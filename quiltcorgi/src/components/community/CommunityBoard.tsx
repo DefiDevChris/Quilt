@@ -1,19 +1,28 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import { useAuthStore } from '@/stores/authStore';
 import { useCommunityStore } from '@/stores/communityStore';
 import { CommunityCard } from '@/components/community/CommunityCard';
+import { FeedTabs } from '@/components/community/FeedTabs';
+import { CategoryFilter } from '@/components/community/CategoryFilter';
+import Link from 'next/link';
 
 export function CommunityBoard() {
+  const user = useAuthStore((s) => s.user);
   const posts = useCommunityStore((s) => s.posts);
   const search = useCommunityStore((s) => s.search);
   const sort = useCommunityStore((s) => s.sort);
+  const tab = useCommunityStore((s) => s.tab);
+  const category = useCommunityStore((s) => s.category);
   const page = useCommunityStore((s) => s.page);
   const totalPages = useCommunityStore((s) => s.totalPages);
   const isLoading = useCommunityStore((s) => s.isLoading);
   const error = useCommunityStore((s) => s.error);
   const setSearch = useCommunityStore((s) => s.setSearch);
   const setSort = useCommunityStore((s) => s.setSort);
+  const setTab = useCommunityStore((s) => s.setTab);
+  const setCategory = useCommunityStore((s) => s.setCategory);
   const fetchPosts = useCommunityStore((s) => s.fetchPosts);
   const loadMore = useCommunityStore((s) => s.loadMore);
 
@@ -49,7 +58,13 @@ export function CommunityBoard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-on-surface mb-6">Community Quilts</h1>
+      <h1 className="text-2xl font-bold text-on-surface mb-4">Community Quilts</h1>
+
+      {/* Feed Tabs */}
+      <FeedTabs activeTab={tab} onTabChange={setTab} isLoggedIn={!!user} />
+
+      {/* Category Filter */}
+      <CategoryFilter activeCategory={category} onCategoryChange={setCategory} />
 
       {/* Search and Sort Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
@@ -150,6 +165,26 @@ export function CommunityBoard() {
             {isLoading ? 'Loading...' : 'Load More'}
           </button>
         </div>
+      )}
+
+      {/* New Post FAB */}
+      {user && (
+        <Link
+          href="/community/new"
+          className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-on shadow-elevation-3 hover:shadow-elevation-4 transition-shadow z-40"
+          title="New Post"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </Link>
       )}
     </div>
   );

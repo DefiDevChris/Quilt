@@ -9,9 +9,14 @@ function makeMockPost(overrides: Partial<CommunityPost> = {}): CommunityPost {
     description: null,
     thumbnailUrl: 'https://example.com/thumb.jpg',
     likeCount: 5,
+    commentCount: 0,
+    category: 'general',
     creatorName: 'Jane',
+    creatorUsername: null,
+    creatorAvatarUrl: null,
     createdAt: '2026-03-27T00:00:00Z',
     isLikedByUser: false,
+    isSavedByUser: false,
     ...overrides,
   };
 }
@@ -21,6 +26,8 @@ function resetStore() {
     posts: [],
     search: '',
     sort: 'newest',
+    tab: 'discover',
+    category: undefined,
     page: 1,
     totalPages: 1,
     total: 0,
@@ -76,6 +83,32 @@ describe('communityStore', () => {
     useCommunityStore.getState().setSort('popular');
     expect(useCommunityStore.getState().sort).toBe('popular');
     expect(useCommunityStore.getState().page).toBe(1);
+  });
+
+  it('initializes tab and category with defaults', () => {
+    const state = useCommunityStore.getState();
+    expect(state.tab).toBe('discover');
+    expect(state.category).toBeUndefined();
+  });
+
+  it('setTab resets page to 1 and updates tab', () => {
+    useCommunityStore.setState({ page: 3 });
+    useCommunityStore.getState().setTab('featured');
+    expect(useCommunityStore.getState().tab).toBe('featured');
+    expect(useCommunityStore.getState().page).toBe(1);
+  });
+
+  it('setCategory resets page to 1 and updates category', () => {
+    useCommunityStore.setState({ page: 4 });
+    useCommunityStore.getState().setCategory('help');
+    expect(useCommunityStore.getState().category).toBe('help');
+    expect(useCommunityStore.getState().page).toBe(1);
+  });
+
+  it('setCategory clears category when undefined', () => {
+    useCommunityStore.setState({ category: 'wip' });
+    useCommunityStore.getState().setCategory(undefined);
+    expect(useCommunityStore.getState().category).toBeUndefined();
   });
 
   it('likePost performs optimistic update', () => {
@@ -150,9 +183,7 @@ describe('communityStore', () => {
 
     await useCommunityStore.getState().fetchPosts();
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/community?')
-    );
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/community?'));
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
     expect(callUrl).toContain('search=star');
     expect(callUrl).toContain('sort=popular');
@@ -211,10 +242,10 @@ describe('communityStore', () => {
 
   it('fetchPosts handles error response', async () => {
     global.fetch = vi.fn().mockResolvedValue(
-      new Response(
-        JSON.stringify({ error: 'Server error' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      )
+      new Response(JSON.stringify({ error: 'Server error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
 
     await useCommunityStore.getState().fetchPosts();
@@ -259,9 +290,7 @@ describe('communityStore', () => {
     const post = makeMockPost({ id: 'post-1', likeCount: 3, isLikedByUser: false });
     useCommunityStore.setState({ posts: [post] });
 
-    global.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 401 })
-    );
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
 
     useCommunityStore.getState().likePost('post-1');
 
@@ -280,9 +309,7 @@ describe('communityStore', () => {
     const post = makeMockPost({ id: 'post-1', likeCount: 5, isLikedByUser: true });
     useCommunityStore.setState({ posts: [post] });
 
-    global.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 401 })
-    );
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
 
     useCommunityStore.getState().unlikePost('post-1');
 
@@ -295,5 +322,82 @@ describe('communityStore', () => {
       expect(current.likeCount).toBe(5);
       expect(current.isLikedByUser).toBe(true);
     });
+  });
+
+  it('savePost performs optimistic update', () => {
+    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
+    useCommunityStore.setState({ posts: [post] });
+
+    useCommunityStore.getState().savePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
+  });
+
+  it('unsavePost performs optimistic update', () => {
+    const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
+    useCommunityStore.setState({ posts: [post] });
+
+    useCommunityStore.getState().unsavePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
+  });
+
+  it('savePost reverts on server error', async () => {
+    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
+    useCommunityStore.setState({ posts: [post] });
+
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
+
+    useCommunityStore.getState().savePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
+    });
+  });
+
+  it('unsavePost reverts on server error', async () => {
+    const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
+    useCommunityStore.setState({ posts: [post] });
+
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
+
+    useCommunityStore.getState().unsavePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
+
+    await vi.waitFor(() => {
+      expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
+    });
+  });
+
+  it('savePost is a no-op for unknown postId', () => {
+    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
+    useCommunityStore.setState({ posts: [post] });
+
+    useCommunityStore.getState().savePost('nonexistent');
+
+    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
+  });
+
+  it('fetchPosts includes tab and category in params', async () => {
+    useCommunityStore.setState({ tab: 'featured', category: 'help', page: 1 });
+
+    await useCommunityStore.getState().fetchPosts();
+
+    const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    expect(callUrl).toContain('tab=featured');
+    expect(callUrl).toContain('category=help');
+  });
+
+  it('fetchPosts omits category param when undefined', async () => {
+    useCommunityStore.setState({ tab: 'discover', category: undefined, page: 1 });
+
+    await useCommunityStore.getState().fetchPosts();
+
+    const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    expect(callUrl).toContain('tab=discover');
+    expect(callUrl).not.toContain('category=');
   });
 });
