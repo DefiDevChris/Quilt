@@ -108,6 +108,14 @@ export const createCommunityPostSchema = z.object({
   description: z.string().max(2000).optional(),
 });
 
+export const fussyCutConfigSchema = z.object({
+  fabricId: z.string().min(1),
+  offsetX: z.number().min(-2000).max(2000).default(0),
+  offsetY: z.number().min(-2000).max(2000).default(0),
+  rotation: z.number().min(-360).max(360).default(0),
+  scale: z.number().min(0.1).max(10).default(1),
+});
+
 export const adminModerationSchema = z.object({
   status: z.enum(['approved', 'rejected']),
 });

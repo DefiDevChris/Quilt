@@ -11,6 +11,8 @@ import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useLayoutEngine } from '@/hooks/useLayoutEngine';
+import { useTextTool } from '@/hooks/useTextTool';
+import { useColorwayTool } from '@/hooks/useColorwayTool';
 
 interface CanvasWorkspaceProps {
   project: Project;
@@ -28,6 +30,8 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useCanvasZoomPan();
   useCanvasKeyboard();
   useLayoutEngine();
+  useTextTool();
+  useColorwayTool();
   useAutoSave();
   useBeforeUnload();
 

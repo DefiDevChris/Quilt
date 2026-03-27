@@ -40,6 +40,16 @@ export function useDrawingTool() {
       fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
+      // Tools handled by their own hooks — exit early
+      if (
+        activeTool === 'text' ||
+        activeTool === 'easydraw' ||
+        activeTool === 'eyedropper' ||
+        activeTool === 'spraycan'
+      ) {
+        return;
+      }
+
       if (activeTool === 'select') {
         canvas.selection = true;
         canvas.defaultCursor = 'default';

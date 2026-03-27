@@ -31,6 +31,7 @@ import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { SmallScreenBanner } from '@/components/studio/SmallScreenBanner';
+import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -58,7 +59,13 @@ function PrintOptionsPanel() {
             >
               <span>{item}</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M6 4L10 8L6 12"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           ))}
@@ -294,6 +301,11 @@ export function StudioClient({ projectId }: StudioClientProps) {
       {/* Pro-gated image export dialog */}
       <ProGate fallback={null}>
         <ImageExportDialog isOpen={isImageExportOpen} onClose={() => setIsImageExportOpen(false)} />
+      </ProGate>
+
+      {/* Pro-gated Fussy Cut dialog */}
+      <ProGate fallback={null}>
+        <FussyCutDialog />
       </ProGate>
     </div>
   );

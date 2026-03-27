@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
+import { TextToolOptions } from '@/components/studio/TextToolOptions';
+import { ColorwayTools } from '@/components/studio/ColorwayTools';
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -32,9 +34,7 @@ function NumberInput({
           onChange={(e) => onChange?.(e.target.value)}
           className="flex-1 bg-transparent font-mono text-body-sm text-on-surface px-2 outline-none min-w-0"
         />
-        {suffix && (
-          <span className="text-body-sm text-secondary pr-2">{suffix}</span>
-        )}
+        {suffix && <span className="text-body-sm text-secondary pr-2">{suffix}</span>}
         <div className="flex flex-col border-l border-outline-variant/20">
           <button
             type="button"
@@ -42,7 +42,13 @@ function NumberInput({
             aria-label={`Increase ${label}`}
           >
             <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
-              <path d="M1 4L4 1L7 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M1 4L4 1L7 4"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
           <button
@@ -51,7 +57,13 @@ function NumberInput({
             aria-label={`Decrease ${label}`}
           >
             <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
-              <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M1 1L4 4L7 1"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
@@ -88,13 +100,17 @@ function Checkbox({
       >
         {checked && (
           <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M1 4L3.5 6.5L9 1"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         )}
       </div>
-      <span className="text-body-sm text-on-surface group-hover:text-on-surface">
-        {label}
-      </span>
+      <span className="text-body-sm text-on-surface group-hover:text-on-surface">{label}</span>
     </label>
   );
 }
@@ -124,10 +140,7 @@ function QuiltPanel() {
             />
           ))}
         </div>
-        <button
-          type="button"
-          className="text-primary text-body-sm font-medium hover:underline"
-        >
+        <button type="button" className="text-primary text-body-sm font-medium hover:underline">
           Open Library
         </button>
       </div>
@@ -150,18 +163,30 @@ function QuiltPanel() {
       <div>
         <SectionTitle>Rotate &amp; Shear</SectionTitle>
         <div className="flex gap-2 mb-3">
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Straighten
           </button>
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Apply
           </button>
         </div>
         <div className="flex gap-2 mb-3">
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Flip Horiz
           </button>
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Flip Vert
           </button>
         </div>
@@ -169,7 +194,10 @@ function QuiltPanel() {
           <div className="flex-1">
             <NumberInput label="Rotation" value={rotation} onChange={setRotation} suffix="deg" />
           </div>
-          <button type="button" className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity">
+          <button
+            type="button"
+            className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity"
+          >
             APPLY
           </button>
         </div>
@@ -177,7 +205,10 @@ function QuiltPanel() {
           <div className="flex-1">
             <NumberInput label="Shear" value={shear} onChange={setShear} suffix="deg" />
           </div>
-          <button type="button" className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity">
+          <button
+            type="button"
+            className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity"
+          >
             APPLY
           </button>
         </div>
@@ -186,6 +217,12 @@ function QuiltPanel() {
           <div className="w-6 h-6 rounded-sm bg-white border border-outline-variant/30 cursor-pointer" />
         </div>
       </div>
+
+      {/* Colorway Tools */}
+      <ColorwayTools />
+
+      {/* Text Tool Properties (shown when text object selected) */}
+      <TextToolOptions />
 
       {/* Print Capabilities */}
       <div>
@@ -199,7 +236,13 @@ function QuiltPanel() {
             >
               <span>{item}</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M6 4L10 8L6 12"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           ))}
@@ -222,9 +265,7 @@ function BlockPanel() {
   return (
     <div className="flex flex-col gap-[2.75rem]">
       <div>
-        <h3 className="text-headline-sm font-semibold text-on-surface mb-4">
-          Block Properties
-        </h3>
+        <h3 className="text-headline-sm font-semibold text-on-surface mb-4">Block Properties</h3>
       </div>
 
       <div>
@@ -265,27 +306,44 @@ function ImagePanel() {
 
         {/* Rotate buttons */}
         <div className="flex gap-2 mb-3">
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Rotate 90&#176;
           </button>
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Rotate -90&#176;
           </button>
         </div>
 
         {/* Flip buttons */}
         <div className="flex gap-2 mb-4">
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Flip Horiz
           </button>
-          <button type="button" className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+          >
             Flip Vert
           </button>
         </div>
 
         {/* Precise Rotation */}
         <div className="mb-4">
-          <NumberInput label="Precise Rotation" value={rotation} onChange={setRotation} suffix="deg" />
+          <NumberInput
+            label="Precise Rotation"
+            value={rotation}
+            onChange={setRotation}
+            suffix="deg"
+          />
         </div>
 
         {/* Shear Horizontally */}
@@ -300,7 +358,9 @@ function ImagePanel() {
               onChange={(e) => setShearH(Number(e.target.value))}
               className="flex-1 h-1 appearance-none rounded-full bg-surface-container-highest accent-primary"
             />
-            <span className="font-mono text-body-sm text-secondary w-8 text-right">{shearH}&#176;</span>
+            <span className="font-mono text-body-sm text-secondary w-8 text-right">
+              {shearH}&#176;
+            </span>
           </div>
         </div>
 
@@ -316,12 +376,17 @@ function ImagePanel() {
               onChange={(e) => setShearV(Number(e.target.value))}
               className="flex-1 h-1 appearance-none rounded-full bg-surface-container-highest accent-primary"
             />
-            <span className="font-mono text-body-sm text-secondary w-8 text-right">{shearV}&#176;</span>
+            <span className="font-mono text-body-sm text-secondary w-8 text-right">
+              {shearV}&#176;
+            </span>
           </div>
         </div>
 
         {/* Straighten button */}
-        <button type="button" className="w-full bg-primary text-white rounded-md py-2.5 text-body-sm font-medium hover:opacity-90 transition-opacity mb-4">
+        <button
+          type="button"
+          className="w-full bg-primary text-white rounded-md py-2.5 text-body-sm font-medium hover:opacity-90 transition-opacity mb-4"
+        >
           Straighten (Apply)
         </button>
       </div>
@@ -329,7 +394,10 @@ function ImagePanel() {
       {/* Background */}
       <div>
         <SectionTitle>Background</SectionTitle>
-        <button type="button" className="w-full bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors mb-3">
+        <button
+          type="button"
+          className="w-full bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors mb-3"
+        >
           Change Canvas Color
         </button>
         <Checkbox

@@ -10,9 +10,31 @@ import {
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
+  REFERENCE_IMAGE_DEFAULT_OPACITY,
 } from '@/lib/constants';
 
-export type ToolType = 'select' | 'rectangle' | 'triangle' | 'polygon' | 'line' | 'curve';
+export type ToolType =
+  | 'select'
+  | 'rectangle'
+  | 'triangle'
+  | 'polygon'
+  | 'line'
+  | 'curve'
+  | 'easydraw'
+  | 'text'
+  | 'eyedropper'
+  | 'spraycan';
+
+export type BlockDraftingMode = 'freeform' | 'easydraw' | 'applique';
+
+export type ColorwayTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
+
+export interface FussyCutTarget {
+  readonly objectId: string;
+  readonly fabricId: string;
+  readonly fabricImageUrl: string;
+  readonly patchVertices: readonly { x: number; y: number }[];
+}
 
 export type WorktableType = 'quilt' | 'block' | 'image' | 'print';
 
@@ -38,6 +60,10 @@ interface CanvasStoreState {
   strokeWidth: number;
   undoStack: string[];
   redoStack: string[];
+  blockDraftingMode: BlockDraftingMode;
+  referenceImageOpacity: number;
+  activeColorwayTool: ColorwayTool | null;
+  fussyCutTarget: FussyCutTarget | null;
 
   setFabricCanvas: (canvas: unknown) => void;
   setZoom: (zoom: number) => void;
@@ -57,6 +83,10 @@ interface CanvasStoreState {
   canUndo: () => boolean;
   canRedo: () => boolean;
   resetHistory: () => void;
+  setBlockDraftingMode: (mode: BlockDraftingMode) => void;
+  setReferenceImageOpacity: (opacity: number) => void;
+  setActiveColorwayTool: (tool: ColorwayTool | null) => void;
+  setFussyCutTarget: (target: FussyCutTarget | null) => void;
 }
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -78,6 +108,10 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   strokeWidth: 1,
   undoStack: [],
   redoStack: [],
+  blockDraftingMode: 'freeform',
+  referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
+  activeColorwayTool: null,
+  fussyCutTarget: null,
 
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
 
@@ -130,4 +164,13 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   canUndo: () => get().undoStack.length > 0,
   canRedo: () => get().redoStack.length > 0,
   resetHistory: () => set({ undoStack: [], redoStack: [] }),
+
+  setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
+
+  setReferenceImageOpacity: (opacity) =>
+    set({ referenceImageOpacity: Math.max(0, Math.min(1, opacity)) }),
+
+  setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
+
+  setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
 }));

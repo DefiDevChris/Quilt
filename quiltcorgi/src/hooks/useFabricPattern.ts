@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { computePatternTransform, type FussyCutConfig } from '@/lib/fussy-cut-engine';
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
@@ -39,14 +40,20 @@ export function useFabricPattern() {
           repeat: 'repeat',
         });
 
+        // Check for existing fussy cut metadata and apply per-patch transform
+        const fussyCutMeta = (target as unknown as { fussyCut?: FussyCutConfig }).fussyCut;
+        if (fussyCutMeta) {
+          pattern.patternTransform = computePatternTransform(fussyCutMeta);
+        }
+
         target.set('fill', pattern);
         canvas.renderAll();
 
         // Push undo state
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);
-      } catch (err) {
-        console.error('Failed to apply fabric pattern:', err);
+      } catch {
+        // Pattern application failed — silently continue
       }
     },
     [fabricCanvas]
@@ -64,20 +71,27 @@ export function useFabricPattern() {
       const fill = active.get('fill');
       if (!fill || typeof fill === 'string') return;
 
-      // Fabric.js Pattern uses patternTransform matrix
-      const rad = (rotation * Math.PI) / 180;
-      const cos = Math.cos(rad) * scaleX;
-      const sin = Math.sin(rad) * scaleY;
-      const patternTransform: [number, number, number, number, number, number] = [
-        cos,
-        sin,
-        -sin,
-        cos,
-        offsetX,
-        offsetY,
-      ];
+      // Check for fussy cut metadata — per-patch transform takes priority
+      const fussyCutMeta = (active as unknown as { fussyCut?: FussyCutConfig }).fussyCut;
+      if (fussyCutMeta) {
+        (fill as InstanceType<typeof fabric.Pattern>).patternTransform =
+          computePatternTransform(fussyCutMeta);
+      } else {
+        // Global pattern transform
+        const rad = (rotation * Math.PI) / 180;
+        const cos = Math.cos(rad) * scaleX;
+        const sin = Math.sin(rad) * scaleY;
+        const patternTransform: [number, number, number, number, number, number] = [
+          cos,
+          sin,
+          -sin,
+          cos,
+          offsetX,
+          offsetY,
+        ];
 
-      (fill as InstanceType<typeof fabric.Pattern>).patternTransform = patternTransform;
+        (fill as InstanceType<typeof fabric.Pattern>).patternTransform = patternTransform;
+      }
       active.dirty = true;
       canvas.renderAll();
     },

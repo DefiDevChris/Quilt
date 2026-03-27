@@ -39,6 +39,21 @@ export const FABRIC_IMAGE_MAX_SIZE = 2048;
 
 export const S3_UPLOAD_EXPIRY_SECONDS = 300;
 
+export const REFERENCE_IMAGE_DEFAULT_OPACITY = 0.5;
+
+export const TEXT_DEFAULT_FONT_SIZE = 24;
+export const TEXT_DEFAULT_FONT_FAMILY = 'Manrope';
+export const TEXT_FONTS = [
+  'Manrope',
+  'Georgia',
+  'Times New Roman',
+  'Courier New',
+  'Palatino',
+  'Garamond',
+  'Trebuchet MS',
+  'Verdana',
+] as const;
+
 export const COLOR_FAMILIES = [
   'Red',
   'Orange',

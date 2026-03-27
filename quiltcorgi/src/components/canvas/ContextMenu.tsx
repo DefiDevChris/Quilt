@@ -140,6 +140,47 @@ export function ContextMenu() {
           canvas.bringObjectToFront(active);
           break;
         }
+        case 'fussyCut': {
+          // Extract fabric pattern info from the active object
+          const fill = active.get('fill');
+          if (fill && typeof fill !== 'string') {
+            const patternFill = fill as {
+              source?: { src?: string };
+              patternSourceCanvas?: unknown;
+            };
+            const fabricImageUrl = patternFill.source?.src ?? '';
+            const fabricId = (active as unknown as { fabricId?: string }).fabricId ?? '';
+            const vertices: { x: number; y: number }[] = [];
+
+            // Get patch shape vertices if it's a polygon
+            if (
+              'points' in active &&
+              Array.isArray((active as unknown as { points: unknown[] }).points)
+            ) {
+              const pts = (active as unknown as { points: { x: number; y: number }[] }).points;
+              for (const pt of pts) {
+                vertices.push({ x: pt.x, y: pt.y });
+              }
+            } else {
+              // Fallback: use bounding box corners
+              const bounds = active.getBoundingRect();
+              vertices.push(
+                { x: bounds.left, y: bounds.top },
+                { x: bounds.left + bounds.width, y: bounds.top },
+                { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+                { x: bounds.left, y: bounds.top + bounds.height }
+              );
+            }
+
+            useCanvasStore.getState().setFussyCutTarget({
+              objectId: (active as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
+              fabricId,
+              fabricImageUrl,
+              patchVertices: vertices,
+            });
+          }
+          break;
+        }
       }
 
       active.setCoords();
@@ -199,6 +240,7 @@ export function ContextMenu() {
         { label: 'Rotate 90°', icon: '↻', action: 'rotate90' },
         { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
         { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
+        { label: 'Fussy Cut...', icon: '✂', action: 'fussyCut' },
         { label: 'divider', icon: '', action: 'divider' },
         { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
       ]

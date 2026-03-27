@@ -16,7 +16,12 @@ const QUILT_TOOLS: FloatingTool[] = [
     toolType: 'select',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M5 3L5 17L9.5 12.5L13.5 19L15.5 18L11.5 11L17 11L5 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path
+          d="M5 3L5 17L9.5 12.5L13.5 19L15.5 18L11.5 11L17 11L5 3Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
@@ -25,7 +30,13 @@ const QUILT_TOOLS: FloatingTool[] = [
     label: 'Pan',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M11 3V19M3 11H19M11 3L8 6M11 3L14 6M11 19L8 16M11 19L14 16M3 11L6 8M3 11L6 14M19 11L16 8M19 11L16 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M11 3V19M3 11H19M11 3L8 6M11 3L14 6M11 19L8 16M11 19L14 16M3 11L6 8M3 11L6 14M19 11L16 8M19 11L16 14"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
@@ -37,7 +48,12 @@ const QUILT_TOOLS: FloatingTool[] = [
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <circle cx="7" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="15" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M9 14L16 4M13 14L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path
+          d="M9 14L16 4M13 14L6 4"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
       </svg>
     ),
   },
@@ -47,7 +63,28 @@ const QUILT_TOOLS: FloatingTool[] = [
     toolType: 'curve',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M4 16C4 16 6 4 11 4C16 4 18 16 18 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path
+          d="M4 16C4 16 6 4 11 4C16 4 18 16 18 16"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+  },
+  {
+    id: 'text',
+    label: 'Text',
+    toolType: 'text',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path
+          d="M5 5H17M11 5V18M8 5V4M14 5V4"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
@@ -93,8 +130,19 @@ const QUILT_TOOLS: FloatingTool[] = [
     label: 'Rotate',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M17 11C17 14.3137 14.3137 17 11 17C7.68629 17 5 14.3137 5 11C5 7.68629 7.68629 5 11 5C13.2 5 15.1 6.2 16.1 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14 8H17V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M17 11C17 14.3137 14.3137 17 11 17C7.68629 17 5 14.3137 5 11C5 7.68629 7.68629 5 11 5C13.2 5 15.1 6.2 16.1 8"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M14 8H17V5"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
@@ -129,7 +177,12 @@ const BLOCK_TOOLS: FloatingTool[] = [
     label: 'Snap',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M11 3V7M11 15V19M3 11H7M15 11H19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path
+          d="M11 3V7M11 15V19M3 11H7M15 11H19"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
         <circle cx="11" cy="11" r="3" stroke="currentColor" strokeWidth="1.5" />
       </svg>
     ),
@@ -152,7 +205,12 @@ const BLOCK_TOOLS: FloatingTool[] = [
     toolType: 'curve',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M4 17C4 9 9 4 17 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path
+          d="M4 17C4 9 9 4 17 4"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
       </svg>
     ),
   },
@@ -186,7 +244,13 @@ const IMAGE_TOOLS: FloatingTool[] = [
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <path d="M4 18L18 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M4 11H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="2 2" />
+        <path
+          d="M4 11H18"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray="2 2"
+        />
       </svg>
     ),
   },
@@ -226,9 +290,7 @@ export function FloatingToolbar() {
                 }
               }}
               className={`flex items-center justify-center transition-colors ${
-                isActive
-                  ? 'text-primary'
-                  : 'text-secondary hover:text-on-surface'
+                isActive ? 'text-primary' : 'text-secondary hover:text-on-surface'
               }`}
             >
               {tool.icon}
