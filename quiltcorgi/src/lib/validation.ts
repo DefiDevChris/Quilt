@@ -165,3 +165,18 @@ export const markNotificationsReadSchema = z.union([
   z.object({ notificationIds: z.literal('all') }),
   z.object({ notificationIds: z.array(z.string().uuid()) }),
 ]);
+
+export const photoPatchworkConfigSchema = z.object({
+  gridWidth: z.number().int().min(4).max(48),
+  gridHeight: z.number().int().min(4).max(48),
+  colorCount: z.number().int().min(2).max(24),
+  maxIterations: z.number().int().min(1).max(100).optional(),
+});
+
+export const quiltOcrConfigSchema = z.object({
+  edgeThreshold: z.number().int().min(1).max(255).default(50),
+  houghThreshold: z.number().int().min(1).max(500).default(80),
+  minLineGap: z.number().int().min(1).max(100).default(10),
+  referenceWidthInches: z.number().positive().max(200).optional(),
+  seamAllowanceInches: z.number().min(0).max(2).default(0.25),
+});

@@ -1,0 +1,94 @@
+---
+title: "Drawing Custom Blocks with EasyDraw"
+slug: "custom-blocks-easydraw"
+difficulty: "intermediate"
+description: "Learn to draft original quilt blocks using EasyDraw's seam-line drawing tool. Draw lines, edit nodes, and save blocks to your library."
+estimatedTime: "20 min"
+publishedAt: "2026-01-25"
+tags: ["intermediate", "easydraw", "blocks", "drafting"]
+order: 2
+---
+
+# Drawing Custom Blocks with EasyDraw
+
+EasyDraw is QuiltCorgi's seam-line block drafting tool. Instead of drawing individual patches, you draw the seam lines that divide a block into regions — then QuiltCorgi automatically figures out the patches for you.
+
+## Opening EasyDraw
+
+There are two ways to open the block drafting modal:
+
+1. Switch to the **Block worktable** using the tab control in the top bar, then click **New Block**
+2. From the Quilt worktable, click a cell and choose **Edit Block** from the context menu
+
+The Block Drafting Modal opens with three tabs: **Freeform**, **EasyDraw**, and **Applique**. Click the **EasyDraw** tab.
+
+## Understanding the EasyDraw Canvas
+
+The EasyDraw canvas shows a square block area with a subtle grid overlay. Key elements:
+
+- **Block boundary** — The outer square that defines your block edges
+- **Grid snapping** — Lines snap to the grid for precision (toggle with `G`)
+- **Node handles** — Small circles at line endpoints that you can drag to adjust
+
+> **Tip:** Use `Ctrl+Z` / `Cmd+Z` to undo any line you draw. EasyDraw supports unlimited undo history within the session.
+
+## Step 1: Draw Your First Seam Line
+
+Select the **Line tool** from the EasyDraw toolbar (or press `L`). Click a starting point on the block boundary, then click an ending point. A straight seam line appears between the two points.
+
+Try drawing a diagonal from the top-left corner to the bottom-right corner. You have just divided your block into two triangle patches.
+
+## Step 2: Add More Lines
+
+Continue drawing lines to subdivide the block further. Common starting patterns include:
+
+- **Four-patch** — One horizontal and one vertical line through the center
+- **Nine-patch** — Two horizontal and two vertical lines creating a 3x3 grid
+- **Diagonal star** — Diagonals from corners plus horizontal and vertical center lines
+
+Lines must start and end on either the block boundary or an existing seam line. This constraint ensures every region forms a valid, sewable patch.
+
+## Step 3: Edit Nodes
+
+Switch to the **Select tool** (press `V`) and click any node handle to select it. You can then:
+
+- **Drag** the node to reposition it along the boundary or seam line
+- **Delete** the node (press `Delete`) to remove a line segment
+- **Split** a line by double-clicking its midpoint to add a new node
+
+Node editing is where the real creativity happens. Small adjustments to node positions can transform a simple grid into an intricate design.
+
+## Step 4: Use Curves
+
+For organic shapes, switch to the **Curve tool** (press `C`). Click to set control points and draw smooth Bezier curves. Curves work the same as lines — they must connect boundary points or existing seam intersections.
+
+> **Note:** Curved seams are beautiful but harder to sew. QuiltCorgi marks curved patches with a small indicator so you know which templates need special attention during cutting.
+
+## Step 5: Preview Your Block
+
+Click the **Preview** button to see your block with automatic coloring applied. QuiltCorgi assigns colors to each patch so you can evaluate the design. The preview also shows:
+
+- Total number of unique patches
+- Number of unique templates (patches that share a shape)
+- Whether all regions are valid (closed, sewable shapes)
+
+If any region is not valid, it will be highlighted in red. Go back and adjust your seam lines to close any gaps.
+
+## Step 6: Save to Your Library
+
+When you are satisfied with your block, click **Save Block**. Give it a name and optionally assign a category. The block is saved to your "My Blocks" section in the [Block Library](/tutorials/block-library).
+
+Saved blocks work just like built-in blocks — you can drag them into any project, recolor them, and apply fabrics.
+
+## Tips for Great Block Designs
+
+- Start simple — a few well-placed lines often create more striking designs than many lines
+- Use symmetry — try mirroring your design across the center for balanced blocks
+- Check sewability — avoid tiny triangles and very acute angles that are difficult to piece
+- Name descriptively — future you will thank present you when browsing "My Blocks" later
+
+## Next Steps
+
+- [Creating Applique Designs](/tutorials/applique-designs) — Layer shapes for non-pieced designs
+- [Using the Block Library](/tutorials/block-library) — Browse existing blocks for inspiration
+- [Using Generators: Symmetry & Serendipity](/tutorials/generators) — Auto-generate block variations

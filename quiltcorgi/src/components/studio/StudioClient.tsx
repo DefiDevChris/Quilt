@@ -32,6 +32,9 @@ import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { SmallScreenBanner } from '@/components/studio/SmallScreenBanner';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
+import { HelpButton } from '@/components/studio/HelpButton';
+import { HelpPanel } from '@/components/studio/HelpPanel';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -91,6 +94,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isPhotoPatchworkOpen, setIsPhotoPatchworkOpen] = useState(false);
+  const [isQuiltOcrOpen, setIsQuiltOcrOpen] = useState(false);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
 
@@ -195,6 +201,8 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenSerendipity={() => setIsSerendipityOpen(true)}
             onOpenCalculator={() => setIsCalculatorOpen(true)}
             onOpenImageExport={() => setIsImageExportOpen(true)}
+            onOpenPhotoPatchwork={() => setIsPhotoPatchworkOpen(true)}
+            onOpenQuiltOcr={() => setIsQuiltOcrOpen(true)}
           />
         )}
 
@@ -212,7 +220,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
         </ProGate>
 
         {/* Canvas area */}
-        <div className="flex-1 flex flex-col overflow-hidden relative">
+        <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
           <HorizontalRuler />
 
           <div
@@ -307,6 +315,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
       <ProGate fallback={null}>
         <FussyCutDialog />
       </ProGate>
+
+      {/* Help button + panel */}
+      <HelpButton onClick={() => setIsHelpOpen(true)} />
+      <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+
+      {/* Onboarding tour */}
+      <OnboardingTour />
     </div>
   );
 }

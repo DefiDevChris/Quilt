@@ -48,6 +48,18 @@ export default function Footer() {
           >
             Contact
           </Link>
+          <Link
+            href="/tutorials"
+            className="text-[length:var(--font-size-body-sm)] text-secondary hover:text-on-surface transition-colors"
+          >
+            Tutorials
+          </Link>
+          <Link
+            href="/blog"
+            className="text-[length:var(--font-size-body-sm)] text-secondary hover:text-on-surface transition-colors"
+          >
+            Blog
+          </Link>
         </div>
 
         <p className="text-[length:var(--font-size-body-sm)] text-outline-variant">

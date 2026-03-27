@@ -21,16 +21,19 @@ export function StudioTopBar() {
             aria-label="Open menu"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path
+                d="M3 5H17M3 10H17M3 15H17"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
-          <span className="font-semibold text-[1.125rem] text-on-surface">
-            QuiltCorgi
-          </span>
+          <span className="font-semibold text-[1.125rem] text-on-surface">QuiltCorgi</span>
         </div>
 
         {/* Center: WorktableSwitcher */}
-        <div className="absolute left-1/2 -translate-x-1/2">
+        <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
           <WorktableSwitcher />
         </div>
 
@@ -40,9 +43,7 @@ export function StudioTopBar() {
             <div className="text-label-lg font-medium text-secondary truncate max-w-40">
               {projectName}
             </div>
-            <div className="text-body-sm text-outline-variant">
-              Layer 1 Active
-            </div>
+            <div className="text-body-sm text-outline-variant">Layer 1 Active</div>
           </div>
           <button
             type="button"

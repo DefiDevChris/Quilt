@@ -63,6 +63,18 @@ export default function PublicNav() {
           >
             Community
           </a>
+          <Link
+            href="/tutorials"
+            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
+          >
+            Tutorials
+          </Link>
+          <Link
+            href="/blog"
+            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
+          >
+            Blog
+          </Link>
         </div>
 
         {/* Right side buttons */}

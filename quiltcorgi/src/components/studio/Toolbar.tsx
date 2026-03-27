@@ -1,26 +1,29 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import { useCanvasStore, type ToolType, type WorktableType } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
+import { TooltipHint } from '@/components/ui/TooltipHint';
 
 interface ToolDef {
   id: string;
   label: string;
+  shortcut?: string;
+  description?: string;
+  isProFeature?: boolean;
   toolType?: ToolType;
   group?: string;
   icon: React.ReactNode;
   onClick?: () => void;
   isActive?: () => boolean;
+  dataTour?: string;
 }
 
 function ToolIcon({
   tool,
-  activeTool,
   onClick,
   isActive,
 }: {
@@ -29,45 +32,42 @@ function ToolIcon({
   onClick: () => void;
   isActive: boolean;
 }) {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const button = (
+    <button
+      type="button"
+      title={tool.label}
+      aria-label={tool.label}
+      aria-pressed={isActive}
+      onClick={onClick}
+      className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
+        isActive ? 'bg-primary-container/30 text-primary' : 'text-secondary hover:text-on-surface'
+      }`}
+    >
+      {tool.icon}
+    </button>
+  );
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  function handleMouseEnter() {
-    timeoutRef.current = setTimeout(() => setShowTooltip(true), 400);
-  }
-
-  function handleMouseLeave() {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setShowTooltip(false);
+  if (tool.description) {
+    return (
+      <div {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}>
+        <TooltipHint
+          name={tool.label}
+          shortcut={tool.shortcut}
+          description={tool.description}
+          isProFeature={tool.isProFeature}
+        >
+          {button}
+        </TooltipHint>
+      </div>
+    );
   }
 
   return (
-    <div className="relative flex items-center justify-center">
-      <button
-        type="button"
-        title={tool.label}
-        aria-label={tool.label}
-        aria-pressed={isActive}
-        onClick={onClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
-          isActive ? 'bg-primary-container/30 text-primary' : 'text-secondary hover:text-on-surface'
-        }`}
-      >
-        {tool.icon}
-      </button>
-      {showTooltip && (
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-surface-container-highest text-body-sm text-on-surface rounded-sm shadow-elevation-4 px-2 py-1 whitespace-nowrap z-50 pointer-events-none">
-          {tool.label}
-        </div>
-      )}
+    <div
+      className="relative flex items-center justify-center"
+      {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}
+    >
+      {button}
     </div>
   );
 }
@@ -95,7 +95,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     // Drawing tools
     {
       id: 'select',
-      label: 'Select (V)',
+      label: 'Select',
+      shortcut: 'V',
+      description: 'Click to select and move objects on the canvas',
       toolType: 'select',
       group: 'tools',
       icon: (
@@ -111,7 +113,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'rectangle',
-      label: 'Rectangle (R)',
+      label: 'Rectangle',
+      shortcut: 'R',
+      description: 'Click and drag to draw a rectangle shape',
       toolType: 'rectangle',
       group: 'tools',
       icon: (
@@ -122,7 +126,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'triangle',
-      label: 'Triangle (T)',
+      label: 'Triangle',
+      shortcut: 'T',
+      description: 'Click and drag to draw a triangle shape',
       toolType: 'triangle',
       group: 'tools',
       icon: (
@@ -138,7 +144,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'polygon',
-      label: 'Polygon (P)',
+      label: 'Polygon',
+      shortcut: 'P',
+      description: 'Click and drag to draw a polygon with adjustable sides',
       toolType: 'polygon',
       group: 'tools',
       icon: (
@@ -154,7 +162,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'line',
-      label: 'Line (L)',
+      label: 'Line',
+      shortcut: 'L',
+      description: 'Click and drag to draw a straight line',
       toolType: 'line',
       group: 'tools',
       icon: (
@@ -165,7 +175,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'curve',
-      label: 'Bezier Curve (C)',
+      label: 'Bezier Curve',
+      shortcut: 'C',
+      description: 'Click to place control points for smooth curves',
       toolType: 'curve',
       group: 'tools',
       icon: (
@@ -181,7 +193,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'text',
-      label: 'Text (X)',
+      label: 'Text',
+      shortcut: 'X',
+      description: 'Click to place a text label on the canvas',
       toolType: 'text',
       group: 'tools',
       icon: (
@@ -199,10 +213,13 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     // Library
     {
       id: 'blocks',
-      label: 'Block Library (B)',
+      label: 'Block Library',
+      shortcut: 'B',
+      description: 'Browse and drag quilt blocks onto your canvas',
       group: 'library',
       onClick: toggleBlockPanel,
       isActive: () => isBlockPanelOpen,
+      dataTour: 'block-library',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
@@ -216,10 +233,13 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'fabrics',
-      label: 'Fabric Library (F)',
+      label: 'Fabric Library',
+      shortcut: 'F',
+      description: 'Upload fabrics and drag them onto patches',
       group: 'library',
       onClick: toggleFabricPanel,
       isActive: () => isFabricPanelOpen,
+      dataTour: 'fabric-library',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
@@ -231,9 +251,11 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'layout',
       label: 'Layout Settings',
+      description: 'Configure grid, sashing, and quilt layout options',
       group: 'layout',
       onClick: callbacks.onOpenLayoutSettings,
       isActive: () => layoutType !== 'free-form',
+      dataTour: 'layout-settings',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
@@ -247,6 +269,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'symmetry',
       label: 'Symmetry Tool',
+      description: 'Mirror your design with vertical, horizontal, or radial symmetry',
       group: 'generate',
       onClick: callbacks.onOpenSymmetry,
       icon: (
@@ -272,6 +295,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'serendipity',
       label: 'Serendipity Generator',
+      description: 'Randomly shuffle fabric assignments for unexpected combinations',
       group: 'generate',
       onClick: callbacks.onOpenSerendipity,
       icon: (
@@ -284,10 +308,52 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
+    // Photo
+    {
+      id: 'photo-patchwork',
+      label: 'Photo Patchwork',
+      description: 'Convert a photo into a patchwork quilt pattern',
+      group: 'photo',
+      onClick: callbacks.onOpenPhotoPatchwork,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M10 3V17" stroke="currentColor" strokeWidth="1.2" />
+          <circle cx="7" cy="7" r="1.5" stroke="currentColor" strokeWidth="1" />
+        </svg>
+      ),
+    },
+    {
+      id: 'quilt-ocr',
+      label: 'Import from Photo',
+      description: 'Analyze a photo of a quilt and recreate the pattern digitally',
+      isProFeature: true,
+      group: 'photo',
+      onClick: callbacks.onOpenQuiltOcr,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M3 7V4C3 3.44772 3.44772 3 4 3H7M13 3H16C16.5523 3 17 3.44772 17 4V7M17 13V16C17 16.5523 16.5523 17 16 17H13M7 17H4C3.44772 17 3 16.5523 3 16V13"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M7 10L9 12L13 8"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
     // Measure
     {
       id: 'yardage',
       label: 'Yardage Estimator',
+      description: 'Calculate fabric yardage needed for your design',
       group: 'measure',
       onClick: toggleYardagePanel,
       isActive: () => isYardagePanelOpen,
@@ -313,6 +379,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'calculator',
       label: 'Fraction Calculator',
+      description: 'Calculate fractions for precise quilt measurements',
       group: 'measure',
       onClick: callbacks.onOpenCalculator,
       icon: (
@@ -339,9 +406,11 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'printlist',
       label: 'Printlist',
+      description: 'Review and print your quilt project materials list',
       group: 'export',
       onClick: togglePrintlistPanel,
       isActive: () => isPrintlistPanelOpen,
+      dataTour: 'export',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="5" y="9" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
@@ -354,6 +423,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'export-image',
       label: 'Export Image',
+      description: 'Save your design as a high-resolution PNG or JPEG',
       group: 'export',
       onClick: callbacks.onOpenImageExport,
       icon: (
@@ -373,7 +443,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     // History
     {
       id: 'undo',
-      label: 'Undo (Ctrl+Z)',
+      label: 'Undo',
+      shortcut: 'Ctrl+Z',
+      description: 'Undo the last action',
       group: 'history',
       onClick: () => {
         if (canUndo) {
@@ -402,7 +474,9 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'redo',
-      label: 'Redo (Ctrl+Shift+Z)',
+      label: 'Redo',
+      shortcut: 'Ctrl+Shift+Z',
+      description: 'Redo the last undone action',
       group: 'history',
       onClick: () => {
         if (canRedo) {
@@ -569,6 +643,8 @@ interface ToolbarCallbacks {
   onOpenSerendipity?: () => void;
   onOpenCalculator?: () => void;
   onOpenImageExport?: () => void;
+  onOpenPhotoPatchwork?: () => void;
+  onOpenQuiltOcr?: () => void;
 }
 
 interface ToolbarProps extends ToolbarCallbacks {}
@@ -579,6 +655,8 @@ export function Toolbar({
   onOpenSerendipity,
   onOpenCalculator,
   onOpenImageExport,
+  onOpenPhotoPatchwork,
+  onOpenQuiltOcr,
 }: ToolbarProps) {
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
@@ -590,6 +668,8 @@ export function Toolbar({
     onOpenSerendipity,
     onOpenCalculator,
     onOpenImageExport,
+    onOpenPhotoPatchwork,
+    onOpenQuiltOcr,
   };
 
   const quiltTools = useQuiltTools(callbacks);
@@ -622,6 +702,7 @@ export function Toolbar({
   return (
     <nav
       aria-label="Design tools"
+      data-tour="toolbar"
       className="w-12 bg-transparent flex flex-col items-center py-2 gap-0.5"
     >
       {groups.map((group, groupIdx) => (

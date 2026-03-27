@@ -74,3 +74,20 @@ export const COLOR_FAMILIES = [
   'Neutral',
   'Multi',
 ] as const;
+
+// Phase 16: Onboarding & Photo features
+export const ONBOARDING_STORAGE_KEY = 'quiltcorgi-onboarding-completed';
+export const TOOLTIP_DELAY_MS = 400;
+
+export const KMEANS_MAX_ITERATIONS = 20;
+export const KMEANS_CONVERGENCE_THRESHOLD = 0.1;
+export const PHOTO_MAX_GRID = 48;
+export const PHOTO_MIN_GRID = 4;
+export const PHOTO_MAX_COLORS = 24;
+export const PHOTO_MIN_COLORS = 2;
+
+export const OCR_CONFIDENCE_HIGH = 0.7;
+export const OCR_CONFIDENCE_LOW = 0.3;
+
+export const BLOG_PER_PAGE = 10;
+export const TUTORIAL_DIFFICULTIES = ['beginner', 'intermediate', 'advanced'] as const;
