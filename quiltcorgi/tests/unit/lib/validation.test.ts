@@ -1,0 +1,104 @@
+import { describe, it, expect } from 'vitest';
+import { createProjectSchema, updateProjectSchema, paginationSchema } from '@/lib/validation';
+
+describe('createProjectSchema', () => {
+  it('accepts valid input with defaults', () => {
+    const result = createProjectSchema.parse({});
+    expect(result).toEqual({
+      name: 'Untitled Quilt',
+      unitSystem: 'imperial',
+      canvasWidth: 48,
+      canvasHeight: 48,
+      gridSettings: { enabled: true, size: 1, snapToGrid: true },
+    });
+  });
+
+  it('accepts custom values', () => {
+    const result = createProjectSchema.parse({
+      name: 'My Quilt',
+      unitSystem: 'metric',
+      canvasWidth: 100,
+      canvasHeight: 80,
+      gridSettings: { enabled: false, size: 2, snapToGrid: false },
+    });
+    expect(result.name).toBe('My Quilt');
+    expect(result.unitSystem).toBe('metric');
+    expect(result.canvasWidth).toBe(100);
+    expect(result.canvasHeight).toBe(80);
+    expect(result.gridSettings.enabled).toBe(false);
+  });
+
+  it('rejects canvas width below minimum', () => {
+    const result = createProjectSchema.safeParse({ canvasWidth: 0 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects canvas width above maximum', () => {
+    const result = createProjectSchema.safeParse({ canvasWidth: 201 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid unit system', () => {
+    const result = createProjectSchema.safeParse({ unitSystem: 'metric2' });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects name exceeding max length', () => {
+    const result = createProjectSchema.safeParse({ name: 'a'.repeat(256) });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty name', () => {
+    const result = createProjectSchema.safeParse({ name: '' });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('updateProjectSchema', () => {
+  it('accepts empty update (all optional)', () => {
+    const result = updateProjectSchema.parse({});
+    expect(result).toEqual({});
+  });
+
+  it('accepts partial update with name only', () => {
+    const result = updateProjectSchema.parse({ name: 'New Name' });
+    expect(result.name).toBe('New Name');
+  });
+
+  it('accepts canvasData as record', () => {
+    const result = updateProjectSchema.parse({
+      canvasData: { objects: [], version: '6.0' },
+    });
+    expect(result.canvasData).toBeDefined();
+  });
+
+  it('rejects invalid thumbnailUrl', () => {
+    const result = updateProjectSchema.safeParse({ thumbnailUrl: 'not-a-url' });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('paginationSchema', () => {
+  it('provides defaults', () => {
+    const result = paginationSchema.parse({});
+    expect(result.page).toBe(1);
+    expect(result.limit).toBe(20);
+    expect(result.order).toBe('desc');
+  });
+
+  it('coerces string numbers', () => {
+    const result = paginationSchema.parse({ page: '3', limit: '10' });
+    expect(result.page).toBe(3);
+    expect(result.limit).toBe(10);
+  });
+
+  it('rejects page below 1', () => {
+    const result = paginationSchema.safeParse({ page: 0 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects limit above max', () => {
+    const result = paginationSchema.safeParse({ limit: 51 });
+    expect(result.success).toBe(false);
+  });
+});

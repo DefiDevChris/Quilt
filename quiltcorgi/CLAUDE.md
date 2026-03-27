@@ -1,0 +1,38 @@
+@AGENTS.md
+
+## Project Reference
+
+Specification docs live in `../Docs/`:
+- `01-PROJECT-OVERVIEW.md` — vision, scope, glossary
+- `02-ARCHITECTURE.md` — tech stack, system design
+- `03-DATA-MODEL.md` — database entities, schemas, enums
+- `04-FEATURES.md` — all 27 features with behavioral specs
+- `05-API-SPEC.md` — every API endpoint
+- `07-AUTH-SECURITY.md` — auth flows, authorization matrix, security
+- `08-DEVOPS.md` — deployment (AWS Amplify), local dev setup
+- `12-ENV-CONFIG.md` — environment variables, API key setup
+- `13-DECISION-LOG.md` — 46 architectural decisions with rationale
+
+## Key Technical Facts
+
+- **Next.js 16.2.1** — App Router, `proxy.ts` (not middleware.ts), `await params` in route handlers
+- **Tailwind CSS v4** — CSS-based config via `@theme` in `globals.css`, no `tailwind.config.ts`
+- **Drizzle ORM 0.45** — `pgTable` 3rd arg returns array. Uses `pgEnum`.
+- **Fabric.js 7.2.0** — dynamic `import('fabric')` in hooks for SSR safety
+- **Zod 4.3** — `z.record()` requires two args
+- **ESLint 9** — flat config in `eslint.config.mjs`
+- **React 19** — Server Components by default. `"use client"` for browser APIs.
+
+## Design System
+
+Material 3-inspired tonal hierarchy defined in `src/app/globals.css`:
+- **Font:** Manrope (sans), JetBrains Mono (mono)
+- **Primary:** #8d4f00, container: #ffca9d, on-primary: #fff6f1
+- **Surface hierarchy:** #fffcf7 → #fefbf5 → #fcf9f3 → #f6f4ec → #f0eee4 → #eae8de
+- **Text:** on-surface #383831, secondary #6c635a, outline-variant #babab0
+- **Radii:** sm 6px, md 10px, lg 16px, xl 24px
+- **Shadows:** elevation-1 through elevation-4
+
+## Workspace Architecture
+
+Four worktables (QUILT, BLOCK, IMAGE, PRINT) switchable via segmented tab control in the top bar. Each worktable has its own tool rail icons, context panel content, and floating bottom toolbar.

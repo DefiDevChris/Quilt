@@ -1,0 +1,215 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface NewProjectDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+  const router = useRouter();
+  const [name, setName] = useState('Untitled Quilt');
+  const [unitSystem, setUnitSystem] = useState<'imperial' | 'metric'>('imperial');
+  const [canvasWidth, setCanvasWidth] = useState(48);
+  const [canvasHeight, setCanvasHeight] = useState(48);
+  const [gridEnabled, setGridEnabled] = useState(true);
+  const [gridSize, setGridSize] = useState(1);
+  const [snapToGrid, setSnapToGrid] = useState(true);
+  const [error, setError] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
+  if (!open) return null;
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setIsCreating(true);
+
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim() || 'Untitled Quilt',
+          unitSystem,
+          canvasWidth,
+          canvasHeight,
+          gridSettings: { enabled: gridEnabled, size: gridSize, snapToGrid },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? 'Failed to create project');
+        setIsCreating(false);
+        return;
+      }
+
+      onClose();
+      router.push(`/studio/${data.data.id}`);
+    } catch {
+      setError('Failed to create project');
+      setIsCreating(false);
+    }
+  }
+
+  const unitLabel = unitSystem === 'imperial' ? 'in' : 'cm';
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
+      <div className="w-full max-w-md rounded-xl bg-surface shadow-elevation-3 p-6">
+        <h2 className="text-xl font-semibold text-on-surface mb-4">New Project</h2>
+
+        {error && (
+          <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-sm text-error">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleCreate} className="space-y-4">
+          <div>
+            <label htmlFor="project-name" className="block text-sm font-medium text-secondary mb-1">
+              Project Name
+            </label>
+            <input
+              id="project-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={255}
+              className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-2">Unit System</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setUnitSystem('imperial')}
+                className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  unitSystem === 'imperial'
+                    ? 'bg-primary text-primary-on'
+                    : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                }`}
+              >
+                Imperial (inches)
+              </button>
+              <button
+                type="button"
+                onClick={() => setUnitSystem('metric')}
+                className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  unitSystem === 'metric'
+                    ? 'bg-primary text-primary-on'
+                    : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                }`}
+              >
+                Metric (cm)
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                htmlFor="canvas-width"
+                className="block text-sm font-medium text-secondary mb-1"
+              >
+                Width ({unitLabel})
+              </label>
+              <input
+                id="canvas-width"
+                type="number"
+                min={1}
+                max={200}
+                step={0.25}
+                value={canvasWidth}
+                onChange={(e) => setCanvasWidth(Number(e.target.value))}
+                className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="canvas-height"
+                className="block text-sm font-medium text-secondary mb-1"
+              >
+                Height ({unitLabel})
+              </label>
+              <input
+                id="canvas-height"
+                type="number"
+                min={1}
+                max={200}
+                step={0.25}
+                value={canvasHeight}
+                onChange={(e) => setCanvasHeight(Number(e.target.value))}
+                className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3 border-t border-outline-variant pt-4">
+            <h3 className="text-sm font-medium text-secondary">Grid Settings</h3>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={gridEnabled}
+                onChange={(e) => setGridEnabled(e.target.checked)}
+                className="rounded accent-primary"
+              />
+              <span className="text-sm text-secondary">Show grid</span>
+            </label>
+            {gridEnabled && (
+              <>
+                <div>
+                  <label htmlFor="grid-size" className="block text-xs text-secondary mb-1">
+                    Grid size ({unitLabel})
+                  </label>
+                  <input
+                    id="grid-size"
+                    type="number"
+                    min={0.25}
+                    max={12}
+                    step={0.25}
+                    value={gridSize}
+                    onChange={(e) => setGridSize(Number(e.target.value))}
+                    className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={snapToGrid}
+                    onChange={(e) => setSnapToGrid(e.target.checked)}
+                    className="rounded accent-primary"
+                  />
+                  <span className="text-sm text-secondary">Snap to grid</span>
+                </label>
+              </>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md px-4 py-2.5 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isCreating}
+              className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCreating ? 'Creating...' : 'Create Project'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

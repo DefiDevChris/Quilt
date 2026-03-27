@@ -1,0 +1,12 @@
+{
+  "name": "QuiltCorgi",
+  "short_name": "QuiltCorgi",
+  "description": "Design quilts in your browser. Free to start.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#D4883C",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
