@@ -180,3 +180,85 @@ export const quiltOcrConfigSchema = z.object({
   referenceWidthInches: z.number().positive().max(200).optional(),
   seamAllowanceInches: z.number().min(0).max(2).default(0.25),
 });
+
+// Phase 17: Community, Profiles & Blog
+
+export const updateProfileSchema = z.object({
+  displayName: z.string().min(1).max(60),
+  bio: z.string().max(500).optional(),
+  location: z.string().max(100).optional(),
+  websiteUrl: z.string().max(255).optional(),
+  instagramHandle: z.string().max(50).optional(),
+  youtubeHandle: z.string().max(50).optional(),
+  tiktokHandle: z.string().max(50).optional(),
+  publicEmail: z.string().max(255).optional(),
+});
+
+export const communityFeedSchema = z.object({
+  search: z.string().optional(),
+  sort: z.enum(['newest', 'popular']).default('newest'),
+  tab: z.enum(['discover', 'following', 'featured']).default('discover'),
+  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
+});
+
+export const createCommunityPostExtendedSchema = z.object({
+  projectId: z.string().uuid(),
+  title: z.string().min(1).max(100),
+  description: z.string().max(2000).optional(),
+  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']),
+});
+
+export const createCommentSchema = z.object({
+  content: z.string().min(1).max(2000),
+  replyToId: z.string().uuid().optional(),
+});
+
+export const commentsPaginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+
+export const createBlogPostSchema = z.object({
+  title: z.string().min(1).max(200),
+  content: z.record(z.string(), z.unknown()).optional(),
+  excerpt: z.string().max(300).optional(),
+  featuredImageUrl: z.string().optional(),
+  category: z.string().min(1).max(50),
+  tags: z.array(z.string().max(50)).max(5).default([]),
+  status: z.enum(['draft', 'pending']).default('draft'),
+});
+
+export const updateBlogPostSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  content: z.record(z.string(), z.unknown()).optional(),
+  excerpt: z.string().max(300).optional(),
+  featuredImageUrl: z.string().optional(),
+  category: z.string().min(1).max(50).optional(),
+  tags: z.array(z.string().max(50)).max(5).optional(),
+  status: z.enum(['draft', 'pending']).optional(),
+});
+
+export const blogSearchSchema = z.object({
+  search: z.string().optional(),
+  category: z.string().optional(),
+  tag: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(20).default(10),
+});
+
+export const blogAdminStatusSchema = z.object({
+  status: z.enum(['published', 'rejected']),
+});
+
+export const createReportSchema = z.object({
+  targetType: z.enum(['post', 'comment', 'user']),
+  targetId: z.string().uuid(),
+  reason: z.enum(['spam', 'harassment', 'inappropriate', 'other']),
+  details: z.string().max(500).optional(),
+});
+
+export const reviewReportSchema = z.object({
+  action: z.enum(['dismiss', 'hide_content', 'warn_user']),
+});
