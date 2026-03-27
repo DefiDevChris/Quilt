@@ -10,6 +10,12 @@ import {
   type CropRect,
 } from '@/lib/image-processing';
 import { MAX_FILE_SIZE_BYTES, ACCEPTED_IMAGE_TYPES } from '@/lib/constants';
+import {
+  computeCalibration,
+  SCANNER_PRESETS,
+  type CalibrationMethod,
+  type ScannerPreset,
+} from '@/lib/fabric-calibration';
 
 interface FabricUploadDialogProps {
   isOpen: boolean;
@@ -17,7 +23,7 @@ interface FabricUploadDialogProps {
   onUploaded: () => void;
 }
 
-type UploadStep = 'pick' | 'process' | 'uploading';
+type UploadStep = 'pick' | 'process' | 'calibrate' | 'uploading';
 
 export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUploadDialogProps) {
   const [step, setStep] = useState<UploadStep>('pick');
@@ -30,6 +36,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
   const [crop, setCrop] = useState<CropRect | null>(null);
   const [error, setError] = useState('');
   const [uploadProgress, setUploadProgress] = useState('');
+  const [calibrationMethod, setCalibrationMethod] = useState<CalibrationMethod>('scanner-preset');
+  const [manualDpi, setManualDpi] = useState(300);
+  const [rulerPixels, setRulerPixels] = useState(0);
+  const [rulerInches, setRulerInches] = useState(0);
+  const [scannerPreset, setScannerPreset] = useState<ScannerPreset>('300');
+  const [calibratedPpi, setCalibratedPpi] = useState<number | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,6 +58,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
     setCrop(null);
     setError('');
     setUploadProgress('');
+    setCalibrationMethod('scanner-preset');
+    setManualDpi(300);
+    setRulerPixels(0);
+    setRulerInches(0);
+    setScannerPreset('300');
+    setCalibratedPpi(null);
     imgRef.current = null;
   }, []);
 
@@ -72,50 +90,41 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
     const drawH = processed.height * drawScale;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(
-      processed,
-      (canvas.width - drawW) / 2,
-      (canvas.height - drawH) / 2,
-      drawW,
-      drawH
-    );
+    ctx.drawImage(processed, (canvas.width - drawW) / 2, (canvas.height - drawH) / 2, drawW, drawH);
   }, [crop, scale, rotation, step]);
 
-  const handleFileSelect = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      setError('');
-      const file = e.target.files?.[0];
-      if (!file) return;
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      if (!ACCEPTED_IMAGE_TYPES.includes(file.type as (typeof ACCEPTED_IMAGE_TYPES)[number])) {
-        setError('Accepted file types: JPEG, PNG, WebP.');
-        return;
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type as (typeof ACCEPTED_IMAGE_TYPES)[number])) {
+      setError('Accepted file types: JPEG, PNG, WebP.');
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setError('File must be under 10MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      setImageDataUrl(dataUrl);
+      setFileName(file.name);
+      setFabricName(file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '));
+
+      try {
+        const img = await loadImage(dataUrl);
+        imgRef.current = img;
+        setStep('process');
+      } catch {
+        setError('Failed to load image.');
       }
-
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        setError('File must be under 10MB.');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const dataUrl = reader.result as string;
-        setImageDataUrl(dataUrl);
-        setFileName(file.name);
-        setFabricName(file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '));
-
-        try {
-          const img = await loadImage(dataUrl);
-          imgRef.current = img;
-          setStep('process');
-        } catch {
-          setError('Failed to load image.');
-        }
-      };
-      reader.readAsDataURL(file);
-    },
-    []
-  );
+    };
+    reader.readAsDataURL(file);
+  }, []);
 
   const handleUpload = useCallback(async () => {
     if (!imgRef.current || !fabricName.trim()) {
@@ -193,6 +202,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
           scaleX: scale,
           scaleY: scale,
           rotation,
+          ...(calibratedPpi != null ? { ppi: calibratedPpi, calibrated: true } : {}),
         }),
       });
 
@@ -207,7 +217,17 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
       setError(err instanceof Error ? err.message : 'Upload failed');
       setStep('process');
     }
-  }, [crop, scale, rotation, fabricName, manufacturer, fileName, onUploaded, onClose]);
+  }, [
+    crop,
+    scale,
+    rotation,
+    fabricName,
+    manufacturer,
+    fileName,
+    calibratedPpi,
+    onUploaded,
+    onClose,
+  ]);
 
   if (!isOpen) return null;
 
@@ -216,19 +236,13 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
       <div className="w-full max-w-lg rounded-xl bg-surface p-6 shadow-elevation-3">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-on-surface">Import Fabric</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-secondary hover:text-on-surface"
-          >
+          <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
             ✕
           </button>
         </div>
 
         {error && (
-          <div className="mb-3 rounded-sm bg-error/10 px-3 py-2 text-sm text-error">
-            {error}
-          </div>
+          <div className="mb-3 rounded-sm bg-error/10 px-3 py-2 text-sm text-error">{error}</div>
         )}
 
         {step === 'pick' && (
@@ -257,10 +271,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
           <div>
             {/* Preview */}
             <div className="mb-4 flex justify-center bg-background rounded-lg p-2">
-              <canvas
-                ref={canvasRef}
-                className="max-h-[300px] max-w-full rounded"
-              />
+              <canvas ref={canvasRef} className="max-h-[300px] max-w-full rounded" />
             </div>
 
             {/* Controls */}
@@ -367,11 +378,148 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               </button>
               <button
                 type="button"
-                onClick={handleUpload}
+                onClick={() => setStep('calibrate')}
                 disabled={!fabricName.trim()}
                 className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
-                Upload Fabric
+                Next: Calibrate
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'calibrate' && (
+          <div className="space-y-4">
+            <p className="text-sm text-secondary">
+              Calibrate the scale so fabric prints at the correct physical size.
+            </p>
+
+            <div className="space-y-2">
+              {[
+                { value: 'scanner-preset' as const, label: 'Standard Scanner DPI' },
+                { value: 'manual-dpi' as const, label: 'I Know the DPI' },
+                { value: 'ruler-reference' as const, label: 'Use Ruler Reference' },
+              ].map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="calibration-method"
+                    value={opt.value}
+                    checked={calibrationMethod === opt.value}
+                    onChange={() => setCalibrationMethod(opt.value)}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-on-surface">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+
+            {calibrationMethod === 'scanner-preset' && (
+              <div>
+                <label className="block text-xs font-medium text-secondary mb-1">
+                  Scanner Resolution
+                </label>
+                <select
+                  value={scannerPreset}
+                  onChange={(e) => setScannerPreset(e.target.value as ScannerPreset)}
+                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                >
+                  {SCANNER_PRESETS.map((p) => (
+                    <option key={p} value={p}>
+                      {p} DPI
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {calibrationMethod === 'manual-dpi' && (
+              <div>
+                <label className="block text-xs font-medium text-secondary mb-1">
+                  DPI (72-1200)
+                </label>
+                <input
+                  type="number"
+                  min={72}
+                  max={1200}
+                  value={manualDpi}
+                  onChange={(e) => setManualDpi(Number(e.target.value))}
+                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                />
+              </div>
+            )}
+
+            {calibrationMethod === 'ruler-reference' && (
+              <div className="space-y-2">
+                <div>
+                  <label className="block text-xs font-medium text-secondary mb-1">
+                    Ruler length in pixels
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={rulerPixels}
+                    onChange={(e) => setRulerPixels(Number(e.target.value))}
+                    className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-secondary mb-1">
+                    Ruler length in inches
+                  </label>
+                  <input
+                    type="number"
+                    min={0.1}
+                    step={0.1}
+                    value={rulerInches}
+                    onChange={(e) => setRulerInches(Number(e.target.value))}
+                    className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2 justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setStep('process')}
+                className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCalibratedPpi(null);
+                  handleUpload();
+                }}
+                className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
+              >
+                Skip Calibration
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const result = computeCalibration({
+                    method: calibrationMethod,
+                    manualDpi: calibrationMethod === 'manual-dpi' ? manualDpi : undefined,
+                    rulerLengthPixels:
+                      calibrationMethod === 'ruler-reference' ? rulerPixels : undefined,
+                    rulerLengthInches:
+                      calibrationMethod === 'ruler-reference' ? rulerInches : undefined,
+                    scannerPreset:
+                      calibrationMethod === 'scanner-preset' ? scannerPreset : undefined,
+                  });
+                  if (result) {
+                    setCalibratedPpi(result.ppi);
+                    handleUpload();
+                  } else {
+                    setError('Invalid calibration input. Check your values.');
+                  }
+                }}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+              >
+                Calibrate & Upload
               </button>
             </div>
           </div>

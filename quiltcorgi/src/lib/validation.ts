@@ -87,6 +87,35 @@ export const createFabricSchema = z.object({
   scaleX: z.number().min(0.1).max(10).default(1.0),
   scaleY: z.number().min(0.1).max(10).default(1.0),
   rotation: z.number().min(-360).max(360).default(0.0),
+  ppi: z.number().min(72).max(1200).optional(),
+  calibrated: z.boolean().optional().default(false),
+});
+
+export const calibrationInputSchema = z.discriminatedUnion('method', [
+  z.object({
+    method: z.literal('manual-dpi'),
+    manualDpi: z.number().min(72).max(1200),
+  }),
+  z.object({
+    method: z.literal('ruler-reference'),
+    rulerLengthInches: z.number().gt(0),
+    rulerLengthPixels: z.number().int().gt(0),
+  }),
+  z.object({
+    method: z.literal('scanner-preset'),
+    scannerPreset: z.enum(['150', '200', '300', '600']),
+  }),
+]);
+
+export const createVariationSchema = z.object({
+  name: z.string().min(1).max(255).default('Variation'),
+  canvasData: z.record(z.string(), z.unknown()),
+});
+
+export const updateVariationSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  canvasData: z.record(z.string(), z.unknown()).optional(),
+  thumbnailUrl: z.string().url().optional(),
 });
 
 export const presignedUrlSchema = z.object({

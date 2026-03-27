@@ -57,3 +57,31 @@ Six design tools added via pure engine + hook + component pattern:
 **BlockDraftingModal decomposition:** Shell + tabs pattern — `BlockDraftingShell.tsx` manages canvas/save, tabs (`FreeformDraftingTab`, `EasyDrawTab`, `AppliqueTab`) handle tool-specific interactions.
 
 **Fussy cut metadata:** Per-patch `{ fabricId, offsetX, offsetY, rotation, scale }` stored on Fabric.js objects. `useFabricPattern.ts` checks for this metadata and applies per-patch pattern transforms.
+
+## Production Tools (Phase 15)
+
+Seven production features added:
+
+| Feature | Engine | Component |
+|---------|--------|-----------|
+| FPP Templates | `fpp-generator.ts` | `FppExportDialog.tsx` |
+| Rotary Cutting Charts | `cutting-chart-generator.ts` | `CuttingChartPanel.tsx` |
+| Pieced Borders | `border-generator.ts` | (extends LayoutSettingsPanel) |
+| Medallion Layout | `layouts/medallion-layout.ts` | (extends LayoutSettingsPanel) |
+| Lone Star Layout | `layouts/lone-star-layout.ts` | (extends LayoutSettingsPanel) |
+| Design Sketchbook | `sketchbookStore.ts` | `SketchbookPanel.tsx` |
+| Fabric Calibration | `fabric-calibration.ts` | (extends FabricUploadDialog) |
+
+**LayoutType union:** `'free-form' | 'grid' | 'sashing' | 'on-point' | 'medallion' | 'lone-star'`
+
+**BorderConfig extended:** `type?: 'solid' | 'pieced'` with optional `pattern`, `unitSize`, `secondaryColor`, `cornerTreatment`. Defaults to `'solid'` for backward compatibility.
+
+**Block library:** 659 blocks across 20+ categories. Procedural generators in `src/db/seed/block-generators/` (star, log-cabin, pinwheel, pictorial, holiday, art-deco, celtic). Aggregated via `index.ts`, deduped by name in `getAllBlockDefinitions()`.
+
+**Design variations:** `designVariations` DB table. API at `/api/projects/[id]/variations`. Free tier: 3 variations, Pro: unlimited.
+
+## Gotchas
+
+- `validationErrorResponse()` in `api-responses.ts` takes a `string`, not a `ZodError` — use `parsed.error.message`
+- Vitest can't resolve bare directory imports — use `./block-generators/index` not `./block-generators`
+- `z.url()` and `z.uuid()` show deprecation warnings in Zod 4.3 — cosmetic, not blocking

@@ -1,11 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import type {
-  LayoutType,
-  SashingConfig,
-  BorderConfig,
-} from '@/lib/layout-engine';
+import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-engine';
 
 interface LayoutStoreState {
   layoutType: LayoutType;
@@ -39,6 +35,7 @@ const DEFAULT_BORDER: BorderConfig = {
   width: 2,
   color: '#2D2D2D',
   fabricId: null,
+  type: 'solid',
 };
 
 export const useLayoutStore = create<LayoutStoreState>((set) => ({
@@ -56,8 +53,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
 
   setCols: (cols) => set({ cols: Math.max(1, Math.min(20, cols)) }),
 
-  setBlockSize: (blockSize) =>
-    set({ blockSize: Math.max(1, Math.min(24, blockSize)) }),
+  setBlockSize: (blockSize) => set({ blockSize: Math.max(1, Math.min(24, blockSize)) }),
 
   setSashing: (updates) =>
     set((state) => ({
@@ -74,9 +70,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
 
   updateBorder: (index, updates) =>
     set((state) => ({
-      borders: state.borders.map((b, i) =>
-        i === index ? { ...b, ...updates } : b
-      ),
+      borders: state.borders.map((b, i) => (i === index ? { ...b, ...updates } : b)),
     })),
 
   removeBorder: (index) =>

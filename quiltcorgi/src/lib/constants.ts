@@ -54,6 +54,11 @@ export const TEXT_FONTS = [
   'Verdana',
 ] as const;
 
+export const FREE_VARIATION_LIMIT = 3;
+export const MAX_MEDALLION_ROUNDS = 10;
+export const MIN_LONE_STAR_RINGS = 3;
+export const MAX_LONE_STAR_RINGS = 8;
+
 export const COLOR_FAMILIES = [
   'Red',
   'Orange',

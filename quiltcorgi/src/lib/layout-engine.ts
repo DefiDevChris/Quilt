@@ -2,11 +2,14 @@
  * Layout Engine — Pure computation functions for quilt layout generation.
  *
  * Computes cell positions, sashing strips, setting triangles, and borders
- * for Grid, Sashing, On-Point, and Free-Form layout types.
+ * for Grid, Sashing, On-Point, Medallion, Lone Star, and Free-Form layout types.
  * All outputs are in pixels. Callers convert from units using pxPerUnit.
  */
 
-export type LayoutType = 'free-form' | 'grid' | 'sashing' | 'on-point';
+import { computeMedallionLayout } from '@/lib/layouts/medallion-layout';
+import { computeLoneStarLayout } from '@/lib/layouts/lone-star-layout';
+
+export type LayoutType = 'free-form' | 'grid' | 'sashing' | 'on-point' | 'medallion' | 'lone-star';
 
 export interface SashingConfig {
   width: number;
@@ -18,6 +21,34 @@ export interface BorderConfig {
   width: number;
   color: string;
   fabricId: string | null;
+  type?: 'solid' | 'pieced';
+  pattern?: string;
+  unitSize?: number;
+  secondaryColor?: string;
+  secondaryFabricId?: string | null;
+  cornerTreatment?: string;
+  customBlockId?: string;
+}
+
+export interface MedallionRound {
+  type: 'solid' | 'pieced';
+  width: number;
+  color: string;
+  fabricId: string | null;
+  pattern?: string;
+  unitSize?: number;
+  secondaryColor?: string;
+}
+
+export interface MedallionConfig {
+  centerBlockSize: number;
+  rounds: MedallionRound[];
+}
+
+export interface LoneStarConfig {
+  diamondRings: number;
+  ringColors: string[];
+  backgroundFill: string;
 }
 
 export interface LayoutConfig {
@@ -27,6 +58,8 @@ export interface LayoutConfig {
   blockSize: number;
   sashing: SashingConfig;
   borders: BorderConfig[];
+  medallion?: MedallionConfig;
+  loneStar?: LoneStarConfig;
 }
 
 export interface LayoutCell {
@@ -68,6 +101,16 @@ export interface LayoutResult {
   sashingStrips: LayoutSashingStrip[];
   settingTriangles: LayoutSettingTriangle[];
   borderStrips: LayoutBorderStrip[];
+  piecedBorderUnits: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    svgData: string;
+    color: string;
+    fabricId: string | null;
+    rotation: number;
+  }>;
   innerWidth: number;
   innerHeight: number;
   totalWidth: number;
@@ -79,16 +122,14 @@ const EMPTY_RESULT: LayoutResult = {
   sashingStrips: [],
   settingTriangles: [],
   borderStrips: [],
+  piecedBorderUnits: [],
   innerWidth: 0,
   innerHeight: 0,
   totalWidth: 0,
   totalHeight: 0,
 };
 
-export function computeLayout(
-  config: LayoutConfig,
-  pxPerUnit: number
-): LayoutResult {
+export function computeLayout(config: LayoutConfig, pxPerUnit: number): LayoutResult {
   if (config.type === 'free-form') {
     return { ...EMPTY_RESULT };
   }
@@ -113,6 +154,10 @@ export function computeLayout(
     case 'on-point':
       result = computeOnPointLayout(config.rows, config.cols, blockSizePx);
       break;
+    case 'medallion':
+      return computeMedallionLayout(config, pxPerUnit);
+    case 'lone-star':
+      return computeLoneStarLayout(config, pxPerUnit);
     default:
       return { ...EMPTY_RESULT };
   }
@@ -124,21 +169,14 @@ export function computeLayout(
     pxPerUnit
   );
 
-  const totalBorderWidth = config.borders.reduce(
-    (sum, b) => sum + b.width * pxPerUnit,
-    0
-  );
+  const totalBorderWidth = config.borders.reduce((sum, b) => sum + b.width * pxPerUnit, 0);
   result.totalWidth = result.innerWidth + totalBorderWidth * 2;
   result.totalHeight = result.innerHeight + totalBorderWidth * 2;
 
   return result;
 }
 
-export function computeGridLayout(
-  rows: number,
-  cols: number,
-  blockSizePx: number
-): LayoutResult {
+export function computeGridLayout(rows: number, cols: number, blockSizePx: number): LayoutResult {
   const cells: LayoutCell[] = [];
 
   for (let r = 0; r < rows; r++) {
@@ -162,6 +200,7 @@ export function computeGridLayout(
     sashingStrips: [],
     settingTriangles: [],
     borderStrips: [],
+    piecedBorderUnits: [],
     innerWidth,
     innerHeight,
     totalWidth: innerWidth,
@@ -244,6 +283,7 @@ export function computeSashingLayout(
     sashingStrips,
     settingTriangles: [],
     borderStrips: [],
+    piecedBorderUnits: [],
     innerWidth,
     innerHeight,
     totalWidth: innerWidth,
@@ -374,6 +414,7 @@ export function computeOnPointLayout(
     sashingStrips: [],
     settingTriangles,
     borderStrips: [],
+    piecedBorderUnits: [],
     innerWidth,
     innerHeight,
     totalWidth: innerWidth,

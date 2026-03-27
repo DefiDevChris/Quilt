@@ -18,3 +18,4 @@ export { communityPosts } from './communityPosts';
 export { likes } from './likes';
 export { subscriptions } from './subscriptions';
 export { notifications } from './notifications';
+export { designVariations } from './designVariations';

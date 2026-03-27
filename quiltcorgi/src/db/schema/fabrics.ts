@@ -25,6 +25,8 @@ export const fabrics = pgTable(
     scaleX: doublePrecision('scaleX').notNull().default(1.0),
     scaleY: doublePrecision('scaleY').notNull().default(1.0),
     rotation: doublePrecision('rotation').notNull().default(0.0),
+    ppi: doublePrecision('ppi'),
+    calibrated: boolean('calibrated').notNull().default(false),
     isDefault: boolean('isDefault').notNull().default(false),
     createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
   },

@@ -4,6 +4,8 @@
  * Fabric.js JSON is generated from the SVG paths at seed time.
  */
 
+import { getGeneratedBlocks } from './block-generators/index';
+
 export interface BlockDefinition {
   name: string;
   category: string;
@@ -1463,7 +1465,7 @@ function generateVariations(): BlockDefinition[] {
 }
 
 export function getAllBlockDefinitions(): BlockDefinition[] {
-  return [
+  const originals = [
     ...traditionalBlocks,
     ...logCabinBlocks,
     ...starBlocks,
@@ -1479,4 +1481,9 @@ export function getAllBlockDefinitions(): BlockDefinition[] {
     ...appliqueBlocks,
     ...generateVariations(),
   ];
+
+  const existingNames = new Set(originals.map((b) => b.name));
+  const generated = getGeneratedBlocks().filter((b) => !existingNames.has(b.name));
+
+  return [...originals, ...generated];
 }

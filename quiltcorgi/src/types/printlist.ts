@@ -5,6 +5,7 @@ export interface PrintlistItem {
   quantity: number;
   seamAllowance: number;
   unitSystem: 'imperial' | 'metric';
+  calibratedPpi?: number;
 }
 
 export interface Printlist {
