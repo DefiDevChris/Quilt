@@ -8,6 +8,7 @@ export type ApiErrorCode =
   | 'CONFLICT'
   | 'VALIDATION_ERROR'
   | 'RATE_LIMITED'
+  | 'TRUST_INSUFFICIENT'
   | 'INTERNAL_ERROR';
 
 export type ApiResponse<T> =

@@ -91,3 +91,35 @@ export const OCR_CONFIDENCE_LOW = 0.3;
 
 export const BLOG_PER_PAGE = 10;
 export const TUTORIAL_DIFFICULTIES = ['beginner', 'intermediate', 'advanced'] as const;
+
+// Phase 17: Community, Profiles & Blog
+export const COMMENTS_PER_PAGE = 20;
+export const REPLIES_INLINE_LIMIT = 3;
+export const MAX_COMMENT_LENGTH = 2000;
+export const MAX_BIO_LENGTH = 500;
+export const MAX_BLOG_EXCERPT_LENGTH = 300;
+export const MAX_BLOG_TAGS = 5;
+export const MAX_POST_IMAGES = 4;
+
+export const COMMUNITY_CATEGORIES = [
+  'show-and-tell',
+  'wip',
+  'help',
+  'inspiration',
+  'general',
+] as const;
+
+export const TRUST_ACCOUNT_AGE_HOURS = 24;
+export const TRUST_COMMENTER_APPROVED_COMMENTS = 3;
+export const TRUST_POSTER_APPROVED_POSTS = 5;
+export const TRUST_MOD_QUEUE_COMMENTS = 3;
+export const TRUST_MOD_QUEUE_POSTS = 2;
+
+export const RATE_LIMITS = {
+  comments: { free: 20, pro: 100 },
+  posts: { free: 3, pro: 20 },
+  follows: { free: 50, pro: 200 },
+  reports: { all: 10 },
+} as const;
+
+export const AUTO_HIDE_REPORT_THRESHOLD = 3;
