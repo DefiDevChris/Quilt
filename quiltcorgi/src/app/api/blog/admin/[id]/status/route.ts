@@ -11,13 +11,11 @@ import {
 } from '@/lib/auth-helpers';
 import { forbiddenResponse, notFoundResponse } from '@/lib/api-responses';
 import { createNotification } from '@/lib/create-notification';
+import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
 export const dynamic = 'force-dynamic';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -67,10 +65,7 @@ export async function PUT(
       .where(eq(blogPosts.id, id))
       .returning();
 
-    const notificationTitle =
-      status === 'published'
-        ? 'Blog post published!'
-        : 'Blog post update';
+    const notificationTitle = status === 'published' ? 'Blog post published!' : 'Blog post update';
 
     const notificationMessage =
       status === 'published'
@@ -79,7 +74,10 @@ export async function PUT(
 
     await createNotification({
       userId: existing.authorId,
-      type: 'blog_status',
+      type:
+        status === 'published'
+          ? NOTIFICATION_TYPES.BLOG_APPROVED
+          : NOTIFICATION_TYPES.BLOG_REJECTED,
       title: notificationTitle,
       message: notificationMessage,
       metadata: {

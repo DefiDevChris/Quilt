@@ -10,6 +10,7 @@ import {
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
+import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,9 +40,7 @@ export async function POST(
     const [existingLike] = await db
       .select({ userId: commentLikes.userId })
       .from(commentLikes)
-      .where(
-        and(eq(commentLikes.userId, session.user.id), eq(commentLikes.commentId, commentId))
-      )
+      .where(and(eq(commentLikes.userId, session.user.id), eq(commentLikes.commentId, commentId)))
       .limit(1);
 
     if (existingLike) {
@@ -88,7 +87,7 @@ export async function POST(
       const authorName = session.user.name ?? 'Someone';
       await createNotification({
         userId: comment.authorId,
-        type: 'comment_like',
+        type: NOTIFICATION_TYPES.COMMENT_LIKED,
         title: 'Comment liked',
         message: `${authorName} liked your comment`,
         metadata: { postId, commentId },

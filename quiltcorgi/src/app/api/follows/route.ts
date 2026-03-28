@@ -10,6 +10,8 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { createNotification } from '@/lib/create-notification';
+import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,23 +44,13 @@ export async function POST(request: NextRequest) {
     const [existingFollow] = await db
       .select({ followerId: follows.followerId })
       .from(follows)
-      .where(
-        and(
-          eq(follows.followerId, session.user.id),
-          eq(follows.followingId, targetUserId)
-        )
-      )
+      .where(and(eq(follows.followerId, session.user.id), eq(follows.followingId, targetUserId)))
       .limit(1);
 
     if (existingFollow) {
       await db
         .delete(follows)
-        .where(
-          and(
-            eq(follows.followerId, session.user.id),
-            eq(follows.followingId, targetUserId)
-          )
-        );
+        .where(and(eq(follows.followerId, session.user.id), eq(follows.followingId, targetUserId)));
 
       await Promise.all([
         db
@@ -104,6 +96,25 @@ export async function POST(request: NextRequest) {
         })
         .where(eq(userProfiles.userId, targetUserId)),
     ]);
+
+    const followerName = session.user.name ?? 'Someone';
+
+    const [followerProfile] = await db
+      .select({ username: userProfiles.username })
+      .from(userProfiles)
+      .where(eq(userProfiles.userId, session.user.id))
+      .limit(1);
+
+    await createNotification({
+      userId: targetUserId,
+      type: NOTIFICATION_TYPES.NEW_FOLLOWER,
+      title: 'New follower',
+      message: `${followerName} started following you`,
+      metadata: {
+        followerId: session.user.id,
+        followerUsername: followerProfile?.username ?? null,
+      },
+    });
 
     return Response.json({
       success: true,

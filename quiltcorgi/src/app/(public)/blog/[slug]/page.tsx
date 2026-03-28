@@ -24,6 +24,7 @@ export async function generateMetadata({
     .select({
       title: blogPosts.title,
       excerpt: blogPosts.excerpt,
+      featuredImageUrl: blogPosts.featuredImageUrl,
       publishedAt: blogPosts.publishedAt,
       authorName: users.name,
       tags: blogPosts.tags,
@@ -38,7 +39,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${post.title} | QuiltCorgi`,
+    title: `${post.title} — QuiltCorgi Blog`,
     description: post.excerpt ?? undefined,
     openGraph: {
       title: post.title,
@@ -47,15 +48,12 @@ export async function generateMetadata({
       publishedTime: post.publishedAt?.toISOString(),
       authors: [post.authorName ?? 'QuiltCorgi Team'],
       tags: [...post.tags],
+      images: post.featuredImageUrl ? [{ url: post.featuredImageUrl }] : undefined,
     },
   };
 }
 
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const [post] = await db

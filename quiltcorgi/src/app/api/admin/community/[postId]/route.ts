@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, notifications } from '@/db/schema';
+import { communityPosts } from '@/db/schema';
 import { adminModerationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
@@ -11,6 +11,8 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { createNotification } from '@/lib/create-notification';
+import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,17 +56,17 @@ export async function PATCH(
       .returning();
 
     if (status === 'approved') {
-      await db.insert(notifications).values({
+      await createNotification({
         userId: existingPost.userId,
-        type: 'post_approved',
+        type: NOTIFICATION_TYPES.POST_APPROVED,
         title: 'Design approved!',
         message: `Your design "${existingPost.title}" has been approved and is now visible on the community board.`,
         metadata: { postId },
       });
     } else {
-      await db.insert(notifications).values({
+      await createNotification({
         userId: existingPost.userId,
-        type: 'post_rejected',
+        type: NOTIFICATION_TYPES.POST_REJECTED,
         title: 'Design not approved',
         message: `Your design "${existingPost.title}" was not approved for the community board.`,
         metadata: { postId },

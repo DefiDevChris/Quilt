@@ -14,6 +14,7 @@ import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
 import { buildTrustUserInput } from '@/middleware/trust-guard';
 import { shouldModerateContent } from '@/lib/trust-engine';
 import { createNotification } from '@/lib/create-notification';
+import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,10 +36,7 @@ interface CommentRow {
   authorAvatarUrl: string | null;
 }
 
-function formatComment(
-  row: CommentRow,
-  isLikedByUser: boolean
-) {
+function formatComment(row: CommentRow, isLikedByUser: boolean) {
   const displayContent =
     row.status === 'hidden'
       ? HIDDEN_CONTENT_PLACEHOLDER
@@ -163,10 +161,7 @@ export async function GET(
       replyCountRows = replyCounts;
     }
 
-    const allCommentIds = [
-      ...topLevelIds,
-      ...replyRows.map((r) => r.id),
-    ];
+    const allCommentIds = [...topLevelIds, ...replyRows.map((r) => r.id)];
 
     let likedCommentIds = new Set<string>();
     if (session && allCommentIds.length > 0) {
@@ -182,9 +177,7 @@ export async function GET(
       likedCommentIds = new Set(userLikes.map((l) => l.commentId));
     }
 
-    const replyCountMap = new Map(
-      replyCountRows.map((r) => [r.replyToId, r.count])
-    );
+    const replyCountMap = new Map(replyCountRows.map((r) => [r.replyToId, r.count]));
 
     const repliesByParent = new Map<string, CommentRow[]>();
     for (const reply of replyRows) {
@@ -201,9 +194,7 @@ export async function GET(
 
       return {
         ...formatComment(topComment as CommentRow, likedCommentIds.has(topComment.id)),
-        replies: sortedReplies.map((r) =>
-          formatComment(r, likedCommentIds.has(r.id))
-        ),
+        replies: sortedReplies.map((r) => formatComment(r, likedCommentIds.has(r.id))),
         totalReplyCount: replyCountMap.get(topComment.id) ?? 0,
       };
     });
@@ -311,7 +302,7 @@ export async function POST(
     if (post.userId !== session.user.id) {
       await createNotification({
         userId: post.userId,
-        type: 'comment',
+        type: NOTIFICATION_TYPES.COMMENT_ON_POST,
         title: 'New comment',
         message: `${authorName} commented on your post "${post.title}"`,
         metadata: { postId, commentId: created!.id },
@@ -322,7 +313,7 @@ export async function POST(
       if (parentComment.authorId !== post.userId) {
         await createNotification({
           userId: parentComment.authorId,
-          type: 'comment_reply',
+          type: NOTIFICATION_TYPES.REPLY_TO_COMMENT,
           title: 'New reply',
           message: `${authorName} replied to your comment`,
           metadata: { postId, commentId: created!.id, parentCommentId: parentComment.id },
