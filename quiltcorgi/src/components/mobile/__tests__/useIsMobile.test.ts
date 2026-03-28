@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -10,16 +11,19 @@ describe('useIsMobile', () => {
     listeners = [];
     currentMatches = false;
 
-    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
-      matches: currentMatches,
-      media: query,
-      addEventListener: (_event: string, fn: (e: { matches: boolean }) => void) => {
-        listeners.push(fn);
-      },
-      removeEventListener: (_event: string, fn: (e: { matches: boolean }) => void) => {
-        listeners = listeners.filter((l) => l !== fn);
-      },
-    })));
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn((query: string) => ({
+        matches: currentMatches,
+        media: query,
+        addEventListener: (_event: string, fn: (e: { matches: boolean }) => void) => {
+          listeners.push(fn);
+        },
+        removeEventListener: (_event: string, fn: (e: { matches: boolean }) => void) => {
+          listeners = listeners.filter((l) => l !== fn);
+        },
+      }))
+    );
   });
 
   afterEach(() => {
