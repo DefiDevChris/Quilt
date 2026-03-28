@@ -27,6 +27,7 @@ interface PrintlistStoreState {
   updateQuantity: (shapeId: string, quantity: number) => void;
   updateSeamAllowance: (shapeId: string, seamAllowance: number) => void;
   toggleSeamAllowance: (shapeId: string) => void;
+  syncItemSvg: (shapeId: string, svgData: string) => void;
   setPaperSize: (size: PaperSize) => void;
   clear: () => void;
   togglePanel: () => void;
@@ -94,6 +95,11 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
       items: state.items.map((i) =>
         i.shapeId === shapeId ? { ...i, seamAllowanceEnabled: !i.seamAllowanceEnabled } : i
       ),
+    })),
+
+  syncItemSvg: (shapeId, svgData) =>
+    set((state) => ({
+      items: state.items.map((i) => (i.shapeId === shapeId ? { ...i, svgData } : i)),
     })),
 
   setPaperSize: (size) => set({ paperSize: size }),
