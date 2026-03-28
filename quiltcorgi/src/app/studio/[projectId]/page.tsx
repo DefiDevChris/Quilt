@@ -1,4 +1,5 @@
 import { StudioClient } from '@/components/studio/StudioClient';
+import { StudioMobileGate } from '@/components/mobile/StudioMobileGate';
 
 export default async function StudioPage({
   params,
@@ -6,5 +7,13 @@ export default async function StudioPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  return <StudioClient projectId={projectId} />;
+
+  return (
+    <>
+      <StudioMobileGate />
+      <div className="hidden md:block">
+        <StudioClient projectId={projectId} />
+      </div>
+    </>
+  );
 }
