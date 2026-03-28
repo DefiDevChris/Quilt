@@ -14,7 +14,21 @@ import {
 export const dynamic = 'force-dynamic';
 
 const avatarUpdateSchema = z.object({
-  avatarUrl: z.string().min(1).max(2048),
+  avatarUrl: z
+    .string()
+    .min(1)
+    .max(2048)
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Avatar URL must be a valid HTTP/HTTPS URL.' }
+    ),
 });
 
 export async function POST(request: NextRequest) {

@@ -16,15 +16,11 @@ export function generateSlug(title: string): string {
 }
 
 /**
- * Append a random 4-character suffix to a slug to ensure uniqueness.
+ * Append a random 4-character hex suffix to a slug to ensure uniqueness.
  */
 export function appendSlugSuffix(slug: string): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let suffix = '';
-  for (let i = 0; i < 4; i++) {
-    suffix += chars[Math.floor(Math.random() * chars.length)];
-  }
-
+  const { randomBytes } = require('crypto') as typeof import('crypto');
+  const suffix = randomBytes(2).toString('hex');
   const base = slug.slice(0, 195);
   return `${base}-${suffix}`;
 }

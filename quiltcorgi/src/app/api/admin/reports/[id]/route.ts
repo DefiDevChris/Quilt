@@ -8,11 +8,11 @@ import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 import {
   getRequiredSession,
   unauthorizedResponse,
-  forbiddenResponse,
   notFoundResponse,
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkTrustLevel } from '@/middleware/trust-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,9 +53,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role !== 'admin') {
-    return forbiddenResponse('Admin access required.');
+  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
+  if (!trustCheck.allowed) {
+    return trustCheck.response!;
   }
 
   const { id } = await params;

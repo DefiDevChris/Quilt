@@ -187,11 +187,26 @@ export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(60),
   bio: z.string().max(500).optional(),
   location: z.string().max(100).optional(),
-  websiteUrl: z.string().max(255).optional(),
+  websiteUrl: z
+    .string()
+    .max(255)
+    .refine(
+      (url) => {
+        if (!url) return true;
+        try {
+          const parsed = new URL(url);
+          return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Website URL must use http or https.' }
+    )
+    .optional(),
   instagramHandle: z.string().max(50).optional(),
   youtubeHandle: z.string().max(50).optional(),
   tiktokHandle: z.string().max(50).optional(),
-  publicEmail: z.string().max(255).optional(),
+  publicEmail: z.string().email().max(255).optional(),
 });
 
 export const communityFeedSchema = z.object({

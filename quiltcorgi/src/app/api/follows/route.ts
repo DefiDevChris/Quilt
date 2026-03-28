@@ -9,7 +9,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel } from '@/middleware/trust-guard';
+import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -26,6 +26,11 @@ export async function POST(request: NextRequest) {
   const trustCheck = await checkTrustLevel(session.user.id, 'canFollow');
   if (!trustCheck.allowed) {
     return trustCheck.response!;
+  }
+
+  const rateCheck = await checkRateLimit(session.user.id, trustCheck.trustLevel, 'follows');
+  if (!rateCheck.allowed) {
+    return rateCheck.response!;
   }
 
   try {

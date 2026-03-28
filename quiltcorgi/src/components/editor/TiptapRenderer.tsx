@@ -18,6 +18,15 @@ interface TiptapDoc {
   readonly content?: readonly TiptapNode[];
 }
 
+function isSafeHref(href: string): boolean {
+  try {
+    const url = new URL(href);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return href.startsWith('/') || href.startsWith('#');
+  }
+}
+
 function renderMarks(text: string, marks: readonly TiptapMark[]): ReactNode {
   let result: ReactNode = text;
 
@@ -37,7 +46,8 @@ function renderMarks(text: string, marks: readonly TiptapMark[]): ReactNode {
         );
         break;
       case 'link': {
-        const href = (mark.attrs?.href as string) ?? '#';
+        const rawHref = (mark.attrs?.href as string) ?? '#';
+        const href = isSafeHref(rawHref) ? rawHref : '#';
         result = (
           <a
             href={href}
@@ -149,10 +159,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
     case 'codeBlock': {
       const language = (node.attrs?.language as string) ?? '';
       return (
-        <pre
-          key={key}
-          className="bg-surface-container-highest rounded-lg p-4 mb-4 overflow-x-auto"
-        >
+        <pre key={key} className="bg-surface-container-highest rounded-lg p-4 mb-4 overflow-x-auto">
           <code className="text-sm font-mono text-on-surface" data-language={language}>
             {children}
           </code>
@@ -173,9 +180,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
             loading="lazy"
           />
           {alt && (
-            <figcaption className="text-sm text-secondary mt-2 text-center">
-              {alt}
-            </figcaption>
+            <figcaption className="text-sm text-secondary mt-2 text-center">{alt}</figcaption>
           )}
         </figure>
       );
@@ -210,17 +215,13 @@ export function TiptapRenderer({ content }: TiptapRendererProps) {
     // Handle simple text-only content
     if ('text' in doc && typeof (doc as { text?: string }).text === 'string') {
       return (
-        <p className="mb-4 text-on-surface leading-relaxed">
-          {(doc as { text: string }).text}
-        </p>
+        <p className="mb-4 text-on-surface leading-relaxed">{(doc as { text: string }).text}</p>
       );
     }
     return null;
   }
 
   return (
-    <div className="prose-quiltcorgi">
-      {doc.content.map((node, i) => renderNode(node, i))}
-    </div>
+    <div className="prose-quiltcorgi">{doc.content.map((node, i) => renderNode(node, i))}</div>
   );
 }
