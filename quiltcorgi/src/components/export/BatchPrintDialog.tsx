@@ -17,7 +17,7 @@ interface BatchPrintDialogProps {
 export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
   const [seamAllowance, setSeamAllowance] = useState(0.25);
   const [paperSize, setPaperSize] = useState<PaperSize>('LETTER');
-  const [isGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
@@ -38,11 +38,176 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
   const [pdfMessage, setPdfMessage] = useState<string | null>(null);
 
   const handleGeneratePDF = useCallback(async () => {
-    if (!fabricCanvas) return;
-    // TODO: Implement real PDF generation with pdf-lib
-    setPdfMessage("PDF export is coming soon. Use your browser's print dialog (Ctrl+P) for now.");
-    setTimeout(() => setPdfMessage(null), 5000);
-  }, [fabricCanvas]);
+    if (!fabricCanvas || batchResult.totalBlocks === 0) return;
+
+    setIsGenerating(true);
+    setPdfMessage(null);
+
+    try {
+      const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib');
+
+      const POINTS_PER_INCH = 72;
+      const MARGIN = 36; // 0.5 inch
+
+      const PAGE_SIZES: Record<string, { width: number; height: number }> = {
+        LETTER: { width: 612, height: 792 },
+        A4: { width: 595.28, height: 841.89 },
+      };
+
+      const pageSize = PAGE_SIZES[paperSize] ?? PAGE_SIZES.LETTER;
+      const totalPages = batchResult.pages.length;
+
+      const pdfDoc = await PDFDocument.create();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      for (const packedPage of batchResult.pages) {
+        const page = pdfDoc.addPage([pageSize.width, pageSize.height]);
+
+        // Header
+        const headerText = `QuiltCorgi — Batch Cutting Templates — Page ${packedPage.pageNumber} of ${totalPages}`;
+        page.drawText(headerText, {
+          x: MARGIN,
+          y: pageSize.height - MARGIN + 8,
+          size: 10,
+          font,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+
+        // Footer
+        const footerText = 'Print at 100% — Do not scale';
+        const footerWidth = font.widthOfTextAtSize(footerText, 9);
+        page.drawText(footerText, {
+          x: (pageSize.width - footerWidth) / 2,
+          y: MARGIN - 20,
+          size: 9,
+          font,
+          color: rgb(0.4, 0.4, 0.4),
+        });
+
+        for (const packed of packedPage.templates) {
+          const rectX = MARGIN + packed.x * POINTS_PER_INCH;
+          const rectWidth = packed.width * POINTS_PER_INCH;
+          const rectHeight = packed.height * POINTS_PER_INCH;
+          const rectY = pageSize.height - MARGIN - packed.y * POINTS_PER_INCH - rectHeight;
+
+          // Template rectangle
+          page.drawRectangle({
+            x: rectX,
+            y: rectY,
+            width: rectWidth,
+            height: rectHeight,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1.5,
+            color: rgb(1, 1, 1),
+          });
+
+          // Seam allowance dashed line
+          const sa = packed.template.seamAllowance * POINTS_PER_INCH;
+          if (sa > 0 && rectWidth > sa * 2 && rectHeight > sa * 2) {
+            const innerX = rectX + sa;
+            const innerY = rectY + sa;
+            const innerW = rectWidth - sa * 2;
+            const innerH = rectHeight - sa * 2;
+            const dashLength = 4;
+            const gapLength = 3;
+
+            // Draw dashed rectangle (top, bottom, left, right)
+            const drawDashedLine = (x1: number, y1: number, x2: number, y2: number) => {
+              const dx = x2 - x1;
+              const dy = y2 - y1;
+              const length = Math.sqrt(dx * dx + dy * dy);
+              const unitX = dx / length;
+              const unitY = dy / length;
+              let cursor = 0;
+
+              while (cursor < length) {
+                const segEnd = Math.min(cursor + dashLength, length);
+                page.drawLine({
+                  start: {
+                    x: x1 + unitX * cursor,
+                    y: y1 + unitY * cursor,
+                  },
+                  end: {
+                    x: x1 + unitX * segEnd,
+                    y: y1 + unitY * segEnd,
+                  },
+                  thickness: 0.5,
+                  color: rgb(0.5, 0.5, 0.5),
+                });
+                cursor = segEnd + gapLength;
+              }
+            };
+
+            drawDashedLine(innerX, innerY + innerH, innerX + innerW, innerY + innerH); // top
+            drawDashedLine(innerX, innerY, innerX + innerW, innerY); // bottom
+            drawDashedLine(innerX, innerY, innerX, innerY + innerH); // left
+            drawDashedLine(innerX + innerW, innerY, innerX + innerW, innerY + innerH); // right
+          }
+
+          // Block name and copy number
+          const labelText = `${packed.template.blockName} (#${packed.copyIndex + 1})`;
+          const labelSize = Math.min(9, rectWidth / (labelText.length * 0.5));
+          page.drawText(labelText, {
+            x: rectX + 4,
+            y: rectY + rectHeight - labelSize - 4,
+            size: labelSize,
+            font: fontBold,
+            color: rgb(0, 0, 0),
+          });
+
+          // Dimensions text
+          const dimText = `${packed.template.width.toFixed(2)}" × ${packed.template.height.toFixed(2)}" (incl. ${packed.template.seamAllowance}" SA)`;
+          const dimSize = Math.min(7, rectWidth / (dimText.length * 0.45));
+          page.drawText(dimText, {
+            x: rectX + 4,
+            y: rectY + rectHeight - labelSize - dimSize - 8,
+            size: dimSize,
+            font,
+            color: rgb(0.3, 0.3, 0.3),
+          });
+
+          // Cutting guide text
+          const cuttingLines = packed.template.patches[0]?.cuttingLines ?? [];
+          const cutSize = Math.min(7, labelSize - 1);
+          let cutY = rectY + 4 + cuttingLines.length * (cutSize + 2);
+
+          for (const line of cuttingLines) {
+            if (cutY > rectY + rectHeight - labelSize - dimSize - 16) break;
+            page.drawText(line, {
+              x: rectX + 4,
+              y: cutY,
+              size: cutSize,
+              font,
+              color: rgb(0.2, 0.2, 0.2),
+            });
+            cutY = cutY - (cutSize + 2);
+          }
+        }
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'quiltcorgi-cutting-templates.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setPdfMessage(`PDF generated — ${totalPages} page${totalPages === 1 ? '' : 's'} downloaded.`);
+      setTimeout(() => setPdfMessage(null), 5000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      setPdfMessage(`Failed to generate PDF: ${message}`);
+      setTimeout(() => setPdfMessage(null), 8000);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [fabricCanvas, batchResult, paperSize]);
 
   if (!isOpen) return null;
 
@@ -204,10 +369,10 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
           </button>
           <button
             onClick={handleGeneratePDF}
-            disabled={batchResult.totalBlocks === 0}
+            disabled={batchResult.totalBlocks === 0 || isGenerating}
             className="px-6 py-2 bg-primary text-on-primary rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
-            Generate PDF
+            {isGenerating ? 'Generating...' : 'Generate PDF'}
           </button>
         </div>
       </div>

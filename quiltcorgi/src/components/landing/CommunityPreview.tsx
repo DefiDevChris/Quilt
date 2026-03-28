@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import Mascot from './Mascot';
 
 interface CommunityPost {
   id: string;
@@ -18,69 +20,40 @@ interface CommunityResponse {
   };
 }
 
-function SkeletonCard() {
+function PostCard({ post }: { post: CommunityPost }) {
   return (
-    <div className="animate-pulse rounded-[var(--radius-lg)] bg-surface-container h-48" />
-  );
-}
-
-function SkeletonGrid() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <SkeletonCard key={i} />
-      ))}
+    <div className="aspect-square rounded-xl bg-gradient-to-br from-warm-peach to-warm-golden flex items-center justify-center overflow-hidden">
+      {post.thumbnailUrl ? (
+        <div
+          className="w-full h-full bg-center bg-cover"
+          style={{ backgroundImage: `url(${post.thumbnailUrl})` }}
+        />
+      ) : (
+        <div className="w-3/4 h-3/4 grid grid-cols-2 gap-1">
+          {[...Array(4)].map((_, j) => (
+            <div key={j} className="rounded-sm bg-white/40" />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function PostCard({ post }: { post: CommunityPost }) {
+function PlaceholderGrid() {
   return (
-    <div className="rounded-[var(--radius-lg)] overflow-hidden">
-      <div className="aspect-video bg-surface-container relative">
-        {post.thumbnailUrl ? (
-          <div
-            className="w-full h-full bg-center bg-cover"
-            style={{ backgroundImage: `url(${post.thumbnailUrl})` }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-secondary">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              aria-hidden="true"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M3 15l4-4 4 4 4-4 5 5" />
-            </svg>
+    <div className="grid grid-cols-3 gap-3">
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="aspect-square rounded-xl bg-gradient-to-br from-warm-peach to-warm-golden flex items-center justify-center"
+        >
+          <div className="w-3/4 h-3/4 grid grid-cols-2 gap-1">
+            {[...Array(4)].map((_, j) => (
+              <div key={j} className="rounded-sm bg-white/40" />
+            ))}
           </div>
-        )}
-      </div>
-      <div className="pt-3">
-        <h3 className="text-[length:var(--font-size-body-sm)] font-medium text-on-surface truncate">
-          {post.title}
-        </h3>
-        <div className="flex items-center gap-1 mt-1 text-secondary">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-          <span className="text-[length:var(--font-size-body-sm)]">
-            {post.likeCount}
-          </span>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -88,16 +61,18 @@ function PostCard({ post }: { post: CommunityPost }) {
 export default function CommunityPreview() {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     async function fetchPosts() {
       try {
-        const response = await fetch('/api/community?limit=6&sort=newest');
+        const response = await fetch('/api/community?limit=6&sort=newest', {
+          signal: controller.signal,
+        });
         if (!response.ok) {
-          setHasError(true);
           setIsLoading(false);
           return;
         }
@@ -106,10 +81,9 @@ export default function CommunityPreview() {
           setPosts(json.data.posts);
         }
       } catch {
-        if (!cancelled) {
-          setHasError(true);
-        }
+        // Silently fall back to placeholder grid
       } finally {
+        clearTimeout(timeoutId);
         if (!cancelled) {
           setIsLoading(false);
         }
@@ -117,43 +91,150 @@ export default function CommunityPreview() {
     }
 
     fetchPosts();
-
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, []);
 
-  if (hasError) {
-    return null;
-  }
-
-  if (isLoading) {
-    return <SkeletonGrid />;
-  }
-
-  if (posts.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-secondary text-lg">Be the first to share a design!</p>
-      </div>
-    );
-  }
+  const hasPosts = !isLoading && posts.length > 0;
 
   return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-warm-surface/50 to-transparent">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left - Community preview */}
+          <div className="relative order-2 lg:order-1">
+            <div className="glass-panel rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3
+                  className="font-bold text-warm-text"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  Community Gallery
+                </h3>
+                <span className="text-sm text-warm-text-muted">Latest designs</span>
+              </div>
+              {hasPosts ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {posts.slice(0, 6).map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </div>
+              ) : (
+                <PlaceholderGrid />
+              )}
+            </div>
+
+            {/* Mascots around community section */}
+            <div className="absolute -top-12 -right-8 hidden lg:block">
+              <Mascot pose="wagging" size="lg" />
+            </div>
+            <div className="absolute -bottom-8 -left-8 hidden lg:block">
+              <Mascot pose="sleeping" size="lg" />
+            </div>
+          </div>
+
+          {/* Right - Text */}
+          <div className="space-y-6 order-1 lg:order-2">
+            <div className="flex items-center gap-4">
+              <Mascot pose="begging" size="lg" />
+              <h2
+                className="text-3xl md:text-4xl font-bold text-warm-text"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Share &amp; Discover
+              </h2>
+            </div>
+            <p className="text-lg text-warm-text-secondary leading-relaxed">
+              Join a community of passionate quilters. Share your patterns, discover inspiration
+              from fellow designers, and grow your skills with tutorials and blog posts.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
+                <Image
+                  src="/icons/quilt-13-dashed-squares-Photoroom.png"
+                  alt="Quilt blocks"
+                  width={36}
+                  height={36}
+                  className="object-contain flex-shrink-0"
+                />
+                <div>
+                  <div
+                    className="text-2xl font-bold text-warm-peach"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    659+
+                  </div>
+                  <div className="text-sm text-warm-text-secondary">Quilt blocks</div>
+                </div>
+              </div>
+              <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
+                <Image
+                  src="/icons/quilt-12-ruler-Photoroom.png"
+                  alt="Layout ruler"
+                  width={36}
+                  height={36}
+                  className="object-contain flex-shrink-0"
+                />
+                <div>
+                  <div
+                    className="text-2xl font-bold text-warm-peach"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    6
+                  </div>
+                  <div className="text-sm text-warm-text-secondary">Layout modes</div>
+                </div>
+              </div>
+              <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
+                <Image
+                  src="/icons/quilt-02-needle-Photoroom.png"
+                  alt="Needle"
+                  width={36}
+                  height={36}
+                  className="object-contain flex-shrink-0"
+                />
+                <div>
+                  <div
+                    className="text-2xl font-bold text-warm-peach"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    10+
+                  </div>
+                  <div className="text-sm text-warm-text-secondary">Tutorials</div>
+                </div>
+              </div>
+              <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
+                <Image
+                  src="/icons/quilt-10-pincushion-Photoroom.png"
+                  alt="Pincushion"
+                  width={36}
+                  height={36}
+                  className="object-contain flex-shrink-0"
+                />
+                <div>
+                  <div
+                    className="text-2xl font-bold text-warm-peach"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    4
+                  </div>
+                  <div className="text-sm text-warm-text-secondary">Worktables</div>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/community"
+              className="inline-block bg-warm-surface text-warm-text font-semibold px-8 py-4 rounded-full shadow-sm hover:shadow-md transition-shadow"
+            >
+              Browse Community
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="text-center mt-8">
-        <Link
-          href="/community"
-          className="inline-block bg-surface-container text-on-surface font-medium px-8 py-4 rounded-full shadow-[var(--shadow-elevation-1)] hover:shadow-[var(--shadow-elevation-2)] transition-shadow"
-        >
-          Browse Community
-        </Link>
-      </div>
-    </div>
+    </section>
   );
 }

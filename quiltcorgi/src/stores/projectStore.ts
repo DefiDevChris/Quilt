@@ -13,17 +13,14 @@ interface ProjectStoreState {
   isDirty: boolean;
   lastSavedAt: Date | null;
 
-  setProject: (data: {
-    id: string;
-    name: string;
-    width: number;
-    height: number;
-  }) => void;
+  setProject: (data: { id: string; name: string; width: number; height: number }) => void;
   setProjectName: (name: string) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setDirty: (dirty: boolean) => void;
   setLastSavedAt: (date: Date) => void;
   setCanvasDimensions: (width: number, height: number) => void;
+  setCanvasWidth: (width: number) => void;
+  setCanvasHeight: (height: number) => void;
   reset: () => void;
 }
 
@@ -50,8 +47,9 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setLastSavedAt: (lastSavedAt) => set({ lastSavedAt }),
-  setCanvasDimensions: (canvasWidth, canvasHeight) =>
-    set({ canvasWidth, canvasHeight }),
+  setCanvasDimensions: (canvasWidth, canvasHeight) => set({ canvasWidth, canvasHeight }),
+  setCanvasWidth: (canvasWidth) => set({ canvasWidth }),
+  setCanvasHeight: (canvasHeight) => set({ canvasHeight }),
   reset: () =>
     set({
       projectId: null,

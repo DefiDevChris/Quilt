@@ -126,3 +126,7 @@ export const RATE_LIMITS = {
 } as const;
 
 export const AUTO_HIDE_REPORT_THRESHOLD = 3;
+
+export const GRID_CELL_SIZE_MIN = 0.125;
+export const GRID_CELL_SIZE_MAX = 12;
+export const GRID_CELL_SIZE_STEP = 0.125;

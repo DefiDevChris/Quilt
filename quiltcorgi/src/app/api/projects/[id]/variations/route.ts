@@ -59,32 +59,40 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return validationErrorResponse(parsed.error.message);
     }
 
-    // Enforce tier limits for free users
     const role = (session.user as { role?: string }).role ?? 'free';
-    if (role === 'free') {
-      const existing = await db
-        .select({ id: designVariations.id })
-        .from(designVariations)
-        .where(eq(designVariations.projectId, projectId));
 
-      if (existing.length >= FREE_VARIATION_LIMIT) {
-        return errorResponse(
-          `Free plan allows up to ${FREE_VARIATION_LIMIT} variations per project. Upgrade to Pro for unlimited.`,
-          'PRO_REQUIRED',
-          403
-        );
+    const created = await db.transaction(async (tx) => {
+      if (role === 'free') {
+        const existing = await tx
+          .select({ id: designVariations.id })
+          .from(designVariations)
+          .where(eq(designVariations.projectId, projectId));
+
+        if (existing.length >= FREE_VARIATION_LIMIT) {
+          return null;
+        }
       }
-    }
 
-    const [created] = await db
-      .insert(designVariations)
-      .values({
-        projectId,
-        userId: session.user.id,
-        name: parsed.data.name,
-        canvasData: parsed.data.canvasData,
-      })
-      .returning();
+      const [row] = await tx
+        .insert(designVariations)
+        .values({
+          projectId,
+          userId: session.user.id,
+          name: parsed.data.name,
+          canvasData: parsed.data.canvasData,
+        })
+        .returning();
+
+      return row;
+    });
+
+    if (!created) {
+      return errorResponse(
+        `Free plan allows up to ${FREE_VARIATION_LIMIT} variations per project. Upgrade to Pro for unlimited.`,
+        'PRO_REQUIRED',
+        403
+      );
+    }
 
     return Response.json({ success: true, data: created }, { status: 201 });
   } catch {

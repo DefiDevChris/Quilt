@@ -19,6 +19,7 @@ export function computeScaleFactor(referenceInches: number, referencePixels: num
 
 /**
  * Compute all quilt measurements from detected grid and a scale factor.
+ * Returns zeroed measurements if scale, grid dimensions, or cell sizes are invalid.
  */
 export function computeMeasurements(
   grid: DetectedGrid,
@@ -26,15 +27,25 @@ export function computeMeasurements(
   imageWidthPixels: number,
   seamAllowanceInches: number = 0.25
 ): QuiltMeasurements {
+  const zeroed: QuiltMeasurements = {
+    blockSizeInches: 0,
+    sashingWidthInches: 0,
+    borderWidthInches: 0,
+    totalWidthInches: 0,
+    totalHeightInches: 0,
+    seamAllowanceInches,
+  };
+
   const scale = computeScaleFactor(referenceWidthInches, imageWidthPixels);
+  if (scale <= 0) return zeroed;
+
+  if (grid.rows <= 0 || grid.cols <= 0) return zeroed;
+  if (grid.cellWidth <= 0 || grid.cellHeight <= 0) return zeroed;
 
   const blockSizeInches = roundToQuarter(grid.cellWidth * scale);
 
   // Simple approach: total width is the reference, compute height proportionally
-  const aspectRatio =
-    grid.rows > 0 && grid.cols > 0
-      ? (grid.rows * grid.cellHeight) / (grid.cols * grid.cellWidth)
-      : 1;
+  const aspectRatio = (grid.rows * grid.cellHeight) / (grid.cols * grid.cellWidth);
   const totalHeightInches = roundToQuarter(referenceWidthInches * aspectRatio);
 
   // Estimate sashing width: if grid has sashing layout, assume alternating

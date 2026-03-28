@@ -13,6 +13,7 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useLayoutEngine } from '@/hooks/useLayoutEngine';
 import { useTextTool } from '@/hooks/useTextTool';
 import { useColorwayTool } from '@/hooks/useColorwayTool';
+import { usePuzzleView } from '@/hooks/usePuzzleView';
 
 interface CanvasWorkspaceProps {
   project: Project;
@@ -32,6 +33,7 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useLayoutEngine();
   useTextTool();
   useColorwayTool();
+  usePuzzleView();
   useAutoSave();
   useBeforeUnload();
 

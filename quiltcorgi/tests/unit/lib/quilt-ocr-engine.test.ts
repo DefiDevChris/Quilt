@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { analyzeQuiltPhoto, updateGrid } from '@/lib/quilt-ocr-engine';
 import type { ImageBuffer } from '@/lib/ocr/image-preprocess';
 import type { OcrPipelineStep } from '@/types/quilt-ocr';
+import sharp from 'sharp';
+import path from 'node:path';
 
 function makeTestImage(width: number, height: number): ImageBuffer {
   const data = new Uint8ClampedArray(width * height * 4);
@@ -20,6 +22,18 @@ function makeTestImage(width: number, height: number): ImageBuffer {
     }
   }
   return { width, height, data };
+}
+
+async function loadFixtureImage(filename: string): Promise<ImageBuffer> {
+  const fixturePath = path.resolve(__dirname, '../../fixtures', filename);
+  const image = sharp(fixturePath);
+  const { width, height } = await image.metadata();
+  const rawBuffer = await image.ensureAlpha().raw().toBuffer();
+  return {
+    width: width!,
+    height: height!,
+    data: new Uint8ClampedArray(rawBuffer.buffer, rawBuffer.byteOffset, rawBuffer.byteLength),
+  };
 }
 
 describe('quilt-ocr-engine', () => {
@@ -50,16 +64,20 @@ describe('quilt-ocr-engine', () => {
       expect(result.measurements).toBeNull();
     });
 
-    it('returns measurements when reference width provided', () => {
-      const image = makeTestImage(100, 100);
-      const result = analyzeQuiltPhoto(
-        image,
-        [],
-        { referenceWidthInches: 60 }
-      );
-      expect(result.measurements).not.toBeNull();
-      expect(result.measurements?.totalWidthInches).toBe(60);
-    });
+    it(
+      'returns measurements when reference width provided (real image)',
+      { timeout: 30_000 },
+      async () => {
+        const image = await loadFixtureImage('test-quilt-grid.png');
+        const result = analyzeQuiltPhoto(image, [], {
+          referenceWidthInches: 60,
+          edgeThreshold: 30,
+          houghThreshold: 40,
+        });
+        expect(result.measurements).not.toBeNull();
+        expect(result.measurements?.totalWidthInches).toBe(60);
+      }
+    );
 
     it('respects custom config', () => {
       const image = makeTestImage(100, 100);
