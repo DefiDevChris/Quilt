@@ -8,6 +8,9 @@
 
 import type { LayoutType } from '@/lib/layout-engine';
 
+const MIN_DIMENSION = 1;
+const MAX_DIMENSION = 200;
+
 export interface CanvasObjectData {
   readonly id: string;
   readonly left: number;
@@ -67,6 +70,16 @@ export interface ResizeResult {
 }
 
 function computeScaleResize(input: ResizeInput): ResizeResult {
+  if (input.currentWidth === 0 || input.currentHeight === 0) {
+    return {
+      newCanvasWidth: input.newWidth,
+      newCanvasHeight: input.newHeight,
+      objects: [...input.objects],
+      layoutSettings: null,
+      addedCells: [],
+    };
+  }
+
   const scaleFactorX = input.newWidth / input.currentWidth;
   const scaleFactorY = input.newHeight / input.currentHeight;
 
@@ -170,8 +183,19 @@ function computeAddBlocksResize(input: ResizeInput): ResizeResult {
 }
 
 export function computeResize(input: ResizeInput): ResizeResult {
-  if (input.mode === 'scale') {
-    return computeScaleResize(input);
+  let newWidth = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, input.newWidth));
+  let newHeight = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, input.newHeight));
+
+  if (input.lockAspectRatio) {
+    const aspectRatio = input.currentWidth / input.currentHeight;
+    newHeight = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, newWidth / aspectRatio));
   }
-  return computeAddBlocksResize(input);
+
+  const validated: ResizeInput = { ...input, newWidth, newHeight };
+
+  if (validated.mode === 'scale') {
+    return computeScaleResize(validated);
+  }
+
+  return computeAddBlocksResize(validated);
 }

@@ -216,4 +216,44 @@ describe('resize-engine', () => {
       expect(result.addedCells).toEqual([]);
     });
   });
+
+  describe('validation', () => {
+    it('clamps minimum dimensions to 1', () => {
+      const result = computeResize(makeInput({ newWidth: 0.5, newHeight: 0.5 }));
+      expect(result.newCanvasWidth).toBe(1);
+      expect(result.newCanvasHeight).toBe(1);
+    });
+
+    it('clamps maximum dimensions to 200', () => {
+      const result = computeResize(makeInput({ newWidth: 300, newHeight: 250 }));
+      expect(result.newCanvasWidth).toBe(200);
+      expect(result.newCanvasHeight).toBe(200);
+    });
+
+    it('enforces aspect ratio lock when lockAspectRatio is true', () => {
+      const result = computeResize(
+        makeInput({
+          currentWidth: 48,
+          currentHeight: 48,
+          newWidth: 60,
+          newHeight: 72,
+          lockAspectRatio: true,
+        })
+      );
+      expect(result.newCanvasWidth).toBe(60);
+      expect(result.newCanvasHeight).toBe(60);
+    });
+
+    it('allows independent width/height when aspect ratio unlocked', () => {
+      const result = computeResize(
+        makeInput({
+          newWidth: 60,
+          newHeight: 72,
+          lockAspectRatio: false,
+        })
+      );
+      expect(result.newCanvasWidth).toBe(60);
+      expect(result.newCanvasHeight).toBe(72);
+    });
+  });
 });
