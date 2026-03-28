@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { saveProject } from '@/lib/save-project';
 
 export function useCanvasKeyboard() {
@@ -133,6 +134,14 @@ export function useCanvasKeyboard() {
             });
           }
           return;
+        }
+
+        if (e.key === 'i' || e.key === 'I') {
+          if (!isCtrl) {
+            e.preventDefault();
+            usePieceInspectorStore.getState().togglePuzzleView();
+            return;
+          }
         }
 
         if (e.key === 'Escape') {

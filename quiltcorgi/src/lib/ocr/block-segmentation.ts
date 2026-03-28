@@ -20,8 +20,12 @@ export function extractRegion(
 ): Uint8ClampedArray {
   const clampedX = Math.max(0, Math.round(x));
   const clampedY = Math.max(0, Math.round(y));
-  const clampedW = Math.min(Math.round(width), source.width - clampedX);
-  const clampedH = Math.min(Math.round(height), source.height - clampedY);
+  const clampedW = Math.max(0, Math.min(Math.round(width), source.width - clampedX));
+  const clampedH = Math.max(0, Math.min(Math.round(height), source.height - clampedY));
+
+  if (clampedW === 0 || clampedH === 0) {
+    return new Uint8ClampedArray(0);
+  }
 
   const regionData = new Uint8ClampedArray(clampedW * clampedH * 4);
 

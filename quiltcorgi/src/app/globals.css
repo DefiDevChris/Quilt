@@ -2,35 +2,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* Surface System (Material 3-inspired tonal hierarchy) */
-  --color-background: #fffcf7;
-  --color-surface: #fffcf7;
-  --color-surface-container-lowest: #fefbf5;
-  --color-surface-container-low: #fcf9f3;
-  --color-surface-container: #f6f4ec;
-  --color-surface-container-high: #f0eee4;
-  --color-surface-container-highest: #eae8de;
+  /* Surface System — Warm Cream Tonal Hierarchy */
+  --color-background: #FFF9F2;
+  --color-surface: #FFF9F2;
+  --color-surface-container-lowest: #FFFCF8;
+  --color-surface-container-low: #FBF5ED;
+  --color-surface-container: #F5EDE4;
+  --color-surface-container-high: #EFE5D9;
+  --color-surface-container-highest: #E8DCCB;
   --color-surface-canvas: #ffffff;
-  --color-surface-recessed: #f8f6f0;
+  --color-surface-recessed: #F8F2EA;
 
-  /* Corgi Patchwork Extracted Palette */
-  --color-primary: #f07e26;
-  --color-primary-dark: #cc6012;
-  --color-primary-container: #ffdfc4;
-  --color-primary-on: #2d1706;
-  --color-primary-on-container: #572f10;
+  /* Warm Peach Primary Palette */
+  --color-primary: #FFB085;
+  --color-primary-dark: #C67B5C;
+  --color-primary-container: #FFE4D0;
+  --color-primary-on: #4A3B32;
+  --color-primary-on-container: #5C4A3D;
 
   /* Text & Content */
-  --color-on-surface: #383831;
-  --color-secondary: #6c635a;
+  --color-on-surface: #4A3B32;
+  --color-secondary: #6B5A4D;
 
   /* Borders & Outlines */
-  --color-outline-variant: #babab0;
+  --color-outline-variant: #E8DCCB;
 
   /* Status */
   --color-success: #4a7c59;
-  --color-error: #9e3b33;
-  --color-warning: #a07830;
+  --color-error: #D4726A;
+  --color-warning: #C6942E;
 
   /* Fonts */
   --font-sans: 'Manrope', system-ui, sans-serif;
@@ -70,10 +70,10 @@
   --radius-xl: 24px;
 
   /* Shadows (Elevation) */
-  --shadow-elevation-1: 0 4px 16px rgba(56, 56, 49, 0.04);
-  --shadow-elevation-2: 0 8px 32px rgba(56, 56, 49, 0.06);
-  --shadow-elevation-3: 0 12px 40px rgba(56, 56, 49, 0.08);
-  --shadow-elevation-4: 0 16px 48px rgba(56, 56, 49, 0.10);
+  --shadow-elevation-1: 0 4px 16px rgba(74, 59, 50, 0.04);
+  --shadow-elevation-2: 0 8px 32px rgba(74, 59, 50, 0.06);
+  --shadow-elevation-3: 0 12px 40px rgba(74, 59, 50, 0.08);
+  --shadow-elevation-4: 0 16px 48px rgba(74, 59, 50, 0.10);
 
   /* Mobile — Golden Amber Accent */
   --color-primary-golden: #c48a28;
@@ -117,11 +117,11 @@ body {
 
 /* Glassmorphic card */
 .glass-card {
-  background: rgba(255, 252, 247, 0.55);
+  background: rgba(255, 249, 242, 0.55);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 4px 24px rgba(56, 56, 49, 0.06);
+  box-shadow: 0 4px 24px rgba(74, 59, 50, 0.06);
 }
 
 /* Pill button */

@@ -115,7 +115,7 @@ export function BlogEditor() {
           </button>
         </div>
 
-        {featuredImageUrl && (
+        {featuredImageUrl && /^https?:\/\//i.test(featuredImageUrl) && (
           <div className="rounded-xl overflow-hidden mb-6 max-h-[400px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={featuredImageUrl} alt={title} className="w-full h-full object-cover" />

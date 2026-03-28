@@ -10,6 +10,7 @@ interface CommentWithReplies extends Comment {
 
 interface CommentState {
   comments: CommentWithReplies[];
+  commentMap: Record<string, Comment>;
   isLoading: boolean;
   error: string | null;
   page: number;
@@ -31,6 +32,7 @@ interface CommentState {
 
 const INITIAL_STATE = {
   comments: [] as CommentWithReplies[],
+  commentMap: {} as Record<string, Comment>,
   isLoading: false,
   error: null as string | null,
   page: 1,
@@ -45,15 +47,6 @@ function updateCommentLike(comment: Comment, commentId: string): Comment {
     isLikedByUser: !comment.isLikedByUser,
     likeCount: comment.isLikedByUser ? Math.max(0, comment.likeCount - 1) : comment.likeCount + 1,
   };
-}
-
-function findComment(comments: CommentWithReplies[], commentId: string): Comment | undefined {
-  for (const c of comments) {
-    if (c.id === commentId) return c;
-    const reply = c.replies.find((r) => r.id === commentId);
-    if (reply) return reply;
-  }
-  return undefined;
 }
 
 export const useCommentStore = create<CommentState>((set, get) => ({
@@ -77,12 +70,24 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       }
 
       const data = json.data;
-      set((state) => ({
-        comments: append ? [...state.comments, ...data.comments] : data.comments,
-        totalPages: data.pagination.totalPages,
-        page: data.pagination.page,
-        isLoading: false,
-      }));
+      set((state) => {
+        const incoming: CommentWithReplies[] = data.comments;
+        const merged = append ? [...state.comments, ...incoming] : incoming;
+        const commentMap: Record<string, Comment> = {};
+        for (const c of merged) {
+          commentMap[c.id] = c;
+          for (const r of c.replies) {
+            commentMap[r.id] = r;
+          }
+        }
+        return {
+          comments: merged,
+          commentMap,
+          totalPages: data.pagination.totalPages,
+          page: data.pagination.page,
+          isLoading: false,
+        };
+      });
     } catch {
       set({ error: 'Failed to load comments', isLoading: false });
     }
@@ -108,6 +113,18 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       const newComment = json.data;
 
       if (replyToId) {
+        const parentExists = get().commentMap[replyToId] !== undefined;
+        if (!parentExists) {
+          console.warn(
+            `[commentStore] Reply saved server-side but parent comment "${replyToId}" not found in local state. Displaying reply as top-level comment.`
+          );
+          set((state) => ({
+            isSubmitting: false,
+            error: 'Your reply was saved, but the parent comment is not visible yet.',
+            comments: [{ ...newComment, replies: [], totalReplyCount: 0 }, ...state.comments],
+          }));
+          return;
+        }
         // Insert reply under the parent comment
         set((state) => ({
           isSubmitting: false,
@@ -125,10 +142,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
         // Insert top-level comment at the beginning
         set((state) => ({
           isSubmitting: false,
-          comments: [
-            { ...newComment, replies: [], totalReplyCount: 0 },
-            ...state.comments,
-          ],
+          comments: [{ ...newComment, replies: [], totalReplyCount: 0 }, ...state.comments],
         }));
       }
     } catch {
@@ -137,7 +151,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   },
 
   likeComment: async (postId, commentId) => {
-    const existing = findComment(get().comments, commentId);
+    const existing = get().commentMap[commentId];
     if (!existing) return;
 
     // Optimistic update (toggle)

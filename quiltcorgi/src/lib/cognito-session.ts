@@ -128,14 +128,25 @@ export async function getSession(): Promise<CognitoSession | null> {
   const name = (payload.name as string) ?? '';
   const emailVerified = (payload.email_verified as boolean) ?? false;
 
-  // TODO: User lookup by email is vulnerable to email changes in Cognito.
-  // Ideally, add a `cognitoSub` column to the users table and look up by sub
-  // with email as a fallback. This requires a schema migration — see Issue #26.
-  const [dbUser] = await db
-    .select({ id: users.id, role: users.role })
+  // Look up by cognitoSub first, fall back to email for pre-migration users
+  let [dbUser] = await db
+    .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
     .from(users)
-    .where(eq(users.email, email))
+    .where(eq(users.cognitoSub, cognitoSub))
     .limit(1);
+
+  if (!dbUser) {
+    [dbUser] = await db
+      .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    // Backfill cognitoSub for pre-migration users
+    if (dbUser && !dbUser.cognitoSub) {
+      await db.update(users).set({ cognitoSub }).where(eq(users.id, dbUser.id));
+    }
+  }
 
   const role = (dbUser?.role as 'free' | 'pro' | 'admin') ?? 'free';
   const userId = dbUser?.id ?? cognitoSub;
@@ -178,18 +189,31 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
     const { users } = await import('@/db/schema');
     const { eq } = await import('drizzle-orm');
 
+    const cognitoSub = payload.sub as string;
     const email = (payload.email as string) ?? '';
     const name = (payload.name as string) ?? '';
     const emailVerified = (payload.email_verified as boolean) ?? false;
 
-    const [dbUser] = await db
-      .select({ id: users.id, role: users.role })
+    let [dbUser] = await db
+      .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
       .from(users)
-      .where(eq(users.email, email))
+      .where(eq(users.cognitoSub, cognitoSub))
       .limit(1);
 
+    if (!dbUser) {
+      [dbUser] = await db
+        .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (dbUser && !dbUser.cognitoSub) {
+        await db.update(users).set({ cognitoSub }).where(eq(users.id, dbUser.id));
+      }
+    }
+
     const role = (dbUser?.role as 'free' | 'pro' | 'admin') ?? 'free';
-    const userId = dbUser?.id ?? (payload.sub as string);
+    const userId = dbUser?.id ?? cognitoSub;
 
     return {
       user: {

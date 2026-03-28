@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ReportReason } from '@/types/community';
 
 interface ReportModalProps {
@@ -19,15 +19,29 @@ const REPORT_REASONS: { value: ReportReason; label: string }[] = [
 
 const MAX_DETAILS_LENGTH = 500;
 
+const TITLE_ID = 'report-modal-title';
+
 export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportModalProps) {
   const [reason, setReason] = useState<ReportReason | null>(null);
   const [details, setDetails] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReported, setIsReported] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Move focus into dialog when it opens
+  useEffect(() => {
+    if (!isOpen) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const firstFocusable = dialog.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    firstFocusable?.focus();
+  }, [isOpen]);
 
   const handleSubmit = useCallback(async () => {
-    if (!reason) return;
+    if (!reason || isSubmitting) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -67,6 +81,39 @@ export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportMod
     }
   }, [isSubmitting, onClose]);
 
+  // Focus trap — keep Tab/Shift+Tab inside the dialog; Escape closes it
+  const handleDialogKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Escape') {
+        handleClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [handleClose]
+  );
+
   const handleDetailsChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     if (value.length <= MAX_DETAILS_LENGTH) {
@@ -78,26 +125,37 @@ export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportMod
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={handleClose}
-        onKeyDown={(e) => { if (e.key === 'Escape') handleClose(); }}
-        role="button"
-        tabIndex={-1}
-        aria-label="Close report modal"
-      />
+      {/* Overlay — purely decorative, click closes the dialog */}
+      <div className="absolute inset-0 bg-black/50" onClick={handleClose} aria-hidden="true" />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-md rounded-xl bg-surface-container p-6 shadow-elevation-3">
+      {/* Modal — proper dialog semantics */}
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={TITLE_ID}
+        onKeyDown={handleDialogKeyDown}
+        className="relative w-full max-w-md rounded-xl bg-surface-container p-6 shadow-elevation-3"
+      >
         {isReported ? (
           <div className="text-center py-4">
             <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-green-600">
-                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6 text-green-600"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-on-surface mb-1">Reported</h3>
+            <h3 id={TITLE_ID} className="text-lg font-semibold text-on-surface mb-1">
+              Reported
+            </h3>
             <p className="text-sm text-secondary mb-4">
               Thank you for your report. Our moderation team will review it.
             </p>
@@ -111,12 +169,10 @@ export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportMod
           </div>
         ) : (
           <>
-            <h3 className="text-lg font-semibold text-on-surface mb-1">
+            <h3 id={TITLE_ID} className="text-lg font-semibold text-on-surface mb-1">
               Report {targetType}
             </h3>
-            <p className="text-sm text-secondary mb-4">
-              Why are you reporting this {targetType}?
-            </p>
+            <p className="text-sm text-secondary mb-4">Why are you reporting this {targetType}?</p>
 
             {/* Reason selection */}
             <div className="space-y-2 mb-4">
@@ -144,7 +200,10 @@ export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportMod
 
             {/* Details textarea */}
             <div className="mb-4">
-              <label htmlFor="report-details" className="block text-sm font-medium text-on-surface mb-1">
+              <label
+                htmlFor="report-details"
+                className="block text-sm font-medium text-on-surface mb-1"
+              >
                 Additional details (optional)
               </label>
               <textarea
@@ -160,9 +219,7 @@ export function ReportModal({ isOpen, onClose, targetType, targetId }: ReportMod
               </p>
             </div>
 
-            {error && (
-              <p className="text-sm text-error mb-4">{error}</p>
-            )}
+            {error && <p className="text-sm text-error mb-4">{error}</p>}
 
             {/* Actions */}
             <div className="flex justify-end gap-3">

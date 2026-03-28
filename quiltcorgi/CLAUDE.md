@@ -114,13 +114,52 @@ Seven production features added:
 
 **SEO:** Dynamic `sitemap.ts` (blog posts, profiles, community posts). `generateMetadata` on profile/blog/community pages. OG images.
 
+## Mobile Experience (Phase 18)
+
+**By design**, mobile is a companion experience — not a full port. Only 5 sections are available on mobile:
+
+| Mobile Tab | Route | Purpose |
+|------------|-------|---------|
+| Feed | `/community` | Browse community posts |
+| Library | `/dashboard` | View projects (read-only) |
+| Discover | `/blog` | Read blog posts |
+| Profile | `/profile` | View/edit profile |
+| Notifications | (drawer) | Full-page notification list |
+
+**Studio is desktop-only.** `StudioGate` intercepts mobile users navigating to `/studio/[projectId]` and redirects them to the dashboard with a "needs a larger screen" message. `StudioMobileGate` wraps the studio page component.
+
+**Mobile shell:** `MobileShell.tsx` provides `MobileBottomNav` (5-tab bar with center FAB) + `MobileDrawer` (hamburger menu). `ResponsiveShell`, `ResponsiveCommunityShell`, and `ResponsivePublicShell` switch between desktop and mobile layouts via `useIsMobile()` hook (768px breakpoint).
+
+**MobileFabricUpload:** Camera-to-library flow — capture/pick photo, crop, add to fabric library. Accessed via the center FAB button in the bottom nav.
+
+**MobileProjectGallery / MobileProjectDetail:** Read-only project browsing with card grid and detail view. No editing capabilities on mobile.
+
+## Canvas Grid + Piece Inspector (Phase 19)
+
+**Two-layer grid system:** Quilt boundary dimensions (set via `QuiltDimensionsPanel.tsx`) define the outer frame with fractional-inch dimension labels and corner marks rendered on the canvas. Cell grid size is independently adjustable via a slider (1/8" to 12" increments). Quilt dimensions use `projectStore.setCanvasWidth/setCanvasHeight`; cell grid uses `canvasStore.setGridSettings`.
+
+**Puzzle View mode:** Toggled via toolbar icon (`inspect` group) or `I` keyboard shortcut. When active, all canvas objects (hand-drawn, OCR-extracted, pattern library blocks, layout cells) respond to hover and click. `usePuzzleView.ts` hook temporarily sets layout elements (`_layoutElement: true`) to `evented: true` and forces `activeTool` to `'select'`. Hover applies golden glow shadow (`rgba(255, 176, 133, 0.4)`). Click extracts geometry and opens the Piece Inspector panel.
+
+**Piece Inspector engine:** `piece-inspector-engine.ts` — pure computation, zero DOM/React. Functions: `extractPieceGeometry` (SVG→vertices), `computePieceDimensions` (with seam allowance), `formatPieceDimensions` (fractional inches), `generatePieceSvgPreview` (SVG with cut/seam lines), `generateSinglePiecePdf` (1:1 PDF via pdf-lib). Reuses `classifyPatchShape`, `computeSeamOffset`, `decimalToFraction`.
+
+**Fabric.js→SVG bridge:** `fabric-object-to-svg.ts` converts any Fabric.js object (Rect, Triangle, Polygon, Path, Group, Circle, Ellipse) to SVG path data via duck-typing. No module-level fabric import (SSR-safe).
+
+**Piece Inspector panel:** `PieceInspectorPanel.tsx` — slide-in right panel (280px, Framer Motion) showing SVG preview with cut line (solid) + seam line (dashed), shape type badge, fractional dimensions, seam allowance slider (0"–1" in 1/8" steps), special instructions, Print Template (PDF download) and Copy SVG actions.
+
+**Store:** `pieceInspectorStore.ts` — `isPuzzleViewActive`, `selectedPieceId`, `hoveredPieceId`, `seamAllowance`, `pieceGeometry`, `pieceDimensions`. Deactivation clears all state.
+
 ## Security Hardening
 
 - **SVG sanitization:** SVGs sanitized on write (`/api/blocks` POST) and on render (`BlockPreview.tsx`, `PrintlistPanel.tsx`, `SerendipityTool.tsx`) via `sanitizeSvg()` from `src/lib/sanitize-svg.ts`. JSON-LD in blog pages escapes `<` as `\u003c`.
 - **DB timezone safety:** All timestamp columns use `{ withTimezone: true }` (TIMESTAMPTZ). All `updatedAt` columns use `.$onUpdate()`. `db.ts` throws in production if `DATABASE_URL` is not set.
 - **Auth rate limiting:** `src/lib/rate-limit.ts` — in-memory sliding-window rate limiter applied to all Cognito auth endpoints (signin, signup, verify, forgot-password). Presets in `AUTH_RATE_LIMITS`. For multi-instance deployments, replace with Redis-backed implementation.
 - **Open redirect prevention:** `AuthForm.tsx` validates `callbackUrl` query param — only allows relative paths starting with `/`, rejects `//` protocol-relative URLs.
+- **Cognito identity lookup:** `cognito-session.ts` looks up users by `cognitoSub` (stable Cognito sub claim) with email fallback for pre-migration users. Backfills `cognitoSub` on first sign-in. Migration: `0001_add-cognito-sub.sql`.
 - **Webhook secret:** `STRIPE_WEBHOOK_SECRET` is required — `getWebhookSecret()` throws at invocation if env var is missing (no empty-string fallback). Webhook route also has in-memory event ID dedup guard.
+- **Free tier race conditions:** Project and variation limit checks use `db.transaction()` to prevent concurrent requests from bypassing limits. Follow/unfollow count updates are also transactional.
+- **Admin pagination:** Admin community endpoint supports `page` and `limit` query params (max 100, default 50) to prevent unbounded queries.
+- **Blog image validation:** `BlogEditor.tsx` only renders featured images with `https?://` protocol to prevent `javascript:` URL injection.
+- **Error response safety:** API routes never leak stack traces — all catch blocks use `errorResponse()` with generic messages.
 - **Admin route gating:** `proxy.ts` checks `qc_user_role` cookie (set during sign-in via `setRoleCookie()` in `cognito-session.ts`). Non-admin users are redirected from `/admin`. All admin API routes enforce access via `checkTrustLevel('canModerate')` from `trust-guard.ts`.
 - **S3 client:** `s3Client` is `null` when AWS env vars are absent. `generatePresignedUrl()` throws a clear error if called without configuration.
 - **CSP:** `connect-src` includes `*.s3.amazonaws.com` and `*.s3.*.amazonaws.com` for Pro user presigned uploads.
@@ -144,10 +183,10 @@ Seven production features added:
 - `normalizeColor()` in `colorway-engine.ts` validates hex input — invalid strings return `#000000` (not pass-through).
 - `verifySessionToken()` in `cognito-session.ts` returns `{ sub, email }` only — no `role` field (role requires DB lookup via `getSession()`).
 - Blog `[slug]/page.tsx` uses React `cache()` to deduplicate the post query between `generateMetadata` and the page component.
-- `manifest.json` references `icon-192.png` and `icon-512.png` — these PNG files need to be generated from `favicon.svg` and placed in `public/`.
+- `manifest.json` references `flavicon.png` and `logo.png` for PWA icons.
 - `saveProject()` lives in `lib/save-project.ts` (shared by `useCanvasKeyboard` and `useAutoSave`). Has max 3 retries on failure.
 - `BorderConfig.id` is optional — the store's `createBorder()` generates a UUID, but test fixtures and engine functions may omit it.
 
 ## Stats
 
-~355 source files, 14 Zustand stores, 18 DB tables, 71 test files (1,316 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.
+~365 source files, 15 Zustand stores, 18 DB tables, 78 test files (1,428 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.

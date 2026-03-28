@@ -1,8 +1,14 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { type SourceQuadrant } from '@/lib/kaleidoscope-engine';
+import { useProjectStore } from '@/stores/projectStore';
+import {
+  generateKaleidoscope,
+  kaleidoscopeToSvgPath,
+  type SourceQuadrant,
+  type Point2D,
+} from '@/lib/kaleidoscope-engine';
 
 interface KaleidoscopeToolProps {
   isOpen: boolean;
@@ -18,25 +24,206 @@ const QUADRANT_OPTIONS: Array<{ id: SourceQuadrant; label: string; position: str
   { id: 'bottom-right', label: 'Bottom Right', position: 'bottom-0 right-0' },
 ];
 
+function extractObjectGeometry(obj: any): Point2D[][] {
+  if (obj.type === 'polygon' && Array.isArray(obj.points)) {
+    return [
+      obj.points.map((p: any) => ({
+        x: p.x + (obj.left ?? 0),
+        y: p.y + (obj.top ?? 0),
+      })),
+    ];
+  }
+  if (obj.type === 'rect') {
+    const l = obj.left ?? 0;
+    const t = obj.top ?? 0;
+    const w = (obj.width ?? 0) * (obj.scaleX ?? 1);
+    const h = (obj.height ?? 0) * (obj.scaleY ?? 1);
+    return [[{ x: l, y: t }, { x: l + w, y: t }, { x: l + w, y: t + h }, { x: l, y: t + h }]];
+  }
+  if (obj.type === 'triangle') {
+    const l = obj.left ?? 0;
+    const t = obj.top ?? 0;
+    const w = (obj.width ?? 0) * (obj.scaleX ?? 1);
+    const h = (obj.height ?? 0) * (obj.scaleY ?? 1);
+    return [[{ x: l + w / 2, y: t }, { x: l + w, y: t + h }, { x: l, y: t + h }]];
+  }
+  if (obj.type === 'path') {
+    const bounds = obj.getBoundingRect?.() ?? { left: 0, top: 0, width: 100, height: 100 };
+    return [
+      [
+        { x: bounds.left, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+        { x: bounds.left, y: bounds.top + bounds.height },
+      ],
+    ];
+  }
+  if (obj.type === 'group') {
+    const bounds = obj.getBoundingRect?.() ?? { left: 0, top: 0, width: 100, height: 100 };
+    return [
+      [
+        { x: bounds.left, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+        { x: bounds.left, y: bounds.top + bounds.height },
+      ],
+    ];
+  }
+  if (obj.type === 'circle') {
+    const bounds = obj.getBoundingRect?.() ?? { left: 0, top: 0, width: 100, height: 100 };
+    return [
+      [
+        { x: bounds.left, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top },
+        { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+        { x: bounds.left, y: bounds.top + bounds.height },
+      ],
+    ];
+  }
+  return [];
+}
+
 export function KaleidoscopeTool({ isOpen, onClose }: KaleidoscopeToolProps) {
   const [foldCount, setFoldCount] = useState<4 | 6 | 8 | 12>(6);
   const [sourceQuadrant, setSourceQuadrant] = useState<SourceQuadrant>('top-left');
   const [selectedShapeId, setSelectedShapeId] = useState<string>('');
+  const [previewSvg, setPreviewSvg] = useState<string>('');
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
-  const handleGenerateKaleidoscope = useCallback(() => {
+  const canvasObjects = useMemo(() => {
+    if (!fabricCanvas) return [];
+    const canvas = fabricCanvas as unknown as {
+      getObjects: () => Array<{
+        type: string;
+        id?: string;
+        blockName?: string;
+        left?: number;
+        top?: number;
+      }>;
+    };
+    return canvas
+      .getObjects()
+      .filter((obj) =>
+        ['polygon', 'rect', 'path', 'group', 'circle', 'triangle'].includes(obj.type)
+      )
+      .map((obj, i) => ({
+        id: (obj as any).id ?? `shape-${i}`,
+        label: (obj as any).blockName ?? `${obj.type} ${i + 1}`,
+      }));
+  }, [fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas || !selectedShapeId) {
+      setPreviewSvg('');
+      return;
+    }
+    const canvas = fabricCanvas as unknown as { getObjects: () => any[] };
+    const objects = canvas.getObjects();
+    const sourceObj = objects.find(
+      (obj: any) =>
+        (obj.id ?? '') === selectedShapeId ||
+        objects.indexOf(obj).toString() === selectedShapeId
+    );
+    if (!sourceObj) {
+      setPreviewSvg('');
+      return;
+    }
+
+    const sourceGeometry = extractObjectGeometry(sourceObj);
+    if (sourceGeometry.length === 0) {
+      setPreviewSvg('');
+      return;
+    }
+
+    const result = generateKaleidoscope(sourceGeometry, { foldCount, sourceQuadrant });
+    const svgPath = kaleidoscopeToSvgPath(result);
+    const d = result.radius * 2;
+    setPreviewSvg(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${result.centerPoint.x - result.radius} ${result.centerPoint.y - result.radius} ${d} ${d}"><path d="${svgPath}" fill="#D4883C" stroke="#000" stroke-width="0.5"/></svg>`
+    );
+  }, [fabricCanvas, selectedShapeId, foldCount, sourceQuadrant]);
+
+  const handleGenerateKaleidoscope = useCallback(async () => {
     if (!fabricCanvas || !selectedShapeId) return;
 
-    // Kaleidoscope generation not yet implemented
+    const fabric = await import('fabric');
+    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+
+    // Find the selected object
+    const objects = canvas.getObjects();
+    const sourceObj = objects.find(
+      (obj: any) =>
+        (obj.id ?? '') === selectedShapeId ||
+        objects.indexOf(obj).toString() === selectedShapeId
+    );
+    if (!sourceObj) return;
+
+    // Extract geometry from the source object
+    const sourceGeometry = extractObjectGeometry(sourceObj);
+    if (sourceGeometry.length === 0) return;
+
+    // Generate kaleidoscope
+    const result = generateKaleidoscope(sourceGeometry, {
+      foldCount,
+      sourceQuadrant,
+    });
+
+    // Convert result to SVG path and create Fabric.js path object
+    const svgPath = kaleidoscopeToSvgPath(result);
+    if (!svgPath.trim()) return;
+
+    const pathObj = new fabric.Path(svgPath, {
+      fill: (sourceObj as any).fill ?? '#D4883C',
+      stroke: '#000000',
+      strokeWidth: 0.5,
+      left: result.centerPoint.x - result.radius,
+      top: result.centerPoint.y - result.radius,
+      selectable: true,
+    });
+
+    canvas.add(pathObj);
+    canvas.setActiveObject(pathObj);
+    canvas.renderAll();
+
+    const json = JSON.stringify(canvas.toJSON());
+    useCanvasStore.getState().pushUndoState(json);
+    useProjectStore.getState().setDirty(true);
+
     onClose();
-  }, [fabricCanvas, selectedShapeId, onClose]);
+  }, [fabricCanvas, selectedShapeId, foldCount, sourceQuadrant, onClose]);
 
-  const handleSaveToLibrary = useCallback(() => {
-    if (!selectedShapeId) return;
+  const handleSaveToLibrary = useCallback(async () => {
+    if (!fabricCanvas || !selectedShapeId) return;
 
-    // Save to library not yet implemented
-  }, [selectedShapeId]);
+    const fabric = await import('fabric');
+    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+
+    const objects = canvas.getObjects();
+    const sourceObj = objects.find(
+      (obj: any) =>
+        (obj.id ?? '') === selectedShapeId ||
+        objects.indexOf(obj).toString() === selectedShapeId
+    );
+    if (!sourceObj) return;
+
+    const sourceGeometry = extractObjectGeometry(sourceObj);
+    if (sourceGeometry.length === 0) return;
+
+    const result = generateKaleidoscope(sourceGeometry, { foldCount, sourceQuadrant });
+    const svgPath = kaleidoscopeToSvgPath(result);
+
+    const diameter = result.radius * 2;
+    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${result.centerPoint.x - result.radius} ${result.centerPoint.y - result.radius} ${diameter} ${diameter}" width="${diameter}" height="${diameter}"><path d="${svgPath}" fill="#D4883C" stroke="#000" stroke-width="0.5"/></svg>`;
+
+    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kaleidoscope-${foldCount}fold.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [fabricCanvas, selectedShapeId, foldCount, sourceQuadrant]);
 
   if (!isOpen) return null;
 
@@ -63,10 +250,12 @@ export function KaleidoscopeTool({ isOpen, onClose }: KaleidoscopeToolProps) {
               onChange={(e) => setSelectedShapeId(e.target.value)}
               className="w-full px-3 py-2 border border-outline-variant rounded-md bg-surface text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">Choose a shape...</option>
-              <option value="triangle-1">Triangle Patch</option>
-              <option value="curve-1">Curved Shape</option>
-              <option value="custom-1">Custom Drawing</option>
+              <option value="">Choose a shape from canvas...</option>
+              {canvasObjects.map((obj) => (
+                <option key={obj.id} value={obj.id}>
+                  {obj.label}
+                </option>
+              ))}
             </select>
             <p className="text-xs text-on-surface-variant mt-1">
               Select a shape from the canvas or library to use as the kaleidoscope source
@@ -138,17 +327,16 @@ export function KaleidoscopeTool({ isOpen, onClose }: KaleidoscopeToolProps) {
             </label>
             <div className="border border-outline-variant rounded-lg p-4 bg-surface-variant/20 min-h-[200px] flex items-center justify-center">
               <div className="w-48 h-48 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center">
-                <div className="text-on-surface-variant text-sm text-center">
-                  {selectedShapeId ? (
-                    <>
-                      <div className="text-lg mb-1">✺</div>
-                      <div>{foldCount}-fold kaleidoscope</div>
-                      <div className="text-xs">from {sourceQuadrant}</div>
-                    </>
-                  ) : (
-                    'Select a shape to see preview'
-                  )}
-                </div>
+                {previewSvg ? (
+                  <div
+                    className="w-48 h-48"
+                    dangerouslySetInnerHTML={{ __html: previewSvg }}
+                  />
+                ) : (
+                  <div className="text-on-surface-variant text-sm text-center">
+                    Select a shape to see preview
+                  </div>
+                )}
               </div>
             </div>
           </div>

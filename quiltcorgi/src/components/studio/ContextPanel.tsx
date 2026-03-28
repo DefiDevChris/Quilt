@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
 
@@ -141,6 +142,25 @@ function QuiltPanel() {
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [rotation, setRotation] = useState('0');
   const [shear, setShear] = useState('0');
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+
+  const applyTransform = useCallback(
+    async (transformFn: (active: any, canvas: any) => void) => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active) return;
+
+      transformFn(active, canvas);
+      active.setCoords();
+      canvas.renderAll();
+      const json = JSON.stringify(canvas.toJSON());
+      useCanvasStore.getState().pushUndoState(json);
+      useProjectStore.getState().setDirty(true);
+    },
+    [fabricCanvas]
+  );
 
   const SWATCHES = ['#D4883C', '#8B4513', '#F5DEB3', '#2E4057', '#7B3F00', '#A0522D'];
 
@@ -183,17 +203,15 @@ function QuiltPanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.rotate(0))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Straighten
           </button>
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation)))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Apply
           </button>
@@ -201,17 +219,15 @@ function QuiltPanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Flip Horiz
           </button>
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Flip Vert
           </button>
@@ -222,9 +238,8 @@ function QuiltPanel() {
           </div>
           <button
             type="button"
-            disabled
-            className="bg-primary/50 text-white rounded-md px-3 h-9 text-body-sm font-medium cursor-not-allowed"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation)))}
+            className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors"
           >
             APPLY
           </button>
@@ -235,9 +250,8 @@ function QuiltPanel() {
           </div>
           <button
             type="button"
-            disabled
-            className="bg-primary/50 text-white rounded-md px-3 h-9 text-body-sm font-medium cursor-not-allowed"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.set({ skewX: parseFloat(shear) }))}
+            className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors"
           >
             APPLY
           </button>
@@ -258,26 +272,76 @@ function QuiltPanel() {
       <div>
         <SectionTitle>Print Capabilities</SectionTitle>
         <div className="flex flex-col">
-          {['Block Overview', 'Cutting Diagram', 'Patch Count', 'Templates'].map((item) => (
-            <button
-              key={item}
-              type="button"
-              disabled
-              className="flex items-center justify-between py-2.5 text-body-md text-secondary rounded-md px-2 cursor-not-allowed opacity-50"
-              title="Coming soon"
-            >
-              <span>{item}</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M6 4L10 8L6 12"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          ))}
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
+          >
+            <span>Block Overview</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M6 4L10 8L6 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
+          >
+            <span>Cutting Diagram</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M6 4L10 8L6 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              if (!fabricCanvas) return;
+              const fabric = await import('fabric');
+              const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+              const count = canvas.getObjects().length;
+              window.alert(`Patch count: ${count}`);
+            }}
+            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
+          >
+            <span>Patch Count</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M6 4L10 8L6 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
+          >
+            <span>Templates</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M6 4L10 8L6 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -328,6 +392,25 @@ function ImagePanel() {
   const [shearH, setShearH] = useState(0);
   const [shearV, setShearV] = useState(0);
   const [cropAfterRotation, setCropAfterRotation] = useState(true);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+
+  const applyTransform = useCallback(
+    async (transformFn: (active: any, canvas: any) => void) => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active) return;
+
+      transformFn(active, canvas);
+      active.setCoords();
+      canvas.renderAll();
+      const json = JSON.stringify(canvas.toJSON());
+      useCanvasStore.getState().pushUndoState(json);
+      useProjectStore.getState().setDirty(true);
+    },
+    [fabricCanvas]
+  );
 
   return (
     <div className="flex flex-col gap-[2.75rem]">
@@ -340,17 +423,15 @@ function ImagePanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Rotate 90&#176;
           </button>
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Rotate -90&#176;
           </button>
@@ -360,17 +441,15 @@ function ImagePanel() {
         <div className="flex gap-2 mb-4">
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Flip Horiz
           </button>
           <button
             type="button"
-            disabled
-            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
+            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
           >
             Flip Vert
           </button>
@@ -425,9 +504,13 @@ function ImagePanel() {
         {/* Straighten button */}
         <button
           type="button"
-          disabled
-          className="w-full bg-primary/50 text-white rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed mb-4"
-          title="Coming soon"
+          onClick={() =>
+            applyTransform((active) => {
+              active.rotate(parseFloat(rotation) || 0);
+              active.set({ skewX: shearH, skewY: shearV });
+            })
+          }
+          className="w-full bg-primary text-on-primary rounded-md py-2.5 text-body-sm font-medium hover:bg-primary/90 transition-colors mb-4"
         >
           Straighten (Apply)
         </button>

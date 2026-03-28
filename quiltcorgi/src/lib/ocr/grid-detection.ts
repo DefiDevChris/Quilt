@@ -38,9 +38,11 @@ export function houghTransform(
       if (data[y * width + x] === 0) continue;
 
       for (let t = 0; t < thetaSteps; t++) {
-        const rho = Math.round(x * cosTable[t] + y * sinTable[t]);
+        const rho = Math.round(x * cosTable[t]! + y * sinTable[t]!);
         const rhoIndex = rho + maxRho;
-        accumulator[rhoIndex * thetaSteps + t]++;
+        if (rhoIndex >= 0 && rhoIndex < 2 * maxRho) {
+          accumulator[rhoIndex * thetaSteps + t]++;
+        }
       }
     }
   }
@@ -235,7 +237,9 @@ function hasAlternatingSpacing(values: readonly number[]): boolean {
   const oddAvg = oddGaps.reduce((s, g) => s + g, 0) / oddGaps.length;
 
   // Different average spacing AND each set is internally consistent
-  const ratio = Math.abs(evenAvg - oddAvg) / Math.max(evenAvg, oddAvg);
+  const maxAvg = Math.max(evenAvg, oddAvg);
+  if (maxAvg === 0) return false;
+  const ratio = Math.abs(evenAvg - oddAvg) / maxAvg;
   return ratio > 0.3;
 }
 

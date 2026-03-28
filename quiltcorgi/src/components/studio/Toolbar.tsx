@@ -6,6 +6,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
+import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 
 interface ToolDef {
@@ -43,7 +44,7 @@ function ToolIcon({
         isActive ? 'bg-primary-container/30 text-primary' : 'text-secondary hover:text-on-surface'
       }`}
     >
-      {tool.icon}
+      <span aria-hidden="true">{tool.icon}</span>
     </button>
   );
 
@@ -262,6 +263,58 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <rect x="11" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="3" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="11" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'grid-dimensions',
+      label: 'Grid & Dimensions',
+      description: 'Set quilt size and configure the cell grid overlay',
+      group: 'layout',
+      onClick: callbacks.onOpenGridDimensions,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path d="M3 6.5H17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
+          <path d="M3 13.5H17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
+          <path d="M6.5 3V17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
+          <path d="M13.5 3V17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
+          <path
+            d="M1 3V1H3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M17 1H19V3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    // Inspect
+    {
+      id: 'puzzle-view',
+      label: 'Puzzle View',
+      shortcut: 'I',
+      description: 'Hover and click pieces to inspect dimensions and print cutting templates',
+      group: 'inspect',
+      onClick: () => usePieceInspectorStore.getState().togglePuzzleView(),
+      isActive: () => usePieceInspectorStore.getState().isPuzzleViewActive,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M4 8C4 6 6 4 8 4H9V8H4ZM11 4H12C14 4 16 6 16 8V9H11V4ZM16 11V12C16 14 14 16 12 16H11V11H16ZM9 16H8C6 16 4 14 4 12V11H9V16Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
     },
@@ -655,6 +708,7 @@ function useImageTools(): ToolDef[] {
 
 interface ToolbarCallbacks {
   onOpenLayoutSettings?: () => void;
+  onOpenGridDimensions?: () => void;
   onOpenSymmetry?: () => void;
   onOpenSerendipity?: () => void;
   onOpenCalculator?: () => void;
@@ -667,6 +721,7 @@ interface ToolbarProps extends ToolbarCallbacks {}
 
 export function Toolbar({
   onOpenLayoutSettings,
+  onOpenGridDimensions,
   onOpenSymmetry,
   onOpenSerendipity,
   onOpenCalculator,
@@ -680,6 +735,7 @@ export function Toolbar({
 
   const callbacks: ToolbarCallbacks = {
     onOpenLayoutSettings,
+    onOpenGridDimensions,
     onOpenSymmetry,
     onOpenSerendipity,
     onOpenCalculator,

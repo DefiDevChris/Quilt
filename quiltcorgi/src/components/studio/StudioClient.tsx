@@ -33,11 +33,14 @@ import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { HelpButton } from '@/components/studio/HelpButton';
 import { HelpPanel } from '@/components/studio/HelpPanel';
+import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
+import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 
 function PrintOptionsPanel() {
   return (
@@ -98,10 +101,12 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isPhotoPatchworkOpen, setIsPhotoPatchworkOpen] = useState(false);
   const [isQuiltOcrOpen, setIsQuiltOcrOpen] = useState(false);
+  const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const isInspectorOpen = usePieceInspectorStore((s) => s.isOpen);
 
   useYardageCalculation();
 
@@ -197,6 +202,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
         ) : (
           <Toolbar
             onOpenLayoutSettings={() => setIsLayoutSettingsOpen(true)}
+            onOpenGridDimensions={() => setIsGridDimensionsOpen(true)}
             onOpenSymmetry={() => setIsSymmetryOpen(true)}
             onOpenSerendipity={() => setIsSerendipityOpen(true)}
             onOpenCalculator={() => setIsCalculatorOpen(true)}
@@ -260,10 +266,21 @@ export function StudioClient({ projectId }: StudioClientProps) {
             isOpen={isCalculatorOpen}
             onClose={() => setIsCalculatorOpen(false)}
           />
+
+          {/* Grid & Dimensions Panel (Free tier) */}
+          <QuiltDimensionsPanel
+            isOpen={isGridDimensionsOpen}
+            onClose={() => setIsGridDimensionsOpen(false)}
+          />
         </div>
 
         {/* Right context panel (hidden for PRINT) */}
-        {activeWorktable !== 'print' && <ContextPanel />}
+        {activeWorktable !== 'print' && (
+          <div className="relative">
+            <ContextPanel />
+            {isInspectorOpen && <PieceInspectorPanel />}
+          </div>
+        )}
       </div>
 
       <BottomBar />

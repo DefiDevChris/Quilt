@@ -5,6 +5,9 @@ import type { PrintlistItem } from '@/types/printlist';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 import type { PaperSize } from '@/lib/pdf-generator';
 
+const QUANTITY_MIN = 1;
+const QUANTITY_MAX = 9999;
+
 interface PrintlistStoreState {
   items: PrintlistItem[];
   paperSize: PaperSize;
@@ -12,8 +15,14 @@ interface PrintlistStoreState {
   projectId: string | null;
   isSaving: boolean;
   isLoading: boolean;
+  lastSaveError: string | null;
 
-  addItem: (item: Omit<PrintlistItem, 'seamAllowance' | 'seamAllowanceEnabled'> & { seamAllowance?: number; seamAllowanceEnabled?: boolean }) => void;
+  addItem: (
+    item: Omit<PrintlistItem, 'seamAllowance' | 'seamAllowanceEnabled'> & {
+      seamAllowance?: number;
+      seamAllowanceEnabled?: boolean;
+    }
+  ) => void;
   removeItem: (shapeId: string) => void;
   updateQuantity: (shapeId: string, quantity: number) => void;
   updateSeamAllowance: (shapeId: string, seamAllowance: number) => void;
@@ -34,10 +43,13 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
   projectId: null,
   isSaving: false,
   isLoading: false,
+  lastSaveError: null,
 
   addItem: (item) => {
+    const clampedQuantity = Math.min(Math.max(item.quantity, QUANTITY_MIN), QUANTITY_MAX);
     const newItem: PrintlistItem = {
       ...item,
+      quantity: clampedQuantity,
       seamAllowance: item.seamAllowance ?? DEFAULT_SEAM_ALLOWANCE_INCHES,
       seamAllowanceEnabled: item.seamAllowanceEnabled ?? true,
     };
@@ -46,7 +58,9 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
       if (existing) {
         return {
           items: state.items.map((i) =>
-            i.shapeId === item.shapeId ? { ...i, quantity: i.quantity + item.quantity } : i
+            i.shapeId === item.shapeId
+              ? { ...i, quantity: Math.min(i.quantity + clampedQuantity, QUANTITY_MAX) }
+              : i
           ),
         };
       }
@@ -62,16 +76,16 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
   updateQuantity: (shapeId, quantity) =>
     set((state) => ({
       items: state.items.map((i) =>
-        i.shapeId === shapeId ? { ...i, quantity: Math.max(1, quantity) } : i
+        i.shapeId === shapeId
+          ? { ...i, quantity: Math.min(Math.max(quantity, QUANTITY_MIN), QUANTITY_MAX) }
+          : i
       ),
     })),
 
   updateSeamAllowance: (shapeId, seamAllowance) =>
     set((state) => ({
       items: state.items.map((i) =>
-        i.shapeId === shapeId
-          ? { ...i, seamAllowance: Math.max(0, Math.min(1, seamAllowance)) }
-          : i
+        i.shapeId === shapeId ? { ...i, seamAllowance: Math.max(0, Math.min(1, seamAllowance)) } : i
       ),
     })),
 
@@ -117,9 +131,9 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
 
   saveToServer: async (projectId: string) => {
     const state = get();
-    set({ isSaving: true });
+    set({ isSaving: true, lastSaveError: null });
     try {
-      await fetch(`/api/projects/${projectId}/printlist`, {
+      const res = await fetch(`/api/projects/${projectId}/printlist`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,8 +141,11 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
           paperSize: state.paperSize,
         }),
       });
+      if (!res.ok) {
+        set({ lastSaveError: 'Failed to save print list. Your changes are not synced.' });
+      }
     } catch {
-      // Silently fail — printlist save is not critical
+      set({ lastSaveError: 'Failed to save print list. Check your connection.' });
     } finally {
       set({ isSaving: false });
     }

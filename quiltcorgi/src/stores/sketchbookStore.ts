@@ -11,6 +11,7 @@ interface SketchbookStoreState {
   isSaving: boolean;
   compareMode: boolean;
   compareVariationId: string | null;
+  error: string | null;
 
   togglePanel: () => void;
   setPanelOpen: (open: boolean) => void;
@@ -18,10 +19,24 @@ interface SketchbookStoreState {
   setCompareMode: (on: boolean, compareId?: string) => void;
 
   loadVariations: (projectId: string) => Promise<void>;
-  saveVariation: (projectId: string, name: string, canvasData: Record<string, unknown>) => Promise<void>;
+  saveVariation: (
+    projectId: string,
+    name: string,
+    canvasData: Record<string, unknown>
+  ) => Promise<void>;
   duplicateVariation: (projectId: string, variationId: string) => Promise<void>;
   deleteVariation: (projectId: string, variationId: string) => Promise<void>;
   renameVariation: (projectId: string, variationId: string, name: string) => Promise<void>;
+}
+
+function isValidVariationRecord(v: Record<string, unknown>): boolean {
+  return (
+    typeof v.id === 'string' &&
+    v.id.length > 0 &&
+    typeof v.name === 'string' &&
+    (v.canvasData === null || v.canvasData === undefined || typeof v.canvasData === 'object') &&
+    (v.createdAt === null || typeof v.createdAt === 'string')
+  );
 }
 
 export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
@@ -32,6 +47,7 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
   isSaving: false,
   compareMode: false,
   compareVariationId: null,
+  error: null,
 
   togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),
   setPanelOpen: (open) => set({ isPanelOpen: open }),
@@ -53,17 +69,24 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
       }
       const json = await res.json();
       if (json.success) {
-        const variations = (json.data as Array<Record<string, unknown>>).map(
-          (v) => ({
+        const raw: Array<Record<string, unknown>> = Array.isArray(json.data) ? json.data : [];
+        const variations = raw
+          .filter((v) => {
+            if (!isValidVariationRecord(v)) {
+              console.warn('[sketchbookStore] Skipping malformed variation record:', v);
+              return false;
+            }
+            return true;
+          })
+          .map((v) => ({
             id: v.id as string,
             projectId,
-            userId: (v.userId as string) ?? '',
+            userId: typeof v.userId === 'string' ? v.userId : '',
             name: v.name as string,
             canvasData: (v.canvasData as Record<string, unknown>) ?? {},
-            thumbnailUrl: (v.thumbnailUrl as string) ?? null,
+            thumbnailUrl: typeof v.thumbnailUrl === 'string' ? v.thumbnailUrl : null,
             createdAt: new Date(v.createdAt as string),
-          })
-        );
+          }));
         set({ variations, isLoading: false });
       } else {
         set({ variations: [], isLoading: false });
@@ -74,7 +97,7 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
   },
 
   saveVariation: async (projectId, name, canvasData) => {
-    set({ isSaving: true });
+    set({ isSaving: true, error: null });
     try {
       const res = await fetch(`/api/projects/${projectId}/variations`, {
         method: 'POST',
@@ -84,15 +107,20 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
-          const v = json.data;
+          const v = json.data as Record<string, unknown>;
+          if (!isValidVariationRecord(v)) {
+            console.warn('[sketchbookStore] saveVariation: invalid response record', v);
+            set({ isSaving: false });
+            return;
+          }
           const newVariation: DesignVariation = {
-            id: v.id,
+            id: v.id as string,
             projectId,
-            userId: v.userId ?? '',
-            name: v.name,
-            canvasData: v.canvasData ?? {},
-            thumbnailUrl: v.thumbnailUrl ?? null,
-            createdAt: new Date(v.createdAt),
+            userId: typeof v.userId === 'string' ? v.userId : '',
+            name: v.name as string,
+            canvasData: (v.canvasData as Record<string, unknown>) ?? {},
+            thumbnailUrl: typeof v.thumbnailUrl === 'string' ? v.thumbnailUrl : null,
+            createdAt: new Date(v.createdAt as string),
           };
           set((state) => ({
             variations: [...state.variations, newVariation],
@@ -112,7 +140,7 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
     const original = variations.find((v) => v.id === variationId);
     if (!original) return;
 
-    set({ isSaving: true });
+    set({ isSaving: true, error: null });
     try {
       const res = await fetch(`/api/projects/${projectId}/variations`, {
         method: 'POST',
@@ -125,15 +153,20 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
-          const v = json.data;
+          const v = json.data as Record<string, unknown>;
+          if (!isValidVariationRecord(v)) {
+            console.warn('[sketchbookStore] duplicateVariation: invalid response record', v);
+            set({ isSaving: false });
+            return;
+          }
           const dup: DesignVariation = {
-            id: v.id,
+            id: v.id as string,
             projectId,
-            userId: v.userId ?? '',
-            name: v.name,
-            canvasData: v.canvasData ?? {},
-            thumbnailUrl: v.thumbnailUrl ?? null,
-            createdAt: new Date(v.createdAt),
+            userId: typeof v.userId === 'string' ? v.userId : '',
+            name: v.name as string,
+            canvasData: (v.canvasData as Record<string, unknown>) ?? {},
+            thumbnailUrl: typeof v.thumbnailUrl === 'string' ? v.thumbnailUrl : null,
+            createdAt: new Date(v.createdAt as string),
           };
           set((state) => ({
             variations: [...state.variations, dup],
@@ -150,10 +183,9 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
 
   deleteVariation: async (projectId, variationId) => {
     try {
-      const res = await fetch(
-        `/api/projects/${projectId}/variations/${variationId}`,
-        { method: 'DELETE' }
-      );
+      const res = await fetch(`/api/projects/${projectId}/variations/${variationId}`, {
+        method: 'DELETE',
+      });
       if (res.ok || res.status === 204) {
         set((state) => ({
           variations: state.variations.filter((v) => v.id !== variationId),
@@ -162,31 +194,30 @@ export const useSketchbookStore = create<SketchbookStoreState>((set, get) => ({
           compareVariationId:
             state.compareVariationId === variationId ? null : state.compareVariationId,
         }));
+      } else {
+        set({ error: 'Failed to delete variation. Please try again.' });
       }
     } catch {
-      // Silent failure for delete
+      set({ error: 'Failed to delete variation. Check your connection.' });
     }
   },
 
   renameVariation: async (projectId, variationId, name) => {
     try {
-      const res = await fetch(
-        `/api/projects/${projectId}/variations/${variationId}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name }),
-        }
-      );
+      const res = await fetch(`/api/projects/${projectId}/variations/${variationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
       if (res.ok) {
         set((state) => ({
-          variations: state.variations.map((v) =>
-            v.id === variationId ? { ...v, name } : v
-          ),
+          variations: state.variations.map((v) => (v.id === variationId ? { ...v, name } : v)),
         }));
+      } else {
+        set({ error: 'Failed to rename variation. Please try again.' });
       }
     } catch {
-      // Silent failure for rename
+      set({ error: 'Failed to rename variation. Check your connection.' });
     }
   },
 }));

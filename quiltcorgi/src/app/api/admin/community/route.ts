@@ -37,6 +37,10 @@ export async function GET(request: NextRequest) {
 
   const { status } = parsed.data;
 
+  const page = Math.max(1, Number(request.nextUrl.searchParams.get('page')) || 1);
+  const limit = Math.min(100, Math.max(1, Number(request.nextUrl.searchParams.get('limit')) || 50));
+  const offset = (page - 1) * limit;
+
   try {
     const whereClause = status !== 'all' ? eq(communityPosts.status, status) : undefined;
 
@@ -56,7 +60,9 @@ export async function GET(request: NextRequest) {
         .from(communityPosts)
         .leftJoin(users, eq(communityPosts.userId, users.id))
         .where(whereClause)
-        .orderBy(desc(communityPosts.createdAt)),
+        .orderBy(desc(communityPosts.createdAt))
+        .limit(limit)
+        .offset(offset),
       db.select({ count: count() }).from(communityPosts).where(whereClause),
     ]);
 
@@ -79,10 +85,10 @@ export async function GET(request: NextRequest) {
       data: {
         posts,
         pagination: {
-          page: 1,
-          limit: total,
+          page,
+          limit,
           total,
-          totalPages: 1,
+          totalPages: Math.ceil(total / limit),
         },
       },
     });

@@ -119,98 +119,101 @@ export function ContextMenu() {
       if (!fabricCanvas || isExecuting) return;
       setIsExecuting(true);
       try {
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-      const active = canvas.getActiveObject();
-      if (!active) return;
+        const fabric = await import('fabric');
+        const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+        const active = canvas.getActiveObject();
+        if (!active) return;
 
-      switch (action) {
-        case 'duplicate': {
-          const cloned = await active.clone();
-          cloned.set({
-            left: (active.left ?? 0) + 20,
-            top: (active.top ?? 0) + 20,
-          });
-          canvas.add(cloned);
-          canvas.setActiveObject(cloned);
-          break;
-        }
-        case 'delete': {
-          canvas.remove(active);
-          canvas.discardActiveObject();
-          break;
-        }
-        case 'flipH': {
-          active.set({ flipX: !active.flipX });
-          break;
-        }
-        case 'flipV': {
-          active.set({ flipY: !active.flipY });
-          break;
-        }
-        case 'rotate90': {
-          active.rotate((active.angle ?? 0) + 90);
-          break;
-        }
-        case 'sendToBack': {
-          canvas.sendObjectToBack(active);
-          break;
-        }
-        case 'bringToFront': {
-          canvas.bringObjectToFront(active);
-          break;
-        }
-        case 'fussyCut': {
-          // Extract fabric pattern info from the active object
-          const fill = active.get('fill');
-          if (fill && typeof fill !== 'string') {
-            const patternFill = fill as {
-              source?: { src?: string };
-              patternSourceCanvas?: unknown;
-            };
-            const fabricImageUrl = patternFill.source?.src ?? '';
-            const fabricId = (active as unknown as { fabricId?: string }).fabricId ?? '';
-            const vertices: { x: number; y: number }[] = [];
-
-            // Get patch shape vertices if it's a polygon
-            if (
-              'points' in active &&
-              Array.isArray((active as unknown as { points: unknown[] }).points)
-            ) {
-              const pts = (active as unknown as { points: { x: number; y: number }[] }).points;
-              for (const pt of pts) {
-                vertices.push({ x: pt.x, y: pt.y });
-              }
-            } else {
-              // Fallback: use bounding box corners
-              const bounds = active.getBoundingRect();
-              vertices.push(
-                { x: bounds.left, y: bounds.top },
-                { x: bounds.left + bounds.width, y: bounds.top },
-                { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
-                { x: bounds.left, y: bounds.top + bounds.height }
-              );
-            }
-
-            useCanvasStore.getState().setFussyCutTarget({
-              objectId: (active as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
-              fabricId,
-              fabricImageUrl,
-              patchVertices: vertices,
+        switch (action) {
+          case 'duplicate': {
+            const cloned = await active.clone();
+            cloned.set({
+              left: (active.left ?? 0) + 20,
+              top: (active.top ?? 0) + 20,
             });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            break;
           }
-          break;
-        }
-      }
+          case 'delete': {
+            canvas.remove(active);
+            canvas.discardActiveObject();
+            break;
+          }
+          case 'flipH': {
+            active.set({ flipX: !active.flipX });
+            break;
+          }
+          case 'flipV': {
+            active.set({ flipY: !active.flipY });
+            break;
+          }
+          case 'rotate90': {
+            active.rotate((active.angle ?? 0) + 90);
+            break;
+          }
+          case 'sendToBack': {
+            canvas.sendObjectToBack(active);
+            break;
+          }
+          case 'bringToFront': {
+            canvas.bringObjectToFront(active);
+            break;
+          }
+          case 'fussyCut': {
+            // Extract fabric pattern info from the active object
+            const fill = active.get('fill');
+            if (fill && typeof fill !== 'string') {
+              const patternFill = fill as {
+                source?: { src?: string };
+                patternSourceCanvas?: unknown;
+              };
+              const fabricImageUrl = patternFill.source?.src ?? '';
+              const fabricId = (active as unknown as { fabricId?: string }).fabricId ?? '';
+              const vertices: { x: number; y: number }[] = [];
 
-      active.setCoords();
-      canvas.renderAll();
-      const json = JSON.stringify(canvas.toJSON());
-      useCanvasStore.getState().pushUndoState(json);
-      useProjectStore.getState().setDirty(true);
-      closeMenu();
+              // Get patch shape vertices if it's a polygon
+              if (
+                'points' in active &&
+                Array.isArray((active as unknown as { points: unknown[] }).points)
+              ) {
+                const pts = (active as unknown as { points: { x: number; y: number }[] }).points;
+                for (const pt of pts) {
+                  vertices.push({ x: pt.x, y: pt.y });
+                }
+              } else {
+                // Fallback: use bounding box corners
+                const bounds = active.getBoundingRect();
+                vertices.push(
+                  { x: bounds.left, y: bounds.top },
+                  { x: bounds.left + bounds.width, y: bounds.top },
+                  { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+                  { x: bounds.left, y: bounds.top + bounds.height }
+                );
+              }
+
+              useCanvasStore.getState().setFussyCutTarget({
+                objectId: (active as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
+                fabricId,
+                fabricImageUrl,
+                patchVertices: vertices,
+              });
+            }
+            break;
+          }
+        }
+
+        active.setCoords();
+        canvas.renderAll();
+        const json = JSON.stringify(canvas.toJSON());
+        useCanvasStore.getState().pushUndoState(json);
+        useProjectStore.getState().setDirty(true);
+        closeMenu();
+      } finally {
+        setIsExecuting(false);
+      }
     },
-    [fabricCanvas, closeMenu]
+    [fabricCanvas, isExecuting, closeMenu]
   );
 
   const handleAddToPrintlist = useCallback(async () => {
@@ -280,8 +283,9 @@ export function ContextMenu() {
             {!showQuantityInput ? (
               <button
                 type="button"
+                disabled={isExecuting}
                 onClick={() => setShowQuantityInput(true)}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="w-5 text-center">{item.icon}</span>
                 {item.label}
@@ -304,10 +308,11 @@ export function ContextMenu() {
                 />
                 <button
                   type="button"
+                  disabled={isExecuting}
                   onClick={handleAddToPrintlist}
-                  className="rounded bg-primary px-2 py-0.5 text-xs text-white hover:opacity-90"
+                  className="rounded bg-primary px-2 py-0.5 text-xs text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add
+                  {isExecuting ? '...' : 'Add'}
                 </button>
               </div>
             )}
@@ -316,10 +321,11 @@ export function ContextMenu() {
           <button
             key={item.action}
             type="button"
+            disabled={isExecuting}
             onClick={() =>
               item.action === 'selectAll' ? handleSelectAll() : executeAction(item.action)
             }
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="w-5 text-center">{item.icon}</span>
             {item.label}

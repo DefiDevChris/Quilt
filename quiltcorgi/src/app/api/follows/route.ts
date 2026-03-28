@@ -53,26 +53,30 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (existingFollow) {
-      await db
-        .delete(follows)
-        .where(and(eq(follows.followerId, session.user.id), eq(follows.followingId, targetUserId)));
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(follows)
+          .where(
+            and(eq(follows.followerId, session.user.id), eq(follows.followingId, targetUserId))
+          );
 
-      await Promise.all([
-        db
-          .update(userProfiles)
-          .set({
-            followingCount: sql`GREATEST(${userProfiles.followingCount} - 1, 0)`,
-            updatedAt: new Date(),
-          })
-          .where(eq(userProfiles.userId, session.user.id)),
-        db
-          .update(userProfiles)
-          .set({
-            followerCount: sql`GREATEST(${userProfiles.followerCount} - 1, 0)`,
-            updatedAt: new Date(),
-          })
-          .where(eq(userProfiles.userId, targetUserId)),
-      ]);
+        await Promise.all([
+          tx
+            .update(userProfiles)
+            .set({
+              followingCount: sql`GREATEST(${userProfiles.followingCount} - 1, 0)`,
+              updatedAt: new Date(),
+            })
+            .where(eq(userProfiles.userId, session.user.id)),
+          tx
+            .update(userProfiles)
+            .set({
+              followerCount: sql`GREATEST(${userProfiles.followerCount} - 1, 0)`,
+              updatedAt: new Date(),
+            })
+            .where(eq(userProfiles.userId, targetUserId)),
+        ]);
+      });
 
       return Response.json({
         success: true,
@@ -80,27 +84,29 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    await db.insert(follows).values({
-      followerId: session.user.id,
-      followingId: targetUserId,
-    });
+    await db.transaction(async (tx) => {
+      await tx.insert(follows).values({
+        followerId: session.user.id,
+        followingId: targetUserId,
+      });
 
-    await Promise.all([
-      db
-        .update(userProfiles)
-        .set({
-          followingCount: sql`${userProfiles.followingCount} + 1`,
-          updatedAt: new Date(),
-        })
-        .where(eq(userProfiles.userId, session.user.id)),
-      db
-        .update(userProfiles)
-        .set({
-          followerCount: sql`${userProfiles.followerCount} + 1`,
-          updatedAt: new Date(),
-        })
-        .where(eq(userProfiles.userId, targetUserId)),
-    ]);
+      await Promise.all([
+        tx
+          .update(userProfiles)
+          .set({
+            followingCount: sql`${userProfiles.followingCount} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(eq(userProfiles.userId, session.user.id)),
+        tx
+          .update(userProfiles)
+          .set({
+            followerCount: sql`${userProfiles.followerCount} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(eq(userProfiles.userId, targetUserId)),
+      ]);
+    });
 
     const followerName = session.user.name ?? 'Someone';
 

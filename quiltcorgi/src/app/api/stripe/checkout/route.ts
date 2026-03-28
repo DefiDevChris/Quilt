@@ -14,6 +14,11 @@ export async function POST() {
     return errorResponse('You already have a Pro subscription.', 'FORBIDDEN', 403);
   }
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (!appUrl) {
+    return errorResponse('Service configuration error', 'INTERNAL_ERROR', 500);
+  }
+
   try {
     // Look up or create Stripe customer
     let stripeCustomerId: string;
@@ -41,13 +46,6 @@ export async function POST() {
         plan: 'free',
         status: 'active',
       });
-    }
-
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (!appUrl) {
-      throw new Error(
-        'NEXT_PUBLIC_APP_URL environment variable is required for Stripe checkout redirects'
-      );
     }
 
     const checkoutSession = await stripe.checkout.sessions.create({
