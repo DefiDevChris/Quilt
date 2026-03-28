@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { PIXELS_PER_INCH } from '@/lib/constants';
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -56,7 +57,7 @@ export function useBlockDrop() {
 
         // Snap to grid if enabled
         if (gridSettings.snapToGrid && gridSettings.enabled) {
-          const gridSizePx = gridSettings.size * 96; // PIXELS_PER_INCH
+          const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
           dropX = Math.round(dropX / gridSizePx) * gridSizePx;
           dropY = Math.round(dropY / gridSizePx) * gridSizePx;
         }
@@ -83,7 +84,7 @@ export function useBlockDrop() {
         if (objects.length === 0) return;
 
         // Scale the block to a reasonable size (96px = 1 inch at 100% zoom)
-        const blockSize = 96; // 1 inch
+        const blockSize = PIXELS_PER_INCH;
         const group = new fabric.Group(objects, {
           left: dropX,
           top: dropY,

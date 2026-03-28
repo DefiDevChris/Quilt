@@ -26,28 +26,31 @@ describe('seam-allowance', () => {
   describe('svgPathToPolyline', () => {
     it('converts M L path to polyline', () => {
       const points = svgPathToPolyline('M 0 0 L 100 0 L 100 100 L 0 100 Z');
-      expect(points.length).toBe(4);
+      expect(points.length).toBe(5);
       expect(points[0]).toEqual({ x: 0, y: 0 });
       expect(points[1]).toEqual({ x: 100, y: 0 });
       expect(points[2]).toEqual({ x: 100, y: 100 });
       expect(points[3]).toEqual({ x: 0, y: 100 });
+      expect(points[4]).toEqual({ x: 0, y: 0 });
     });
 
     it('handles H and V commands', () => {
       const points = svgPathToPolyline('M 0 0 H 50 V 50 H 0 Z');
-      expect(points.length).toBe(4);
+      expect(points.length).toBe(5);
       expect(points[0]).toEqual({ x: 0, y: 0 });
       expect(points[1]).toEqual({ x: 50, y: 0 });
       expect(points[2]).toEqual({ x: 50, y: 50 });
       expect(points[3]).toEqual({ x: 0, y: 50 });
+      expect(points[4]).toEqual({ x: 0, y: 0 });
     });
 
     it('handles relative commands', () => {
       const points = svgPathToPolyline('M 0 0 l 100 0 l 0 100 z');
-      expect(points.length).toBe(3);
+      expect(points.length).toBe(4);
       expect(points[0]).toEqual({ x: 0, y: 0 });
       expect(points[1]).toEqual({ x: 100, y: 0 });
       expect(points[2]).toEqual({ x: 100, y: 100 });
+      expect(points[3]).toEqual({ x: 0, y: 0 });
     });
 
     it('approximates cubic bezier curves', () => {
@@ -72,10 +75,11 @@ describe('seam-allowance', () => {
 
     it('handles triangle path', () => {
       const points = svgPathToPolyline('M 50 0 L 100 100 L 0 100 Z');
-      expect(points.length).toBe(3);
+      expect(points.length).toBe(4);
       expect(points[0]).toEqual({ x: 50, y: 0 });
       expect(points[1]).toEqual({ x: 100, y: 100 });
       expect(points[2]).toEqual({ x: 0, y: 100 });
+      expect(points[3]).toEqual({ x: 50, y: 0 });
     });
   });
 
@@ -113,7 +117,10 @@ describe('seam-allowance', () => {
     });
 
     it('returns original points for fewer than 3 points', () => {
-      const line = [{ x: 0, y: 0 }, { x: 1, y: 0 }];
+      const line = [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+      ];
       const result = computeSeamOffset(line, 0.25);
       expect(result).toEqual(line);
     });
@@ -140,7 +147,7 @@ describe('seam-allowance', () => {
       const svg = '<path d="M 0 0 L 96 0 L 96 96 L 0 96 Z"/>';
       const result = computeSeamAllowance(svg, 0.25, 1 / 96);
       expect(result).not.toBeNull();
-      expect(result!.cutLine.length).toBe(4);
+      expect(result!.cutLine.length).toBe(5);
       expect(result!.seamLine.length).toBeGreaterThan(0);
     });
 

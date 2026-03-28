@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
 import {
@@ -28,8 +28,8 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
 
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
-  const allBlocks = [...blocks, ...userBlocks].filter(
-    (b, i, arr) => arr.findIndex((x) => x.id === b.id) === i
+  const allBlocks = useMemo(() => [...blocks, ...userBlocks].filter(
+    (b, i, arr) => arr.findIndex((x) => x.id === b.id) === i), [blocks, userBlocks]
   );
 
   // Fetch block data when both blocks are selected

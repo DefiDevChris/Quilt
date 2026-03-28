@@ -10,13 +10,10 @@ import {
 } from '@/lib/auth-helpers';
 import { notFoundResponse } from '@/lib/api-responses';
 import { updateBlogPostSchema } from '@/lib/validation';
+import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-function calculateReadTime(content: unknown): number {
-  const charCount = JSON.stringify(content ?? '').length;
-  return Math.max(1, Math.ceil(charCount / 1500));
-}
 
 export async function GET(
   _request: NextRequest,

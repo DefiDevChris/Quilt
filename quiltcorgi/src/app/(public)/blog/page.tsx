@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { BlogGrid } from '@/components/blog/BlogGrid';
 import type { BlogPostListItem } from '@/types/community';
+import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,10 +14,6 @@ export const metadata: Metadata = {
     'News, tips, and behind-the-scenes updates from the QuiltCorgi team. Learn about quilt design, new features, and the quilting community.',
 };
 
-function calculateReadTime(content: unknown): number {
-  const charCount = JSON.stringify(content ?? '').length;
-  return Math.max(1, Math.ceil(charCount / 1500));
-}
 
 export default async function BlogPage() {
   const whereClause = eq(blogPosts.status, 'published');

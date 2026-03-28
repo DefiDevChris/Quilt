@@ -4,13 +4,10 @@ import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-function calculateReadTime(content: unknown): number {
-  const charCount = JSON.stringify(content ?? '').length;
-  return Math.max(1, Math.ceil(charCount / 1500));
-}
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();

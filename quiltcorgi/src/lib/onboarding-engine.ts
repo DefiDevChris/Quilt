@@ -134,6 +134,7 @@ export function computeTooltipPosition(
 
 export function getStorageFlag(key: string): boolean {
   try {
+    if (typeof localStorage === 'undefined') return false;
     return localStorage.getItem(key) === 'true';
   } catch {
     return false;
@@ -142,6 +143,7 @@ export function getStorageFlag(key: string): boolean {
 
 export function setStorageFlag(key: string, value: boolean): void {
   try {
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(key, String(value));
   } catch {
     // Silently fail if localStorage is unavailable

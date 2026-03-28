@@ -171,6 +171,7 @@ export function generateCheckerboardUnits(
 
 /**
  * Generate HST (half-square-triangle) units along a line.
+ * HST and sawtooth share the same triangle construction.
  */
 export function generateHstUnits(
   length: number,

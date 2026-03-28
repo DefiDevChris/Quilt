@@ -12,13 +12,10 @@ import {
 } from '@/lib/auth-helpers';
 import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
+import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-function calculateReadTime(content: unknown): number {
-  const charCount = JSON.stringify(content ?? '').length;
-  return Math.max(1, Math.ceil(charCount / 1500));
-}
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl;

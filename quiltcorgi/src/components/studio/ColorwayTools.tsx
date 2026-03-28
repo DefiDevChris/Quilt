@@ -151,7 +151,7 @@ export function ColorwayTools() {
             <div className="flex flex-wrap gap-1 mb-1">
               {palette.map((color, i) => (
                 <input
-                  key={i}
+                  key={`palette-${color}-${i}`}
                   type="color"
                   value={color}
                   onChange={(e) => handlePaletteColorChange(i, e.target.value)}

@@ -25,6 +25,7 @@ export const metadata: Metadata = {
       'A modern, browser-based quilt design studio. Free to start, low-cost Pro subscription.',
     type: 'website',
     siteName: 'QuiltCorgi',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'QuiltCorgi' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: '/favicon.svg',
-    apple: '/favicon.svg',
+    apple: '/icon-192.png',
   },
   manifest: '/manifest.json',
 };

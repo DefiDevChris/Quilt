@@ -273,7 +273,7 @@ describe('mdx-engine', () => {
       expect(rss).toContain('<rss version="2.0"');
       expect(rss).toContain('<title><![CDATA[Introducing QuiltCorgi]]></title>');
       expect(rss).toContain('<link>https://quiltcorgi.com/blog/introducing-quiltcorgi</link>');
-      expect(rss).toContain('<category>announcement</category>');
+      expect(rss).toContain('<category><![CDATA[announcement]]></category>');
     });
   });
 });

@@ -197,8 +197,8 @@ export function generateRssFeed(siteUrl: string, posts: readonly BlogEntry[]): s
       <description><![CDATA[${post.description}]]></description>
       <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
       <guid>${siteUrl}/blog/${post.slug}</guid>
-      <author>${post.author}</author>
-      ${post.tags.map((t) => `<category>${t}</category>`).join('\n      ')}
+      <author><![CDATA[${post.author}]]></author>
+      ${post.tags.map((t) => `<category><![CDATA[${t}]]></category>`).join('\n      ')}
     </item>`
     )
     .join('\n');

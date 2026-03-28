@@ -231,6 +231,7 @@ export function svgPathToPolyline(d: string): Point[] {
       case 'Z': {
         cx = startX;
         cy = startY;
+        points.push({ x: cx, y: cy });
         lastCpX = cx;
         lastCpY = cy;
         break;

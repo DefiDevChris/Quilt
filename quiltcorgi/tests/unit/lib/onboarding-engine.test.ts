@@ -30,6 +30,7 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
+Object.defineProperty(globalThis, 'window', { value: globalThis, writable: true, configurable: true });
 
 describe('onboarding-engine', () => {
   describe('TOUR_STEPS', () => {

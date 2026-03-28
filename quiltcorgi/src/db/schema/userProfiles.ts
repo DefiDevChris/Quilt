@@ -14,7 +14,7 @@ export const userProfiles = pgTable(
     bio: text('bio'),
     avatarUrl: text('avatarUrl'),
     location: varchar('location', { length: 100 }),
-    websiteUrl: varchar('websiteUrl', { length: 255 }),
+    websiteUrl: text('websiteUrl'),
     instagramHandle: varchar('instagramHandle', { length: 50 }),
     youtubeHandle: varchar('youtubeHandle', { length: 50 }),
     tiktokHandle: varchar('tiktokHandle', { length: 50 }),

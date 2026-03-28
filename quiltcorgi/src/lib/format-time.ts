@@ -2,6 +2,7 @@ export function formatRelativeTime(date: Date | string): string {
   const now = Date.now();
   const then = typeof date === 'string' ? new Date(date).getTime() : date.getTime();
   const diffMs = now - then;
+  if (diffMs < 0) return 'just now';
   const diffSeconds = Math.floor(diffMs / 1000);
 
   if (diffSeconds < 60) {

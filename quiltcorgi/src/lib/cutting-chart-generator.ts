@@ -78,7 +78,16 @@ function extractVertices(svgData: string): Point[] {
   // Try path d attribute
   const pathD = extractPathFromSvg(svgData);
   if (pathD) {
-    return svgPathToPolyline(pathD);
+    const pts = svgPathToPolyline(pathD);
+    // Remove duplicate closing point (Z command adds start point back)
+    if (
+      pts.length > 1 &&
+      pts[0].x === pts[pts.length - 1].x &&
+      pts[0].y === pts[pts.length - 1].y
+    ) {
+      return pts.slice(0, -1);
+    }
+    return pts;
   }
 
   return [];
