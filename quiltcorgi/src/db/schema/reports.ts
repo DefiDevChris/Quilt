@@ -8,7 +8,7 @@ export const reports = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     reporterId: uuid('reporterId')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
     targetType: reportTargetTypeEnum('targetType').notNull(),
     targetId: uuid('targetId').notNull(),
     reason: reportReasonEnum('reason').notNull(),

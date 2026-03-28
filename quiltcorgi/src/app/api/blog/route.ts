@@ -3,6 +3,7 @@ import { eq, and, ilike, desc, count, arrayContains } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { blogSearchSchema, createBlogPostSchema } from '@/lib/validation';
+import { escapeLikePattern } from '@/lib/escape-like';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      conditions.push(ilike(blogPosts.title, `%${search}%`));
+      conditions.push(ilike(blogPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...conditions);

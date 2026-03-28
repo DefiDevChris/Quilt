@@ -174,7 +174,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       ),
     });
 
-    fetch(`/api/community/${postId}/like`, { method: 'DELETE' })
+    fetch(`/api/community/${postId}/like`, { method: 'POST' })
       .then((res) => {
         if (!res.ok) {
           set({
@@ -234,7 +234,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: false } : p)),
     });
 
-    fetch(`/api/community/${postId}/save`, { method: 'DELETE' })
+    fetch(`/api/community/${postId}/save`, { method: 'POST' })
       .then((res) => {
         if (!res.ok) {
           set({

@@ -19,6 +19,7 @@ import {
 } from '@/lib/auth-helpers';
 import { checkTrustLevel, checkRateLimit, buildTrustUserInput } from '@/middleware/trust-guard';
 import { shouldModerateContent } from '@/lib/trust-engine';
+import { escapeLikePattern } from '@/lib/escape-like';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      conditions.push(ilike(communityPosts.title, `%${search}%`));
+      conditions.push(ilike(communityPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...conditions);

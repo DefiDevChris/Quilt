@@ -1,12 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  text,
-  jsonb,
-  timestamp,
-  index,
-} from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { blogPostStatusEnum } from './enums';
 
@@ -16,7 +8,7 @@ export const blogPosts = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     authorId: uuid('authorId')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
     title: varchar('title', { length: 200 }).notNull(),
     slug: varchar('slug', { length: 200 }).notNull().unique(),
     content: jsonb('content'),

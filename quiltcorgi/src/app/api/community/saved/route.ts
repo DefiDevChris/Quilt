@@ -9,6 +9,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { escapeLikePattern } from '@/lib/escape-like';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
     ];
 
     if (search) {
-      baseConditions.push(ilike(communityPosts.title, `%${search}%`));
+      baseConditions.push(ilike(communityPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...baseConditions);

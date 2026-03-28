@@ -292,10 +292,12 @@ export async function POST(
       })
       .returning();
 
-    await db
-      .update(communityPosts)
-      .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
-      .where(eq(communityPosts.id, postId));
+    if (!needsModeration) {
+      await db
+        .update(communityPosts)
+        .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
+        .where(eq(communityPosts.id, postId));
+    }
 
     const authorName = session.user.name ?? 'Someone';
 
