@@ -17,6 +17,7 @@ interface NotificationState {
   unreadCount: number;
   isOpen: boolean;
   isLoading: boolean;
+  error: string | null;
 
   fetchNotifications: () => Promise<void>;
   markAsRead: (ids: string[]) => void;
@@ -29,20 +30,21 @@ const INITIAL_STATE = {
   unreadCount: 0,
   isOpen: false,
   isLoading: false,
+  error: null as string | null,
 };
 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
   ...INITIAL_STATE,
 
   fetchNotifications: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
 
     try {
       const res = await fetch('/api/notifications?limit=20');
       const json = await res.json();
 
       if (!res.ok) {
-        set({ isLoading: false });
+        set({ error: json.error ?? 'Failed to load notifications', isLoading: false });
         return;
       }
 
@@ -53,7 +55,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         isLoading: false,
       });
     } catch {
-      set({ isLoading: false });
+      set({ error: 'Failed to load notifications', isLoading: false });
     }
   },
 

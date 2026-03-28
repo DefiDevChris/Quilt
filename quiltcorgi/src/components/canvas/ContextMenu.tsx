@@ -17,6 +17,7 @@ export function ContextMenu() {
   const [position, setPosition] = useState<ContextMenuPosition | null>(null);
   const [showQuantityInput, setShowQuantityInput] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isExecuting, setIsExecuting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const closeMenu = useCallback(() => {
@@ -30,7 +31,9 @@ export function ContextMenu() {
 
     let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
-    let cleanupFn: (() => void) | null = null;
+    // Track registered listeners independently of isMounted so cleanup
+    // always runs even when unmount races with the async import.
+    const registeredListeners: Array<() => void> = [];
 
     (async () => {
       fabric = await import('fabric');
@@ -55,9 +58,6 @@ export function ContextMenu() {
         evt.preventDefault();
       };
 
-      canvas.on('mouse:down', onMouseDown);
-      canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
-
       const onMouseDownBefore = ((e: { e: MouseEvent }) => {
         if (e.e.button === 2) {
           const target = canvas.findTarget(e.e) as unknown;
@@ -68,18 +68,26 @@ export function ContextMenu() {
         }
       }) as never;
 
-      canvas.on('mouse:down:before', onMouseDownBefore);
+      // Guard: only register listeners if component is still mounted, then
+      // immediately record each removal so the cleanup closure (below) can
+      // always tear them down regardless of future isMounted state.
+      if (!isMounted) return;
 
-      cleanupFn = () => {
-        canvas.off('mouse:down', onMouseDown);
-        canvas.off('mouse:down:before', onMouseDownBefore);
-        canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu);
-      };
+      canvas.on('mouse:down', onMouseDown);
+      registeredListeners.push(() => canvas.off('mouse:down', onMouseDown));
+
+      canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
+      registeredListeners.push(() =>
+        canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu)
+      );
+
+      canvas.on('mouse:down:before', onMouseDownBefore);
+      registeredListeners.push(() => canvas.off('mouse:down:before', onMouseDownBefore));
     })();
 
     return () => {
       isMounted = false;
-      cleanupFn?.();
+      for (const remove of registeredListeners) remove();
     };
   }, [fabricCanvas, closeMenu]);
 
@@ -108,7 +116,9 @@ export function ContextMenu() {
 
   const executeAction = useCallback(
     async (action: string) => {
-      if (!fabricCanvas) return;
+      if (!fabricCanvas || isExecuting) return;
+      setIsExecuting(true);
+      try {
       const fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
       const active = canvas.getActiveObject();

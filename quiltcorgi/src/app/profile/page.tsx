@@ -8,17 +8,21 @@ import { useAuthStore } from '@/stores/authStore';
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
   const [isUpgradeLoading, setIsUpgradeLoading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
 
   async function handleUpgrade() {
     setIsUpgradeLoading(true);
+    setUpgradeError(null);
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' });
       const data = await res.json();
       if (data.success && data.data.checkoutUrl) {
         window.location.href = data.data.checkoutUrl;
+      } else {
+        setUpgradeError(data.error ?? 'Failed to start checkout. Please try again.');
       }
     } catch {
-      // Checkout session creation failed — user sees button re-enabled
+      setUpgradeError('Unable to connect. Please check your connection and try again.');
     } finally {
       setIsUpgradeLoading(false);
     }
@@ -93,6 +97,7 @@ export default function ProfilePage() {
               >
                 View plans
               </Link>
+              {upgradeError && <p className="text-sm text-error">{upgradeError}</p>}
             </div>
           </div>
         )}

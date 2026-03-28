@@ -4,6 +4,8 @@ import { userRoleEnum } from './enums';
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
+  // .unique() creates an implicit B-tree index on email in PostgreSQL — no separate
+  // index() definition is needed. The constraint name is users_email_unique.
   email: varchar('email', { length: 255 }).notNull().unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date', withTimezone: true }),
   image: text('image'),

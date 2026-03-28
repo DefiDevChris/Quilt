@@ -17,8 +17,26 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
+/** Maximum number of unique keys the store will hold before evicting the oldest. */
+const MAX_STORE_SIZE = 10_000;
+
 const CLEANUP_INTERVAL_MS = 60_000;
 let lastCleanup = Date.now();
+
+/**
+ * Evict the oldest entries when the store exceeds MAX_STORE_SIZE.
+ * Map iteration order is insertion order, so the first entries are the oldest.
+ */
+function evictOldestEntries() {
+  if (store.size <= MAX_STORE_SIZE) return;
+  const excess = store.size - MAX_STORE_SIZE;
+  let evicted = 0;
+  for (const key of store.keys()) {
+    store.delete(key);
+    evicted++;
+    if (evicted >= excess) break;
+  }
+}
 
 function cleanup(windowMs: number) {
   const now = Date.now();
@@ -58,11 +76,15 @@ export function checkRateLimit(key: string, options: RateLimitOptions): RateLimi
 
   const entry = store.get(key);
   if (!entry) {
+    evictOldestEntries();
     store.set(key, { timestamps: [now] });
     return { allowed: true, remaining: limit - 1, retryAfterMs: 0 };
   }
 
-  entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
+  // Filter expired timestamps, then cap the array to the window size (limit)
+  // to prevent a single key's array from growing unboundedly.
+  const inWindow = entry.timestamps.filter((t) => t > cutoff);
+  entry.timestamps = inWindow.length > limit ? inWindow.slice(-limit) : inWindow;
 
   if (entry.timestamps.length >= limit) {
     const oldestInWindow = entry.timestamps[0] ?? now;

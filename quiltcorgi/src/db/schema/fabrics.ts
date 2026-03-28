@@ -15,6 +15,9 @@ export const fabrics = pgTable(
   'fabrics',
   {
     id: uuid('id').primaryKey().defaultRandom(),
+    // Nullable by design: system-provided default fabrics have userId=null and isDefault=true.
+    // User-owned fabrics have a userId and isDefault=false. onDelete:'set null' preserves
+    // the fabric record when a user account is deleted.
     userId: uuid('userId').references(() => users.id, { onDelete: 'set null' }),
     name: varchar('name', { length: 255 }).notNull(),
     imageUrl: text('imageUrl').notNull(),

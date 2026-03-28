@@ -8,6 +8,7 @@ import {
   ZOOM_MIN,
   ZOOM_MAX,
   UNDO_HISTORY_MAX,
+  UNDO_SNAPSHOT_SIZE_LIMIT,
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
@@ -137,11 +138,18 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setStrokeColor: (color) => set({ strokeColor: color }),
   setStrokeWidth: (width) => set({ strokeWidth: width }),
 
-  pushUndoState: (json) =>
+  pushUndoState: (json) => {
+    if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
+      console.warn(
+        `[canvasStore] Snapshot skipped: size ${json.length} bytes exceeds ${UNDO_SNAPSHOT_SIZE_LIMIT} byte limit.`
+      );
+      return;
+    }
     set((state) => ({
       undoStack: [...state.undoStack.slice(-(UNDO_HISTORY_MAX - 1)), json],
       redoStack: [],
-    })),
+    }));
+  },
 
   popUndo: (currentJson) => {
     const { undoStack } = get();

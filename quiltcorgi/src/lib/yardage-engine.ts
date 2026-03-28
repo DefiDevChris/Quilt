@@ -38,8 +38,7 @@ export const FAT_QUARTER_DIMENSIONS = {
   height: 22,
 } as const;
 
-const FAT_QUARTER_AREA_SQ_IN =
-  FAT_QUARTER_DIMENSIONS.width * FAT_QUARTER_DIMENSIONS.height;
+const FAT_QUARTER_AREA_SQ_IN = FAT_QUARTER_DIMENSIONS.width * FAT_QUARTER_DIMENSIONS.height;
 
 const INCHES_PER_YARD = 36;
 
@@ -49,9 +48,7 @@ export function groupShapesByFabric(shapes: CanvasShapeData[]): FabricGroup[] {
   const groupMap = new Map<string, FabricGroup>();
 
   for (const shape of shapes) {
-    const key = shape.fabricId
-      ? `fabric:${shape.fabricId}`
-      : `color:${shape.fillColor}`;
+    const key = shape.fabricId ? `fabric:${shape.fabricId}` : `color:${shape.fillColor}`;
 
     const existing = groupMap.get(key);
     if (existing) {
@@ -70,10 +67,7 @@ export function groupShapesByFabric(shapes: CanvasShapeData[]): FabricGroup[] {
   return Array.from(groupMap.values());
 }
 
-export function calculateTotalArea(
-  shapes: CanvasShapeData[],
-  pixelsPerUnit: number
-): number {
+export function calculateTotalArea(shapes: CanvasShapeData[], pixelsPerUnit: number): number {
   return shapes.reduce((sum, shape) => {
     const widthUnits = (shape.widthPx * shape.scaleX) / pixelsPerUnit;
     const heightUnits = (shape.heightPx * shape.scaleY) / pixelsPerUnit;
@@ -86,7 +80,7 @@ export function calculateYardage(
   wofInches: number,
   wasteMargin: number
 ): number {
-  if (totalAreaSqIn === 0) return 0;
+  if (totalAreaSqIn === 0 || wofInches <= 0) return 0;
   const areaWithWaste = totalAreaSqIn * (1 + wasteMargin);
   const lengthInches = areaWithWaste / wofInches;
   return lengthInches / INCHES_PER_YARD;
@@ -96,10 +90,7 @@ function roundUpToEighth(yards: number): number {
   return Math.ceil(yards * 8) / 8;
 }
 
-export function calculateFatQuarters(
-  totalAreaSqIn: number,
-  wasteMargin: number
-): number {
+export function calculateFatQuarters(totalAreaSqIn: number, wasteMargin: number): number {
   if (totalAreaSqIn === 0) return 0;
   const areaWithWaste = totalAreaSqIn * (1 + wasteMargin);
   return Math.ceil(areaWithWaste / FAT_QUARTER_AREA_SQ_IN);

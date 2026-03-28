@@ -305,6 +305,7 @@ function lineCircleIntersection(
   const fy = p1.y - center.y;
 
   const a = dx * dx + dy * dy;
+  if (a === 0) return null;
   const b = 2 * (fx * dx + fy * dy);
   const c = fx * fx + fy * fy - radius * radius;
 

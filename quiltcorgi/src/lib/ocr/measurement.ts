@@ -10,9 +10,10 @@ import type { DetectedGrid, QuiltMeasurements } from '@/types/quilt-ocr';
  * Compute a scale factor (inches per pixel) from a known reference.
  * If the user says "the quilt is X inches wide" and we know the
  * pixel width, we can derive the scale.
+ * Returns 0 for any invalid or non-positive input.
  */
 export function computeScaleFactor(referenceInches: number, referencePixels: number): number {
-  if (referencePixels <= 0) return 0;
+  if (referencePixels <= 0 || referenceInches <= 0) return 0;
   return referenceInches / referencePixels;
 }
 

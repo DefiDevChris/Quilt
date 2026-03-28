@@ -64,6 +64,10 @@ function calculateBoundingBox(paths: Point2D[][]): {
   x: number;
   y: number;
 } {
+  if (paths.length === 0 || paths.every((p) => p.length === 0)) {
+    return { width: 0, height: 0, x: 0, y: 0 };
+  }
+
   let minX = Infinity,
     minY = Infinity,
     maxX = -Infinity,

@@ -22,12 +22,28 @@ const avatarUpdateSchema = z.object({
       (url) => {
         try {
           const parsed = new URL(url);
-          return parsed.protocol === 'https:';
+          if (parsed.protocol !== 'https:') return false;
+
+          const cloudfrontUrl = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
+          const s3Bucket = process.env.AWS_S3_BUCKET;
+          if (!cloudfrontUrl && !s3Bucket) return true;
+
+          const allowed: string[] = [];
+          if (cloudfrontUrl) {
+            try {
+              allowed.push(new URL(cloudfrontUrl).hostname);
+            } catch {
+              /* skip */
+            }
+          }
+          if (s3Bucket) allowed.push(`${s3Bucket}.s3.amazonaws.com`);
+
+          return allowed.some((h) => parsed.hostname === h);
         } catch {
           return false;
         }
       },
-      { message: 'Avatar URL must be a valid HTTPS URL.' }
+      { message: "Avatar URL must be an HTTPS URL on the app's asset domain." }
     ),
 });
 

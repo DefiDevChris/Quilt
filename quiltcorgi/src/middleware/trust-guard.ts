@@ -1,6 +1,6 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { users, comments, communityPosts, subscriptions } from '@/db/schema';
+import { users, comments, communityPosts, subscriptions, follows, reports } from '@/db/schema';
 import {
   calculateTrustLevel,
   getTrustPermissions,
@@ -143,14 +143,12 @@ export async function checkRateLimit(
       .where(and(eq(communityPosts.userId, userId), gte(communityPosts.createdAt, oneDayAgo)));
     currentCount = row?.count ?? 0;
   } else if (action === 'follows') {
-    const { follows } = await import('@/db/schema');
     const [row] = await db
       .select({ count: count() })
       .from(follows)
       .where(and(eq(follows.followerId, userId), gte(follows.createdAt, oneDayAgo)));
     currentCount = row?.count ?? 0;
   } else if (action === 'reports') {
-    const { reports } = await import('@/db/schema');
     const [row] = await db
       .select({ count: count() })
       .from(reports)
