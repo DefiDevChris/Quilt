@@ -73,6 +73,22 @@
   --shadow-elevation-2: 0 8px 32px rgba(56, 56, 49, 0.06);
   --shadow-elevation-3: 0 12px 40px rgba(56, 56, 49, 0.08);
   --shadow-elevation-4: 0 16px 48px rgba(56, 56, 49, 0.10);
+
+  /* Mobile — Golden Amber Accent */
+  --color-primary-golden: #c48a28;
+  --color-primary-golden-light: #daa545;
+  --color-primary-golden-glow: rgba(196, 138, 40, 0.15);
+
+  /* Glassmorphism */
+  --glass-surface: rgba(255, 252, 247, 0.72);
+  --glass-warm: rgba(252, 249, 243, 0.65);
+  --glass-blur: 24px;
+  --glass-blur-heavy: 28px;
+
+  /* Mobile Shadows */
+  --shadow-fab: 0 6px 20px rgba(196, 138, 40, 0.3);
+  --shadow-fab-hover: 0 8px 28px rgba(196, 138, 40, 0.35);
+  --shadow-golden-glow: 0 4px 20px rgba(196, 138, 40, 0.15);
 }
 
 body {
