@@ -182,8 +182,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Community API Error]", error);
-    return Response.json({ success: false, error: String(error), stack: error instanceof Error ? error.stack : undefined }, { status: 500 });
+    console.error('[Community API Error]', error);
+    return errorResponse('Failed to load community feed', 'INTERNAL_ERROR', 500);
   }
 }
 

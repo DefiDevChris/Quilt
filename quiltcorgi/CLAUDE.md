@@ -125,6 +125,10 @@ Seven production features added:
 - **S3 client:** `s3Client` is `null` when AWS env vars are absent. `generatePresignedUrl()` throws a clear error if called without configuration.
 - **CSP:** `connect-src` includes `*.s3.amazonaws.com` and `*.s3.*.amazonaws.com` for Pro user presigned uploads.
 - **Cookie write safety:** `tryRefreshSession()` wraps `setAuthCookies()` in its own try/catch — cookie write failures in RSC context don't cause the session to return `null`.
+- **Avatar URL domain restriction:** `avatar/route.ts` validates avatar URLs against CloudFront/S3 domains (same pattern as `validation.ts` assetUrlSchema).
+- **DB pool hardening:** `db.ts` pool capped at `max: 5` with `statement_timeout: 30_000` to prevent runaway queries.
+- **drizzle.config.ts safety:** Throws a clear error if `DATABASE_URL` is missing (no `!` assertion).
+- **Members 404:** `members/[username]/page.tsx` calls `notFound()` for non-existent usernames (proper SEO 404).
 
 ## Gotchas
 - `calculateReadTime()` lives in `src/lib/read-time.ts` — shared across all blog routes. Do not duplicate locally.
@@ -146,4 +150,4 @@ Seven production features added:
 
 ## Stats
 
-~355 source files, 14 Zustand stores, 18 DB tables, 66 test files (1,300 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.
+~355 source files, 14 Zustand stores, 18 DB tables, 71 test files (1,316 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.

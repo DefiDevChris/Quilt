@@ -10,6 +10,7 @@ interface ProfileState {
   error: string | null;
   fetchProfile: (username: string) => Promise<void>;
   toggleFollow: (userId: string) => Promise<void>;
+  reset: () => void;
 }
 
 const INITIAL_STATE = {
@@ -48,6 +49,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       set({ error: 'Failed to load profile', isLoading: false });
     }
   },
+
+  reset: () => set({ ...INITIAL_STATE }),
 
   toggleFollow: async (userId) => {
     const { profile } = get();

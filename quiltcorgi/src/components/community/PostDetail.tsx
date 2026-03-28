@@ -78,7 +78,8 @@ export function PostDetail({ postId }: PostDetailProps) {
 
   useEffect(() => {
     fetchPost();
-  }, [fetchPost]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postId]);
 
   useEffect(() => {
     const fromStore = storePosts.find((p) => p.id === postId);

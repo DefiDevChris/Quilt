@@ -8,8 +8,8 @@ const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}
 
 const csp = [
   "default-src 'self'",
-  // Scripts: self + Next.js inline runtime + Stripe.js
-  "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+  // Scripts: self + Next.js inline runtime + Stripe.js (unsafe-eval needed for React dev mode)
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
   // Styles: self + inline styles (required by Fabric.js and Tailwind)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Fonts: self + Google Fonts

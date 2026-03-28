@@ -2,79 +2,90 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Mascot from './Mascot';
 
 export default function PublicNav() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     function handleScroll() {
       setScrolled(window.scrollY > 20);
     }
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <nav
-      className={`sticky top-0 z-40 h-14 bg-surface/90 backdrop-blur-[24px] transition-shadow duration-200 ${
-        scrolled ? 'shadow-[var(--shadow-elevation-1)]' : ''
-      }`}
+    <header className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-xl transition-shadow duration-200"
+      style={{ boxShadow: scrolled ? '0 4px 24px rgba(74, 59, 50, 0.06)' : 'none' }}
     >
-      <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="group-hover:-translate-y-0.5 transition-transform bg-primary-container rounded-lg p-0.5">
-            <Image src="/corgi3.png" alt="QuiltCorgi Logo" width={32} height={32} className="object-contain drop-shadow-sm" />
-          </div>
-          <span className="text-lg font-bold text-on-surface">QuiltCorgi</span>
+      <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-4">
+        <Link href="/" className="flex items-center gap-3">
+          <Mascot pose="waving" size="sm" />
+          <span className="text-2xl font-bold text-warm-text" style={{ fontFamily: 'var(--font-display)' }}>
+            QuiltCorgi
+          </span>
+          <span className="hidden sm:inline-block text-sm text-warm-text-muted ml-2">
+            Professional Quilt Design
+          </span>
         </Link>
 
-        {/* Center nav links */}
         <div className="hidden md:flex items-center gap-8">
-          <a
-            href="#features"
-            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
-            Features
+          <a href="#features" className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium">
+            Designer
           </a>
-          <a
-            href="#community"
-            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
+          <Link href="/community" className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium">
             Community
-          </a>
-          <Link
-            href="/tutorials"
-            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
+          </Link>
+          <Link href="/tutorials" className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium">
             Tutorials
           </Link>
-          <Link
-            href="/blog"
-            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
+          <Link href="/blog" className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium">
             Blog
           </Link>
-        </div>
-
-        {/* Right side buttons */}
-        <div className="flex items-center gap-4">
-          <Link
-            href="/auth/signin"
-            className="hidden md:inline-block text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
+          <Link href="/auth/signin" className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium">
             Sign In
           </Link>
           <Link
             href="/auth/signup"
-            className="bg-primary text-primary-on text-sm font-medium px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
+            className="px-6 py-2.5 bg-warm-peach text-warm-text rounded-full font-semibold hover:bg-warm-peach-dark transition-colors"
           >
-            Get Started
+            Start Free Trial
           </Link>
         </div>
-      </div>
-    </nav>
+
+        <button
+          className="md:hidden p-2 text-warm-text"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {menuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {menuOpen && (
+        <div className="md:hidden border-t border-warm-border bg-warm-bg px-6 py-4 space-y-3">
+          <a href="#features" className="block text-warm-text-secondary font-medium py-2" onClick={() => setMenuOpen(false)}>Designer</a>
+          <Link href="/community" className="block text-warm-text-secondary font-medium py-2" onClick={() => setMenuOpen(false)}>Community</Link>
+          <Link href="/tutorials" className="block text-warm-text-secondary font-medium py-2" onClick={() => setMenuOpen(false)}>Tutorials</Link>
+          <Link href="/blog" className="block text-warm-text-secondary font-medium py-2" onClick={() => setMenuOpen(false)}>Blog</Link>
+          <Link href="/auth/signin" className="block text-warm-text-secondary font-medium py-2" onClick={() => setMenuOpen(false)}>Sign In</Link>
+          <Link
+            href="/auth/signup"
+            className="block text-center px-6 py-3 bg-warm-peach text-warm-text rounded-full font-semibold"
+            onClick={() => setMenuOpen(false)}
+          >
+            Start Free Trial
+          </Link>
+        </div>
+      )}
+    </header>
   );
 }

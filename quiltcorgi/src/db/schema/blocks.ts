@@ -14,6 +14,9 @@ export const blocks = pgTable(
   'blocks',
   {
     id: uuid('id').primaryKey().defaultRandom(),
+    // Nullable by design: system-provided default blocks have userId=null and isDefault=true.
+    // User-created blocks have a userId and isDefault=false. onDelete:'set null' preserves
+    // the block record when a user account is deleted.
     userId: uuid('userId').references(() => users.id, { onDelete: 'set null' }),
     name: varchar('name', { length: 255 }).notNull(),
     category: varchar('category', { length: 100 }).notNull(),

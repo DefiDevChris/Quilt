@@ -194,20 +194,32 @@ export default function DashboardPage() {
   }, [fetchProjects]);
 
   async function handleDelete(id: string) {
-    const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      setProjects((prev) => prev.filter((p) => p.id !== id));
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setProjects((prev) => prev.filter((p) => p.id !== id));
+      } else {
+        alert('Failed to delete project. Please try again.');
+      }
+    } catch {
+      alert('Failed to delete project. Please check your connection.');
     }
   }
 
   async function handleRename(id: string, newName: string) {
-    const res = await fetch(`/api/projects/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newName }),
-    });
-    if (res.ok) {
-      setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, name: newName } : p)));
+    try {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName }),
+      });
+      if (res.ok) {
+        setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, name: newName } : p)));
+      } else {
+        alert('Failed to rename project. Please try again.');
+      }
+    } catch {
+      alert('Failed to rename project. Please check your connection.');
     }
   }
 

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -89,6 +90,23 @@
   --shadow-fab: 0 6px 20px rgba(196, 138, 40, 0.3);
   --shadow-fab-hover: 0 8px 28px rgba(196, 138, 40, 0.35);
   --shadow-golden-glow: 0 4px 20px rgba(196, 138, 40, 0.15);
+
+  /* Landing Page Warm Palette */
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --color-warm-bg: #FFF9F2;
+  --color-warm-text: #4A3B32;
+  --color-warm-text-secondary: #6B5A4D;
+  --color-warm-text-muted: #8B7355;
+  --color-warm-peach: #FFB085;
+  --color-warm-peach-dark: #FF9D6B;
+  --color-warm-peach-light: rgba(255, 176, 133, 0.2);
+  --color-warm-golden: #FFD166;
+  --color-warm-coral: #E07B67;
+  --color-warm-terracotta: #C67B5C;
+  --color-warm-border: #E8DCCB;
+  --color-warm-surface: #F5EDE4;
+  --color-warm-card: rgba(255, 255, 255, 0.65);
+  --color-warm-glass-border: rgba(255, 255, 255, 0.5);
 }
 
 body {
@@ -109,4 +127,33 @@ body {
 /* Pill button */
 .btn-pill {
   border-radius: 9999px;
+}
+
+/* Landing page glass panel */
+.glass-panel {
+  background: var(--color-warm-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-warm-glass-border);
+  box-shadow: 0 8px 32px rgba(74, 59, 50, 0.05);
+}
+
+/* Landing page float animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-animation-delayed {
+  animation: float-delayed 7s ease-in-out infinite;
+  animation-delay: 1s;
 }

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { comments, reports } from '@/db/schema';
 import { createReportSchema } from '@/lib/validation';
@@ -52,6 +52,22 @@ export async function POST(
     }
 
     const { reason, details } = parsed.data;
+
+    const [existingReport] = await db
+      .select({ id: reports.id })
+      .from(reports)
+      .where(
+        and(
+          eq(reports.reporterId, session.user.id),
+          eq(reports.targetType, 'comment'),
+          eq(reports.targetId, commentId)
+        )
+      )
+      .limit(1);
+
+    if (existingReport) {
+      return Response.json({ success: true, data: { reported: true } }, { status: 200 });
+    }
 
     await db.insert(reports).values({
       reporterId: session.user.id,

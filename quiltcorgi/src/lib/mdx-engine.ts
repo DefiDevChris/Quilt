@@ -153,11 +153,13 @@ export function paginateBlogPosts(
   readonly totalPages: number;
   readonly totalPosts: number;
 } {
+  const safePage = Math.max(1, page);
+  const safePerPage = Math.max(1, perPage);
   const allPosts = getAllBlogPosts();
   const totalPosts = allPosts.length;
-  const totalPages = Math.ceil(totalPosts / perPage);
-  const start = (page - 1) * perPage;
-  const posts = allPosts.slice(start, start + perPage);
+  const totalPages = Math.ceil(totalPosts / safePerPage);
+  const start = (safePage - 1) * safePerPage;
+  const posts = allPosts.slice(start, start + safePerPage);
   return { posts, totalPages, totalPosts };
 }
 

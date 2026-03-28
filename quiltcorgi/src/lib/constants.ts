@@ -8,6 +8,7 @@ export const GRID_DEFAULT_ENABLED = true;
 export const GRID_DEFAULT_SNAP = true;
 
 export const UNDO_HISTORY_MAX = 50;
+export const UNDO_SNAPSHOT_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 export const AUTO_SAVE_INTERVAL_MS = 30_000;
 
 export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;

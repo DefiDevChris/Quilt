@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { userProfiles } from '@/db/schema';
@@ -38,6 +39,14 @@ export async function generateMetadata({ params }: MemberPageProps): Promise<Met
 
 export default async function MemberPage({ params }: MemberPageProps) {
   const { username } = await params;
+
+  const [exists] = await db
+    .select({ id: userProfiles.id })
+    .from(userProfiles)
+    .where(eq(userProfiles.username, username))
+    .limit(1);
+
+  if (!exists) notFound();
 
   return <UserProfilePage username={username} />;
 }

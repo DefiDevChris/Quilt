@@ -14,7 +14,6 @@ import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -92,12 +91,12 @@ export async function GET(
   }
 }
 
-/** Update a blog post by ID (passed as the slug segment). */
+/** Update a blog post by slug. */
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const { slug: id } = await params;
+  const { slug } = await params;
 
   try {
     const body = await request.json();
@@ -113,7 +112,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         status: blogPosts.status,
       })
       .from(blogPosts)
-      .where(eq(blogPosts.id, id))
+      .where(eq(blogPosts.slug, slug))
       .limit(1);
 
     if (!existing) {
@@ -144,7 +143,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const [updated] = await db
       .update(blogPosts)
       .set(updateData)
-      .where(eq(blogPosts.id, id))
+      .where(eq(blogPosts.id, existing.id))
       .returning();
 
     return Response.json({ success: true, data: updated });

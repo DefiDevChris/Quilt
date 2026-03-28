@@ -9,9 +9,10 @@ if (!connectionString && process.env.NODE_ENV === 'production') {
 
 const pool = new Pool({
   connectionString: connectionString ?? 'postgresql://localhost:5432/quiltcorgi',
-  max: 10,
+  max: 5,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,
+  statement_timeout: 30_000,
 });
 
 pool.on('error', (err) => {
