@@ -90,17 +90,88 @@ function computeScaleResize(input: ResizeInput): ResizeResult {
   };
 }
 
+function computeAddBlocksResize(input: ResizeInput): ResizeResult {
+  const objects: TransformedObject[] = input.objects.map((obj) => ({
+    id: obj.id,
+    left: obj.left,
+    top: obj.top,
+    scaleX: obj.scaleX,
+    scaleY: obj.scaleY,
+    width: obj.width,
+    height: obj.height,
+    type: obj.type,
+  }));
+
+  // Free-form, medallion, lone-star: just expand canvas, no new cells
+  if (
+    input.layoutType === 'free-form' ||
+    input.layoutType === 'medallion' ||
+    input.layoutType === 'lone-star'
+  ) {
+    return {
+      newCanvasWidth: input.newWidth,
+      newCanvasHeight: input.newHeight,
+      objects,
+      layoutSettings: null,
+      addedCells: [],
+    };
+  }
+
+  // Grid-based layouts: compute new rows/cols
+  if (!input.layoutSettings) {
+    return {
+      newCanvasWidth: input.newWidth,
+      newCanvasHeight: input.newHeight,
+      objects,
+      layoutSettings: null,
+      addedCells: [],
+    };
+  }
+
+  const { blockSize, rows: oldRows, cols: oldCols } = input.layoutSettings;
+  const newCols = Math.floor(input.newWidth / blockSize);
+  const newRows = Math.floor(input.newHeight / blockSize);
+
+  const addedCells: AddedCell[] = [];
+  for (let row = 0; row < newRows; row++) {
+    for (let col = 0; col < newCols; col++) {
+      if (row < oldRows && col < oldCols) continue;
+
+      const sourceObjectIds: string[] = [];
+      if (input.tilePattern && oldRows > 0 && oldCols > 0) {
+        const sourceRow = row % oldRows;
+        const sourceCol = col % oldCols;
+        const sourceObjs = input.objects.filter((obj) => {
+          const objCol = Math.floor(obj.left / (blockSize * (input.currentWidth / oldCols)));
+          const objRow = Math.floor(obj.top / (blockSize * (input.currentHeight / oldRows)));
+          return objRow === sourceRow && objCol === sourceCol;
+        });
+        sourceObjectIds.push(...sourceObjs.map((o) => o.id));
+      }
+
+      addedCells.push({
+        row,
+        col,
+        centerX: col * blockSize + blockSize / 2,
+        centerY: row * blockSize + blockSize / 2,
+        size: blockSize,
+        sourceObjectIds,
+      });
+    }
+  }
+
+  return {
+    newCanvasWidth: input.newWidth,
+    newCanvasHeight: input.newHeight,
+    objects,
+    layoutSettings: { rows: newRows, cols: newCols, blockSize },
+    addedCells,
+  };
+}
+
 export function computeResize(input: ResizeInput): ResizeResult {
   if (input.mode === 'scale') {
     return computeScaleResize(input);
   }
-
-  // add-blocks mode placeholder — implemented in Task 2
-  return {
-    newCanvasWidth: input.newWidth,
-    newCanvasHeight: input.newHeight,
-    objects: [...input.objects],
-    layoutSettings: null,
-    addedCells: [],
-  };
+  return computeAddBlocksResize(input);
 }

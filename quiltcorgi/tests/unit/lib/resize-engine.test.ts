@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  computeResize,
-  type ResizeInput,
-  type CanvasObjectData,
-} from '@/lib/resize-engine';
+import { computeResize, type ResizeInput, type CanvasObjectData } from '@/lib/resize-engine';
 
 function makeObject(overrides: Partial<CanvasObjectData> = {}): CanvasObjectData {
   return {
@@ -106,6 +102,118 @@ describe('resize-engine', () => {
       const result = computeResize(makeInput());
       expect(result.addedCells).toEqual([]);
       expect(result.layoutSettings).toBeNull();
+    });
+  });
+
+  describe('add-blocks mode', () => {
+    it('returns updated canvas dimensions', () => {
+      const result = computeResize(makeInput({ mode: 'add-blocks', newWidth: 60, newHeight: 60 }));
+      expect(result.newCanvasWidth).toBe(60);
+      expect(result.newCanvasHeight).toBe(60);
+    });
+
+    it('preserves existing object positions and scale', () => {
+      const obj = makeObject({ left: 96, top: 96, scaleX: 2, scaleY: 2 });
+      const result = computeResize(makeInput({ mode: 'add-blocks', objects: [obj] }));
+      expect(result.objects[0].left).toBe(96);
+      expect(result.objects[0].top).toBe(96);
+      expect(result.objects[0].scaleX).toBe(2);
+      expect(result.objects[0].scaleY).toBe(2);
+    });
+
+    it('computes new layout settings for grid layout', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          currentWidth: 48,
+          currentHeight: 48,
+          newWidth: 60,
+          newHeight: 60,
+          layoutType: 'grid',
+          layoutSettings: { rows: 4, cols: 4, blockSize: 12 },
+        })
+      );
+      expect(result.layoutSettings).toEqual({ rows: 5, cols: 5, blockSize: 12 });
+    });
+
+    it('computes added cells for grid layout', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          currentWidth: 48,
+          currentHeight: 48,
+          newWidth: 60,
+          newHeight: 60,
+          layoutType: 'grid',
+          layoutSettings: { rows: 4, cols: 4, blockSize: 12 },
+        })
+      );
+      // 5x5 - 4x4 = 25 - 16 = 9 new cells
+      expect(result.addedCells).toHaveLength(9);
+    });
+
+    it('returns no added cells for free-form layout', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          layoutType: 'free-form',
+          layoutSettings: null,
+        })
+      );
+      expect(result.addedCells).toEqual([]);
+      expect(result.layoutSettings).toBeNull();
+    });
+
+    it('computes new layout settings for sashing layout', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          currentWidth: 48,
+          currentHeight: 48,
+          newWidth: 60,
+          newHeight: 60,
+          layoutType: 'sashing',
+          layoutSettings: { rows: 4, cols: 4, blockSize: 12 },
+        })
+      );
+      expect(result.layoutSettings).toEqual({ rows: 5, cols: 5, blockSize: 12 });
+    });
+
+    it('computes new layout for on-point layout', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          currentWidth: 48,
+          currentHeight: 48,
+          newWidth: 60,
+          newHeight: 60,
+          layoutType: 'on-point',
+          layoutSettings: { rows: 4, cols: 4, blockSize: 12 },
+        })
+      );
+      expect(result.layoutSettings).toEqual({ rows: 5, cols: 5, blockSize: 12 });
+    });
+
+    it('returns no layout change for medallion (expand background only)', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          layoutType: 'medallion',
+          layoutSettings: { rows: 1, cols: 1, blockSize: 24 },
+        })
+      );
+      expect(result.addedCells).toEqual([]);
+    });
+
+    it('returns no layout change for lone-star (expand background only)', () => {
+      const result = computeResize(
+        makeInput({
+          mode: 'add-blocks',
+          layoutType: 'lone-star',
+          layoutSettings: { rows: 1, cols: 1, blockSize: 24 },
+        })
+      );
+      expect(result.addedCells).toEqual([]);
     });
   });
 });
