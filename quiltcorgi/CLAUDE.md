@@ -82,7 +82,7 @@ Seven production features added:
 
 **Tutorials:** 10 MDX files in `src/content/tutorials/`. Routes at `/tutorials` and `/tutorials/[slug]`. HowTo JSON-LD schema. Filterable by difficulty.
 
-**Blog:** 5 MDX files in `src/content/blog/`. Routes at `/blog` and `/blog/[slug]`. Article JSON-LD schema. RSS feed at `/blog/rss.xml`.
+**Blog (legacy):** 5 MDX files in `src/content/blog/` (superseded by DB-backed blog in Phase 17).
 
 **MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map.
 
@@ -100,6 +100,24 @@ Seven production features added:
 
 **Toolbar additions:** `Toolbar.tsx` now has `shortcut`, `description`, `isProFeature` on `ToolDef`. New 'photo' group with Photo Patchwork + Import from Photo tools. Callbacks: `onOpenPhotoPatchwork`, `onOpenQuiltOcr`.
 
+## Community Platform (Phase 17)
+
+**Trust engine:** `trust-engine.ts` — pure function `calculateTrustLevel()` with 7 levels: visitor → verified → commenter → poster → trusted → pro → admin. `trust-guard.ts` middleware checks permissions + rate limits on API routes. Rate limits: comments 20/100/∞, posts 3/20/∞, follows 50/200/∞, reports 10 (all per 24h).
+
+**User profiles:** `userProfiles` table with displayName, username (auto-generated slug), bio, avatar, social links, denormalized follower/following counts. API at `/api/members/[username]`, `/api/profile`. `profileStore.ts` with optimistic follow/unfollow.
+
+**Enhanced community feed:** Tabs (Discover/Following/Featured), category filter (show-and-tell/wip/help/inspiration/general), bookmark/save toggle. `communityStore.ts` extended with tab, category, savePost/unsavePost. CommunityCard shows category badge, comment count, save icon, author avatar.
+
+**Comments:** 2-level threaded comments on community posts. `comments` + `commentLikes` tables. API at `/api/community/[postId]/comments`. `commentStore.ts` with optimistic likes. Trust-gated: commenter+ to comment, first 3 go to mod queue.
+
+**Blog (DB-backed):** `blogPosts` table with Tiptap JSON content, slug, category, tags. API at `/api/blog` (CRUD + admin moderation). `RichTextEditor.tsx` (textarea with markdown preview), `TiptapRenderer.tsx` (JSON → React nodes). RSS at `/blog/rss.xml`. 5 seed posts in `src/db/seed/blog-seed.ts`. Article JSON-LD on post pages.
+
+**Reporting:** `reports` table with polymorphic target (post/comment/user). Auto-moderation: 3 reports = auto-hide content. Admin panel at `/admin/reports` with dismiss/hide/warn actions.
+
+**Notifications:** `NOTIFICATION_TYPES` constants in `notification-types.ts`. `createNotification()` utility. Types: comment_on_post, reply_to_comment, new_follower, comment_liked, blog_approved/rejected, comment_approved, report_reviewed, content_auto_hidden.
+
+**SEO:** Dynamic `sitemap.ts` (blog posts, profiles, community posts). `generateMetadata` on profile/blog/community pages. OG images.
+
 ## Gotchas
 
 - `validationErrorResponse()` in `api-responses.ts` takes a `string`, not a `ZodError` — use `parsed.error.message`
@@ -112,4 +130,4 @@ Seven production features added:
 
 ## Stats
 
-~266 source files, 12 Zustand stores, 19 lib engine/OCR files, 61 test files (1,132 tests), 659 blocks, 10 tutorials, 5 blog posts.
+~310 source files, 15 Zustand stores, 22 lib engine/utility files, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts, 7 new DB tables.
