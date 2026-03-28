@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -6,21 +7,7 @@ export default function Footer() {
       <div className="max-w-4xl mx-auto px-4 text-center">
         {/* Corgi watermark */}
         <div className="flex justify-center mb-6" aria-hidden="true">
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 28 28"
-            fill="none"
-            className="text-outline-variant"
-          >
-            <ellipse cx="14" cy="16" rx="10" ry="8" fill="currentColor" opacity="0.2" />
-            <circle cx="10" cy="10" r="3.5" fill="currentColor" />
-            <circle cx="18" cy="10" r="3.5" fill="currentColor" />
-            <ellipse cx="14" cy="16" rx="7" ry="5.5" fill="currentColor" />
-            <circle cx="11.5" cy="14.5" r="1.2" fill="var(--color-surface-container-low)" />
-            <circle cx="16.5" cy="14.5" r="1.2" fill="var(--color-surface-container-low)" />
-            <ellipse cx="14" cy="17" rx="1.8" ry="1" fill="currentColor" opacity="0.6" />
-          </svg>
+          <Image src="/corgi3.png" alt="Corgi Watermark" width={48} height={48} className="opacity-30 grayscale" />
         </div>
 
         <div className="flex items-center justify-center gap-6 mb-6">

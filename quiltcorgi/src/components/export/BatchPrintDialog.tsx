@@ -17,7 +17,7 @@ interface BatchPrintDialogProps {
 export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
   const [seamAllowance, setSeamAllowance] = useState(0.25);
   const [paperSize, setPaperSize] = useState<PaperSize>('LETTER');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating] = useState(false);
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
@@ -35,35 +35,14 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
     return generateBatchPrintResult(canvasData, PAPER_CONFIGS[paperSize], seamAllowance);
   }, [canvasData, paperSize, seamAllowance]);
 
+  const [pdfMessage, setPdfMessage] = useState<string | null>(null);
+
   const handleGeneratePDF = useCallback(async () => {
     if (!fabricCanvas) return;
-
-    setIsGenerating(true);
-
-    try {
-      // Mock PDF generation - in real app would use pdf-lib
-      // Simulate PDF generation delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock download
-      const blob = new Blob(['Mock PDF content'], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'quilt-batch-print.pdf';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      onClose();
-    } catch (error) {
-      console.error('PDF generation failed:', error);
-      alert('Failed to generate PDF. Please try again.');
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [fabricCanvas, seamAllowance, paperSize, batchResult, onClose]);
+    // TODO: Implement real PDF generation with pdf-lib
+    setPdfMessage("PDF export is coming soon. Use your browser's print dialog (Ctrl+P) for now.");
+    setTimeout(() => setPdfMessage(null), 5000);
+  }, [fabricCanvas]);
 
   if (!isOpen) return null;
 
@@ -208,6 +187,12 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
           </div>
         </div>
 
+        {pdfMessage && (
+          <div className="mx-6 mb-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary">
+            {pdfMessage}
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex justify-end gap-3 p-6 border-t border-outline-variant/10">
           <button
@@ -219,17 +204,10 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
           </button>
           <button
             onClick={handleGeneratePDF}
-            disabled={isGenerating || batchResult.totalBlocks === 0}
+            disabled={batchResult.totalBlocks === 0}
             className="px-6 py-2 bg-primary text-on-primary rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
-            {isGenerating ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate PDF'
-            )}
+            Generate PDF
           </button>
         </div>
       </div>

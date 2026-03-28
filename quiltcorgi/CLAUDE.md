@@ -17,7 +17,7 @@
 
 Material 3-inspired tonal hierarchy defined in `src/app/globals.css`:
 - **Font:** Manrope (sans), JetBrains Mono (mono)
-- **Primary:** #8d4f00, container: #ffca9d, on-primary: #fff6f1
+- **Primary:** #faa566ff, container: #ffebcd, on-primary: #faa566ff
 - **Surface hierarchy:** #fffcf7 → #fefbf5 → #fcf9f3 → #f6f4ec → #f0eee4 → #eae8de
 - **Text:** on-surface #383831, secondary #6c635a, outline-variant #babab0
 - **Radii:** sm 6px, md 10px, lg 16px, xl 24px

@@ -13,20 +13,23 @@ interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
+  isPro: boolean;
+  isAdmin: boolean;
   setUser: (user: AuthUser | null) => void;
   setLoading: (loading: boolean) => void;
-  isPro: () => boolean;
-  isAdmin: () => boolean;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: true,
-  setUser: (user) => set({ user, isLoading: false }),
+  isPro: false,
+  isAdmin: false,
+  setUser: (user) =>
+    set({
+      user,
+      isLoading: false,
+      isPro: user?.role === 'pro' || user?.role === 'admin',
+      isAdmin: user?.role === 'admin',
+    }),
   setLoading: (isLoading) => set({ isLoading }),
-  isPro: () => {
-    const role = get().user?.role;
-    return role === 'pro' || role === 'admin';
-  },
-  isAdmin: () => get().user?.role === 'admin',
 }));

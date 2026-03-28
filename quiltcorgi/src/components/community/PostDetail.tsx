@@ -39,7 +39,8 @@ export function PostDetail({ postId }: PostDetailProps) {
     setIsLoading(true);
     setError(null);
 
-    const fromStore = storePosts.find((p) => p.id === postId);
+    const currentStorePosts = useCommunityStore.getState().posts;
+    const fromStore = currentStorePosts.find((p) => p.id === postId);
     if (fromStore) {
       setPost(fromStore);
       setIsSaved(fromStore.isSavedByUser);
@@ -73,7 +74,7 @@ export function PostDetail({ postId }: PostDetailProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [postId, storePosts]);
+  }, [postId]);
 
   useEffect(() => {
     fetchPost();

@@ -114,18 +114,6 @@ export function toMixedNumberString(f: Fraction): string {
   return `${sign}${whole} ${remainder}/${s.denominator}`;
 }
 
-export function toFractionString(f: Fraction): string {
-  const s = simplify(f);
-  if (s.denominator === 1) return `${s.numerator}`;
-  return `${s.numerator}/${s.denominator}`;
-}
-
-export function toImproperFractionString(f: Fraction): string {
-  const s = simplify(f);
-  if (s.denominator === 1) return `${s.numerator}`;
-  return `${s.numerator}/${s.denominator}`;
-}
-
 export function decimalToFraction(decimal: number): Fraction {
   if (Number.isNaN(decimal) || !Number.isFinite(decimal)) {
     throw new Error('Cannot convert NaN or Infinity to fraction');
@@ -139,8 +127,10 @@ export function decimalToFraction(decimal: number): Fraction {
   let abs = Math.abs(decimal);
   const maxDenominator = 10000;
 
-  let h0 = 0, h1 = 1;
-  let k0 = 1, k1 = 0;
+  let h0 = 0,
+    h1 = 1;
+  let k0 = 1,
+    k1 = 0;
 
   for (let i = 0; i < 100; i++) {
     const a = Math.floor(abs);
@@ -160,6 +150,16 @@ export function decimalToFraction(decimal: number): Fraction {
   }
 
   return simplify(fraction(sign * h1, k1));
+}
+
+export function toFractionString(f: Fraction): string {
+  const s = simplify(f);
+  if (s.denominator === 1) return `${s.numerator}`;
+  return `${s.numerator}/${s.denominator}`;
+}
+
+export function toImproperFractionString(f: Fraction): string {
+  return toFractionString(f);
 }
 
 export function inchesToCm(inches: number): number {

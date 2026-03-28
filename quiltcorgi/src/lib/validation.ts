@@ -10,6 +10,44 @@ import {
   ACCEPTED_IMAGE_TYPES,
 } from '@/lib/constants';
 
+/**
+ * Validate that a URL is an HTTPS URL pointing to the app's CloudFront or S3 domain.
+ * Falls back to any HTTPS URL when NEXT_PUBLIC_CLOUDFRONT_URL and AWS_S3_BUCKET are
+ * not configured (local dev).
+ */
+function isAllowedAssetUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return false;
+
+    const cloudfrontUrl = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
+    const s3Bucket = process.env.AWS_S3_BUCKET;
+
+    // In local dev without AWS config, allow any HTTPS URL
+    if (!cloudfrontUrl && !s3Bucket) return true;
+
+    const allowedHostnames: string[] = [];
+    if (cloudfrontUrl) {
+      try {
+        allowedHostnames.push(new URL(cloudfrontUrl).hostname);
+      } catch {
+        /* skip */
+      }
+    }
+    if (s3Bucket) {
+      allowedHostnames.push(`${s3Bucket}.s3.amazonaws.com`);
+    }
+
+    return allowedHostnames.some((h) => parsed.hostname === h);
+  } catch {
+    return false;
+  }
+}
+
+const assetUrlSchema = z.string().url().refine(isAllowedAssetUrl, {
+  message: "URL must be an HTTPS URL on the app's CloudFront or S3 domain.",
+});
+
 const gridSettingsSchema = z.object({
   enabled: z.boolean().default(true),
   size: z.number().min(0.25).max(12).default(1),
@@ -31,7 +69,7 @@ export const updateProjectSchema = z.object({
   canvasWidth: z.number().min(1).max(200).optional(),
   canvasHeight: z.number().min(1).max(200).optional(),
   gridSettings: gridSettingsSchema.optional(),
-  thumbnailUrl: z.string().url().optional(),
+  thumbnailUrl: assetUrlSchema.optional(),
   isPublic: z.boolean().optional(),
 });
 
@@ -80,7 +118,7 @@ export const fabricSearchSchema = z.object({
 
 export const createFabricSchema = z.object({
   name: z.string().min(1).max(255),
-  imageUrl: z.string().url(),
+  imageUrl: assetUrlSchema,
   thumbnailUrl: z.string().optional(),
   manufacturer: z.string().max(255).optional(),
   sku: z.string().max(100).optional(),
@@ -115,7 +153,7 @@ export const createVariationSchema = z.object({
 export const updateVariationSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   canvasData: z.record(z.string(), z.unknown()).optional(),
-  thumbnailUrl: z.string().url().optional(),
+  thumbnailUrl: assetUrlSchema.optional(),
 });
 
 export const presignedUrlSchema = z.object({

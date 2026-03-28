@@ -130,6 +130,10 @@ export function randomizeColors(
   palette: string[],
   seed?: number
 ): ColorChange[] {
+  if (palette.length === 0) {
+    return patches.map((patch) => ({ objectId: patch.objectId, newFill: patch.currentFill }));
+  }
+
   const normalizedPalette = palette.map(normalizeColor);
   const rand = seed !== undefined ? mulberry32(seed) : Math.random.bind(Math);
 

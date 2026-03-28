@@ -47,7 +47,7 @@ export function ModerationPanel() {
   }, []);
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isAdmin) {
       fetchPosts(activeTab);
     }
   }, [activeTab, isAdmin, fetchPosts]);
@@ -71,7 +71,7 @@ export function ModerationPanel() {
     }
   }
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return (
       <div className="max-w-4xl mx-auto text-center py-16">
         <p className="text-secondary">Access denied.</p>

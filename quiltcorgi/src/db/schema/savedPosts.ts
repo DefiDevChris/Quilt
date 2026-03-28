@@ -1,4 +1,4 @@
-import { pgTable, uuid, timestamp, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, timestamp, primaryKey, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { communityPosts } from './communityPosts';
 
@@ -11,7 +11,10 @@ export const savedPosts = pgTable(
     postId: uuid('postId')
       .notNull()
       .references(() => communityPosts.id, { onDelete: 'cascade' }),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.postId] })]
+  (table) => [
+    primaryKey({ columns: [table.userId, table.postId] }),
+    index('idx_saved_posts_postId').on(table.postId),
+  ]
 );

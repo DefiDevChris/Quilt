@@ -13,9 +13,12 @@ export const subscriptions = pgTable('subscriptions', {
   stripePriceId: varchar('stripePriceId', { length: 255 }),
   plan: subscriptionPlanEnum('plan').notNull().default('free'),
   status: subscriptionStatusEnum('status').notNull().default('active'),
-  currentPeriodStart: timestamp('currentPeriodStart', { mode: 'date' }),
-  currentPeriodEnd: timestamp('currentPeriodEnd', { mode: 'date' }),
+  currentPeriodStart: timestamp('currentPeriodStart', { mode: 'date', withTimezone: true }),
+  currentPeriodEnd: timestamp('currentPeriodEnd', { mode: 'date', withTimezone: true }),
   cancelAtPeriodEnd: boolean('cancelAtPeriodEnd').notNull().default(false),
-  createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
-  updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });

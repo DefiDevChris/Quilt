@@ -15,11 +15,12 @@ export const reports = pgTable(
     details: text('details'),
     status: reportStatusEnum('status').notNull().default('pending'),
     reviewedBy: uuid('reviewedBy').references(() => users.id),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     index('idx_reports_status').on(table.status),
     index('idx_reports_targetType_targetId').on(table.targetType, table.targetId),
     index('idx_reports_reporterId').on(table.reporterId),
+    index('idx_reports_reviewedBy').on(table.reviewedBy),
   ]
 );

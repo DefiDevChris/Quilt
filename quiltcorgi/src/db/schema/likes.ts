@@ -12,7 +12,7 @@ export const likes = pgTable(
     communityPostId: uuid('communityPostId')
       .notNull()
       .references(() => communityPosts.id, { onDelete: 'cascade' }),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     unique('idx_likes_userId_communityPostId').on(table.userId, table.communityPostId),

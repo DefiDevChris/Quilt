@@ -1,7 +1,15 @@
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/auth/signin');
+  }
+
   return (
     <>
       <PublicNav />

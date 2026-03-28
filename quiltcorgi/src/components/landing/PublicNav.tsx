@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PublicNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,23 +24,10 @@ export default function PublicNav() {
     >
       <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            fill="none"
-            className="text-primary"
-            aria-hidden="true"
-          >
-            <ellipse cx="14" cy="16" rx="10" ry="8" fill="currentColor" opacity="0.15" />
-            <circle cx="10" cy="10" r="3.5" fill="currentColor" />
-            <circle cx="18" cy="10" r="3.5" fill="currentColor" />
-            <ellipse cx="14" cy="16" rx="7" ry="5.5" fill="currentColor" />
-            <circle cx="11.5" cy="14.5" r="1.2" fill="var(--color-primary-on)" />
-            <circle cx="16.5" cy="14.5" r="1.2" fill="var(--color-primary-on)" />
-            <ellipse cx="14" cy="17" rx="1.8" ry="1" fill="var(--color-primary-dark)" />
-          </svg>
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="group-hover:-translate-y-0.5 transition-transform bg-primary-container rounded-lg p-0.5">
+            <Image src="/corgi3.png" alt="QuiltCorgi Logo" width={32} height={32} className="object-contain drop-shadow-sm" />
+          </div>
           <span className="text-lg font-bold text-on-surface">QuiltCorgi</span>
         </Link>
 
@@ -50,12 +38,6 @@ export default function PublicNav() {
             className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
           >
             Features
-          </a>
-          <a
-            href="#pricing"
-            className="text-[length:var(--font-size-label-lg)] font-medium text-secondary hover:text-on-surface transition-colors"
-          >
-            Pricing
           </a>
           <a
             href="#community"
@@ -87,9 +69,9 @@ export default function PublicNav() {
           </Link>
           <Link
             href="/auth/signup"
-            className="bg-primary text-primary-on text-sm font-medium px-4 py-2 rounded-[var(--radius-md)] hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-on text-sm font-medium px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
           >
-            Get Started Free
+            Get Started
           </Link>
         </div>
       </div>

@@ -18,12 +18,28 @@ function NumberInput({
   value,
   onChange,
   suffix,
+  step = 1,
 }: {
   label: string;
   value: string;
   onChange?: (val: string) => void;
   suffix?: string;
+  step?: number;
 }) {
+  const increment = () => {
+    const num = parseFloat(value);
+    if (!isNaN(num)) {
+      onChange?.(String(parseFloat((num + step).toFixed(6))));
+    }
+  };
+
+  const decrement = () => {
+    const num = parseFloat(value);
+    if (!isNaN(num)) {
+      onChange?.(String(parseFloat((num - step).toFixed(6))));
+    }
+  };
+
   return (
     <div className="flex flex-col gap-1">
       <label className="text-body-sm text-secondary">{label}</label>
@@ -38,6 +54,7 @@ function NumberInput({
         <div className="flex flex-col border-l border-outline-variant/20">
           <button
             type="button"
+            onClick={increment}
             className="px-1.5 h-[18px] flex items-center justify-center text-secondary hover:text-on-surface"
             aria-label={`Increase ${label}`}
           >
@@ -53,6 +70,7 @@ function NumberInput({
           </button>
           <button
             type="button"
+            onClick={decrement}
             className="px-1.5 h-[18px] flex items-center justify-center text-secondary hover:text-on-surface"
             aria-label={`Decrease ${label}`}
           >

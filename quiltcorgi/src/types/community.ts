@@ -52,12 +52,25 @@ export interface Comment {
 
 export type BlogPostStatus = 'draft' | 'pending' | 'published' | 'rejected';
 
+export interface TiptapNode {
+  readonly type: string;
+  readonly attrs?: Record<string, unknown>;
+  readonly content?: TiptapNode[];
+  readonly marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
+  readonly text?: string;
+}
+
+export interface TiptapDocument {
+  readonly type: 'doc';
+  readonly content?: TiptapNode[];
+}
+
 export interface BlogPost {
   id: string;
   authorId: string;
   title: string;
   slug: string;
-  content: unknown;
+  content: TiptapDocument | null;
   excerpt: string | null;
   featuredImageUrl: string | null;
   category: string;

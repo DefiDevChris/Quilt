@@ -17,10 +17,7 @@ import type {
 /**
  * Compute medallion layout: center block + concentric rounds.
  */
-export function computeMedallionLayout(
-  config: LayoutConfig,
-  pxPerUnit: number
-): LayoutResult {
+export function computeMedallionLayout(config: LayoutConfig, pxPerUnit: number): LayoutResult {
   const emptyResult: LayoutResult = {
     cells: [],
     sashingStrips: [],
@@ -54,6 +51,7 @@ export function computeMedallionLayout(
   let currentHeight = centerSizePx;
 
   // Add concentric rounds
+  let accOffset = 0;
   for (let i = 0; i < rounds.length; i++) {
     const round = rounds[i];
     const roundWidthPx = round.width * pxPerUnit;
@@ -61,8 +59,8 @@ export function computeMedallionLayout(
     if (round.type === 'solid') {
       // Top strip
       borderStrips.push({
-        x: -roundWidthPx + (currentWidth - centerSizePx) / 2 + centerSizePx / 2 - currentWidth / 2,
-        y: -(roundWidthPx + (currentHeight - centerSizePx) / 2) + centerSizePx / 2 - currentHeight / 2,
+        x: -(accOffset + roundWidthPx),
+        y: -(accOffset + roundWidthPx),
         width: currentWidth + 2 * roundWidthPx,
         height: roundWidthPx,
         color: round.color,
@@ -73,8 +71,8 @@ export function computeMedallionLayout(
 
       // Bottom strip
       borderStrips.push({
-        x: -roundWidthPx + (currentWidth - centerSizePx) / 2 + centerSizePx / 2 - currentWidth / 2,
-        y: (currentHeight - centerSizePx) / 2 + centerSizePx / 2 + currentHeight / 2,
+        x: -(accOffset + roundWidthPx),
+        y: centerSizePx + accOffset,
         width: currentWidth + 2 * roundWidthPx,
         height: roundWidthPx,
         color: round.color,
@@ -85,8 +83,8 @@ export function computeMedallionLayout(
 
       // Left strip
       borderStrips.push({
-        x: -(roundWidthPx + (currentWidth - centerSizePx) / 2) + centerSizePx / 2 - currentWidth / 2,
-        y: (currentHeight - centerSizePx) / 2 + centerSizePx / 2 - currentHeight / 2,
+        x: -(accOffset + roundWidthPx),
+        y: -accOffset,
         width: roundWidthPx,
         height: currentHeight,
         color: round.color,
@@ -97,8 +95,8 @@ export function computeMedallionLayout(
 
       // Right strip
       borderStrips.push({
-        x: (currentWidth - centerSizePx) / 2 + centerSizePx / 2 + currentWidth / 2,
-        y: (currentHeight - centerSizePx) / 2 + centerSizePx / 2 - currentHeight / 2,
+        x: centerSizePx + accOffset,
+        y: -accOffset,
         width: roundWidthPx,
         height: currentHeight,
         color: round.color,
@@ -108,6 +106,7 @@ export function computeMedallionLayout(
       });
     }
 
+    accOffset += roundWidthPx;
     currentWidth += 2 * roundWidthPx;
     currentHeight += 2 * roundWidthPx;
   }

@@ -31,30 +31,24 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password } = parsed.data;
 
-    // Check if user already exists in our DB
-    const [existing] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
-
-    if (existing) {
-      return Response.json(
-        { success: false, error: 'An account with this email already exists', code: 'CONFLICT' },
-        { status: 409 }
-      );
-    }
-
-    // Register with Cognito (sends verification email automatically)
+    // Register with Cognito first — let Cognito be the source of truth for
+    // duplicate detection. This avoids a TOCTOU race where the DB check passes
+    // but another request creates the Cognito user between check and sign-up.
+    // Cognito will throw UsernameExistsException if the email is already taken.
     await cognitoSignUp(email, password, name);
 
-    // Create user in our DB (unverified, no password hash needed)
-    await db.insert(users).values({
-      name,
-      email,
-      role: 'free',
-      emailVerified: null,
-    });
+    // Create user in our DB (unverified, no password hash needed).
+    // Use onConflictDoNothing to handle the rare case where the DB row already
+    // exists (e.g., concurrent signup attempts that both passed Cognito).
+    await db
+      .insert(users)
+      .values({
+        name,
+        email,
+        role: 'free',
+        emailVerified: null,
+      })
+      .onConflictDoNothing({ target: users.email });
 
     return Response.json(
       { success: true, data: { message: 'Please check your email to verify your account.' } },

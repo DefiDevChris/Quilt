@@ -83,7 +83,7 @@ export function AdminReportsPanel() {
   }, []);
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isAdmin) {
       fetchReports(activeTab, currentPage);
     }
   }, [activeTab, currentPage, isAdmin, fetchReports]);
@@ -112,7 +112,7 @@ export function AdminReportsPanel() {
     }
   }
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return (
       <div className="max-w-4xl mx-auto text-center py-16">
         <p className="text-secondary">Access denied.</p>
@@ -144,11 +144,14 @@ export function AdminReportsPanel() {
             }`}
           >
             {tab.label}
-            {tab.value === 'pending' && pagination && activeTab === 'pending' && pagination.total > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-[10px] font-bold text-white leading-none">
-                {pagination.total}
-              </span>
-            )}
+            {tab.value === 'pending' &&
+              pagination &&
+              activeTab === 'pending' &&
+              pagination.total > 0 && (
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-[10px] font-bold text-white leading-none">
+                  {pagination.total}
+                </span>
+              )}
           </button>
         ))}
       </div>

@@ -11,19 +11,14 @@ interface SaveButtonProps {
 
 export function SaveButton({ postId, isSaved, onToggle }: SaveButtonProps) {
   const user = useAuthStore((s) => s.user);
-  const savePost = useCommunityStore((s) => s.savePost);
-  const unsavePost = useCommunityStore((s) => s.unsavePost);
+  const toggleSavePost = useCommunityStore((s) => s.toggleSavePost);
 
   function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
     if (!user) return;
 
-    if (isSaved) {
-      unsavePost(postId);
-    } else {
-      savePost(postId);
-    }
+    toggleSavePost(postId, isSaved);
     onToggle();
   }
 

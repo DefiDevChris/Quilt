@@ -12,12 +12,12 @@
   --color-surface-canvas: #ffffff;
   --color-surface-recessed: #f8f6f0;
 
-  /* Primary */
-  --color-primary: #8d4f00;
-  --color-primary-dark: #6e3e00;
-  --color-primary-container: #ffca9d;
-  --color-primary-on: #fff6f1;
-  --color-primary-on-container: #3d2200;
+  /* Corgi Patchwork Extracted Palette */
+  --color-primary: #f07e26;
+  --color-primary-dark: #cc6012;
+  --color-primary-container: #ffdfc4;
+  --color-primary-on: #2d1706;
+  --color-primary-on-container: #572f10;
 
   /* Text & Content */
   --color-on-surface: #383831;
@@ -79,4 +79,18 @@ body {
   background-color: var(--color-background);
   color: var(--color-on-surface);
   font-family: var(--font-sans);
+}
+
+/* Glassmorphic card */
+.glass-card {
+  background: rgba(255, 252, 247, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 4px 24px rgba(56, 56, 49, 0.06);
+}
+
+/* Pill button */
+.btn-pill {
+  border-radius: 9999px;
 }

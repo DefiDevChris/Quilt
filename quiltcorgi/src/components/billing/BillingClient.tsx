@@ -56,7 +56,7 @@ export function BillingClient() {
         window.location.href = data.data.checkoutUrl;
       }
     } catch {
-      console.error('Failed to create checkout session');
+      // Checkout session creation failed — UI remains on current page
     } finally {
       setIsCheckoutLoading(false);
     }
@@ -71,7 +71,7 @@ export function BillingClient() {
         window.location.href = data.data.portalUrl;
       }
     } catch {
-      console.error('Failed to create portal session');
+      // Portal session creation failed — UI remains on current page
     } finally {
       setIsPortalLoading(false);
     }

@@ -21,8 +21,11 @@ export const userProfiles = pgTable(
     publicEmail: varchar('publicEmail', { length: 255 }),
     followerCount: integer('followerCount').notNull().default(0),
     followingCount: integer('followingCount').notNull().default(0),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
-    updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [index('idx_user_profiles_username').on(table.username)]
 );

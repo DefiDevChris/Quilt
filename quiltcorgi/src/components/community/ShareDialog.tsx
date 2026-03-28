@@ -27,7 +27,7 @@ export function ShareDialog({
 
   if (!isOpen) return null;
 
-  if (!isPro()) {
+  if (!isPro) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div className="w-full max-w-md rounded-xl bg-surface p-6 shadow-elevation-3 mx-4">

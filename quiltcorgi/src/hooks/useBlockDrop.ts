@@ -30,7 +30,8 @@ export function useBlockDrop() {
       const canvas = fabricCanvas as import('fabric').Canvas | null;
       if (!canvas) return;
 
-      const blockId = e.dataTransfer.getData('application/quiltcorgi-block-id') || dragBlockIdRef.current;
+      const blockId =
+        e.dataTransfer.getData('application/quiltcorgi-block-id') || dragBlockIdRef.current;
       if (!blockId) return;
 
       try {
@@ -66,7 +67,11 @@ export function useBlockDrop() {
 
         // Build the group from fabricJsData
         const objects: import('fabric').FabricObject[] = [];
-        const groupData = fabricJsData as { objects?: Array<Record<string, unknown>>; width?: number; height?: number };
+        const groupData = fabricJsData as {
+          objects?: Array<Record<string, unknown>>;
+          width?: number;
+          height?: number;
+        };
 
         if (groupData.objects && Array.isArray(groupData.objects)) {
           for (const obj of groupData.objects) {
@@ -90,8 +95,8 @@ export function useBlockDrop() {
         canvas.setActiveObject(group);
         canvas.requestRenderAll();
         setActiveTool('select');
-      } catch (err) {
-        console.error('Failed to drop block:', err);
+      } catch {
+        // Block drop failed silently — canvas state unchanged
       }
 
       dragBlockIdRef.current = null;
@@ -153,12 +158,12 @@ async function createFabricObject(
       });
     }
     case 'Line': {
-      const coords = [
-        obj.x1 as number,
-        obj.y1 as number,
-        obj.x2 as number,
-        obj.y2 as number,
-      ] as [number, number, number, number];
+      const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [
+        number,
+        number,
+        number,
+        number,
+      ];
       return new fabric.Line(coords, {
         stroke: (obj.stroke as string) ?? '#333',
         strokeWidth,

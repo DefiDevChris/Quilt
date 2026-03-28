@@ -43,7 +43,12 @@ export async function POST() {
       });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      throw new Error(
+        'NEXT_PUBLIC_APP_URL environment variable is required for Stripe checkout redirects'
+      );
+    }
 
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,

@@ -81,7 +81,7 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
 export function ProGate({ children, fallback, featureName }: ProGateProps) {
   const isPro = useAuthStore((s) => s.isPro);
 
-  if (isPro()) {
+  if (isPro) {
     return <>{children}</>;
   }
 

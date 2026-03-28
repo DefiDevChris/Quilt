@@ -34,7 +34,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const [activeTab, setActiveTab] = useState<TabType>('library');
 
   useEffect(() => {
-    if (isPanelOpen && activeTab === 'myfabrics' && isPro()) {
+    if (isPanelOpen && activeTab === 'myfabrics' && isPro) {
       fetchUserFabrics();
     }
   }, [isPanelOpen, activeTab, isPro, fetchUserFabrics]);
@@ -109,7 +109,10 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   {isLoading ? (
                     <div className="grid grid-cols-3 gap-2">
                       {Array.from({ length: 12 }).map((_, i) => (
-                        <div key={i} className="aspect-square animate-pulse rounded-lg bg-background" />
+                        <div
+                          key={i}
+                          className="aspect-square animate-pulse rounded-lg bg-background"
+                        />
                       ))}
                     </div>
                   ) : error ? (
@@ -130,11 +133,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   ) : (
                     <div className="grid grid-cols-3 gap-2">
                       {fabricItems.map((fabric) => (
-                        <FabricCard
-                          key={fabric.id}
-                          fabric={fabric}
-                          onDragStart={handleDragStart}
-                        />
+                        <FabricCard key={fabric.id} fabric={fabric} onDragStart={handleDragStart} />
                       ))}
                     </div>
                   )}
@@ -167,7 +166,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
             ) : (
               <>
                 <div className="flex-1 overflow-y-auto px-3 py-2">
-                  {!isPro() ? (
+                  {!isPro ? (
                     <div className="py-8 text-center">
                       <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-2">
                         Pro Feature
@@ -179,7 +178,10 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   ) : isLoadingUserFabrics ? (
                     <div className="grid grid-cols-3 gap-2">
                       {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="aspect-square animate-pulse rounded-lg bg-background" />
+                        <div
+                          key={i}
+                          className="aspect-square animate-pulse rounded-lg bg-background"
+                        />
                       ))}
                     </div>
                   ) : userFabrics.length === 0 ? (
@@ -213,7 +215,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                     </div>
                   )}
                 </div>
-                {isPro() && onOpenUpload && (
+                {isPro && onOpenUpload && (
                   <div className="border-t border-outline-variant px-3 py-2">
                     <button
                       type="button"

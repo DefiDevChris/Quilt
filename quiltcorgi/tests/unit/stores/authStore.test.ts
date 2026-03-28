@@ -48,7 +48,7 @@ describe('authStore', () => {
       role: 'pro',
     });
 
-    expect(useAuthStore.getState().isPro()).toBe(true);
+    expect(useAuthStore.getState().isPro).toBe(true);
   });
 
   it('isPro returns true for admin role', () => {
@@ -60,7 +60,7 @@ describe('authStore', () => {
       role: 'admin',
     });
 
-    expect(useAuthStore.getState().isPro()).toBe(true);
+    expect(useAuthStore.getState().isPro).toBe(true);
   });
 
   it('isPro returns false for free role', () => {
@@ -72,7 +72,7 @@ describe('authStore', () => {
       role: 'free',
     });
 
-    expect(useAuthStore.getState().isPro()).toBe(false);
+    expect(useAuthStore.getState().isPro).toBe(false);
   });
 
   it('isAdmin returns true only for admin role', () => {
@@ -84,7 +84,7 @@ describe('authStore', () => {
       role: 'admin',
     });
 
-    expect(useAuthStore.getState().isAdmin()).toBe(true);
+    expect(useAuthStore.getState().isAdmin).toBe(true);
   });
 
   it('isAdmin returns false for pro role', () => {
@@ -96,6 +96,6 @@ describe('authStore', () => {
       role: 'pro',
     });
 
-    expect(useAuthStore.getState().isAdmin()).toBe(false);
+    expect(useAuthStore.getState().isAdmin).toBe(false);
   });
 });

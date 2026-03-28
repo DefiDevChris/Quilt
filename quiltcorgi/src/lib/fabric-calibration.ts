@@ -65,9 +65,10 @@ function calculatePpi(input: CalibrationInput): number | null {
 }
 
 /**
- * Convert PPI to a scale factor relative to a target DPI.
+ * Convert a PPI value to a scale factor relative to a target DPI.
+ * Default target is PIXELS_PER_INCH (96).
  */
-export function ppiToScaleFactor(ppi: number, targetDpi: number): number {
+export function ppiToScaleFactor(ppi: number, targetDpi: number = PIXELS_PER_INCH): number {
   return ppi / targetDpi;
 }
 

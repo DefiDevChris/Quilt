@@ -10,6 +10,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { FREE_BLOCK_LIMIT } from '@/lib/constants';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 export const dynamic = 'force-dynamic';
 
@@ -148,7 +149,8 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid block data');
     }
 
-    const { name, category, svgData, fabricJsData, tags, parentBlockIds } = parsed.data;
+    const { name, category, svgData: rawSvgData, fabricJsData, tags, parentBlockIds } = parsed.data;
+    const svgData = typeof rawSvgData === 'string' ? sanitizeSvg(rawSvgData) : rawSvgData;
 
     // Embed parent block IDs in fabricJsData metadata if present
     const enrichedFabricData = parentBlockIds

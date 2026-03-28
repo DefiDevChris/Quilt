@@ -3,7 +3,7 @@ import { eq, desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
-import { forbiddenResponse } from '@/lib/api-responses';
+import { checkTrustLevel } from '@/middleware/trust-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,9 +16,9 @@ export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role !== 'admin') {
-    return forbiddenResponse('Admin access required.');
+  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
+  if (!trustCheck.allowed) {
+    return trustCheck.response!;
   }
 
   const url = request.nextUrl;

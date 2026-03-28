@@ -105,9 +105,32 @@ export const useCommentStore = create<CommentState>((set, get) => ({
         return;
       }
 
-      // Re-fetch to get properly formatted comments with author info
-      set({ isSubmitting: false, page: 1 });
-      await get().fetchComments(postId);
+      const newComment = json.data;
+
+      if (replyToId) {
+        // Insert reply under the parent comment
+        set((state) => ({
+          isSubmitting: false,
+          comments: state.comments.map((c) =>
+            c.id === replyToId
+              ? {
+                  ...c,
+                  replies: [...c.replies, newComment],
+                  totalReplyCount: c.totalReplyCount + 1,
+                }
+              : c
+          ),
+        }));
+      } else {
+        // Insert top-level comment at the beginning
+        set((state) => ({
+          isSubmitting: false,
+          comments: [
+            { ...newComment, replies: [], totalReplyCount: 0 },
+            ...state.comments,
+          ],
+        }));
+      }
     } catch {
       set({ error: 'Failed to post comment', isSubmitting: false });
     }

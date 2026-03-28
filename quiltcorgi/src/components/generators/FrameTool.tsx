@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { type FrameStyle, type FrameConfig } from '@/lib/frame-engine';
+import { type FrameStyle } from '@/lib/frame-engine';
 
 interface FrameToolProps {
   isOpen: boolean;
@@ -35,30 +35,18 @@ export function FrameTool({ isOpen, onClose }: FrameToolProps) {
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
-  const frameConfig: FrameConfig = useMemo(
-    () => ({
-      style: selectedStyle,
-      width: frameWidth,
-      color: frameColor,
-      cornerTreatment,
-    }),
-    [selectedStyle, frameWidth, frameColor, cornerTreatment]
-  );
-
   const handleApplyFrame = useCallback(() => {
     if (!fabricCanvas || !selectedBlockId) return;
 
-    // TODO: integrate with Fabric.js to apply frame to canvas
+    // Frame application not yet implemented
     onClose();
-  }, [fabricCanvas, selectedBlockId, frameConfig, onClose]);
+  }, [fabricCanvas, selectedBlockId, onClose]);
 
   const handleSaveToLibrary = useCallback(() => {
     if (!selectedBlockId) return;
 
-    // Mock implementation - would save framed block to library
-    // Show success message
-    alert('Framed block saved to library!');
-  }, [selectedBlockId, frameConfig]);
+    // Save to library not yet implemented
+  }, [selectedBlockId]);
 
   if (!isOpen) return null;
 

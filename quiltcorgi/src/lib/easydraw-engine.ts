@@ -375,13 +375,15 @@ function buildAdjacency(
   _gridRows: number
 ): Map<string, string[]> {
   const adj = new Map<string, string[]>();
+  const adjSets = new Map<string, Set<string>>();
 
   function addEdge(a: string, b: string) {
-    const list = adj.get(a) ?? [];
-    if (!list.includes(b)) {
-      list.push(b);
+    let set = adjSets.get(a);
+    if (!set) {
+      set = new Set<string>();
+      adjSets.set(a, set);
     }
-    adj.set(a, list);
+    set.add(b);
   }
 
   for (const seg of segments) {
@@ -389,6 +391,10 @@ function buildAdjacency(
     const tk = pointKey(seg.to);
     addEdge(fk, tk);
     addEdge(tk, fk);
+  }
+
+  for (const [key, set] of adjSets.entries()) {
+    adj.set(key, [...set]);
   }
 
   return adj;

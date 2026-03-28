@@ -36,7 +36,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
   const [activeTab, setActiveTab] = useState<TabType>('library');
 
   useEffect(() => {
-    if (isPanelOpen && activeTab === 'myblocks' && isPro()) {
+    if (isPanelOpen && activeTab === 'myblocks' && isPro) {
       fetchUserBlocks();
     }
   }, [isPanelOpen, activeTab, isPro, fetchUserBlocks]);
@@ -175,7 +175,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                 <>
                   {/* My Blocks section */}
                   <div className="flex-1 overflow-y-auto px-3 py-2">
-                    {!isPro() ? (
+                    {!isPro ? (
                       <div className="py-8 text-center">
                         <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-2">
                           Pro Feature
@@ -225,7 +225,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                       </div>
                     )}
                   </div>
-                  {isPro() && onOpenDrafting && (
+                  {isPro && onOpenDrafting && (
                     <div className="border-t border-outline-variant px-3 py-2">
                       <button
                         type="button"

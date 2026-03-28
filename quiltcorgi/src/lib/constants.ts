@@ -24,6 +24,8 @@ export const DEFAULT_CANVAS_WIDTH = 48;
 export const DEFAULT_CANVAS_HEIGHT = 48;
 
 export const DEFAULT_SEAM_ALLOWANCE_INCHES = 0.25;
+export const DEFAULT_WOF: 44 = 44;
+export const DEFAULT_WASTE_MARGIN = 0.1;
 
 export const PAGINATION_DEFAULT_LIMIT = 20;
 export const PAGINATION_MAX_LIMIT = 50;

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { type SourceQuadrant, type KaleidoscopeConfig } from '@/lib/kaleidoscope-engine';
+import { type SourceQuadrant } from '@/lib/kaleidoscope-engine';
 
 interface KaleidoscopeToolProps {
   isOpen: boolean;
@@ -25,28 +25,18 @@ export function KaleidoscopeTool({ isOpen, onClose }: KaleidoscopeToolProps) {
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
-  const kaleidoscopeConfig: KaleidoscopeConfig = useMemo(
-    () => ({
-      foldCount,
-      sourceQuadrant,
-    }),
-    [foldCount, sourceQuadrant]
-  );
-
   const handleGenerateKaleidoscope = useCallback(() => {
     if (!fabricCanvas || !selectedShapeId) return;
 
-    // TODO: integrate with Fabric.js to generate kaleidoscope on canvas
+    // Kaleidoscope generation not yet implemented
     onClose();
-  }, [fabricCanvas, selectedShapeId, kaleidoscopeConfig, onClose]);
+  }, [fabricCanvas, selectedShapeId, onClose]);
 
   const handleSaveToLibrary = useCallback(() => {
     if (!selectedShapeId) return;
 
-    // Mock implementation - would save kaleidoscope block to library
-    // Show success message
-    alert('Kaleidoscope block saved to library!');
-  }, [selectedShapeId, kaleidoscopeConfig]);
+    // Save to library not yet implemented
+  }, [selectedShapeId]);
 
   if (!isOpen) return null;
 

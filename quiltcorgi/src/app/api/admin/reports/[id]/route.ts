@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     if (existingReport.status !== 'pending') {
-      return errorResponse('Report has already been reviewed.', 'ALREADY_REVIEWED' as never, 409);
+      return errorResponse('Report has already been reviewed.', 'CONFLICT', 409);
     }
 
     const newStatus = action === 'dismiss' ? 'dismissed' : 'reviewed';

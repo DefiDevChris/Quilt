@@ -329,31 +329,31 @@ describe('communityStore', () => {
     });
   });
 
-  it('savePost performs optimistic update', () => {
+  it('toggleSavePost saves an unsaved post', () => {
     const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
     useCommunityStore.setState({ posts: [post] });
 
-    useCommunityStore.getState().savePost('post-1');
+    useCommunityStore.getState().toggleSavePost('post-1', false);
 
     expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
   });
 
-  it('unsavePost performs optimistic update', () => {
+  it('toggleSavePost unsaves a saved post', () => {
     const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
     useCommunityStore.setState({ posts: [post] });
 
-    useCommunityStore.getState().unsavePost('post-1');
+    useCommunityStore.getState().toggleSavePost('post-1', true);
 
     expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
   });
 
-  it('savePost reverts on server error', async () => {
+  it('toggleSavePost (save) reverts on server error', async () => {
     const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
     useCommunityStore.setState({ posts: [post] });
 
-    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
 
-    useCommunityStore.getState().savePost('post-1');
+    useCommunityStore.getState().toggleSavePost('post-1', false);
 
     expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
 
@@ -362,13 +362,13 @@ describe('communityStore', () => {
     });
   });
 
-  it('unsavePost reverts on server error', async () => {
+  it('toggleSavePost (unsave) reverts on server error', async () => {
     const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
     useCommunityStore.setState({ posts: [post] });
 
-    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
 
-    useCommunityStore.getState().unsavePost('post-1');
+    useCommunityStore.getState().toggleSavePost('post-1', true);
 
     expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
 
@@ -377,11 +377,11 @@ describe('communityStore', () => {
     });
   });
 
-  it('savePost is a no-op for unknown postId', () => {
+  it('toggleSavePost is a no-op for unknown postId', () => {
     const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
     useCommunityStore.setState({ posts: [post] });
 
-    useCommunityStore.getState().savePost('nonexistent');
+    useCommunityStore.getState().toggleSavePost('nonexistent', false);
 
     expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
   });

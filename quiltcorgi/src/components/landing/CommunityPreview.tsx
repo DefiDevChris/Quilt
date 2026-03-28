@@ -149,7 +149,7 @@ export default function CommunityPreview() {
       <div className="text-center mt-8">
         <Link
           href="/community"
-          className="inline-block bg-surface-container text-on-surface font-medium px-6 py-3 rounded-[var(--radius-md)] hover:opacity-90 transition-opacity"
+          className="inline-block bg-surface-container text-on-surface font-medium px-8 py-4 rounded-full shadow-[var(--shadow-elevation-1)] hover:shadow-[var(--shadow-elevation-2)] transition-shadow"
         >
           Browse Community
         </Link>

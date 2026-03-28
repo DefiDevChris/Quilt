@@ -15,7 +15,7 @@ export function useCanvasKeyboard() {
 
     (async () => {
       const fabric = await import('fabric');
-      const canvas = fabricCanvas as {
+      const canvas = fabricCanvas as unknown as {
         toJSON: () => Record<string, unknown>;
         loadFromJSON: (json: Record<string, unknown>) => Promise<void>;
         renderAll: () => void;

@@ -26,14 +26,6 @@ interface NotificationState {
   stopPolling: () => void;
 }
 
-const _g = globalThis as typeof globalThis & {
-  __notifPollingId?: ReturnType<typeof setInterval> | null;
-};
-if (_g.__notifPollingId) {
-  clearInterval(_g.__notifPollingId);
-  _g.__notifPollingId = null;
-}
-
 const INITIAL_STATE = {
   notifications: [] as Notification[],
   unreadCount: 0,
@@ -68,15 +60,17 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   markAsRead: (ids: string[]) => {
-    const { notifications: prev } = get();
+    const { notifications: prev, unreadCount: previousUnreadCount } = get();
     const previousNotifications = [...prev];
-    const previousUnreadCount = get().unreadCount;
 
-    const markedCount = prev.filter((n) => !n.isRead && ids.includes(n.id)).length;
-
-    set({
-      notifications: prev.map((n) => (ids.includes(n.id) ? { ...n, isRead: true } : n)),
-      unreadCount: Math.max(0, get().unreadCount - markedCount),
+    set((state) => {
+      const markedCount = state.notifications.filter((n) => !n.isRead && ids.includes(n.id)).length;
+      return {
+        notifications: state.notifications.map((n) =>
+          ids.includes(n.id) ? { ...n, isRead: true } : n
+        ),
+        unreadCount: Math.max(0, state.unreadCount - markedCount),
+      };
     });
 
     fetch('/api/notifications/read', {
@@ -140,17 +134,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   startPolling: () => {
-    if (_g.__notifPollingId != null) return;
     get().fetchNotifications();
-    _g.__notifPollingId = setInterval(() => {
-      get().fetchNotifications();
-    }, 60_000);
   },
 
   stopPolling: () => {
-    if (_g.__notifPollingId != null) {
-      clearInterval(_g.__notifPollingId);
-      _g.__notifPollingId = null;
-    }
+    // No-op — polling removed in favor of on-demand fetch
   },
 }));

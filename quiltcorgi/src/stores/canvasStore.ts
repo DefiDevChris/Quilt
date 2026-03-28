@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import type { Canvas as FabricCanvas } from 'fabric';
 import type { UnitSystem } from '@/types/canvas';
 import {
   ZOOM_DEFAULT,
@@ -46,7 +47,7 @@ interface GridSettings {
 }
 
 interface CanvasStoreState {
-  fabricCanvas: unknown;
+  fabricCanvas: FabricCanvas | null;
   zoom: number;
   unitSystem: UnitSystem;
   gridSettings: GridSettings;
@@ -66,7 +67,7 @@ interface CanvasStoreState {
   fussyCutTarget: FussyCutTarget | null;
   grayscaleMode: boolean;
 
-  setFabricCanvas: (canvas: unknown) => void;
+  setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<GridSettings>) => void;

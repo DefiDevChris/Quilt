@@ -7,7 +7,13 @@ import { stripe } from '@/lib/stripe';
 
 export const dynamic = 'force-dynamic';
 
-// In-memory dedup guard for webhook event IDs (handles immediate retries)
+// In-memory dedup guard for webhook event IDs (handles immediate retries).
+// NOTE: Stripe webhooks are idempotent by design — each event has a unique ID
+// and Stripe recommends making handlers idempotent. This in-memory dedup is
+// defense-in-depth for immediate retries within the same process. It does NOT
+// survive process restarts or span multiple instances, which is acceptable
+// because our DB upserts (upsertSubscription, syncUserRole) are themselves
+// idempotent. A duplicate webhook will simply re-write the same data.
 const processedEvents = new Map<string, number>();
 const DEDUP_TTL_MS = 5 * 60 * 1000; // 5 minutes
 

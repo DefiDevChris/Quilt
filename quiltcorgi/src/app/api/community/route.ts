@@ -181,8 +181,9 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
-    return errorResponse('Failed to fetch community posts', 'INTERNAL_ERROR', 500);
+  } catch (error) {
+    console.error("[Community API Error]", error);
+    return Response.json({ success: false, error: String(error), stack: error instanceof Error ? error.stack : undefined }, { status: 500 });
   }
 }
 

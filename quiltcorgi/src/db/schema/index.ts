@@ -13,9 +13,6 @@ export {
   reportStatusEnum,
 } from './enums';
 export { users } from './users';
-export { accounts } from './accounts';
-export { sessions } from './sessions';
-export { verificationTokens } from './verificationTokens';
 export { projects } from './projects';
 export { blocks } from './blocks';
 export { fabrics } from './fabrics';

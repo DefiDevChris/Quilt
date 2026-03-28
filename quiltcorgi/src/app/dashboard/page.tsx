@@ -80,63 +80,6 @@ function PeopleIcon() {
   );
 }
 
-function GeometricIcon() {
-  return (
-    <svg
-      width="48"
-      height="48"
-      viewBox="0 0 48 48"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className="text-secondary"
-    >
-      <polygon points="24,6 42,36 6,36" strokeLinejoin="round" />
-      <rect x="16" y="20" width="16" height="16" rx="2" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function SwatchIcon() {
-  return (
-    <svg
-      width="48"
-      height="48"
-      viewBox="0 0 48 48"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className="text-secondary"
-    >
-      <rect x="6" y="6" width="16" height="36" rx="3" />
-      <rect x="26" y="6" width="16" height="24" rx="3" />
-      <circle cx="14" cy="36" r="2" fill="currentColor" />
-      <line x1="26" y1="34" x2="42" y2="34" strokeLinecap="round" />
-      <line x1="26" y1="38" x2="38" y2="38" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function GridPatternIcon() {
-  return (
-    <svg
-      width="48"
-      height="48"
-      viewBox="0 0 48 48"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className="text-secondary"
-    >
-      <rect x="6" y="6" width="36" height="36" rx="3" />
-      <line x1="18" y1="6" x2="18" y2="42" />
-      <line x1="30" y1="6" x2="30" y2="42" />
-      <line x1="6" y1="18" x2="42" y2="18" />
-      <line x1="6" y1="30" x2="42" y2="30" />
-    </svg>
-  );
-}
-
 function BookIcon() {
   return (
     <svg
@@ -344,39 +287,6 @@ export default function DashboardPage() {
           </h3>
           <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
             Browse shared designs
-          </p>
-        </BentoCard>
-
-        {/* Blocks — col-span-3 */}
-        <BentoCard className="col-span-6 md:col-span-3" href="/blocks">
-          <GeometricIcon />
-          <h3 className="text-[length:var(--font-size-headline-sm)] font-semibold text-on-surface mt-3">
-            Block Library
-          </h3>
-          <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-            6,000+ patterns
-          </p>
-        </BentoCard>
-
-        {/* Fabrics — col-span-3 */}
-        <BentoCard className="col-span-6 md:col-span-3" href="/fabrics">
-          <SwatchIcon />
-          <h3 className="text-[length:var(--font-size-headline-sm)] font-semibold text-on-surface mt-3">
-            Fabric Library
-          </h3>
-          <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-            Browse & import
-          </p>
-        </BentoCard>
-
-        {/* Patterns — col-span-3 */}
-        <BentoCard className="col-span-6 md:col-span-3" href="/patterns">
-          <GridPatternIcon />
-          <h3 className="text-[length:var(--font-size-headline-sm)] font-semibold text-on-surface mt-3">
-            Patterns
-          </h3>
-          <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-            Layout templates
           </p>
         </BentoCard>
 

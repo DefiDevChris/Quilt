@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import PublicNav from '@/components/landing/PublicNav';
 import HeroSection from '@/components/landing/HeroSection';
 import FeatureHighlights from '@/components/landing/FeatureHighlights';
 import WorkspacePreview from '@/components/landing/WorkspacePreview';
-import PricingSection from '@/components/landing/PricingSection';
 import CommunityPreview from '@/components/landing/CommunityPreview';
 import Footer from '@/components/landing/Footer';
 
@@ -20,6 +20,8 @@ function CommunitySkeleton() {
   );
 }
 
+import CoreCapabilities from '@/components/landing/CoreCapabilities';
+
 export default function LandingPage() {
   return (
     <>
@@ -28,11 +30,11 @@ export default function LandingPage() {
         <HeroSection />
         <FeatureHighlights />
         <WorkspacePreview />
-        <PricingSection />
-        <section id="community" className="py-[5.5rem] bg-surface px-4">
+        <CoreCapabilities />
+        <section id="community" className="py-[6rem] bg-surface-container-low px-4">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-[2rem] font-semibold leading-[1.3] tracking-[-0.01em] text-on-surface text-center mb-12">
-              See what quilters are creating
+            <h2 className="text-[2rem] font-bold leading-[1.3] tracking-[-0.01em] text-on-surface text-center mb-12">
+              See what the community is creating
             </h2>
             <Suspense fallback={<CommunitySkeleton />}>
               <CommunityPreview />

@@ -190,6 +190,10 @@ export function packItems(
 export function polylineBoundingBox(
   points: Array<{ x: number; y: number }>
 ): BoundingBox & { minX: number; minY: number } {
+  if (points.length === 0) {
+    return { width: 0, height: 0, minX: 0, minY: 0 };
+  }
+
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;

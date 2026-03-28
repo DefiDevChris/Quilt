@@ -30,9 +30,14 @@ export const projects = pgTable(
     canvasHeight: doublePrecision('canvasHeight').notNull().default(48.0),
     thumbnailUrl: text('thumbnailUrl'),
     isPublic: boolean('isPublic').notNull().default(false),
-    lastSavedAt: timestamp('lastSavedAt', { mode: 'date' }).notNull().defaultNow(),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
-    updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull().defaultNow(),
+    lastSavedAt: timestamp('lastSavedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [index('idx_projects_userId').on(table.userId)]
 );

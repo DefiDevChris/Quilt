@@ -118,21 +118,20 @@ export function extractUniqueBlocks(canvasData: FabricJSON): BlockInstance[] {
     }
 
     const block = blockMap.get(blockId)!;
-    block.quantity++;
+    const newPatch =
+      obj.type === 'path' || obj.type === 'polygon' || obj.type === 'rect' || obj.type === 'circle'
+        ? {
+            shape: extractShapeData(obj),
+            fill: obj.fill || '#000000',
+            fabricId: obj.fabricId,
+          }
+        : null;
 
-    // Add patch data
-    if (
-      obj.type === 'path' ||
-      obj.type === 'polygon' ||
-      obj.type === 'rect' ||
-      obj.type === 'circle'
-    ) {
-      block.patches.push({
-        shape: extractShapeData(obj),
-        fill: obj.fill || '#000000',
-        fabricId: obj.fabricId,
-      });
-    }
+    blockMap.set(blockId, {
+      ...block,
+      quantity: block.quantity + 1,
+      patches: newPatch ? [...block.patches, newPatch] : block.patches,
+    });
   }
 
   return Array.from(blockMap.values()).filter((block) => block.quantity > 0);

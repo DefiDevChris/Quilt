@@ -17,13 +17,15 @@ export const blogPosts = pgTable(
     category: varchar('category', { length: 50 }).notNull(),
     tags: text('tags').array().notNull().default([]),
     status: blogPostStatusEnum('status').notNull().default('draft'),
-    publishedAt: timestamp('publishedAt', { mode: 'date' }),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
-    updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull().defaultNow(),
+    publishedAt: timestamp('publishedAt', { mode: 'date', withTimezone: true }),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_blog_posts_status_publishedAt').on(table.status, table.publishedAt),
-    index('idx_blog_posts_slug').on(table.slug),
     index('idx_blog_posts_authorId').on(table.authorId),
   ]
 );

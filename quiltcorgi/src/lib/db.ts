@@ -3,12 +3,12 @@ import { Pool } from 'pg';
 import * as schema from '@/db/schema';
 
 const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  console.warn('DATABASE_URL is not set — database operations will fail');
+if (!connectionString && process.env.NODE_ENV === 'production') {
+  throw new Error('DATABASE_URL must be set in production');
 }
 
 const pool = new Pool({
-  connectionString: connectionString ?? '',
+  connectionString: connectionString ?? 'postgresql://localhost:5432/quiltcorgi',
   max: 10,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,

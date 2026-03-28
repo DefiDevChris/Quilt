@@ -67,7 +67,7 @@ export function BlogModerationPanel() {
   }, []);
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isAdmin) {
       fetchPosts(activeTab);
     }
   }, [activeTab, isAdmin, fetchPosts]);
@@ -91,7 +91,7 @@ export function BlogModerationPanel() {
     }
   }
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return (
       <div className="max-w-4xl mx-auto text-center py-16">
         <p className="text-secondary">Access denied.</p>
@@ -169,9 +169,7 @@ export function BlogModerationPanel() {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-sm font-semibold text-on-surface truncate">
-                    {post.title}
-                  </h3>
+                  <h3 className="text-sm font-semibold text-on-surface truncate">{post.title}</h3>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_STYLES[post.status]}`}
                   >
@@ -183,9 +181,7 @@ export function BlogModerationPanel() {
                   {formatDate(post.createdAt)} &middot; {post.readTimeMinutes} min read
                 </p>
                 {post.excerpt && (
-                  <p className="text-xs text-secondary mt-1 line-clamp-1">
-                    {post.excerpt}
-                  </p>
+                  <p className="text-xs text-secondary mt-1 line-clamp-1">{post.excerpt}</p>
                 )}
               </div>
 

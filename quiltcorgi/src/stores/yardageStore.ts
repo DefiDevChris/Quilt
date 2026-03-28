@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import type { WOF, YardageResult } from '@/lib/yardage-engine';
+import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
 
 interface YardageStoreState {
   isPanelOpen: boolean;
@@ -18,8 +19,8 @@ interface YardageStoreState {
 
 export const useYardageStore = create<YardageStoreState>((set) => ({
   isPanelOpen: false,
-  wof: 44,
-  wasteMargin: 0.10,
+  wof: DEFAULT_WOF,
+  wasteMargin: DEFAULT_WASTE_MARGIN,
   results: [],
 
   togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),

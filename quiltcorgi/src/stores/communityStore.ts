@@ -46,8 +46,7 @@ interface CommunityState {
   loadMore: () => Promise<void>;
   likePost: (postId: string) => void;
   unlikePost: (postId: string) => void;
-  savePost: (postId: string) => void;
-  unsavePost: (postId: string) => void;
+  toggleSavePost: (postId: string, currentlySaved: boolean) => void;
   reset: () => void;
 }
 
@@ -63,6 +62,9 @@ const INITIAL_STATE = {
   isLoading: false,
   error: null as string | null,
 };
+
+let communityAbortController: AbortController | null = null;
+const inFlightActions = new Set<string>();
 
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   ...INITIAL_STATE,
@@ -88,6 +90,8 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   fetchPosts: async (append = false) => {
+    communityAbortController?.abort();
+    communityAbortController = new AbortController();
     const { search, sort, tab, category, page } = get();
     set({ isLoading: true, error: null });
 
@@ -100,7 +104,9 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       params.set('page', String(page));
       params.set('limit', '24');
 
-      const res = await fetch(`/api/community?${params.toString()}`);
+      const res = await fetch(`/api/community?${params.toString()}`, {
+        signal: communityAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -198,60 +204,24 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       });
   },
 
-  savePost: (postId) => {
+  toggleSavePost: (postId, currentlySaved) => {
     const { posts } = get();
     const original = posts.find((p) => p.id === postId);
     if (!original) return;
 
     set({
-      posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: true } : p)),
+      posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: !currentlySaved } : p)),
     });
 
-    fetch(`/api/community/${postId}/save`, { method: 'POST' })
-      .then((res) => {
-        if (!res.ok) {
-          set({
-            posts: get().posts.map((p) =>
-              p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
-            ),
-          });
-        }
-      })
-      .catch(() => {
+    fetch(`/api/community/${postId}/save`, { method: currentlySaved ? 'DELETE' : 'POST' }).catch(
+      () => {
         set({
           posts: get().posts.map((p) =>
             p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
           ),
         });
-      });
-  },
-
-  unsavePost: (postId) => {
-    const { posts } = get();
-    const original = posts.find((p) => p.id === postId);
-    if (!original) return;
-
-    set({
-      posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: false } : p)),
-    });
-
-    fetch(`/api/community/${postId}/save`, { method: 'POST' })
-      .then((res) => {
-        if (!res.ok) {
-          set({
-            posts: get().posts.map((p) =>
-              p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
-            ),
-          });
-        }
-      })
-      .catch(() => {
-        set({
-          posts: get().posts.map((p) =>
-            p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
-          ),
-        });
-      });
+      }
+    );
   },
 
   reset: () => set({ ...INITIAL_STATE }),

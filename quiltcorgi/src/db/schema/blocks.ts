@@ -23,7 +23,7 @@ export const blocks = pgTable(
     tags: text('tags').array().notNull().default([]),
     isDefault: boolean('isDefault').notNull().default(false),
     thumbnailUrl: text('thumbnailUrl'),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     index('idx_blocks_category').on(table.category),

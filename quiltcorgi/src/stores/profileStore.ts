@@ -60,9 +60,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       profile: {
         ...profile,
         isFollowedByUser: !wasFollowing,
-        followerCount: wasFollowing
-          ? Math.max(0, originalCount - 1)
-          : originalCount + 1,
+        followerCount: wasFollowing ? Math.max(0, originalCount - 1) : originalCount + 1,
       },
     });
 
@@ -74,22 +72,28 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       });
 
       if (!res.ok) {
+        const current = get().profile;
+        if (current) {
+          set({
+            profile: {
+              ...current,
+              isFollowedByUser: wasFollowing,
+              followerCount: originalCount,
+            },
+          });
+        }
+      }
+    } catch {
+      const current = get().profile;
+      if (current) {
         set({
           profile: {
-            ...get().profile!,
+            ...current,
             isFollowedByUser: wasFollowing,
             followerCount: originalCount,
           },
         });
       }
-    } catch {
-      set({
-        profile: {
-          ...get().profile!,
-          isFollowedByUser: wasFollowing,
-          followerCount: originalCount,
-        },
-      });
     }
   },
 }));

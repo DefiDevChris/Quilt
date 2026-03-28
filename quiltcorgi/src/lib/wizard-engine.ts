@@ -4,23 +4,31 @@ export function computeNavigation<TData>(
   steps: readonly WizardStep<TData>[],
   currentStepIndex: number
 ): WizardNavigationResult {
-  const totalSteps = steps.length;
-  const clampedIndex = Math.max(0, Math.min(currentStepIndex, totalSteps - 1));
-
+  const clamped = Math.max(0, Math.min(currentStepIndex, steps.length - 1));
   return {
-    canGoNext: clampedIndex < totalSteps - 1,
-    canGoBack: clampedIndex > 0,
-    isFirstStep: clampedIndex === 0,
-    isLastStep: clampedIndex === totalSteps - 1,
-    progress: totalSteps > 1 ? clampedIndex / (totalSteps - 1) : 1,
-    currentStepIndex: clampedIndex,
+    canGoNext: clamped < steps.length - 1,
+    canGoBack: clamped > 0,
+    isFirstStep: clamped === 0,
+    isLastStep: clamped === steps.length - 1,
+    progress: steps.length > 1 ? clamped / (steps.length - 1) : 1,
+    currentStepIndex: clamped,
   };
 }
 
-export function validateStep<TData>(
-  step: WizardStep<TData>,
-  data: TData
-): true | string {
+export function computeProgress(currentIndex: number, totalSteps: number): number {
+  if (totalSteps <= 1) return 1;
+  return currentIndex / (totalSteps - 1);
+}
+
+export function getStepLabel<TData>(steps: readonly WizardStep<TData>[], index: number): string {
+  return steps[index]?.title ?? '';
+}
+
+export function isStepOptional<TData>(steps: readonly WizardStep<TData>[], index: number): boolean {
+  return steps[index]?.optional === true;
+}
+
+export function validateStep<TData>(step: WizardStep<TData>, data: TData): true | string {
   if (!step.validate) {
     return true;
   }
@@ -46,32 +54,6 @@ export function goNext<TData>(
   return { newIndex: nextIndex, error: null };
 }
 
-export function goBack(
-  currentStepIndex: number
-): { readonly newIndex: number } {
+export function goBack(currentStepIndex: number): { readonly newIndex: number } {
   return { newIndex: Math.max(0, currentStepIndex - 1) };
-}
-
-export function computeProgress(
-  currentStepIndex: number,
-  totalSteps: number
-): number {
-  if (totalSteps <= 1) return 1;
-  return currentStepIndex / (totalSteps - 1);
-}
-
-export function getStepLabel<TData>(
-  steps: readonly WizardStep<TData>[],
-  currentStepIndex: number
-): string {
-  const step = steps[currentStepIndex];
-  return step ? step.title : '';
-}
-
-export function isStepOptional<TData>(
-  steps: readonly WizardStep<TData>[],
-  stepIndex: number
-): boolean {
-  const step = steps[stepIndex];
-  return step?.optional === true;
 }

@@ -1,6 +1,14 @@
 /**
  * In-memory sliding-window rate limiter for auth endpoints.
- * For multi-instance deployments, replace with Redis-backed implementation.
+ *
+ * INTENTIONAL: This uses an in-memory Map, which is appropriate for
+ * single-instance deployments (e.g., a single Vercel serverless function
+ * or a single container). The Map resets on cold starts, which is acceptable
+ * because rate limiting is defense-in-depth — Cognito has its own throttling.
+ *
+ * TODO: For multi-instance or serverless-at-scale deployments, migrate to a
+ * Redis-backed implementation (e.g., @upstash/ratelimit) so rate limit state
+ * is shared across instances and survives cold starts.
  */
 
 interface RateLimitEntry {

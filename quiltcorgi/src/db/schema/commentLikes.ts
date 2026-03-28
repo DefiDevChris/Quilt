@@ -11,10 +11,11 @@ export const commentLikes = pgTable(
     commentId: uuid('commentId')
       .notNull()
       .references(() => comments.id, { onDelete: 'cascade' }),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     primaryKey({ columns: [table.userId, table.commentId] }),
     index('idx_comment_likes_commentId').on(table.commentId),
+    index('idx_comment_likes_userId').on(table.userId),
   ]
 );

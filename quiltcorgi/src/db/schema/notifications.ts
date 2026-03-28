@@ -22,7 +22,7 @@ export const notifications = pgTable(
     message: text('message').notNull(),
     isRead: boolean('isRead').notNull().default(false),
     metadata: jsonb('metadata'),
-    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     index('idx_notifications_userId_isRead').on(table.userId, table.isRead),

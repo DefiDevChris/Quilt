@@ -2,11 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
 import { stripe } from '@/lib/stripe';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
+import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +21,12 @@ export async function POST() {
       return errorResponse('No subscription found.', 'NOT_FOUND', 404);
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      throw new Error(
+        'NEXT_PUBLIC_APP_URL environment variable is required for Stripe portal redirects'
+      );
+    }
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: sub.stripeCustomerId,
