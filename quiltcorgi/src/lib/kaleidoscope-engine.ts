@@ -115,9 +115,7 @@ function extractSourceQuadrant(
 ): Point2D[][] {
   const bounds = getQuadrantBounds(bbox, quadrant);
 
-  return geometry
-    .map((polygon) => polygon.filter((point) => isPointInQuadrant(point, bounds)))
-    .filter((polygon) => polygon.length > 0);
+  return geometry.filter((polygon) => polygon.some((point) => isPointInQuadrant(point, bounds)));
 }
 
 /**
@@ -168,7 +166,7 @@ function isPointInQuadrant(
 function generateWedge(
   sourceGeometry: Point2D[][],
   center: Point2D,
-  radius: number,
+  _radius: number,
   wedgeAngle: number,
   rotationAngle: number
 ): Point2D[][] {

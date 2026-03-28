@@ -31,7 +31,6 @@ export function getStripePriceId(): string {
   return priceId ?? '';
 }
 
-/** @deprecated Use getStripePriceId() for lazy evaluation after secrets are loaded. */
-export const STRIPE_PRO_PRICE_ID = '' as string;
+export const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID ?? '';
 
 export const PAYMENT_FAILURE_GRACE_DAYS = 7;

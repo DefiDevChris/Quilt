@@ -49,22 +49,22 @@ describe('calculateTrustLevel', () => {
     expect(calculateTrustLevel(user)).toBe('visitor');
   });
 
-  it('returns "commenter" when account is 24+ hours old with 0 approved comments', () => {
+  it('returns "verified" when account is 24+ hours old with 0 approved comments', () => {
     const dayAgo = new Date(Date.now() - 25 * 60 * 60 * 1000);
     const user = makeUser({
       createdAt: dayAgo,
       approvedCommentCount: 0,
     });
-    expect(calculateTrustLevel(user)).toBe('commenter');
+    expect(calculateTrustLevel(user)).toBe('verified');
   });
 
-  it('returns "poster" when user has 3+ approved comments', () => {
+  it('returns "commenter" when user has 3+ approved comments', () => {
     const dayAgo = new Date(Date.now() - 25 * 60 * 60 * 1000);
     const user = makeUser({
       createdAt: dayAgo,
       approvedCommentCount: 3,
     });
-    expect(calculateTrustLevel(user)).toBe('poster');
+    expect(calculateTrustLevel(user)).toBe('commenter');
   });
 
   it('returns "trusted" when user has 5+ approved posts', () => {

@@ -69,6 +69,12 @@ export function calculateTrustLevel(user: TrustUserInput | null): TrustLevel {
 
   if (!isAccountOldEnough(user.createdAt)) return 'verified';
 
+  if (
+    user.approvedPostCount >= TRUST_POSTER_APPROVED_POSTS &&
+    user.approvedCommentCount >= TRUST_COMMENTER_APPROVED_COMMENTS
+  )
+    return 'trusted';
+
   if (user.approvedPostCount >= TRUST_POSTER_APPROVED_POSTS) return 'poster';
 
   if (user.approvedCommentCount >= TRUST_COMMENTER_APPROVED_COMMENTS) return 'commenter';
