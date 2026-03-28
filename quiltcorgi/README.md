@@ -16,7 +16,7 @@ A modern, browser-based quilt design studio. Professional block drafting, fabric
 | Secrets | AWS Secrets Manager (production configuration) |
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe |
-| Testing | Vitest (1,295 unit tests) + Playwright E2E |
+| Testing | Vitest (1,305 unit tests) + Playwright E2E |
 
 ## Getting Started
 
@@ -27,7 +27,7 @@ npm install
 npm run dev                   # http://localhost:3000
 ```
 
-See `../Docs/12-ENV-CONFIG.md` for full environment setup (Cognito, AWS Secrets Manager, S3, Stripe) and `../Docs/08-DEVOPS.md` for deployment.
+Set `AWS_SECRET_NAME=skip` for local dev. See root README for full details.
 
 ## Project Structure
 
@@ -37,7 +37,7 @@ src/
   components/       # React components (127 across 25 directories)
   hooks/            # 18 custom hooks (canvas, drawing, patterns, colorway, text, etc.)
   stores/           # 14 Zustand stores
-  lib/              # 56 utility modules (engines, math, PDF, S3, auth, etc.)
+  lib/              # ~60 utility modules (engines, math, PDF, S3, auth, etc.)
   types/            # TypeScript type definitions
   db/               # Drizzle schemas (21 tables) + seed data
 ```
@@ -49,7 +49,7 @@ npm run dev          # Development server
 npm run build        # Production build
 npm run lint         # ESLint
 npm run format       # Prettier
-npm test             # Vitest (1,295 tests)
+npm test             # Vitest (1,305 tests)
 npm run test:coverage # Vitest with coverage
 npm run test:e2e     # Playwright E2E tests
 npm run type-check   # TypeScript type checking

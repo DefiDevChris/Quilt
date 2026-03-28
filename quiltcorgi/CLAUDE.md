@@ -1,9 +1,5 @@
 @AGENTS.md
 
-## Project Reference
-
-Specification docs live in `../Docs/` (01-05, 07-08, 12-13).
-
 ## Key Technical Facts
 
 - **Next.js 16.2.1** — App Router, `proxy.ts` (not middleware.ts), `await params` in route handlers
@@ -118,6 +114,17 @@ Seven production features added:
 
 **SEO:** Dynamic `sitemap.ts` (blog posts, profiles, community posts). `generateMetadata` on profile/blog/community pages. OG images.
 
+## Security Hardening
+
+- **SVG sanitization:** All `dangerouslySetInnerHTML` SVG rendering uses `sanitizeSvg()` from `src/lib/sanitize-svg.ts` (wraps `isomorphic-dompurify` with strict SVG-only allowlist). Applied in `BlockPreview.tsx`, `PrintlistPanel.tsx`, `SerendipityTool.tsx`.
+- **Auth rate limiting:** `src/lib/rate-limit.ts` — in-memory sliding-window rate limiter applied to all Cognito auth endpoints (signin, signup, verify, forgot-password). Presets in `AUTH_RATE_LIMITS`. For multi-instance deployments, replace with Redis-backed implementation.
+- **Open redirect prevention:** `AuthForm.tsx` validates `callbackUrl` query param — only allows relative paths starting with `/`, rejects `//` protocol-relative URLs.
+- **Webhook secret:** `STRIPE_WEBHOOK_SECRET` is required — `getWebhookSecret()` throws at invocation if env var is missing (no empty-string fallback). Webhook route also has in-memory event ID dedup guard.
+- **Admin route gating:** `proxy.ts` checks `qc_user_role` cookie (set during sign-in via `setRoleCookie()` in `cognito-session.ts`). Non-admin users are redirected from `/admin`. All admin API routes enforce access via `checkTrustLevel('canModerate')` from `trust-guard.ts`.
+- **S3 client:** `s3Client` is `null` when AWS env vars are absent. `generatePresignedUrl()` throws a clear error if called without configuration.
+- **CSP:** `connect-src` includes `*.s3.amazonaws.com` and `*.s3.*.amazonaws.com` for Pro user presigned uploads.
+- **Cookie write safety:** `tryRefreshSession()` wraps `setAuthCookies()` in its own try/catch — cookie write failures in RSC context don't cause the session to return `null`.
+
 ## Gotchas
 
 - `validationErrorResponse()` in `api-responses.ts` takes a `string`, not a `ZodError` — use `parsed.error.message`
@@ -132,7 +139,9 @@ Seven production features added:
 - `verifySessionToken()` in `cognito-session.ts` returns `{ sub, email }` only — no `role` field (role requires DB lookup via `getSession()`).
 - Blog `[slug]/page.tsx` uses React `cache()` to deduplicate the post query between `generateMetadata` and the page component.
 - `manifest.json` references `icon-192.png` and `icon-512.png` — these PNG files need to be generated from `favicon.svg` and placed in `public/`.
+- `saveProject()` lives in `lib/save-project.ts` (shared by `useCanvasKeyboard` and `useAutoSave`). Has max 3 retries on failure.
+- `BorderConfig.id` is optional — the store's `createBorder()` generates a UUID, but test fixtures and engine functions may omit it.
 
 ## Stats
 
-~353 source files, 14 Zustand stores, 21 DB tables, 69 test files (1,295 passing / 1,305 total), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito (cognito.ts, cognito-session.ts, secrets.ts, instrumentation.ts). 10 pre-existing test failures: kaleidoscope-engine (6), trust-engine (3), stripe env config (1).
+~354 source files, 14 Zustand stores, 21 DB tables, 69 test files (1,305 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.

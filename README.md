@@ -1,55 +1,86 @@
-# QuiltCorgi — Project Blueprint
+# QuiltCorgi
 
-**Version:** 1.0 | **Date:** March 26, 2026
+A modern, browser-based quilt design studio. Professional block drafting, fabric visualization, generative design tools, and 1:1 pattern printing -- free to start, no download required.
 
-A modern, browser-based quilt design studio that replaces legacy desktop software with a real-time Fabric.js canvas engine, 6,000+ block library, fabric visualization, generative design tools, precision 1:1 PDF pattern export, and a community sharing board. Free to start, low-cost Pro subscription.
+## Features
 
----
+- **Canvas Studio** -- Fabric.js-powered design surface with 4 worktables (Quilt, Block, Image, Print)
+- **659 Block Library** -- Procedurally generated across 20+ categories, plus custom block drafting
+- **Design Tools** -- EasyDraw, Applique, Colorway, Text/Labels, Image Tracing, Fussy Cut
+- **Production Tools** -- FPP templates, rotary cutting charts, pieced borders, 1:1 PDF export
+- **Generative Design** -- Serendipity block generator, Kaleidoscope, Photo Patchwork, Frames
+- **Layout Engine** -- Grid, sashing, on-point, medallion, lone star, free-form
+- **Community** -- Profiles, posts, threaded comments, trust-based moderation, blog
+- **Pro Tier** -- OCR quilt reconstruction, fabric calibration, unlimited variations, S3 uploads
 
-## Document Index
-
-| # | Document | Description | Desktop/Quilt/Docs |
-|---|----------|-------------|
-| 1 | [01-PROJECT-OVERVIEW.md](01-PROJECT-OVERVIEW.md) | Vision, problem statement, target users, scope (in/out), and glossary of every domain term |
-| 2 | [02-ARCHITECTURE.md](02-ARCHITECTURE.md) | System architecture, full tech stack table, frontend/backend/database design, service communication map, and architecture decision record |
-| 3 | [03-DATA-MODEL.md](03-DATA-MODEL.md) | All 12 database entities with every field, type, constraint, index, relationship, enum, and seed data spec |
-| 4 | [04-FEATURES.md](04-FEATURES.md) | 27 features with complete behavioral specs: user stories, processing logic, error handling, edge cases, and acceptance criteria |
-| 5 | [05-API-SPEC.md](05-API-SPEC.md) | Every API endpoint with method, path, request/response schemas, error codes, pagination, and filtering |
-| 6 | [06-UI-UX-SPEC.md](06-UI-UX-SPEC.md) | Design system (colors, typography, spacing), layout structure, every screen with states and components, navigation flows, responsive behavior |
-| 7 | [07-AUTH-SECURITY.md](07-AUTH-SECURITY.md) | Authentication flows (OAuth + email), JWT strategy, full authorization matrix, rate limiting, security headers, data protection, account deletion |
-| 8 | [08-DEVOPS.md](08-DEVOPS.md) | Local dev setup (step-by-step), deployment via AWS Amplify, monitoring, rollback procedure, backup/recovery |
-| 9 | [09-PROJECT-STRUCTURE.md](09-PROJECT-STRUCTURE.md) | Complete file tree with every directory and file explained, naming conventions, coding standards, import order |
-| 10 | [10-BUILD-PHASES.md](10-BUILD-PHASES.md) | 13 build phases with tasks, dependencies, acceptance gates, deliverables, launch criteria, and post-launch roadmap |
-| 11 | [11-AGENT-PROMPTS.md](11-AGENT-PROMPTS.md) | Self-contained prompts for AI agents to build each phase — copy-paste ready, in dependency order |
-| 12 | [12-ENV-CONFIG.md](12-ENV-CONFIG.md) | Every environment variable, API key, config file template, OAuth provider setup instructions, and local setup checklist |
-| 13 | [13-DECISION-LOG.md](13-DECISION-LOG.md) | All 46 decisions made during blueprinting with rationale and alternatives considered |
-
----
-
-## Quick Start
-
-1. Read `01-PROJECT-OVERVIEW.md` for the full vision and scope
-2. Read `02-ARCHITECTURE.md` for the tech stack and system design
-3. Follow `12-ENV-CONFIG.md` to set up accounts and environment variables
-4. Follow `08-DEVOPS.md § Local Development Setup` to get running locally
-5. Execute the agent prompts in `11-AGENT-PROMPTS.md` in order, phase by phase
-6. Reference `04-FEATURES.md` and `05-API-SPEC.md` for detailed specifications during each phase
-
----
-
-## Tech Stack Summary
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 14+ (App Router) + TypeScript |
-| Styling | Tailwind CSS + custom components |
-| Canvas | Fabric.js 6.x + Clipper.js + polygon-clipping |
-| State | Zustand 4.x |
-| Auth | NextAuth.js v5 (Google, Facebook, Apple, X, Email) |
-| Database | AWS Aurora Serverless v2 (PostgreSQL 15) |
-| ORM | Drizzle ORM |
+| Framework | Next.js 16.2 (App Router) + TypeScript + React 19 |
+| Styling | Tailwind CSS v4 (Material 3-inspired design system) |
+| Canvas | Fabric.js 7.2 |
+| State | Zustand (14 stores) |
+| Auth | AWS Cognito (email/password, JWT via JWKS) |
+| Database | PostgreSQL + Drizzle ORM 0.45 (21 tables) |
 | Storage | AWS S3 + CloudFront CDN |
-| PDF | pdf-lib (client-side) |
-| Payments | Stripe |
-| Hosting | AWS Amplify |
-| Testing | Vitest + Playwright |
+| Secrets | AWS Secrets Manager |
+| PDF | pdf-lib (client-side 1:1 scale) |
+| Payments | Stripe (checkout, webhooks, subscription management) |
+| Testing | Vitest (1,305 tests) + Playwright E2E |
+
+## Getting Started
+
+```bash
+cd quiltcorgi
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials. Set `AWS_SECRET_NAME=skip` for local development (secrets loaded from `.env.local` instead of Secrets Manager).
+
+## Project Structure
+
+```
+quiltcorgi/
+  src/
+    app/            Next.js App Router -- pages + API routes
+    components/     React components (25 directories)
+    hooks/          18 custom hooks (canvas, drawing, patterns)
+    stores/         14 Zustand stores
+    lib/            ~60 utility modules (engines, auth, S3, PDF)
+    db/             Drizzle schemas + seed data (659 blocks)
+    content/        MDX tutorials (10) + blog posts (5)
+    middleware/     Trust guard for community rate limiting
+    types/          TypeScript type definitions
+  tests/
+    unit/           69 test files, 1,305 tests
+```
+
+## Architecture
+
+All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM dependencies, fully testable in Vitest. Hooks bridge engines to Fabric.js canvas. Components handle UI.
+
+**Auth flow:** Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Rate limiting on all auth endpoints.
+
+**Security:** SVG sanitization (DOMPurify), CSP headers, open-redirect prevention, webhook signature verification, admin role gating, S3 credential validation.
+
+## Commands
+
+```bash
+npm run dev           # Development server (http://localhost:3000)
+npm run build         # Production build
+npm test              # Run all tests
+npm run test:coverage # Tests with coverage
+npm run test:e2e      # Playwright E2E
+npm run type-check    # TypeScript type checking
+npm run lint          # ESLint
+npm run format        # Prettier
+npm run db:push       # Push schema to database
+npm run db:migrate    # Run Drizzle migrations
+```
+
+## License
+
+Private repository.
