@@ -127,6 +127,7 @@ Seven production features added:
 - **Cookie write safety:** `tryRefreshSession()` wraps `setAuthCookies()` in its own try/catch — cookie write failures in RSC context don't cause the session to return `null`.
 
 ## Gotchas
+- `calculateReadTime()` lives in `src/lib/read-time.ts` — shared across all blog routes. Do not duplicate locally.
 
 - `validationErrorResponse()` in `api-responses.ts` takes a `string`, not a `ZodError` — use `parsed.error.message`
 - Vitest can't resolve bare directory imports — use `./block-generators/index` not `./block-generators`
@@ -145,4 +146,4 @@ Seven production features added:
 
 ## Stats
 
-~350 source files, 14 Zustand stores, 18 DB tables, 66 test files (1,300 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.
+~355 source files, 14 Zustand stores, 18 DB tables, 66 test files (1,300 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.
