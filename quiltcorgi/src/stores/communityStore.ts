@@ -16,6 +16,11 @@ export interface CommunityPost {
   creatorName: string;
   creatorUsername: string | null;
   creatorAvatarUrl: string | null;
+  creatorId: string | null;
+  isPro: boolean;
+  projectId: string | null;
+  projectName: string | null;
+  projectThumbnailUrl: string | null;
   createdAt: string;
   isLikedByUser: boolean;
   isSavedByUser: boolean;

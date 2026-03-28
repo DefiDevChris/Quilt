@@ -94,13 +94,19 @@ export async function GET(request: NextRequest) {
           commentCount: communityPosts.commentCount,
           category: communityPosts.category,
           createdAt: communityPosts.createdAt,
+          creatorId: communityPosts.userId,
           creatorName: users.name,
           creatorUsername: userProfiles.username,
           creatorAvatarUrl: userProfiles.avatarUrl,
+          creatorRole: users.role,
+          projectId: communityPosts.projectId,
+          projectName: projects.name,
+          projectThumbnailUrl: projects.thumbnailUrl,
         })
         .from(communityPosts)
         .leftJoin(users, eq(communityPosts.userId, users.id))
         .leftJoin(userProfiles, eq(communityPosts.userId, userProfiles.userId))
+        .leftJoin(projects, eq(communityPosts.projectId, projects.id))
         .where(whereClause)
         .orderBy(...orderBy)
         .limit(limit)
@@ -149,9 +155,14 @@ export async function GET(request: NextRequest) {
       likeCount: post.likeCount,
       commentCount: post.commentCount,
       category: post.category,
+      creatorId: post.creatorId,
       creatorName: post.creatorName ? formatCreatorName(post.creatorName) : 'Anonymous',
       creatorUsername: post.creatorUsername ?? null,
       creatorAvatarUrl: post.creatorAvatarUrl ?? null,
+      isPro: post.creatorRole === 'pro' || post.creatorRole === 'admin',
+      projectId: post.projectId,
+      projectName: post.projectName ?? null,
+      projectThumbnailUrl: post.projectThumbnailUrl ?? null,
       createdAt: post.createdAt,
       isLikedByUser: likedPostIds.has(post.id),
       isSavedByUser: savedPostIds.has(post.id),

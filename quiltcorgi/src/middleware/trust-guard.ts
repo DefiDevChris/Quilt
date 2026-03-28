@@ -142,6 +142,13 @@ export async function checkRateLimit(
       .from(communityPosts)
       .where(and(eq(communityPosts.userId, userId), gte(communityPosts.createdAt, oneDayAgo)));
     currentCount = row?.count ?? 0;
+  } else if (action === 'reports') {
+    const { reports } = await import('@/db/schema');
+    const [row] = await db
+      .select({ count: count() })
+      .from(reports)
+      .where(and(eq(reports.reporterId, userId), gte(reports.createdAt, oneDayAgo)));
+    currentCount = row?.count ?? 0;
   }
 
   if (currentCount >= limit) {

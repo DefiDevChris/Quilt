@@ -1,0 +1,168 @@
+import { NextRequest } from 'next/server';
+import { eq, and, ilike, desc, count, arrayContains } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogSearchSchema, createBlogPostSchema } from '@/lib/validation';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
+import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
+import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
+
+export const dynamic = 'force-dynamic';
+
+function calculateReadTime(content: unknown): number {
+  const charCount = JSON.stringify(content ?? '').length;
+  return Math.max(1, Math.ceil(charCount / 1500));
+}
+
+export async function GET(request: NextRequest) {
+  const url = request.nextUrl;
+  const parsed = blogSearchSchema.safeParse({
+    search: url.searchParams.get('search') ?? undefined,
+    category: url.searchParams.get('category') ?? undefined,
+    tag: url.searchParams.get('tag') ?? undefined,
+    page: url.searchParams.get('page') ?? undefined,
+    limit: url.searchParams.get('limit') ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
+  }
+
+  const { search, category, tag, page, limit } = parsed.data;
+  const offset = (page - 1) * limit;
+
+  try {
+    const conditions = [eq(blogPosts.status, 'published')];
+
+    if (category) {
+      conditions.push(eq(blogPosts.category, category));
+    }
+
+    if (tag) {
+      conditions.push(arrayContains(blogPosts.tags, [tag]));
+    }
+
+    if (search) {
+      conditions.push(ilike(blogPosts.title, `%${search}%`));
+    }
+
+    const whereClause = and(...conditions);
+
+    const [postRows, [totalRow]] = await Promise.all([
+      db
+        .select({
+          id: blogPosts.id,
+          title: blogPosts.title,
+          slug: blogPosts.slug,
+          excerpt: blogPosts.excerpt,
+          featuredImageUrl: blogPosts.featuredImageUrl,
+          category: blogPosts.category,
+          tags: blogPosts.tags,
+          content: blogPosts.content,
+          publishedAt: blogPosts.publishedAt,
+          authorName: users.name,
+          authorAvatarUrl: userProfiles.avatarUrl,
+        })
+        .from(blogPosts)
+        .leftJoin(users, eq(blogPosts.authorId, users.id))
+        .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
+        .where(whereClause)
+        .orderBy(desc(blogPosts.publishedAt))
+        .limit(limit)
+        .offset(offset),
+      db.select({ count: count() }).from(blogPosts).where(whereClause),
+    ]);
+
+    const total = totalRow?.count ?? 0;
+
+    const posts = postRows.map((post) => ({
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      featuredImageUrl: post.featuredImageUrl,
+      category: post.category,
+      tags: post.tags,
+      authorName: post.authorName ?? 'QuiltCorgi Team',
+      authorAvatarUrl: post.authorAvatarUrl ?? null,
+      publishedAt: post.publishedAt,
+      readTimeMinutes: calculateReadTime(post.content),
+    }));
+
+    return Response.json({
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    });
+  } catch {
+    return errorResponse('Failed to fetch blog posts', 'INTERNAL_ERROR', 500);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
+
+  const trustCheck = await checkTrustLevel(session.user.id, 'canPost');
+  if (!trustCheck.allowed) {
+    return trustCheck.response!;
+  }
+
+  const rateLimitCheck = await checkRateLimit(session.user.id, trustCheck.trustLevel, 'posts');
+  if (!rateLimitCheck.allowed) {
+    return rateLimitCheck.response!;
+  }
+
+  try {
+    const body = await request.json();
+    const parsed = createBlogPostSchema.safeParse(body);
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
+    }
+
+    const { title, content, excerpt, featuredImageUrl, category, tags, status } = parsed.data;
+
+    let slug = generateSlug(title);
+
+    const [existing] = await db
+      .select({ id: blogPosts.id })
+      .from(blogPosts)
+      .where(eq(blogPosts.slug, slug))
+      .limit(1);
+
+    if (existing) {
+      slug = appendSlugSuffix(slug);
+    }
+
+    const [created] = await db
+      .insert(blogPosts)
+      .values({
+        authorId: session.user.id,
+        title,
+        slug,
+        content: content ?? null,
+        excerpt: excerpt ?? null,
+        featuredImageUrl: featuredImageUrl ?? null,
+        category,
+        tags,
+        status,
+      })
+      .returning();
+
+    return Response.json({ success: true, data: created }, { status: 201 });
+  } catch {
+    return errorResponse('Failed to create blog post', 'INTERNAL_ERROR', 500);
+  }
+}

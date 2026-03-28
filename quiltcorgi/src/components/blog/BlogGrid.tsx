@@ -1,96 +1,180 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BlogCard } from '@/components/blog/BlogCard';
-import type { BlogFrontmatter } from '@/lib/mdx-schemas';
-
-const POSTS_PER_PAGE = 6;
+import type { BlogPostListItem } from '@/types/community';
 
 interface BlogGridProps {
-  readonly initialPosts: readonly BlogFrontmatter[];
-  readonly allTags: readonly string[];
+  readonly initialPosts: readonly BlogPostListItem[];
+  readonly initialTotal: number;
+  readonly initialCategory?: string;
 }
 
-export function BlogGrid({ initialPosts, allTags }: BlogGridProps) {
-  const [activeTags, setActiveTags] = useState<ReadonlySet<string>>(new Set());
-  const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
+export function BlogGrid({ initialPosts, initialTotal, initialCategory }: BlogGridProps) {
+  const [posts, setPosts] = useState<readonly BlogPostListItem[]>(initialPosts);
+  const [total, setTotal] = useState(initialTotal);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState(initialCategory ?? '');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const toggleTag = (tag: string) => {
-    setActiveTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tag)) {
-        next.delete(tag);
-      } else {
-        next.add(tag);
+  const totalPages = Math.ceil(total / 10);
+
+  const fetchPosts = useCallback(async (pageNum: number, searchTerm: string, cat: string) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(pageNum));
+      if (searchTerm) params.set('search', searchTerm);
+      if (cat) params.set('category', cat);
+
+      const res = await fetch(`/api/blog?${params.toString()}`);
+      const json = await res.json();
+
+      if (res.ok && json.data) {
+        setPosts(json.data.posts);
+        setTotal(json.data.pagination.total);
       }
-      return next;
-    });
-    setVisibleCount(POSTS_PER_PAGE);
-  };
+    } catch {
+      // Keep existing state on error
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const filtered = useMemo(() => {
-    if (activeTags.size === 0) return initialPosts;
-    return initialPosts.filter((post) =>
-      post.tags.some((tag) => activeTags.has(tag))
-    );
-  }, [initialPosts, activeTags]);
+  const handleSearch = useCallback(() => {
+    setPage(1);
+    fetchPosts(1, search, category);
+  }, [search, category, fetchPosts]);
 
-  const visiblePosts = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  const handleCategoryChange = useCallback(
+    (newCategory: string) => {
+      const cat = newCategory === category ? '' : newCategory;
+      setCategory(cat);
+      setPage(1);
+      fetchPosts(1, search, cat);
+    },
+    [category, search, fetchPosts]
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+      fetchPosts(newPage, search, category);
+    },
+    [search, category, fetchPosts]
+  );
+
+  // Sync when initial props change (SSR)
+  useEffect(() => {
+    setPosts(initialPosts);
+    setTotal(initialTotal);
+  }, [initialPosts, initialTotal]);
+
+  const categories = [
+    'Tutorials',
+    'Tips & Tricks',
+    'Community',
+    'Product Updates',
+    'Inspiration',
+    'Behind the Scenes',
+  ];
 
   return (
     <div>
-      {/* Tag Filter Pills */}
-      {allTags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => toggleTag(tag)}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-                activeTags.has(tag)
-                  ? 'bg-primary text-primary-on'
-                  : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-              }`}
-            >
-              {tag}
-            </button>
+      {/* Search */}
+      <div className="flex gap-3 mb-6">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSearch();
+          }}
+          placeholder="Search blog posts..."
+          className="flex-1 rounded-lg border border-outline-variant/30 bg-surface px-4 py-2.5 text-sm text-on-surface placeholder:text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+        <button
+          type="button"
+          onClick={handleSearch}
+          className="rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
+        >
+          Search
+        </button>
+      </div>
+
+      {/* Category Filter Pills */}
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => handleCategoryChange(cat)}
+            className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+              category === cat
+                ? 'bg-primary text-primary-on'
+                : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+        {category && (
+          <button
+            type="button"
+            onClick={() => handleCategoryChange('')}
+            className="text-sm text-secondary hover:text-on-surface transition-colors underline underline-offset-2"
+          >
+            Clear filter
+          </button>
+        )}
+      </div>
+
+      {/* Loading */}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-64 bg-surface-container rounded-lg animate-pulse" />
           ))}
-          {activeTags.size > 0 && (
-            <button
-              type="button"
-              onClick={() => setActiveTags(new Set())}
-              className="text-sm text-secondary hover:text-on-surface transition-colors underline underline-offset-2"
-            >
-              Clear filters
-            </button>
-          )}
         </div>
       )}
 
       {/* Posts Grid */}
-      {visiblePosts.length === 0 ? (
+      {!isLoading && posts.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-secondary">No posts match the selected tags.</p>
+          <p className="text-secondary">No blog posts found.</p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visiblePosts.map((post) => (
-            <BlogCard key={post.slug} post={post} />
+      )}
+
+      {!isLoading && posts.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {posts.map((post) => (
+            <BlogCard key={post.id} post={post} />
           ))}
         </div>
       )}
 
-      {/* Load More */}
-      {hasMore && (
-        <div className="mt-8 text-center">
+      {/* Pagination */}
+      {!isLoading && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-8">
           <button
             type="button"
-            onClick={() => setVisibleCount((prev) => prev + POSTS_PER_PAGE)}
-            className="rounded-md bg-surface-container px-6 py-2.5 text-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
+            className="rounded-md bg-surface-container px-3 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Load More
+            Previous
+          </button>
+          <span className="text-sm text-secondary px-3">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+            className="rounded-md bg-surface-container px-3 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
           </button>
         </div>
       )}

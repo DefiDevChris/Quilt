@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ModerationPanel } from '@/components/admin/ModerationPanel';
+import { BlogModerationPanel } from '@/components/admin/BlogModerationPanel';
 
 export const metadata: Metadata = {
-  title: 'Community Moderation | QuiltCorgi Admin',
-  description: 'Review and moderate community posts.',
+  title: 'Blog Moderation | QuiltCorgi Admin',
+  description: 'Review and moderate blog posts.',
 };
 
 function ModerationSkeleton() {
@@ -13,6 +12,7 @@ function ModerationSkeleton() {
     <div className="max-w-4xl mx-auto animate-pulse space-y-4">
       <div className="h-8 w-48 bg-surface-container-high rounded" />
       <div className="flex gap-2">
+        <div className="h-8 w-20 bg-surface-container-high rounded-md" />
         <div className="h-8 w-20 bg-surface-container-high rounded-md" />
         <div className="h-8 w-20 bg-surface-container-high rounded-md" />
         <div className="h-8 w-20 bg-surface-container-high rounded-md" />
@@ -24,21 +24,10 @@ function ModerationSkeleton() {
   );
 }
 
-export default function AdminCommunityPage() {
+export default function AdminBlogPage() {
   return (
-    <>
-      <nav className="max-w-4xl mx-auto mb-6 flex gap-3 text-sm">
-        <span className="font-semibold text-primary">Moderation</span>
-        <Link
-          href="/admin/reports"
-          className="text-secondary hover:text-on-surface transition-colors"
-        >
-          Reports
-        </Link>
-      </nav>
-      <Suspense fallback={<ModerationSkeleton />}>
-        <ModerationPanel />
-      </Suspense>
-    </>
+    <Suspense fallback={<ModerationSkeleton />}>
+      <BlogModerationPanel />
+    </Suspense>
   );
 }

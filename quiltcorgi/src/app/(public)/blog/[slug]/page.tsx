@@ -1,22 +1,16 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import { getBlogPostBySlug, getBlogSlugs } from '@/lib/mdx-engine';
-import { mdxComponents } from '@/components/ui/MdxComponents';
+import { eq, and, desc, ne } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { blogPosts, users, userProfiles } from '@/db/schema';
+import { BlogPostView } from '@/components/blog/BlogPostView';
+import type { BlogPostListItem } from '@/types/community';
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
+function calculateReadTime(content: unknown): number {
+  const charCount = JSON.stringify(content ?? '').length;
+  return Math.max(1, Math.ceil(charCount / 1500));
 }
 
 export async function generateMetadata({
@@ -25,20 +19,33 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+
+  const [post] = await db
+    .select({
+      title: blogPosts.title,
+      excerpt: blogPosts.excerpt,
+      publishedAt: blogPosts.publishedAt,
+      authorName: users.name,
+      tags: blogPosts.tags,
+    })
+    .from(blogPosts)
+    .leftJoin(users, eq(blogPosts.authorId, users.id))
+    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
+    .limit(1);
+
   if (!post) {
     return { title: 'Post Not Found | QuiltCorgi' };
   }
 
   return {
     title: `${post.title} | QuiltCorgi`,
-    description: post.description,
+    description: post.excerpt ?? undefined,
     openGraph: {
       title: post.title,
-      description: post.description,
+      description: post.excerpt ?? undefined,
       type: 'article',
-      publishedTime: post.publishedAt,
-      authors: [post.author],
+      publishedTime: post.publishedAt?.toISOString(),
+      authors: [post.authorName ?? 'QuiltCorgi Team'],
       tags: [...post.tags],
     },
   };
@@ -50,81 +57,128 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+
+  const [post] = await db
+    .select({
+      id: blogPosts.id,
+      authorId: blogPosts.authorId,
+      title: blogPosts.title,
+      slug: blogPosts.slug,
+      content: blogPosts.content,
+      excerpt: blogPosts.excerpt,
+      featuredImageUrl: blogPosts.featuredImageUrl,
+      category: blogPosts.category,
+      tags: blogPosts.tags,
+      status: blogPosts.status,
+      publishedAt: blogPosts.publishedAt,
+      createdAt: blogPosts.createdAt,
+      updatedAt: blogPosts.updatedAt,
+      authorName: users.name,
+      authorAvatarUrl: userProfiles.avatarUrl,
+      authorBio: userProfiles.bio,
+      authorUsername: userProfiles.username,
+    })
+    .from(blogPosts)
+    .leftJoin(users, eq(blogPosts.authorId, users.id))
+    .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
+    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
+    .limit(1);
 
   if (!post) {
     notFound();
   }
 
+  // Fetch related posts (same category, max 3)
+  const relatedRows = await db
+    .select({
+      id: blogPosts.id,
+      title: blogPosts.title,
+      slug: blogPosts.slug,
+      excerpt: blogPosts.excerpt,
+      featuredImageUrl: blogPosts.featuredImageUrl,
+      category: blogPosts.category,
+      tags: blogPosts.tags,
+      content: blogPosts.content,
+      publishedAt: blogPosts.publishedAt,
+      authorName: users.name,
+      authorAvatarUrl: userProfiles.avatarUrl,
+    })
+    .from(blogPosts)
+    .leftJoin(users, eq(blogPosts.authorId, users.id))
+    .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
+    .where(
+      and(
+        eq(blogPosts.status, 'published'),
+        eq(blogPosts.category, post.category),
+        ne(blogPosts.id, post.id)
+      )
+    )
+    .orderBy(desc(blogPosts.publishedAt))
+    .limit(3);
+
+  const relatedPosts: BlogPostListItem[] = relatedRows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    excerpt: r.excerpt,
+    featuredImageUrl: r.featuredImageUrl,
+    category: r.category,
+    tags: r.tags,
+    authorName: r.authorName ?? 'QuiltCorgi Team',
+    authorAvatarUrl: r.authorAvatarUrl ?? null,
+    publishedAt: r.publishedAt,
+    readTimeMinutes: calculateReadTime(r.content),
+  }));
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
-    description: post.description,
+    description: post.excerpt ?? '',
     author: {
-      '@type': 'Organization',
-      name: post.author,
+      '@type': 'Person',
+      name: post.authorName ?? 'QuiltCorgi Team',
     },
-    datePublished: post.publishedAt,
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.updatedAt?.toISOString(),
+    image: post.featuredImageUrl ?? undefined,
     publisher: {
       '@type': 'Organization',
       name: 'QuiltCorgi',
       url: 'https://quiltcorgi.com',
     },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://quiltcorgi.com/blog/${post.slug}`,
+    },
+  };
+
+  const postData = {
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    content: post.content,
+    excerpt: post.excerpt,
+    featuredImageUrl: post.featuredImageUrl,
+    category: post.category,
+    tags: post.tags,
+    publishedAt: post.publishedAt,
+    readTimeMinutes: calculateReadTime(post.content),
+    author: {
+      name: post.authorName ?? 'QuiltCorgi Team',
+      avatarUrl: post.authorAvatarUrl ?? null,
+      bio: post.authorBio ?? null,
+      username: post.authorUsername ?? null,
+    },
   };
 
   return (
-    <article>
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-
-      {/* Header */}
-      <div className="mb-8">
-        <Link
-          href="/blog"
-          className="text-sm text-secondary hover:text-on-surface transition-colors mb-4 inline-block"
-        >
-          &larr; Back to Blog
-        </Link>
-
-        <h1 className="text-headline-lg font-bold text-on-surface mb-3">
-          {post.title}
-        </h1>
-
-        <div className="flex items-center gap-3 text-sm text-secondary mb-4">
-          <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-          <span aria-hidden="true">&middot;</span>
-          <span>{post.author}</span>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs font-medium text-primary bg-primary-container/30 px-2 py-0.5 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* MDX Content */}
-      <div className="prose-quiltcorgi">
-        <MDXRemote source={post.content} components={mdxComponents} />
-      </div>
-
-      {/* Back to Blog */}
-      <div className="mt-12 pt-6 border-t border-outline-variant/20">
-        <Link
-          href="/blog"
-          className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
-        >
-          &larr; Back to all posts
-        </Link>
-      </div>
-    </article>
+      <BlogPostView post={postData} relatedPosts={relatedPosts} />
+    </>
   );
 }
