@@ -192,7 +192,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
 
               {borders.map((border, i) => (
                 <div
-                  key={border.id}
+                  key={border.id ?? i}
                   className="flex items-end gap-3 mb-2 rounded-lg border border-outline-variant p-2"
                 >
                   <div>

@@ -18,7 +18,7 @@ export interface SashingConfig {
 }
 
 export interface BorderConfig {
-  id: string;
+  id?: string;
   width: number;
   color: string;
   fabricId: string | null;

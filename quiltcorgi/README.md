@@ -16,7 +16,7 @@ A modern, browser-based quilt design studio. Professional block drafting, fabric
 | Secrets | AWS Secrets Manager (production configuration) |
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe |
-| Testing | Vitest (820 unit tests) + Playwright (12 E2E tests) |
+| Testing | Vitest (1,295 unit tests) + Playwright E2E |
 
 ## Getting Started
 
@@ -34,12 +34,12 @@ See `../Docs/12-ENV-CONFIG.md` for full environment setup (Cognito, AWS Secrets 
 ```
 src/
   app/              # Next.js App Router (pages + API routes)
-  components/       # React components (94 across 18 directories)
-  hooks/            # 19 custom hooks (canvas, drawing, patterns, colorway, text, etc.)
-  stores/           # 10 Zustand stores
-  lib/              # 31 utility modules (engines, math, PDF, S3, etc.)
+  components/       # React components (127 across 25 directories)
+  hooks/            # 18 custom hooks (canvas, drawing, patterns, colorway, text, etc.)
+  stores/           # 14 Zustand stores
+  lib/              # 56 utility modules (engines, math, PDF, S3, auth, etc.)
   types/            # TypeScript type definitions
-  db/               # Drizzle schemas (12 tables) + seed data
+  db/               # Drizzle schemas (21 tables) + seed data
 ```
 
 ## Commands
@@ -48,6 +48,12 @@ src/
 npm run dev          # Development server
 npm run build        # Production build
 npm run lint         # ESLint
-npm test             # Vitest (820 tests)
+npm run format       # Prettier
+npm test             # Vitest (1,295 tests)
+npm run test:coverage # Vitest with coverage
 npm run test:e2e     # Playwright E2E tests
+npm run type-check   # TypeScript type checking
+npm run db:generate  # Generate Drizzle migrations
+npm run db:push      # Push schema to database
+npm run db:migrate   # Run Drizzle migrations
 ```

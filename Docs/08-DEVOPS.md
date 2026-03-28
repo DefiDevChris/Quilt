@@ -27,8 +27,8 @@ cd quiltcorgi
 npm install
 
 # 3. Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your values (→ See 12-ENV-CONFIG.md for all variables)
+# Create .env.local with your values (→ See 12-ENV-CONFIG.md for template and all variables)
+# Set AWS_SECRET_NAME=skip to disable Secrets Manager in local dev
 
 # 4. Start local PostgreSQL (if using Docker)
 docker run --name quiltcorgi-db \
@@ -74,17 +74,20 @@ The app is now running at `http://localhost:3000`.
 ## Environment Configuration
 
 ### Local Development
-- Database: Local PostgreSQL (Docker or native install)
-- S3: Real AWS S3 bucket (dev bucket) — local file storage is not supported due to presigned URL architecture
-- Stripe: Test mode keys + Stripe CLI for webhook forwarding
-- Auth: OAuth apps configured in test mode for each provider
+- **Secrets:** `AWS_SECRET_NAME=skip` in `.env.local` — all config read from `.env.local` file, Secrets Manager not contacted
+- **Database:** Local PostgreSQL (Docker or native install)
+- **S3:** Real AWS S3 bucket (dev bucket) — local file storage is not supported due to presigned URL architecture
+- **Stripe:** Test mode keys + Stripe CLI for webhook forwarding
+- **Auth:** AWS Cognito (same user pool as prod, or a separate dev pool). Cognito credentials set directly in `.env.local`.
 
 ### Production
-- Database: AWS Aurora Serverless v2
-- S3: Production S3 bucket with CloudFront distribution
-- Stripe: Live mode keys
-- Auth: OAuth apps in production mode with verified domains
-- Hosting: AWS Amplify with auto-deploy from main branch
+- **Secrets:** AWS Secrets Manager (`quiltcorgi/prod`) loaded at startup via `instrumentation.ts` → `loadSecrets()`. KMS-encrypted. Fatal error if fetch fails.
+- **Database:** AWS Aurora Serverless v2 (connection string in Secrets Manager)
+- **S3:** Production S3 bucket with CloudFront distribution
+- **Stripe:** Live mode keys (in Secrets Manager)
+- **Auth:** AWS Cognito (`us-east-1_jdtaevYHE`). Config in Secrets Manager.
+- **Hosting:** AWS Amplify with auto-deploy from main branch
+- **Build-time vars:** `NEXT_PUBLIC_*` vars must be set in Amplify environment variables (not in Secrets Manager — needed at build time)
 
 ---
 
@@ -116,7 +119,7 @@ frontend:
       - .next/cache/**/*
 ```
 
-3. Set environment variables in Amplify Console (→ See [12-ENV-CONFIG.md]).
+3. Set **build-time** environment variables in Amplify Console: `NEXT_PUBLIC_CLOUDFRONT_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `AWS_SECRET_NAME=quiltcorgi/prod`, `AWS_REGION=us-east-1`. Runtime secrets are loaded from Secrets Manager at startup (→ See [12-ENV-CONFIG.md]).
 4. Pushes to `main` branch trigger automatic builds and deployments.
 5. Amplify serves the Next.js app with server-side rendering support.
 

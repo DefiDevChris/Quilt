@@ -21,7 +21,7 @@ A **User** has many **Projects**, many **Blocks** (user-created), many **Fabrics
 | id | UUID | Yes | Yes | `gen_random_uuid()` | Primary key |
 | name | VARCHAR(255) | Yes | No | — | Display name (from OAuth profile or manual entry) |
 | email | VARCHAR(255) | Yes | Yes | — | Email address (from OAuth profile or registration) |
-| emailVerified | TIMESTAMP | No | No | NULL | Timestamp when email was verified (NextAuth.js managed) |
+| emailVerified | TIMESTAMP | No | No | NULL | Timestamp when email was verified (set after Cognito email confirmation) |
 | image | TEXT | No | No | NULL | Avatar URL (from OAuth profile or S3 upload) |
 | role | ENUM('free', 'pro', 'admin') | Yes | No | `'free'` | User role determining feature access |
 | createdAt | TIMESTAMP | Yes | No | `NOW()` | Account creation timestamp |
@@ -42,72 +42,7 @@ A **User** has many **Projects**, many **Blocks** (user-created), many **Fabrics
 - `email` must be unique
 - `role` must be one of: `free`, `pro`, `admin`
 
-**Note:** NextAuth.js also creates `accounts` and `sessions` tables automatically. These follow the NextAuth.js Drizzle adapter schema and are not detailed here — they are managed entirely by the NextAuth.js library.
-
----
-
-### Account
-**Table name:** `accounts`
-**Description:** OAuth provider accounts linked to a User. Managed by NextAuth.js Drizzle adapter.
-
-| Field | Type | Required | Unique | Default | Description |
-|-------|------|----------|--------|---------|-------------|
-| id | UUID | Yes | Yes | `gen_random_uuid()` | Primary key |
-| userId | UUID | Yes | No | — | Foreign key to `users.id` |
-| type | VARCHAR(255) | Yes | No | — | Account type (`oauth`, `email`, `credentials`) |
-| provider | VARCHAR(255) | Yes | No | — | OAuth provider name (google, facebook, apple, twitter) |
-| providerAccountId | VARCHAR(255) | Yes | No | — | Provider's unique account ID |
-| refresh_token | TEXT | No | No | NULL | OAuth refresh token |
-| access_token | TEXT | No | No | NULL | OAuth access token |
-| expires_at | INTEGER | No | No | NULL | Token expiry timestamp |
-| token_type | VARCHAR(255) | No | No | NULL | Token type |
-| scope | TEXT | No | No | NULL | OAuth scope |
-| id_token | TEXT | No | No | NULL | OIDC ID token |
-| session_state | VARCHAR(255) | No | No | NULL | Session state |
-
-**Relationships:**
-- Belongs to User via `userId`
-
-**Indexes:**
-- `idx_accounts_provider_providerAccountId` UNIQUE on (`provider`, `providerAccountId`)
-
-**Constraints:**
-- Composite unique on (`provider`, `providerAccountId`)
-- `userId` references `users.id` with CASCADE delete
-
----
-
-### Session
-**Table name:** `sessions`
-**Description:** Active user sessions. Managed by NextAuth.js Drizzle adapter.
-
-| Field | Type | Required | Unique | Default | Description |
-|-------|------|----------|--------|---------|-------------|
-| id | UUID | Yes | Yes | `gen_random_uuid()` | Primary key |
-| sessionToken | VARCHAR(255) | Yes | Yes | — | Unique session token |
-| userId | UUID | Yes | No | — | Foreign key to `users.id` |
-| expires | TIMESTAMP | Yes | No | — | Session expiry timestamp |
-
-**Relationships:**
-- Belongs to User via `userId`
-
-**Indexes:**
-- `idx_sessions_sessionToken` UNIQUE on `sessionToken`
-
-**Constraints:**
-- `userId` references `users.id` with CASCADE delete
-
----
-
-### VerificationToken
-**Table name:** `verification_tokens`
-**Description:** Email verification tokens. Managed by NextAuth.js Drizzle adapter.
-
-| Field | Type | Required | Unique | Default | Description |
-|-------|------|----------|--------|---------|-------------|
-| identifier | VARCHAR(255) | Yes | No | — | Email address or identifier |
-| token | VARCHAR(255) | Yes | Yes | — | Verification token |
-| expires | TIMESTAMP | Yes | No | — | Token expiry timestamp |
+**Note:** Sessions are managed via Cognito JWT tokens stored in HTTP-only cookies — there are no `sessions` or `accounts` tables in the database. Email verification is handled by Cognito (sends 6-digit codes). The `accounts`, `sessions`, and `verification_tokens` tables from the previous NextAuth.js implementation have been removed.
 
 **Indexes:**
 - `idx_verification_identifier_token` UNIQUE on (`identifier`, `token`)

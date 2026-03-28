@@ -2,7 +2,7 @@
 
 ## Project Reference
 
-Specification docs live in `../Docs/` (01 through 13).
+Specification docs live in `../Docs/` (01-05, 07-08, 12-13).
 
 ## Key Technical Facts
 
@@ -13,7 +13,7 @@ Specification docs live in `../Docs/` (01 through 13).
 - **Zod 4.3** — `z.record()` requires two args. `z.url()`/`z.uuid()` show deprecation warnings (cosmetic).
 - **ESLint 9** — flat config in `eslint.config.mjs`
 - **React 19** — Server Components by default. `"use client"` for browser APIs.
-- **next-mdx-remote** — MDX rendering in App Router server components. Tutorials live in `src/content/tutorials/`. Legacy blog MDX in `src/content/blog/` (superseded by DB-backed blog in Phase 17).
+- **next-mdx-remote** — MDX rendering in App Router server components. Tutorials live in `src/content/tutorials/`.
 - **AWS Cognito** — Authentication migrated from NextAuth.js. Sessions stored in HTTP-only cookies (qc_id_token, qc_access_token, qc_refresh_token). JWT verified via JWKS. Auth routes: `/api/auth/cognito/{signin,signup,verify,forgot-password,signout,session}`. Verification pages: `/auth/verify-email`, `/auth/forgot-password`.
 - **AWS Secrets Manager** — Production secrets loaded at startup via `instrumentation.ts`. Controlled by `AWS_SECRET_NAME` env var (default: "quiltcorgi/prod", set to "skip" for local dev).
 
@@ -84,7 +84,7 @@ Seven production features added:
 
 **Tutorials:** 10 MDX files in `src/content/tutorials/`. Routes at `/tutorials` and `/tutorials/[slug]`. HowTo JSON-LD schema. Filterable by difficulty.
 
-**MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map. Used for tutorials; legacy blog MDX files in `src/content/blog/` remain on disk but are no longer served (replaced by DB-backed blog in Phase 17).
+**MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map. Used for tutorials.
 
 **Photo Patchwork:** `photo-patchwork-engine.ts` + `color-math.ts`. K-means++ clustering in LAB color space, grid pixelation, fabric mapping. 5-step wizard (`PhotoPatchworkDialog.tsx`).
 
@@ -127,8 +127,12 @@ Seven production features added:
 - OCR engine sub-modules operate on `Uint8ClampedArray` pixel data — zero DOM dependencies, fully testable in Vitest `node` env
 - `color-math.ts` uses D65 illuminant for sRGB→XYZ→LAB. Shared by photo-patchwork and OCR engines.
 - MDX frontmatter parsing is a simple YAML-like parser in `mdx-engine.ts` — does NOT use a YAML library. Arrays must be `[a, b, c]` format.
-- `instrumentation.ts` runs at startup and loads secrets from AWS Secrets Manager. If `AWS_SECRET_NAME=skip`, secrets are not loaded (for local dev). Credentials exported globally as `COGNITO_CLIENT_ID`, `COGNITO_CLIENT_SECRET`, `COGNITO_REGION`, `COGNITO_USER_POOL_ID`, `COGNITO_DOMAIN`.
+- `instrumentation.ts` runs at startup and loads secrets from AWS Secrets Manager (KMS-encrypted). If `AWS_SECRET_NAME=skip` or `NODE_ENV=development`, secrets are not loaded (use `.env.local` instead). Injects `COGNITO_CLIENT_ID`, `COGNITO_USER_POOL_ID`, `COGNITO_REGION`, `DATABASE_URL`, `STRIPE_*`, `AWS_*` into `process.env`. No `COGNITO_CLIENT_SECRET` (public client).
+- `normalizeColor()` in `colorway-engine.ts` validates hex input — invalid strings return `#000000` (not pass-through).
+- `verifySessionToken()` in `cognito-session.ts` returns `{ sub, email }` only — no `role` field (role requires DB lookup via `getSession()`).
+- Blog `[slug]/page.tsx` uses React `cache()` to deduplicate the post query between `generateMetadata` and the page component.
+- `manifest.json` references `icon-192.png` and `icon-512.png` — these PNG files need to be generated from `favicon.svg` and placed in `public/`.
 
 ## Stats
 
-~340 source files, 14 Zustand stores, 21 DB tables, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Cognito + Secrets Manager added (3 new lib modules: cognito.ts, cognito-session.ts, secrets.ts, plus instrumentation.ts startup hook).
+~353 source files, 14 Zustand stores, 21 DB tables, 69 test files (1,295 passing / 1,305 total), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito (cognito.ts, cognito-session.ts, secrets.ts, instrumentation.ts). 10 pre-existing test failures: kaleidoscope-engine (6), trust-engine (3), stripe env config (1).

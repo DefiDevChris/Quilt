@@ -25,10 +25,11 @@
 1. User clicks "Sign In" → redirected to `/auth/signin`
 2. User enters email + password
 3. Client posts to `/api/auth/cognito/signin`
-4. Backend calls Cognito `AdminInitiateAuth` with credentials
+4. Backend calls Cognito `InitiateAuthCommand` with `USER_PASSWORD_AUTH` flow (no client secret needed)
 5. On success: Cognito returns id_token, access_token, refresh_token
-6. Backend sets session cookies and redirects to `/dashboard`
-7. On failure: generic error message "Invalid credentials"
+6. Backend sets HTTP-only session cookies and auto-syncs user to local DB (if first sign-in)
+7. Client redirects to `/dashboard` (or `callbackUrl` if present)
+8. On failure: `NotAuthorizedException` → "Invalid credentials"; `UserNotConfirmedException` → redirect to `/auth/verify-email`
 
 ### Sign Out
 1. User clicks avatar dropdown → "Sign Out"
@@ -46,15 +47,19 @@
 7. Redirect to sign-in page
 
 ### Session Management
-- Sessions use JWT tokens stored in three HTTP-only, secure, SameSite=Strict cookies
-- ID token (`qc_id_token`): JWT containing user identity (email, name, roles). Verified via JWKS from Cognito.
-- Access token (`qc_access_token`): Scoped token for API calls. Verified via JWKS.
-- Refresh token (`qc_refresh_token`): Used to obtain new tokens when current ones expire.
+- Sessions use JWT tokens stored in three HTTP-only, secure, SameSite=lax cookies
+- ID token (`qc_id_token`): JWT containing user identity (email, name, email_verified). Verified via JWKS from Cognito.
+- Access token (`qc_access_token`): Scoped token for Cognito API calls (e.g., GetUser). Verified via JWKS.
+- Refresh token (`qc_refresh_token`): Long-lived (30 days). Used to obtain new id/access tokens when expired.
 - JWT expiry: ID token 1 hour, access token 1 hour (configurable in Cognito)
-- Session data from ID token: sub (user ID), email, email_verified, cognito:username
-- Tokens verified at request time by extracting public JWKS from Cognito endpoints
+- Session data from ID token: sub, email, name, email_verified
+- User role (free/pro/admin) stored in local DB, looked up via `getSession()` (not in JWT)
+- Tokens verified at request time via JWKS (`createRemoteJWKSet` from `jose` library)
 - No server-side session store needed — JWT validation is stateless
-- Routes using `@/lib/cognito-session.ts` via `SessionProvider` can access current user
+- `proxy.ts` does lightweight JWT verification (signature + expiry only, no DB call)
+- Route handlers call `getSession()` from `cognito-session.ts` for full session with DB role lookup
+- Automatic token refresh: `getSession()` calls `tryRefreshSession()` when ID token is expired but refresh token is available
+- Production secrets (Cognito config, DB URL, Stripe keys) loaded from AWS Secrets Manager at startup, not stored in .env files
 
 ---
 
@@ -71,7 +76,7 @@
 | Refresh Token Expiry | 30 days (configurable in Cognito) |
 | Storage | Three HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`) |
 | Secure flag | true (HTTPS only) |
-| SameSite | Strict |
+| SameSite | Lax |
 | JWKS Verification | Public keys fetched from Cognito `.well-known/jwks.json` endpoint |
 | Key Rotation | Automatic — Cognito rotates keys regularly, clients fetch latest JWKS |
 
@@ -155,9 +160,9 @@ Rate limiting is implemented via an in-memory sliding window counter in API midd
 ### CSRF Protection
 CSRF protection is enforced via:
 - HTTP-only cookie storage (tokens not accessible to JavaScript)
-- SameSite=Strict on all session cookies
+- SameSite=Lax on all session cookies
 - Same-origin verification in API routes via origin checks
-- Cognito client secret kept server-side only
+- No client secret in use (public client with `USER_PASSWORD_AUTH` flow)
 
 ### Input Sanitization
 - All API route inputs are validated using Zod schemas
@@ -188,7 +193,7 @@ CSRF protection is enforced via:
 | At rest (S3) | AWS S3 default encryption (SSE-S3, AES-256) |
 | Passwords (Cognito) | PBKDF2 with Cognito's configurable iteration count (default: 6,000 iterations) |
 | JWT Signing | RS256 with Cognito's RSA 2048-bit private keys |
-| Secrets (Secrets Manager) | AWS Secrets Manager encryption at rest (AWS KMS) |
+| Secrets (Secrets Manager) | AWS Secrets Manager encryption at rest (AWS KMS). Secret: `quiltcorgi/prod`. All server-side credentials stored here in production. |
 
 ### Data Retention
 - User data is retained as long as the account is active
