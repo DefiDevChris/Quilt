@@ -59,7 +59,8 @@ function PrintOptionsPanel() {
             <button
               key={item}
               type="button"
-              className="flex items-center justify-between py-2.5 px-3 text-body-md text-on-surface bg-surface-container rounded-md hover:bg-surface-container-high transition-colors"
+              disabled
+              className="flex items-center justify-between py-2.5 px-3 text-body-md text-on-surface bg-surface-container rounded-md opacity-50 cursor-not-allowed"
             >
               <span>{item}</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

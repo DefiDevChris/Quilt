@@ -188,7 +188,10 @@ describe('communityStore', () => {
 
     await useCommunityStore.getState().fetchPosts();
 
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/community?'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/api/community?'),
+      expect.any(Object)
+    );
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
     expect(callUrl).toContain('search=star');
     expect(callUrl).toContain('sort=popular');

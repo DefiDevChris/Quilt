@@ -2,9 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { useNotificationStore } from '@/stores/notificationStore';
 import type { Notification } from '@/stores/notificationStore';
 
-function makeMockNotification(
-  overrides: Partial<Notification> = {}
-): Notification {
+function makeMockNotification(overrides: Partial<Notification> = {}): Notification {
   return {
     id: '550e8400-e29b-41d4-a716-446655440000',
     type: 'post_approved',
@@ -47,7 +45,7 @@ describe('notificationStore', () => {
 
   afterEach(() => {
     global.fetch = originalFetch;
-    useNotificationStore.getState().stopPolling();
+    useNotificationStore.setState({ isOpen: false });
   });
 
   it('initializes with default state', () => {
@@ -142,9 +140,7 @@ describe('notificationStore', () => {
       unreadCount: 1,
     });
 
-    global.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 500 })
-    );
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 500 }));
 
     useNotificationStore.getState().markAsRead(['n1']);
 
@@ -153,9 +149,7 @@ describe('notificationStore', () => {
 
     // Wait for revert
     await vi.waitFor(() => {
-      expect(
-        useNotificationStore.getState().notifications[0].isRead
-      ).toBe(false);
+      expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
       expect(useNotificationStore.getState().unreadCount).toBe(1);
     });
   });
@@ -183,22 +177,16 @@ describe('notificationStore', () => {
       unreadCount: 2,
     });
 
-    global.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 500 })
-    );
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 500 }));
 
     useNotificationStore.getState().markAllAsRead();
 
     // Optimistic update applied
-    expect(
-      useNotificationStore.getState().notifications.every((n) => n.isRead)
-    ).toBe(true);
+    expect(useNotificationStore.getState().notifications.every((n) => n.isRead)).toBe(true);
 
     // Wait for revert
     await vi.waitFor(() => {
-      expect(
-        useNotificationStore.getState().notifications[0].isRead
-      ).toBe(false);
+      expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
       expect(useNotificationStore.getState().unreadCount).toBe(2);
     });
   });
@@ -209,9 +197,7 @@ describe('notificationStore', () => {
     useNotificationStore.getState().toggleDropdown();
 
     expect(useNotificationStore.getState().isOpen).toBe(true);
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/notifications')
-    );
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/notifications'));
   });
 
   it('toggleDropdown closes when already open', () => {
@@ -225,10 +211,10 @@ describe('notificationStore', () => {
   it('toggleDropdown does not fetch when closing', () => {
     useNotificationStore.setState({ isOpen: true });
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(
-        JSON.stringify({ data: { notifications: [], unreadCount: 0 } }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      )
+      new Response(JSON.stringify({ data: { notifications: [], unreadCount: 0 } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
     );
     global.fetch = fetchMock;
 
@@ -237,14 +223,10 @@ describe('notificationStore', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('startPolling initiates fetch', () => {
-    useNotificationStore.getState().startPolling();
+  it('fetchNotifications initiates fetch', () => {
+    useNotificationStore.getState().fetchNotifications();
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/notifications')
-    );
-
-    useNotificationStore.getState().stopPolling();
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/notifications'));
   });
 
   it('markAsRead sends correct PATCH request', () => {

@@ -26,6 +26,8 @@ interface BlockStoreState {
   deleteUserBlock: (blockId: string) => Promise<boolean>;
 }
 
+let blockAbortController: AbortController | null = null;
+
 export const useBlockStore = create<BlockStoreState>((set, get) => ({
   blocks: [],
   userBlocks: [],
@@ -70,6 +72,8 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   },
 
   fetchBlocks: async () => {
+    blockAbortController?.abort();
+    blockAbortController = new AbortController();
     const { search, category, page } = get();
     set({ isLoading: true, error: null });
 
@@ -81,7 +85,9 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
       params.set('limit', '50');
       params.set('scope', 'system');
 
-      const res = await fetch(`/api/blocks?${params.toString()}`);
+      const res = await fetch(`/api/blocks?${params.toString()}`, {
+        signal: blockAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -97,7 +103,8 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
         page: data.pagination.page,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load blocks', isLoading: false });
     }
   },

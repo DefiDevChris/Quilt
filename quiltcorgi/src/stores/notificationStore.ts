@@ -22,8 +22,6 @@ interface NotificationState {
   markAsRead: (ids: string[]) => void;
   markAllAsRead: () => void;
   toggleDropdown: () => void;
-  startPolling: () => void;
-  stopPolling: () => void;
 }
 
 const INITIAL_STATE = {
@@ -131,13 +129,5 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     if (willOpen) {
       get().fetchNotifications();
     }
-  },
-
-  startPolling: () => {
-    get().fetchNotifications();
-  },
-
-  stopPolling: () => {
-    // No-op — polling removed in favor of on-demand fetch
   },
 }));

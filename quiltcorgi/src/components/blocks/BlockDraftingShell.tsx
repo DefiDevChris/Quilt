@@ -136,9 +136,8 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
 
       const clones = await Promise.all(objs.map((o) => o.clone()));
       const group = new fabric.Group(clones);
-      const fabricJsData = group.toObject() as unknown as Record<string, unknown>;
-      fabricJsData.width = 100;
-      fabricJsData.height = 100;
+      const rawData = group.toObject() as unknown as Record<string, unknown>;
+      const fabricJsData = { ...rawData, width: 100, height: 100 };
 
       const svgData = await generateThumbnailSvg();
 

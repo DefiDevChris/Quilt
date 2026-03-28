@@ -122,7 +122,8 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
         page: data.pagination.page,
         isLoading: false,
       }));
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load community posts', isLoading: false });
     }
   },
@@ -135,9 +136,11 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   likePost: (postId) => {
+    if (inFlightActions.has(`like:${postId}`)) return;
     const { posts } = get();
     const original = posts.find((p) => p.id === postId);
     if (!original) return;
+    inFlightActions.add(`like:${postId}`);
 
     set({
       posts: posts.map((p) =>
@@ -147,6 +150,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
     fetch(`/api/community/${postId}/like`, { method: 'POST' })
       .then((res) => {
+        inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {
           set({
             posts: get().posts.map((p) =>
@@ -158,6 +162,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
         }
       })
       .catch(() => {
+        inFlightActions.delete(`like:${postId}`);
         set({
           posts: get().posts.map((p) =>
             p.id === postId
@@ -169,9 +174,11 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   unlikePost: (postId) => {
+    if (inFlightActions.has(`like:${postId}`)) return;
     const { posts } = get();
     const original = posts.find((p) => p.id === postId);
     if (!original) return;
+    inFlightActions.add(`like:${postId}`);
 
     set({
       posts: posts.map((p) =>
@@ -183,6 +190,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
     fetch(`/api/community/${postId}/like`, { method: 'DELETE' })
       .then((res) => {
+        inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {
           set({
             posts: get().posts.map((p) =>
@@ -194,6 +202,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
         }
       })
       .catch(() => {
+        inFlightActions.delete(`like:${postId}`);
         set({
           posts: get().posts.map((p) =>
             p.id === postId
@@ -205,23 +214,28 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   toggleSavePost: (postId, currentlySaved) => {
+    if (inFlightActions.has(`save:${postId}`)) return;
     const { posts } = get();
     const original = posts.find((p) => p.id === postId);
     if (!original) return;
+    inFlightActions.add(`save:${postId}`);
 
     set({
       posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: !currentlySaved } : p)),
     });
 
-    fetch(`/api/community/${postId}/save`, { method: currentlySaved ? 'DELETE' : 'POST' }).catch(
-      () => {
+    fetch(`/api/community/${postId}/save`, { method: currentlySaved ? 'DELETE' : 'POST' })
+      .then(() => {
+        inFlightActions.delete(`save:${postId}`);
+      })
+      .catch(() => {
+        inFlightActions.delete(`save:${postId}`);
         set({
           posts: get().posts.map((p) =>
             p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
           ),
         });
-      }
-    );
+      });
   },
 
   reset: () => set({ ...INITIAL_STATE }),

@@ -116,7 +116,8 @@ Seven production features added:
 
 ## Security Hardening
 
-- **SVG sanitization:** All `dangerouslySetInnerHTML` SVG rendering uses `sanitizeSvg()` from `src/lib/sanitize-svg.ts` (wraps `isomorphic-dompurify` with strict SVG-only allowlist). Applied in `BlockPreview.tsx`, `PrintlistPanel.tsx`, `SerendipityTool.tsx`.
+- **SVG sanitization:** SVGs sanitized on write (`/api/blocks` POST) and on render (`BlockPreview.tsx`, `PrintlistPanel.tsx`, `SerendipityTool.tsx`) via `sanitizeSvg()` from `src/lib/sanitize-svg.ts`. JSON-LD in blog pages escapes `<` as `\u003c`.
+- **DB timezone safety:** All timestamp columns use `{ withTimezone: true }` (TIMESTAMPTZ). All `updatedAt` columns use `.$onUpdate()`. `db.ts` throws in production if `DATABASE_URL` is not set.
 - **Auth rate limiting:** `src/lib/rate-limit.ts` — in-memory sliding-window rate limiter applied to all Cognito auth endpoints (signin, signup, verify, forgot-password). Presets in `AUTH_RATE_LIMITS`. For multi-instance deployments, replace with Redis-backed implementation.
 - **Open redirect prevention:** `AuthForm.tsx` validates `callbackUrl` query param — only allows relative paths starting with `/`, rejects `//` protocol-relative URLs.
 - **Webhook secret:** `STRIPE_WEBHOOK_SECRET` is required — `getWebhookSecret()` throws at invocation if env var is missing (no empty-string fallback). Webhook route also has in-memory event ID dedup guard.
@@ -144,4 +145,4 @@ Seven production features added:
 
 ## Stats
 
-~354 source files, 14 Zustand stores, 21 DB tables, 69 test files (1,305 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.
+~350 source files, 14 Zustand stores, 18 DB tables, 66 test files (1,300 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify.

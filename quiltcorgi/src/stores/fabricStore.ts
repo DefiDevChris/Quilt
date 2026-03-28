@@ -28,6 +28,8 @@ interface FabricStoreState {
   deleteUserFabric: (fabricId: string) => Promise<boolean>;
 }
 
+let fabricAbortController: AbortController | null = null;
+
 export const useFabricStore = create<FabricStoreState>((set, get) => ({
   fabrics: [],
   userFabrics: [],
@@ -78,6 +80,8 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   },
 
   fetchFabrics: async () => {
+    fabricAbortController?.abort();
+    fabricAbortController = new AbortController();
     const { search, manufacturer, colorFamily, page } = get();
     set({ isLoading: true, error: null });
 
@@ -90,7 +94,9 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
       params.set('limit', '50');
       params.set('scope', 'all');
 
-      const res = await fetch(`/api/fabrics?${params.toString()}`);
+      const res = await fetch(`/api/fabrics?${params.toString()}`, {
+        signal: fabricAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -106,7 +112,8 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
         page: data.pagination.page,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load fabrics', isLoading: false });
     }
   },

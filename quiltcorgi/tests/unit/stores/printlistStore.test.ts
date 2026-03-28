@@ -96,4 +96,64 @@ describe('printlistStore', () => {
     usePrintlistStore.getState().clear();
     expect(usePrintlistStore.getState().items).toEqual([]);
   });
+
+  it('adds item with custom seam allowance', () => {
+    usePrintlistStore.getState().addItem({
+      shapeId: 'shape-1',
+      shapeName: 'Square',
+      svgData: '<path/>',
+      quantity: 1,
+      unitSystem: 'imperial',
+      seamAllowance: 0.5,
+    });
+    expect(usePrintlistStore.getState().items[0].seamAllowance).toBe(0.5);
+  });
+
+  it('updates seam allowance (clamped 0-1)', () => {
+    usePrintlistStore.getState().addItem({
+      shapeId: 'shape-1',
+      shapeName: 'A',
+      svgData: '<path/>',
+      quantity: 1,
+      unitSystem: 'imperial',
+    });
+    usePrintlistStore.getState().updateSeamAllowance('shape-1', 0.5);
+    expect(usePrintlistStore.getState().items[0].seamAllowance).toBe(0.5);
+
+    usePrintlistStore.getState().updateSeamAllowance('shape-1', 2);
+    expect(usePrintlistStore.getState().items[0].seamAllowance).toBe(1);
+
+    usePrintlistStore.getState().updateSeamAllowance('shape-1', -0.5);
+    expect(usePrintlistStore.getState().items[0].seamAllowance).toBe(0);
+  });
+
+  it('sets paper size', () => {
+    usePrintlistStore.getState().setPaperSize('a4');
+    expect(usePrintlistStore.getState().paperSize).toBe('a4');
+  });
+
+  it('toggles panel', () => {
+    expect(usePrintlistStore.getState().isPanelOpen).toBe(false);
+    usePrintlistStore.getState().togglePanel();
+    expect(usePrintlistStore.getState().isPanelOpen).toBe(true);
+    usePrintlistStore.getState().togglePanel();
+    expect(usePrintlistStore.getState().isPanelOpen).toBe(false);
+  });
+
+  it('sets project id', () => {
+    usePrintlistStore.getState().setProjectId('proj-123');
+    expect(usePrintlistStore.getState().projectId).toBe('proj-123');
+  });
+
+  it('enforces minimum quantity of 1 for negative values', () => {
+    usePrintlistStore.getState().addItem({
+      shapeId: 'shape-1',
+      shapeName: 'A',
+      svgData: '<path/>',
+      quantity: 5,
+      unitSystem: 'imperial',
+    });
+    usePrintlistStore.getState().updateQuantity('shape-1', -5);
+    expect(usePrintlistStore.getState().items[0].quantity).toBe(1);
+  });
 });

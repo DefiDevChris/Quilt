@@ -7,15 +7,11 @@ export function NotificationBell() {
   const unreadCount = useNotificationStore((s) => s.unreadCount);
   const isOpen = useNotificationStore((s) => s.isOpen);
   const toggleDropdown = useNotificationStore((s) => s.toggleDropdown);
-  const startPolling = useNotificationStore((s) => s.startPolling);
-  const stopPolling = useNotificationStore((s) => s.stopPolling);
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications);
 
   useEffect(() => {
-    startPolling();
-    return () => {
-      stopPolling();
-    };
-  }, [startPolling, stopPolling]);
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   return (
     <button
