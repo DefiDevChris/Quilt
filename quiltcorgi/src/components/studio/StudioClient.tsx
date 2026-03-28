@@ -30,7 +30,6 @@ import { ProGate } from '@/components/auth/ProGate';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
-import { SmallScreenBanner } from '@/components/studio/SmallScreenBanner';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { HelpButton } from '@/components/studio/HelpButton';
 import { HelpPanel } from '@/components/studio/HelpPanel';
@@ -189,7 +188,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   return (
     <div className="h-screen flex flex-col bg-surface select-none">
-      <SmallScreenBanner />
       <StudioTopBar />
 
       <div className="flex-1 flex overflow-hidden">
