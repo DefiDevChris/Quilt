@@ -35,6 +35,7 @@ import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { HelpButton } from '@/components/studio/HelpButton';
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
+import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -221,17 +222,19 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
         {/* Canvas area */}
         <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
-          <HorizontalRuler />
+          <CanvasErrorBoundary>
+            <HorizontalRuler />
 
-          <div
-            className="flex-1 flex overflow-hidden relative"
-            onDragOver={combinedDragOver}
-            onDrop={combinedDrop}
-          >
-            <VerticalRuler />
-            <CanvasWorkspace project={project} />
-            <FloatingToolbar />
-          </div>
+            <div
+              className="flex-1 flex overflow-hidden relative"
+              onDragOver={combinedDragOver}
+              onDrop={combinedDrop}
+            >
+              <VerticalRuler />
+              <CanvasWorkspace project={project} />
+              <FloatingToolbar />
+            </div>
+          </CanvasErrorBoundary>
 
           {/* Pro-gated floating panels */}
           <ProGate fallback={null}>

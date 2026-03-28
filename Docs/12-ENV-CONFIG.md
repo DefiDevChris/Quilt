@@ -1,7 +1,7 @@
 # Environment & Configuration Setup
 **Project:** QuiltCorgi
-**Version:** 1.0
-**Date:** March 26, 2026
+**Version:** 2.0
+**Date:** March 27, 2026
 **Purpose:** Every environment variable, API key, configuration file, and setup instruction.
 
 ---
@@ -11,11 +11,7 @@
 | Service | Purpose | Signup URL | Env Variable(s) |
 |---------|---------|-----------|-----------------|
 | PostgreSQL (local) | Local development database | Docker or local install | `DATABASE_URL` |
-| AWS (Aurora, S3, CloudFront, Amplify) | Production database, file storage, CDN, hosting | https://aws.amazon.com | `DATABASE_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_S3_BUCKET`, `NEXT_PUBLIC_CLOUDFRONT_URL` |
-| Google Cloud Console | Google OAuth provider | https://console.cloud.google.com | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
-| Meta for Developers | Facebook OAuth provider | https://developers.facebook.com | `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET` |
-| Apple Developer | Apple OAuth provider | https://developer.apple.com | `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET` |
-| X Developer Portal | X (Twitter) OAuth provider | https://developer.twitter.com | `TWITTER_CLIENT_ID`, `TWITTER_CLIENT_SECRET` |
+| AWS (Aurora, S3, CloudFront, Amplify, Cognito, Secrets Manager) | Production database, file storage, CDN, hosting, authentication, secret management | https://aws.amazon.com | `DATABASE_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_S3_BUCKET`, `NEXT_PUBLIC_CLOUDFRONT_URL`, `COGNITO_CLIENT_ID`, `COGNITO_CLIENT_SECRET`, `COGNITO_REGION`, `COGNITO_USER_POOL_ID`, `COGNITO_DOMAIN`, `AWS_SECRET_NAME` |
 | Stripe | Subscription billing | https://dashboard.stripe.com | `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID` |
 
 ---
@@ -25,28 +21,24 @@
 | Variable | Environment | Required | Example Value | Description |
 |----------|-------------|----------|---------------|-------------|
 | `DATABASE_URL` | All | Yes | `postgresql://user:pass@localhost:5432/quiltcorgi` | PostgreSQL connection string |
-| `NEXTAUTH_URL` | All | Yes | `http://localhost:3000` | Base URL of the application (used by NextAuth.js) |
-| `NEXTAUTH_SECRET` | All | Yes | `a-random-32-char-string-here123` | Secret for JWT signing (min 32 chars, randomly generated) |
-| `GOOGLE_CLIENT_ID` | All | Yes | `123456789.apps.googleusercontent.com` | Google OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | All | Yes | `GOCSPX-xxxxxxxxxxxx` | Google OAuth client secret |
-| `FACEBOOK_CLIENT_ID` | All | Yes | `1234567890123456` | Facebook OAuth app ID |
-| `FACEBOOK_CLIENT_SECRET` | All | Yes | `abcdef1234567890abcdef` | Facebook OAuth app secret |
-| `APPLE_CLIENT_ID` | All | Yes | `com.quiltcorgi.auth` | Apple Services ID |
-| `APPLE_CLIENT_SECRET` | All | Yes | `eyJhbGciOiJFUzI1NiI...` | Apple client secret (JWT, 6-month expiry) |
-| `TWITTER_CLIENT_ID` | All | Yes | `abc123def456` | X (Twitter) OAuth 2.0 client ID |
-| `TWITTER_CLIENT_SECRET` | All | Yes | `secret123456` | X (Twitter) OAuth 2.0 client secret |
+| `AWS_ACCESS_KEY_ID` | All | Yes | `AKIAIOSFODNN7EXAMPLE` | AWS IAM access key for S3 and Secrets Manager operations |
+| `AWS_SECRET_ACCESS_KEY` | All | Yes | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLE` | AWS IAM secret key |
+| `AWS_REGION` | All | Yes | `us-east-1` | AWS region for S3, Aurora, Cognito, Secrets Manager |
+| `AWS_S3_BUCKET` | All | Yes | `quiltcorgi-uploads-dev` (dev) / `quiltcorgi-uploads` (prod) | S3 bucket name |
+| `AWS_SECRET_NAME` | Prod | Optional | `quiltcorgi/prod` | Secrets Manager secret name. Set to `skip` for local dev (no Secrets Manager lookup). |
+| `COGNITO_CLIENT_ID` | All | Yes | `abc123def456ghi789jkl` | Cognito app client ID. In prod, loaded from Secrets Manager. |
+| `COGNITO_CLIENT_SECRET` | All | Yes | `secret123456abcdef` | Cognito app client secret. In prod, loaded from Secrets Manager. |
+| `COGNITO_REGION` | All | Yes | `us-east-1` | AWS region where Cognito user pool is hosted. In prod, loaded from Secrets Manager. |
+| `COGNITO_USER_POOL_ID` | All | Yes | `us-east-1_abc123def456` | Cognito user pool ID. In prod, loaded from Secrets Manager. |
+| `COGNITO_DOMAIN` | All | Yes | `quiltcorgi-auth.auth.us-east-1.amazoncognito.com` | Cognito domain for JWKS endpoint. In prod, loaded from Secrets Manager. |
 | `STRIPE_SECRET_KEY` | All | Yes | `sk_test_...` (dev) / `sk_live_...` (prod) | Stripe secret key |
 | `STRIPE_PUBLISHABLE_KEY` | All | Yes | `pk_test_...` (dev) / `pk_live_...` (prod) | Stripe publishable key (exposed to client) |
 | `STRIPE_WEBHOOK_SECRET` | All | Yes | `whsec_...` | Stripe webhook signing secret |
 | `STRIPE_PRO_PRICE_ID` | All | Yes | `price_...` | Stripe Price ID for Pro monthly subscription |
-| `AWS_ACCESS_KEY_ID` | All | Yes | `AKIAIOSFODNN7EXAMPLE` | AWS IAM access key for S3 operations |
-| `AWS_SECRET_ACCESS_KEY` | All | Yes | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLE` | AWS IAM secret key |
-| `AWS_REGION` | All | Yes | `us-east-1` | AWS region for S3 and Aurora |
-| `AWS_S3_BUCKET` | All | Yes | `quiltcorgi-uploads-dev` (dev) / `quiltcorgi-uploads` (prod) | S3 bucket name |
 | `NEXT_PUBLIC_CLOUDFRONT_URL` | All | Yes | `https://d1234567890.cloudfront.net` | CloudFront distribution URL for serving S3 assets |
 | `NEXT_PUBLIC_APP_URL` | All | Yes | `http://localhost:3000` (dev) / `https://quiltcorgi.com` (prod) | Public-facing application URL |
 
-**Note:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. All others are server-only.
+**Note:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. All others are server-only. In production, Cognito variables are loaded from Secrets Manager at startup via `instrumentation.ts`.
 
 ---
 
@@ -57,31 +49,25 @@
 # Database
 DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi
 
-# NextAuth.js
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=generate-a-random-32-char-secret-here
+# AWS
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=quiltcorgi-uploads-dev
+AWS_SECRET_NAME=skip
 
-# OAuth Providers
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-FACEBOOK_CLIENT_ID=
-FACEBOOK_CLIENT_SECRET=
-APPLE_CLIENT_ID=
-APPLE_CLIENT_SECRET=
-TWITTER_CLIENT_ID=
-TWITTER_CLIENT_SECRET=
+# Cognito (for local dev, set these directly; for prod, loaded from Secrets Manager)
+COGNITO_CLIENT_ID=
+COGNITO_CLIENT_SECRET=
+COGNITO_REGION=us-east-1
+COGNITO_USER_POOL_ID=
+COGNITO_DOMAIN=
 
 # Stripe
 STRIPE_SECRET_KEY=sk_test_
 STRIPE_PUBLISHABLE_KEY=pk_test_
 STRIPE_WEBHOOK_SECRET=whsec_
 STRIPE_PRO_PRICE_ID=price_
-
-# AWS
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_REGION=us-east-1
-AWS_S3_BUCKET=quiltcorgi-uploads-dev
 
 # Public
 NEXT_PUBLIC_CLOUDFRONT_URL=https://your-distribution.cloudfront.net
@@ -164,35 +150,55 @@ export default config;
 
 ---
 
-## OAuth Provider Setup Instructions
+## AWS Cognito Setup Instructions
 
-### Google
-1. Go to https://console.cloud.google.com → Create a new project
-2. APIs & Services → Credentials → Create OAuth Client ID
-3. Application type: Web application
-4. Authorized redirect URI: `http://localhost:3000/api/auth/callback/google` (dev), `https://quiltcorgi.com/api/auth/callback/google` (prod)
-5. Copy Client ID and Client Secret to env variables
+### Create User Pool
+1. Go to AWS Console → Cognito → Create user pool
+2. Pool name: `quiltcorgi-users`
+3. **MFA configuration:** Optional (recommended for production)
+4. **User account recovery:** Enable email and SMS options
+5. **Required attributes:** email, name
+6. Click "Create user pool"
 
-### Facebook
-1. Go to https://developers.facebook.com → Create App → Consumer type
-2. Add Facebook Login product
-3. Settings → Basic → copy App ID and App Secret
-4. Facebook Login → Settings → Valid OAuth Redirect URIs: `http://localhost:3000/api/auth/callback/facebook`
+### Configure App Client
+1. In the user pool → "App integration" → "App clients and analytics" → "Create app client"
+2. App client name: `quiltcorgi-web`
+3. **Authentication flows:** Enable "ADMIN_NO_SRP_AUTH" and "ALLOW_REFRESH_TOKEN_AUTH"
+4. **Token expiration:** ID token 60 minutes, access token 60 minutes, refresh token 30 days
+5. Generate client secret: Check "Generate client secret"
+6. Save client ID and client secret to `COGNITO_CLIENT_ID` and `COGNITO_CLIENT_SECRET`
 
-### Apple
-1. Go to https://developer.apple.com → Certificates, Identifiers & Profiles
-2. Register a new Services ID (this is the Client ID)
-3. Enable "Sign In with Apple" and configure the return URL: `https://quiltcorgi.com/api/auth/callback/apple`
-4. Create a private key for Sign In with Apple
-5. Generate the client secret JWT using the private key (expires every 6 months — set a reminder)
+### Configure Hosted UI (Optional)
+1. In user pool → "App integration" → "Domain" → Create Cognito domain
+2. Domain prefix: `quiltcorgi-auth`
+3. Configure sign-up and sign-in pages through the hosted UI
+4. Under "App client settings":
+   - Callback URL: `http://localhost:3000/auth/callback` (dev), `https://quiltcorgi.com/auth/callback` (prod)
+   - Sign out URL: `http://localhost:3000/` (dev), `https://quiltcorgi.com/` (prod)
 
-### X (Twitter)
-1. Go to https://developer.twitter.com → Developer Portal → Create a project and app
-2. Set up OAuth 2.0 authentication
-3. Callback URL: `http://localhost:3000/api/auth/callback/twitter`
-4. Copy Client ID and Client Secret
+### Retrieve Configuration
+1. In user pool → General settings: Copy User Pool ID to `COGNITO_USER_POOL_ID`
+2. Copy region to `COGNITO_REGION`
+3. In user pool → App integration → Domain: Get domain name for `COGNITO_DOMAIN` (format: `{domain}.auth.{region}.amazoncognito.com`)
 
-### Stripe
+### Secrets Manager Setup (Production Only)
+1. AWS Console → Secrets Manager → Create secret
+2. Secret name: `quiltcorgi/prod` (or value specified in `AWS_SECRET_NAME`)
+3. Secret type: Other type of secret
+4. Secret key/value pairs:
+   ```json
+   {
+     "COGNITO_CLIENT_ID": "value",
+     "COGNITO_CLIENT_SECRET": "value",
+     "COGNITO_REGION": "us-east-1",
+     "COGNITO_USER_POOL_ID": "value",
+     "COGNITO_DOMAIN": "value"
+   }
+   ```
+5. Click "Store secret"
+6. Ensure IAM user has permissions: `secretsmanager:GetSecretValue` for the secret ARN
+
+## Stripe Setup Instructions
 1. Go to https://dashboard.stripe.com → Create account
 2. Products → Create a product: "QuiltCorgi Pro" → Add a monthly price
 3. Copy the Price ID to `STRIPE_PRO_PRICE_ID`
@@ -201,11 +207,11 @@ export default config;
 6. Copy webhook signing secret
 7. For local dev: install Stripe CLI (`stripe listen --forward-to localhost:3000/api/stripe/webhook`)
 
-### AWS
+## AWS S3 & CloudFront Setup
 1. Create an S3 bucket (e.g., `quiltcorgi-uploads-dev`)
 2. Configure CORS on the bucket to allow browser uploads from your domain
 3. Create a CloudFront distribution pointing to the S3 bucket
-4. Create an IAM user with S3 read/write permissions, copy access key and secret
+4. Create an IAM user with S3 and Secrets Manager read/write permissions, copy access key and secret
 5. Create an Aurora Serverless v2 cluster (PostgreSQL 15 compatible) in the AWS RDS console
 6. Connect Amplify to your Git repository for auto-deployment
 
@@ -219,12 +225,15 @@ export default config;
 - [ ] PostgreSQL 15+ running locally (Docker or native)
 - [ ] Repository cloned
 - [ ] `npm install` completed
-- [ ] `.env.local` created from `.env.example` with all values filled
-- [ ] At least one OAuth provider configured (Google recommended for initial setup)
+- [ ] `.env.local` created from `.env.example` with all values filled (including Cognito credentials)
+- [ ] AWS Cognito user pool created with app client configured
+- [ ] Cognito credentials added to `.env.local` (COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET, etc.)
+- [ ] `AWS_SECRET_NAME=skip` in `.env.local` (to skip Secrets Manager in local dev)
 - [ ] Stripe test keys added
 - [ ] AWS S3 bucket created and credentials added
 - [ ] Database tables created (`npx drizzle-kit push`)
 - [ ] Block library seeded (`npm run db:seed`)
 - [ ] Stripe CLI listening for webhooks (`stripe listen --forward-to localhost:3000/api/stripe/webhook`)
 - [ ] Dev server running (`npm run dev`)
-- [ ] Can sign in and create a project
+- [ ] Can sign up, verify email, and sign in
+- [ ] Can create a project

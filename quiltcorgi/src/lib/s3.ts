@@ -2,6 +2,21 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3_UPLOAD_EXPIRY_SECONDS } from '@/lib/constants';
 
+const awsVarsPresent =
+  process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_S3_BUCKET;
+
+if (awsVarsPresent) {
+  if (!process.env.AWS_ACCESS_KEY_ID) {
+    throw new Error('AWS_ACCESS_KEY_ID must be set when any AWS variable is configured');
+  }
+  if (!process.env.AWS_SECRET_ACCESS_KEY) {
+    throw new Error('AWS_SECRET_ACCESS_KEY must be set when any AWS variable is configured');
+  }
+  if (!process.env.AWS_S3_BUCKET) {
+    throw new Error('AWS_S3_BUCKET must be set when any AWS variable is configured');
+  }
+}
+
 const s3Client = new S3Client({
   region: process.env.AWS_REGION ?? 'us-east-1',
   credentials: {

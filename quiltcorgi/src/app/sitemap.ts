@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { MetadataRoute } from 'next';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
@@ -30,37 +32,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const [publishedBlogPosts, profiles, approvedCommunityPosts] =
-    await Promise.all([
-      db
-        .select({
-          slug: blogPosts.slug,
-          updatedAt: blogPosts.updatedAt,
-        })
-        .from(blogPosts)
-        .where(eq(blogPosts.status, 'published')),
-      db
-        .select({
-          username: userProfiles.username,
-        })
-        .from(userProfiles),
-      db
-        .select({
-          id: communityPosts.id,
-          createdAt: communityPosts.createdAt,
-        })
-        .from(communityPosts)
-        .where(eq(communityPosts.status, 'approved')),
-    ]);
+  const [publishedBlogPosts, profiles, approvedCommunityPosts] = await Promise.all([
+    db
+      .select({
+        slug: blogPosts.slug,
+        updatedAt: blogPosts.updatedAt,
+      })
+      .from(blogPosts)
+      .where(eq(blogPosts.status, 'published')),
+    db
+      .select({
+        username: userProfiles.username,
+      })
+      .from(userProfiles),
+    db
+      .select({
+        id: communityPosts.id,
+        createdAt: communityPosts.createdAt,
+      })
+      .from(communityPosts)
+      .where(eq(communityPosts.status, 'approved')),
+  ]);
 
-  const blogEntries: MetadataRoute.Sitemap = publishedBlogPosts.map(
-    (post) => ({
-      url: `${BASE_URL}/blog/${post.slug}`,
-      lastModified: post.updatedAt,
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })
-  );
+  const blogEntries: MetadataRoute.Sitemap = publishedBlogPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: post.updatedAt,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
 
   const profileEntries: MetadataRoute.Sitemap = profiles.map((profile) => ({
     url: `${BASE_URL}/members/${profile.username}`,
@@ -68,19 +67,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const communityEntries: MetadataRoute.Sitemap = approvedCommunityPosts.map(
-    (post) => ({
-      url: `${BASE_URL}/community/${post.id}`,
-      lastModified: post.createdAt,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    })
-  );
+  const communityEntries: MetadataRoute.Sitemap = approvedCommunityPosts.map((post) => ({
+    url: `${BASE_URL}/community/${post.id}`,
+    lastModified: post.createdAt,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
 
-  return [
-    ...staticPages,
-    ...blogEntries,
-    ...profileEntries,
-    ...communityEntries,
-  ];
+  return [...staticPages, ...blogEntries, ...profileEntries, ...communityEntries];
 }

@@ -4,6 +4,7 @@ export interface PrintlistItem {
   svgData: string;
   quantity: number;
   seamAllowance: number;
+  seamAllowanceEnabled: boolean;
   unitSystem: 'imperial' | 'metric';
   calibratedPpi?: number;
 }

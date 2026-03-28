@@ -3,10 +3,20 @@
 import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useColorwayTool } from '@/hooks/useColorwayTool';
+import { generateColorScheme, type ColorSchemeType } from '@/lib/colorway-engine';
 
 const DEFAULT_PALETTE = [
   '#D4883C', '#8B4513', '#F5DEB3', '#2E4057',
   '#7B3F00', '#A0522D', '#DEB887', '#C9B896',
+];
+
+const COLOR_SCHEMES: Array<{ id: ColorSchemeType; label: string }> = [
+  { id: 'monochromatic', label: 'Monochromatic' },
+  { id: 'analogous', label: 'Analogous' },
+  { id: 'complementary', label: 'Complementary' },
+  { id: 'triadic', label: 'Triadic' },
+  { id: 'split-complementary', label: 'Split Comp.' },
+  { id: 'tetradic', label: 'Tetradic' },
 ];
 
 export function ColorwayTools() {
@@ -14,6 +24,8 @@ export function ColorwayTools() {
   const [swapColorA, setSwapColorA] = useState('#D4883C');
   const [swapColorB, setSwapColorB] = useState('#2E4057');
   const [palette, setPalette] = useState(DEFAULT_PALETTE);
+  const [selectedScheme, setSelectedScheme] = useState<ColorSchemeType>('analogous');
+  const [baseColor, setBaseColor] = useState('#D4883C');
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const { executeSwap, executeRandomize } = useColorwayTool();
@@ -44,6 +56,15 @@ export function ColorwayTools() {
     },
     []
   );
+
+  const handleGenerateScheme = useCallback(() => {
+    const newPalette = generateColorScheme(baseColor, selectedScheme, 8);
+    setPalette(newPalette);
+  }, [baseColor, selectedScheme]);
+
+  const handleApplyScheme = useCallback(() => {
+    executeRandomize(palette);
+  }, [executeRandomize, palette]);
 
   return (
     <div className="border-t border-outline-variant/10 pt-1">
@@ -145,6 +166,49 @@ export function ColorwayTools() {
             >
               Shuffle
             </button>
+          </div>
+
+          {/* Color Scheme Generator */}
+          <div>
+            <span className="text-[10px] text-secondary block mb-1">Suggest Palette</span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <input
+                  type="color"
+                  value={baseColor}
+                  onChange={(e) => setBaseColor(e.target.value)}
+                  className="w-7 h-6 rounded-sm border border-outline-variant cursor-pointer"
+                  title="Base Color"
+                />
+                <select
+                  value={selectedScheme}
+                  onChange={(e) => setSelectedScheme(e.target.value as ColorSchemeType)}
+                  className="flex-1 text-[10px] bg-background border border-outline-variant rounded px-1 py-1 text-secondary"
+                >
+                  {COLOR_SCHEMES.map((scheme) => (
+                    <option key={scheme.id} value={scheme.id}>
+                      {scheme.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={handleGenerateScheme}
+                  className="flex-1 rounded bg-background px-2 py-1 text-[10px] text-secondary hover:text-on-surface"
+                >
+                  Generate
+                </button>
+                <button
+                  type="button"
+                  onClick={handleApplyScheme}
+                  className="flex-1 rounded bg-primary px-2 py-1 text-[10px] text-white hover:bg-primary/90"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

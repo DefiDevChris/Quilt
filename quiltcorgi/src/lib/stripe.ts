@@ -23,6 +23,9 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
+if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_PRO_PRICE_ID) {
+  throw new Error('STRIPE_PRO_PRICE_ID must be set when STRIPE_SECRET_KEY is configured');
+}
 export const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID ?? '';
 
 export const PAYMENT_FAILURE_GRACE_DAYS = 7;

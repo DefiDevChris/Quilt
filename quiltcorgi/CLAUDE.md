@@ -14,6 +14,8 @@ Specification docs live in `../Docs/` (01 through 13).
 - **ESLint 9** — flat config in `eslint.config.mjs`
 - **React 19** — Server Components by default. `"use client"` for browser APIs.
 - **next-mdx-remote** — MDX rendering in App Router server components. Tutorials live in `src/content/tutorials/`. Legacy blog MDX in `src/content/blog/` (superseded by DB-backed blog in Phase 17).
+- **AWS Cognito** — Authentication migrated from NextAuth.js. Sessions stored in HTTP-only cookies (qc_id_token, qc_access_token, qc_refresh_token). JWT verified via JWKS. Auth routes: `/api/auth/cognito/{signin,signup,verify,forgot-password,signout,session}`. Verification pages: `/auth/verify-email`, `/auth/forgot-password`.
+- **AWS Secrets Manager** — Production secrets loaded at startup via `instrumentation.ts`. Controlled by `AWS_SECRET_NAME` env var (default: "quiltcorgi/prod", set to "skip" for local dev).
 
 ## Design System
 
@@ -125,7 +127,8 @@ Seven production features added:
 - OCR engine sub-modules operate on `Uint8ClampedArray` pixel data — zero DOM dependencies, fully testable in Vitest `node` env
 - `color-math.ts` uses D65 illuminant for sRGB→XYZ→LAB. Shared by photo-patchwork and OCR engines.
 - MDX frontmatter parsing is a simple YAML-like parser in `mdx-engine.ts` — does NOT use a YAML library. Arrays must be `[a, b, c]` format.
+- `instrumentation.ts` runs at startup and loads secrets from AWS Secrets Manager. If `AWS_SECRET_NAME=skip`, secrets are not loaded (for local dev). Credentials exported globally as `COGNITO_CLIENT_ID`, `COGNITO_CLIENT_SECRET`, `COGNITO_REGION`, `COGNITO_USER_POOL_ID`, `COGNITO_DOMAIN`.
 
 ## Stats
 
-~330 source files, 14 Zustand stores, 21 DB tables, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts.
+~340 source files, 14 Zustand stores, 21 DB tables, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Cognito + Secrets Manager added (3 new lib modules: cognito.ts, cognito-session.ts, secrets.ts, plus instrumentation.ts startup hook).

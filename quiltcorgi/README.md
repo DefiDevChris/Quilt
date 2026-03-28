@@ -10,9 +10,10 @@ A modern, browser-based quilt design studio. Professional block drafting, fabric
 | Styling | Tailwind CSS v4 (Manrope + JetBrains Mono) |
 | Canvas | Fabric.js 7.2.0 |
 | State | Zustand 5 |
-| Auth | NextAuth.js v5 (Google OAuth + Email/Password) |
+| Auth | AWS Cognito (Email/Password with email verification) |
 | Database | PostgreSQL + Drizzle ORM 0.45 |
 | Storage | AWS S3 + CloudFront |
+| Secrets | AWS Secrets Manager (production configuration) |
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe |
 | Testing | Vitest (820 unit tests) + Playwright (12 E2E tests) |
@@ -21,11 +22,12 @@ A modern, browser-based quilt design studio. Professional block drafting, fabric
 
 ```bash
 cp .env.example .env.local   # Configure environment variables
+# Edit .env.local with AWS Cognito credentials, S3 bucket, and Stripe keys
 npm install
 npm run dev                   # http://localhost:3000
 ```
 
-See `../Docs/12-ENV-CONFIG.md` for full environment setup and `../Docs/08-DEVOPS.md` for deployment.
+See `../Docs/12-ENV-CONFIG.md` for full environment setup (Cognito, AWS Secrets Manager, S3, Stripe) and `../Docs/08-DEVOPS.md` for deployment.
 
 ## Project Structure
 

@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/cognito-session';
 
 export {
   unauthorizedResponse,
@@ -9,7 +9,7 @@ export {
 } from '@/lib/api-responses';
 
 export async function getRequiredSession() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) {
     return null;
   }

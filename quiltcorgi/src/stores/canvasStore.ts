@@ -64,6 +64,7 @@ interface CanvasStoreState {
   referenceImageOpacity: number;
   activeColorwayTool: ColorwayTool | null;
   fussyCutTarget: FussyCutTarget | null;
+  grayscaleMode: boolean;
 
   setFabricCanvas: (canvas: unknown) => void;
   setZoom: (zoom: number) => void;
@@ -87,6 +88,7 @@ interface CanvasStoreState {
   setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorwayTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
+  toggleGrayscaleMode: () => void;
 }
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -112,6 +114,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null,
   fussyCutTarget: null,
+  grayscaleMode: false,
 
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
 
@@ -173,4 +176,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
   setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
+
+  toggleGrayscaleMode: () => set((state) => ({ grayscaleMode: !state.grayscaleMode })),
 }));

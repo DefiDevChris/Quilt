@@ -1,54 +1,60 @@
 # Auth & Security Specification
 **Project:** QuiltCorgi
-**Version:** 1.0
-**Date:** March 26, 2026
+**Version:** 2.0
+**Date:** March 27, 2026
 **Purpose:** Complete authentication flow, permissions matrix, and security measures.
 
 ---
 
 ## Authentication Flow
 
-### Sign Up (Social OAuth)
+### Sign Up (Email/Password via Cognito)
 1. User clicks "Sign Up" → redirected to `/auth/signup`
-2. User clicks a social provider button (Google, Facebook, Apple, X)
-3. NextAuth.js initiates the OAuth 2.0 authorization code flow with the selected provider
-4. User authenticates with the provider and grants permissions
-5. Provider redirects to `/api/auth/callback/[provider]` with authorization code
-6. NextAuth.js exchanges code for tokens, retrieves user profile
-7. If no user exists with that provider account: create `users` record (role: `free`), create `accounts` record, create `subscriptions` record (plan: `free`, status: `active`)
-8. If user already exists (matching email): link the new provider to existing account
-9. Create session (JWT) and set session cookie
+2. User enters email + password (validated client-side, enforced server-side)
+3. Client posts credentials to `/api/auth/cognito/signup`
+4. Backend validates input with Zod, creates user in AWS Cognito user pool
+5. User must verify email — verification code sent to inbox
+6. User navigates to `/auth/verify-email` and enters code
+7. Client posts code to `/api/auth/cognito/verify`
+8. Backend confirms email, creates `users` record (role: `free`), creates `subscriptions` record (plan: `free`, status: `active`)
+9. Session cookies set: `qc_id_token` (HTTP-only), `qc_access_token` (HTTP-only), `qc_refresh_token` (HTTP-only)
 10. Redirect to `/dashboard`
 11. Create `welcome` notification for new users
 
-### Sign Up (Email/Password)
-1. User clicks "Sign Up" → redirected to `/auth/signup`
-2. User enters email + password (min 8 chars)
-3. NextAuth.js Credentials provider validates input
-4. Password is hashed with bcrypt (12 rounds) and stored
-5. User record created (role: `free`), subscription record created
-6. Session created, redirect to `/dashboard`
-
-### Sign In
+### Sign In (Email/Password via Cognito)
 1. User clicks "Sign In" → redirected to `/auth/signin`
-2. User clicks social provider or enters email/password
-3. Social: OAuth flow as above, existing account is found by provider + providerAccountId
-4. Email/Password: bcrypt.compare against stored hash
-5. On success: session created, redirect to `/dashboard`
-6. On failure: error message "Invalid credentials" (generic — no indication of whether email exists)
+2. User enters email + password
+3. Client posts to `/api/auth/cognito/signin`
+4. Backend calls Cognito `AdminInitiateAuth` with credentials
+5. On success: Cognito returns id_token, access_token, refresh_token
+6. Backend sets session cookies and redirects to `/dashboard`
+7. On failure: generic error message "Invalid credentials"
 
 ### Sign Out
 1. User clicks avatar dropdown → "Sign Out"
-2. `POST /api/auth/signout` destroys the session
-3. Redirect to `/`
+2. `POST /api/auth/cognito/signout` clears session cookies
+3. Session invalidated in Cognito (access token revoked)
+4. Redirect to `/`
+
+### Forgot Password Flow
+1. User on sign-in page clicks "Forgot Password?"
+2. Redirected to `/auth/forgot-password`
+3. User enters email → `POST /api/auth/cognito/forgot-password`
+4. Cognito sends reset code to email
+5. User enters new password + code
+6. Backend validates code and resets password in Cognito
+7. Redirect to sign-in page
 
 ### Session Management
-- Sessions use JWT tokens stored in an HTTP-only, secure, SameSite=Lax cookie
-- JWT expiry: 30 days
-- JWT is stateless — no server-side session store needed
-- Session data includes: userId, email, name, image, role (free/pro/admin)
-- `getServerSession()` is used in API routes to validate requests
-- `useSession()` hook is used client-side for session state
+- Sessions use JWT tokens stored in three HTTP-only, secure, SameSite=Strict cookies
+- ID token (`qc_id_token`): JWT containing user identity (email, name, roles). Verified via JWKS from Cognito.
+- Access token (`qc_access_token`): Scoped token for API calls. Verified via JWKS.
+- Refresh token (`qc_refresh_token`): Used to obtain new tokens when current ones expire.
+- JWT expiry: ID token 1 hour, access token 1 hour (configurable in Cognito)
+- Session data from ID token: sub (user ID), email, email_verified, cognito:username
+- Tokens verified at request time by extracting public JWKS from Cognito endpoints
+- No server-side session store needed — JWT validation is stateless
+- Routes using `@/lib/cognito-session.ts` via `SessionProvider` can access current user
 
 ---
 
@@ -56,14 +62,18 @@
 
 | Setting | Value |
 |---------|-------|
+| Provider | AWS Cognito |
 | Strategy | JWT (stateless) |
-| Algorithm | HS256 |
-| Expiry | 30 days |
-| Storage | HTTP-only cookie (`__Secure-next-auth.session-token`) |
+| ID Token Algorithm | RS256 (signed by Cognito private key) |
+| Access Token Algorithm | RS256 (signed by Cognito private key) |
+| ID Token Expiry | 1 hour (configurable in Cognito) |
+| Access Token Expiry | 1 hour (configurable in Cognito) |
+| Refresh Token Expiry | 30 days (configurable in Cognito) |
+| Storage | Three HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`) |
 | Secure flag | true (HTTPS only) |
-| SameSite | Lax |
-| Refresh | New JWT issued on each request within the session window |
-| Secret | `NEXTAUTH_SECRET` environment variable (min 32 chars, randomly generated) |
+| SameSite | Strict |
+| JWKS Verification | Public keys fetched from Cognito `.well-known/jwks.json` endpoint |
+| Key Rotation | Automatic — Cognito rotates keys regularly, clients fetch latest JWKS |
 
 ---
 
@@ -132,7 +142,7 @@ Rate limiting is implemented via an in-memory sliding window counter in API midd
 }
 ```
 
-### Security Headers (via next.config.js)
+### Security Headers (via next.config.ts)
 | Header | Value |
 |--------|-------|
 | Content-Security-Policy | `default-src 'self'; script-src 'self' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.quiltcorgi.com https://*.googleusercontent.com https://*.fbcdn.net data: blob:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com;` |
@@ -143,13 +153,20 @@ Rate limiting is implemented via an in-memory sliding window counter in API midd
 | Permissions-Policy | `camera=(), microphone=(), geolocation=()` |
 
 ### CSRF Protection
-NextAuth.js provides built-in CSRF protection via the CSRF token endpoint.
+CSRF protection is enforced via:
+- HTTP-only cookie storage (tokens not accessible to JavaScript)
+- SameSite=Strict on all session cookies
+- Same-origin verification in API routes via origin checks
+- Cognito client secret kept server-side only
 
 ### Input Sanitization
 - All API route inputs are validated using Zod schemas
 - String inputs are trimmed and length-limited
+- Emails validated as RFC 5322 standard via Zod `z.string().email()`
+- Passwords enforced server-side (client-side hints only) with minimum strength requirements
 - HTML content in descriptions is stripped (no rich text — plain text only)
 - File uploads are validated by MIME type and size before presigned URL generation
+- Cognito handles additional validation for authentication flows (password complexity, email verification)
 
 ---
 
@@ -169,7 +186,9 @@ NextAuth.js provides built-in CSRF protection via the CSRF token endpoint.
 | In transit | TLS 1.2+ (enforced by AWS Amplify / CloudFront) |
 | At rest (database) | AWS Aurora Serverless v2 default encryption (AES-256) |
 | At rest (S3) | AWS S3 default encryption (SSE-S3, AES-256) |
-| Passwords | bcrypt with 12 salt rounds |
+| Passwords (Cognito) | PBKDF2 with Cognito's configurable iteration count (default: 6,000 iterations) |
+| JWT Signing | RS256 with Cognito's RSA 2048-bit private keys |
+| Secrets (Secrets Manager) | AWS Secrets Manager encryption at rest (AWS KMS) |
 
 ### Data Retention
 - User data is retained as long as the account is active

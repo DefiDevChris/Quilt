@@ -13,10 +13,11 @@ interface PrintlistStoreState {
   isSaving: boolean;
   isLoading: boolean;
 
-  addItem: (item: Omit<PrintlistItem, 'seamAllowance'> & { seamAllowance?: number }) => void;
+  addItem: (item: Omit<PrintlistItem, 'seamAllowance' | 'seamAllowanceEnabled'> & { seamAllowance?: number; seamAllowanceEnabled?: boolean }) => void;
   removeItem: (shapeId: string) => void;
   updateQuantity: (shapeId: string, quantity: number) => void;
   updateSeamAllowance: (shapeId: string, seamAllowance: number) => void;
+  toggleSeamAllowance: (shapeId: string) => void;
   setPaperSize: (size: PaperSize) => void;
   clear: () => void;
   togglePanel: () => void;
@@ -38,6 +39,7 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
     const newItem: PrintlistItem = {
       ...item,
       seamAllowance: item.seamAllowance ?? DEFAULT_SEAM_ALLOWANCE_INCHES,
+      seamAllowanceEnabled: item.seamAllowanceEnabled ?? true,
     };
     set((state) => {
       const existing = state.items.find((i) => i.shapeId === item.shapeId);
@@ -70,6 +72,13 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
         i.shapeId === shapeId
           ? { ...i, seamAllowance: Math.max(0, Math.min(1, seamAllowance)) }
           : i
+      ),
+    })),
+
+  toggleSeamAllowance: (shapeId) =>
+    set((state) => ({
+      items: state.items.map((i) =>
+        i.shapeId === shapeId ? { ...i, seamAllowanceEnabled: !i.seamAllowanceEnabled } : i
       ),
     })),
 

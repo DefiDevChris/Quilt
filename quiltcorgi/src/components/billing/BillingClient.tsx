@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useAuthStore } from '@/stores/authStore';
 
 type SubscriptionInfo = {
@@ -14,7 +13,7 @@ type SubscriptionInfo = {
 
 export function BillingClient() {
   const user = useAuthStore((s) => s.user);
-  const { update: updateSession } = useSession();
+  const setUser = useAuthStore((s) => s.setUser);
   const searchParams = useSearchParams();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,10 +42,10 @@ export function BillingClient() {
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
       setSuccessMessage('Welcome to Pro! Your subscription is now active.');
-      updateSession({ role: 'pro' });
+      if (user) setUser({ ...user, role: 'pro' });
       window.history.replaceState({}, '', '/profile/billing');
     }
-  }, [searchParams, updateSession]);
+  }, [searchParams, user, setUser]);
 
   async function handleUpgrade() {
     setIsCheckoutLoading(true);

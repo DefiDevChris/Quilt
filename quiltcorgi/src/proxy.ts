@@ -1,12 +1,36 @@
-import { auth } from '@/lib/auth';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify, createRemoteJWKSet } from 'jose';
+
+const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID ?? '';
+const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
+
+const jwks = COGNITO_USER_POOL_ID ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
 
 const protectedRoutes = ['/dashboard', '/studio', '/profile', '/admin'];
-const authRoutes = ['/auth/signin', '/auth/signup'];
+const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
-export const proxy = auth((req) => {
+async function verifyIdToken(token: string): Promise<{ sub: string; email: string } | null> {
+  if (!jwks) return null;
+  try {
+    const { payload } = await jwtVerify(token, jwks, {
+      issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`,
+    });
+    return {
+      sub: payload.sub as string,
+      email: (payload.email as string) ?? '',
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isAuthenticated = !!req.auth?.user;
+  const idToken = req.cookies.get('qc_id_token')?.value;
+
+  const user = idToken ? await verifyIdToken(idToken) : null;
+  const isAuthenticated = !!user;
 
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
   if (isProtectedRoute && !isAuthenticated) {
@@ -20,15 +44,14 @@ export const proxy = auth((req) => {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  if (pathname.startsWith('/admin') && isAuthenticated) {
-    const role = req.auth?.user?.role;
-    if (role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
+  // Admin route protection requires DB lookup (role is in DB, not JWT).
+  // We block obviously unauthenticated requests here; API routes enforce role checks.
+  if (pathname.startsWith('/admin') && !isAuthenticated) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [

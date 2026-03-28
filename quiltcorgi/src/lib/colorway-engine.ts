@@ -171,3 +171,213 @@ export function eyedropperPick(patches: PatchColor[], objectId: string): string 
   const match = patches.find((p) => p.objectId === objectId);
   return match !== undefined ? normalizeColor(match.currentFill) : null;
 }
+
+// ---------------------------------------------------------------------------
+// Color Scheme Generation
+// ---------------------------------------------------------------------------
+
+export type ColorSchemeType = 'monochromatic' | 'analogous' | 'complementary' | 'triadic' | 'split-complementary' | 'tetradic';
+
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
+
+export interface HSL {
+  h: number;
+  s: number;
+  l: number;
+}
+
+/**
+ * Convert hex color to RGB.
+ */
+function hexToRgb(hex: string): RGB {
+  const normalized = normalizeColor(hex);
+  const r = parseInt(normalized.slice(1, 3), 16);
+  const g = parseInt(normalized.slice(3, 5), 16);
+  const b = parseInt(normalized.slice(5, 7), 16);
+  return { r, g, b };
+}
+
+/**
+ * Convert RGB to HSL.
+ */
+function rgbToHsl(rgb: RGB): HSL {
+  const r = rgb.r / 255;
+  const g = rgb.g / 255;
+  const b = rgb.b / 255;
+  
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const diff = max - min;
+  
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+  
+  if (diff !== 0) {
+    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
+    
+    switch (max) {
+      case r:
+        h = ((g - b) / diff + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / diff + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / diff + 4) / 6;
+        break;
+    }
+  }
+  
+  return { h: h * 360, s: s * 100, l: l * 100 };
+}
+
+/**
+ * Convert HSL to RGB.
+ */
+function hslToRgb(hsl: HSL): RGB {
+  const h = hsl.h / 360;
+  const s = hsl.s / 100;
+  const l = hsl.l / 100;
+  
+  if (s === 0) {
+    const gray = Math.round(l * 255);
+    return { r: gray, g: gray, b: gray };
+  }
+  
+  const hue2rgb = (p: number, q: number, t: number): number => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  };
+  
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  
+  const r = hue2rgb(p, q, h + 1/3);
+  const g = hue2rgb(p, q, h);
+  const b = hue2rgb(p, q, h - 1/3);
+  
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+  };
+}
+
+/**
+ * Convert RGB to hex.
+ */
+function rgbToHex(rgb: RGB): string {
+  const toHex = (n: number) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+}
+
+/**
+ * Generate harmonious color palette based on color theory.
+ */
+export function generateColorScheme(
+  baseColor: string,
+  schemeType: ColorSchemeType,
+  count: number = 5
+): string[] {
+  const rgb = hexToRgb(baseColor);
+  const hsl = rgbToHsl(rgb);
+  const colors: string[] = [normalizeColor(baseColor)];
+  
+  switch (schemeType) {
+    case 'monochromatic':
+      for (let i = 1; i < count; i++) {
+        const lightness = Math.max(10, Math.min(90, hsl.l + (i - count/2) * 15));
+        const saturation = Math.max(20, Math.min(100, hsl.s + (i % 2 === 0 ? -10 : 10)));
+        const newHsl: HSL = { h: hsl.h, s: saturation, l: lightness };
+        colors.push(rgbToHex(hslToRgb(newHsl)));
+      }
+      break;
+      
+    case 'analogous':
+      for (let i = 1; i < count; i++) {
+        const hue = (hsl.h + (i * 30)) % 360;
+        const newHsl: HSL = { h: hue, s: hsl.s, l: hsl.l };
+        colors.push(rgbToHex(hslToRgb(newHsl)));
+      }
+      break;
+      
+    case 'complementary':
+      const compHue = (hsl.h + 180) % 360;
+      colors.push(rgbToHex(hslToRgb({ h: compHue, s: hsl.s, l: hsl.l })));
+      
+      // Add variations
+      for (let i = 2; i < count; i++) {
+        const useBase = i % 2 === 0;
+        const baseHue = useBase ? hsl.h : compHue;
+        const lightness = Math.max(20, Math.min(80, hsl.l + (i - count/2) * 10));
+        colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
+      }
+      break;
+      
+    case 'triadic':
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 120) % 360, s: hsl.s, l: hsl.l })));
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 240) % 360, s: hsl.s, l: hsl.l })));
+      
+      // Add variations
+      for (let i = 3; i < count; i++) {
+        const baseHue = [hsl.h, (hsl.h + 120) % 360, (hsl.h + 240) % 360][i % 3];
+        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 3) * 15));
+        colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.7, l: lightness })));
+      }
+      break;
+      
+    case 'split-complementary':
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 150) % 360, s: hsl.s, l: hsl.l })));
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 210) % 360, s: hsl.s, l: hsl.l })));
+      
+      // Add variations
+      for (let i = 3; i < count; i++) {
+        const baseHue = [hsl.h, (hsl.h + 150) % 360, (hsl.h + 210) % 360][i % 3];
+        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 3) * 12));
+        colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
+      }
+      break;
+      
+    case 'tetradic':
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 90) % 360, s: hsl.s, l: hsl.l })));
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l })));
+      colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 270) % 360, s: hsl.s, l: hsl.l })));
+      
+      // Add variations
+      for (let i = 4; i < count; i++) {
+        const baseHue = [hsl.h, (hsl.h + 90) % 360, (hsl.h + 180) % 360, (hsl.h + 270) % 360][i % 4];
+        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 4) * 10));
+        colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.9, l: lightness })));
+      }
+      break;
+  }
+  
+  return colors.slice(0, count);
+}
+
+/**
+ * Suggest color palette based on current palette analysis.
+ */
+export function suggestPalette(
+  currentPalette: string[],
+  schemeType: ColorSchemeType,
+  count: number = 5
+): string[] {
+  if (currentPalette.length === 0) {
+    // Default to a warm base color
+    return generateColorScheme('#D4883C', schemeType, count);
+  }
+  
+  // Use the first color as the base for scheme generation
+  const baseColor = currentPalette[0];
+  return generateColorScheme(baseColor, schemeType, count);
+}

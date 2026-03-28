@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { signOut } from 'next-auth/react';
 import { useAuthStore } from '@/stores/authStore';
 
 export function CommunityNav() {
   const user = useAuthStore((s) => s.user);
   const isLoading = useAuthStore((s) => s.isLoading);
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -117,7 +117,11 @@ export function CommunityNav() {
                 </Link>
                 <button
                   type="button"
-                  onClick={() => signOut({ callbackUrl: '/' })}
+                  onClick={async () => {
+                    await fetch('/api/auth/cognito/signout', { method: 'POST' });
+                    router.push('/');
+                    router.refresh();
+                  }}
                   className="w-full text-left px-4 py-2 text-sm text-error hover:bg-surface-container transition-colors"
                 >
                   Sign Out

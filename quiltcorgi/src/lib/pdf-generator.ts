@@ -42,7 +42,7 @@ const VALIDATION_BLOCK_HEIGHT = 1.6; // Total height including label
 
 interface ShapeData {
   cutLine: Point[];
-  seamLine: Point[];
+  seamLine: Point[] | null;
   bbox: { width: number; height: number; minX: number; minY: number };
   seamBbox: { width: number; height: number; minX: number; minY: number };
   name: string;
@@ -53,7 +53,7 @@ interface ShapeData {
  * Extract polyline points from a printlist item's SVG data.
  * Converts from canvas pixels to inches.
  */
-function extractShapePoints(item: PrintlistItem): { cutLine: Point[]; seamLine: Point[] } | null {
+function extractShapePoints(item: PrintlistItem): { cutLine: Point[]; seamLine: Point[] | null } | null {
   const pathD = extractPathFromSvg(item.svgData);
   if (!pathD) return null;
 
@@ -63,7 +63,9 @@ function extractShapePoints(item: PrintlistItem): { cutLine: Point[]; seamLine: 
   // Convert from canvas pixels to inches
   const scale = 1 / PIXELS_PER_INCH;
   const cutLine = rawPoints.map((p) => ({ x: p.x * scale, y: p.y * scale }));
-  const seamLine = computeSeamOffset(cutLine, item.seamAllowance);
+  const seamLine = item.seamAllowanceEnabled !== false
+    ? computeSeamOffset(cutLine, item.seamAllowance)
+    : null;
 
   return { cutLine, seamLine };
 }
@@ -192,7 +194,9 @@ export async function generatePatternPdf(
     if (!result) continue;
 
     const bbox = polylineBoundingBox(result.cutLine);
-    const seamBbox = polylineBoundingBox(result.seamLine);
+    const seamBbox = result.seamLine
+      ? polylineBoundingBox(result.seamLine)
+      : bbox;
 
     shapes.push({
       cutLine: result.cutLine,
@@ -244,13 +248,15 @@ export async function generatePatternPdf(
     const drawY =
       pageDims.margin + packedItem.y + (packedItem.page === 0 ? VALIDATION_BLOCK_HEIGHT : 0);
 
-    // Draw seam line (dashed, gray)
-    drawPolyline(page, shape.seamLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, {
-      color: { r: 0.5, g: 0.5, b: 0.5 },
-      lineWidth: 0.5,
-      dashArray: [3, 3],
-      dashPhase: 0,
-    });
+    // Draw seam line (dashed, gray) — only if enabled
+    if (shape.seamLine) {
+      drawPolyline(page, shape.seamLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, {
+        color: { r: 0.5, g: 0.5, b: 0.5 },
+        lineWidth: 0.5,
+        dashArray: [3, 3],
+        dashPhase: 0,
+      });
+    }
 
     // Draw cut line (solid, black) — same origin as seam line
     drawPolyline(page, shape.cutLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, {

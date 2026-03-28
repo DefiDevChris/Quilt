@@ -18,12 +18,12 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
   const removeItem = usePrintlistStore((s) => s.removeItem);
   const updateQuantity = usePrintlistStore((s) => s.updateQuantity);
   const updateSeamAllowance = usePrintlistStore((s) => s.updateSeamAllowance);
+  const toggleSeamAllowance = usePrintlistStore((s) => s.toggleSeamAllowance);
   const setPaperSize = usePrintlistStore((s) => s.setPaperSize);
   const loadFromServer = usePrintlistStore((s) => s.loadFromServer);
   const saveToServer = usePrintlistStore((s) => s.saveToServer);
-  const projectId = useProjectStore((s) => s.projectId);
 
-  // Load printlist when panel opens
+  const projectId = useProjectStore((s) => s.projectId);
   useEffect(() => {
     if (isPanelOpen && projectId) {
       loadFromServer(projectId);
@@ -133,22 +133,40 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                         />
                       </div>
                       <div className="flex-1">
-                        <label className="text-[10px] text-secondary block mb-0.5">
-                          Seam ({item.unitSystem === 'metric' ? 'cm' : 'in'})
-                        </label>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <label className="text-[10px] text-secondary">
+                            Seam ({item.unitSystem === 'metric' ? 'cm' : 'in'})
+                          </label>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={item.seamAllowanceEnabled}
+                            onClick={() => toggleSeamAllowance(item.shapeId)}
+                            className={`relative inline-flex h-3.5 w-6 shrink-0 cursor-pointer rounded-full transition-colors ${
+                              item.seamAllowanceEnabled ? 'bg-primary' : 'bg-outline-variant'
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-2.5 w-2.5 mt-[1px] rounded-full bg-white shadow transition-transform ${
+                                item.seamAllowanceEnabled ? 'translate-x-3' : 'translate-x-0.5'
+                              }`}
+                            />
+                          </button>
+                        </div>
                         <input
                           type="number"
                           min={0}
                           max={1}
                           step={0.0625}
                           value={item.seamAllowance}
+                          disabled={!item.seamAllowanceEnabled}
                           onChange={(e) =>
                             updateSeamAllowance(
                               item.shapeId,
                               parseFloat(e.target.value) || 0.25
                             )
                           }
-                          className="w-full rounded border border-outline-variant bg-white px-2 py-1 text-xs text-on-surface"
+                          className="w-full rounded border border-outline-variant bg-white px-2 py-1 text-xs text-on-surface disabled:opacity-40 disabled:cursor-not-allowed"
                         />
                       </div>
                     </div>

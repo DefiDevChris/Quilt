@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -11,6 +10,7 @@ import { NotificationDropdown } from '@/components/notifications/NotificationDro
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -145,7 +145,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
               <button
                 type="button"
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={async () => {
+                  await fetch('/api/auth/cognito/signout', { method: 'POST' });
+                  router.push('/');
+                  router.refresh();
+                }}
                 className="w-full text-left px-4 py-2 text-sm text-error hover:bg-surface-container transition-colors"
               >
                 Sign Out

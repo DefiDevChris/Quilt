@@ -12,7 +12,7 @@ export default async function ProfileEditPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect('/api/auth/signin');
+    redirect('/auth/signin');
   }
 
   return <ProfileEditForm />;
