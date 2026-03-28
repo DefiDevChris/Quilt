@@ -13,7 +13,7 @@ Specification docs live in `../Docs/` (01 through 13).
 - **Zod 4.3** — `z.record()` requires two args. `z.url()`/`z.uuid()` show deprecation warnings (cosmetic).
 - **ESLint 9** — flat config in `eslint.config.mjs`
 - **React 19** — Server Components by default. `"use client"` for browser APIs.
-- **next-mdx-remote** — MDX rendering in App Router server components. Content lives in `src/content/`.
+- **next-mdx-remote** — MDX rendering in App Router server components. Tutorials live in `src/content/tutorials/`. Legacy blog MDX in `src/content/blog/` (superseded by DB-backed blog in Phase 17).
 
 ## Design System
 
@@ -82,9 +82,7 @@ Seven production features added:
 
 **Tutorials:** 10 MDX files in `src/content/tutorials/`. Routes at `/tutorials` and `/tutorials/[slug]`. HowTo JSON-LD schema. Filterable by difficulty.
 
-**Blog (legacy):** 5 MDX files in `src/content/blog/` (superseded by DB-backed blog in Phase 17).
-
-**MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map.
+**MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map. Used for tutorials; legacy blog MDX files in `src/content/blog/` remain on disk but are no longer served (replaced by DB-backed blog in Phase 17).
 
 **Photo Patchwork:** `photo-patchwork-engine.ts` + `color-math.ts`. K-means++ clustering in LAB color space, grid pixelation, fabric mapping. 5-step wizard (`PhotoPatchworkDialog.tsx`).
 
@@ -130,4 +128,4 @@ Seven production features added:
 
 ## Stats
 
-~310 source files, 15 Zustand stores, 22 lib engine/utility files, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts, 7 new DB tables.
+~330 source files, 14 Zustand stores, 21 DB tables, 64 test files (1,195 tests), 659 blocks, 10 tutorials, 5 blog seed posts.
