@@ -68,7 +68,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
     set((state) => {
       if (state.borders.length >= 5) return state;
       return {
-        borders: [...state.borders, { ...DEFAULT_BORDER }],
+        borders: [...state.borders, createBorder()],
       };
     }),
 

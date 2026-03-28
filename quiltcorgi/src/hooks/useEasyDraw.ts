@@ -6,7 +6,6 @@ import {
   detectPatches,
   gridPointToPixel,
   type Segment,
-  type ArcSegment,
   type DrawSegment,
   type Patch,
 } from '@/lib/easydraw-engine';

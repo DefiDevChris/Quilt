@@ -7,6 +7,21 @@ import { stripe } from '@/lib/stripe';
 
 export const dynamic = 'force-dynamic';
 
+// In-memory dedup guard for webhook event IDs (handles immediate retries)
+const processedEvents = new Map<string, number>();
+const DEDUP_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function isDuplicate(eventId: string): boolean {
+  const now = Date.now();
+  // Prune stale entries
+  for (const [id, ts] of processedEvents) {
+    if (now - ts > DEDUP_TTL_MS) processedEvents.delete(id);
+  }
+  if (processedEvents.has(eventId)) return true;
+  processedEvents.set(eventId, now);
+  return false;
+}
+
 function getWebhookSecret(): string {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) {
@@ -208,6 +223,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Webhook signature verification failed:', error);
     return Response.json({ success: false, error: 'Invalid signature' }, { status: 401 });
+  }
+
+  if (isDuplicate(event.id)) {
+    return Response.json({ success: true, data: { received: true, deduplicated: true } });
   }
 
   try {

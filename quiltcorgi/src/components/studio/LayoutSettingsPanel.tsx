@@ -41,9 +41,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
       <div className="w-full max-w-md rounded-xl bg-surface shadow-elevation-3 p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold text-on-surface mb-4">
-          Layout Settings
-        </h2>
+        <h2 className="text-lg font-semibold text-on-surface mb-4">Layout Settings</h2>
 
         {/* Layout Type Selection */}
         <div className="space-y-2 mb-6">
@@ -62,12 +60,8 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                     : 'border-outline-variant hover:border-primary-container'
                 }`}
               >
-                <div className="text-sm font-medium text-on-surface">
-                  {opt.label}
-                </div>
-                <div className="text-[10px] text-secondary mt-0.5">
-                  {opt.desc}
-                </div>
+                <div className="text-sm font-medium text-on-surface">{opt.label}</div>
+                <div className="text-[10px] text-secondary mt-0.5">{opt.desc}</div>
               </button>
             ))}
           </div>
@@ -78,10 +72,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
           <div className="space-y-4 mb-6">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label
-                  htmlFor="layout-rows"
-                  className="block text-xs text-secondary mb-1"
-                >
+                <label htmlFor="layout-rows" className="block text-xs text-secondary mb-1">
                   Rows
                 </label>
                 <input
@@ -96,10 +87,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                 />
               </div>
               <div className="flex-1">
-                <label
-                  htmlFor="layout-cols"
-                  className="block text-xs text-secondary mb-1"
-                >
+                <label htmlFor="layout-cols" className="block text-xs text-secondary mb-1">
                   Columns
                 </label>
                 <input
@@ -116,10 +104,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
             </div>
 
             <div>
-              <label
-                htmlFor="layout-block-size"
-                className="block text-xs text-secondary mb-1"
-              >
+              <label htmlFor="layout-block-size" className="block text-xs text-secondary mb-1">
                 Block Size ({unit})
               </label>
               <input
@@ -129,9 +114,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                 max={24}
                 step={0.5}
                 value={blockSize}
-                onChange={(e) =>
-                  setBlockSize(parseFloat(e.target.value) || 6)
-                }
+                onChange={(e) => setBlockSize(parseFloat(e.target.value) || 6)}
                 className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
@@ -147,10 +130,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
               </label>
               <div className="flex gap-4">
                 <div>
-                  <label
-                    htmlFor="sashing-width"
-                    className="block text-xs text-secondary mb-1"
-                  >
+                  <label htmlFor="sashing-width" className="block text-xs text-secondary mb-1">
                     Width ({unit})
                   </label>
                   <input
@@ -169,19 +149,14 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="sashing-color"
-                    className="block text-xs text-secondary mb-1"
-                  >
+                  <label htmlFor="sashing-color" className="block text-xs text-secondary mb-1">
                     Color
                   </label>
                   <input
                     id="sashing-color"
                     type="color"
                     value={sashing.color}
-                    onChange={(e) =>
-                      setSashing({ color: e.target.value })
-                    }
+                    onChange={(e) => setSashing({ color: e.target.value })}
                     className="h-9 w-12 cursor-pointer rounded-sm border border-outline-variant"
                   />
                 </div>
@@ -217,7 +192,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
 
               {borders.map((border, i) => (
                 <div
-                  key={i}
+                  key={border.id}
                   className="flex items-end gap-3 mb-2 rounded-lg border border-outline-variant p-2"
                 >
                   <div>
@@ -253,9 +228,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                       id={`border-color-${i}`}
                       type="color"
                       value={border.color}
-                      onChange={(e) =>
-                        updateBorder(i, { color: e.target.value })
-                      }
+                      onChange={(e) => updateBorder(i, { color: e.target.value })}
                       className="h-8 w-10 cursor-pointer rounded-sm border border-outline-variant"
                     />
                   </div>
@@ -277,8 +250,8 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
         {layoutType === 'on-point' && (
           <div className="rounded-lg bg-background/50 border border-outline-variant p-3 mb-6">
             <p className="text-xs text-secondary">
-              On-Point rotates blocks 45 degrees. Setting triangles fill the edges
-              to create a rectangular quilt shape.
+              On-Point rotates blocks 45 degrees. Setting triangles fill the edges to create a
+              rectangular quilt shape.
             </p>
           </div>
         )}

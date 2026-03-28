@@ -271,12 +271,12 @@ To add Google/Apple sign-in:
 - [ ] PostgreSQL 15+ running locally (Docker or native)
 - [ ] Repository cloned
 - [ ] `npm install` completed
-- [ ] `.env.local` created from `.env.example` with all values filled (including Cognito credentials)
-- [ ] AWS Cognito user pool created with app client configured
-- [ ] Cognito credentials added to `.env.local` (COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET, etc.)
-- [ ] `AWS_SECRET_NAME=skip` in `.env.local` (to skip Secrets Manager in local dev)
+- [ ] `.env.local` created with all values filled (copy template from `.env.local` section above)
+- [ ] `AWS_SECRET_NAME=skip` in `.env.local` (disables Secrets Manager for local dev)
+- [ ] Cognito credentials added to `.env.local` (`COGNITO_CLIENT_ID`, `COGNITO_USER_POOL_ID`)
 - [ ] Stripe test keys added
 - [ ] AWS S3 bucket created and credentials added
+- [ ] `NEXT_PUBLIC_*` vars set (CloudFront URL, app URL, Stripe publishable key)
 - [ ] Database tables created (`npx drizzle-kit push`)
 - [ ] Block library seeded (`npm run db:seed`)
 - [ ] Stripe CLI listening for webhooks (`stripe listen --forward-to localhost:3000/api/stripe/webhook`)
