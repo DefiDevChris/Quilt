@@ -98,7 +98,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'select',
       label: 'Select',
       shortcut: 'V',
-      description: 'Click to select and move objects on the canvas',
+      description: 'Select and move pieces on your canvas',
       toolType: 'select',
       group: 'tools',
       icon: (
@@ -116,7 +116,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'rectangle',
       label: 'Rectangle',
       shortcut: 'R',
-      description: 'Click and drag to draw a rectangle shape',
+      description: 'Draw a rectangle — hold Shift for a perfect square',
       toolType: 'rectangle',
       group: 'tools',
       icon: (
@@ -129,7 +129,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'triangle',
       label: 'Triangle',
       shortcut: 'T',
-      description: 'Click and drag to draw a triangle shape',
+      description: 'Draw a triangle patch',
       toolType: 'triangle',
       group: 'tools',
       icon: (
@@ -147,7 +147,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'polygon',
       label: 'Polygon',
       shortcut: 'P',
-      description: 'Click and drag to draw a polygon with adjustable sides',
+      description: 'Draw a polygon — adjust the number of sides after placing',
       toolType: 'polygon',
       group: 'tools',
       icon: (
@@ -165,7 +165,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'line',
       label: 'Line',
       shortcut: 'L',
-      description: 'Click and drag to draw a straight line',
+      description: 'Draw a straight line — hold Shift for 45-degree angles',
       toolType: 'line',
       group: 'tools',
       icon: (
@@ -178,7 +178,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'curve',
       label: 'Bezier Curve',
       shortcut: 'C',
-      description: 'Click to place control points for smooth curves',
+      description: 'Draw smooth curves with control points',
       toolType: 'curve',
       group: 'tools',
       icon: (
@@ -196,7 +196,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'text',
       label: 'Text',
       shortcut: 'X',
-      description: 'Click to place a text label on the canvas',
+      description: 'Add a text label to your design',
       toolType: 'text',
       group: 'tools',
       icon: (
@@ -216,7 +216,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'blocks',
       label: 'Block Library',
       shortcut: 'B',
-      description: 'Browse and drag quilt blocks onto your canvas',
+      description: 'Browse 659+ quilt blocks and drag them onto your canvas',
       group: 'library',
       onClick: toggleBlockPanel,
       isActive: () => isBlockPanelOpen,
@@ -236,7 +236,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'fabrics',
       label: 'Fabric Library',
       shortcut: 'F',
-      description: 'Upload fabrics and drag them onto patches',
+      description: 'Upload your fabric photos and apply them to patches',
       group: 'library',
       onClick: toggleFabricPanel,
       isActive: () => isFabricPanelOpen,
@@ -252,7 +252,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'layout',
       label: 'Layout Settings',
-      description: 'Configure grid, sashing, and quilt layout options',
+      description: 'Set up your quilt layout — grid, sashing, on-point, and more',
       group: 'layout',
       onClick: callbacks.onOpenLayoutSettings,
       isActive: () => layoutType !== 'free-form',
@@ -269,7 +269,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'grid-dimensions',
       label: 'Grid & Dimensions',
-      description: 'Set quilt size and configure the cell grid overlay',
+      description: 'Set your quilt dimensions and grid spacing',
       group: 'layout',
       onClick: callbacks.onOpenGridDimensions,
       icon: (
@@ -298,12 +298,37 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
+    {
+      id: 'resize-quilt',
+      label: 'Resize Quilt',
+      description: 'Scale the entire quilt or add blocks to change dimensions',
+      group: 'layout',
+      onClick: callbacks.onOpenResize,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M4 13V16H7M16 7V4H13"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M16 4L11 9M4 16L9 11"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
     // Inspect
     {
       id: 'puzzle-view',
       label: 'Puzzle View',
       shortcut: 'I',
-      description: 'Hover and click pieces to inspect dimensions and print cutting templates',
+      description: 'Inspect any piece — see dimensions and print individual cutting templates',
       group: 'inspect',
       onClick: () => usePieceInspectorStore.getState().togglePuzzleView(),
       isActive: () => usePieceInspectorStore.getState().isPuzzleViewActive,
@@ -322,7 +347,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'symmetry',
       label: 'Symmetry Tool',
-      description: 'Mirror your design with vertical, horizontal, or radial symmetry',
+      description: 'Mirror your design — vertical, horizontal, or radial',
       group: 'generate',
       onClick: callbacks.onOpenSymmetry,
       icon: (
@@ -348,7 +373,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'serendipity',
       label: 'Serendipity Generator',
-      description: 'Randomly shuffle fabric assignments for unexpected combinations',
+      description: 'Shuffle your fabrics and discover unexpected color combinations',
       group: 'generate',
       onClick: callbacks.onOpenSerendipity,
       icon: (
@@ -365,7 +390,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'photo-patchwork',
       label: 'Photo Patchwork',
-      description: 'Convert a photo into a patchwork quilt pattern',
+      description: 'Turn any photo into a patchwork quilt design',
       group: 'photo',
       onClick: callbacks.onOpenPhotoPatchwork,
       icon: (
@@ -380,7 +405,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'quilt-ocr',
       label: 'Import from Photo',
-      description: 'Analyze a photo of a quilt and recreate the pattern digitally',
+      description: 'Snap a photo of a quilt and recreate the pattern digitally',
       isProFeature: true,
       group: 'photo',
       onClick: callbacks.onOpenQuiltOcr,
@@ -406,7 +431,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'yardage',
       label: 'Yardage Estimator',
-      description: 'Calculate fabric yardage needed for your design',
+      description: 'Calculate how much fabric you need for your quilt',
       group: 'measure',
       onClick: toggleYardagePanel,
       isActive: () => isYardagePanelOpen,
@@ -432,7 +457,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'calculator',
       label: 'Fraction Calculator',
-      description: 'Calculate fractions for precise quilt measurements',
+      description: 'Quick fraction math for precise measurements',
       group: 'measure',
       onClick: callbacks.onOpenCalculator,
       icon: (
@@ -459,7 +484,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'printlist',
       label: 'Printlist',
-      description: 'Review and print your quilt project materials list',
+      description: 'Review your materials list and generate a printable PDF',
       group: 'export',
       onClick: togglePrintlistPanel,
       isActive: () => isPrintlistPanelOpen,
@@ -476,7 +501,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'export-image',
       label: 'Export Image',
-      description: 'Save your design as a high-resolution PNG or JPEG',
+      description: 'Save your design as a high-res image to share online',
       group: 'export',
       onClick: callbacks.onOpenImageExport,
       icon: (
@@ -715,6 +740,7 @@ interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
   onOpenPhotoPatchwork?: () => void;
   onOpenQuiltOcr?: () => void;
+  onOpenResize?: () => void;
 }
 
 interface ToolbarProps extends ToolbarCallbacks {}
@@ -728,6 +754,7 @@ export function Toolbar({
   onOpenImageExport,
   onOpenPhotoPatchwork,
   onOpenQuiltOcr,
+  onOpenResize,
 }: ToolbarProps) {
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
@@ -742,6 +769,7 @@ export function Toolbar({
     onOpenImageExport,
     onOpenPhotoPatchwork,
     onOpenQuiltOcr,
+    onOpenResize,
   };
 
   const quiltTools = useQuiltTools(callbacks);

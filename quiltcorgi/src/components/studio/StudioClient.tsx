@@ -37,6 +37,7 @@ import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
+import { ResizeDialog } from '@/components/studio/ResizeDialog';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -102,6 +103,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isPhotoPatchworkOpen, setIsPhotoPatchworkOpen] = useState(false);
   const [isQuiltOcrOpen, setIsQuiltOcrOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
+  const [isResizeOpen, setIsResizeOpen] = useState(false);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
 
@@ -209,6 +211,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenImageExport={() => setIsImageExportOpen(true)}
             onOpenPhotoPatchwork={() => setIsPhotoPatchworkOpen(true)}
             onOpenQuiltOcr={() => setIsQuiltOcrOpen(true)}
+            onOpenResize={() => setIsResizeOpen(true)}
           />
         )}
 
@@ -334,6 +337,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
       <ProGate fallback={null}>
         <FussyCutDialog />
       </ProGate>
+
+      {/* Resize quilt dialog */}
+      <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />
 
       {/* Help button + panel */}
       <HelpButton onClick={() => setIsHelpOpen(true)} />
