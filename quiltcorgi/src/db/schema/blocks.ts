@@ -20,7 +20,7 @@ export const blocks = pgTable(
     subcategory: varchar('subcategory', { length: 100 }),
     svgData: text('svgData').notNull(),
     fabricJsData: jsonb('fabricJsData'),
-    tags: text('tags').array().default([]),
+    tags: text('tags').array().notNull().default([]),
     isDefault: boolean('isDefault').notNull().default(false),
     thumbnailUrl: text('thumbnailUrl'),
     createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),

@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 interface PrintlistPanelProps {
   onGeneratePdf: () => void;
@@ -76,9 +77,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
               </div>
             ) : items.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-secondary">
-                  No items in printlist.
-                </p>
+                <p className="text-sm text-secondary">No items in printlist.</p>
                 <p className="text-xs text-secondary mt-1">
                   Right-click a shape and select &quot;Add to Printlist&quot;
                 </p>
@@ -107,7 +106,9 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                       className="w-full h-16 bg-white border border-outline-variant rounded mb-2 flex items-center justify-center overflow-hidden"
                       dangerouslySetInnerHTML={{
                         __html: item.svgData
-                          ? `<svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg">${item.svgData}</svg>`
+                          ? sanitizeSvg(
+                              `<svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg">${item.svgData}</svg>`
+                            )
                           : '',
                       }}
                     />
@@ -115,19 +116,14 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                     {/* Quantity + Seam Allowance */}
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <label className="text-[10px] text-secondary block mb-0.5">
-                          Qty
-                        </label>
+                        <label className="text-[10px] text-secondary block mb-0.5">Qty</label>
                         <input
                           type="number"
                           min={1}
                           max={999}
                           value={item.quantity}
                           onChange={(e) =>
-                            updateQuantity(
-                              item.shapeId,
-                              Math.max(1, parseInt(e.target.value) || 1)
-                            )
+                            updateQuantity(item.shapeId, Math.max(1, parseInt(e.target.value) || 1))
                           }
                           className="w-full rounded border border-outline-variant bg-white px-2 py-1 text-xs text-on-surface"
                         />
@@ -161,10 +157,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                           value={item.seamAllowance}
                           disabled={!item.seamAllowanceEnabled}
                           onChange={(e) =>
-                            updateSeamAllowance(
-                              item.shapeId,
-                              parseFloat(e.target.value) || 0.25
-                            )
+                            updateSeamAllowance(item.shapeId, parseFloat(e.target.value) || 0.25)
                           }
                           className="w-full rounded border border-outline-variant bg-white px-2 py-1 text-xs text-on-surface disabled:opacity-40 disabled:cursor-not-allowed"
                         />

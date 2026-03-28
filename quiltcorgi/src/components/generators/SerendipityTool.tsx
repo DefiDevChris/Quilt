@@ -10,6 +10,7 @@ import {
   multiPolygonToFabricData,
   type GeneratedVariation,
 } from '@/lib/serendipity-engine';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 import type { BlockListItem } from '@/types/block';
 
 interface SerendipityToolProps {
@@ -369,7 +370,7 @@ function VariationCard({
     <div className="rounded-lg border border-outline-variant p-2">
       <div
         className="w-full aspect-square bg-background rounded mb-2 flex items-center justify-center"
-        dangerouslySetInnerHTML={{ __html: svgString }}
+        dangerouslySetInnerHTML={{ __html: sanitizeSvg(svgString) }}
       />
       <div className="text-[10px] text-on-surface font-medium mb-2 truncate">{variation.label}</div>
       <div className="flex gap-1">

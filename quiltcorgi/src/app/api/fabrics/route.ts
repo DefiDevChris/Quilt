@@ -59,7 +59,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      const searchPattern = `%${search}%`;
+      const escaped = search.replace(/[%_\\]/g, '\\$&');
+      const searchPattern = `%${escaped}%`;
       conditions.push(ilike(fabrics.name, searchPattern));
     }
 

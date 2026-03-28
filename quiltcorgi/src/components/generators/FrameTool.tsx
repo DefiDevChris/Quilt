@@ -48,8 +48,7 @@ export function FrameTool({ isOpen, onClose }: FrameToolProps) {
   const handleApplyFrame = useCallback(() => {
     if (!fabricCanvas || !selectedBlockId) return;
 
-    // Mock implementation - in real app would integrate with Fabric.js
-    // Close dialog after applying
+    // TODO: integrate with Fabric.js to apply frame to canvas
     onClose();
   }, [fabricCanvas, selectedBlockId, frameConfig, onClose]);
 

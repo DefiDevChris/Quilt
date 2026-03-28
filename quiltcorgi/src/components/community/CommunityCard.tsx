@@ -58,16 +58,15 @@ export function CommunityCard({ post }: CommunityCardProps) {
             </div>
           )}
           {post.creatorUsername ? (
-            <span
+            <a
+              href={`/members/${post.creatorUsername}`}
               onClick={(e) => {
                 e.stopPropagation();
-                e.preventDefault();
-                window.location.href = `/members/${post.creatorUsername}`;
               }}
               className="text-body-sm text-secondary hover:text-primary hover:underline cursor-pointer"
             >
               {post.creatorName}
-            </span>
+            </a>
           ) : (
             <span className="text-body-sm text-secondary">{post.creatorName}</span>
           )}
@@ -99,11 +98,7 @@ export function CommunityCard({ post }: CommunityCardProps) {
               <span className="text-xs text-secondary">{post.commentCount}</span>
             </span>
           </div>
-          <SaveButton
-            postId={post.id}
-            isSaved={post.isSavedByUser}
-            onToggle={() => {}}
-          />
+          <SaveButton postId={post.id} isSaved={post.isSavedByUser} onToggle={() => {}} />
         </div>
       </div>
     </Link>

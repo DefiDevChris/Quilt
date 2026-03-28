@@ -6,6 +6,7 @@
  */
 
 import { packItems, type PaperConfig, type PackResult, PAPER_LETTER, PAPER_A4 } from './bin-packer';
+import { PIXELS_PER_INCH } from '@/lib/constants';
 
 export interface BlockInstance {
   blockId: string;
@@ -102,8 +103,8 @@ export function extractUniqueBlocks(canvasData: FabricJSON): BlockInstance[] {
     if (!obj.blockId || !obj.blockName) continue;
 
     const blockId = obj.blockId;
-    const actualWidth = ((obj.width || 0) * (obj.scaleX || 1)) / 96; // Convert pixels to inches
-    const actualHeight = ((obj.height || 0) * (obj.scaleY || 1)) / 96;
+    const actualWidth = ((obj.width || 0) * (obj.scaleX || 1)) / PIXELS_PER_INCH;
+    const actualHeight = ((obj.height || 0) * (obj.scaleY || 1)) / PIXELS_PER_INCH;
 
     if (!blockMap.has(blockId)) {
       blockMap.set(blockId, {

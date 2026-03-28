@@ -6,31 +6,38 @@ import { getRequiredSession, unauthorizedResponse } from '@/lib/auth-helpers';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
+  try {
+    const session = await getRequiredSession();
+    if (!session) return unauthorizedResponse();
 
-  const [sub] = await db
-    .select({
-      plan: subscriptions.plan,
-      status: subscriptions.status,
-      currentPeriodEnd: subscriptions.currentPeriodEnd,
-      cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
-    })
-    .from(subscriptions)
-    .where(eq(subscriptions.userId, session.user.id))
-    .limit(1);
+    const [sub] = await db
+      .select({
+        plan: subscriptions.plan,
+        status: subscriptions.status,
+        currentPeriodEnd: subscriptions.currentPeriodEnd,
+        cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
+      })
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, session.user.id))
+      .limit(1);
 
-  if (!sub) {
-    return Response.json({
-      success: true,
-      data: {
-        plan: 'free',
-        status: 'active',
-        currentPeriodEnd: null,
-        cancelAtPeriodEnd: false,
-      },
-    });
+    if (!sub) {
+      return Response.json({
+        success: true,
+        data: {
+          plan: 'free',
+          status: 'active',
+          currentPeriodEnd: null,
+          cancelAtPeriodEnd: false,
+        },
+      });
+    }
+
+    return Response.json({ success: true, data: sub });
+  } catch {
+    return Response.json(
+      { success: false, error: 'Failed to fetch subscription' },
+      { status: 500 }
+    );
   }
-
-  return Response.json({ success: true, data: sub });
 }

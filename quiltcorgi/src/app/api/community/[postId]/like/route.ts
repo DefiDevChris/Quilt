@@ -8,6 +8,7 @@ import {
   notFoundResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkTrustLevel } from '@/middleware/trust-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,9 @@ export async function POST(
   if (!session) return unauthorizedResponse();
 
   const { postId } = await params;
+
+  const trustCheck = await checkTrustLevel(session.user.id, 'canLike');
+  if (!trustCheck.allowed) return trustCheck.response!;
 
   try {
     const [post] = await db
@@ -32,20 +36,21 @@ export async function POST(
     }
 
     try {
-      await db.insert(likes).values({
-        userId: session.user.id,
-        communityPostId: postId,
+      await db.transaction(async (tx) => {
+        await tx.insert(likes).values({
+          userId: session.user.id,
+          communityPostId: postId,
+        });
+        await tx
+          .update(communityPosts)
+          .set({
+            likeCount: sql`${communityPosts.likeCount} + 1`,
+          })
+          .where(eq(communityPosts.id, postId));
       });
     } catch {
       return errorResponse('Already liked', 'CONFLICT', 409);
     }
-
-    await db
-      .update(communityPosts)
-      .set({
-        likeCount: sql`${communityPosts.likeCount} + 1`,
-      })
-      .where(eq(communityPosts.id, postId));
 
     const [updated] = await db
       .select({ likeCount: communityPosts.likeCount })
@@ -72,21 +77,29 @@ export async function DELETE(
   const { postId } = await params;
 
   try {
-    const deleted = await db
-      .delete(likes)
-      .where(and(eq(likes.userId, session.user.id), eq(likes.communityPostId, postId)))
-      .returning();
+    let deletedCount = 0;
 
-    if (deleted.length === 0) {
+    await db.transaction(async (tx) => {
+      const deleted = await tx
+        .delete(likes)
+        .where(and(eq(likes.userId, session.user.id), eq(likes.communityPostId, postId)))
+        .returning();
+
+      deletedCount = deleted.length;
+
+      if (deleted.length > 0) {
+        await tx
+          .update(communityPosts)
+          .set({
+            likeCount: sql`GREATEST(${communityPosts.likeCount} - 1, 0)`,
+          })
+          .where(eq(communityPosts.id, postId));
+      }
+    });
+
+    if (deletedCount === 0) {
       return notFoundResponse('Like not found.');
     }
-
-    await db
-      .update(communityPosts)
-      .set({
-        likeCount: sql`GREATEST(${communityPosts.likeCount} - 1, 0)`,
-      })
-      .where(eq(communityPosts.id, postId));
 
     const [updated] = await db
       .select({ likeCount: communityPosts.likeCount })

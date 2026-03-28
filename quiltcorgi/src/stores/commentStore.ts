@@ -20,7 +20,12 @@ interface CommentState {
   addComment: (postId: string, content: string, replyToId?: string) => Promise<void>;
   likeComment: (postId: string, commentId: string) => Promise<void>;
   deleteComment: (postId: string, commentId: string) => Promise<void>;
-  reportComment: (postId: string, commentId: string, reason: string, details?: string) => Promise<void>;
+  reportComment: (
+    postId: string,
+    commentId: string,
+    reason: string,
+    details?: string
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -38,18 +43,7 @@ function updateCommentLike(comment: Comment, commentId: string): Comment {
   return {
     ...comment,
     isLikedByUser: !comment.isLikedByUser,
-    likeCount: comment.isLikedByUser
-      ? Math.max(0, comment.likeCount - 1)
-      : comment.likeCount + 1,
-  };
-}
-
-function revertCommentLike(comment: Comment, commentId: string, original: Comment): Comment {
-  if (comment.id !== commentId) return comment;
-  return {
-    ...comment,
-    isLikedByUser: original.isLikedByUser,
-    likeCount: original.likeCount,
+    likeCount: comment.isLikedByUser ? Math.max(0, comment.likeCount - 1) : comment.likeCount + 1,
   };
 }
 
@@ -120,31 +114,29 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   },
 
   likeComment: async (postId, commentId) => {
-    const { comments } = get();
-    const original = findComment(comments, commentId);
-    if (!original) return;
+    const existing = findComment(get().comments, commentId);
+    if (!existing) return;
 
-    // Optimistic update
+    // Optimistic update (toggle)
     set({
-      comments: comments.map((c) => ({
-        ...updateCommentLike(c, commentId) as CommentWithReplies,
+      comments: get().comments.map((c) => ({
+        ...(updateCommentLike(c, commentId) as CommentWithReplies),
         replies: c.replies.map((r) => updateCommentLike(r, commentId)),
         totalReplyCount: c.totalReplyCount,
       })),
     });
 
     try {
-      const res = await fetch(
-        `/api/community/${postId}/comments/${commentId}/like`,
-        { method: 'POST' }
-      );
+      const res = await fetch(`/api/community/${postId}/comments/${commentId}/like`, {
+        method: 'POST',
+      });
 
       if (!res.ok) {
-        // Revert on failure
+        // Revert by toggling again on current state (avoids stale closure)
         set({
           comments: get().comments.map((c) => ({
-            ...revertCommentLike(c, commentId, original) as CommentWithReplies,
-            replies: c.replies.map((r) => revertCommentLike(r, commentId, original)),
+            ...(updateCommentLike(c, commentId) as CommentWithReplies),
+            replies: c.replies.map((r) => updateCommentLike(r, commentId)),
             totalReplyCount: c.totalReplyCount,
           })),
         });
@@ -152,8 +144,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     } catch {
       set({
         comments: get().comments.map((c) => ({
-          ...revertCommentLike(c, commentId, original) as CommentWithReplies,
-          replies: c.replies.map((r) => revertCommentLike(r, commentId, original)),
+          ...(updateCommentLike(c, commentId) as CommentWithReplies),
+          replies: c.replies.map((r) => updateCommentLike(r, commentId)),
           totalReplyCount: c.totalReplyCount,
         })),
       });
@@ -162,10 +154,9 @@ export const useCommentStore = create<CommentState>((set, get) => ({
 
   deleteComment: async (postId, commentId) => {
     try {
-      const res = await fetch(
-        `/api/community/${postId}/comments/${commentId}`,
-        { method: 'DELETE' }
-      );
+      const res = await fetch(`/api/community/${postId}/comments/${commentId}`, {
+        method: 'DELETE',
+      });
 
       if (!res.ok) {
         const json = await res.json();
@@ -177,7 +168,11 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       set({
         comments: get().comments.map((c) => {
           if (c.id === commentId) {
-            return { ...c, status: 'deleted' as const, content: '[This comment has been deleted.]' };
+            return {
+              ...c,
+              status: 'deleted' as const,
+              content: '[This comment has been deleted.]',
+            };
           }
           return {
             ...c,
@@ -196,14 +191,11 @@ export const useCommentStore = create<CommentState>((set, get) => ({
 
   reportComment: async (postId, commentId, reason, details) => {
     try {
-      const res = await fetch(
-        `/api/community/${postId}/comments/${commentId}/report`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reason, details }),
-        }
-      );
+      const res = await fetch(`/api/community/${postId}/comments/${commentId}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason, details }),
+      });
 
       if (!res.ok) {
         const json = await res.json();

@@ -20,9 +20,7 @@ function buildSvgPathData(anchors: AnchorPoint[]): string {
   for (let i = 1; i < anchors.length; i++) {
     const prev = anchors[i - 1];
     const curr = anchors[i];
-    parts.push(
-      `C ${prev.cp2x} ${prev.cp2y}, ${curr.cp1x} ${curr.cp1y}, ${curr.x} ${curr.y}`
-    );
+    parts.push(`C ${prev.cp2x} ${prev.cp2y}, ${curr.cp1x} ${curr.cp1y}, ${curr.x} ${curr.y}`);
   }
   return parts.join(' ');
 }
@@ -55,11 +53,13 @@ export function useBezierCurveTool() {
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'curve') return;
 
+    let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       canvas.selection = false;
@@ -115,26 +115,20 @@ export function useBezierCurveTool() {
             evented: false,
           });
           // Lines from anchor to control points
-          const line1 = new fabric.Line(
-            [anchor.x, anchor.y, anchor.cp1x, anchor.cp1y],
-            {
-              stroke: '#1976D2',
-              strokeWidth: 1,
-              strokeDashArray: [3, 3],
-              selectable: false,
-              evented: false,
-            }
-          );
-          const line2 = new fabric.Line(
-            [anchor.x, anchor.y, anchor.cp2x, anchor.cp2y],
-            {
-              stroke: '#E53935',
-              strokeWidth: 1,
-              strokeDashArray: [3, 3],
-              selectable: false,
-              evented: false,
-            }
-          );
+          const line1 = new fabric.Line([anchor.x, anchor.y, anchor.cp1x, anchor.cp1y], {
+            stroke: '#1976D2',
+            strokeWidth: 1,
+            strokeDashArray: [3, 3],
+            selectable: false,
+            evented: false,
+          });
+          const line2 = new fabric.Line([anchor.x, anchor.y, anchor.cp2x, anchor.cp2y], {
+            stroke: '#E53935',
+            strokeWidth: 1,
+            strokeDashArray: [3, 3],
+            selectable: false,
+            evented: false,
+          });
           // Anchor point
           const anchorDot = new fabric.Circle({
             left: anchor.x - 5,
@@ -285,6 +279,7 @@ export function useBezierCurveTool() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool]);

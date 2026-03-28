@@ -1,77 +1,124 @@
 # Environment & Configuration Setup
 **Project:** QuiltCorgi
-**Version:** 2.0
+**Version:** 3.0
 **Date:** March 27, 2026
 **Purpose:** Every environment variable, API key, configuration file, and setup instruction.
 
 ---
 
-## Required Accounts & API Keys
+## Secret Management Architecture
 
-| Service | Purpose | Signup URL | Env Variable(s) |
-|---------|---------|-----------|-----------------|
-| PostgreSQL (local) | Local development database | Docker or local install | `DATABASE_URL` |
-| AWS (Aurora, S3, CloudFront, Amplify, Cognito, Secrets Manager) | Production database, file storage, CDN, hosting, authentication, secret management | https://aws.amazon.com | `DATABASE_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_S3_BUCKET`, `NEXT_PUBLIC_CLOUDFRONT_URL`, `COGNITO_CLIENT_ID`, `COGNITO_CLIENT_SECRET`, `COGNITO_REGION`, `COGNITO_USER_POOL_ID`, `COGNITO_DOMAIN`, `AWS_SECRET_NAME` |
-| Stripe | Subscription billing | https://dashboard.stripe.com | `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID` |
+QuiltCorgi uses **AWS Secrets Manager** (encrypted with AWS KMS) as the single source of truth for all sensitive configuration in production. Secrets are loaded once at server startup via `instrumentation.ts` → `loadSecrets()` and injected into `process.env`. Existing env vars are never overwritten.
+
+| Environment | Secret Source | How It Works |
+|-------------|-------------|--------------|
+| **Production** | AWS Secrets Manager (`quiltcorgi/prod`) | `loadSecrets()` fetches the secret JSON and injects key/value pairs into `process.env`. Fatal error if the fetch fails. |
+| **Local Dev** | `.env.local` file | `AWS_SECRET_NAME=skip` disables Secrets Manager. All vars read from `.env.local` via Next.js built-in `.env` loading. |
+
+**Startup sequence:** `instrumentation.ts` → `loadSecrets()` (Secrets Manager or skip) → `validateEnv()` (checks required vars are present).
+
+### What's Stored in Secrets Manager
+
+The `quiltcorgi/prod` secret (ARN: `arn:aws:secretsmanager:us-east-1:463564115060:secret:quiltcorgi/prod-w7LIM8`) contains:
+
+```json
+{
+  "DATABASE_URL": "postgresql://...",
+  "COGNITO_CLIENT_ID": "kibtuj00q55b62qcsecihcmdj",
+  "COGNITO_REGION": "us-east-1",
+  "COGNITO_USER_POOL_ID": "us-east-1_jdtaevYHE",
+  "STRIPE_SECRET_KEY": "sk_live_...",
+  "STRIPE_WEBHOOK_SECRET": "whsec_...",
+  "STRIPE_PRO_PRICE_ID": "price_...",
+  "AWS_ACCESS_KEY_ID": "...",
+  "AWS_SECRET_ACCESS_KEY": "...",
+  "AWS_S3_BUCKET": "quiltcorgi-uploads"
+}
+```
+
+### What's NOT in Secrets Manager
+
+`NEXT_PUBLIC_*` variables are required at **build time** (baked into the client bundle) and must be set as Amplify environment variables or in `.env.local`:
+
+| Variable | Example | Why Not in Secrets Manager |
+|----------|---------|---------------------------|
+| `NEXT_PUBLIC_CLOUDFRONT_URL` | `https://d1234567890.cloudfront.net` | Build-time, client-visible |
+| `NEXT_PUBLIC_APP_URL` | `https://quiltcorgi.com` | Build-time, client-visible |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_live_...` | Build-time, client-visible |
 
 ---
 
-## Environment Variables
+## Required Accounts & Services
 
-| Variable | Environment | Required | Example Value | Description |
-|----------|-------------|----------|---------------|-------------|
-| `DATABASE_URL` | All | Yes | `postgresql://user:pass@localhost:5432/quiltcorgi` | PostgreSQL connection string |
-| `AWS_ACCESS_KEY_ID` | All | Yes | `AKIAIOSFODNN7EXAMPLE` | AWS IAM access key for S3 and Secrets Manager operations |
-| `AWS_SECRET_ACCESS_KEY` | All | Yes | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLE` | AWS IAM secret key |
-| `AWS_REGION` | All | Yes | `us-east-1` | AWS region for S3, Aurora, Cognito, Secrets Manager |
-| `AWS_S3_BUCKET` | All | Yes | `quiltcorgi-uploads-dev` (dev) / `quiltcorgi-uploads` (prod) | S3 bucket name |
-| `AWS_SECRET_NAME` | Prod | Optional | `quiltcorgi/prod` | Secrets Manager secret name. Set to `skip` for local dev (no Secrets Manager lookup). |
-| `COGNITO_CLIENT_ID` | All | Yes | `abc123def456ghi789jkl` | Cognito app client ID. In prod, loaded from Secrets Manager. |
-| `COGNITO_CLIENT_SECRET` | All | Yes | `secret123456abcdef` | Cognito app client secret. In prod, loaded from Secrets Manager. |
-| `COGNITO_REGION` | All | Yes | `us-east-1` | AWS region where Cognito user pool is hosted. In prod, loaded from Secrets Manager. |
-| `COGNITO_USER_POOL_ID` | All | Yes | `us-east-1_abc123def456` | Cognito user pool ID. In prod, loaded from Secrets Manager. |
-| `COGNITO_DOMAIN` | All | Yes | `quiltcorgi-auth.auth.us-east-1.amazoncognito.com` | Cognito domain for JWKS endpoint. In prod, loaded from Secrets Manager. |
-| `STRIPE_SECRET_KEY` | All | Yes | `sk_test_...` (dev) / `sk_live_...` (prod) | Stripe secret key |
-| `STRIPE_PUBLISHABLE_KEY` | All | Yes | `pk_test_...` (dev) / `pk_live_...` (prod) | Stripe publishable key (exposed to client) |
-| `STRIPE_WEBHOOK_SECRET` | All | Yes | `whsec_...` | Stripe webhook signing secret |
-| `STRIPE_PRO_PRICE_ID` | All | Yes | `price_...` | Stripe Price ID for Pro monthly subscription |
-| `NEXT_PUBLIC_CLOUDFRONT_URL` | All | Yes | `https://d1234567890.cloudfront.net` | CloudFront distribution URL for serving S3 assets |
-| `NEXT_PUBLIC_APP_URL` | All | Yes | `http://localhost:3000` (dev) / `https://quiltcorgi.com` (prod) | Public-facing application URL |
+| Service | Purpose | Env Variable(s) |
+|---------|---------|-----------------|
+| PostgreSQL (local) | Local development database | `DATABASE_URL` |
+| AWS (Aurora, S3, CloudFront, Amplify, Cognito, Secrets Manager, KMS) | Production database, file storage, CDN, hosting, authentication, secret management | Stored in Secrets Manager (see above) |
+| Stripe | Subscription billing | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID` |
 
-**Note:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. All others are server-only. In production, Cognito variables are loaded from Secrets Manager at startup via `instrumentation.ts`.
+---
+
+## Environment Variables Reference
+
+### Server-side (loaded from Secrets Manager in prod, `.env.local` in dev)
+
+| Variable | Required | Example Value | Description |
+|----------|----------|---------------|-------------|
+| `DATABASE_URL` | Yes | `postgresql://user:pass@localhost:5432/quiltcorgi` | PostgreSQL connection string |
+| `AWS_ACCESS_KEY_ID` | Yes | `AKIAIOSFODNN7EXAMPLE` | AWS IAM access key for S3 operations |
+| `AWS_SECRET_ACCESS_KEY` | Yes | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLE` | AWS IAM secret key |
+| `AWS_REGION` | Yes | `us-east-1` | AWS region for S3, Aurora, Cognito, Secrets Manager |
+| `AWS_S3_BUCKET` | Yes | `quiltcorgi-uploads-dev` (dev) / `quiltcorgi-uploads` (prod) | S3 bucket name |
+| `AWS_SECRET_NAME` | No | `quiltcorgi/prod` | Secrets Manager secret name. Default: `quiltcorgi/prod`. Set to `skip` for local dev. |
+| `COGNITO_CLIENT_ID` | Yes | `kibtuj00q55b62qcsecihcmdj` | Cognito app client ID (no client secret — public client) |
+| `COGNITO_REGION` | No | `us-east-1` | Cognito region. Falls back to `AWS_REGION`, then `us-east-1`. |
+| `COGNITO_USER_POOL_ID` | Yes | `us-east-1_jdtaevYHE` | Cognito user pool ID |
+| `STRIPE_SECRET_KEY` | Yes | `sk_test_...` (dev) / `sk_live_...` (prod) | Stripe secret key |
+| `STRIPE_WEBHOOK_SECRET` | Yes | `whsec_...` | Stripe webhook signing secret |
+| `STRIPE_PRO_PRICE_ID` | Yes | `price_...` | Stripe Price ID for Pro monthly subscription |
+
+### Client-side (set as build-time env vars, NOT in Secrets Manager)
+
+| Variable | Required | Example Value | Description |
+|----------|----------|---------------|-------------|
+| `NEXT_PUBLIC_CLOUDFRONT_URL` | Yes | `https://d1234567890.cloudfront.net` | CloudFront distribution URL for serving S3 assets |
+| `NEXT_PUBLIC_APP_URL` | Yes | `http://localhost:3000` (dev) / `https://quiltcorgi.com` (prod) | Public-facing application URL |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Yes | `pk_test_...` (dev) / `pk_live_...` (prod) | Stripe publishable key (exposed to client) |
+
+**Note:** There is no `COGNITO_CLIENT_SECRET` — the app client is configured as a public client (no secret) for the `USER_PASSWORD_AUTH` flow.
 
 ---
 
 ## Configuration Files
 
-### `.env.example`
+### `.env.local` (local development only)
 ```env
 # Database
 DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi
 
-# AWS
+# AWS — IAM credentials for S3 operations
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=us-east-1
 AWS_S3_BUCKET=quiltcorgi-uploads-dev
+
+# Secrets Manager — skip in local dev (use this file instead)
 AWS_SECRET_NAME=skip
 
-# Cognito (for local dev, set these directly; for prod, loaded from Secrets Manager)
+# Cognito — set directly for local dev (no client secret needed)
 COGNITO_CLIENT_ID=
-COGNITO_CLIENT_SECRET=
 COGNITO_REGION=us-east-1
 COGNITO_USER_POOL_ID=
-COGNITO_DOMAIN=
 
 # Stripe
 STRIPE_SECRET_KEY=sk_test_
-STRIPE_PUBLISHABLE_KEY=pk_test_
 STRIPE_WEBHOOK_SECRET=whsec_
 STRIPE_PRO_PRICE_ID=price_
 
-# Public
+# Public (build-time, client-visible)
 NEXT_PUBLIC_CLOUDFRONT_URL=https://your-distribution.cloudfront.net
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_
 ```
 
 ### `drizzle.config.ts`
@@ -150,53 +197,52 @@ export default config;
 
 ---
 
-## AWS Cognito Setup Instructions
+## AWS Cognito Setup
 
-### Create User Pool
-1. Go to AWS Console → Cognito → Create user pool
-2. Pool name: `quiltcorgi-users`
-3. **MFA configuration:** Optional (recommended for production)
-4. **User account recovery:** Enable email and SMS options
-5. **Required attributes:** email, name
-6. Click "Create user pool"
+### Existing Resources
 
-### Configure App Client
-1. In the user pool → "App integration" → "App clients and analytics" → "Create app client"
-2. App client name: `quiltcorgi-web`
-3. **Authentication flows:** Enable "ADMIN_NO_SRP_AUTH" and "ALLOW_REFRESH_TOKEN_AUTH"
-4. **Token expiration:** ID token 60 minutes, access token 60 minutes, refresh token 30 days
-5. Generate client secret: Check "Generate client secret"
-6. Save client ID and client secret to `COGNITO_CLIENT_ID` and `COGNITO_CLIENT_SECRET`
+| Resource | Value |
+|----------|-------|
+| User Pool | `us-east-1_jdtaevYHE` (region: `us-east-1`, account: `463564115060`) |
+| App Client | `kibtuj00q55b62qcsecihcmdj` (no client secret — public client) |
+| Auth Flows | `USER_PASSWORD_AUTH`, `REFRESH_TOKEN_AUTH` |
+| Token Expiry | ID/access: 1 hour, refresh: 30 days |
+| JWKS Endpoint | `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_jdtaevYHE/.well-known/jwks.json` |
 
-### Configure Hosted UI (Optional)
-1. In user pool → "App integration" → "Domain" → Create Cognito domain
-2. Domain prefix: `quiltcorgi-auth`
-3. Configure sign-up and sign-in pages through the hosted UI
-4. Under "App client settings":
-   - Callback URL: `http://localhost:3000/auth/callback` (dev), `https://quiltcorgi.com/auth/callback` (prod)
-   - Sign out URL: `http://localhost:3000/` (dev), `https://quiltcorgi.com/` (prod)
+### User Pool Configuration
+- **Username attribute:** email
+- **Required attributes:** email, name
+- **Email verification:** enabled (Cognito sends 6-digit codes)
+- **Password policy:** uppercase + lowercase + numbers, 8 character minimum
+- **No client secret** — the app client uses `USER_PASSWORD_AUTH` (server-side credential submission), not SRP
 
-### Retrieve Configuration
-1. In user pool → General settings: Copy User Pool ID to `COGNITO_USER_POOL_ID`
-2. Copy region to `COGNITO_REGION`
-3. In user pool → App integration → Domain: Get domain name for `COGNITO_DOMAIN` (format: `{domain}.auth.{region}.amazoncognito.com`)
+### Social Login Setup (Future)
+To add Google/Apple sign-in:
+1. Configure identity providers in Cognito Console → Sign-in experience → Federated identity providers
+2. Set up a Cognito domain (required for OAuth redirect flow)
+3. Configure App Client OAuth settings: callback URLs, scopes (`openid`, `email`, `profile`)
+4. Add a `/api/auth/cognito/callback` route to exchange authorization codes for tokens
+5. Add social login buttons to `AuthForm.tsx`
 
-### Secrets Manager Setup (Production Only)
-1. AWS Console → Secrets Manager → Create secret
-2. Secret name: `quiltcorgi/prod` (or value specified in `AWS_SECRET_NAME`)
-3. Secret type: Other type of secret
-4. Secret key/value pairs:
-   ```json
-   {
-     "COGNITO_CLIENT_ID": "value",
-     "COGNITO_CLIENT_SECRET": "value",
-     "COGNITO_REGION": "us-east-1",
-     "COGNITO_USER_POOL_ID": "value",
-     "COGNITO_DOMAIN": "value"
-   }
-   ```
-5. Click "Store secret"
-6. Ensure IAM user has permissions: `secretsmanager:GetSecretValue` for the secret ARN
+### Secrets Manager Setup
+
+**Already configured:**
+- Secret name: `quiltcorgi/prod`
+- ARN: `arn:aws:secretsmanager:us-east-1:463564115060:secret:quiltcorgi/prod-w7LIM8`
+- Encryption: AWS KMS (default Secrets Manager key)
+
+**How secrets are loaded:**
+1. `instrumentation.ts` runs at server startup (Node.js runtime only)
+2. Calls `loadSecrets()` from `src/lib/secrets.ts`
+3. Fetches secret JSON from Secrets Manager via `GetSecretValueCommand`
+4. Injects key/value pairs into `process.env` (does not overwrite existing vars)
+5. `validateEnv()` checks all required vars are present
+6. Skipped entirely when `AWS_SECRET_NAME=skip` or `NODE_ENV=development`
+7. Fatal error in production if fetch fails
+
+**IAM permissions required:**
+- `secretsmanager:GetSecretValue` on the secret ARN
+- `kms:Decrypt` on the KMS key (if using a customer-managed key)
 
 ## Stripe Setup Instructions
 1. Go to https://dashboard.stripe.com → Create account

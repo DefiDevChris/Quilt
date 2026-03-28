@@ -2,11 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq, desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
+import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 import { forbiddenResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
@@ -27,6 +23,11 @@ export async function GET(request: NextRequest) {
 
   const url = request.nextUrl;
   const statusFilter = url.searchParams.get('status') ?? undefined;
+  const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10) || 1);
+  const limit = Math.min(
+    100,
+    Math.max(1, parseInt(url.searchParams.get('limit') ?? '50', 10) || 50)
+  );
 
   try {
     const whereClause =
@@ -56,7 +57,9 @@ export async function GET(request: NextRequest) {
         .leftJoin(users, eq(blogPosts.authorId, users.id))
         .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
         .where(whereClause)
-        .orderBy(desc(blogPosts.createdAt)),
+        .orderBy(desc(blogPosts.createdAt))
+        .limit(limit)
+        .offset((page - 1) * limit),
       db.select({ count: count() }).from(blogPosts).where(whereClause),
     ]);
 
@@ -84,10 +87,10 @@ export async function GET(request: NextRequest) {
       data: {
         posts,
         pagination: {
-          page: 1,
-          limit: total,
+          page,
+          limit,
           total,
-          totalPages: 1,
+          totalPages: Math.ceil(total / limit),
         },
       },
     });

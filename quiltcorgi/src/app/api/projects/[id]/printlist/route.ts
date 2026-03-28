@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { printlists, projects } from '@/db/schema';
@@ -21,10 +22,7 @@ async function verifyProjectOwner(projectId: string, userId: string) {
   return project ?? null;
 }
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -62,10 +60,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -80,7 +75,20 @@ export async function PUT(
 
   try {
     const body = await request.json();
-    const items = Array.isArray(body.items) ? body.items : [];
+
+    const printlistItemSchema = z
+      .array(
+        z.object({
+          blockId: z.string().max(100),
+          blockName: z.string().max(255),
+          quantity: z.number().int().min(1).max(999),
+          copies: z.number().int().min(1).max(100).optional(),
+        })
+      )
+      .max(200);
+
+    const parsedItems = printlistItemSchema.safeParse(body.items);
+    const items = parsedItems.success ? parsedItems.data : [];
     const paperSize = body.paperSize === 'a4' ? 'a4' : 'letter';
 
     // Upsert: update if exists, insert if not

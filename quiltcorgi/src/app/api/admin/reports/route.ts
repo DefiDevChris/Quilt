@@ -5,10 +5,10 @@ import { reports, users } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
-  forbiddenResponse,
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkTrustLevel } from '@/middleware/trust-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,17 +25,17 @@ export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role !== 'admin') {
-    return forbiddenResponse('Admin access required.');
-  }
+  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
+  if (!trustCheck.allowed) return trustCheck.response!;
 
   const url = request.nextUrl;
   const statusParam = url.searchParams.get('status') ?? 'pending';
   const pageParam = url.searchParams.get('page') ?? '1';
 
   if (!isValidStatus(statusParam)) {
-    return validationErrorResponse('Invalid status filter. Must be pending, reviewed, or dismissed.');
+    return validationErrorResponse(
+      'Invalid status filter. Must be pending, reviewed, or dismissed.'
+    );
   }
 
   const page = Math.max(1, parseInt(pageParam, 10) || 1);

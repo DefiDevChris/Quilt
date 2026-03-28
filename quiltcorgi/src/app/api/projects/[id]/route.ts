@@ -6,7 +6,6 @@ import { updateProjectSchema } from '@/lib/validation';
 import {
   getRequiredSession,
   unauthorizedResponse,
-  forbiddenResponse,
   notFoundResponse,
   validationErrorResponse,
   errorResponse,
@@ -21,10 +20,7 @@ async function getOwnedProject(projectId: string, userId: string) {
   return project ?? null;
 }
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -32,24 +28,13 @@ export async function GET(
   const project = await getOwnedProject(id, session.user.id);
 
   if (!project) {
-    // Check if project exists at all to differentiate 404 vs 403
-    const [exists] = await db
-      .select({ id: projects.id })
-      .from(projects)
-      .where(eq(projects.id, id))
-      .limit(1);
-
-    if (exists) return forbiddenResponse('You do not have access to this project.');
     return notFoundResponse('Project not found.');
   }
 
   return Response.json({ success: true, data: project });
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -57,13 +42,6 @@ export async function PUT(
   const project = await getOwnedProject(id, session.user.id);
 
   if (!project) {
-    const [exists] = await db
-      .select({ id: projects.id })
-      .from(projects)
-      .where(eq(projects.id, id))
-      .limit(1);
-
-    if (exists) return forbiddenResponse('You do not have access to this project.');
     return notFoundResponse('Project not found.');
   }
 
@@ -81,11 +59,7 @@ export async function PUT(
       lastSavedAt: new Date(),
     };
 
-    const [updated] = await db
-      .update(projects)
-      .set(updates)
-      .where(eq(projects.id, id))
-      .returning();
+    const [updated] = await db.update(projects).set(updates).where(eq(projects.id, id)).returning();
 
     return Response.json({ success: true, data: updated });
   } catch {
@@ -104,13 +78,6 @@ export async function DELETE(
   const project = await getOwnedProject(id, session.user.id);
 
   if (!project) {
-    const [exists] = await db
-      .select({ id: projects.id })
-      .from(projects)
-      .where(eq(projects.id, id))
-      .limit(1);
-
-    if (exists) return forbiddenResponse('You do not have access to this project.');
     return notFoundResponse('Project not found.');
   }
 

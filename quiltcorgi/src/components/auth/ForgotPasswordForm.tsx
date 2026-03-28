@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -8,6 +8,11 @@ type Step = 'request' | 'reset';
 
 export function ForgotPasswordForm() {
   const router = useRouter();
+  const redirectTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+
+  useEffect(() => {
+    return () => clearTimeout(redirectTimeoutRef.current);
+  }, []);
 
   const [step, setStep] = useState<Step>('request');
   const [email, setEmail] = useState('');
@@ -62,7 +67,7 @@ export function ForgotPasswordForm() {
       }
 
       setSuccess('Password reset! Redirecting to sign in...');
-      setTimeout(() => router.push('/auth/signin'), 1500);
+      redirectTimeoutRef.current = setTimeout(() => router.push('/auth/signin'), 1500);
     } catch {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
@@ -73,7 +78,13 @@ export function ForgotPasswordForm() {
     <div className="w-full max-w-[420px] mx-auto bg-surface-container-low rounded-xl shadow-elevation-2 p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <div className="w-16 h-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-          <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg
+            className="w-8 h-8 text-primary"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
             <rect x="3" y="11" width="18" height="11" rx="2" strokeLinecap="round" />
             <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" />
           </svg>
@@ -103,7 +114,10 @@ export function ForgotPasswordForm() {
       {step === 'request' ? (
         <form onSubmit={handleRequestReset} className="space-y-4">
           <div>
-            <label htmlFor="reset-email" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+            <label
+              htmlFor="reset-email"
+              className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            >
               Email
             </label>
             <input
@@ -128,7 +142,10 @@ export function ForgotPasswordForm() {
       ) : (
         <form onSubmit={handleConfirmReset} className="space-y-4">
           <div>
-            <label htmlFor="reset-code" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+            <label
+              htmlFor="reset-code"
+              className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            >
               Reset Code
             </label>
             <input
@@ -146,7 +163,10 @@ export function ForgotPasswordForm() {
           </div>
 
           <div>
-            <label htmlFor="new-password" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+            <label
+              htmlFor="new-password"
+              className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            >
               New Password
             </label>
             <div className="relative">
@@ -167,12 +187,27 @@ export function ForgotPasswordForm() {
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
-                  <svg className="w-4.5 h-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg
+                    className="w-4.5 h-4.5"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
                     <path d="M3 3l14 14M8.5 8.8a2.5 2.5 0 003.4 3.4" strokeLinecap="round" />
-                    <path d="M6.3 6.6C4.5 7.8 3.2 9.5 2.5 10c1.5 2 4.2 5 7.5 5 1.3 0 2.5-.4 3.5-1M10 5c3.3 0 6 3 7.5 5-.4.6-1 1.4-1.7 2.1" strokeLinecap="round" />
+                    <path
+                      d="M6.3 6.6C4.5 7.8 3.2 9.5 2.5 10c1.5 2 4.2 5 7.5 5 1.3 0 2.5-.4 3.5-1M10 5c3.3 0 6 3 7.5 5-.4.6-1 1.4-1.7 2.1"
+                      strokeLinecap="round"
+                    />
                   </svg>
                 ) : (
-                  <svg className="w-4.5 h-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg
+                    className="w-4.5 h-4.5"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
                     <path d="M10 5c3.3 0 6 3 7.5 5-1.5 2-4.2 5-7.5 5s-6-3-7.5-5C4 8 6.7 5 10 5z" />
                     <circle cx="10" cy="10" r="2.5" />
                   </svg>

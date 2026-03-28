@@ -36,8 +36,7 @@ export function KaleidoscopeTool({ isOpen, onClose }: KaleidoscopeToolProps) {
   const handleGenerateKaleidoscope = useCallback(() => {
     if (!fabricCanvas || !selectedShapeId) return;
 
-    // Mock implementation - in real app would integrate with Fabric.js
-    // Close dialog after generating
+    // TODO: integrate with Fabric.js to generate kaleidoscope on canvas
     onClose();
   }, [fabricCanvas, selectedShapeId, kaleidoscopeConfig, onClose]);
 

@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 /**
  * Generate a URL-friendly slug from a blog post title.
  * Lowercases, replaces spaces with hyphens, strips special characters,
@@ -19,7 +21,6 @@ export function generateSlug(title: string): string {
  * Append a random 4-character hex suffix to a slug to ensure uniqueness.
  */
 export function appendSlugSuffix(slug: string): string {
-  const { randomBytes } = require('crypto') as typeof import('crypto');
   const suffix = randomBytes(2).toString('hex');
   const base = slug.slice(0, 195);
   return `${base}-${suffix}`;

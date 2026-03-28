@@ -24,8 +24,5 @@ export const userProfiles = pgTable(
     createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull().defaultNow(),
   },
-  (table) => [
-    index('idx_user_profiles_userId').on(table.userId),
-    index('idx_user_profiles_username').on(table.username),
-  ]
+  (table) => [index('idx_user_profiles_username').on(table.username)]
 );

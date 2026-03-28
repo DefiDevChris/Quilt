@@ -23,9 +23,15 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_PRO_PRICE_ID) {
-  throw new Error('STRIPE_PRO_PRICE_ID must be set when STRIPE_SECRET_KEY is configured');
+export function getStripePriceId(): string {
+  const priceId = process.env.STRIPE_PRO_PRICE_ID;
+  if (process.env.STRIPE_SECRET_KEY && !priceId) {
+    throw new Error('STRIPE_PRO_PRICE_ID must be set when STRIPE_SECRET_KEY is configured');
+  }
+  return priceId ?? '';
 }
-export const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID ?? '';
+
+/** @deprecated Use getStripePriceId() for lazy evaluation after secrets are loaded. */
+export const STRIPE_PRO_PRICE_ID = '' as string;
 
 export const PAYMENT_FAILURE_GRACE_DAYS = 7;

@@ -11,7 +11,10 @@ interface AuthFormProps {
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
+  const rawCallback = searchParams.get('callbackUrl') ?? '/dashboard';
+  // Prevent open redirect: only allow relative paths starting with /
+  const callbackUrl =
+    rawCallback.startsWith('/') && !rawCallback.startsWith('//') ? rawCallback : '/dashboard';
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -86,8 +89,20 @@ export function AuthForm({ mode }: AuthFormProps) {
             <ellipse cx="17" cy="23.5" rx="1.5" ry="2" fill="#fff6f1" />
             <ellipse cx="31" cy="23.5" rx="1.5" ry="2" fill="#fff6f1" />
             <ellipse cx="24" cy="30" rx="3" ry="2" fill="#8d4f00" />
-            <path d="M4 18 L12 4 L20 14" fill="#ffca9d" stroke="#8d4f00" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M44 18 L36 4 L28 14" fill="#ffca9d" stroke="#8d4f00" strokeWidth="1.5" strokeLinejoin="round" />
+            <path
+              d="M4 18 L12 4 L20 14"
+              fill="#ffca9d"
+              stroke="#8d4f00"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M44 18 L36 4 L28 14"
+              fill="#ffca9d"
+              stroke="#8d4f00"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
             <circle cx="24" cy="32" r="1.5" fill="#383831" />
           </svg>
         </div>
@@ -107,7 +122,10 @@ export function AuthForm({ mode }: AuthFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {isSignUp && (
           <div>
-            <label htmlFor="name" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+            <label
+              htmlFor="name"
+              className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            >
               Name
             </label>
             <input
@@ -123,7 +141,10 @@ export function AuthForm({ mode }: AuthFormProps) {
         )}
 
         <div>
-          <label htmlFor="email" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+          <label
+            htmlFor="email"
+            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+          >
             Email
           </label>
           <input
@@ -139,7 +160,10 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="password" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary">
+            <label
+              htmlFor="password"
+              className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary"
+            >
               Password
             </label>
             {!isSignUp && (
@@ -169,12 +193,27 @@ export function AuthForm({ mode }: AuthFormProps) {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <svg className="w-4.5 h-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  className="w-4.5 h-4.5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
                   <path d="M3 3l14 14M8.5 8.8a2.5 2.5 0 003.4 3.4" strokeLinecap="round" />
-                  <path d="M6.3 6.6C4.5 7.8 3.2 9.5 2.5 10c1.5 2 4.2 5 7.5 5 1.3 0 2.5-.4 3.5-1M10 5c3.3 0 6 3 7.5 5-.4.6-1 1.4-1.7 2.1" strokeLinecap="round" />
+                  <path
+                    d="M6.3 6.6C4.5 7.8 3.2 9.5 2.5 10c1.5 2 4.2 5 7.5 5 1.3 0 2.5-.4 3.5-1M10 5c3.3 0 6 3 7.5 5-.4.6-1 1.4-1.7 2.1"
+                    strokeLinecap="round"
+                  />
                 </svg>
               ) : (
-                <svg className="w-4.5 h-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  className="w-4.5 h-4.5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
                   <path d="M10 5c3.3 0 6 3 7.5 5-1.5 2-4.2 5-7.5 5s-6-3-7.5-5C4 8 6.7 5 10 5z" />
                   <circle cx="10" cy="10" r="2.5" />
                 </svg>

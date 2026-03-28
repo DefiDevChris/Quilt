@@ -7,7 +7,13 @@ import { stripe } from '@/lib/stripe';
 
 export const dynamic = 'force-dynamic';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? '';
+function getWebhookSecret(): string {
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error('STRIPE_WEBHOOK_SECRET environment variable is required');
+  }
+  return secret;
+}
 
 async function upsertSubscription(
   userId: string,
@@ -198,7 +204,7 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    event = stripe.webhooks.constructEvent(body, signature, getWebhookSecret());
   } catch (error) {
     console.error('Webhook signature verification failed:', error);
     return Response.json({ success: false, error: 'Invalid signature' }, { status: 401 });
@@ -227,5 +233,5 @@ export async function POST(request: NextRequest) {
     return Response.json({ success: false, error: 'Webhook handler failed' }, { status: 500 });
   }
 
-  return Response.json({ received: true });
+  return Response.json({ success: true });
 }

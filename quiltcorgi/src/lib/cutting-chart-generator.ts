@@ -84,9 +84,17 @@ function extractVertices(svgData: string): Point[] {
   return [];
 }
 
-function boundingBox(points: Point[]): { width: number; height: number; minX: number; minY: number } {
+function boundingBox(points: Point[]): {
+  width: number;
+  height: number;
+  minX: number;
+  minY: number;
+} {
   if (points.length === 0) return { width: 0, height: 0, minX: 0, minY: 0 };
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const p of points) {
     if (p.x < minX) minX = p.x;
     if (p.y < minY) minY = p.y;
@@ -98,6 +106,25 @@ function boundingBox(points: Point[]): { width: number; height: number; minX: nu
 
 function isApproxEqual(a: number, b: number, tolerance: number = 0.05): boolean {
   return Math.abs(a - b) / Math.max(a, b, 1) < tolerance;
+}
+
+function hasRightAngles(vertices: Point[]): boolean {
+  const n = vertices.length;
+  if (n < 3) return false;
+  for (let i = 0; i < n; i++) {
+    const a = vertices[i];
+    const b = vertices[(i + 1) % n];
+    const c = vertices[(i + 2) % n];
+    const dx1 = b.x - a.x;
+    const dy1 = b.y - a.y;
+    const dx2 = c.x - b.x;
+    const dy2 = c.y - b.y;
+    const dot = dx1 * dx2 + dy1 * dy2;
+    const mag = Math.sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2));
+    if (mag === 0) return false;
+    if (Math.abs(dot / mag) > 0.1) return false;
+  }
+  return true;
 }
 
 /**
@@ -131,7 +158,7 @@ export function classifyPatchShape(svgData: string, seamAllowance: number): Patc
 
     // Check if it's a QST (4 triangles from center)
     // For now, classify as square or rectangle based on aspect ratio
-    if (isSquareAspect) {
+    if (isSquareAspect && hasRightAngles(vertices)) {
       const cutWidth = finishedWidth + 2 * seamAllowance;
       return {
         shape: 'square',
@@ -143,21 +170,35 @@ export function classifyPatchShape(svgData: string, seamAllowance: number): Patc
       };
     }
 
-    // Check if it's truly rectangular (right angles)
+    // Check if it's truly rectangular (right angles at all corners)
+    if (hasRightAngles(vertices)) {
+      const cutW = finishedWidth + 2 * seamAllowance;
+      const cutH = finishedHeight + 2 * seamAllowance;
+      return {
+        shape: 'rectangle',
+        finishedWidth,
+        finishedHeight,
+        cutWidth: cutW,
+        cutHeight: cutH,
+        specialInstructions: null,
+      };
+    }
+
+    // Non-right-angle quadrilateral — trapezoid or irregular 4-sided shape
     const cutW = finishedWidth + 2 * seamAllowance;
     const cutH = finishedHeight + 2 * seamAllowance;
     return {
-      shape: 'rectangle',
+      shape: 'trapezoid',
       finishedWidth,
       finishedHeight,
       cutWidth: cutW,
       cutHeight: cutH,
-      specialInstructions: null,
+      specialInstructions: 'Template cut — use pattern piece',
     };
   }
 
-  // 4+ vertices, check for trapezoid (4 vertices with one pair of parallel sides)
-  if (vertexCount >= 4 && vertexCount <= 5) {
+  // 5 vertices — irregular pentagon, treat as template piece
+  if (vertexCount === 5) {
     const cutW = finishedWidth + 2 * seamAllowance;
     const cutH = finishedHeight + 2 * seamAllowance;
     return {
@@ -194,13 +235,16 @@ export function generateCuttingChart(
 ): CuttingChartEntry[] {
   if (items.length === 0) return [];
 
-  const groups = new Map<string, {
-    fabricId: string | null;
-    fabricDisplayName: string;
-    fillColor: string;
-    patches: Map<string, CuttingChartPatch & { mutableQuantity: number }>;
-    totalPieces: number;
-  }>();
+  const groups = new Map<
+    string,
+    {
+      fabricId: string | null;
+      fabricDisplayName: string;
+      fillColor: string;
+      patches: Map<string, CuttingChartPatch & { mutableQuantity: number }>;
+      totalPieces: number;
+    }
+  >();
 
   for (const item of items) {
     const groupKey = item.fabricId ?? item.fillColor ?? 'unknown';
@@ -237,9 +281,10 @@ export function generateCuttingChart(
         quantity: item.quantity,
         mutableQuantity: item.quantity,
         specialInstructions: classification.specialInstructions,
-        stripWidth: classification.shape === 'irregular' || classification.shape === 'trapezoid'
-          ? null
-          : Math.max(classification.cutWidth, classification.cutHeight),
+        stripWidth:
+          classification.shape === 'irregular' || classification.shape === 'trapezoid'
+            ? null
+            : Math.max(classification.cutWidth, classification.cutHeight),
       });
     }
 

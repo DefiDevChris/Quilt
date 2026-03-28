@@ -28,11 +28,13 @@ export function ContextMenu() {
   useEffect(() => {
     if (!fabricCanvas) return;
 
+    let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
     let cleanupFn: (() => void) | null = null;
 
     (async () => {
       fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       function onContextMenu(e: { e: MouseEvent; target?: unknown }) {
@@ -45,15 +47,18 @@ export function ContextMenu() {
         });
       }
 
-      canvas.on('mouse:down', () => {
+      function onMouseDown() {
         closeMenu();
-      });
+      }
 
-      canvas.wrapperEl.addEventListener('contextmenu', (evt) => {
+      const handleContextMenu = (evt: MouseEvent) => {
         evt.preventDefault();
-      });
+      };
 
-      canvas.on('mouse:down:before', ((e: { e: MouseEvent }) => {
+      canvas.on('mouse:down', onMouseDown);
+      canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
+
+      const onMouseDownBefore = ((e: { e: MouseEvent }) => {
         if (e.e.button === 2) {
           const target = canvas.findTarget(e.e) as unknown;
           if (target && fabric) {
@@ -61,14 +66,19 @@ export function ContextMenu() {
           }
           onContextMenu({ e: e.e, target });
         }
-      }) as never);
+      }) as never;
+
+      canvas.on('mouse:down:before', onMouseDownBefore);
 
       cleanupFn = () => {
-        // Listeners cleaned up by canvas disposal
+        canvas.off('mouse:down', onMouseDown);
+        canvas.off('mouse:down:before', onMouseDownBefore);
+        canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu);
       };
     })();
 
     return () => {
+      isMounted = false;
       cleanupFn?.();
     };
   }, [fabricCanvas, closeMenu]);

@@ -44,7 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select({
         username: userProfiles.username,
       })
-      .from(userProfiles),
+      .from(userProfiles)
+      .limit(50_000),
     db
       .select({
         id: communityPosts.id,

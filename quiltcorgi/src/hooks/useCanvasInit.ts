@@ -15,6 +15,7 @@ export function useCanvasInit(
 ) {
   useEffect(() => {
     let disposed = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     (async () => {
       const fabric = await import('fabric');
@@ -118,7 +119,7 @@ export function useCanvasInit(
         gridEl.height = r.height;
         canvas.renderAll();
       };
-      const resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver = new ResizeObserver(handleResize);
       resizeObserver.observe(container);
 
       if (project.canvasData && Object.keys(project.canvasData).length > 0) {
@@ -141,14 +142,11 @@ export function useCanvasInit(
           height: project.canvasHeight,
         });
       }
-
-      return () => {
-        resizeObserver.disconnect();
-      };
     })();
 
     return () => {
       disposed = true;
+      resizeObserver?.disconnect();
       const canvas = useCanvasStore.getState().fabricCanvas;
       if (canvas && typeof (canvas as { dispose?: () => void }).dispose === 'function') {
         (canvas as { dispose: () => void }).dispose();

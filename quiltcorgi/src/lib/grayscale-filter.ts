@@ -116,21 +116,44 @@ export function applyGrayscaleFilter(
   if (state.isActive) return state; // Already applied
 
   const originalColors = new Map<string, string>();
+  const originalStrokes = new Map<string, string>();
 
-  // Store original colors and apply grayscale
-  canvasObjects.forEach((obj, index) => {
-    if (obj.fill) {
+  // Store original colors and apply grayscale with rollback on failure
+  try {
+    canvasObjects.forEach((obj, index) => {
+      if (obj.fill) {
+        const objectId = String(obj.id || `object_${index}`);
+        originalColors.set(objectId, obj.fill);
+        obj.set('fill', colorToGrayscale(obj.fill));
+      }
+
+      if (obj.stroke) {
+        const strokeId = `${obj.id || `object_${index}`}_stroke`;
+        originalStrokes.set(strokeId, obj.stroke);
+        obj.set('stroke', colorToGrayscale(obj.stroke));
+      }
+    });
+  } catch (error) {
+    // Restore all objects that were already modified
+    canvasObjects.forEach((obj, index) => {
       const objectId = String(obj.id || `object_${index}`);
-      originalColors.set(objectId, obj.fill);
-      obj.set('fill', colorToGrayscale(obj.fill));
-    }
+      const originalFill = originalColors.get(objectId);
+      if (originalFill !== undefined) {
+        obj.set('fill', originalFill);
+      }
+      const strokeId = `${objectId}_stroke`;
+      const originalStroke = originalStrokes.get(strokeId);
+      if (originalStroke !== undefined) {
+        obj.set('stroke', originalStroke);
+      }
+    });
+    throw error;
+  }
 
-    if (obj.stroke) {
-      const strokeId = `${obj.id || `object_${index}`}_stroke`;
-      originalColors.set(strokeId, obj.stroke);
-      obj.set('stroke', colorToGrayscale(obj.stroke));
-    }
-  });
+  // Merge stroke entries into the combined map for the returned state
+  for (const [key, value] of originalStrokes) {
+    originalColors.set(key, value);
+  }
 
   return {
     originalColors,

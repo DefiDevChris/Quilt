@@ -85,7 +85,7 @@ describe('formatRelativeTime', () => {
     expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('6d ago');
   });
 
-  it('returns weeks ago for timestamps 7+ days ago', () => {
+  it('returns weeks ago for timestamps 7-29 days ago', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-04-10T12:00:00Z'));
 
@@ -97,6 +97,34 @@ describe('formatRelativeTime', () => {
     vi.setSystemTime(new Date('2026-04-03T12:00:00Z'));
 
     expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('1w ago');
+  });
+
+  it('returns months ago for timestamps 30-364 days ago', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-27T12:00:00Z'));
+
+    expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('3mo ago');
+  });
+
+  it('returns "1mo ago" for exactly 30 days', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-26T12:00:00Z'));
+
+    expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('1mo ago');
+  });
+
+  it('returns years ago for timestamps 365+ days ago', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2028-03-27T12:00:00Z'));
+
+    expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('2y ago');
+  });
+
+  it('returns "1y ago" for exactly 365 days', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2027-03-27T12:00:00Z'));
+
+    expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('1y ago');
   });
 
   it('handles Date object input', () => {
@@ -111,12 +139,5 @@ describe('formatRelativeTime', () => {
     vi.setSystemTime(new Date('2026-03-27T14:00:00Z'));
 
     expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('2h ago');
-  });
-
-  it('handles large week values', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-06-27T12:00:00Z'));
-
-    expect(formatRelativeTime('2026-03-27T12:00:00Z')).toBe('13w ago');
   });
 });

@@ -6,11 +6,11 @@ import { adminModerationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
   unauthorizedResponse,
-  forbiddenResponse,
   notFoundResponse,
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkTrustLevel } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -23,10 +23,8 @@ export async function PATCH(
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role !== 'admin') {
-    return forbiddenResponse('Admin access required.');
-  }
+  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
+  if (!trustCheck.allowed) return trustCheck.response!;
 
   const { postId } = await params;
 

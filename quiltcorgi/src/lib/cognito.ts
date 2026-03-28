@@ -40,10 +40,13 @@ export interface CognitoTokens {
 }
 
 function toTokens(result: AuthenticationResultType): CognitoTokens {
+  if (!result.IdToken || !result.AccessToken) {
+    throw new Error('Missing required tokens in Cognito response');
+  }
   return {
-    idToken: result.IdToken!,
-    accessToken: result.AccessToken!,
-    refreshToken: result.RefreshToken!,
+    idToken: result.IdToken,
+    accessToken: result.AccessToken,
+    refreshToken: result.RefreshToken ?? '',
     expiresIn: result.ExpiresIn ?? 3600,
   };
 }

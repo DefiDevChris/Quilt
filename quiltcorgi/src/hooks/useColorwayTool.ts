@@ -25,10 +25,12 @@ export function useColorwayTool() {
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'spraycan') return;
 
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       canvas.defaultCursor = 'crosshair';
@@ -56,6 +58,7 @@ export function useColorwayTool() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool, fillColor]);
@@ -64,10 +67,12 @@ export function useColorwayTool() {
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'eyedropper') return;
 
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       canvas.defaultCursor = 'crosshair';
@@ -94,6 +99,7 @@ export function useColorwayTool() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool]);

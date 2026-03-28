@@ -33,11 +33,13 @@ export function useDrawingTool() {
   useEffect(() => {
     if (!fabricCanvas) return;
 
+    let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       // Tools handled by their own hooks — exit early
@@ -303,6 +305,7 @@ export function useDrawingTool() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool]);

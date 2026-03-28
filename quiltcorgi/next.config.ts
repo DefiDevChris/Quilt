@@ -20,8 +20,8 @@ const csp = [
   "worker-src 'self' blob:",
   // Stripe payment frame + Stripe fraud-detection beacon
   'frame-src https://js.stripe.com https://hooks.stripe.com',
-  // API calls: self + Stripe + Google OAuth
-  "connect-src 'self' https://api.stripe.com https://accounts.google.com",
+  // API calls: self + Stripe + Google OAuth + S3 presigned uploads
+  "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.*.amazonaws.com",
   // Block all plugins (Flash, etc.)
   "object-src 'none'",
   // Disallow framing this site
@@ -38,6 +38,7 @@ const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
 ];
 
 const nextConfig: NextConfig = {

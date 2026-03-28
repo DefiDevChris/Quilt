@@ -9,10 +9,4 @@ export interface CanvasState {
     snapToGrid: boolean;
   };
   selectedObjectIds: string[];
-  panOffset: { x: number; y: number };
-}
-
-export interface UndoHistoryEntry {
-  canvasJson: string;
-  timestamp: number;
 }

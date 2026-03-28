@@ -68,6 +68,21 @@ export async function setAuthCookies(tokens: {
   });
 }
 
+/**
+ * Set a non-httpOnly role cookie for proxy-level admin route gating.
+ * This is NOT security-critical — API routes still enforce DB-based role checks.
+ */
+export async function setRoleCookie(role: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set('qc_user_role', role, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60, // 1 hour — refreshed on each sign-in
+  });
+}
+
 /** Clear all auth cookies (sign out). */
 export async function clearAuthCookies(): Promise<void> {
   const cookieStore = await cookies();
@@ -113,7 +128,9 @@ export async function getSession(): Promise<CognitoSession | null> {
   const name = (payload.name as string) ?? '';
   const emailVerified = (payload.email_verified as boolean) ?? false;
 
-  // Look up user in our DB by email (Cognito sub might not match our user ID)
+  // TODO: User lookup by email is vulnerable to email changes in Cognito.
+  // Ideally, add a `cognitoSub` column to the users table and look up by sub
+  // with email as a fallback. This requires a schema migration — see Issue #26.
   const [dbUser] = await db
     .select({ id: users.id, role: users.role })
     .from(users)
@@ -139,13 +156,19 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
   try {
     const newTokens = await cognitoRefreshTokens(refreshToken);
 
-    // Set updated cookies
-    await setAuthCookies({
-      idToken: newTokens.idToken,
-      accessToken: newTokens.accessToken,
-      refreshToken,
-      expiresIn: newTokens.expiresIn,
-    });
+    // Try to persist refreshed tokens to cookies.
+    // This will silently fail in RSC context (cookies are read-only there),
+    // but we still return the session so the user isn't incorrectly logged out.
+    try {
+      await setAuthCookies({
+        idToken: newTokens.idToken,
+        accessToken: newTokens.accessToken,
+        refreshToken,
+        expiresIn: newTokens.expiresIn,
+      });
+    } catch {
+      // Cookie write failed (likely RSC context) — session data is still valid
+    }
 
     // Re-parse the new id token
     const payload = await verifyToken(newTokens.idToken);
@@ -189,7 +212,7 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
  */
 export async function verifySessionToken(
   idToken: string
-): Promise<{ sub: string; email: string; role?: string } | null> {
+): Promise<{ sub: string; email: string } | null> {
   const payload = await verifyToken(idToken);
   if (!payload) return null;
 

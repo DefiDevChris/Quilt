@@ -87,9 +87,7 @@ export function PatternAdjuster() {
         <div>
           <label className="flex items-center justify-between text-xs text-secondary">
             <span>Scale X</span>
-            <span className="text-[10px] text-secondary font-mono">
-              {state.scaleX.toFixed(2)}
-            </span>
+            <span className="text-[10px] text-secondary font-mono">{state.scaleX.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -104,9 +102,7 @@ export function PatternAdjuster() {
         <div>
           <label className="flex items-center justify-between text-xs text-secondary">
             <span>Scale Y</span>
-            <span className="text-[10px] text-secondary font-mono">
-              {state.scaleY.toFixed(2)}
-            </span>
+            <span className="text-[10px] text-secondary font-mono">{state.scaleY.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -121,7 +117,9 @@ export function PatternAdjuster() {
         <div>
           <label className="flex items-center justify-between text-xs text-secondary">
             <span>Rotation</span>
-            <span className="text-[10px] text-secondary font-mono">{Math.round(state.rotation)}°</span>
+            <span className="text-[10px] text-secondary font-mono">
+              {Math.round(state.rotation)}°
+            </span>
           </label>
           <input
             type="range"
@@ -136,7 +134,9 @@ export function PatternAdjuster() {
         <div>
           <label className="flex items-center justify-between text-xs text-secondary">
             <span>Offset X</span>
-            <span className="text-[10px] text-secondary font-mono">{Math.round(state.offsetX)}px</span>
+            <span className="text-[10px] text-secondary font-mono">
+              {Math.round(state.offsetX)}px
+            </span>
           </label>
           <input
             type="range"
@@ -151,7 +151,9 @@ export function PatternAdjuster() {
         <div>
           <label className="flex items-center justify-between text-xs text-secondary">
             <span>Offset Y</span>
-            <span className="text-[10px] text-secondary font-mono">{Math.round(state.offsetY)}px</span>
+            <span className="text-[10px] text-secondary font-mono">
+              {Math.round(state.offsetY)}px
+            </span>
           </label>
           <input
             type="range"
@@ -165,7 +167,10 @@ export function PatternAdjuster() {
 
         <button
           type="button"
-          onClick={() => handleChange('scaleX', 1)}
+          onClick={() => {
+            setState(DEFAULT_STATE);
+            updatePatternTransform(1, 1, 0, 0, 0);
+          }}
           className="w-full rounded-md bg-background px-2 py-1 text-[10px] text-secondary hover:bg-outline-variant"
         >
           Reset Pattern Transform

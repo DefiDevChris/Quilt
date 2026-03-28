@@ -122,6 +122,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   loadMore: async () => {
+    if (get().isLoading) return;
     const { page } = get();
     set({ page: page + 1 });
     return get().fetchPosts(true);
@@ -174,7 +175,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       ),
     });
 
-    fetch(`/api/community/${postId}/like`, { method: 'POST' })
+    fetch(`/api/community/${postId}/like`, { method: 'DELETE' })
       .then((res) => {
         if (!res.ok) {
           set({

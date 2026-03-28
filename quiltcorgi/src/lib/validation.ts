@@ -80,7 +80,7 @@ export const fabricSearchSchema = z.object({
 
 export const createFabricSchema = z.object({
   name: z.string().min(1).max(255),
-  imageUrl: z.string().min(1),
+  imageUrl: z.string().url(),
   thumbnailUrl: z.string().optional(),
   manufacturer: z.string().max(255).optional(),
   sku: z.string().max(100).optional(),
@@ -184,7 +184,11 @@ export const quiltOcrConfigSchema = z.object({
 // Phase 17: Community, Profiles & Blog
 
 export const updateProfileSchema = z.object({
-  displayName: z.string().min(1).max(60),
+  displayName: z
+    .string()
+    .min(1)
+    .max(60)
+    .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Display name contains invalid characters'),
   bio: z.string().max(500).optional(),
   location: z.string().max(100).optional(),
   websiteUrl: z
@@ -195,12 +199,12 @@ export const updateProfileSchema = z.object({
         if (!url) return true;
         try {
           const parsed = new URL(url);
-          return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+          return parsed.protocol === 'https:';
         } catch {
           return false;
         }
       },
-      { message: 'Website URL must use http or https.' }
+      { message: 'Website URL must use https.' }
     )
     .optional(),
   instagramHandle: z.string().max(50).optional(),
@@ -239,7 +243,7 @@ export const createBlogPostSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
-  featuredImageUrl: z.string().optional(),
+  featuredImageUrl: z.string().url().optional(),
   category: z.string().min(1).max(50),
   tags: z.array(z.string().max(50)).max(5).default([]),
   status: z.enum(['draft', 'pending']).default('draft'),
@@ -249,7 +253,7 @@ export const updateBlogPostSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
-  featuredImageUrl: z.string().optional(),
+  featuredImageUrl: z.string().url().optional(),
   category: z.string().min(1).max(50).optional(),
   tags: z.array(z.string().max(50)).max(5).optional(),
   status: z.enum(['draft', 'pending']).optional(),

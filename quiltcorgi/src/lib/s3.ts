@@ -17,13 +17,21 @@ if (awsVarsPresent) {
   }
 }
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION ?? 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
-  },
-});
+const s3Configured = !!(
+  process.env.AWS_ACCESS_KEY_ID &&
+  process.env.AWS_SECRET_ACCESS_KEY &&
+  process.env.AWS_S3_BUCKET
+);
+
+const s3Client = s3Configured
+  ? new S3Client({
+      region: process.env.AWS_REGION ?? 'us-east-1',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
+    })
+  : null;
 
 const bucket = process.env.AWS_S3_BUCKET ?? '';
 const cloudfrontUrl = process.env.NEXT_PUBLIC_CLOUDFRONT_URL ?? '';
@@ -41,7 +49,17 @@ export async function generatePresignedUrl({
   contentType,
   purpose,
 }: PresignedUrlParams) {
-  const ext = filename.split('.').pop() ?? 'jpg';
+  if (!s3Client) {
+    throw new Error(
+      'S3 is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_BUCKET.'
+    );
+  }
+  const extMap: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+  };
+  const ext = extMap[contentType] ?? 'jpg';
   const timestamp = Date.now();
   const fileKey = `${purpose}s/${userId}/${timestamp}-${sanitizeFilename(filename)}.${ext}`;
 

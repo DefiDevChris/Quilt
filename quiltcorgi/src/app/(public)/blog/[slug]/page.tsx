@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { eq, and, desc, ne } from 'drizzle-orm';
@@ -13,49 +14,7 @@ function calculateReadTime(content: unknown): number {
   return Math.max(1, Math.ceil(charCount / 1500));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-
-  const [post] = await db
-    .select({
-      title: blogPosts.title,
-      excerpt: blogPosts.excerpt,
-      featuredImageUrl: blogPosts.featuredImageUrl,
-      publishedAt: blogPosts.publishedAt,
-      authorName: users.name,
-      tags: blogPosts.tags,
-    })
-    .from(blogPosts)
-    .leftJoin(users, eq(blogPosts.authorId, users.id))
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
-    .limit(1);
-
-  if (!post) {
-    return { title: 'Post Not Found | QuiltCorgi' };
-  }
-
-  return {
-    title: `${post.title} — QuiltCorgi Blog`,
-    description: post.excerpt ?? undefined,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      type: 'article',
-      publishedTime: post.publishedAt?.toISOString(),
-      authors: [post.authorName ?? 'QuiltCorgi Team'],
-      tags: [...post.tags],
-      images: post.featuredImageUrl ? [{ url: post.featuredImageUrl }] : undefined,
-    },
-  };
-}
-
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-
+const getPostBySlug = cache(async (slug: string) => {
   const [post] = await db
     .select({
       id: blogPosts.id,
@@ -81,6 +40,39 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
     .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
     .limit(1);
+  return post ?? null;
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return { title: 'Post Not Found | QuiltCorgi' };
+  }
+
+  return {
+    title: `${post.title} — QuiltCorgi Blog`,
+    description: post.excerpt ?? undefined,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      type: 'article',
+      publishedTime: post.publishedAt?.toISOString(),
+      authors: [post.authorName ?? 'QuiltCorgi Team'],
+      tags: [...post.tags],
+      images: post.featuredImageUrl ? [{ url: post.featuredImageUrl }] : undefined,
+    },
+  };
+}
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();

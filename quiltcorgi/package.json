@@ -13,7 +13,10 @@
     "db:studio": "drizzle-kit studio",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "type-check": "tsc --noEmit",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.1019.0",
@@ -24,6 +27,7 @@
     "drizzle-orm": "^0.45.1",
     "fabric": "^7.2.0",
     "framer-motion": "^12.38.0",
+    "isomorphic-dompurify": "^3.7.1",
     "jose": "^6.2.2",
     "next": "16.2.1",
     "next-mdx-remote": "^6.0.0",

@@ -7,7 +7,7 @@
  * Pipeline: image data -> grid sampling -> k-means clustering -> quantized grid
  */
 
-import type { RGB } from '@/lib/color-math';
+import type { RGB, LAB } from '@/lib/color-math';
 import {
   rgbToLab,
   rgbToHex,
@@ -241,13 +241,7 @@ export function kMeansClustering(
 // K-means++ initialization
 // ---------------------------------------------------------------------------
 
-import type { LAB } from '@/lib/color-math';
-
-function kMeansPlusPlusInit(
-  labColors: readonly LAB[],
-  k: number,
-  rand: () => number
-): LAB[] {
+function kMeansPlusPlusInit(labColors: readonly LAB[], k: number, rand: () => number): LAB[] {
   const centroids: LAB[] = [];
 
   // Pick first centroid randomly
@@ -391,11 +385,7 @@ export function generatePatchworkGrid(
 ): PatchworkGrid {
   const validated = photoPatchworkConfigSchema.parse(config);
 
-  const gridColors = sampleGridColors(
-    imageData,
-    validated.gridWidth,
-    validated.gridHeight
-  );
+  const gridColors = sampleGridColors(imageData, validated.gridWidth, validated.gridHeight);
 
   // Flatten grid colors for clustering
   const flatColors: RGB[] = [];
@@ -416,9 +406,7 @@ export function generatePatchworkGrid(
   // Apply fabric mappings if available
   if (fabrics && fabrics.length > 0) {
     const mappings = mapClustersToFabrics(clusters, fabrics);
-    const mappingByCluster = new Map(
-      mappings.map((m) => [m.clusterId, m])
-    );
+    const mappingByCluster = new Map(mappings.map((m) => [m.clusterId, m]));
 
     cells = cells.map((cell) => {
       const mapping = mappingByCluster.get(cell.clusterId);

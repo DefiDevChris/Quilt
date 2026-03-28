@@ -29,8 +29,8 @@ interface TrustCheckResult {
 const TRUST_LEVEL_DESCRIPTIONS: Record<TrustLevel, string> = {
   visitor: 'You must be logged in and verify your email to perform this action.',
   verified: 'Your account must be at least 24 hours old to perform this action.',
-  commenter: 'You need 3 approved comments before you can create posts.',
-  poster: 'You need 5 approved posts to skip the moderation queue.',
+  commenter: 'You need 3 approved comments to create posts.',
+  poster: 'You need 5 approved posts to become a trusted member.',
   trusted: 'This action requires a Pro subscription.',
   pro: 'This action requires admin privileges.',
   admin: '',

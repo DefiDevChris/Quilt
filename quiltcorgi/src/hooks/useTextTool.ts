@@ -17,10 +17,12 @@ export function useTextTool() {
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'text') return;
 
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       canvas.defaultCursor = 'text';
@@ -66,6 +68,7 @@ export function useTextTool() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool, fillColor]);
@@ -104,7 +107,8 @@ export function useTextProperties() {
 
     return {
       text: (active as InstanceType<typeof fabric.IText>).text ?? '',
-      fontFamily: (active as unknown as { fontFamily?: string }).fontFamily ?? TEXT_DEFAULT_FONT_FAMILY,
+      fontFamily:
+        (active as unknown as { fontFamily?: string }).fontFamily ?? TEXT_DEFAULT_FONT_FAMILY,
       fontSize: (active as unknown as { fontSize?: number }).fontSize ?? TEXT_DEFAULT_FONT_SIZE,
       fill: typeof active.fill === 'string' ? active.fill : '#383831',
       fontWeight: (active as unknown as { fontWeight?: string }).fontWeight ?? 'normal',

@@ -9,10 +9,12 @@ export function useCanvasZoomPan() {
 
   useEffect(() => {
     if (!fabricCanvas) return;
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       let isPanning = false;
@@ -102,6 +104,7 @@ export function useCanvasZoomPan() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas]);

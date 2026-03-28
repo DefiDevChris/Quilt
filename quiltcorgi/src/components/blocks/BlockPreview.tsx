@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { BlockListItem } from '@/types/block';
 import type { Block } from '@/types/block';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 interface BlockPreviewProps {
   block: BlockListItem;
@@ -84,7 +85,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
           ) : fullBlock?.svgData ? (
             <div
               className="h-40 w-40"
-              dangerouslySetInnerHTML={{ __html: fullBlock.svgData }}
+              dangerouslySetInnerHTML={{ __html: sanitizeSvg(fullBlock.svgData) }}
             />
           ) : error ? (
             <p className="text-sm text-error">{error}</p>

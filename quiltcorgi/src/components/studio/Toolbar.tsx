@@ -448,8 +448,17 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Undo the last action',
       group: 'history',
       onClick: () => {
-        if (canUndo) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true }));
+        if (!canUndo) return;
+        const canvas = useCanvasStore.getState().fabricCanvas as {
+          toJSON: () => unknown;
+          loadFromJSON: (json: unknown) => Promise<void>;
+          renderAll: () => void;
+        } | null;
+        if (!canvas) return;
+        const currentJson = JSON.stringify(canvas.toJSON());
+        const prevJson = useCanvasStore.getState().popUndo(currentJson);
+        if (prevJson) {
+          canvas.loadFromJSON(JSON.parse(prevJson)).then(() => canvas.renderAll());
         }
       },
       isActive: () => false,
@@ -479,10 +488,17 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Redo the last undone action',
       group: 'history',
       onClick: () => {
-        if (canRedo) {
-          document.dispatchEvent(
-            new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, shiftKey: true })
-          );
+        if (!canRedo) return;
+        const canvas = useCanvasStore.getState().fabricCanvas as {
+          toJSON: () => unknown;
+          loadFromJSON: (json: unknown) => Promise<void>;
+          renderAll: () => void;
+        } | null;
+        if (!canvas) return;
+        const currentJson = JSON.stringify(canvas.toJSON());
+        const nextJson = useCanvasStore.getState().popRedo(currentJson);
+        if (nextJson) {
+          canvas.loadFromJSON(JSON.parse(nextJson)).then(() => canvas.renderAll());
         }
       },
       isActive: () => false,

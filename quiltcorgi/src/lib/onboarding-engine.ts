@@ -1,9 +1,7 @@
 import type { TourStep } from '@/types/onboarding';
+import { ONBOARDING_STORAGE_KEY, TOOLTIP_DELAY_MS } from '@/lib/constants';
 
-// --- Constants ---
-
-export const ONBOARDING_STORAGE_KEY = 'quiltcorgi-onboarding-completed';
-export const TOOLTIP_DELAY_MS = 400;
+export { ONBOARDING_STORAGE_KEY, TOOLTIP_DELAY_MS };
 
 // --- Tour Steps ---
 

@@ -48,20 +48,20 @@ export function PostDetail({ postId }: PostDetailProps) {
     }
 
     try {
-      const params = new URLSearchParams();
-      params.set('limit', '100');
-      params.set('sort', 'newest');
-
-      const res = await fetch(`/api/community?${params.toString()}`);
+      const res = await fetch(`/api/community/${encodeURIComponent(postId)}`);
       const json = await res.json();
 
       if (!res.ok) {
-        setError('Failed to load design');
+        if (res.status === 404) {
+          setError('not_found');
+        } else {
+          setError('Failed to load design');
+        }
         setIsLoading(false);
         return;
       }
 
-      const found = json.data?.posts?.find((p: CommunityPost) => p.id === postId);
+      const found = json.data as CommunityPost | undefined;
       if (found) {
         setPost(found);
         setIsSaved(found.isSavedByUser);
@@ -226,23 +226,13 @@ export function PostDetail({ postId }: PostDetailProps) {
             isLikedByUser={post.isLikedByUser}
             size="lg"
           />
-          <SaveButton
-            postId={post.id}
-            isSaved={isSaved}
-            onToggle={handleSaveToggle}
-          />
+          <SaveButton postId={post.id} isSaved={isSaved} onToggle={handleSaveToggle} />
           <ShareButton onShare={handleShareLink} copied={copiedLink} />
-          {!isOwnPost && user && (
-            <ReportButton onClick={() => setShowReportModal(true)} />
-          )}
+          {!isOwnPost && user && <ReportButton onClick={() => setShowReportModal(true)} />}
         </div>
 
         {/* Comments */}
-        <CommentThread
-          postId={post.id}
-          currentUserId={user?.id}
-          isAdmin={user?.role === 'admin'}
-        />
+        <CommentThread postId={post.id} currentUserId={user?.id} isAdmin={user?.role === 'admin'} />
       </div>
 
       {/* Report modal */}

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { cognitoForgotPassword, cognitoConfirmForgotPassword } from '@/lib/cognito';
+import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 const initiateSchema = z.object({
   email: z.string().email(),
@@ -14,6 +15,10 @@ const confirmSchema = z.object({
 
 /** Initiate forgot password — sends code to email. */
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`forgot:${ip}`, AUTH_RATE_LIMITS.forgotPassword);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const body = await request.json();
     const parsed = initiateSchema.safeParse(body);
@@ -37,6 +42,10 @@ export async function POST(request: NextRequest) {
 
 /** Confirm password reset with code and new password. */
 export async function PUT(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`forgot-confirm:${ip}`, AUTH_RATE_LIMITS.forgotPasswordConfirm);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const body = await request.json();
     const parsed = confirmSchema.safeParse(body);
@@ -66,14 +75,22 @@ export async function PUT(request: NextRequest) {
 
     if (message.includes('ExpiredCodeException')) {
       return Response.json(
-        { success: false, error: 'Reset code has expired. Please request a new one.', code: 'EXPIRED_CODE' },
+        {
+          success: false,
+          error: 'Reset code has expired. Please request a new one.',
+          code: 'EXPIRED_CODE',
+        },
         { status: 400 }
       );
     }
 
     if (message.includes('InvalidPasswordException')) {
       return Response.json(
-        { success: false, error: 'Password must include uppercase, lowercase, and numbers', code: 'VALIDATION_ERROR' },
+        {
+          success: false,
+          error: 'Password must include uppercase, lowercase, and numbers',
+          code: 'VALIDATION_ERROR',
+        },
         { status: 422 }
       );
     }

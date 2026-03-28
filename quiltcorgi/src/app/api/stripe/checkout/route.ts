@@ -1,12 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
-import { stripe, STRIPE_PRO_PRICE_ID } from '@/lib/stripe';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
+import { stripe, getStripePriceId } from '@/lib/stripe';
+import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +50,7 @@ export async function POST() {
       mode: 'subscription',
       line_items: [
         {
-          price: STRIPE_PRO_PRICE_ID,
+          price: getStripePriceId(),
           quantity: 1,
         },
       ],

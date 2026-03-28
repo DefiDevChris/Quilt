@@ -36,9 +36,18 @@ const SEAM_LINE_WIDTH = 2;
 
 // Default patch fill colors for auto-coloring
 const PATCH_COLORS = [
-  '#ffca9d', '#f5deb3', '#d4883c', '#8b4513',
-  '#7b3f00', '#a0522d', '#2e4057', '#deb887',
-  '#c9b896', '#e8d5b7', '#b8860b', '#cd853f',
+  '#ffca9d',
+  '#f5deb3',
+  '#d4883c',
+  '#8b4513',
+  '#7b3f00',
+  '#a0522d',
+  '#2e4057',
+  '#deb887',
+  '#c9b896',
+  '#e8d5b7',
+  '#b8860b',
+  '#cd853f',
 ];
 
 export function useEasyDraw({
@@ -53,6 +62,8 @@ export function useEasyDraw({
   const [activeMode, setActiveMode] = useState<EasyDrawMode>('line');
   const [segments, setSegments] = useState<readonly DrawSegment[]>([]);
   const [patches, setPatches] = useState<readonly Patch[]>([]);
+  const segmentsRef = useRef(segments);
+  segmentsRef.current = segments;
   const startPointRef = useRef<{ row: number; col: number } | null>(null);
   const previewLineRef = useRef<unknown>(null);
 
@@ -78,9 +89,7 @@ export function useEasyDraw({
 
   // Recompute patches whenever segments change
   useEffect(() => {
-    const lineSegments = segments.filter(
-      (s): s is Segment => !('center' in s)
-    );
+    const lineSegments = segments.filter((s): s is Segment => !('center' in s));
     const newPatches = detectPatches(lineSegments, gridCols, gridRows);
     setPatches(newPatches);
   }, [segments, gridCols, gridRows]);
@@ -89,10 +98,12 @@ export function useEasyDraw({
   useEffect(() => {
     if (!draftCanvasRef.current || !isOpen) return;
 
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
       // Clear existing user objects (keep grid lines)
@@ -122,19 +133,16 @@ export function useEasyDraw({
       }
 
       // Draw seam lines
-      for (const seg of segments) {
+      for (const seg of segmentsRef.current) {
         if ('center' in seg) continue;
         const fromPx = gridPointToPixel(seg.from, gridSize);
         const toPx = gridPointToPixel(seg.to, gridSize);
-        const line = new fabric.Line(
-          [fromPx.x, fromPx.y, toPx.x, toPx.y],
-          {
-            stroke: SEAM_LINE_COLOR,
-            strokeWidth: SEAM_LINE_WIDTH,
-            selectable: false,
-            evented: false,
-          }
-        );
+        const line = new fabric.Line([fromPx.x, fromPx.y, toPx.x, toPx.y], {
+          stroke: SEAM_LINE_COLOR,
+          strokeWidth: SEAM_LINE_WIDTH,
+          selectable: false,
+          evented: false,
+        });
         canvas.add(line);
       }
 
@@ -197,11 +205,20 @@ export function useEasyDraw({
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [
-    isOpen, draftCanvasRef, segments, patches, activeMode,
-    gridSize, gridCols, gridRows, snapToGridPoint, fillColor, strokeColor,
+    isOpen,
+    draftCanvasRef,
+    patches,
+    activeMode,
+    gridSize,
+    gridCols,
+    gridRows,
+    snapToGridPoint,
+    fillColor,
+    strokeColor,
   ]);
 
   const clearSegments = useCallback(() => {

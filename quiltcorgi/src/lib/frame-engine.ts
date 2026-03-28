@@ -5,6 +5,8 @@
  * All functions are pure and immutable. No React, no Fabric.js, no DOM dependencies.
  */
 
+import { PIXELS_PER_INCH } from '@/lib/constants';
+
 export type FrameStyle =
   | 'simple-border'
   | 'double-border'
@@ -92,7 +94,7 @@ function generateFrameGeometry(
   config: FrameConfig
 ): FrameGeometry[] {
   const { style, width, color, fabricId } = config;
-  const pixelWidth = width * 96; // Convert inches to pixels (96 DPI)
+  const pixelWidth = width * PIXELS_PER_INCH;
 
   switch (style) {
     case 'simple-border':

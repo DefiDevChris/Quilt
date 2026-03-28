@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { updateProfileSchema } from '@/lib/validation';
 
@@ -76,9 +76,9 @@ export function ProfileEditForm() {
     }
   }, [hasFetched]);
 
-  useState(() => {
+  useEffect(() => {
     fetchProfile();
-  });
+  }, [fetchProfile]);
 
   function updateField(field: keyof ProfileFormData, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -299,9 +299,7 @@ export function ProfileEditForm() {
         />
       </fieldset>
 
-      {error && (
-        <div className="p-3 rounded-md bg-error/10 text-error text-body-sm">{error}</div>
-      )}
+      {error && <div className="p-3 rounded-md bg-error/10 text-error text-body-sm">{error}</div>}
 
       {success && (
         <div className="p-3 rounded-md bg-success/10 text-success text-body-sm">{success}</div>
@@ -346,11 +344,18 @@ function AvatarUpload({
           />
         ) : (
           <div className="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center">
-            <span className="text-headline-md font-bold text-primary-on-container">{initials || '?'}</span>
+            <span className="text-headline-md font-bold text-primary-on-container">
+              {initials || '?'}
+            </span>
           </div>
         )}
         <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white" className="w-5 h-5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="white"
+            className="w-5 h-5"
+          >
             <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110-8 4 4 0 010 8z" />
           </svg>
         </div>

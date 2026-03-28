@@ -11,10 +11,12 @@ export function useCurveEdit() {
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'select') return;
 
+    let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
+      if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       let editingPath: InstanceType<typeof fabric.Path> | null = null;
@@ -197,6 +199,7 @@ export function useCurveEdit() {
     })();
 
     return () => {
+      isMounted = false;
       cleanup?.();
     };
   }, [fabricCanvas, activeTool]);

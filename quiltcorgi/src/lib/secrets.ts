@@ -10,19 +10,16 @@
  * Set `AWS_SECRET_NAME=skip` to disable Secrets Manager and rely on .env files.
  */
 
-import {
-  SecretsManagerClient,
-  GetSecretValueCommand,
-} from '@aws-sdk/client-secrets-manager';
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 
 const SECRET_NAME = process.env.AWS_SECRET_NAME ?? 'quiltcorgi/prod';
 const REGION = process.env.AWS_REGION ?? 'us-east-1';
 
-let loaded = false;
+const _global = globalThis as typeof globalThis & { __secretsLoaded?: boolean };
 
 export async function loadSecrets(): Promise<void> {
-  if (loaded) return;
-  loaded = true;
+  if (_global.__secretsLoaded) return;
+  _global.__secretsLoaded = true;
 
   // Skip Secrets Manager in development or when explicitly disabled
   if (SECRET_NAME === 'skip' || process.env.NODE_ENV === 'development') {
@@ -55,6 +52,8 @@ export async function loadSecrets(): Promise<void> {
       );
     }
     // In other environments, warn but continue (secrets may come from .env)
-    console.error(`[secrets] Failed to load from Secrets Manager (non-fatal): ${err instanceof Error ? err.message : String(err)}`);
+    console.error(
+      `[secrets] Failed to load from Secrets Manager (non-fatal): ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 }

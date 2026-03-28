@@ -85,6 +85,27 @@ export async function POST(request: NextRequest) {
 
     const { targetType, targetId, reason, details } = parsed.data;
 
+    // Verify the target actually exists before creating a report
+    if (targetType === 'post') {
+      const [post] = await db
+        .select({ id: communityPosts.id })
+        .from(communityPosts)
+        .where(eq(communityPosts.id, targetId))
+        .limit(1);
+      if (!post) {
+        return errorResponse('The reported content does not exist.', 'NOT_FOUND' as never, 404);
+      }
+    } else if (targetType === 'comment') {
+      const [comment] = await db
+        .select({ id: comments.id })
+        .from(comments)
+        .where(eq(comments.id, targetId))
+        .limit(1);
+      if (!comment) {
+        return errorResponse('The reported content does not exist.', 'NOT_FOUND' as never, 404);
+      }
+    }
+
     const [existingReport] = await db
       .select({ id: reports.id })
       .from(reports)

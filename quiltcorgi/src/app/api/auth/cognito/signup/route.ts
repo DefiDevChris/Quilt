@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { cognitoSignUp } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
+import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 const signupSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
@@ -12,6 +13,10 @@ const signupSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`signup:${ip}`, AUTH_RATE_LIMITS.signup);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const body = await request.json();
     const parsed = signupSchema.safeParse(body);
@@ -41,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Register with Cognito (sends verification email automatically)
-    const { userSub } = await cognitoSignUp(email, password, name);
+    await cognitoSignUp(email, password, name);
 
     // Create user in our DB (unverified, no password hash needed)
     await db.insert(users).values({
@@ -52,7 +57,7 @@ export async function POST(request: NextRequest) {
     });
 
     return Response.json(
-      { success: true, data: { userSub } },
+      { success: true, data: { message: 'Please check your email to verify your account.' } },
       { status: 201 }
     );
   } catch (err) {

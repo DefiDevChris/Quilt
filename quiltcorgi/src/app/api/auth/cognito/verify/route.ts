@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { cognitoConfirmSignUp, cognitoResendVerification } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
+import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 const verifySchema = z.object({
   email: z.string().email(),
@@ -16,6 +17,10 @@ const resendSchema = z.object({
 
 /** Confirm email verification with code. */
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`verify:${ip}`, AUTH_RATE_LIMITS.verify);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const body = await request.json();
     const parsed = verifySchema.safeParse(body);
@@ -32,10 +37,7 @@ export async function POST(request: NextRequest) {
     await cognitoConfirmSignUp(email, code);
 
     // Update emailVerified in our DB
-    await db
-      .update(users)
-      .set({ emailVerified: new Date() })
-      .where(eq(users.email, email));
+    await db.update(users).set({ emailVerified: new Date() }).where(eq(users.email, email));
 
     return Response.json({ success: true });
   } catch (err) {
@@ -50,7 +52,11 @@ export async function POST(request: NextRequest) {
 
     if (message.includes('ExpiredCodeException')) {
       return Response.json(
-        { success: false, error: 'Verification code has expired. Please request a new one.', code: 'EXPIRED_CODE' },
+        {
+          success: false,
+          error: 'Verification code has expired. Please request a new one.',
+          code: 'EXPIRED_CODE',
+        },
         { status: 400 }
       );
     }
@@ -64,6 +70,10 @@ export async function POST(request: NextRequest) {
 
 /** Resend verification code. */
 export async function PUT(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`resend:${ip}`, AUTH_RATE_LIMITS.resendVerification);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const body = await request.json();
     const parsed = resendSchema.safeParse(body);

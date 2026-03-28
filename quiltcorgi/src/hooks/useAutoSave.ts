@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants';
-import { saveProject } from '@/hooks/useCanvasKeyboard';
+import { saveProject } from '@/lib/save-project';
 
 export function useAutoSave() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);

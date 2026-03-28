@@ -1,12 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import {
-  TOUR_STEPS,
-  ONBOARDING_STORAGE_KEY,
-  getStorageFlag,
-  setStorageFlag,
-} from '@/lib/onboarding-engine';
+import { TOUR_STEPS, ONBOARDING_STORAGE_KEY, setStorageFlag } from '@/lib/onboarding-engine';
 
 interface OnboardingState {
   currentStepIndex: number;
@@ -49,6 +44,7 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   },
 
   skipTour: () => {
+    setStorageFlag(ONBOARDING_STORAGE_KEY, true);
     set({ isActive: false, currentStepIndex: 0 });
   },
 

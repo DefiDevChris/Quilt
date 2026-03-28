@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { follows, userProfiles, users } from '@/db/schema';
 import { errorResponse, validationErrorResponse } from '@/lib/auth-helpers';
@@ -11,6 +12,12 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   const { userId } = await params;
+
+  const uuidResult = z.string().uuid().safeParse(userId);
+  if (!uuidResult.success) {
+    return validationErrorResponse('Invalid user ID format.');
+  }
+
   const url = request.nextUrl;
   const type = url.searchParams.get('type');
 

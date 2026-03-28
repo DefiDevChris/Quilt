@@ -101,6 +101,8 @@ export function svgPathToPolyline(d: string): Point[] {
           }
           points.push({ x: cx, y: cy });
         }
+        lastCpX = cx;
+        lastCpY = cy;
         break;
       }
       case 'L': {
@@ -109,6 +111,8 @@ export function svgPathToPolyline(d: string): Point[] {
           cy = isRelative ? cy + args[i + 1] : args[i + 1];
           points.push({ x: cx, y: cy });
         }
+        lastCpX = cx;
+        lastCpY = cy;
         break;
       }
       case 'H': {
@@ -116,6 +120,8 @@ export function svgPathToPolyline(d: string): Point[] {
           cx = isRelative ? cx + a : a;
           points.push({ x: cx, y: cy });
         }
+        lastCpX = cx;
+        lastCpY = cy;
         break;
       }
       case 'V': {
@@ -123,6 +129,8 @@ export function svgPathToPolyline(d: string): Point[] {
           cy = isRelative ? cy + a : a;
           points.push({ x: cx, y: cy });
         }
+        lastCpX = cx;
+        lastCpY = cy;
         break;
       }
       case 'C': {
@@ -207,9 +215,24 @@ export function svgPathToPolyline(d: string): Point[] {
         }
         break;
       }
+      case 'A': {
+        for (let i = 0; i < args.length; i += 7) {
+          const endX = isRelative ? cx + args[i + 5] : args[i + 5];
+          const endY = isRelative ? cy + args[i + 6] : args[i + 6];
+          // Approximate arc as line to endpoint
+          cx = endX;
+          cy = endY;
+          points.push({ x: cx, y: cy });
+        }
+        lastCpX = cx;
+        lastCpY = cy;
+        break;
+      }
       case 'Z': {
         cx = startX;
         cy = startY;
+        lastCpX = cx;
+        lastCpY = cy;
         break;
       }
     }

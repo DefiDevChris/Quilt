@@ -60,11 +60,32 @@ function parseRectToVertices(attrs: Record<string, string>): Point[] {
   ];
 }
 
+const DANGEROUS_ATTRS = new Set([
+  'onload',
+  'onerror',
+  'onclick',
+  'onmouseover',
+  'onfocus',
+  'onblur',
+  'onmouseout',
+  'onmousedown',
+  'onmouseup',
+  'onkeydown',
+  'onkeyup',
+  'onkeypress',
+  'onsubmit',
+  'onreset',
+  'onchange',
+  'oninput',
+]);
+
 function extractAttributes(tag: string): Record<string, string> {
   const attrs: Record<string, string> = {};
   const attrRegex = /(\w+)="([^"]*?)"/g;
   let match: RegExpExecArray | null;
   while ((match = attrRegex.exec(tag)) !== null) {
+    if (DANGEROUS_ATTRS.has(match[1].toLowerCase())) continue;
+    if (match[2].toLowerCase().trimStart().startsWith('javascript:')) continue;
     attrs[match[1]] = match[2];
   }
   return attrs;
@@ -111,7 +132,12 @@ export function parseSvgToPatches(svgData: string): FppPatch[] {
     if (vertices.every((v) => v.x === 0 || v.y === 0)) {
       const w = parseFloat(attrs.width ?? '0');
       const h = parseFloat(attrs.height ?? '0');
-      if (w >= 100 && h >= 100 && parseFloat(attrs.x ?? '0') === 0 && parseFloat(attrs.y ?? '0') === 0) {
+      if (
+        w >= 100 &&
+        h >= 100 &&
+        parseFloat(attrs.x ?? '0') === 0 &&
+        parseFloat(attrs.y ?? '0') === 0
+      ) {
         continue;
       }
     }
@@ -142,11 +168,7 @@ function edgesFromVertices(vertices: Point[]): Array<[Point, Point]> {
   return edges;
 }
 
-function edgesOverlap(
-  e1: [Point, Point],
-  e2: [Point, Point],
-  threshold: number
-): boolean {
+function edgesOverlap(e1: [Point, Point], e2: [Point, Point], threshold: number): boolean {
   // Check if two edges share a significant portion of their length
   // Simplified: check if endpoints of one edge are close to the other edge's line
   const dist1 = pointToSegmentDistance(e1[0], e2[0], e2[1]);

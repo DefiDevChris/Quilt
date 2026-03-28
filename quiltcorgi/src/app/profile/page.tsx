@@ -18,7 +18,7 @@ export default function ProfilePage() {
         window.location.href = data.data.checkoutUrl;
       }
     } catch {
-      console.error('Failed to create checkout session');
+      // Checkout session creation failed — user sees button re-enabled
     } finally {
       setIsUpgradeLoading(false);
     }

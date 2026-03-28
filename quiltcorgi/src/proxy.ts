@@ -3,6 +3,11 @@ import { jwtVerify, createRemoteJWKSet } from 'jose';
 
 const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID ?? '';
+
+if (!COGNITO_USER_POOL_ID && process.env.NODE_ENV === 'production') {
+  throw new Error('COGNITO_USER_POOL_ID must be set in production');
+}
+
 const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
 
 const jwks = COGNITO_USER_POOL_ID ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
@@ -44,10 +49,16 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // Admin route protection requires DB lookup (role is in DB, not JWT).
-  // We block obviously unauthenticated requests here; API routes enforce role checks.
-  if (pathname.startsWith('/admin') && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+  // Admin route protection: check role cookie set during sign-in.
+  // This is UI gating only — API routes still enforce DB-based role checks.
+  if (pathname.startsWith('/admin')) {
+    if (!isAuthenticated) {
+      return NextResponse.redirect(new URL('/auth/signin', req.url));
+    }
+    const role = req.cookies.get('qc_user_role')?.value;
+    if (role !== 'admin') {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
   }
 
   return NextResponse.next();

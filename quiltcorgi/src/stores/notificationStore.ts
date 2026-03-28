@@ -26,7 +26,13 @@ interface NotificationState {
   stopPolling: () => void;
 }
 
-let pollingIntervalId: ReturnType<typeof setInterval> | null = null;
+const _g = globalThis as typeof globalThis & {
+  __notifPollingId?: ReturnType<typeof setInterval> | null;
+};
+if (_g.__notifPollingId) {
+  clearInterval(_g.__notifPollingId);
+  _g.__notifPollingId = null;
+}
 
 const INITIAL_STATE = {
   notifications: [] as Notification[],
@@ -66,14 +72,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     const previousNotifications = [...prev];
     const previousUnreadCount = get().unreadCount;
 
-    const markedCount = prev.filter(
-      (n) => !n.isRead && ids.includes(n.id)
-    ).length;
+    const markedCount = prev.filter((n) => !n.isRead && ids.includes(n.id)).length;
 
     set({
-      notifications: prev.map((n) =>
-        ids.includes(n.id) ? { ...n, isRead: true } : n
-      ),
+      notifications: prev.map((n) => (ids.includes(n.id) ? { ...n, isRead: true } : n)),
       unreadCount: Math.max(0, get().unreadCount - markedCount),
     });
 
@@ -138,17 +140,17 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   startPolling: () => {
-    if (pollingIntervalId !== null) return;
+    if (_g.__notifPollingId != null) return;
     get().fetchNotifications();
-    pollingIntervalId = setInterval(() => {
+    _g.__notifPollingId = setInterval(() => {
       get().fetchNotifications();
     }, 60_000);
   },
 
   stopPolling: () => {
-    if (pollingIntervalId !== null) {
-      clearInterval(pollingIntervalId);
-      pollingIntervalId = null;
+    if (_g.__notifPollingId != null) {
+      clearInterval(_g.__notifPollingId);
+      _g.__notifPollingId = null;
     }
   },
 }));

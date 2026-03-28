@@ -2,7 +2,12 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { generateBatchPrintResult, PAPER_CONFIGS, type PaperSize } from '@/lib/batch-print-engine';
+import {
+  generateBatchPrintResult,
+  PAPER_CONFIGS,
+  type PaperSize,
+  type FabricJSON,
+} from '@/lib/batch-print-engine';
 
 interface BatchPrintDialogProps {
   isOpen: boolean;
@@ -16,54 +21,19 @@ export function BatchPrintDialog({ isOpen, onClose }: BatchPrintDialogProps) {
 
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
-  // Mock canvas data for preview
-  const mockCanvasData = useMemo(
-    () => ({
-      objects: [
-        {
-          type: 'path',
-          blockId: 'ohio-star-1',
-          blockName: 'Ohio Star',
-          width: 576, // 6 inches * 96 DPI
-          height: 576,
-          scaleX: 1,
-          scaleY: 1,
-          fill: '#D4883C',
-          left: 100,
-          top: 100,
-        },
-        {
-          type: 'path',
-          blockId: 'ohio-star-1',
-          blockName: 'Ohio Star',
-          width: 576,
-          height: 576,
-          scaleX: 1,
-          scaleY: 1,
-          fill: '#2E4057',
-          left: 200,
-          top: 200,
-        },
-        {
-          type: 'path',
-          blockId: 'log-cabin-1',
-          blockName: 'Log Cabin',
-          width: 480, // 5 inches * 96 DPI
-          height: 480,
-          scaleX: 1,
-          scaleY: 1,
-          fill: '#8B4513',
-          left: 300,
-          top: 300,
-        },
-      ],
-    }),
-    []
-  );
+  const canvasData = useMemo((): FabricJSON => {
+    if (!fabricCanvas) return { objects: [] };
+    const canvas = fabricCanvas as unknown as {
+      getObjects: () => { toObject: () => Record<string, unknown> }[];
+    };
+    return {
+      objects: canvas.getObjects().map((obj) => obj.toObject()),
+    } as FabricJSON;
+  }, [fabricCanvas]);
 
   const batchResult = useMemo(() => {
-    return generateBatchPrintResult(mockCanvasData, PAPER_CONFIGS[paperSize], seamAllowance);
-  }, [mockCanvasData, paperSize, seamAllowance]);
+    return generateBatchPrintResult(canvasData, PAPER_CONFIGS[paperSize], seamAllowance);
+  }, [canvasData, paperSize, seamAllowance]);
 
   const handleGeneratePDF = useCallback(async () => {
     if (!fabricCanvas) return;

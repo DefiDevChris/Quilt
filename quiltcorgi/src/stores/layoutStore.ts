@@ -31,12 +31,16 @@ const DEFAULT_SASHING: SashingConfig = {
   fabricId: null,
 };
 
-const DEFAULT_BORDER: BorderConfig = {
-  width: 2,
-  color: '#2D2D2D',
-  fabricId: null,
-  type: 'solid',
-};
+function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
+  return {
+    id: crypto.randomUUID(),
+    width: 2,
+    color: '#2D2D2D',
+    fabricId: null,
+    type: 'solid',
+    ...overrides,
+  };
+}
 
 export const useLayoutStore = create<LayoutStoreState>((set) => ({
   layoutType: 'free-form',

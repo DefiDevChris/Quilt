@@ -165,13 +165,17 @@ function QuiltPanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Straighten
           </button>
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Apply
           </button>
@@ -179,13 +183,17 @@ function QuiltPanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Flip Horiz
           </button>
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Flip Vert
           </button>
@@ -196,7 +204,9 @@ function QuiltPanel() {
           </div>
           <button
             type="button"
-            className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity"
+            disabled
+            className="bg-primary/50 text-white rounded-md px-3 h-9 text-body-sm font-medium cursor-not-allowed"
+            title="Coming soon"
           >
             APPLY
           </button>
@@ -207,7 +217,9 @@ function QuiltPanel() {
           </div>
           <button
             type="button"
-            className="bg-primary text-white rounded-md px-3 h-9 text-body-sm font-medium hover:opacity-90 transition-opacity"
+            disabled
+            className="bg-primary/50 text-white rounded-md px-3 h-9 text-body-sm font-medium cursor-not-allowed"
+            title="Coming soon"
           >
             APPLY
           </button>
@@ -232,7 +244,9 @@ function QuiltPanel() {
             <button
               key={item}
               type="button"
-              className="flex items-center justify-between py-2.5 text-body-md text-on-surface hover:bg-surface-container rounded-md px-2 transition-colors"
+              disabled
+              className="flex items-center justify-between py-2.5 text-body-md text-secondary rounded-md px-2 cursor-not-allowed opacity-50"
+              title="Coming soon"
             >
               <span>{item}</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -308,13 +322,17 @@ function ImagePanel() {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Rotate 90&#176;
           </button>
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Rotate -90&#176;
           </button>
@@ -324,13 +342,17 @@ function ImagePanel() {
         <div className="flex gap-2 mb-4">
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Flip Horiz
           </button>
           <button
             type="button"
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
+            disabled
+            className="flex-1 bg-surface-container text-secondary rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             Flip Vert
           </button>
@@ -385,7 +407,9 @@ function ImagePanel() {
         {/* Straighten button */}
         <button
           type="button"
-          className="w-full bg-primary text-white rounded-md py-2.5 text-body-sm font-medium hover:opacity-90 transition-opacity mb-4"
+          disabled
+          className="w-full bg-primary/50 text-white rounded-md py-2.5 text-body-sm font-medium cursor-not-allowed mb-4"
+          title="Coming soon"
         >
           Straighten (Apply)
         </button>

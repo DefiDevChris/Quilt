@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -8,6 +8,11 @@ export function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailParam = searchParams.get('email') ?? '';
+  const redirectTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+
+  useEffect(() => {
+    return () => clearTimeout(redirectTimeoutRef.current);
+  }, []);
 
   const [email, setEmail] = useState(emailParam);
   const [code, setCode] = useState('');
@@ -38,7 +43,7 @@ export function VerifyEmailForm() {
       }
 
       setSuccess('Email verified! Redirecting to sign in...');
-      setTimeout(() => router.push('/auth/signin'), 1500);
+      redirectTimeoutRef.current = setTimeout(() => router.push('/auth/signin'), 1500);
     } catch {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
@@ -73,8 +78,18 @@ export function VerifyEmailForm() {
     <div className="w-full max-w-[420px] mx-auto bg-surface-container-low rounded-xl shadow-elevation-2 p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <div className="w-16 h-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-          <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            className="w-8 h-8 text-primary"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
         <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface">
@@ -99,7 +114,10 @@ export function VerifyEmailForm() {
 
       <form onSubmit={handleVerify} className="space-y-4">
         <div>
-          <label htmlFor="verify-email" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+          <label
+            htmlFor="verify-email"
+            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+          >
             Email
           </label>
           <input
@@ -114,7 +132,10 @@ export function VerifyEmailForm() {
         </div>
 
         <div>
-          <label htmlFor="code" className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5">
+          <label
+            htmlFor="code"
+            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+          >
             Verification Code
           </label>
           <input

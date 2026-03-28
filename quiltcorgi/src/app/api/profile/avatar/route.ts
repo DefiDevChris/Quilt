@@ -22,12 +22,12 @@ const avatarUpdateSchema = z.object({
       (url) => {
         try {
           const parsed = new URL(url);
-          return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+          return parsed.protocol === 'https:';
         } catch {
           return false;
         }
       },
-      { message: 'Avatar URL must be a valid HTTP/HTTPS URL.' }
+      { message: 'Avatar URL must be a valid HTTPS URL.' }
     ),
 });
 

@@ -251,8 +251,10 @@ export default function DashboardPage() {
   }, [fetchProjects]);
 
   async function handleDelete(id: string) {
-    await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+    const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+    }
   }
 
   async function handleRename(id: string, newName: string) {

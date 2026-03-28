@@ -63,7 +63,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       setToasts((prev) => {
         const next = [...prev, newToast];
         if (next.length > MAX_VISIBLE_TOASTS) {
-          const removed = next.shift();
+          const removed = next[0];
           if (removed) {
             const timer = timersRef.current.get(removed.id);
             if (timer) {
@@ -71,6 +71,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               timersRef.current.delete(removed.id);
             }
           }
+          return next.slice(1);
         }
         return next;
       });
