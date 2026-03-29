@@ -89,6 +89,7 @@ export async function clearAuthCookies(): Promise<void> {
   cookieStore.delete(COOKIE_ID_TOKEN);
   cookieStore.delete(COOKIE_ACCESS_TOKEN);
   cookieStore.delete(COOKIE_REFRESH_TOKEN);
+  cookieStore.delete('qc_user_role');
 }
 
 /**

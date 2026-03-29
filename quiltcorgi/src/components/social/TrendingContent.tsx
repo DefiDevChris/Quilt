@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, TrendingUp } from 'lucide-react';
 
 interface QuiltPin {
@@ -130,7 +131,7 @@ function PinCard({ pin }: { pin: QuiltPin }) {
         className="block glass-panel-social rounded-[1.5rem] overflow-hidden glass-panel-social-hover group cursor-pointer"
       >
         <div className={`${pin.aspect} overflow-hidden`}>
-          <img src={pin.image} alt={pin.title} className="w-full h-full object-cover" />
+          <Image src={pin.image} alt={pin.title} width={400} height={400} className="w-full h-full object-cover" />
         </div>
         <div className="p-3">
           <span className="text-[10px] font-extrabold text-orange-500 uppercase tracking-wide">

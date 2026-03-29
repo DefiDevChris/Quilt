@@ -16,7 +16,7 @@ const confirmSchema = z.object({
 /** Initiate forgot password — sends code to email. */
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`forgot:${ip}`, AUTH_RATE_LIMITS.forgotPassword);
+  const rl = await checkRateLimit(`forgot:${ip}`, AUTH_RATE_LIMITS.forgotPassword);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 /** Confirm password reset with code and new password. */
 export async function PUT(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`forgot-confirm:${ip}`, AUTH_RATE_LIMITS.forgotPasswordConfirm);
+  const rl = await checkRateLimit(`forgot-confirm:${ip}`, AUTH_RATE_LIMITS.forgotPasswordConfirm);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {

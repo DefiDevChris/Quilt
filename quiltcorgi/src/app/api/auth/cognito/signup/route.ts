@@ -14,7 +14,7 @@ const signupSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`signup:${ip}`, AUTH_RATE_LIMITS.signup);
+  const rl = await checkRateLimit(`signup:${ip}`, AUTH_RATE_LIMITS.signup);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {

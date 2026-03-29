@@ -1,32 +1,48 @@
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
 /**
- * In-memory sliding-window rate limiter for auth endpoints.
+ * Hybrid rate limiter for auth endpoints.
  *
- * INTENTIONAL: This uses an in-memory Map, which is appropriate for
- * single-instance deployments (e.g., a single Vercel serverless function
- * or a single container). The Map resets on cold starts, which is acceptable
- * because rate limiting is defense-in-depth — Cognito has its own throttling.
+ * Uses Upstash Redis for distributed rate limiting across serverless instances
+ * if UPSTASH_REDIS_REST_URL is configured.
  *
- * TODO: For multi-instance or serverless-at-scale deployments, migrate to a
- * Redis-backed implementation (e.g., @upstash/ratelimit) so rate limit state
- * is shared across instances and survives cold starts.
+ * Falls back to an in-memory Map for local development or when Redis is absent.
  */
 
+// --- Redis Implementation ---
+const useRedis = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const redisLimiterCache = new Map<string, Ratelimit>();
+function getRedisRatelimiter(limit: number, windowMs: number): Ratelimit {
+  const cacheKey = `${limit}:${windowMs}`;
+  if (!redisLimiterCache.has(cacheKey)) {
+    const redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    });
+    // Convert ms to seconds for Upstash
+    const windowSecs = Math.max(1, Math.floor(windowMs / 1000));
+    redisLimiterCache.set(cacheKey, new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(limit, `${windowSecs} s`),
+      analytics: false,
+    }));
+  }
+  return redisLimiterCache.get(cacheKey)!;
+}
+
+
+// --- In-Memory Fallback Implementation ---
 interface RateLimitEntry {
   timestamps: number[];
 }
 
 const store = new Map<string, RateLimitEntry>();
-
-/** Maximum number of unique keys the store will hold before evicting the oldest. */
 const MAX_STORE_SIZE = 10_000;
-
 const CLEANUP_INTERVAL_MS = 60_000;
 let lastCleanup = Date.now();
 
-/**
- * Evict the oldest entries when the store exceeds MAX_STORE_SIZE.
- * Map iteration order is insertion order, so the first entries are the oldest.
- */
 function evictOldestEntries() {
   if (store.size <= MAX_STORE_SIZE) return;
   const excess = store.size - MAX_STORE_SIZE;
@@ -55,9 +71,7 @@ function cleanup(windowMs: number) {
 }
 
 interface RateLimitOptions {
-  /** Max requests allowed in the window. */
   limit: number;
-  /** Window size in milliseconds. */
   windowMs: number;
 }
 
@@ -67,8 +81,20 @@ interface RateLimitResult {
   retryAfterMs: number;
 }
 
-export function checkRateLimit(key: string, options: RateLimitOptions): RateLimitResult {
+export async function checkRateLimit(key: string, options: RateLimitOptions): Promise<RateLimitResult> {
   const { limit, windowMs } = options;
+
+  if (useRedis) {
+    const ratelimit = getRedisRatelimiter(limit, windowMs);
+    const result = await ratelimit.limit(key);
+    return {
+      allowed: result.success,
+      remaining: result.remaining,
+      retryAfterMs: result.success ? 0 : result.reset - Date.now(),
+    };
+  }
+
+  // --- Fallback Memory Mode ---
   const now = Date.now();
   const cutoff = now - windowMs;
 
@@ -81,8 +107,6 @@ export function checkRateLimit(key: string, options: RateLimitOptions): RateLimi
     return { allowed: true, remaining: limit - 1, retryAfterMs: 0 };
   }
 
-  // Filter expired timestamps, then cap the array to the window size (limit)
-  // to prevent a single key's array from growing unboundedly.
   const inWindow = entry.timestamps.filter((t) => t > cutoff);
   entry.timestamps = inWindow.length > limit ? inWindow.slice(-limit) : inWindow;
 
@@ -98,17 +122,11 @@ export function checkRateLimit(key: string, options: RateLimitOptions): RateLimi
 
 /** Rate limit presets for auth endpoints. */
 export const AUTH_RATE_LIMITS = {
-  /** Sign-in: 5 attempts per 15 minutes per IP. */
   signin: { limit: 5, windowMs: 15 * 60 * 1000 },
-  /** Sign-up: 3 attempts per 15 minutes per IP. */
   signup: { limit: 3, windowMs: 15 * 60 * 1000 },
-  /** Forgot password initiate: 3 per 15 minutes per IP. */
   forgotPassword: { limit: 3, windowMs: 15 * 60 * 1000 },
-  /** Password reset confirm: 5 per 15 minutes per IP. */
   forgotPasswordConfirm: { limit: 5, windowMs: 15 * 60 * 1000 },
-  /** Verify code: 5 per 15 minutes per IP. */
   verify: { limit: 5, windowMs: 15 * 60 * 1000 },
-  /** Resend verification: 3 per 15 minutes per IP. */
   resendVerification: { limit: 3, windowMs: 15 * 60 * 1000 },
 } as const;
 

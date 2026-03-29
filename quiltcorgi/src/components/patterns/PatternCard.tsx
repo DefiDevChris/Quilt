@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo } from 'react';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
 
 interface PatternCardProps {
@@ -67,20 +66,13 @@ const PASTEL_PALETTE = [
   '#E4D4C4',
 ] as const;
 
-function PlaceholderGrid({ name }: { name: string }) {
+function PlaceholderFallback({ name }: { name: string }) {
   const hash = hashString(name);
-  const colors = useMemo(() => {
-    return Array.from({ length: 16 }, (_, i) => {
-      const index = (hash + i * 7 + i * i) % PASTEL_PALETTE.length;
-      return PASTEL_PALETTE[index];
-    });
-  }, [hash]);
-
+  const color = PASTEL_PALETTE[hash % PASTEL_PALETTE.length];
+  
   return (
-    <div className="w-full h-full grid grid-cols-4 grid-rows-4 gap-0.5 p-2">
-      {colors.map((color, i) => (
-        <div key={i} className="rounded-sm" style={{ backgroundColor: color }} />
-      ))}
+    <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: color }}>
+      <span className="material-symbols-outlined text-4xl opacity-20 text-on-surface">inventory_2</span>
     </div>
   );
 }
@@ -145,7 +137,7 @@ export function PatternCard({ pattern, onPreview }: PatternCardProps) {
             unoptimized
           />
         ) : (
-          <PlaceholderGrid name={pattern.name} />
+          <PlaceholderFallback name={pattern.name} />
         )}
       </div>
 

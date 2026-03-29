@@ -1,15 +1,13 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { verifySessionToken } from '@/lib/cognito-session';
 
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
-  // DEV BYPASS — remove before production deploy
-  if (process.env.NODE_ENV === 'development') {
-    return <>{children}</>;
-  }
+  const cookieStore = await cookies();
+  const idToken = cookieStore.get('qc_id_token')?.value;
+  const user = idToken ? await verifySessionToken(idToken) : null;
 
-  const session = await auth();
-
-  if (!session?.user) {
+  if (!user) {
     redirect('/auth/signin?callbackUrl=/dashboard');
   }
 

@@ -67,15 +67,17 @@ export async function POST(
       });
     }
 
-    await db.insert(commentLikes).values({
-      userId: session.user.id,
-      commentId,
-    });
+    await db.transaction(async (tx) => {
+      await tx.insert(commentLikes).values({
+        userId: session.user.id,
+        commentId,
+      });
 
-    await db
-      .update(comments)
-      .set({ likeCount: sql`${comments.likeCount} + 1` })
-      .where(eq(comments.id, commentId));
+      await tx
+        .update(comments)
+        .set({ likeCount: sql`${comments.likeCount} + 1` })
+        .where(eq(comments.id, commentId));
+    });
 
     const [updated] = await db
       .select({ likeCount: comments.likeCount })

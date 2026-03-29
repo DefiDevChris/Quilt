@@ -10,7 +10,6 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date', withTimezone: true }),
   image: text('image'),
-  passwordHash: text('passwordHash'),
   role: userRoleEnum('role').notNull().default('free'),
   createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })

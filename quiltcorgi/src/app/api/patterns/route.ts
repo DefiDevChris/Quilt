@@ -9,6 +9,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { escapeLikePattern } from '@/lib/escape-like';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
 
 const FREE_PATTERN_LIST_LIMIT = 6;
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      const searchPattern = `%${search}%`;
+      const searchPattern = `%${escapeLikePattern(search)}%`;
       conditions.push(
         or(
           ilike(patternTemplates.name, searchPattern),

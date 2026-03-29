@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
-import { Compass, FileText, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
+import { formatRelativeTime } from '@/lib/format-time';
 
 interface CommunityPost {
   id: string;
@@ -62,35 +63,18 @@ export function FeedContent() {
       {/* Create Post Card */}
       {user && (
         <div className="glass-panel rounded-[1.5rem] p-4 shadow-sm">
-          <div className="flex gap-4">
-            <img
-              src={user.image || 'https://i.pravatar.cc/150?u=quiltcorgi'}
-              alt="Avatar"
-              className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm"
-            />
-            <div className="flex-1">
-              <textarea
-                placeholder="What's inspiring you today?"
-                className="w-full bg-white/40 border border-white/50 rounded-2xl p-4 text-slate-700 placeholder:text-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-orange-300 focus:bg-white/60 transition-all resize-none shadow-inner"
-                rows={2}
-              />
-              <div className="flex justify-between items-center mt-4">
-                <div className="flex gap-2">
-                  <button className="p-2.5 rounded-xl bg-white/40 hover:bg-white/70 text-slate-600 transition-colors shadow-sm">
-                    <Compass size={20} />
-                  </button>
-                  <button className="p-2.5 rounded-xl bg-white/40 hover:bg-white/70 text-slate-600 transition-colors shadow-sm">
-                    <FileText size={20} />
-                  </button>
-                </div>
-                <Link
-                  href="/socialthreads/new"
-                  className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-8 py-2.5 rounded-full font-bold shadow-md hover:shadow-lg transition-all"
-                >
-                  Post
-                </Link>
-              </div>
+          <div className="flex gap-4 items-center">
+            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm shrink-0">
+              <span className="text-lg font-bold text-orange-500">
+                {user.name?.charAt(0)?.toUpperCase() ?? '?'}
+              </span>
             </div>
+            <Link
+              href="/dashboard"
+              className="flex-1 bg-white/40 border border-white/50 rounded-2xl px-4 py-3 text-slate-500 font-medium hover:bg-white/60 transition-all"
+            >
+              Share your latest quilt design...
+            </Link>
           </div>
         </div>
       )}
@@ -151,7 +135,7 @@ export function FeedContent() {
           <p className="text-slate-500 mb-6 font-medium">Be the first to share your quilt!</p>
           {user && (
             <Link
-              href="/socialthreads/new"
+              href="/dashboard"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,17 +203,7 @@ function PostCard({ post }: { post: CommunityPost }) {
     });
   };
 
-  const timeAgo = (date: string) => {
-    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-    if (seconds < 60) return 'just now';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d ago`;
-    return new Date(date).toLocaleDateString();
-  };
+  const timeAgo = (date: string) => formatRelativeTime(date);
 
   const authorHandle =
     post.creatorUsername || `@${post.creatorName.toLowerCase().replace(/\s/g, '')}`;
@@ -238,11 +212,11 @@ function PostCard({ post }: { post: CommunityPost }) {
     <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
       <div className="flex items-center justify-between mb-3">
         <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
-          <img
-            src={post.creatorAvatarUrl || `https://i.pravatar.cc/150?u=${post.creatorName}`}
-            alt={post.creatorName}
-            className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm"
-          />
+          <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm">
+              <span className="text-sm font-bold text-orange-500">
+                {post.creatorName.charAt(0).toUpperCase()}
+              </span>
+            </div>
           <div>
             <h4 className="font-bold text-slate-800 text-base group-hover:text-orange-500 transition-colors">
               {post.creatorName}

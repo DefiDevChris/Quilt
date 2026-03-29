@@ -21,11 +21,8 @@
     "type-check": "tsc --noEmit",
     "db:migrate": "drizzle-kit migrate",
     "db:seed:blog": "tsx src/db/seed/seed-blog.ts",
-    "db:seed:all": "tsx scripts/db-seed-all.ts",
     "db:local:up": "docker compose up -d --wait",
-    "db:local:down": "docker compose down",
-    "db:local:reset": "bash scripts/db-reset.sh",
-    "db:setup": "bash scripts/db-setup.sh"
+    "db:local:down": "docker compose down"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "~3.1019.0",
@@ -33,6 +30,8 @@
     "@aws-sdk/client-secrets-manager": "~3.1019.0",
     "@aws-sdk/s3-request-presigner": "~3.1019.0",
     "@techstark/opencv-js": "^4.12.0-release.1",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.37.0",
     "clipper-lib": "^6.4.2",
     "drizzle-orm": "~0.45.1",
     "fabric": "~7.2.0",

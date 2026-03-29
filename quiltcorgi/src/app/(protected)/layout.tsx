@@ -1,15 +1,16 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { verifySessionToken } from '@/lib/cognito-session';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  // DEV BYPASS — remove before production deploy
-  if (process.env.NODE_ENV !== 'development') {
-    const session = await auth();
-    if (!session?.user) {
-      redirect('/auth/signin');
-    }
+  const cookieStore = await cookies();
+  const idToken = cookieStore.get('qc_id_token')?.value;
+  const user = idToken ? await verifySessionToken(idToken) : null;
+  
+  if (!user) {
+    redirect('/auth/signin');
   }
 
   return (
