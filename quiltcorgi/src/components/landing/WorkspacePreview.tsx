@@ -266,9 +266,7 @@ function ImageWorktableMockup() {
               }}
             />
             <div className="absolute inset-0 bg-black/40 z-10" />
-            <motion.div
-              animate={{ width: ['40%', '42%', '40%'] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            <div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] z-20 outline outline-2 outline-white"
               style={{ boxShadow: '0 0 0 9999px rgba(0,0,0,0.6)' }}
             >
@@ -284,7 +282,7 @@ function ImageWorktableMockup() {
               <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
               <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
               <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-gray-300" />
-            </motion.div>
+            </div>
           </motion.div>
         </div>
 

@@ -40,7 +40,7 @@ export default function PublicNav() {
             href="#features"
             className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
           >
-            Designer
+            Features
           </a>
           <Link
             href="/socialthreads"
@@ -53,6 +53,12 @@ export default function PublicNav() {
             className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
           >
             Blog
+          </Link>
+          <Link
+            href="/tutorials"
+            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+          >
+            Tutorials
           </Link>
           <Link
             href="/auth/signin"
@@ -100,7 +106,7 @@ export default function PublicNav() {
             className="block text-warm-text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
-            Designer
+            Features
           </a>
           <Link
             href="/socialthreads"
@@ -115,6 +121,13 @@ export default function PublicNav() {
             onClick={() => setMenuOpen(false)}
           >
             Blog
+          </Link>
+          <Link
+            href="/tutorials"
+            className="block text-warm-text-secondary font-medium py-2"
+            onClick={() => setMenuOpen(false)}
+          >
+            Tutorials
           </Link>
           <Link
             href="/auth/signin"

@@ -445,7 +445,7 @@ export default function DashboardPage() {
                 src="/images/quilts/quilt_03_closeup_scrappy.png"
                 alt="Fabric swatches"
                 fill
-                className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
               <div className="relative mt-auto p-6">
@@ -497,7 +497,7 @@ export default function DashboardPage() {
                   src="/images/quilts/quilt_01_closeup_churndash.png"
                   alt="Photo to pattern"
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  className="object-cover"
                 />
                 {/* OpenCV-style shape detection overlay */}
                 <svg
@@ -671,7 +671,7 @@ export default function DashboardPage() {
                   src="/images/quilts/quilt_06_wall_art.png"
                   alt="Quilting blog"
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
               </div>

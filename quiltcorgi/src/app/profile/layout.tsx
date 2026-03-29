@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
+import { SocialLayout } from '@/components/social/SocialLayout';
 
 export const metadata: Metadata = {
   title: 'Profile',
 };
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
-  return <ResponsiveShell>{children}</ResponsiveShell>;
+  return <SocialLayout activeSection="profile">{children}</SocialLayout>;
 }

@@ -123,7 +123,7 @@ Warm-cream glassmorphic design system defined in `src/app/globals.css` via Tailw
 - **Borders:** outline-variant `#E8DCCB`
 - **Status:** success `#4a7c59`, error `#D4726A`, warning `#C6942E`
 - **Mobile accent:** golden `#c48a28`, golden-light `#daa545`
-- **Landing warm palette:** peach-dark `#FF9D6B`, coral `#E07B67`, terracotta `#C67B5C`, golden `#FFD166`
+- **Landing warm palette:** peach-dark `#FF9D6B golden `#FFD166`
 
 ### Radii
 sm 6px, md 10px, lg 16px, xl 24px

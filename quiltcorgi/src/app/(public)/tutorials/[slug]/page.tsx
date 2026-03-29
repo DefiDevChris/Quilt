@@ -5,17 +5,18 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getTutorialBySlug, getTutorialSlugs, getAllTutorials } from '@/lib/mdx-engine';
 import { mdxComponents } from '@/components/ui/MdxComponents';
 
-const DIFFICULTY_STYLES = {
-  beginner: 'bg-green-100 text-green-800',
-  intermediate: 'bg-amber-100 text-amber-800',
-  advanced: 'bg-red-100 text-red-800',
-} as const;
-
 const DIFFICULTY_LABELS = {
   beginner: 'Beginner',
   intermediate: 'Intermediate',
   advanced: 'Advanced',
 } as const;
+
+function formatTag(tag: string): string {
+  return tag
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 export async function generateStaticParams() {
   const slugs = getTutorialSlugs();
@@ -34,7 +35,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${tutorial.title} | QuiltCorgi`,
+    title: tutorial.title,
     description: tutorial.description,
     openGraph: {
       title: tutorial.title,
@@ -50,20 +51,18 @@ function getAdjacentTutorials(currentSlug: string) {
   if (currentIndex === -1) return { prev: null, next: null };
 
   return {
-    prev: currentIndex > 0
-      ? { slug: tutorials[currentIndex - 1].slug, title: tutorials[currentIndex - 1].title }
-      : null,
-    next: currentIndex < tutorials.length - 1
-      ? { slug: tutorials[currentIndex + 1].slug, title: tutorials[currentIndex + 1].title }
-      : null,
+    prev:
+      currentIndex > 0
+        ? { slug: tutorials[currentIndex - 1].slug, title: tutorials[currentIndex - 1].title }
+        : null,
+    next:
+      currentIndex < tutorials.length - 1
+        ? { slug: tutorials[currentIndex + 1].slug, title: tutorials[currentIndex + 1].title }
+        : null,
   };
 }
 
-export default async function TutorialPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function TutorialPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const tutorial = getTutorialBySlug(slug);
 
@@ -104,9 +103,7 @@ export default async function TutorialPage({
         </Link>
 
         <div className="flex items-center gap-3 mb-3">
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${DIFFICULTY_STYLES[tutorial.difficulty]}`}
-          >
+          <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
             {DIFFICULTY_LABELS[tutorial.difficulty]}
           </span>
           <span className="text-sm text-secondary">{tutorial.estimatedTime}</span>
@@ -116,9 +113,9 @@ export default async function TutorialPage({
           {tutorial.tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs text-outline-variant bg-surface-container px-1.5 py-0.5 rounded"
+              className="text-xs text-secondary bg-surface-container px-2 py-0.5 rounded-full"
             >
-              {tag}
+              {formatTag(tag)}
             </span>
           ))}
         </div>
@@ -131,14 +128,12 @@ export default async function TutorialPage({
 
       {/* Try It Now CTA */}
       <div className="mt-12 p-6 bg-primary-container/20 rounded-lg text-center">
-        <p className="text-body-lg font-medium text-on-surface mb-3">
-          Ready to try it yourself?
-        </p>
+        <p className="text-body-lg font-medium text-on-surface mb-3">Ready to try it yourself?</p>
         <Link
-          href="/studio"
+          href="/dashboard"
           className="inline-block bg-primary text-primary-on text-sm font-medium px-6 py-2.5 rounded-[var(--radius-md)] hover:opacity-90 transition-opacity"
         >
-          Open Studio
+          Start a New Design
         </Link>
       </div>
 

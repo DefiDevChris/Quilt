@@ -106,6 +106,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
             onChange={(e) => setName(e.target.value)}
             className={inputClassName}
             placeholder="Your name"
+            autoComplete="name"
           />
         </div>
       )}
@@ -125,6 +126,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           onChange={(e) => setEmail(e.target.value)}
           className={inputClassName}
           placeholder="you@example.com"
+          autoComplete="email"
         />
       </div>
 
@@ -155,6 +157,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
             onChange={(e) => setPassword(e.target.value)}
             className={`${inputClassName} pr-10`}
             placeholder={isSignUp ? 'At least 8 characters' : 'Your password'}
+            autoComplete={isSignUp ? 'new-password' : 'current-password'}
           />
           <button
             type="button"

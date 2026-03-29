@@ -29,9 +29,7 @@ function formatDimensionDisplay(inches: number): string {
     return `${whole}`;
   }
 
-  const match = FRACTION_MAP.find(
-    ([value]) => Math.abs(fractional - value) < 0.0625
-  );
+  const match = FRACTION_MAP.find(([value]) => Math.abs(fractional - value) < 0.0625);
 
   if (!match) {
     return `${inches}`;
@@ -51,10 +49,22 @@ function hashString(str: string): number {
 }
 
 const PASTEL_PALETTE = [
-  '#F8E8D4', '#E8D4C4', '#D4C4B4', '#F4E4D0',
-  '#E0D0C0', '#F0E0D0', '#D8C8B8', '#ECE0D4',
-  '#F4DCC8', '#E4D0C0', '#D0C0B0', '#E8DCD0',
-  '#F0D8C4', '#DCC8B8', '#C8B8A8', '#E4D4C4',
+  '#F8E8D4',
+  '#E8D4C4',
+  '#D4C4B4',
+  '#F4E4D0',
+  '#E0D0C0',
+  '#F0E0D0',
+  '#D8C8B8',
+  '#ECE0D4',
+  '#F4DCC8',
+  '#E4D0C0',
+  '#D0C0B0',
+  '#E8DCD0',
+  '#F0D8C4',
+  '#DCC8B8',
+  '#C8B8A8',
+  '#E4D4C4',
 ] as const;
 
 function PlaceholderGrid({ name }: { name: string }) {
@@ -69,11 +79,7 @@ function PlaceholderGrid({ name }: { name: string }) {
   return (
     <div className="w-full h-full grid grid-cols-4 grid-rows-4 gap-0.5 p-2">
       {colors.map((color, i) => (
-        <div
-          key={i}
-          className="rounded-sm"
-          style={{ backgroundColor: color }}
-        />
+        <div key={i} className="rounded-sm" style={{ backgroundColor: color }} />
       ))}
     </div>
   );
@@ -135,7 +141,7 @@ export function PatternCard({ pattern, onPreview }: PatternCardProps) {
             src={pattern.thumbnailUrl}
             alt={pattern.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover"
             unoptimized
           />
         ) : (
@@ -166,19 +172,14 @@ export function PatternCard({ pattern, onPreview }: PatternCardProps) {
         </span>
 
         {/* Dimensions */}
-        <p
-          className="text-xs font-medium"
-          style={{ color: 'var(--color-on-surface)' }}
-        >
+        <p className="text-xs font-medium" style={{ color: 'var(--color-on-surface)' }}>
           {dimensions}
         </p>
 
         {/* Stats */}
-        <p
-          className="text-xs"
-          style={{ color: 'var(--color-secondary)' }}
-        >
-          {pattern.blockCount} block{pattern.blockCount !== 1 ? 's' : ''} &middot; {pattern.fabricCount} fabric{pattern.fabricCount !== 1 ? 's' : ''}
+        <p className="text-xs" style={{ color: 'var(--color-secondary)' }}>
+          {pattern.blockCount} block{pattern.blockCount !== 1 ? 's' : ''} &middot;{' '}
+          {pattern.fabricCount} fabric{pattern.fabricCount !== 1 ? 's' : ''}
         </p>
 
         {/* Import count */}

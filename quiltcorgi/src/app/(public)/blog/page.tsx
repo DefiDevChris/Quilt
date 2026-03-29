@@ -1,19 +1,11 @@
-import type { Metadata } from 'next';
 import { eq, desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { BlogContent } from '@/components/social/BlogContent';
-import { SocialLayout } from '@/components/social/SocialLayout';
 import type { BlogPostListItem } from '@/types/community';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
-
-export const metadata: Metadata = {
-  title: 'Blog | QuiltCorgi',
-  description:
-    'News, tips, and behind-the-scenes updates from the QuiltCorgi team. Learn about quilt design, new features, and the quilting community.',
-};
 
 export default async function BlogPage() {
   let postRows: Array<{
@@ -79,9 +71,5 @@ export default async function BlogPage() {
     readTimeMinutes: calculateReadTime(post.content),
   }));
 
-  return (
-    <SocialLayout activeSection="blog">
-      <BlogContent initialPosts={initialPosts} initialTotal={total} />
-    </SocialLayout>
-  );
+  return <BlogContent initialPosts={initialPosts} initialTotal={total} />;
 }

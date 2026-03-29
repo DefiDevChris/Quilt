@@ -1,2 +1,0 @@
-[      97ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/contact:0
-[      97ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'https://*.s3.*.amazonaws.com'. It will be ignored. @ http://localhost:3000/contact:0

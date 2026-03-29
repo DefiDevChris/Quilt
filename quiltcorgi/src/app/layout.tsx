@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     description: 'A modern, browser-based quilt design studio. Free to start.',
   },
   icons: {
-    icon: '/favicon.svg',
+    icon: '/flavicon.png',
     apple: '/icon-192.png',
   },
   manifest: '/manifest.json',

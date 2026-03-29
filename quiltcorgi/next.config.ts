@@ -15,7 +15,7 @@ const csp = [
   // Fonts: self + Google Fonts
   "font-src 'self' https://fonts.gstatic.com",
   // Images: self + data URIs (Fabric.js exports) + Google avatars + CloudFront
-  `img-src 'self' data: blob: https://*.googleusercontent.com${cloudfrontCspSource}`,
+  `img-src 'self' data: blob: https://*.googleusercontent.com https://i.pravatar.cc${cloudfrontCspSource}`,
   // Canvas/WebWorker blobs used by Fabric.js
   "worker-src 'self' blob:",
   // Stripe payment frame + Stripe fraud-detection beacon

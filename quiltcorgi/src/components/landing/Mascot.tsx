@@ -1,6 +1,19 @@
 import Image from 'next/image';
 
-type Pose = 'walking' | 'standing' | 'sitting' | 'jumping' | 'sleeping' | 'wagging' | 'fetching' | 'scratching' | 'licking' | 'waving' | 'running' | 'begging' | 'howling';
+type Pose =
+  | 'walking'
+  | 'standing'
+  | 'sitting'
+  | 'jumping'
+  | 'sleeping'
+  | 'wagging'
+  | 'fetching'
+  | 'scratching'
+  | 'licking'
+  | 'waving'
+  | 'running'
+  | 'begging'
+  | 'howling';
 type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const sizePx: Record<Size, number> = {
@@ -19,7 +32,7 @@ const poseMap: Record<Pose, string> = {
   jumping: '/corgi-02-jumping-Photoroom.png',
   running: '/corgi-03-running-Photoroom.png',
   sleeping: '/corgi-05-sleeping-Photoroom.png',
-  wagging: '/corgi-09-tail-wag-Photoroom.png',
+  wagging: '/corgi-20-yawning-Photoroom.png',
   fetching: '/corgi-10-fetching-Photoroom.png',
   howling: '/corgi-11-howling-Photoroom.png',
   begging: '/corgi-13-begging-Photoroom.png',
@@ -44,6 +57,7 @@ export default function Mascot({
       alt="QuiltCorgi Mascot"
       width={px}
       height={px}
+      unoptimized
       className={`object-contain ${className}`}
     />
   );

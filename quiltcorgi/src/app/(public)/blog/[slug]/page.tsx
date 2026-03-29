@@ -10,7 +10,6 @@ import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-
 const getPostBySlug = cache(async (slug: string) => {
   const [post] = await db
     .select({
@@ -49,11 +48,11 @@ export async function generateMetadata({
   const post = await getPostBySlug(slug);
 
   if (!post) {
-    return { title: 'Post Not Found | QuiltCorgi' };
+    return { title: 'Post Not Found' };
   }
 
   return {
-    title: `${post.title} — QuiltCorgi Blog`,
+    title: post.title,
     description: post.excerpt ?? undefined,
     openGraph: {
       title: post.title,
@@ -75,21 +74,23 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  // Fetch related posts (same category, max 3)
+  // Fetch related posts (same category, max 3), fall back to recent posts
+  const relatedSelect = {
+    id: blogPosts.id,
+    title: blogPosts.title,
+    slug: blogPosts.slug,
+    excerpt: blogPosts.excerpt,
+    featuredImageUrl: blogPosts.featuredImageUrl,
+    category: blogPosts.category,
+    tags: blogPosts.tags,
+    content: blogPosts.content,
+    publishedAt: blogPosts.publishedAt,
+    authorName: users.name,
+    authorAvatarUrl: userProfiles.avatarUrl,
+  };
+
   const relatedRows = await db
-    .select({
-      id: blogPosts.id,
-      title: blogPosts.title,
-      slug: blogPosts.slug,
-      excerpt: blogPosts.excerpt,
-      featuredImageUrl: blogPosts.featuredImageUrl,
-      category: blogPosts.category,
-      tags: blogPosts.tags,
-      content: blogPosts.content,
-      publishedAt: blogPosts.publishedAt,
-      authorName: users.name,
-      authorAvatarUrl: userProfiles.avatarUrl,
-    })
+    .select(relatedSelect)
     .from(blogPosts)
     .leftJoin(users, eq(blogPosts.authorId, users.id))
     .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
@@ -103,7 +104,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     .orderBy(desc(blogPosts.publishedAt))
     .limit(3);
 
-  const relatedPosts: BlogPostListItem[] = relatedRows.map((r) => ({
+  // If fewer than 3 category matches, backfill with recent posts from any category
+  let allRelatedRows = relatedRows;
+  if (relatedRows.length < 3) {
+    const existingIds = new Set([post.id, ...relatedRows.map((r) => r.id)]);
+    const recentRows = await db
+      .select(relatedSelect)
+      .from(blogPosts)
+      .leftJoin(users, eq(blogPosts.authorId, users.id))
+      .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
+      .where(and(eq(blogPosts.status, 'published'), ne(blogPosts.id, post.id)))
+      .orderBy(desc(blogPosts.publishedAt))
+      .limit(3);
+
+    const backfill = recentRows.filter((r) => !existingIds.has(r.id));
+    allRelatedRows = [...relatedRows, ...backfill].slice(0, 3);
+  }
+
+  const relatedPosts: BlogPostListItem[] = allRelatedRows.map((r) => ({
     id: r.id,
     title: r.title,
     slug: r.slug,
