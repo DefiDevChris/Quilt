@@ -89,7 +89,11 @@ export async function cognitoSignUp(
 
   const response = await getClient().send(command);
 
-  return { userSub: response.UserSub! };
+  if (!response.UserSub) {
+    throw new Error('Cognito sign-up response missing UserSub');
+  }
+
+  return { userSub: response.UserSub };
 }
 
 /** Confirm sign-up with the verification code sent to email. */
@@ -157,11 +161,7 @@ export async function cognitoRefreshTokens(
     throw new Error('Token refresh failed');
   }
 
-  return {
-    idToken: response.AuthenticationResult.IdToken!,
-    accessToken: response.AuthenticationResult.AccessToken!,
-    expiresIn: response.AuthenticationResult.ExpiresIn ?? 3600,
-  };
+  return toTokens(response.AuthenticationResult);
 }
 
 /** Sign out globally (invalidate all tokens). */
@@ -188,11 +188,15 @@ export async function cognitoGetUser(accessToken: string) {
     }
   }
 
+  if (!response.Username) {
+    throw new Error('Cognito GetUser response missing Username');
+  }
+
   return {
-    username: response.Username!,
+    username: response.Username,
     email: attrs.email ?? '',
     name: attrs.name ?? '',
     emailVerified: attrs.email_verified === 'true',
-    sub: attrs.sub ?? response.Username!,
+    sub: attrs.sub ?? response.Username,
   };
 }

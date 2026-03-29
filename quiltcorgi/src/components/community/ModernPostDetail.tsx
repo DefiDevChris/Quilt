@@ -240,7 +240,7 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
           {post.projectId && (
             <div className="p-5 border-t border-white/40">
               <Link
-                href={`/dashboard/projects/${post.projectId}`}
+                href={`/studio/${post.projectId}`}
                 className="flex items-center gap-3 p-3 rounded-[1.5rem] bg-white/50 hover:bg-white/80 border border-white/60 transition-all group"
               >
                 {post.projectThumbnailUrl ? (
@@ -397,7 +397,7 @@ function VoteButtons({
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M4.5 15.75l7.5-7.5 7.5 7.5"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
           />
         </svg>
       </button>
@@ -406,20 +406,6 @@ function VoteButtons({
       >
         {likeCount}
       </span>
-      <button
-        onClick={() => handleVote(false)}
-        className="p-2 text-slate-500 hover:bg-white/70 transition-colors"
-        title="Downvote"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-          />
-        </svg>
-      </button>
     </div>
   );
 }
@@ -548,17 +534,66 @@ function AboutQuilter({
 
 function MoreFromQuilter({
   creatorId,
-  currentPostId: _currentPostId,
+  currentPostId,
 }: {
   creatorId: string | null;
   currentPostId: string;
 }) {
+  const [otherPosts, setOtherPosts] = useState<{ id: string; title: string; thumbnailUrl: string }[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!creatorId) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/community?sort=newest&limit=4`);
+        const json = await res.json();
+        if (res.ok && json.data?.posts) {
+          const filtered = json.data.posts
+            .filter((p: { id: string; creatorId: string }) => p.creatorId === creatorId && p.id !== currentPostId)
+            .slice(0, 3);
+          setOtherPosts(filtered);
+        }
+      } catch { /* ignore */ }
+      setLoaded(true);
+    })();
+  }, [creatorId, currentPostId]);
+
   if (!creatorId) return null;
 
   return (
     <div className="glass-panel-social rounded-[1.5rem] p-5">
       <h3 className="text-sm font-extrabold text-slate-800 mb-3">More from this Quilter</h3>
-      <p className="text-xs text-slate-500 text-center py-3">More designs coming soon...</p>
+      {!loaded ? (
+        <div className="animate-pulse space-y-2">
+          <div className="h-16 bg-white/50 rounded-xl" />
+          <div className="h-16 bg-white/50 rounded-xl" />
+        </div>
+      ) : otherPosts.length === 0 ? (
+        <p className="text-xs text-slate-500 text-center py-3">No other designs yet</p>
+      ) : (
+        <div className="space-y-2">
+          {otherPosts.map((p) => (
+            <Link
+              key={p.id}
+              href={`/socialthreads/${p.id}`}
+              className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/50 transition-colors"
+            >
+              {p.thumbnailUrl && (
+                <Image
+                  src={p.thumbnailUrl}
+                  alt={p.title}
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 rounded-lg object-cover"
+                  unoptimized
+                />
+              )}
+              <p className="text-sm font-medium text-slate-700 truncate">{p.title}</p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

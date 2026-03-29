@@ -14,7 +14,7 @@ const signinSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`signin:${ip}`, AUTH_RATE_LIMITS.signin);
+  const rl = await checkRateLimit(`signin:${ip}`, AUTH_RATE_LIMITS.signin);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {

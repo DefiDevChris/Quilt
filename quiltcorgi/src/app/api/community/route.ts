@@ -1,11 +1,13 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, desc, count } from 'drizzle-orm';
+import { eq, and, ilike, desc, count, inArray } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   communityPosts,
   users,
   projects,
   userProfiles,
+  likes,
+  savedPosts,
 } from '@/db/schema';
 import { communityFeedSchema, createCommunityPostExtendedSchema } from '@/lib/validation';
 import {
@@ -101,6 +103,28 @@ export async function GET(request: NextRequest) {
 
     const total = totalRow?.count ?? 0;
 
+    // Compute isLikedByUser / isSavedByUser for the current user
+    let likedPostIds = new Set<string>();
+    let savedPostIds = new Set<string>();
+
+    if (session) {
+      const postIds = postRows.map((p) => p.id);
+      if (postIds.length > 0) {
+        const [likedRows, savedRows] = await Promise.all([
+          db
+            .select({ communityPostId: likes.communityPostId })
+            .from(likes)
+            .where(and(eq(likes.userId, session.user.id), inArray(likes.communityPostId, postIds))),
+          db
+            .select({ postId: savedPosts.postId })
+            .from(savedPosts)
+            .where(and(eq(savedPosts.userId, session.user.id), inArray(savedPosts.postId, postIds))),
+        ]);
+        likedPostIds = new Set(likedRows.map((r) => r.communityPostId));
+        savedPostIds = new Set(savedRows.map((r) => r.postId));
+      }
+    }
+
     const postsWithMeta = postRows.map((post) => ({
       id: post.id,
       title: post.title,
@@ -118,8 +142,8 @@ export async function GET(request: NextRequest) {
       projectName: post.projectName ?? null,
       projectThumbnailUrl: post.projectThumbnailUrl ?? null,
       createdAt: post.createdAt,
-      isLikedByUser: false,
-      isSavedByUser: false,
+      isLikedByUser: likedPostIds.has(post.id),
+      isSavedByUser: savedPostIds.has(post.id),
     }));
 
     return Response.json({

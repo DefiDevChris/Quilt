@@ -19,7 +19,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
   function handleShareToCommunity() {
     onClose();
-    router.push('/socialthreads/new');
+    router.push('/dashboard');
   }
 
   return (

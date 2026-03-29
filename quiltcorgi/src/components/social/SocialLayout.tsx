@@ -122,16 +122,9 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
           </div>
         </div>
 
-        {/* Center: Search */}
+        {/* Center: Section Title (mobile) */}
         <div className="flex justify-center">
-          <div className="hidden md:flex items-center glass-panel rounded-full px-5 py-2.5 w-64 lg:w-72 shadow-inner border border-white/50 bg-white/40 focus-within:bg-white/70 focus-within:border-orange-300 transition-all">
-            <Search size={18} className="text-slate-400 mr-3" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="bg-transparent border-none outline-none text-sm font-medium text-slate-700 w-full placeholder:text-slate-400"
-            />
-          </div>
+          <span className="md:hidden text-sm font-bold text-slate-700">{activeSectionData.label}</span>
         </div>
 
         {/* Right: Avatar + Dropdown */}
@@ -139,13 +132,9 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
           <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative group"
+              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative group bg-orange-100 flex items-center justify-center"
             >
-              <img
-                src="https://i.pravatar.cc/150?u=quiltcorgi"
-                alt="User"
-                className="w-full h-full object-cover"
-              />
+              <span className="text-lg font-bold text-orange-500">Q</span>
             </button>
 
             {dropdownOpen && (

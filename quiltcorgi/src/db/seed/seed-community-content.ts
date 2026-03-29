@@ -981,4 +981,12 @@ async function seedContent() {
     });
 }
 
-seedContent().catch(console.error);
+// Only run when executed directly, not when imported
+const isDirectRun = process.argv[1]?.endsWith('seed-community-content.ts') ||
+  process.argv[1]?.endsWith('seed-community-content.js');
+
+if (isDirectRun) {
+  seedContent().catch(console.error);
+}
+
+export { seedContent };

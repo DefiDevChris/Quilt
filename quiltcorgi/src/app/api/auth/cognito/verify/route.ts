@@ -18,7 +18,7 @@ const resendSchema = z.object({
 /** Confirm email verification with code. */
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`verify:${ip}`, AUTH_RATE_LIMITS.verify);
+  const rl = await checkRateLimit(`verify:${ip}`, AUTH_RATE_LIMITS.verify);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 /** Resend verification code. */
 export async function PUT(request: NextRequest) {
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`resend:${ip}`, AUTH_RATE_LIMITS.resendVerification);
+  const rl = await checkRateLimit(`resend:${ip}`, AUTH_RATE_LIMITS.resendVerification);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {

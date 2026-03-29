@@ -21,7 +21,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     return errorResponse(
       'Pattern import requires a Pro subscription. Upgrade to unlock this feature.',
       'PRO_REQUIRED',
-      401
+      403
     );
   }
 

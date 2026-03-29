@@ -19,9 +19,32 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="text-lg text-warm-text-secondary leading-relaxed">
-          Have a question, idea, or just want to say hello? We&apos;d love to hear from you. Drop us
-          a line and we&apos;ll get back to you as soon as we can. Contact form coming soon.
+          Have a question, idea, or just want to say hello? We&apos;d love to hear from you.
         </p>
+
+        <div className="mt-12 flex flex-col md:flex-row gap-6 justify-center max-w-2xl mx-auto">
+          <a
+            href="mailto:support@quiltcorgi.com"
+            className="flex-1 p-8 rounded-2xl bg-surface border border-outline-variant hover:border-primary transition-colors duration-200"
+          >
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-2xl">mail</span>
+            </div>
+            <h3 className="text-lg font-semibold text-on-surface mb-2">Email Support</h3>
+            <p className="text-secondary text-sm">Reach out to our team directly at support@quiltcorgi.com</p>
+          </a>
+
+          <a
+            href="#"
+            className="flex-1 p-8 rounded-2xl bg-surface border border-outline-variant hover:border-primary transition-colors duration-200"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-2xl">forum</span>
+            </div>
+            <h3 className="text-lg font-semibold text-on-surface mb-2">Community Discord</h3>
+            <p className="text-secondary text-sm">Join our community to chat with other quilters and get help.</p>
+          </a>
+        </div>
       </main>
       <Footer />
     </>

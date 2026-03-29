@@ -436,9 +436,6 @@ export default function DashboardPage() {
             {/* Browse Fabrics — 4 cols, tall, with real image */}
             <Link
               href="/dashboard"
-              onClick={(e) => {
-                e.preventDefault(); /* TODO: navigate to fabrics */
-              }}
               className="col-span-6 md:col-span-4 md:row-span-2 rounded-[18px] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-elevation-1 relative group"
             >
               <Image

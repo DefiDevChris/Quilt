@@ -88,7 +88,7 @@ export function CommunityBoard() {
                     </div>
                   )}
                   <Link
-                    href="/socialthreads/new"
+                    href="/dashboard"
                     className="flex-1 bg-surface-container rounded-full px-5 py-2.5 text-secondary hover:bg-surface-container-high transition-colors text-left"
                   >
                     Share your latest quilt design...
@@ -189,7 +189,7 @@ export function CommunityBoard() {
                 <p className="text-secondary mb-6">Be the first to share your quilt!</p>
                 {user && (
                   <Link
-                    href="/socialthreads/new"
+                    href="/dashboard"
                     className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-on hover:opacity-90 transition-opacity"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

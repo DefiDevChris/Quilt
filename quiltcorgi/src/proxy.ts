@@ -12,7 +12,7 @@ const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_
 
 const jwks = COGNITO_USER_POOL_ID ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
 
-const protectedRoutes = ['/studio', '/profile', '/admin'];
+const protectedRoutes = ['/dashboard', '/studio', '/profile', '/admin'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
 async function verifyIdToken(token: string): Promise<{ sub: string; email: string } | null> {
@@ -31,11 +31,6 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
 }
 
 export async function proxy(req: NextRequest) {
-  // DEV BYPASS — skip all auth checks in development
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
-  }
-
   const { pathname } = req.nextUrl;
   const idToken = req.cookies.get('qc_id_token')?.value;
 

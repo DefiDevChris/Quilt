@@ -22,103 +22,31 @@ interface CommunityResponse {
 
 function PostCard({ post, index }: { post: CommunityPost; index: number }) {
   return (
-    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
       {post.thumbnailUrl ? (
         <div
           className="w-full h-full bg-center bg-cover"
           style={{ backgroundImage: `url(${post.thumbnailUrl})` }}
         />
       ) : (
-        <QuiltThumbnail quilt={GALLERY_QUILTS[index % GALLERY_QUILTS.length]} />
+        <div className="w-full h-full bg-warm-surface flex items-center justify-center">
+          <span className="material-symbols-outlined text-4xl text-warm-border">image</span>
+        </div>
       )}
     </div>
   );
 }
 
-/* Mini quilt patterns for the placeholder gallery — each is a unique design */
-const GALLERY_QUILTS: { name: string; grid: string[][]; cols: number }[] = [
-  {
-    name: 'Ohio Star',
-    cols: 3,
-    grid: [
-      ['#FFF5E6', '#C67B5C', '#FFF5E6'],
-      ['#C67B5C', '#FFB085', '#C67B5C'],
-      ['#FFF5E6', '#C67B5C', '#FFF5E6'],
-    ],
-  },
-  {
-    name: 'Log Cabin',
-    cols: 4,
-    grid: [
-      ['#8B5E3C', '#8B5E3C', '#D4A574', '#D4A574'],
-      ['#8B5E3C', '#C67B5C', '#C67B5C', '#D4A574'],
-      ['#FFF5E6', '#C67B5C', '#C67B5C', '#8B5E3C'],
-      ['#FFF5E6', '#FFF5E6', '#8B5E3C', '#8B5E3C'],
-    ],
-  },
-  {
-    name: 'Irish Chain',
-    cols: 5,
-    grid: [
-      ['#5B7F5B', '#FFF5E6', '#5B7F5B', '#FFF5E6', '#5B7F5B'],
-      ['#FFF5E6', '#5B7F5B', '#FFF5E6', '#5B7F5B', '#FFF5E6'],
-      ['#5B7F5B', '#FFF5E6', '#5B7F5B', '#FFF5E6', '#5B7F5B'],
-      ['#FFF5E6', '#5B7F5B', '#FFF5E6', '#5B7F5B', '#FFF5E6'],
-      ['#5B7F5B', '#FFF5E6', '#5B7F5B', '#FFF5E6', '#5B7F5B'],
-    ],
-  },
-  {
-    name: 'Nine Patch',
-    cols: 3,
-    grid: [
-      ['#7EB5D6', '#FFF5E6', '#7EB5D6'],
-      ['#FFF5E6', '#7EB5D6', '#FFF5E6'],
-      ['#7EB5D6', '#FFF5E6', '#7EB5D6'],
-    ],
-  },
-  {
-    name: 'Rail Fence',
-    cols: 4,
-    grid: [
-      ['#9B4F5A', '#D4A574', '#FFF5E6', '#9B4F5A'],
-      ['#FFF5E6', '#9B4F5A', '#D4A574', '#FFF5E6'],
-      ['#D4A574', '#FFF5E6', '#9B4F5A', '#D4A574'],
-      ['#9B4F5A', '#D4A574', '#FFF5E6', '#9B4F5A'],
-    ],
-  },
-  {
-    name: 'Pinwheel',
-    cols: 4,
-    grid: [
-      ['#E8B84B', '#FFF5E6', '#FFF5E6', '#E8B84B'],
-      ['#FFF5E6', '#E8B84B', '#E8B84B', '#FFF5E6'],
-      ['#FFF5E6', '#E8B84B', '#E8B84B', '#FFF5E6'],
-      ['#E8B84B', '#FFF5E6', '#FFF5E6', '#E8B84B'],
-    ],
-  },
-];
-
-function QuiltThumbnail({ quilt }: { quilt: (typeof GALLERY_QUILTS)[number] }) {
+function EmptyGallery() {
   return (
-    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 p-2 shadow-sm hover:shadow-md transition-shadow">
-      <div
-        className="w-full h-full grid gap-[1px] rounded-md overflow-hidden"
-        style={{ gridTemplateColumns: `repeat(${quilt.cols}, 1fr)` }}
-      >
-        {quilt.grid.flat().map((color, i) => (
-          <div key={i} className="aspect-square" style={{ backgroundColor: color }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PlaceholderGrid() {
-  return (
-    <div className="grid grid-cols-3 gap-4">
-      {GALLERY_QUILTS.map((quilt) => (
-        <QuiltThumbnail key={quilt.name} quilt={quilt} />
-      ))}
+    <div className="w-full flex-1 flex flex-col items-center justify-center p-8 bg-surface border border-outline-variant/50 rounded-2xl text-center">
+      <Mascot pose="sleeping" size="md" />
+      <h4 className="mt-4 text-lg font-semibold text-on-surface" style={{ fontFamily: 'var(--font-display)' }}>
+        It's quiet in here...
+      </h4>
+      <p className="mt-2 text-sm text-secondary max-w-[250px]">
+        No designs have been shared yet. Be the first to post your masterpiece!
+      </p>
     </div>
   );
 }
@@ -146,7 +74,7 @@ export default function CommunityPreview() {
           setPosts(json.data.posts);
         }
       } catch {
-        // Silently fall back to placeholder grid
+        // Silently fall back to empty state
       } finally {
         clearTimeout(timeoutId);
         if (!cancelled) {
@@ -186,7 +114,7 @@ export default function CommunityPreview() {
                 ))}
               </div>
             ) : (
-              <PlaceholderGrid />
+              <EmptyGallery />
             )}
 
             {/* Mascots around community section */}

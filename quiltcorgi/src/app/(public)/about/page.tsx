@@ -19,9 +19,12 @@ export default function AboutPage() {
           About QuiltCorgi
         </h1>
         <p className="text-lg text-warm-text-secondary leading-relaxed">
-          QuiltCorgi is a modern, browser-based quilt design studio built for quilters of every skill
-          level. Design your quilts, pick your fabrics, calculate your yardage, and export true-scale
-          patterns — all in one place. More details coming soon.
+          QuiltCorgi was born from a simple idea: quilting design software should be as joyful 
+          and creative as quilting itself. We've built a modern, browser-based studio that 
+          empowers quilters of all skill levels to bring their visions to life. Whether you're 
+          drafting a custom block, calculating complex yardage, or exploring new colorways, 
+          QuiltCorgi provides the intuitive tools you need without the steep learning curve. 
+          Join our community of passionate makers and start designing your next masterpiece today.
         </p>
       </main>
       <Footer />

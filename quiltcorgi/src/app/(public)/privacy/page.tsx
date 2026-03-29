@@ -19,9 +19,30 @@ export default function PrivacyPage() {
           Privacy Policy
         </h1>
         <p className="text-lg text-warm-text-secondary leading-relaxed">
-          Your privacy matters to us. This page will contain our full privacy policy detailing how
-          QuiltCorgi collects, uses, and protects your information. Full policy coming soon.
+          We are committed to protecting your personal information and your right to privacy.
         </p>
+
+        <div className="mt-12 text-left text-warm-text-secondary space-y-8 max-w-2xl mx-auto">
+          <section>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">1. Information We Collect</h2>
+            <p>We collect personal information that you provide to us, such as name, email address, and payment information (processed securely via Stripe). We also collect usage data to improve our services.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">2. How We Use Your Information</h2>
+            <p>We use the information we collect to securely manage your account, process transactions, provide customer support, and improve the QuiltCorgi studio experience.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">3. Data Security & Storage</h2>
+            <p>Your data is stored securely using industry-standard infrastructure (AWS). We use strict access controls and encryption to protect your project files and personal information from unauthorized access.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">4. Cookies and Tracking</h2>
+            <p>QuiltCorgi uses essential cookies for authentication (session management) and security. We do not use third-party tracking cookies for targeted advertising.</p>
+          </section>
+        </div>
       </main>
       <Footer />
     </>
