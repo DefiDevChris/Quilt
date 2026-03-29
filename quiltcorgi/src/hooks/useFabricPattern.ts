@@ -3,6 +3,7 @@
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { computePatternTransform, type FussyCutConfig } from '@/lib/fussy-cut-engine';
+import { saveRecentFabric } from '@/components/studio/SelectionPanel';
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
@@ -170,6 +171,7 @@ export function useFabricDrop() {
     async (e: React.DragEvent) => {
       const fabricId = e.dataTransfer.getData('application/quiltcorgi-fabric-id');
       const imageUrl = e.dataTransfer.getData('application/quiltcorgi-fabric-url');
+      const fabricName = e.dataTransfer.getData('application/quiltcorgi-fabric-name');
       if (!fabricId || !imageUrl || !fabricCanvas) return;
       e.preventDefault();
 
@@ -179,14 +181,20 @@ export function useFabricDrop() {
       // Find the object under the drop point
       const foundTarget = canvas.findTarget(e.nativeEvent);
 
+      let applied = false;
       if (foundTarget && 'targets' in foundTarget && Array.isArray(foundTarget.targets)) {
-        // findTarget may return a container with targets — get the first actual object
         const target = foundTarget.targets[0] ?? foundTarget;
         canvas.setActiveObject(target as InstanceType<typeof fabric.FabricObject>);
         await applyFabricToObject(null, imageUrl);
+        applied = true;
       } else if (foundTarget) {
         canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
         await applyFabricToObject(null, imageUrl);
+        applied = true;
+      }
+
+      if (applied) {
+        saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
       }
     },
     [fabricCanvas, applyFabricToObject]

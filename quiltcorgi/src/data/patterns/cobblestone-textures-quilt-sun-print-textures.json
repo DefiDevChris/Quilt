@@ -1,0 +1,421 @@
+{
+  "id": "cobblestone-textures-quilt",
+  "name": "Cobblestone Textures Quilt",
+  "description": "Let your creativity take over when making this delightful lap-size quilt. You determine the angle of the patches in each block and the arrangement of the colors. The piecing is an easy \"slice and stitch\" method that you will breeze through in no time at all.",
+  "skillLevel": "beginner",
+  "finishedWidth": 52.5,
+  "finishedHeight": 64,
+  "blocks": [
+    {
+      "name": "Cobblestone Block",
+      "finishedWidth": 7.5,
+      "finishedHeight": 4,
+      "quantity": 112,
+      "pieces": [
+        {
+          "fabricLabel": "Print A",
+          "shape": "rectangle",
+          "cutWidth": 5,
+          "cutHeight": 8,
+          "quantity": 1,
+          "specialInstructions": "Slice diagonally to create wedge patch. Pair with wedge from Print B and sew along angled cut edge. Offset patches so stitching begins where fabrics crisscross."
+        },
+        {
+          "fabricLabel": "Print B",
+          "shape": "rectangle",
+          "cutWidth": 5,
+          "cutHeight": 8,
+          "quantity": 1,
+          "specialInstructions": "Slice diagonally to create wedge patch. Pair with wedge from Print A and sew along angled cut edge."
+        }
+      ]
+    }
+  ],
+  "fabrics": [
+    {
+      "label": "1282-B",
+      "name": "Sun Print Textures 1282-B",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-B"
+    },
+    {
+      "label": "1282-C",
+      "name": "Sun Print Textures 1282-C",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-C"
+    },
+    {
+      "label": "1282-E",
+      "name": "Sun Print Textures 1282-E",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-E"
+    },
+    {
+      "label": "1282-G",
+      "name": "Sun Print Textures 1282-G",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-G"
+    },
+    {
+      "label": "1282-K",
+      "name": "Sun Print Textures 1282-K",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-K"
+    },
+    {
+      "label": "1282-O",
+      "name": "Sun Print Textures 1282-O",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-O"
+    },
+    {
+      "label": "1282-O1",
+      "name": "Sun Print Textures 1282-O1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-O1"
+    },
+    {
+      "label": "1282-P",
+      "name": "Sun Print Textures 1282-P",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1282-P"
+    },
+    {
+      "label": "1283-B",
+      "name": "Sun Print Textures 1283-B",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-B"
+    },
+    {
+      "label": "1283-B1",
+      "name": "Sun Print Textures 1283-B1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-B1"
+    },
+    {
+      "label": "1283-G1",
+      "name": "Sun Print Textures 1283-G1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-G1"
+    },
+    {
+      "label": "1283-K",
+      "name": "Sun Print Textures 1283-K",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-K"
+    },
+    {
+      "label": "1283-O1",
+      "name": "Sun Print Textures 1283-O1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-O1"
+    },
+    {
+      "label": "1283-P",
+      "name": "Sun Print Textures 1283-P",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-P"
+    },
+    {
+      "label": "1283-R",
+      "name": "Sun Print Textures 1283-R",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-R"
+    },
+    {
+      "label": "1283-V1",
+      "name": "Sun Print Textures 1283-V1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1283-V1"
+    },
+    {
+      "label": "1284-B1",
+      "name": "Sun Print Textures 1284-B1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-B1"
+    },
+    {
+      "label": "1284-C",
+      "name": "Sun Print Textures 1284-C",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-C"
+    },
+    {
+      "label": "1284-G",
+      "name": "Sun Print Textures 1284-G",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-G"
+    },
+    {
+      "label": "1284-O",
+      "name": "Sun Print Textures 1284-O",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-O"
+    },
+    {
+      "label": "1284-P1",
+      "name": "Sun Print Textures 1284-P1",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-P1"
+    },
+    {
+      "label": "1284-R",
+      "name": "Sun Print Textures 1284-R",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-R"
+    },
+    {
+      "label": "1284-T",
+      "name": "Sun Print Textures 1284-T",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-T"
+    },
+    {
+      "label": "1284-Y",
+      "name": "Sun Print Textures 1284-Y",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1284-Y"
+    },
+    {
+      "label": "1282-L",
+      "name": "Sun Print Textures 1282-L Binding",
+      "role": "binding",
+      "yardage": 0.5,
+      "sku": "1282-L"
+    },
+    {
+      "label": "1283-L",
+      "name": "Sun Print Textures 1283-L Backing",
+      "role": "backing",
+      "yardage": 3.5,
+      "sku": "1283-L"
+    }
+  ],
+  "layout": {
+    "type": "grid",
+    "rows": 16,
+    "cols": 7,
+    "sashingWidth": 0,
+    "borderWidths": []
+  },
+  "cuttingDirections": [
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-B",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-C",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-E",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-G",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-K",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-O",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-O1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-P",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-B",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-B1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-G1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-K",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-O1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-P",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-R",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-V1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-B1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-C",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-G",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-O",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-P1",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-R",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-T",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1284-Y",
+      "instructions": [
+        "Cut (5) rectangles 5 inches x 8 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1282-L",
+      "instructions": [
+        "Cut (6) strips 2.5 inches x WOF for binding"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "1283-L",
+      "instructions": [
+        "Cut (2) lengths 37 inches x 63 inches, pieced to fit quilt top with overlap on all sides"
+      ]
+    }
+  ],
+  "assemblySteps": [
+    "Select 2 bright rectangles from fabrics close to each other on the color wheel. Stack them with right sides up. Place a long acrylic ruler on top and make a diagonal cut across both rectangles at any angle.",
+    "Take the top patch from the first fabric and the bottom patch from the second fabric. Stitch them together along the cut angled edges, offsetting the patches so the line of stitching begins right where the fabrics crisscross. Press the seam in one direction or open. The block should measure 4.5 inches x 8 inches.",
+    "Repeat with the remaining 2 patches (top of second fabric and bottom of first fabric) to create a second block.",
+    "Repeat steps 1-2 to make 112 blocks total. Vary the angle of the cut for visual interest - some closer to the middle, others closer to the top and bottom edges.",
+    "Arrange 16 blocks in each of 7 vertical columns in diagonal color gradation. Ensure no fabric touches itself. Turn some blocks upside down for variety. Join blocks into columns, then join the columns to complete the quilt top.",
+    "Layer the quilt with batting and backing and baste. Quilt in the ditch around patches or quilt an overall design. Bind to finish the quilt."
+  ],
+  "sourceFilename": "Cobblestone Textures Quilt - Sun Print Textures.pdf",
+  "pageCount": 4,
+  "isQuilt": true,
+  "parseConfidence": 0.9
+}

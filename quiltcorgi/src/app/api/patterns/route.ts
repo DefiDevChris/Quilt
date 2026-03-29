@@ -1,0 +1,120 @@
+import { NextRequest } from 'next/server';
+import { eq, and, desc, asc, count, ilike, or, sql } from 'drizzle-orm';
+import { z } from 'zod';
+import { db } from '@/lib/db';
+import { patternTemplates } from '@/db/schema';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
+import type { PatternTemplateListItem } from '@/types/pattern-template';
+
+const FREE_PATTERN_LIST_LIMIT = 6;
+
+const patternQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(24),
+  skillLevel: z
+    .enum(['beginner', 'confident-beginner', 'intermediate', 'advanced'])
+    .optional(),
+  search: z.string().max(200).optional(),
+  sort: z.enum(['popular', 'name', 'newest']).default('popular'),
+});
+
+export async function GET(request: NextRequest) {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
+
+  const url = request.nextUrl;
+  const parsed = patternQuerySchema.safeParse({
+    page: url.searchParams.get('page') ?? undefined,
+    limit: url.searchParams.get('limit') ?? undefined,
+    skillLevel: url.searchParams.get('skillLevel') ?? undefined,
+    search: url.searchParams.get('search') ?? undefined,
+    sort: url.searchParams.get('sort') ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
+  }
+
+  const { page, limit, sort, skillLevel, search } = parsed.data;
+  const offset = (page - 1) * limit;
+
+  try {
+    const conditions = [eq(patternTemplates.isPublished, true)];
+
+    if (skillLevel) {
+      conditions.push(eq(patternTemplates.skillLevel, skillLevel));
+    }
+
+    if (search) {
+      const searchPattern = `%${search}%`;
+      conditions.push(
+        or(
+          ilike(patternTemplates.name, searchPattern),
+          sql`${search} = ANY(${patternTemplates.tags})`
+        )!
+      );
+    }
+
+    const whereClause = and(...conditions);
+
+    const sortColumn =
+      sort === 'name'
+        ? asc(patternTemplates.name)
+        : sort === 'newest'
+          ? desc(patternTemplates.createdAt)
+          : desc(patternTemplates.importCount);
+
+    const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+
+    const [rows, [totalRow]] = await Promise.all([
+      db
+        .select({
+          id: patternTemplates.id,
+          slug: patternTemplates.slug,
+          name: patternTemplates.name,
+          skillLevel: patternTemplates.skillLevel,
+          finishedWidth: patternTemplates.finishedWidth,
+          finishedHeight: patternTemplates.finishedHeight,
+          blockCount: patternTemplates.blockCount,
+          fabricCount: patternTemplates.fabricCount,
+          thumbnailUrl: patternTemplates.thumbnailUrl,
+          importCount: patternTemplates.importCount,
+        })
+        .from(patternTemplates)
+        .where(whereClause)
+        .orderBy(sortColumn)
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: count() })
+        .from(patternTemplates)
+        .where(whereClause),
+    ]);
+
+    const total = totalRow?.count ?? 0;
+    const upgradeRequired = !isPro && total > FREE_PATTERN_LIST_LIMIT;
+
+    const data: PatternTemplateListItem[] = isPro
+      ? (rows as PatternTemplateListItem[])
+      : (rows.slice(0, FREE_PATTERN_LIST_LIMIT) as PatternTemplateListItem[]);
+
+    return Response.json({
+      success: true,
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        upgradeRequired,
+      },
+    });
+  } catch {
+    return errorResponse('Failed to load patterns', 'INTERNAL_ERROR', 500);
+  }
+}

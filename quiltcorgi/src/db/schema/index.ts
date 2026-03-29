@@ -21,6 +21,7 @@ export { communityPosts } from './communityPosts';
 export { likes } from './likes';
 export { subscriptions } from './subscriptions';
 export { notifications } from './notifications';
+export { patternTemplates } from './patternTemplates';
 export { designVariations } from './designVariations';
 export { userProfiles } from './userProfiles';
 export { comments } from './comments';

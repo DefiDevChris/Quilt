@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
+import { SelectionPanel } from '@/components/studio/SelectionPanel';
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -135,14 +136,132 @@ function Checkbox({
 }
 
 function QuiltPanel() {
-  const [blockWidth, setBlockWidth] = useState('12.000');
-  const [blockHeight, setBlockHeight] = useState('12.000');
-  const [snapsH, setSnapsH] = useState('24');
-  const [snapsV, setSnapsV] = useState('24');
-  const [snapToGrid, setSnapToGrid] = useState(true);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const gridSettings = useCanvasStore((s) => s.gridSettings);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+
+  const [blockWidth, setBlockWidth] = useState(() => canvasWidth.toFixed(3));
+  const [blockHeight, setBlockHeight] = useState(() => canvasHeight.toFixed(3));
+  const [snapsH, setSnapsH] = useState(() =>
+    String(Math.max(1, Math.round(canvasWidth / Math.max(gridSettings.size, 0.01))))
+  );
+  const [snapsV, setSnapsV] = useState(() =>
+    String(Math.max(1, Math.round(canvasHeight / Math.max(gridSettings.size, 0.01))))
+  );
+  const [snapToGrid, setSnapToGrid] = useState(() => gridSettings.snapToGrid);
   const [rotation, setRotation] = useState('0');
   const [shear, setShear] = useState('0');
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const [canvasColor, setCanvasColor] = useState('#ffffff');
+  const colorInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync local state when store values change externally
+  useEffect(() => {
+    setBlockWidth(canvasWidth.toFixed(3));
+  }, [canvasWidth]);
+  useEffect(() => {
+    setBlockHeight(canvasHeight.toFixed(3));
+  }, [canvasHeight]);
+
+  const pushUndo = useCallback(() => {
+    if (!fabricCanvas) return;
+    const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
+    const json = JSON.stringify(canvas.toJSON());
+    useCanvasStore.getState().pushUndoState(json);
+    useProjectStore.getState().setDirty(true);
+  }, [fabricCanvas]);
+
+  const handleBlockWidthChange = useCallback(
+    (val: string) => {
+      setBlockWidth(val);
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        useProjectStore.getState().setCanvasWidth(num);
+        // Recompute snaps from new width
+        const gridSize = useCanvasStore.getState().gridSettings.size;
+        setSnapsH(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleBlockHeightChange = useCallback(
+    (val: string) => {
+      setBlockHeight(val);
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        useProjectStore.getState().setCanvasHeight(num);
+        const gridSize = useCanvasStore.getState().gridSettings.size;
+        setSnapsV(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleSnapsHChange = useCallback(
+    (val: string) => {
+      setSnapsH(val);
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        const width = useProjectStore.getState().canvasWidth;
+        useCanvasStore.getState().setGridSettings({ size: width / num });
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleSnapsVChange = useCallback(
+    (val: string) => {
+      setSnapsV(val);
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        const height = useProjectStore.getState().canvasHeight;
+        useCanvasStore.getState().setGridSettings({ size: height / num });
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleSnapToGridChange = useCallback(
+    (val: boolean) => {
+      setSnapToGrid(val);
+      pushUndo();
+      useCanvasStore.getState().setGridSettings({ snapToGrid: val });
+    },
+    [pushUndo]
+  );
+
+  const handleCanvasColorClick = useCallback(() => {
+    colorInputRef.current?.click();
+  }, []);
+
+  const handleCanvasColorChange = useCallback(
+    async (hex: string) => {
+      setCanvasColor(hex);
+      if (!fabricCanvas) return;
+      pushUndo();
+      const canvas = fabricCanvas as {
+        set: (props: Record<string, unknown>) => void;
+        renderAll: () => void;
+      };
+      canvas.set({ backgroundColor: hex });
+      canvas.renderAll();
+    },
+    [fabricCanvas, pushUndo]
+  );
+
+  // Read initial canvas background color
+  useEffect(() => {
+    if (!fabricCanvas) return;
+    const canvas = fabricCanvas as { backgroundColor?: string };
+    if (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') {
+      setCanvasColor(canvas.backgroundColor);
+    }
+  }, [fabricCanvas]);
 
   const applyTransform = useCallback(
     async (transformFn: (active: any, canvas: any) => void) => {
@@ -162,39 +281,33 @@ function QuiltPanel() {
     [fabricCanvas]
   );
 
-  const SWATCHES = ['#D4883C', '#8B4513', '#F5DEB3', '#2E4057', '#7B3F00', '#A0522D'];
-
   return (
     <div className="flex flex-col gap-[2.75rem]">
-      {/* Sketchbook Fabrics & Colors */}
-      <div>
-        <SectionTitle>Sketchbook Fabrics &amp; Colors</SectionTitle>
-        <div className="flex gap-2 flex-wrap mb-2">
-          {SWATCHES.map((color) => (
-            <div
-              key={color}
-              className="w-14 h-14 rounded-sm cursor-pointer hover:ring-2 hover:ring-primary/30 transition-shadow"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
-        <button type="button" className="text-primary text-body-sm font-medium hover:underline">
-          Open Library
-        </button>
-      </div>
+      {/* Selection details: shape preview, dimensions, color/fabric picker */}
+      <SelectionPanel />
 
       {/* Precision Bar */}
       <div>
         <SectionTitle>Precision Bar</SectionTitle>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Block Width" value={blockWidth} onChange={setBlockWidth} />
-          <NumberInput label="Block Height" value={blockHeight} onChange={setBlockHeight} />
+          <NumberInput
+            label="Block Width"
+            value={blockWidth}
+            onChange={handleBlockWidthChange}
+            suffix="in"
+          />
+          <NumberInput
+            label="Block Height"
+            value={blockHeight}
+            onChange={handleBlockHeightChange}
+            suffix="in"
+          />
         </div>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Snaps Horiz" value={snapsH} onChange={setSnapsH} />
-          <NumberInput label="Snaps Vert" value={snapsV} onChange={setSnapsV} />
+          <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
+          <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
         </div>
-        <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={setSnapToGrid} />
+        <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
       </div>
 
       {/* Rotate & Shear */}
@@ -258,7 +371,18 @@ function QuiltPanel() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-body-sm text-secondary">Canvas Color</span>
-          <div className="w-6 h-6 rounded-sm bg-white border border-outline-variant/30 cursor-pointer" />
+          <div
+            className="w-6 h-6 rounded-sm border border-outline-variant/30 cursor-pointer"
+            style={{ backgroundColor: canvasColor }}
+            onClick={handleCanvasColorClick}
+          />
+          <input
+            ref={colorInputRef}
+            type="color"
+            value={canvasColor}
+            onChange={(e) => handleCanvasColorChange(e.target.value)}
+            className="sr-only"
+          />
         </div>
       </div>
 
@@ -267,83 +391,6 @@ function QuiltPanel() {
 
       {/* Text Tool Properties (shown when text object selected) */}
       <TextToolOptions />
-
-      {/* Print Capabilities */}
-      <div>
-        <SectionTitle>Print Capabilities</SectionTitle>
-        <div className="flex flex-col">
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
-          >
-            <span>Block Overview</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 4L10 8L6 12"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
-          >
-            <span>Cutting Diagram</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 4L10 8L6 12"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={async () => {
-              if (!fabricCanvas) return;
-              const fabric = await import('fabric');
-              const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-              const count = canvas.getObjects().length;
-              window.alert(`Patch count: ${count}`);
-            }}
-            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
-          >
-            <span>Patch Count</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 4L10 8L6 12"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex items-center justify-between py-2.5 text-body-md text-on-surface rounded-md px-2 hover:bg-surface-container-high transition-colors"
-          >
-            <span>Templates</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M6 4L10 8L6 12"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

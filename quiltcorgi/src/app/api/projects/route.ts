@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, asc, count, sql } from 'drizzle-orm';
+import { eq, desc, asc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects } from '@/db/schema';
 import { createProjectSchema, paginationSchema } from '@/lib/validation';
@@ -9,7 +9,6 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { FREE_PROJECT_LIMIT } from '@/lib/constants';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -89,43 +88,29 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    const { name, unitSystem, canvasWidth, canvasHeight, gridSettings } = parsed.data;
-
-    const newProject = await db.transaction(async (tx) => {
-      if (session.user.role === 'free') {
-        const [countRow] = await tx
-          .select({ count: count() })
-          .from(projects)
-          .where(eq(projects.userId, session.user.id));
-
-        if ((countRow?.count ?? 0) >= FREE_PROJECT_LIMIT) {
-          return null;
-        }
-      }
-
-      const [created] = await tx
-        .insert(projects)
-        .values({
-          userId: session.user.id,
-          name,
-          unitSystem,
-          canvasWidth,
-          canvasHeight,
-          gridSettings,
-          canvasData: {},
-        })
-        .returning();
-
-      return created;
-    });
-
-    if (!newProject) {
+    const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+    if (!isPro) {
       return errorResponse(
-        'Free plan allows up to 3 projects. Upgrade to Pro for unlimited projects.',
-        'PROJECT_LIMIT_REACHED',
+        'Saving projects requires a Pro subscription. Upgrade to Pro for $8/month.',
+        'PRO_REQUIRED',
         403
       );
     }
+
+    const { name, unitSystem, canvasWidth, canvasHeight, gridSettings } = parsed.data;
+
+    const [newProject] = await db
+      .insert(projects)
+      .values({
+        userId: session.user.id,
+        name,
+        unitSystem,
+        canvasWidth,
+        canvasHeight,
+        gridSettings,
+        canvasData: {},
+      })
+      .returning();
 
     return Response.json({ success: true, data: newProject }, { status: 201 });
   } catch {

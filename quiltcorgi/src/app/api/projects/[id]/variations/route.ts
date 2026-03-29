@@ -10,7 +10,6 @@ import {
   validationErrorResponse,
 } from '@/lib/auth-helpers';
 import { createVariationSchema } from '@/lib/validation';
-import { FREE_VARIATION_LIMIT } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +47,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
+  const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+  if (!isPro) {
+    return errorResponse('Saving requires a Pro subscription.', 'PRO_REQUIRED', 403);
+  }
+
   const { id: projectId } = await params;
   const project = await verifyProjectOwner(projectId, session.user.id);
   if (!project) return notFoundResponse('Project not found.');
@@ -56,43 +60,18 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body = await request.json();
     const parsed = createVariationSchema.safeParse(body);
     if (!parsed.success) {
-      return validationErrorResponse(parsed.error.message);
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    const role = (session.user as { role?: string }).role ?? 'free';
-
-    const created = await db.transaction(async (tx) => {
-      if (role === 'free') {
-        const existing = await tx
-          .select({ id: designVariations.id })
-          .from(designVariations)
-          .where(eq(designVariations.projectId, projectId));
-
-        if (existing.length >= FREE_VARIATION_LIMIT) {
-          return null;
-        }
-      }
-
-      const [row] = await tx
-        .insert(designVariations)
-        .values({
-          projectId,
-          userId: session.user.id,
-          name: parsed.data.name,
-          canvasData: parsed.data.canvasData,
-        })
-        .returning();
-
-      return row;
-    });
-
-    if (!created) {
-      return errorResponse(
-        `Free plan allows up to ${FREE_VARIATION_LIMIT} variations per project. Upgrade to Pro for unlimited.`,
-        'PRO_REQUIRED',
-        403
-      );
-    }
+    const [created] = await db
+      .insert(designVariations)
+      .values({
+        projectId,
+        userId: session.user.id,
+        name: parsed.data.name,
+        canvasData: parsed.data.canvasData,
+      })
+      .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
   } catch {

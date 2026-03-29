@@ -35,9 +35,11 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
       type="button"
       onClick={handleClick}
       disabled={!user}
-      className={`inline-flex items-center gap-1 transition-colors ${
-        !user ? 'cursor-default opacity-60' : 'cursor-pointer hover:opacity-80'
-      }`}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
+        isLikedByUser
+          ? 'bg-error/10 text-error hover:bg-error/20'
+          : 'hover:bg-surface-container text-secondary'
+      } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
       title={!user ? 'Sign in to like' : isLikedByUser ? 'Unlike' : 'Like'}
     >
       {isLikedByUser ? (

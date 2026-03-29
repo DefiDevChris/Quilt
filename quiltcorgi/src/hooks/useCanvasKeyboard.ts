@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
+import { useBlockStore } from '@/stores/blockStore';
+import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
 
 export function useCanvasKeyboard() {
@@ -134,6 +136,37 @@ export function useCanvasKeyboard() {
             });
           }
           return;
+        }
+
+        // Single-key tool shortcuts (only when no modifier)
+        if (!isCtrl && !e.altKey) {
+          const TOOL_SHORTCUTS: Record<string, ToolType> = {
+            v: 'select',
+            r: 'rectangle',
+            t: 'triangle',
+            p: 'polygon',
+            l: 'line',
+            c: 'curve',
+            x: 'text',
+          };
+          const tool = TOOL_SHORTCUTS[e.key.toLowerCase()];
+          if (tool) {
+            e.preventDefault();
+            useCanvasStore.getState().setActiveTool(tool);
+            return;
+          }
+
+          // Panel toggles
+          if (e.key === 'b' || e.key === 'B') {
+            e.preventDefault();
+            useBlockStore.getState().togglePanel();
+            return;
+          }
+          if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            useFabricStore.getState().togglePanel();
+            return;
+          }
         }
 
         if (e.key === 'i' || e.key === 'I') {

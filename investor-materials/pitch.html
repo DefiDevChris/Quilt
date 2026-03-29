@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FFF9F2;
+    --surface: #F5EDE4;
+    --card: rgba(255,255,255,0.65);
+    --border: #E8DCCB;
+    --peach: #FFB085;
+    --peach-dark: #C67B5C;
+    --peach-light: rgba(255,176,133,0.18);
+    --golden: #FFD166;
+    --coral: #E07B67;
+    --text: #4A3B32;
+    --text-secondary: #6B5A4D;
+    --text-muted: #8B7355;
+    --success: #4a7c59;
+    --font-display: 'Outfit', system-ui, sans-serif;
+    --font-body: 'Manrope', system-ui, sans-serif;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-card: 0 2px 4px rgba(74,59,50,0.04), 0 8px 24px rgba(74,59,50,0.08);
+  }
+
+  html, body { width: 100%; height: 100%; background: #2a1f18; font-family: var(--font-body); }
+  .deck { display: flex; flex-direction: column; gap: 0; }
+
+  .slide {
+    width: 1280px; height: 720px; margin: 32px auto;
+    background: var(--bg); border-radius: var(--radius-xl);
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .slide-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 18px 40px 0; flex-shrink: 0;
+  }
+  .slide-header img.logo { height: 32px; width: auto; }
+  .slide-header .brand {
+    font-family: var(--font-display); font-size: 1rem;
+    font-weight: 700; color: var(--peach-dark); letter-spacing: -0.01em;
+  }
+  .slide-num { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+  .blob { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0; }
+  .blob-peach { background: rgba(255,176,133,0.22); }
+  .blob-golden { background: rgba(255,209,102,0.15); }
+  .blob-coral  { background: rgba(224,123,103,0.12); }
+
+  .glass {
+    background: var(--card); backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    border-radius: var(--radius-lg);
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--peach-light); border: 1px solid rgba(255,176,133,0.35);
+    border-radius: 9999px; padding: 4px 14px;
+    font-size: 0.72rem; font-weight: 600; color: var(--peach-dark);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  .corgi { position: absolute; pointer-events: none; z-index: 10; }
+
+  h2.slide-title {
+    font-family: var(--font-display); font-size: 1.9rem;
+    font-weight: 800; color: var(--text); letter-spacing: -0.02em;
+    padding: 12px 40px 0; position: relative; z-index: 2;
+  }
+  h2.slide-title span { color: var(--peach-dark); }
+
+  .card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-lg);
+    padding: 20px 22px;
+  }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .dot-bad { background: var(--coral); }
+  .dot-good { background: var(--peach-dark); }
+
+  .row { display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+
+  /* ═══ SLIDE 1 ═══ */
+  #s1 .content {
+    position: relative; z-index: 2; padding: 28px 56px 0;
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; gap: 20px; max-width: 640px;
+  }
+  #s1 h1 {
+    font-family: var(--font-display); font-size: 3.6rem;
+    font-weight: 800; color: var(--text); line-height: 1.05; letter-spacing: -0.03em;
+  }
+  #s1 h1 span { color: var(--peach-dark); }
+  #s1 .sub { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; max-width: 480px; }
+  #s1 .stats-row { display: flex; gap: 16px; margin-top: 8px; }
+  #s1 .stat-chip {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.6);
+    border-radius: var(--radius-lg); padding: 14px 20px;
+    box-shadow: var(--shadow-card); backdrop-filter: blur(12px);
+  }
+  #s1 .stat-chip .num {
+    font-family: var(--font-display); font-size: 1.6rem;
+    font-weight: 800; color: var(--peach-dark); line-height: 1;
+  }
+  #s1 .stat-chip .lbl {
+    font-size: 0.72rem; color: var(--text-muted); font-weight: 600;
+    margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  #s1 .corgi-hero { right: -10px; bottom: 0; height: 480px; width: auto; }
+
+  /* ═══ SLIDE 2 ═══ */
+  #s2 .body {
+    position: relative; z-index: 2; flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    padding: 16px 40px 28px;
+  }
+  .bad-card { background: rgba(224,123,103,0.08); border: 1px solid rgba(224,123,103,0.25); }
+  .good-card { background: rgba(255,176,133,0.12); border: 1px solid rgba(255,176,133,0.35); }
+  .tag {
+    display: inline-block; border-radius: 9999px; padding: 2px 10px;
+    font-size: 0.7rem; font-weight: 700; margin-left: 8px;
+    vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .tag-bad { background: rgba(212,114,106,0.15); color: var(--coral); }
+  .tag-good { background: rgba(74,124,89,0.12); color: var(--success); }
+  .card-title {
+    font-family: var(--font-display); font-size: 1rem;
+    font-weight: 700; color: var(--text); margin-bottom: 8px;
+  }
+  .card-sub { font-size: 0.72rem; color: var(--text-muted); font-style: italic; margin-top: 8px; }
+
+  /* ═══ SLIDE 3 ═══ */
+  #s3 .body {
+    position: relative; z-index: 2; flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+    padding: 16px 40px 28px;
+  }
+  .feat-card {
+    border-radius: var(--radius-lg); padding: 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px);
+  }
+  .feat-icon { font-size: 1.6rem; line-height: 1; }
+  .feat-card h3 {
+    font-family: var(--font-display); font-size: 0.95rem;
+    font-weight: 700; color: var(--text);
+  }
+  .feat-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .feat-card ul li {
+    font-size: 0.78rem; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 7px; line-height: 1.4;
+  }
+  .feat-card ul li::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--peach); flex-shrink: 0; margin-top: 5px;
+  }
+
+  /* ═══ SLIDE 4 ═══ */
+  #s4 .body {
+    position: relative; z-index: 2; flex: 1;
+    display: flex; flex-direction: column; gap: 20px;
+    padding: 16px 40px 28px;
+  }
+  .demo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .demo-card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-lg);
+    padding: 18px 20px; text-align: center;
+  }
+  .demo-num {
+    font-family: var(--font-display); font-size: 2rem;
+    font-weight: 800; color: var(--peach-dark); line-height: 1;
+  }
+  .demo-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .demo-sub { font-size: 0.72rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.3; }
+  .table-wrap { flex: 1; }
+  .comp-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-size: 0.8rem; border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .comp-table th {
+    background: var(--surface); color: var(--text-muted);
+    font-weight: 700; font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table td {
+    padding: 10px 14px; color: var(--text-secondary);
+    border-bottom: 1px solid rgba(232,220,203,0.4);
+  }
+  .comp-table tr:nth-child(even) td { background: rgba(245,237,228,0.4); }
+  .comp-table tr:last-child td { font-weight: 700; color: var(--text); background: rgba(255,176,133,0.1); }
+  .comp-table .check { color: var(--success); font-weight: 700; }
+  .comp-table .cross { color: var(--coral); }
+  .comp-table .partial { color: var(--golden); font-weight: 600; }
+
+  /* ═══ SLIDE 5 ═══ */
+  #s5 .body {
+    position: relative; z-index: 2; flex: 1;
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px;
+    padding: 16px 40px 28px; align-items: start;
+  }
+  .chart-wrap {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-lg);
+    padding: 20px 20px 14px; height: 100%;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .chart-title {
+    font-family: var(--font-display); font-size: 0.82rem;
+    font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .chart-area { flex: 1; position: relative; }
+  canvas#revenueChart { width: 100% !important; }
+  .rev-right { display: flex; flex-direction: column; gap: 12px; height: 100%; }
+  .rev-stream {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-md);
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .rev-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .rev-stream .rev-label { font-size: 0.8rem; font-weight: 600; color: var(--text); flex: 1; }
+  .rev-stream .rev-tag {
+    font-size: 0.68rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--surface); border-radius: 9999px; padding: 2px 9px;
+  }
+
+  /* ═══ SLIDE 6 ═══ */
+  #s6 .body {
+    position: relative; z-index: 2; flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    padding: 16px 40px 28px;
+  }
+  .role-card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-lg);
+    padding: 22px 24px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .role-card .role-icon { font-size: 1.6rem; }
+  .role-card h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text); }
+  .role-price {
+    display: inline-block; background: var(--peach-light);
+    border: 1px solid rgba(255,176,133,0.35); border-radius: 9999px;
+    padding: 3px 12px; font-size: 0.72rem; font-weight: 700; color: var(--peach-dark);
+  }
+  .role-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .role-card ul li {
+    font-size: 0.78rem; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;
+  }
+  .role-card ul li::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--peach); flex-shrink: 0; margin-top: 5px;
+  }
+  .right-col { display: flex; flex-direction: column; gap: 14px; }
+  .why-card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow-card);
+    backdrop-filter: blur(16px); border-radius: var(--radius-lg);
+    padding: 18px 22px;
+  }
+  .why-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .why-card p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+  .why-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .why-card ul li {
+    font-size: 0.8rem; color: var(--text-secondary);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .ask-card {
+    background: linear-gradient(135deg, rgba(255,176,133,0.18), rgba(255,209,102,0.12));
+    border: 1px solid rgba(255,176,133,0.4); border-radius: var(--radius-lg);
+    padding: 18px 22px;
+  }
+  .ask-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .ask-num { font-family: var(--font-display); font-size: 0.82rem; font-weight: 800; color: var(--peach-dark); }
+  .ask-label { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+  .ask-sub { font-size: 0.72rem; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 1 — TITLE -->
+<div class="slide" id="s1">
+  <div class="blob blob-peach" style="width:500px;height:500px;top:-100px;right:-80px;"></div>
+  <div class="blob blob-golden" style="width:300px;height:300px;bottom:-60px;left:200px;"></div>
+  <div class="slide-header">
+    <img class="logo" src="logo.png" alt="logo">
+    <span class="brand">[Name TBD]</span>
+    <span class="slide-num">1 / 6</span>
+  </div>
+  <div class="content">
+    <div class="pill">Investor Overview · 2026</div>
+    <h1>Design.<br>Share.<br><span>Quilt together.</span></h1>
+    <p class="sub">A browser-based quilt design studio with a built-in social community. Free to start. Nothing like it exists.</p>
+    <div class="stats-row">
+      <div class="stat-chip"><div class="num">$4.5B</div><div class="lbl">U.S. Market</div></div>
+      <div class="stat-chip"><div class="num">9–11M</div><div class="lbl">Active Quilters</div></div>
+      <div class="stat-chip"><div class="num">659+</div><div class="lbl">Blocks Built</div></div>
+      <div class="stat-chip"><div class="num">$0</div><div class="lbl">To Start</div></div>
+    </div>
+  </div>
+  <img class="corgi corgi-hero" src="corgi-15-sitting-pretty-Photoroom.png" alt="corgi">
+</div>
+
+<!-- SLIDE 2 — THE PROBLEM -->
+<div class="slide" id="s2">
+  <div class="blob blob-coral" style="width:400px;height:400px;top:-80px;right:-60px;"></div>
+  <h2 class="slide-title">The <span>gap</span> no one has filled</h2>
+  <div class="body">
+    <div class="card bad-card">
+      <div class="card-title">Desktop Software <span class="tag tag-bad">$120–$400</span></div>
+      <div class="row"><div class="dot dot-bad"></div>No browser, no mobile — install required</div>
+      <div class="row"><div class="dot dot-bad"></div>No community or sharing</div>
+      <div class="row"><div class="dot dot-bad"></div>Aging UX, no ongoing relationship</div>
+      <div class="card-sub">Electric Quilt 8 ($239.95) · BlockBase+ ($119.95)</div>
+    </div>
+    <div class="card bad-card">
+      <div class="card-title">Free Web Tools <span class="tag tag-bad">Shallow</span></div>
+      <div class="row"><div class="dot dot-bad"></div>No yardage, no PDF export, tiny block libraries</div>
+      <div class="row"><div class="dot dot-bad"></div>No community, no tutorials</div>
+      <div class="row"><div class="dot dot-bad"></div>No fabric upload or real design depth</div>
+      <div class="card-sub">PreQuilt · PatternJam · MyWebQuilter</div>
+    </div>
+    <div class="card good-card" style="grid-column: 1 / -1;">
+      <div class="card-title">What's missing <span class="tag tag-good">The opportunity</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="row"><div class="dot dot-good"></div>A serious design studio that works in any browser, free to start</div>
+        <div class="row"><div class="dot dot-good"></div>A social home built for quilters — not Instagram, not Facebook</div>
+        <div class="row"><div class="dot dot-good"></div>Design + community + learning in one place</div>
+      </div>
+    </div>
+  </div>
+  <img class="corgi" src="corgi-01-sit-shake-Photoroom.png" alt="corgi" style="right:30px;bottom:0;height:160px;">
+</div>
+
+<!-- SLIDE 3 — THE PRODUCT -->
+<div class="slide" id="s3">
+  <div class="blob blob-peach" style="width:450px;height:450px;top:-100px;right:-60px;"></div>
+  <h2 class="slide-title">Two products. <span>One home.</span></h2>
+  <div class="body">
+    <div class="feat-card">
+      <div class="feat-icon">🎨</div>
+      <h3>Design Studio</h3>
+      <ul>
+        <li>659+ blocks · 6 layout modes</li>
+        <li>Automatic yardage & cutting charts</li>
+        <li>True 1:1 PDF export with seam allowances</li>
+        <li>Upload real fabrics — preview before buying</li>
+        <li>Photo-to-pattern (Pro)</li>
+        <li>No install. Any browser.</li>
+      </ul>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🧵</div>
+      <h3>Social Threads</h3>
+      <ul>
+        <li>Quilt-only social feed</li>
+        <li>Show & Tell, WIP, Help, Inspiration</li>
+        <li>Follow makers, build your feed</li>
+        <li>Threaded comments, real conversations</li>
+        <li>Moderated with 7-level trust system</li>
+      </ul>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📚</div>
+      <h3>Learn</h3>
+      <ul>
+        <li>Step-by-step tutorials (all levels)</li>
+        <li>Blog — tips, techniques, spotlights</li>
+        <li>Community content with editorial review</li>
+      </ul>
+      <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--border);">
+        <div style="font-size:0.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Free</div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);">Genuinely useful — builds habit</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-top:8px;">Pro — $8/mo or $60/yr</div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);">Full library, unlimited saves, PDF export</div>
+      </div>
+    </div>
+  </div>
+  <img class="corgi" src="corgi-02-jumping-Photoroom.png" alt="corgi" style="right:20px;bottom:0;height:140px;">
+</div>
+
+<!-- SLIDE 4 — MARKET & COMPETITION -->
+<div class="slide" id="s4">
+  <div class="blob blob-golden" style="width:400px;height:400px;top:-80px;right:-60px;"></div>
+  <h2 class="slide-title">Market & <span>competition</span></h2>
+  <div class="body">
+    <div class="demo-grid">
+      <div class="demo-card">
+        <div class="demo-num">$4.5B</div>
+        <div class="demo-label">U.S. Market</div>
+        <div class="demo-sub">Stable. $1.8B in 2000 → $4.5B in 2025.</div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-num">9–11M</div>
+        <div class="demo-label">Active Quilters</div>
+        <div class="demo-sub">Stable base for 10+ years.</div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-num">18%</div>
+        <div class="demo-label">New Quilters</div>
+        <div class="demo-sub">Up from 11%. Younger, tech-comfortable.</div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-num">$3,200</div>
+        <div class="demo-label">Annual Spend</div>
+        <div class="demo-sub">Per dedicated quilter. Loyal, high-income demo.</div>
+      </div>
+    </div>
+    <div class="table-wrap card" style="padding:0;overflow:hidden;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Platform</th><th>Price</th><th>Browser</th><th>Design Tools</th><th>Community</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Electric Quilt 8</td><td>$239.95</td><td class="cross">✗</td><td>Professional</td><td class="cross">✗</td></tr>
+          <tr><td>PreQuilt</td><td>Free</td><td class="check">✓</td><td class="partial">Basic</td><td class="cross">✗</td></tr>
+          <tr><td>PatternJam</td><td>Free</td><td class="check">✓</td><td class="partial">Basic</td><td class="partial">Share only</td></tr>
+          <tr><td>Facebook Groups</td><td>Free</td><td class="check">✓</td><td class="cross">✗</td><td class="partial">Scattered</td></tr>
+          <tr><td><strong>[Name TBD]</strong></td><td><strong>Free / $8</strong></td><td class="check"><strong>✓</strong></td><td><strong>Professional</strong></td><td class="check"><strong>✓</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — REVENUE -->
+<div class="slide" id="s5">
+  <div class="blob blob-peach" style="width:400px;height:400px;top:-80px;right:-60px;"></div>
+  <h2 class="slide-title">Revenue <span>potential</span></h2>
+  <div class="body">
+    <div class="chart-wrap">
+      <div class="chart-title">Projected ARR — Subscriptions at 3% Pro Conversion</div>
+      <div class="chart-area"><canvas id="revenueChart"></canvas></div>
+      <div style="font-size:0.68rem;color:var(--text-muted);margin-top:4px;">$60/yr Pro · 9–11M quilters · 3% = $16.2M ARR at scale · Conservative estimate</div>
+    </div>
+    <div class="rev-right">
+      <div style="font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Revenue Streams</div>
+      <div class="rev-stream"><div class="rev-dot" style="background:var(--peach-dark);"></div><div class="rev-label">Subscriptions</div><div class="rev-tag">Active</div></div>
+      <div class="rev-stream"><div class="rev-dot" style="background:#FFD166;"></div><div class="rev-label">Fabric Brand Partnerships</div><div class="rev-tag">Near-Term</div></div>
+      <div class="rev-stream"><div class="rev-dot" style="background:#E07B67;"></div><div class="rev-label">Equipment Affiliates</div><div class="rev-tag">Mid-Term</div></div>
+      <div class="rev-stream"><div class="rev-dot" style="background:#4a7c59;"></div><div class="rev-label">Educator Video Lessons</div><div class="rev-tag">Mid-Term</div></div>
+      <div class="rev-stream"><div class="rev-dot" style="background:#9B7EBD;"></div><div class="rev-label">Pattern Marketplace</div><div class="rev-tag">Future</div></div>
+      <div style="background:var(--peach-light);border:1px solid rgba(255,176,133,0.35);border-radius:var(--radius-md);padding:12px 14px;margin-top:auto;">
+        <div style="font-size:0.72rem;font-weight:700;color:var(--peach-dark);text-transform:uppercase;letter-spacing:0.04em;">Infrastructure</div>
+        <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">~$45–$110/mo early · AWS serverless · scales with users</div>
+      </div>
+    </div>
+  </div>
+  <img class="corgi" src="corgi-03-running-Photoroom.png" alt="corgi" style="right:20px;bottom:0;height:150px;">
+</div>
+
+<!-- SLIDE 6 — TEAM, WHY NOW, ASK -->
+<div class="slide" id="s6">
+  <div class="blob blob-peach" style="width:400px;height:400px;top:-80px;right:-60px;"></div>
+  <div class="blob blob-golden" style="width:280px;height:280px;bottom:-40px;left:60px;"></div>
+  <h2 class="slide-title">Team, <span>why now</span>, next steps</h2>
+  <div class="body">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="role-card">
+        <div class="role-icon">💻</div>
+        <h3>Developer</h3>
+        <div class="role-price">$80K–$130K/yr · or contract to start</div>
+        <ul>
+          <li>Platform maintenance, new features, infrastructure</li>
+          <li>Next.js / TypeScript / PostgreSQL / AWS / Stripe</li>
+          <li>1,305 tests — solid codebase to build on</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🪡</div>
+        <h3>Community & Content Lead</h3>
+        <div class="role-price">$45K–$75K/yr · must love quilting</div>
+        <ul>
+          <li>Moderate Social Threads, welcome members</li>
+          <li>Blog, tutorials, customer support</li>
+          <li>Outreach to brands, guilds, influencers</li>
+          <li>Social media: Instagram, Pinterest, YouTube</li>
+        </ul>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="why-card">
+        <h3>Why now</h3>
+        <p>EQ8 is $239.95, desktop-only, no community. 18% of quilters are brand new and looking for an online home. No browser tool combines real design depth with a social layer. <strong>The platform is already built.</strong> This is a growth conversation.</p>
+      </div>
+      <div class="ask-card">
+        <h3>The ask</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="ask-num">01</span>
+            <div><div class="ask-label">Hire Community & Content Lead</div><div class="ask-sub">Start building Social Threads</div></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="ask-num">02</span>
+            <div><div class="ask-label">Launch marketing</div><div class="ask-sub">Instagram, Pinterest — target quilters where they are</div></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="ask-num">03</span>
+            <div><div class="ask-label">Close first fabric brand partnership</div><div class="ask-sub">Andover integration already coded</div></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="ask-num">04</span>
+            <div><div class="ask-label">Iterate on user feedback</div><div class="ask-sub">Ship, learn, repeat</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <img class="corgi" src="corgi-06-sitting-Photoroom.png" alt="corgi" style="right:24px;bottom:0;height:200px;">
+</div>
+
+</div><!-- /deck -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('revenueChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['5K', '10K', '25K', '50K', '100K', '180K'],
+    datasets: [
+      { label: '1% conversion', data: [3, 6, 15, 30, 60, 108], backgroundColor: 'rgba(255,176,133,0.45)', borderColor: 'rgba(198,123,92,0.7)', borderWidth: 1.5, borderRadius: 6, borderSkipped: false },
+      { label: '3% conversion', data: [9, 18, 45, 90, 180, 324], backgroundColor: 'rgba(255,176,133,0.85)', borderColor: 'rgba(198,123,92,1)', borderWidth: 1.5, borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { font: { family: 'Manrope', size: 11, weight: '600' }, color: '#6B5A4D', boxWidth: 12, boxHeight: 12, borderRadius: 4, padding: 12 } },
+      tooltip: { callbacks: { label: c => ` $${c.parsed.y}K ARR` }, bodyFont: { family: 'Manrope', size: 12 }, titleFont: { family: 'Outfit', size: 12, weight: '700' }, backgroundColor: 'rgba(255,249,242,0.95)', titleColor: '#4A3B32', bodyColor: '#6B5A4D', borderColor: 'rgba(232,220,203,0.8)', borderWidth: 1, padding: 10 }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: 'Manrope', size: 10, weight: '600' }, color: '#8B7355' }, border: { display: false } },
+      y: { grid: { color: 'rgba(232,220,203,0.5)', drawBorder: false }, ticks: { font: { family: 'Manrope', size: 10, weight: '600' }, color: '#8B7355', callback: v => `$${v}K` }, border: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>

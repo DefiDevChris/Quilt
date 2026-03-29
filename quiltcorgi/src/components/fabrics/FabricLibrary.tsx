@@ -43,6 +43,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
     (e: React.DragEvent, fabric: FabricListItem) => {
       e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabric.id);
       e.dataTransfer.setData('application/quiltcorgi-fabric-url', fabric.imageUrl);
+      e.dataTransfer.setData('application/quiltcorgi-fabric-name', fabric.name);
       e.dataTransfer.effectAllowed = 'copy';
       onFabricDragStart(e, fabric.id);
     },

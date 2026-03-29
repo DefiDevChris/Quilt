@@ -5,7 +5,19 @@ import { useProjectStore } from '@/stores/projectStore';
 import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 
-export function StudioTopBar() {
+interface StudioTopBarProps {
+  readonly onOpenImageExport?: () => void;
+  readonly onOpenPdfExport?: () => void;
+  readonly onOpenHelp?: () => void;
+  readonly onSave?: () => void;
+}
+
+export function StudioTopBar({
+  onOpenImageExport,
+  onOpenPdfExport,
+  onOpenHelp,
+  onSave,
+}: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -47,6 +59,7 @@ export function StudioTopBar() {
           </div>
           <button
             type="button"
+            onClick={onOpenImageExport}
             className="bg-on-surface text-white rounded-md px-[1rem] py-[0.5rem] text-sm font-medium hover:opacity-90 transition-opacity"
           >
             EXPORT
@@ -54,7 +67,14 @@ export function StudioTopBar() {
         </div>
       </div>
 
-      <HamburgerDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <HamburgerDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onSave={onSave}
+        onOpenImageExport={onOpenImageExport}
+        onOpenPdfExport={onOpenPdfExport}
+        onOpenHelp={onOpenHelp}
+      />
     </>
   );
 }

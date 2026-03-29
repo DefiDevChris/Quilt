@@ -14,7 +14,6 @@ function QuiltWorktableMockup() {
             My_First_Quilt.qc
           </div>
         </div>
-        <div className="text-[10px] text-warm-text-muted font-mono">Zoom: 45%</div>
       </div>
 
       <div className="flex flex-1 overflow-hidden relative">
@@ -474,28 +473,32 @@ const tabs = [
     id: 'quilt',
     label: 'Quilt Worktable',
     shortLabel: 'Quilt',
-    caption: 'Six layout modes: free-form, grid, sashing, on-point, medallion, and lone-star.',
+    caption:
+      'Choose from six layout modes — grid, sashing, on-point, medallion, lone star, or go completely free-form.',
     component: <QuiltWorktableMockup />,
   },
   {
     id: 'block',
     label: 'Block Worktable',
     shortLabel: 'Block',
-    caption: 'Snap-to-grid drafting with EasyDraw for custom block creation.',
+    caption:
+      'Draft your own blocks with EasyDraw — snap-to-grid seam lines make precision effortless.',
     component: <BlockWorktableMockup />,
   },
   {
     id: 'image',
     label: 'Image Worktable',
     shortLabel: 'Image',
-    caption: 'Calibrate imported fabrics to real-world scale for pixel-perfect accuracy.',
+    caption:
+      'Upload your fabric photos and calibrate them to real-world scale — what you see is what you sew.',
     component: <ImageWorktableMockup />,
   },
   {
     id: 'print',
     label: 'Print Worktable',
     shortLabel: 'Print',
-    caption: 'Export true 1:1 scale PDF patterns with seam allowances and cutting guides.',
+    caption:
+      'Export true 1:1 scale PDFs with cutting instructions, yardage summaries, and seam allowances included.',
     component: <PrintWorktableMockup />,
   },
 ];
@@ -518,12 +521,13 @@ export default function WorkspacePreview() {
               className="text-3xl md:text-4xl font-bold text-warm-text"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Four Purpose-Built Worktables
+              Four Worktables. One Creative Flow.
             </h2>
           </div>
           <p className="text-lg text-warm-text-secondary mb-16 max-w-2xl mx-auto">
-            Each worktable is designed for a specific stage of your quilting workflow, from layout
-            to block drafting to fabric calibration to print export.
+            Each worktable handles a different stage of your quilting journey — lay out your design,
+            draft custom blocks, calibrate your fabrics, and export patterns ready for the sewing
+            room.
           </p>
         </motion.div>
 

@@ -9,6 +9,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { FREE_FABRIC_LIMIT } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,9 +19,6 @@ export async function GET(request: NextRequest) {
 
   const userRole = session.user.role;
   const isPro = userRole === 'pro' || userRole === 'admin';
-  if (!isPro) {
-    return errorResponse('Fabric library requires a Pro subscription.', 'PRO_REQUIRED', 403);
-  }
 
   const url = request.nextUrl;
   const parsed = fabricSearchSchema.safeParse({
@@ -40,9 +38,14 @@ export async function GET(request: NextRequest) {
   const offset = (page - 1) * limit;
 
   try {
+    // Free users: only see first N default fabrics, no user fabrics
+    const effectiveLimit = isPro ? limit : Math.min(limit, FREE_FABRIC_LIMIT);
+
     const conditions = [];
 
-    if (scope === 'system') {
+    if (!isPro) {
+      conditions.push(eq(fabrics.isDefault, true));
+    } else if (scope === 'system') {
       conditions.push(eq(fabrics.isDefault, true));
     } else if (scope === 'user') {
       conditions.push(eq(fabrics.userId, session.user.id));
@@ -82,22 +85,25 @@ export async function GET(request: NextRequest) {
         .from(fabrics)
         .where(whereClause)
         .orderBy(asc(fabrics.name))
-        .limit(limit)
-        .offset(offset),
+        .limit(effectiveLimit)
+        .offset(isPro ? offset : 0),
       db.select({ count: count() }).from(fabrics).where(whereClause),
     ]);
 
-    const total = totalRow?.count ?? 0;
+    const total = isPro
+      ? (totalRow?.count ?? 0)
+      : Math.min(totalRow?.count ?? 0, FREE_FABRIC_LIMIT);
 
     return Response.json({
       success: true,
       data: {
         fabrics: fabricRows,
+        upgradeRequired: !isPro,
         pagination: {
-          page,
-          limit,
+          page: isPro ? page : 1,
+          limit: effectiveLimit,
           total,
-          totalPages: Math.ceil(total / limit),
+          totalPages: isPro ? Math.ceil(total / limit) : 1,
         },
       },
     });

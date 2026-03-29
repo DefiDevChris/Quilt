@@ -1,17 +1,17 @@
 # QuiltCorgi
 
-A modern, browser-based quilt design studio. Professional block drafting, fabric visualization, generative design tools, and 1:1 pattern printing -- free to start, no download required.
+Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Four worktables, 659+ quilt blocks, and a community of quilters who get it — all in your browser, free to start.
 
-## Features
+## What You Can Do
 
-- **Canvas Studio** -- Fabric.js-powered design surface with 4 worktables (Quilt, Block, Image, Print)
-- **659 Block Library** -- Procedurally generated across 20+ categories, plus custom block drafting
-- **Design Tools** -- EasyDraw, Applique, Colorway, Text/Labels, Image Tracing, Fussy Cut
-- **Production Tools** -- FPP templates, rotary cutting charts, pieced borders, 1:1 PDF export
-- **Generative Design** -- Serendipity block generator, Kaleidoscope, Photo Patchwork, Frames
-- **Layout Engine** -- Grid, sashing, on-point, medallion, lone star, free-form
-- **Community** -- Profiles, posts, threaded comments, trust-based moderation, blog
-- **Pro Tier** -- OCR quilt reconstruction, fabric calibration, unlimited variations, S3 uploads
+- **Design Studio** — Four connected worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
+- **659+ Block Library** — Browse by category or draft your own with EasyDraw, Applique, and Freeform tools
+- **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
+- **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
+- **Creative Tools** — Serendipity color shuffling, Kaleidoscope generator, Photo Patchwork, Fussy Cut previewing
+- **Six Layout Modes** — Grid, sashing, on-point, medallion, lone star, or completely free-form
+- **Community** — Share designs, discover inspiration, threaded comments, and a blog
+- **Pro Features** — Snap a photo of a quilt and recreate it digitally, fabric calibration, unlimited projects
 
 ## Tech Stack
 
@@ -28,6 +28,17 @@ A modern, browser-based quilt design studio. Professional block drafting, fabric
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe (checkout, webhooks, subscription management) |
 | Testing | Vitest (1,305 tests) + Playwright E2E |
+
+## Brand Voice
+
+All user-facing copy follows a warm, quilter-friendly voice. See `quiltcorgi/README.md` for the full style guide. The short version:
+
+- **Warm and welcoming**, like a knowledgeable friend in a quilt shop
+- **Playful** — punchy headlines, occasional wordplay
+- **Address quilters directly** with "you" / "your"
+- **Use quilting vocabulary naturally** — trust the quilter to know the terms
+- **Lead with what the quilter gets**, not what the software does
+- **Avoid** generic SaaS language ("professional-grade", "comprehensive suite", "leverage", "robust")
 
 ## Getting Started
 

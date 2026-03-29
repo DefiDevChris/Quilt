@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import {
   ZOOM_MIN,
   ZOOM_MAX,
-  FREE_PROJECT_LIMIT,
   FREE_BLOCK_LIMIT,
+  FREE_FABRIC_LIMIT,
+  PRO_PRICE_MONTHLY,
+  PRO_PRICE_YEARLY,
   PIXELS_PER_INCH,
   PDF_POINTS_PER_INCH,
   DEFAULT_SEAM_ALLOWANCE_INCHES,
@@ -21,8 +23,13 @@ describe('constants', () => {
   });
 
   it('has correct free tier limits', () => {
-    expect(FREE_PROJECT_LIMIT).toBe(3);
-    expect(FREE_BLOCK_LIMIT).toBe(100);
+    expect(FREE_BLOCK_LIMIT).toBe(20);
+    expect(FREE_FABRIC_LIMIT).toBe(10);
+  });
+
+  it('has correct pricing', () => {
+    expect(PRO_PRICE_MONTHLY).toBe(8);
+    expect(PRO_PRICE_YEARLY).toBe(60);
   });
 
   it('has correct DPI and point values', () => {

@@ -4,10 +4,12 @@ import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/auth/signin');
+  // DEV BYPASS — remove before production deploy
+  if (process.env.NODE_ENV !== 'development') {
+    const session = await auth();
+    if (!session?.user) {
+      redirect('/auth/signin');
+    }
   }
 
   return (

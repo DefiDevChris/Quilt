@@ -1,0 +1,4 @@
+{"type":"server-started","port":60892,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:60892","screen_dir":"/home/chrishoran/Desktop/Quilt/quiltcorgi/.superpowers/brainstorm/90561-1774729663/content","state_dir":"/home/chrishoran/Desktop/Quilt/quiltcorgi/.superpowers/brainstorm/90561-1774729663/state"}
+{"type":"screen-added","file":"/home/chrishoran/Desktop/Quilt/quiltcorgi/.superpowers/brainstorm/90561-1774729663/content/dashboard-layout.html"}
+{"type":"screen-added","file":"/home/chrishoran/Desktop/Quilt/quiltcorgi/.superpowers/brainstorm/90561-1774729663/content/dashboard-bento-v2.html"}
+{"type":"server-stopped","reason":"idle timeout"}

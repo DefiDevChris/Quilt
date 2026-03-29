@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 interface NewProjectDialogProps {
   open: boolean;
   onClose: () => void;
+  onBrowsePatterns?: () => void;
 }
 
-export function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProjectDialogProps) {
   const router = useRouter();
   const [name, setName] = useState('Untitled Quilt');
   const [unitSystem, setUnitSystem] = useState<'imperial' | 'metric'>('imperial');
@@ -67,6 +68,51 @@ export function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
           <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-sm text-error">
             {error}
           </div>
+        )}
+
+        {onBrowsePatterns && (
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              onBrowsePatterns();
+            }}
+            className="w-full mb-4 flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3.5 text-left transition-colors hover:bg-surface-container-high group"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="shrink-0 text-primary"
+            >
+              <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
+              <rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
+              <rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
+                Start from Pattern
+              </p>
+              <p className="text-xs text-secondary">Choose from our pattern library</p>
+            </div>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="ml-auto text-secondary"
+            >
+              <path
+                d="M6 3l5 5-5 5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         )}
 
         <form onSubmit={handleCreate} className="space-y-4">

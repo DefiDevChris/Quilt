@@ -1,17 +1,22 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Link from 'next/link';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import { MobileDrawer } from '@/components/mobile/MobileDrawer';
 import { UploadSheet } from '@/components/mobile/UploadSheet';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileNotifications } from '@/components/mobile/MobileNotifications';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export function MobileShell({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((s) => s.user);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
   const isNotificationsOpen = useNotificationStore((s) => s.isOpen);
+
+  const isAuthenticated = !!user;
 
   const handleFabPress = useCallback(() => {
     setUploadSheetOpen(true);
@@ -39,14 +44,29 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
             <line x1="4" y1="17" x2="16" y2="17" />
           </svg>
         </button>
-        <span className="text-base font-bold text-on-surface tracking-wide">QuiltCorgi</span>
-        <NotificationBell />
+        <Link href="/dashboard" className="text-base font-bold text-on-surface tracking-wide">
+          QuiltCorgi
+        </Link>
+        {isAuthenticated ? (
+          <NotificationBell />
+        ) : (
+          <Link
+            href="/auth/signin"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Sign In
+          </Link>
+        )}
       </header>
       <main className="px-0">{children}</main>
       <MobileBottomNav onFabPress={handleFabPress} />
       <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
-      <UploadSheet isOpen={uploadSheetOpen} onClose={() => setUploadSheetOpen(false)} />
-      {isNotificationsOpen && <MobileNotifications />}
+      {isAuthenticated && (
+        <>
+          <UploadSheet isOpen={uploadSheetOpen} onClose={() => setUploadSheetOpen(false)} />
+          {isNotificationsOpen && <MobileNotifications />}
+        </>
+      )}
     </div>
   );
 }

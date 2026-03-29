@@ -146,7 +146,8 @@ export async function GET(
           .leftJoin(users, eq(comments.authorId, users.id))
           .leftJoin(userProfiles, eq(comments.authorId, userProfiles.userId))
           .where(sql`${comments.replyToId} = ANY(${topLevelIds})`)
-          .orderBy(desc(comments.createdAt)),
+          .orderBy(desc(comments.createdAt))
+          .limit(topLevelIds.length * MAX_INLINE_REPLIES * 2),
         db
           .select({
             replyToId: comments.replyToId,

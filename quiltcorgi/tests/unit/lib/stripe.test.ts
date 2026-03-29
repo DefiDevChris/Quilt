@@ -2,19 +2,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock environment variables before importing
 vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake_key_for_testing');
-vi.stubEnv('STRIPE_PRO_PRICE_ID', 'price_test_pro_monthly');
+vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', 'price_test_pro_monthly');
+vi.stubEnv('STRIPE_PRO_PRICE_YEARLY', 'price_test_pro_yearly');
 vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test_secret');
 
 describe('stripe lib', () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake_key_for_testing');
-    vi.stubEnv('STRIPE_PRO_PRICE_ID', 'price_test_pro_monthly');
+    vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', 'price_test_pro_monthly');
+    vi.stubEnv('STRIPE_PRO_PRICE_YEARLY', 'price_test_pro_yearly');
   });
 
-  it('exports STRIPE_PRO_PRICE_ID from env', async () => {
-    const { STRIPE_PRO_PRICE_ID } = await import('@/lib/stripe');
-    expect(STRIPE_PRO_PRICE_ID).toBe('price_test_pro_monthly');
+  it('getStripePriceId returns monthly price by default', async () => {
+    const { getStripePriceId } = await import('@/lib/stripe');
+    expect(getStripePriceId()).toBe('price_test_pro_monthly');
+    expect(getStripePriceId('monthly')).toBe('price_test_pro_monthly');
+  });
+
+  it('getStripePriceId returns yearly price when requested', async () => {
+    const { getStripePriceId } = await import('@/lib/stripe');
+    expect(getStripePriceId('yearly')).toBe('price_test_pro_yearly');
   });
 
   it('exports PAYMENT_FAILURE_GRACE_DAYS as 7', async () => {

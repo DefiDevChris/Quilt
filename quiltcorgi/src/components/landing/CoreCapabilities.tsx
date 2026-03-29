@@ -191,35 +191,35 @@ export default function CoreCapabilities() {
                 className="text-3xl md:text-4xl font-bold text-warm-text leading-tight"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                Professional-grade tools.
+                Tools quilters actually need.
                 <br />
-                <span className="text-warm-peach">Built for precision.</span>
+                <span className="text-warm-peach">Built by quilters who care.</span>
               </h2>
             </div>
 
             <p className="text-lg text-warm-text-secondary mb-8">
-              QuiltCorgi equips you with a comprehensive suite of design utilities. From Photo
-              Patchwork that converts images into quilt designs, to Fussy Cut previewing that
-              positions fabric motifs on individual patches, every feature is engineered for
-              quilters who demand the best.
+              Whether you&apos;re converting a favorite photo into a patchwork design, positioning
+              fabric motifs with Fussy Cut, or letting the Serendipity Generator surprise you with
+              unexpected color combinations — every tool is made to help you create something
+              you&apos;ll be proud of.
             </p>
 
             <ul className="space-y-4 mb-10">
-              <CheckItem>Automatic yardage and sub-cutting calculations</CheckItem>
-              <CheckItem>Fussy Cut and Photo Patchwork previewing</CheckItem>
-              <CheckItem>True 1:1 scale PDF exports with seam allowances</CheckItem>
-              <CheckItem>EasyDraw seam-line block drafting</CheckItem>
-              <CheckItem>Applique layering and Colorway bulk recoloring</CheckItem>
-              <CheckItem>FPP templates and rotary cutting charts</CheckItem>
-              <CheckItem>OCR pattern reconstruction from photos (Pro)</CheckItem>
-              <CheckItem>Infinite canvas with 6 dynamic layout modes</CheckItem>
+              <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
+              <CheckItem>Fussy Cut previewing and Photo Patchwork conversion</CheckItem>
+              <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
+              <CheckItem>EasyDraw for drafting custom blocks by seam line</CheckItem>
+              <CheckItem>Applique layering and one-click Colorway recoloring</CheckItem>
+              <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
+              <CheckItem>Snap a photo of a quilt and recreate it digitally (Pro)</CheckItem>
+              <CheckItem>Six layout modes on an infinite canvas</CheckItem>
             </ul>
 
             <Link
               href="/auth/signup"
               className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-lg hover:bg-warm-peach-dark transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              Explore All Features
+              See What You Can Create
             </Link>
           </motion.div>
 

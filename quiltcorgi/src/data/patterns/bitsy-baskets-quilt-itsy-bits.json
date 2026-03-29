@@ -1,0 +1,447 @@
+{
+  "id": "bitsy-baskets-quilt",
+  "name": "Bitsy Baskets Quilt",
+  "description": "Mini-basket blocks make up this charming wall quilt. Follow the diagrams to make this quilt, or choose your own combinations for the baskets and backgrounds. The appliquéd posies add a whimsical touch. The quilt features 84 unique basket blocks arranged on point with gray borders and optional purple flange.",
+  "skillLevel": "intermediate",
+  "finishedWidth": 48,
+  "finishedHeight": 48,
+  "blocks": [
+    {
+      "name": "Bitsy Basket",
+      "finishedWidth": 4.5,
+      "finishedHeight": 4.5,
+      "quantity": 84,
+      "pieces": [
+        {
+          "fabricLabel": "Background",
+          "shape": "square",
+          "cutWidth": 5.375,
+          "cutHeight": 5.375,
+          "quantity": 1,
+          "specialInstructions": "Cut in half diagonally to make 2 half-square triangles; one triangle is used for the block background, one is leftover for another block"
+        },
+        {
+          "fabricLabel": "Background",
+          "shape": "square",
+          "cutWidth": 2.5,
+          "cutHeight": 2.5,
+          "quantity": 2,
+          "specialInstructions": "For HST construction; pair with Basket squares. Cut 2 3/8 inch if you do not wish to trim later. Yields 4 HST; 3 used in block, 1 leftover"
+        },
+        {
+          "fabricLabel": "Basket",
+          "shape": "custom",
+          "cutWidth": 0,
+          "cutHeight": 0,
+          "quantity": 1,
+          "specialInstructions": "Handle template for appliqué"
+        },
+        {
+          "fabricLabel": "Basket",
+          "shape": "square",
+          "cutWidth": 2.5,
+          "cutHeight": 2.5,
+          "quantity": 2,
+          "specialInstructions": "For HST construction; pair with Background squares. Cut 2 3/8 inch if you do not wish to trim later. Yields 4 HST; 3 used in block, 1 leftover"
+        },
+        {
+          "fabricLabel": "Basket",
+          "shape": "square",
+          "cutWidth": 2.375,
+          "cutHeight": 2.375,
+          "quantity": 2,
+          "specialInstructions": "Cut in half diagonally to make 4 half-square triangles; 3 are used in the block, 1 is leftover for another Basket Block"
+        }
+      ]
+    }
+  ],
+  "fabrics": [
+    {
+      "label": "1",
+      "name": "Fabric 1",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1450-G"
+    },
+    {
+      "label": "2",
+      "name": "Fabric 2",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1450-N"
+    },
+    {
+      "label": "3",
+      "name": "Fabric 3",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1450-R"
+    },
+    {
+      "label": "4",
+      "name": "Fabric 4",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1451-C"
+    },
+    {
+      "label": "5",
+      "name": "Green",
+      "role": "accent",
+      "yardage": 0.375,
+      "sku": "1451-G",
+      "specialInstructions": "Includes fat 1/8 for blocks plus fat 1/4 for leaves"
+    },
+    {
+      "label": "6",
+      "name": "Fabric 6",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1451-R"
+    },
+    {
+      "label": "7",
+      "name": "Gray",
+      "role": "border",
+      "yardage": 1.5,
+      "sku": "1452-C"
+    },
+    {
+      "label": "8",
+      "name": "Fabric 8",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1452-P"
+    },
+    {
+      "label": "9",
+      "name": "Fabric 9",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1452-Y"
+    },
+    {
+      "label": "10",
+      "name": "Fabric 10",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1453-B"
+    },
+    {
+      "label": "11",
+      "name": "Neutral 1",
+      "role": "background",
+      "yardage": 0.25,
+      "sku": "1453-N"
+    },
+    {
+      "label": "12",
+      "name": "Fabric 12",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1453-R"
+    },
+    {
+      "label": "13",
+      "name": "Fabric 13",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1454-C"
+    },
+    {
+      "label": "14",
+      "name": "Fabric 14",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1454-T"
+    },
+    {
+      "label": "15",
+      "name": "Fabric 15",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1454-Y"
+    },
+    {
+      "label": "16",
+      "name": "Neutral 2",
+      "role": "background",
+      "yardage": 0.5,
+      "sku": "1455-L"
+    },
+    {
+      "label": "17",
+      "name": "Fabric 17",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1455-O"
+    },
+    {
+      "label": "18",
+      "name": "Fabric 18",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1455-T"
+    },
+    {
+      "label": "19",
+      "name": "Neutral 3",
+      "role": "background",
+      "yardage": 0.25,
+      "sku": "1456-C"
+    },
+    {
+      "label": "20",
+      "name": "Fabric 20",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1456-N"
+    },
+    {
+      "label": "21",
+      "name": "Fabric 21",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1456-R"
+    },
+    {
+      "label": "22",
+      "name": "Neutral 4",
+      "role": "background",
+      "yardage": 0.25,
+      "sku": "1457-C"
+    },
+    {
+      "label": "23",
+      "name": "Fabric 23",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1457-O"
+    },
+    {
+      "label": "24",
+      "name": "Fabric 24",
+      "role": "blocks",
+      "yardage": 3.625,
+      "sku": "1457-T",
+      "specialInstructions": "Includes fat 1/8 for blocks plus 3.5 yards for backing"
+    },
+    {
+      "label": "25",
+      "name": "Fabric 25",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1458-C"
+    },
+    {
+      "label": "26",
+      "name": "Fabric 26",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1458-G"
+    },
+    {
+      "label": "27",
+      "name": "Neutral 5",
+      "role": "background",
+      "yardage": 0.5,
+      "sku": "1458-L"
+    },
+    {
+      "label": "28",
+      "name": "Fabric 28",
+      "role": "blocks",
+      "yardage": 0.5,
+      "sku": "1459-B",
+      "specialInstructions": "Includes fat 1/8 for blocks plus 3/8 yard for binding"
+    },
+    {
+      "label": "29",
+      "name": "Fabric 29",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1459-C"
+    },
+    {
+      "label": "30",
+      "name": "Purple",
+      "role": "accent",
+      "yardage": 0.25,
+      "sku": "1459-P"
+    },
+    {
+      "label": "31",
+      "name": "Fabric 31",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1460-P"
+    },
+    {
+      "label": "32",
+      "name": "Fabric 32",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1460-R"
+    },
+    {
+      "label": "33",
+      "name": "Fabric 33",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1460-T"
+    },
+    {
+      "label": "34",
+      "name": "Fabric 34",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1461-E"
+    },
+    {
+      "label": "35",
+      "name": "Fabric 35",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1461-G"
+    },
+    {
+      "label": "36",
+      "name": "Fabric 36",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1461-P"
+    }
+  ],
+  "layout": {
+    "type": "on-point",
+    "sashingWidth": 0,
+    "borderWidths": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ]
+  },
+  "cuttingDirections": [
+    {
+      "scope": "per-block",
+      "blockName": "Bitsy Basket",
+      "fabricLabel": "Background",
+      "instructions": [
+        "Cut (1) square 5 3/8 inches, cut in half diagonally to make 2 half-square triangles (one is used, one is leftover)",
+        "Cut (2) squares 2 1/2 inches (or 2 3/8 inches) for HST construction"
+      ]
+    },
+    {
+      "scope": "per-block",
+      "blockName": "Bitsy Basket",
+      "fabricLabel": "Basket",
+      "instructions": [
+        "Cut (1) handle from template",
+        "Cut (2) squares 2 1/2 inches (or 2 3/8 inches) for HST construction",
+        "Cut (2) squares 2 3/8 inches, cut in half diagonally to make 4 half-square triangles (three are used, one is leftover)"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "5",
+      "instructions": [
+        "Cut background patches for 9 blocks",
+        "Cut (24) leaves (number is optional)"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "7",
+      "instructions": [
+        "Cut (2) top/bottom borders 2 inches x 48 1/2 inches",
+        "Cut (2) side borders 2 inches x 45 1/2 inches",
+        "Cut (5) squares 7 5/8 inches, cut in half diagonally twice to make 20 quarter-square triangles for setting",
+        "Cut (2) squares 7 1/4 inches, cut in half diagonally to make 4 half-square triangles for corners",
+        "Cut background patches for 11 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "11",
+      "instructions": [
+        "Cut background patches for 10 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "19",
+      "instructions": [
+        "Cut background patches for 9 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "22",
+      "instructions": [
+        "Cut background patches for 7 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "16",
+      "instructions": [
+        "Cut background patches for 19 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "27",
+      "instructions": [
+        "Cut background patches for 19 blocks"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "30",
+      "instructions": [
+        "Cut (5) strips 1 inch x WOF, pieced to make (4) flanges 1 inch x 48 1/2 inches",
+        "Cut patches for 4 Baskets"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "28",
+      "instructions": [
+        "Cut (5) strips 2 1/2 inches x WOF for binding"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "24",
+      "instructions": [
+        "Cut (2) lengths 30 inches x 58 inches, pieced to fit quilt top with overlap on all sides"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Basket Fabrics",
+      "instructions": [
+        "Cut patches as needed for the number of baskets indicated in each color: 4 Baskets for Fabrics 3, 8, 13, 17, 24, 28, 31; 3 Baskets for Fabrics 1, 2, 4, 6, 10, 12, 20, 21, 26, 32, 34, 36; 2 Baskets for Fabrics 9, 14, 18, 23, 25, 33, 35; 1 Basket for Fabrics 15, 29",
+        "Cut (12) flowers from leftovers (number of flowers is optional)"
+      ]
+    }
+  ],
+  "assemblySteps": [
+    "Make HST units: Draw diagonal on wrong side of lighter background square. Pair with colored square, stitch 1/4 inch from each side of line, cut apart, press toward darker fabric, trim to 2 inches. Make 4 identical HST per block pair (3 used, 1 leftover).",
+    "Prepare appliqué handles: Trace handles from template onto fusible webbing, fuse to basket fabric, cut out.",
+    "Appliqué handle to large background triangle (from 5 3/8 inch square), centering handle and aligning ends with raw edge. Stitch edges.",
+    "Assemble block: Arrange 3 HST and 3 small colored triangles (from 2 3/8 inch squares) in rows as shown in diagram. Join rows. Sew unit to long edge of large background triangle with handle. Make 84 blocks.",
+    "Optional: Appliqué 12 flowers with leaves to desired blocks (placement optional, refer to photograph).",
+    "Arrange 84 blocks in diagonal rows on point, adding quarter-square triangle setting pieces (Fabric 7) at each end of rows. Join into rows, then join rows.",
+    "Sew half-square corner triangles (Fabric 7) to each corner. Trim quilt edges leaving 1/4 inch seam allowance.",
+    "Sew shorter gray borders to sides, then longer borders to top and bottom.",
+    "Layer quilt with batting and backing, baste. Quilt in ditch around borders and patches, around appliqué, and as desired in background.",
+    "Optional flange: Fold Purple (30) strips in half lengthwise. Align raw edges with quilt edges, baste slightly under 1/4 inch. Place on all four sides.",
+    "Bind quilt using binding strips, sewing to front and turning to back."
+  ],
+  "sourceFilename": "Bitsy Baskets Quilt - Itsy Bits.pdf",
+  "pageCount": 6,
+  "isQuilt": true,
+  "parseConfidence": 0.85
+}
