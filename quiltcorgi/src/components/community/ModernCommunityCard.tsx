@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { LikeButton } from '@/components/community/LikeButton';
 import { SaveButton } from '@/components/community/SaveButton';
-import { CategoryBadge } from '@/components/community/CategoryBadge';
 import type { CommunityPost } from '@/stores/communityStore';
 
 interface ModernCommunityCardProps {
@@ -29,9 +28,7 @@ export function ModernCommunityCard({ post }: ModernCommunityCardProps) {
               src={post.thumbnailUrl}
               alt={post.title}
               fill
-              className={`object-cover transition-transform duration-500 ${
-                isHovered ? 'scale-105' : 'scale-100'
-              }`}
+              className="object-cover"
               unoptimized
             />
           ) : (
@@ -41,18 +38,13 @@ export function ModernCommunityCard({ post }: ModernCommunityCardProps) {
               </svg>
             </div>
           )}
-          
+
           {/* Hover Overlay */}
           <div
             className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 ${
               isHovered ? 'opacity-100' : 'opacity-0'
             }`}
           />
-          
-          {/* Category Badge */}
-          <div className="absolute top-3 left-3">
-            <CategoryBadge category={post.category} />
-          </div>
         </div>
       </Link>
 
@@ -106,7 +98,7 @@ export function ModernCommunityCard({ post }: ModernCommunityCardProps) {
               isLikedByUser={post.isLikedByUser}
               size="sm"
             />
-            
+
             <Link
               href={`/socialthreads/${post.id}`}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
@@ -122,7 +114,7 @@ export function ModernCommunityCard({ post }: ModernCommunityCardProps) {
               <span>{post.commentCount}</span>
             </Link>
           </div>
-          
+
           <SaveButton postId={post.id} isSaved={post.isSavedByUser} onToggle={() => {}} />
         </div>
       </div>
@@ -134,7 +126,7 @@ function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
+
   if (seconds < 60) return 'just now';
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
@@ -144,6 +136,6 @@ function formatRelativeTime(dateString: string): string {
   if (days < 7) return `${days}d ago`;
   const weeks = Math.floor(days / 7);
   if (weeks < 4) return `${weeks}w ago`;
-  
+
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

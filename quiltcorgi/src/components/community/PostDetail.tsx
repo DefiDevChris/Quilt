@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LikeButton } from '@/components/community/LikeButton';
 import { SaveButton } from '@/components/community/SaveButton';
-import { CategoryBadge } from '@/components/community/CategoryBadge';
 import { CommentThread } from '@/components/community/comments/CommentThread';
 import { ReportModal } from '@/components/community/ReportModal';
 import {
@@ -189,7 +188,6 @@ export function PostDetail({ postId }: PostDetailProps) {
         <div>
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-on-surface">{post.title}</h1>
-            <CategoryBadge category={post.category} />
           </div>
           <p className="text-sm text-secondary">{formatRelativeTime(post.createdAt)}</p>
         </div>

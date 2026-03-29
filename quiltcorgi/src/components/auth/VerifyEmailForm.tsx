@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export function VerifyEmailForm() {
@@ -77,21 +78,15 @@ export function VerifyEmailForm() {
   return (
     <div className="w-full max-w-[420px] mx-auto bg-surface-container-low rounded-xl shadow-elevation-2 p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-primary"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <path
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+        <Link href="/" className="w-16 h-16 mb-4 relative block">
+          <Image
+            src="/logo.png"
+            alt="QuiltCorgi — Back to home"
+            fill
+            sizes="64px"
+            className="object-contain"
+          />
+        </Link>
         <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface">
           Verify your email
         </h1>
@@ -128,6 +123,7 @@ export function VerifyEmailForm() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
             placeholder="you@example.com"
+            autoComplete="email"
           />
         </div>
 

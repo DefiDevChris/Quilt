@@ -103,7 +103,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
                 setShowAll(s !== 'recent');
               }}
               className={`text-sm font-semibold transition-colors ${
-                sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+                sort === s ? 'text-slate-800' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               {s === 'recent' ? 'Recent' : 'Top'}
@@ -123,7 +123,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
 
       {/* Empty */}
       {!isLoading && flat.length === 0 && (
-        <p className="text-sm text-secondary py-4">No comments yet</p>
+        <p className="text-sm text-slate-500 py-4">No comments yet</p>
       )}
 
       {/* Comments */}
@@ -145,7 +145,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
       {sort === 'recent' && !showAll && hiddenCount > 0 && (
         <button
           onClick={() => setShowAll(true)}
-          className="text-sm font-semibold text-secondary hover:text-on-surface mt-2 transition-colors"
+          className="text-sm font-semibold text-slate-500 hover:text-slate-800 mt-2 transition-colors"
         >
           View all {sorted.length} comments
         </button>
@@ -161,7 +161,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
             onCancel={replyTo ? () => setReplyTo(null) : undefined}
           />
         ) : (
-          <p className="text-xs text-secondary">
+          <p className="text-xs text-slate-500">
             {!currentUserId ? 'Sign in to comment' : 'Build trust to unlock commenting'}
           </p>
         )}
@@ -202,8 +202,8 @@ function CommentRow({
             unoptimized
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
-            <span className="text-xs font-semibold text-primary">
+          <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+            <span className="text-xs font-semibold text-orange-500">
               {comment.authorName.charAt(0)}
             </span>
           </div>
@@ -213,25 +213,25 @@ function CommentRow({
       {/* Body */}
       <div className="flex-1 min-w-0">
         <p className="text-sm">
-          <Link href={profileHref} className="font-semibold text-on-surface hover:underline">
+          <Link href={profileHref} className="font-semibold text-slate-800 hover:underline">
             {comment.authorName}
           </Link>{' '}
-          <span className="text-on-surface">{comment.content}</span>
+          <span className="text-slate-800">{comment.content}</span>
         </p>
 
         {/* Meta row */}
         <div className="flex items-center gap-4 mt-1">
-          <span className="text-xs text-secondary">{formatRelativeTime(comment.createdAt)}</span>
+          <span className="text-xs text-slate-500">{formatRelativeTime(comment.createdAt)}</span>
 
           {comment.likeCount > 0 && (
-            <span className="text-xs font-semibold text-secondary">
+            <span className="text-xs font-semibold text-slate-500">
               {comment.likeCount} {comment.likeCount === 1 ? 'like' : 'likes'}
             </span>
           )}
 
           <button
             onClick={onReply}
-            className="text-xs font-semibold text-secondary hover:text-on-surface transition-colors"
+            className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           >
             Reply
           </button>
@@ -239,7 +239,7 @@ function CommentRow({
           {(isOwn || isAdmin) && (
             <button
               onClick={onDelete}
-              className="text-xs text-secondary hover:text-error transition-colors opacity-0 group-hover:opacity-100"
+              className="text-xs text-slate-500 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
             >
               Delete
             </button>
@@ -251,7 +251,9 @@ function CommentRow({
       <button onClick={onLike} className="shrink-0 self-center p-1" disabled={!currentUserId}>
         <svg
           className={`w-4 h-4 transition-colors ${
-            comment.isLikedByUser ? 'text-error fill-current' : 'text-secondary hover:text-error'
+            comment.isLikedByUser
+              ? 'text-rose-500 fill-current'
+              : 'text-slate-400 hover:text-rose-500'
           }`}
           viewBox="0 0 24 24"
           fill={comment.isLikedByUser ? 'currentColor' : 'none'}
@@ -293,13 +295,13 @@ function CommentInput({
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         disabled={isSubmitting}
-        className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-secondary border-b border-outline-variant py-2 focus:outline-none focus:border-primary transition-colors"
+        className="flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 border-b border-white/40 py-2 focus:outline-none focus:border-orange-400 transition-colors"
       />
       {content.trim() && (
         <button
           type="submit"
           disabled={isSubmitting}
-          className="text-sm font-semibold text-primary hover:opacity-80 disabled:opacity-50 transition-opacity"
+          className="text-sm font-semibold text-orange-500 hover:opacity-80 disabled:opacity-50 transition-opacity"
         >
           Post
         </button>
@@ -308,7 +310,7 @@ function CommentInput({
         <button
           type="button"
           onClick={onCancel}
-          className="text-xs text-secondary hover:text-on-surface transition-colors"
+          className="text-xs text-slate-500 hover:text-slate-800 transition-colors"
         >
           Cancel
         </button>
@@ -320,10 +322,10 @@ function CommentInput({
 function CommentSkeleton() {
   return (
     <div className="flex gap-3 py-2 animate-pulse">
-      <div className="w-8 h-8 rounded-full bg-surface-container-high shrink-0" />
+      <div className="w-8 h-8 rounded-full bg-white/50 shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-3 w-3/4 bg-surface-container-high rounded" />
-        <div className="h-3 w-1/3 bg-surface-container-high rounded" />
+        <div className="h-3 w-3/4 bg-white/50 rounded" />
+        <div className="h-3 w-1/3 bg-white/50 rounded" />
       </div>
     </div>
   );

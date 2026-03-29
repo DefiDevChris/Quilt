@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 
 type Step = 'request' | 'reset';
@@ -77,18 +78,15 @@ export function ForgotPasswordForm() {
   return (
     <div className="w-full max-w-[420px] mx-auto bg-surface-container-low rounded-xl shadow-elevation-2 p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-primary"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <rect x="3" y="11" width="18" height="11" rx="2" strokeLinecap="round" />
-            <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" />
-          </svg>
-        </div>
+        <Link href="/" className="w-16 h-16 mb-4 relative block">
+          <Image
+            src="/logo.png"
+            alt="QuiltCorgi — Back to home"
+            fill
+            sizes="64px"
+            className="object-contain"
+          />
+        </Link>
         <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface">
           {step === 'request' ? 'Reset your password' : 'Enter reset code'}
         </h1>
@@ -128,6 +126,7 @@ export function ForgotPasswordForm() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
               placeholder="you@example.com"
+              autoComplete="email"
             />
           </div>
 
@@ -179,6 +178,7 @@ export function ForgotPasswordForm() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 pr-10 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
                 placeholder="At least 8 characters"
+                autoComplete="new-password"
               />
               <button
                 type="button"

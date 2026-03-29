@@ -4,6 +4,7 @@ import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { communityPosts, users } from '@/db/schema';
 import { ModernPostDetail } from '@/components/community/ModernPostDetail';
+import { SocialLayout } from '@/components/social/SocialLayout';
 
 interface PageProps {
   params: Promise<{ postId: string }>;
@@ -56,8 +57,10 @@ export default async function PostDetailPage({ params }: PageProps) {
   const { postId } = await params;
 
   return (
-    <Suspense fallback={null}>
-      <ModernPostDetail postId={postId} />
-    </Suspense>
+    <SocialLayout activeSection="feed" contentClassName="pb-10">
+      <Suspense fallback={null}>
+        <ModernPostDetail postId={postId} />
+      </Suspense>
+    </SocialLayout>
   );
 }

@@ -30,18 +30,15 @@ export function BlogCard({ post }: BlogCardProps) {
             alt={post.title}
             width={600}
             height={338}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover"
             unoptimized
           />
         </div>
       )}
 
       <div className="p-5">
-        {/* Category & Read Time */}
+        {/* Read Time */}
         <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
-          <span className="font-medium text-primary bg-primary-container/30 px-2 py-0.5 rounded-full">
-            {post.category}
-          </span>
           <span>{post.readTimeMinutes} min read</span>
         </div>
 
@@ -52,9 +49,7 @@ export function BlogCard({ post }: BlogCardProps) {
 
         {/* Excerpt */}
         {post.excerpt && (
-          <p className="text-body-sm text-secondary line-clamp-3 mb-3">
-            {post.excerpt}
-          </p>
+          <p className="text-body-sm text-secondary line-clamp-3 mb-3">{post.excerpt}</p>
         )}
 
         {/* Author & Date */}
@@ -85,20 +80,6 @@ export function BlogCard({ post }: BlogCardProps) {
             </>
           )}
         </div>
-
-        {/* Tags */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs text-secondary bg-surface-container-high px-2 py-0.5 rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </Link>
   );

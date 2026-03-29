@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
 import { Compass, FileText, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 
 interface CommunityPost {
   id: string;
@@ -169,7 +170,7 @@ export function FeedContent() {
 
       {/* Posts */}
       {!loading && !error && posts.length > 0 && (
-        <div className="space-y-5">
+        <div className="space-y-6">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
@@ -180,6 +181,7 @@ export function FeedContent() {
 }
 
 function PostCard({ post }: { post: CommunityPost }) {
+  const { open } = useSocialQuickView();
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
 
@@ -187,16 +189,34 @@ function PostCard({ post }: { post: CommunityPost }) {
     e.preventDefault();
     e.stopPropagation();
     try {
-      const response = await fetch(`/api/community/${post.id}/like`, {
-        method: 'POST',
-      });
+      const response = await fetch(`/api/community/${post.id}/like`, { method: 'POST' });
       if (response.ok) {
         setLiked(!liked);
         setLikeCount(liked ? likeCount - 1 : likeCount + 1);
       }
-    } catch (error) {
-      console.error('Failed to like post:', error);
+    } catch {
+      /* ignore */
     }
+  };
+
+  const openModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    open({
+      type: 'post',
+      id: post.id,
+      title: post.title,
+      imageUrl: post.thumbnailUrl,
+      creatorName: post.creatorName,
+      creatorUsername: post.creatorUsername,
+      creatorAvatarUrl: post.creatorAvatarUrl,
+      likeCount,
+      commentCount: post.commentCount,
+      isLikedByUser: liked,
+      isSavedByUser: false,
+      description: post.description,
+      category: post.category,
+    });
   };
 
   const timeAgo = (date: string) => {
@@ -215,75 +235,64 @@ function PostCard({ post }: { post: CommunityPost }) {
     post.creatorUsername || `@${post.creatorName.toLowerCase().replace(/\s/g, '')}`;
 
   return (
-    <Link href={`/socialthreads/${post.id}`}>
-      <article className="glass-panel rounded-[1.5rem] p-5 glass-panel-hover cursor-pointer block">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={post.creatorAvatarUrl || `https://i.pravatar.cc/150?u=${post.creatorName}`}
-              alt={post.creatorName}
-              className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm"
-            />
-            <div>
-              <h4 className="font-bold text-slate-800 text-base">{post.creatorName}</h4>
-              <p className="text-xs text-slate-500 font-medium">
-                {authorHandle} • {timeAgo(post.createdAt)}
-              </p>
-            </div>
+    <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
+      <div className="flex items-center justify-between mb-3">
+        <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
+          <img
+            src={post.creatorAvatarUrl || `https://i.pravatar.cc/150?u=${post.creatorName}`}
+            alt={post.creatorName}
+            className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm"
+          />
+          <div>
+            <h4 className="font-bold text-slate-800 text-base group-hover:text-orange-500 transition-colors">
+              {post.creatorName}
+            </h4>
+            <p className="text-xs text-slate-500 font-medium">
+              {authorHandle} • {timeAgo(post.createdAt)}
+            </p>
           </div>
-          <button
-            onClick={(e) => e.preventDefault()}
-            className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="19" cy="12" r="1" />
-              <circle cx="5" cy="12" r="1" />
-            </svg>
-          </button>
-        </div>
+        </Link>
+      </div>
 
-        <p className="text-slate-700 mb-3 text-[15px] leading-relaxed">
-          {post.description || post.title}
-        </p>
+      <p className="text-slate-700 mb-3 text-[15px] leading-relaxed">
+        {post.description || post.title}
+      </p>
 
-        {post.thumbnailUrl && (
-          <div className="rounded-2xl overflow-hidden shadow-sm border border-white/50 mb-3">
-            <img
-              src={post.thumbnailUrl}
-              alt={post.title}
-              className="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-700"
-            />
-          </div>
-        )}
+      {/* Clicking the image opens the quick-view modal */}
+      {post.thumbnailUrl && (
+        <button
+          onClick={openModal}
+          className="w-full rounded-2xl overflow-hidden shadow-sm border border-white/50 mb-3 block cursor-zoom-in"
+        >
+          <img
+            src={post.thumbnailUrl}
+            alt={post.title}
+            className="w-full h-auto max-h-96 object-cover object-cover"
+          />
+        </button>
+      )}
 
-        <div className="flex gap-2 border-t border-white/40 pt-4">
-          <button
-            onClick={handleLike}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-rose-500 bg-rose-50/50' : 'text-slate-600 hover:bg-white/50'}`}
-          >
-            <Heart
-              size={20}
-              fill={liked ? 'currentColor' : 'none'}
-              className={liked ? 'scale-110 transition-transform' : ''}
-            />
-            {likeCount}
-          </button>
-          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/50 transition-colors">
-            <MessageCircle size={20} /> {post.commentCount}
-          </button>
-          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/50 transition-colors">
-            <Share2 size={20} /> Share
-          </button>
-        </div>
-      </article>
-    </Link>
+      <div className="flex gap-2 border-t border-white/40 pt-4">
+        <button
+          onClick={handleLike}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-rose-500 bg-rose-50/50' : 'text-slate-600 hover:bg-white/50'}`}
+        >
+          <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
+          {likeCount}
+        </button>
+        <button
+          onClick={openModal}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/50 transition-colors"
+        >
+          <MessageCircle size={20} /> {post.commentCount}
+        </button>
+        <Link
+          href={`/socialthreads/${post.id}`}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-white/50 transition-colors"
+        >
+          <Share2 size={20} /> Full Post
+        </Link>
+      </div>
+    </article>
   );
 }

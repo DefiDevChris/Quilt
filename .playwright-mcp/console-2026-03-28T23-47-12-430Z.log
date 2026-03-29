@@ -1,6 +1,0 @@
-[     317ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'https://*.s3.*.amazonaws.com'. It will be ignored. @ http://localhost:3000/studio/9d4565b7-081c-42cc-90a7-a2133fa7b025:0
-[    1018ms] [ERROR] Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
-
-Check the render method of `Toolbar`.  @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
-[    1279ms] [WARNING] The specified value "transparent" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1440
-[    1280ms] [WARNING] The specified value "transparent" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1527

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LikeButton } from '@/components/community/LikeButton';
 import { SaveButton } from '@/components/community/SaveButton';
-import { CategoryBadge } from '@/components/community/CategoryBadge';
 import type { CommunityPost } from '@/stores/communityStore';
 
 interface CommunityCardProps {
@@ -32,9 +31,6 @@ export function CommunityCard({ post }: CommunityCardProps) {
             <span className="text-3xl text-primary/40">&#9632;</span>
           </div>
         )}
-        <div className="absolute top-2 left-2">
-          <CategoryBadge category={post.category} />
-        </div>
       </div>
 
       <div className="p-3">
