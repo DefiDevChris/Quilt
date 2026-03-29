@@ -29,7 +29,7 @@ function getNavigationPath(notification: Notification): string | null {
   }
 
   if (metadata && metadata.postId && typeof metadata.postId === 'string') {
-    return `/community/${metadata.postId}`;
+    return `/socialthreads/${metadata.postId}`;
   }
 
   return null;

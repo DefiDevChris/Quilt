@@ -8,6 +8,20 @@
       "when": 1774654592095,
       "tag": "0000_phase17-community-profiles-blog",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774654592096,
+      "tag": "0001_add-cognito-sub",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774654592097,
+      "tag": "0002_pattern-templates",
+      "breakpoints": true
     }
   ]
 }

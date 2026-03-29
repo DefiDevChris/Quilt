@@ -2,18 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
 
 interface MobileBottomNavProps {
   onFabPress: () => void;
 }
-
-const NAV_ITEMS = [
-  { href: '/community', label: 'Feed', match: '/community' },
-  { href: '/dashboard', label: 'Library', match: '/dashboard' },
-  { href: '', label: 'fab', match: '' },
-  { href: '/blog', label: 'Discover', match: '/blog' },
-  { href: '/profile', label: 'Profile', match: '/profile' },
-] as const;
 
 function NavIcon({ label, active }: { label: string; active: boolean }) {
   const stroke = active ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)';
@@ -50,6 +43,14 @@ function NavIcon({ label, active }: { label: string; active: boolean }) {
           <circle cx="12" cy="7" r="4" />
         </svg>
       );
+    case 'Sign In':
+      return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+      );
     default:
       return null;
   }
@@ -57,11 +58,23 @@ function NavIcon({ label, active }: { label: string; active: boolean }) {
 
 export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = !!user;
 
   function isActive(match: string): boolean {
     if (!match) return false;
     return pathname.startsWith(match);
   }
+
+  const NAV_ITEMS = [
+    { href: '/socialthreads', label: 'Feed', match: '/socialthreads' },
+    { href: '/dashboard', label: 'Library', match: '/dashboard' },
+    { href: '', label: 'fab', match: '' },
+    { href: '/blog', label: 'Discover', match: '/blog' },
+    isAuthenticated
+      ? { href: '/profile', label: 'Profile', match: '/profile' }
+      : { href: '/auth/signin', label: 'Sign In', match: '/auth/signin' },
+  ] as const;
 
   return (
     <nav

@@ -1,0 +1,581 @@
+{
+  "id": "farmhouse-churns-quilt",
+  "name": "Farmhouse Churns Quilt",
+  "description": "Traditional Churn Dash blocks frame a pretty print based on salvaged wallpaper from an early 1900 Missouri farmhouse. The soothing neutral tones recreate an ever-so-light texture for a slightly worn and loved appearance. Small blocks are made with easy half-square triangle units.",
+  "skillLevel": "intermediate",
+  "finishedWidth": 62,
+  "finishedHeight": 82,
+  "blocks": [
+    {
+      "name": "Churn Dash Block",
+      "finishedWidth": 4.5,
+      "finishedHeight": 4.5,
+      "quantity": 96,
+      "pieces": [
+        {
+          "fabricLabel": "Light",
+          "shape": "square",
+          "cutWidth": 2.375,
+          "cutHeight": 2.375,
+          "quantity": 2,
+          "specialInstructions": "Or cut 2.5 inches and trim to 2 inches after stitching"
+        },
+        {
+          "fabricLabel": "Light",
+          "shape": "rectangle",
+          "cutWidth": 1.25,
+          "cutHeight": 2,
+          "quantity": 4
+        },
+        {
+          "fabricLabel": "Colored",
+          "shape": "square",
+          "cutWidth": 2.375,
+          "cutHeight": 2.375,
+          "quantity": 2,
+          "specialInstructions": "Or cut 2.5 inches and trim to 2 inches after stitching"
+        },
+        {
+          "fabricLabel": "Colored",
+          "shape": "rectangle",
+          "cutWidth": 1.25,
+          "cutHeight": 2,
+          "quantity": 4
+        },
+        {
+          "fabricLabel": "Center",
+          "shape": "square",
+          "cutWidth": 2,
+          "cutHeight": 2,
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "name": "Big Block",
+      "finishedWidth": 18,
+      "finishedHeight": 18,
+      "quantity": 12,
+      "pieces": [
+        {
+          "fabricLabel": "A",
+          "shape": "square",
+          "cutWidth": 9.5,
+          "cutHeight": 9.5,
+          "quantity": 1
+        },
+        {
+          "fabricLabel": "Corner",
+          "shape": "square",
+          "cutWidth": 5,
+          "cutHeight": 5,
+          "quantity": 4
+        }
+      ]
+    }
+  ],
+  "fabrics": [
+    {
+      "label": "I",
+      "name": "Stripe",
+      "role": "sashing",
+      "yardage": 1.5,
+      "sku": "1356-NT"
+    },
+    {
+      "label": "A",
+      "name": "Gray",
+      "role": "blocks",
+      "yardage": 1,
+      "sku": "1354-KN"
+    },
+    {
+      "label": "Z",
+      "name": "Cream",
+      "role": "background",
+      "yardage": 0.75,
+      "sku": "1362-L"
+    },
+    {
+      "label": "P",
+      "name": "Tan",
+      "role": "background",
+      "yardage": 0.5,
+      "sku": "1359-N"
+    },
+    {
+      "label": "C",
+      "name": "Red",
+      "role": "blocks",
+      "yardage": 0.375,
+      "sku": "1354-R"
+    },
+    {
+      "label": "D",
+      "name": "Fabric D",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1354-T"
+    },
+    {
+      "label": "E",
+      "name": "Fabric E",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1355-L"
+    },
+    {
+      "label": "G",
+      "name": "Fabric G",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1355-N"
+    },
+    {
+      "label": "J",
+      "name": "Fabric J",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1357-N"
+    },
+    {
+      "label": "K",
+      "name": "Fabric K",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1357-R"
+    },
+    {
+      "label": "L",
+      "name": "Fabric L",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1357-T"
+    },
+    {
+      "label": "M",
+      "name": "Fabric M",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1358-N"
+    },
+    {
+      "label": "N",
+      "name": "Fabric N",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1358-R"
+    },
+    {
+      "label": "O",
+      "name": "Fabric O",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1358-T"
+    },
+    {
+      "label": "Q",
+      "name": "Fabric Q",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1359-NL"
+    },
+    {
+      "label": "R",
+      "name": "Fabric R",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1359-R"
+    },
+    {
+      "label": "T",
+      "name": "Fabric T",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1360-N"
+    },
+    {
+      "label": "U",
+      "name": "Fabric U",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1360-R"
+    },
+    {
+      "label": "V",
+      "name": "Fabric V",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1360-T"
+    },
+    {
+      "label": "W",
+      "name": "Fabric W",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1361-NE"
+    },
+    {
+      "label": "X",
+      "name": "Fabric X",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1361-NT"
+    },
+    {
+      "label": "Y",
+      "name": "Fabric Y",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1361-NY"
+    },
+    {
+      "label": "YY",
+      "name": "Fabric YY",
+      "role": "blocks",
+      "yardage": 0.25,
+      "sku": "1362-N"
+    },
+    {
+      "label": "B",
+      "name": "Fabric B",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1354-N"
+    },
+    {
+      "label": "F",
+      "name": "Fabric F",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1355-T"
+    },
+    {
+      "label": "H",
+      "name": "Fabric H",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1356-NR"
+    },
+    {
+      "label": "S",
+      "name": "Fabric S",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1359-T"
+    },
+    {
+      "label": "ZZ",
+      "name": "Fabric ZZ",
+      "role": "blocks",
+      "yardage": 0.125,
+      "sku": "1362-NY"
+    },
+    {
+      "label": "Binding",
+      "name": "Binding Fabric",
+      "role": "binding",
+      "yardage": 0.625
+    },
+    {
+      "label": "Backing",
+      "name": "Backing Fabric",
+      "role": "backing",
+      "yardage": 5
+    }
+  ],
+  "layout": {
+    "type": "grid",
+    "rows": 4,
+    "cols": 3,
+    "sashingWidth": 2,
+    "borderWidths": []
+  },
+  "cuttingDirections": [
+    {
+      "scope": "per-block",
+      "blockName": "Churn Dash Block",
+      "fabricLabel": "Light",
+      "instructions": [
+        "Cut (2) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (4) rectangles 1.25 inches x 2 inches"
+      ]
+    },
+    {
+      "scope": "per-block",
+      "blockName": "Churn Dash Block",
+      "fabricLabel": "Colored",
+      "instructions": [
+        "Cut (2) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (4) rectangles 1.25 inches x 2 inches"
+      ]
+    },
+    {
+      "scope": "per-block",
+      "blockName": "Churn Dash Block",
+      "fabricLabel": "Center",
+      "instructions": [
+        "Cut (1) square 2 inches"
+      ]
+    },
+    {
+      "scope": "per-block",
+      "blockName": "Big Block",
+      "fabricLabel": "A",
+      "instructions": [
+        "Cut (1) center square 9.5 inches"
+      ]
+    },
+    {
+      "scope": "per-block",
+      "blockName": "Big Block",
+      "fabricLabel": "Corner",
+      "instructions": [
+        "Cut (4) squares 5 inches"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "I",
+      "instructions": [
+        "Cut (31) sashes 2.5 inches x 18.5 inches, cut crosswise"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "A",
+      "instructions": [
+        "Cut (12) squares 9.5 inches for Big Block centers"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Z",
+      "instructions": [
+        "Cut (80) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (160) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "P",
+      "instructions": [
+        "Cut (50) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (100) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "C",
+      "instructions": [
+        "Cut (16) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "D",
+      "instructions": [
+        "Cut (8) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "E",
+      "instructions": [
+        "Cut (8) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "G",
+      "instructions": [
+        "Cut (8) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "M",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "N",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "O",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Q",
+      "instructions": [
+        "Cut (14) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (28) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "R",
+      "instructions": [
+        "Cut (14) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (28) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "F",
+      "instructions": [
+        "Cut (4) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "B",
+      "instructions": [
+        "Cut (4) squares 5 inches for Big Block corners"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "H",
+      "instructions": [
+        "Cut (12) squares 2 inches for Churn Dash centers"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "J",
+      "instructions": [
+        "Cut (20) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (40) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "K",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (8) squares 2 inches for Churn Dash centers",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "L",
+      "instructions": [
+        "Cut (24) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (48) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "S",
+      "instructions": [
+        "Cut (20) squares 2.5 inches for setting squares"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "T",
+      "instructions": [
+        "Cut (24) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (48) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "U",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (7) squares 2 inches for Churn Dash centers",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "V",
+      "instructions": [
+        "Cut (22) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (44) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "W",
+      "instructions": [
+        "Cut (12) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (24) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "X",
+      "instructions": [
+        "Cut (16) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (3) squares 2 inches for Churn Dash centers",
+        "Cut (32) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Y",
+      "instructions": [
+        "Cut (22) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (44) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "YY",
+      "instructions": [
+        "Cut (62) squares 2 inches for Churn Dash centers"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "ZZ",
+      "instructions": [
+        "Cut (6) squares 2.375 inches (or 2.5 inches) for HST",
+        "Cut (4) squares 2 inches for Churn Dash centers",
+        "Cut (12) rectangles 1.25 inches x 2 inches for Churn Dash"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Binding",
+      "instructions": [
+        "Cut (8) strips 2.5 inches x WOF for binding"
+      ]
+    },
+    {
+      "scope": "whole-quilt",
+      "fabricLabel": "Backing",
+      "instructions": [
+        "Cut (2) lengths 36 inches x 92 inches, pieced to fit quilt top with overlap on all sides"
+      ]
+    }
+  ],
+  "assemblySteps": [
+    "Make Half-Square Triangles (HST): Draw a diagonal line on wrong side of lighter 2.375-inch (or 2.5-inch) squares. With right sides together, position marked square on colored square. Stitch 0.25 inch on each side of diagonal line. Cut apart on drawn line. Press seam allowance toward darker fabric. Trim HST to 2 inches square if needed. Make 4 alike for each Churn Dash Block.",
+    "Sew the 1.25-inch x 2-inch strips in pairs to make side units. Each side unit should measure 2 inches x 2 inches square.",
+    "Arrange the HST, 4 side units, and 2-inch center square in rows. Join the parts, then join the rows. The Churn Dash Block should measure 5 inches unfinished. Make 96 Churn Dash Blocks.",
+    "For Big Blocks: Arrange 8 Churn Dash Blocks, 4 corner 5-inch squares, and 1 Fabric A center square. Join parts to make 3 rows, then join the rows. The block should measure 18.5 inches unfinished. Make 12 Big Blocks.",
+    "Arrange and join 3 Big Blocks and 4 Fabric I sashes to make a block row. Make 4 block rows. To make sash rows, join 3 sashes alternately with 4 Fabric S setting squares. Make 5 sash rows. Join the block and sash rows as shown in diagram.",
+    "Layer the quilt with batting and backing and baste. Quilt in the ditch around sashes and patches. Quilt around the printed motifs in the center Fabric A squares. Bind to finish the quilt."
+  ],
+  "sourceFilename": "Farmhouse Churns Quilt - Farmhouse.pdf",
+  "pageCount": 6,
+  "isQuilt": true,
+  "parseConfidence": 0.9
+}

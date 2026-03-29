@@ -1,14 +1,11 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, desc, count, sql, inArray } from 'drizzle-orm';
+import { eq, and, ilike, desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   communityPosts,
-  likes,
   users,
   projects,
   userProfiles,
-  follows,
-  savedPosts,
 } from '@/db/schema';
 import { communityFeedSchema, createCommunityPostExtendedSchema } from '@/lib/validation';
 import {
@@ -49,35 +46,22 @@ export async function GET(request: NextRequest) {
   const { search, sort, tab, category, page, limit } = parsed.data;
   const offset = (page - 1) * limit;
 
-  if (tab === 'following' && !session) {
-    return unauthorizedResponse();
-  }
+    try {
+      const conditions = [eq(communityPosts.status, 'approved')];
 
-  try {
-    const conditions = [eq(communityPosts.status, 'approved')];
+      if (tab === 'featured') {
+        conditions.push(eq(communityPosts.isFeatured, true));
+      }
 
-    if (tab === 'featured') {
-      conditions.push(eq(communityPosts.isFeatured, true));
-    }
+      if (category) {
+        conditions.push(eq(communityPosts.category, category));
+      }
 
-    if (tab === 'following' && session) {
-      const followedUsers = db
-        .select({ followingId: follows.followingId })
-        .from(follows)
-        .where(eq(follows.followerId, session.user.id));
+      if (search) {
+        conditions.push(ilike(communityPosts.title, `%${escapeLikePattern(search)}%`));
+      }
 
-      conditions.push(inArray(communityPosts.userId, followedUsers));
-    }
-
-    if (category) {
-      conditions.push(eq(communityPosts.category, category));
-    }
-
-    if (search) {
-      conditions.push(ilike(communityPosts.title, `%${escapeLikePattern(search)}%`));
-    }
-
-    const whereClause = and(...conditions);
+      const whereClause = and(...conditions);
 
     const orderBy =
       sort === 'popular'
@@ -117,37 +101,6 @@ export async function GET(request: NextRequest) {
 
     const total = totalRow?.count ?? 0;
 
-    let likedPostIds = new Set<string>();
-    let savedPostIds = new Set<string>();
-
-    if (session) {
-      const postIds = postRows.map((p) => p.id);
-      if (postIds.length > 0) {
-        const [userLikes, userSaves] = await Promise.all([
-          db
-            .select({ communityPostId: likes.communityPostId })
-            .from(likes)
-            .where(
-              and(
-                eq(likes.userId, session.user.id),
-                sql`${likes.communityPostId} = ANY(${postIds})`
-              )
-            ),
-          db
-            .select({ postId: savedPosts.postId })
-            .from(savedPosts)
-            .where(
-              and(
-                eq(savedPosts.userId, session.user.id),
-                sql`${savedPosts.postId} = ANY(${postIds})`
-              )
-            ),
-        ]);
-        likedPostIds = new Set(userLikes.map((l) => l.communityPostId));
-        savedPostIds = new Set(userSaves.map((s) => s.postId));
-      }
-    }
-
     const postsWithMeta = postRows.map((post) => ({
       id: post.id,
       title: post.title,
@@ -165,8 +118,8 @@ export async function GET(request: NextRequest) {
       projectName: post.projectName ?? null,
       projectThumbnailUrl: post.projectThumbnailUrl ?? null,
       createdAt: post.createdAt,
-      isLikedByUser: likedPostIds.has(post.id),
-      isSavedByUser: savedPostIds.has(post.id),
+      isLikedByUser: false,
+      isSavedByUser: false,
     }));
 
     return Response.json({

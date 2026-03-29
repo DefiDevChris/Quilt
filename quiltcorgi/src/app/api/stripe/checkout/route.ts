@@ -6,7 +6,7 @@ import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/a
 
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(request: Request) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -20,6 +20,10 @@ export async function POST() {
   }
 
   try {
+    const body = await request.json().catch(() => ({}));
+    const interval: 'monthly' | 'yearly' =
+      body.interval === 'yearly' ? 'yearly' : 'monthly';
+
     // Look up or create Stripe customer
     let stripeCustomerId: string;
 
@@ -53,7 +57,7 @@ export async function POST() {
       mode: 'subscription',
       line_items: [
         {
-          price: getStripePriceId(),
+          price: getStripePriceId(interval),
           quantity: 1,
         },
       ],

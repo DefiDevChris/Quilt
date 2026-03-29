@@ -220,7 +220,7 @@ function PostsGrid({ posts, displayName }: { posts: PostItem[]; displayName: str
         {posts.map((post) => (
           <a
             key={post.id}
-            href={`/community/${post.id}`}
+            href={`/socialthreads/${post.id}`}
             className="block rounded-lg overflow-hidden bg-surface-container shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
           >
             {post.thumbnailUrl ? (

@@ -23,14 +23,13 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-export function getStripePriceId(): string {
-  const priceId = process.env.STRIPE_PRO_PRICE_ID;
+export function getStripePriceId(interval: 'monthly' | 'yearly' = 'monthly'): string {
+  const envKey = interval === 'yearly' ? 'STRIPE_PRO_PRICE_YEARLY' : 'STRIPE_PRO_PRICE_MONTHLY';
+  const priceId = process.env[envKey];
   if (process.env.STRIPE_SECRET_KEY && !priceId) {
-    throw new Error('STRIPE_PRO_PRICE_ID must be set when STRIPE_SECRET_KEY is configured');
+    throw new Error(`${envKey} must be set when STRIPE_SECRET_KEY is configured`);
   }
   return priceId ?? '';
 }
-
-export const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID ?? '';
 
 export const PAYMENT_FAILURE_GRACE_DAYS = 7;

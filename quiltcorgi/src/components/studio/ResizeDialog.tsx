@@ -77,7 +77,15 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
       const container = containerRef.current?.closest('[data-studio-canvas]');
       const containerWidth = container?.clientWidth ?? window.innerWidth;
       const containerHeight = container?.clientHeight ?? window.innerHeight;
-      applyResize(mode, width, height, lockAspectRatio, tilePattern, containerWidth, containerHeight);
+      applyResize(
+        mode,
+        width,
+        height,
+        lockAspectRatio,
+        tilePattern,
+        containerWidth,
+        containerHeight
+      );
       onClose();
     },
     [applyResize, width, height, lockAspectRatio, tilePattern, onClose]
@@ -85,8 +93,8 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
 
   if (!isOpen) return null;
 
-  const formattedCurrent = `${formatMeasurement(canvasWidth, unitSystem)}${unitLabel} \u00d7 ${formatMeasurement(canvasHeight, unitSystem)}${unitLabel}`;
-  const formattedNew = `${formatMeasurement(width, unitSystem)}${unitLabel} \u00d7 ${formatMeasurement(height, unitSystem)}${unitLabel}`;
+  const formattedCurrent = `${formatMeasurement(canvasWidth, unitSystem)} \u00d7 ${formatMeasurement(canvasHeight, unitSystem)}`;
+  const formattedNew = `${formatMeasurement(width, unitSystem)} \u00d7 ${formatMeasurement(height, unitSystem)}`;
 
   return (
     <div
@@ -130,13 +138,37 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               >
                 {lockAspectRatio ? (
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect x="5" y="9" width="10" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9" stroke="currentColor" strokeWidth="1.4" />
+                    <rect
+                      x="5"
+                      y="9"
+                      width="10"
+                      height="8"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                    <path
+                      d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
                   </svg>
                 ) : (
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect x="5" y="9" width="10" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6" stroke="currentColor" strokeWidth="1.4" />
+                    <rect
+                      x="5"
+                      y="9"
+                      width="10"
+                      height="8"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                    <path
+                      d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
                   </svg>
                 )}
               </button>
@@ -158,9 +190,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               </div>
             </div>
 
-            <p className="text-body-sm text-secondary mb-4">
-              Current: {formattedCurrent}
-            </p>
+            <p className="text-body-sm text-secondary mb-4">Current: {formattedCurrent}</p>
 
             <div className="flex justify-end gap-2">
               <button

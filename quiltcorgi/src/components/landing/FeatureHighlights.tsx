@@ -25,17 +25,17 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 const features = [
   {
-    title: 'Design Studio',
+    title: 'Your Design Studio',
     description:
-      'Build quilt layouts with four purpose-built worktables. Draft custom blocks with snap-to-grid precision, choose from six layout modes: free-form, grid, sashing, on-point, medallion, and lone-star.',
+      'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from six layout modes including sashing, on-point, medallion, and lone star.',
     iconSrc: '/icons/quilt-13-dashed-squares-Photoroom.png',
     iconAlt: 'Quilt layout squares',
     checks: ['4 connected worktables', '659+ block library', '6 layout modes'],
   },
   {
-    title: 'Fabric & Yardage Calculator',
+    title: 'Yardage & Cutting Made Easy',
     description:
-      'Automatically calculate fabric requirements, yardage, and cutting instructions for every project. Calibrate imported fabrics to real-world scale for pixel-perfect accuracy.',
+      'No more guesswork at the fabric counter. QuiltCorgi calculates your yardage, generates sub-cutting charts, and even calibrates imported fabric photos to real-world scale.',
     iconSrc: '/icons/quilt-09-measuring-tape-Photoroom.png',
     iconAlt: 'Measuring tape',
     checks: [
@@ -45,9 +45,9 @@ const features = [
     ],
   },
   {
-    title: 'Export & Print',
+    title: 'Print-Ready Patterns',
     description:
-      'Export true 1:1 scale PDF patterns with seam allowances built in. Generate Foundation Paper Piecing templates and rotary cutting charts ready for your sewing room.',
+      'Export true 1:1 scale PDFs with seam allowances baked right in. Generate Foundation Paper Piecing templates and rotary cutting charts that go straight from your printer to your sewing room.',
     iconSrc: '/icons/quilt-04-scissors-Photoroom.png',
     iconAlt: 'Quilting scissors',
     checks: ['True-scale PDF with seam allowances', 'FPP template generation', 'Design variations'],
@@ -85,10 +85,10 @@ export default function FeatureHighlights() {
               className="text-3xl md:text-4xl font-bold text-warm-text"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Professional Design Tools
+              Everything But the Fabric
             </h2>
             <p className="text-lg text-warm-text-secondary mt-2">
-              Everything you need to create stunning quilt patterns
+              Design, calculate, and print — all in one place
             </p>
           </div>
         </motion.div>

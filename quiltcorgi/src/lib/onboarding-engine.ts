@@ -10,24 +10,24 @@ export const TOUR_STEPS: readonly TourStep[] = [
     id: 'welcome',
     title: 'Welcome to QuiltCorgi!',
     description:
-      'Let us show you around the design studio. This quick tour will help you get started with your first quilt design.',
+      'Let us show you around the studio. This quick tour covers the essentials so you can jump right into your first design.',
     targetSelector: '',
     placement: 'bottom',
   },
   {
     id: 'worktable-switcher',
-    title: 'Worktable Switcher',
+    title: 'Your Worktables',
     description:
-      'Switch between four worktables: Quilt for full layouts, Block for individual blocks, Image for reference photos, and Print for export.',
+      'Switch between four worktables: Quilt for full layouts, Block for drafting individual blocks, Image for fabric photos, and Print for exporting patterns.',
     targetSelector: '[data-tour="worktable-switcher"]',
     placement: 'bottom',
     showPointer: true,
   },
   {
     id: 'toolbar',
-    title: 'Tool Rail',
+    title: 'Drawing Tools',
     description:
-      'Your drawing tools live here. Select shapes, draw lines, curves, and text. Each tool has a keyboard shortcut shown in its tooltip.',
+      'Your drawing tools live here — shapes, lines, curves, and text. Each one has a keyboard shortcut shown in its tooltip.',
     targetSelector: '[data-tour="toolbar"]',
     placement: 'right',
     showPointer: true,
@@ -36,7 +36,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     id: 'block-library',
     title: 'Block Library',
     description:
-      'Browse over 650 quilt blocks organized by category. Drag blocks directly onto your canvas to start designing.',
+      'Browse over 650 quilt blocks organized by category. Drag any block straight onto your canvas to start building your design.',
     targetSelector: '[data-tour="block-library"]',
     placement: 'right',
     showPointer: true,
@@ -45,16 +45,16 @@ export const TOUR_STEPS: readonly TourStep[] = [
     id: 'fabric-library',
     title: 'Fabric Library',
     description:
-      'Upload your own fabric photos or choose from built-in swatches. Drag fabrics onto patches to colorize your design.',
+      'Upload your own fabric photos or pick from built-in swatches. Drag a fabric onto any patch to see it come to life.',
     targetSelector: '[data-tour="fabric-library"]',
     placement: 'right',
     showPointer: true,
   },
   {
     id: 'canvas',
-    title: 'Canvas Area',
+    title: 'Your Canvas',
     description:
-      'This is your design workspace. Zoom with scroll wheel, pan by holding Space and dragging. Right-click for context actions.',
+      'This is where the magic happens. Scroll to zoom, hold Space and drag to pan, and right-click for quick actions.',
     targetSelector: '[data-tour="canvas"]',
     placement: 'left',
     showPointer: true,
@@ -63,25 +63,25 @@ export const TOUR_STEPS: readonly TourStep[] = [
     id: 'layout-settings',
     title: 'Layout Settings',
     description:
-      'Choose grid, sashing, on-point, medallion, or lone star layouts. Set row and column counts, block sizes, and sashing widths.',
+      'Set up your quilt layout — grid, sashing, on-point, medallion, or lone star. Adjust rows, columns, block sizes, and sashing widths.',
     targetSelector: '[data-tour="layout-settings"]',
     placement: 'right',
     showPointer: true,
   },
   {
     id: 'export',
-    title: 'Export Options',
+    title: 'Export & Print',
     description:
-      'Export your design as a printable PDF with cutting charts, yardage estimates, and templates, or save as a high-resolution image.',
+      'When you are ready, export your design as a true-scale PDF with cutting charts, yardage estimates, and seam allowances — or save as a high-res image.',
     targetSelector: '[data-tour="export"]',
     placement: 'right',
     showPointer: true,
   },
   {
     id: 'ready',
-    title: "You're Ready!",
+    title: "You're All Set!",
     description:
-      'You now know the essentials. Press "?" in the top-right corner anytime for help, shortcuts, and FAQs. Happy quilting!',
+      'That covers the basics. Press "?" anytime for help, shortcuts, and FAQs. Now go make something beautiful!',
     targetSelector: '',
     placement: 'bottom',
   },

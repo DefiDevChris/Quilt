@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: quiltcorgi-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: quiltcorgi
+      POSTGRES_PASSWORD: localdev
+      POSTGRES_DB: quiltcorgi
+    volumes:
+      - quiltcorgi-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quiltcorgi"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  quiltcorgi-pgdata:

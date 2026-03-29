@@ -138,7 +138,6 @@ function StudioMockup() {
             />
           ))}
         </div>
-        <div className="text-xs text-warm-text-muted font-mono">Zoom: 45%</div>
       </div>
     </div>
   );
@@ -159,7 +158,7 @@ export default function HeroSection() {
             >
               <Mascot pose="wagging" size="xs" />
               <span className="text-warm-text-secondary text-sm font-medium">
-                Professional quilt design made simple
+                Your next quilt starts here
               </span>
             </motion.div>
 
@@ -170,8 +169,8 @@ export default function HeroSection() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-warm-text leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Design Beautiful Quilts
-              <span className="block text-warm-peach">With Precision</span>
+              From First Stitch
+              <span className="block text-warm-peach">to Finished Quilt</span>
             </motion.h1>
 
             <motion.p
@@ -180,9 +179,9 @@ export default function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg md:text-xl text-warm-text-secondary max-w-xl leading-relaxed"
             >
-              Four purpose-built worktables, automatic yardage calculators, 659+ quilt blocks, and a
-              collaborative community. Create stunning quilts in your browser with our intuitive
-              design studio.
+              Design your quilt, pick your fabrics, calculate your yardage, and export true-scale
+              patterns with seam allowances built in. Four worktables, 659+ blocks, and a community
+              of quilters who get it.
             </motion.p>
 
             <motion.div
@@ -195,7 +194,7 @@ export default function HeroSection() {
                 href="/auth/signup"
                 className="px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-lg text-center"
               >
-                Try Designer Free
+                Start Designing Free
               </Link>
             </motion.div>
 
@@ -205,9 +204,9 @@ export default function HeroSection() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="flex items-center gap-6 pt-4"
             >
-              <CheckBadge>No credit card</CheckBadge>
-              <CheckBadge>1:1 PDF Export</CheckBadge>
-              <CheckBadge>659+ blocks</CheckBadge>
+              <CheckBadge>No credit card needed</CheckBadge>
+              <CheckBadge>True-scale PDF patterns</CheckBadge>
+              <CheckBadge>659+ quilt blocks</CheckBadge>
             </motion.div>
           </div>
 

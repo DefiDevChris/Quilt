@@ -16,7 +16,6 @@ export function BottomBar() {
           Mouse H: {formatMeasurement(cursorPosition.x, unitSystem)} V:{' '}
           {formatMeasurement(cursorPosition.y, unitSystem)}
         </span>
-        <span>Stitches: 0</span>
       </div>
 
       {/* Right side */}

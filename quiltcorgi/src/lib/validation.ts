@@ -211,14 +211,6 @@ export const photoPatchworkConfigSchema = z.object({
   maxIterations: z.number().int().min(1).max(100).optional(),
 });
 
-export const quiltOcrConfigSchema = z.object({
-  edgeThreshold: z.number().int().min(1).max(255).default(50),
-  houghThreshold: z.number().int().min(1).max(500).default(80),
-  minLineGap: z.number().int().min(1).max(100).default(10),
-  referenceWidthInches: z.number().positive().max(200).optional(),
-  seamAllowanceInches: z.number().min(0).max(2).default(0.25),
-});
-
 // Phase 17: Community, Profiles & Blog
 
 export const updateProfileSchema = z.object({

@@ -69,11 +69,15 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  /* Shadows (Elevation) */
-  --shadow-elevation-1: 0 4px 16px rgba(74, 59, 50, 0.04);
-  --shadow-elevation-2: 0 8px 32px rgba(74, 59, 50, 0.06);
-  --shadow-elevation-3: 0 12px 40px rgba(74, 59, 50, 0.08);
-  --shadow-elevation-4: 0 16px 48px rgba(74, 59, 50, 0.10);
+  /* Shadows (Elevation) — multi-layer for depth */
+  --shadow-elevation-1: 0 1px 2px rgba(74, 59, 50, 0.04), 0 4px 16px rgba(74, 59, 50, 0.06);
+  --shadow-elevation-2: 0 2px 4px rgba(74, 59, 50, 0.04), 0 8px 24px rgba(74, 59, 50, 0.08), 0 16px 40px rgba(74, 59, 50, 0.04);
+  --shadow-elevation-3: 0 2px 8px rgba(74, 59, 50, 0.06), 0 12px 32px rgba(74, 59, 50, 0.10), 0 24px 56px rgba(74, 59, 50, 0.06);
+  --shadow-elevation-4: 0 4px 12px rgba(74, 59, 50, 0.08), 0 20px 48px rgba(74, 59, 50, 0.12), 0 32px 72px rgba(74, 59, 50, 0.06);
+
+  /* Inset / recessed shadow */
+  --shadow-inset: inset 0 2px 6px rgba(74, 59, 50, 0.06), inset 0 1px 2px rgba(74, 59, 50, 0.04);
+  --shadow-inset-lg: inset 0 4px 12px rgba(74, 59, 50, 0.08), inset 0 2px 4px rgba(74, 59, 50, 0.04);
 
   /* Mobile — Golden Amber Accent */
   --color-primary-golden: #c48a28;
@@ -83,8 +87,13 @@
   /* Glassmorphism */
   --glass-surface: rgba(255, 252, 247, 0.72);
   --glass-warm: rgba(252, 249, 243, 0.65);
+  --glass-frosted: rgba(255, 255, 255, 0.55);
+  --glass-elevated: rgba(255, 255, 255, 0.70);
   --glass-blur: 24px;
-  --glass-blur-heavy: 28px;
+  --glass-blur-heavy: 32px;
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-border-highlight: rgba(255, 255, 255, 0.80);
+  --glass-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.60);
 
   /* Mobile Shadows */
   --shadow-fab: 0 6px 20px rgba(196, 138, 40, 0.3);
@@ -115,13 +124,48 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Glassmorphic card */
+/* Glassmorphic card — base */
 .glass-card {
   background: rgba(255, 249, 242, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 4px 24px rgba(74, 59, 50, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow:
+    var(--glass-inner-glow),
+    0 2px 4px rgba(74, 59, 50, 0.04),
+    0 8px 24px rgba(74, 59, 50, 0.06);
+}
+
+/* Elevated glass — floating panels, modals, dropdowns */
+.glass-elevated {
+  background: var(--glass-elevated);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  border: 1px solid var(--glass-border-highlight);
+  box-shadow:
+    var(--glass-inner-glow),
+    0 2px 8px rgba(74, 59, 50, 0.05),
+    0 12px 32px rgba(74, 59, 50, 0.08),
+    0 24px 56px rgba(74, 59, 50, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-elevated:hover {
+  box-shadow:
+    var(--glass-inner-glow),
+    0 4px 12px rgba(74, 59, 50, 0.06),
+    0 16px 40px rgba(74, 59, 50, 0.10),
+    0 32px 64px rgba(74, 59, 50, 0.05);
+  transform: translateY(-1px);
+}
+
+/* Recessed / inset glass — input fields, wells */
+.glass-inset {
+  background: rgba(245, 237, 228, 0.50);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 220, 203, 0.40);
+  box-shadow: var(--shadow-inset);
 }
 
 /* Pill button */
@@ -132,10 +176,27 @@ body {
 /* Landing page glass panel */
 .glass-panel {
   background: var(--color-warm-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-warm-glass-border);
-  box-shadow: 0 8px 32px rgba(74, 59, 50, 0.05);
+  box-shadow:
+    var(--glass-inner-glow),
+    0 2px 4px rgba(74, 59, 50, 0.03),
+    0 8px 32px rgba(74, 59, 50, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    var(--glass-inner-glow),
+    0 4px 8px rgba(74, 59, 50, 0.04),
+    0 16px 48px rgba(74, 59, 50, 0.10);
+  transform: translateY(-3px);
 }
 
 /* Landing page float animations */
@@ -156,4 +217,92 @@ body {
 .float-animation-delayed {
   animation: float-delayed 7s ease-in-out infinite;
   animation-delay: 1s;
+}
+
+/* Social Threads Glassmorphism Theme */
+@layer utilities {
+  .glass-panel-social {
+    background: rgba(255, 255, 255, 0.60);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.70),
+      0 2px 4px rgba(74, 59, 50, 0.03),
+      0 8px 24px rgba(255, 160, 122, 0.10),
+      0 20px 48px rgba(74, 59, 50, 0.04);
+  }
+
+  .glass-panel-social-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-panel-social-hover:hover {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.80),
+      0 4px 8px rgba(74, 59, 50, 0.04),
+      0 16px 40px rgba(255, 160, 122, 0.18),
+      0 28px 56px rgba(74, 59, 50, 0.06);
+    transform: translateY(-3px);
+    border-color: rgba(255, 176, 133, 0.45);
+  }
+
+  .animate-expand-social {
+    animation: expandInSocial 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes expandInSocial {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollLeftFast {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fade {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+
+@keyframes swipe {
+  0%, 100% { transform: translateX(0); }
+  20%, 80% { transform: translateX(-100%); }
+}
+
+@keyframes expandIn {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Custom scrollbar for social threads */
+.social-scroll::-webkit-scrollbar { 
+  width: 6px; 
+}
+
+.social-scroll::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+
+.social-scroll::-webkit-scrollbar-thumb { 
+  background: rgba(255, 180, 160, 0.5); 
+  border-radius: 10px; 
+}
+
+.social-scroll::-webkit-scrollbar-thumb:hover { 
+  background: rgba(255, 150, 120, 0.7); 
 }

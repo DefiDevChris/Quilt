@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/authStore';
 
 export function CommunityNav() {
   const user = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
   const isLoading = useAuthStore((s) => s.isLoading);
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -48,14 +49,14 @@ export function CommunityNav() {
           </Link>
         )}
         <Link
-          href="/community"
+          href="/socialthreads"
           className={`text-label-lg transition-colors ${
-            isActive('/community')
+            isActive('/socialthreads')
               ? 'text-on-surface font-semibold'
               : 'text-secondary hover:text-on-surface'
           }`}
         >
-          Community
+          Social Threads
         </Link>
       </div>
 
@@ -119,6 +120,7 @@ export function CommunityNav() {
                   type="button"
                   onClick={async () => {
                     await fetch('/api/auth/cognito/signout', { method: 'POST' });
+                    setUser(null);
                     router.push('/');
                     router.refresh();
                   }}

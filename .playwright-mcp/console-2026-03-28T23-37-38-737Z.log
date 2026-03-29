@@ -1,0 +1,11 @@
+[     135ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'https://*.s3.*.amazonaws.com'. It will be ignored. @ http://localhost:3000/dashboard:0
+[     601ms] [WARNING] Image with src "/images/quilts/quilt_03_closeup_scrappy.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     602ms] [WARNING] Image with src "/images/quilts/quilt_01_closeup_churndash.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     613ms] [WARNING] Image with src "/images/quilts/quilt_06_wall_art.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1218ms] [WARNING] Image with src "/images/quilts/quilt_03_closeup_scrappy.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[   26156ms] [ERROR] Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
+
+Check the render method of `Toolbar`.  @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[   26438ms] [WARNING] The specified value "transparent" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1440
+[   26440ms] [WARNING] The specified value "transparent" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1527

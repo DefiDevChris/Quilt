@@ -58,7 +58,9 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
           {featureName && (
             <p className="text-headline-sm text-on-surface font-semibold mb-1">{featureName}</p>
           )}
-          <p className="text-body-md text-secondary mb-4">Upgrade to Pro to unlock this feature</p>
+          <p className="text-body-md text-secondary mb-4">
+            Upgrade to Pro to unlock this feature. Starting at $8/month.
+          </p>
           <button
             type="button"
             onClick={handleUpgrade}

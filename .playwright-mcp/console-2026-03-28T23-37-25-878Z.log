@@ -1,0 +1,2 @@
+[    2540ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'https://*.s3.*.amazonaws.com'. It will be ignored. @ http://localhost:3000/studio/test-project:0
+[    3707ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/projects/test-project:0

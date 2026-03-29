@@ -20,16 +20,16 @@ import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { PatternAdjuster } from '@/components/fabrics/PatternAdjuster';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
 import { SymmetryTool } from '@/components/generators/SymmetryTool';
-import { SerendipityTool } from '@/components/generators/SerendipityTool';
 import { YardagePanel } from '@/components/measurement/YardagePanel';
-import { FractionCalculator } from '@/components/measurement/FractionCalculator';
+import { PhotoPatchworkDialog } from '@/components/studio/PhotoPatchworkDialog';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
-import { ProGate } from '@/components/auth/ProGate';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
+import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
+import { saveProject } from '@/lib/save-project';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { HelpButton } from '@/components/studio/HelpButton';
 import { HelpPanel } from '@/components/studio/HelpPanel';
@@ -38,12 +38,55 @@ import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
+import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
+import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
+import { usePrintlistStore } from '@/stores/printlistStore';
+import { useYardageStore } from '@/stores/yardageStore';
+import type { PatchworkWizardData } from '@/components/studio/PhotoPatchworkDialog';
+import type { ScaledPiece } from '@/lib/photo-pattern-types';
 
-function PrintOptionsPanel() {
+function PrintOptionsPanel({
+  onOpenPdfExport,
+  onOpenImageExport,
+}: {
+  onOpenPdfExport: () => void;
+  onOpenImageExport: () => void;
+}) {
+  const printOptions = [
+    {
+      label: 'Printlist',
+      description: 'Block overview, patch count & cutting diagram',
+      onClick: () => usePrintlistStore.getState().togglePanel(),
+    },
+    {
+      label: 'Piece Templates',
+      description: 'Inspect pieces & generate 1:1 PDF templates',
+      onClick: () => {
+        usePieceInspectorStore.getState().togglePuzzleView();
+      },
+    },
+    {
+      label: 'Yardage Summary',
+      description: 'Fabric requirements & yardage calculations',
+      onClick: () => useYardageStore.getState().togglePanel(),
+    },
+    {
+      label: 'Export PDF',
+      description: 'Full printable PDF package',
+      onClick: onOpenPdfExport,
+    },
+    {
+      label: 'Export Image',
+      description: 'Save as PNG or JPEG',
+      onClick: onOpenImageExport,
+    },
+  ];
+
   return (
     <div className="w-[220px] bg-surface flex-shrink-0 overflow-y-auto border-r border-outline-variant/10">
       <div className="p-4">
@@ -51,22 +94,24 @@ function PrintOptionsPanel() {
           Print Options
         </h3>
         <div className="flex flex-col gap-3">
-          {[
-            'Block Overview',
-            'Cutting Diagram',
-            'Patch Count',
-            'Templates',
-            'Fabric Requirements',
-            'Yardage Summary',
-          ].map((item) => (
+          {printOptions.map((item) => (
             <button
-              key={item}
+              key={item.label}
               type="button"
-              disabled
-              className="flex items-center justify-between py-2.5 px-3 text-body-md text-on-surface bg-surface-container rounded-md opacity-50 cursor-not-allowed"
+              onClick={item.onClick}
+              className="flex items-center justify-between py-2.5 px-3 text-body-md text-on-surface bg-surface-container rounded-md hover:bg-surface-container-high transition-colors"
             >
-              <span>{item}</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <div className="text-left">
+                <span className="block">{item.label}</span>
+                <span className="text-body-sm text-secondary">{item.description}</span>
+              </div>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                className="flex-shrink-0 ml-2"
+              >
                 <path
                   d="M6 4L10 8L6 12"
                   stroke="currentColor"
@@ -95,22 +140,28 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
   const [isSymmetryOpen, setIsSymmetryOpen] = useState(false);
-  const [isSerendipityOpen, setIsSerendipityOpen] = useState(false);
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isPhotoPatchworkOpen, setIsPhotoPatchworkOpen] = useState(false);
-  const [isQuiltOcrOpen, setIsQuiltOcrOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
+  const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
+  const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const isInspectorOpen = usePieceInspectorStore((s) => s.isOpen);
 
   useYardageCalculation();
+  usePhotoPatternImport();
+
+  const handleSave = useCallback(() => {
+    const { projectId } = useProjectStore.getState();
+    saveProject(projectId, fabricCanvas);
+  }, [fabricCanvas]);
 
   const handleBlockSaved = useCallback(() => {
     useBlockStore.getState().fetchUserBlocks();
@@ -118,6 +169,37 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   const handleFabricUploaded = useCallback(() => {
     useFabricStore.getState().fetchUserFabrics();
+  }, []);
+
+  const handlePhotoPatternFinish = useCallback((data: PatchworkWizardData) => {
+    setIsPhotoPatchworkOpen(false);
+    if (!data.grid) return;
+
+    const { canvasWidth, canvasHeight } = useProjectStore.getState();
+    const cellW = canvasWidth / data.grid.cols;
+    const cellH = canvasHeight / data.grid.rows;
+
+    const pieces: ScaledPiece[] = data.grid.cells.map((cell, i) => ({
+      id: `patchwork-${i}`,
+      contourInches: [
+        { x: cell.col * cellW, y: cell.row * cellH },
+        { x: (cell.col + 1) * cellW, y: cell.row * cellH },
+        { x: (cell.col + 1) * cellW, y: (cell.row + 1) * cellH },
+        { x: cell.col * cellW, y: (cell.row + 1) * cellH },
+      ],
+      finishedWidth: `${cellW.toFixed(2)}"`,
+      finishedHeight: `${cellH.toFixed(2)}"`,
+      cutWidth: `${(cellW + 0.5).toFixed(2)}"`,
+      cutHeight: `${(cellH + 0.5).toFixed(2)}"`,
+      finishedWidthNum: cellW,
+      finishedHeightNum: cellH,
+      dominantColor: cell.color,
+    }));
+
+    const store = usePhotoPatternStore.getState();
+    store.setTargetDimensions(canvasWidth, canvasHeight);
+    usePhotoPatternStore.setState({ originalImageUrl: data.imagePreviewUrl });
+    store.setScaledPieces(pieces);
   }, []);
 
   const combinedDragOver = useCallback(
@@ -195,22 +277,31 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   return (
     <div className="h-screen flex flex-col bg-surface select-none">
-      <StudioTopBar />
+      <StudioTopBar
+        onOpenImageExport={() => setIsImageExportOpen(true)}
+        onOpenPdfExport={() => setIsPdfExportOpen(true)}
+        onOpenHelp={() => setIsHelpOpen(true)}
+        onSave={handleSave}
+      />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left side: PRINT shows options panel, others show tool rail */}
         {activeWorktable === 'print' ? (
-          <PrintOptionsPanel />
+          <PrintOptionsPanel
+            onOpenPdfExport={() => setIsPdfExportOpen(true)}
+            onOpenImageExport={() => setIsImageExportOpen(true)}
+          />
         ) : (
           <Toolbar
             onOpenLayoutSettings={() => setIsLayoutSettingsOpen(true)}
             onOpenGridDimensions={() => setIsGridDimensionsOpen(true)}
             onOpenSymmetry={() => setIsSymmetryOpen(true)}
-            onOpenSerendipity={() => setIsSerendipityOpen(true)}
-            onOpenCalculator={() => setIsCalculatorOpen(true)}
-            onOpenImageExport={() => setIsImageExportOpen(true)}
-            onOpenPhotoPatchwork={() => setIsPhotoPatchworkOpen(true)}
-            onOpenQuiltOcr={() => setIsQuiltOcrOpen(true)}
+            onOpenImageExport={() =>
+              isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
+            }
+            onOpenPhotoPatchwork={() =>
+              isPro ? setIsPhotoPatchworkOpen(true) : setProUpgradeFeature('Photo to Pattern')
+            }
             onOpenResize={() => setIsResizeOpen(true)}
           />
         )}
@@ -220,13 +311,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
           onOpenDrafting={() => setIsDraftingOpen(true)}
         />
 
-        {/* Pro-gated Fabric Library panel */}
-        <ProGate fallback={null}>
-          <FabricLibrary
-            onFabricDragStart={handleFabricDragStart}
-            onOpenUpload={() => setIsFabricUploadOpen(true)}
-          />
-        </ProGate>
+        {/* Fabric Library — visible to all, upload gated to pro */}
+        <FabricLibrary
+          onFabricDragStart={handleFabricDragStart}
+          onOpenUpload={() =>
+            isPro ? setIsFabricUploadOpen(true) : setProUpgradeFeature('Fabric Upload')
+          }
+        />
 
         {/* Canvas area */}
         <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
@@ -244,31 +335,19 @@ export function StudioClient({ projectId }: StudioClientProps) {
             </div>
           </CanvasErrorBoundary>
 
-          {/* Pro-gated floating panels */}
-          <ProGate fallback={null}>
-            <ContextMenu />
-            <QuickInfo />
-            <PatternAdjuster />
-          </ProGate>
+          {/* Context menu & info — available to all */}
+          <ContextMenu />
+          <QuickInfo />
+          <PatternAdjuster />
 
-          {/* Pro-gated Yardage Panel */}
-          <ProGate fallback={null}>
-            <YardagePanel />
-          </ProGate>
-
-          {/* Pro-gated Printlist Panel */}
-          <ProGate fallback={null}>
+          {/* Pro-only production panels */}
+          {isPro && <YardagePanel />}
+          {isPro && (
             <PrintlistPanel
               onGeneratePdf={() => setIsPdfExportOpen(true)}
               onExportImage={() => setIsImageExportOpen(true)}
             />
-          </ProGate>
-
-          {/* Fraction Calculator (Free tier) */}
-          <FractionCalculator
-            isOpen={isCalculatorOpen}
-            onClose={() => setIsCalculatorOpen(false)}
-          />
+          )}
 
           {/* Grid & Dimensions Panel (Free tier) */}
           <QuiltDimensionsPanel
@@ -288,55 +367,91 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       <BottomBar />
 
-      {/* Pro-gated block drafting modal */}
-      <ProGate fallback={null}>
+      {/* Block drafting — pro only */}
+      {isPro && (
         <BlockDraftingModal
           isOpen={isDraftingOpen}
           onClose={() => setIsDraftingOpen(false)}
           onSaved={handleBlockSaved}
         />
-      </ProGate>
-
-      {/* Pro-gated fabric upload dialog */}
-      <ProGate fallback={null}>
-        <FabricUploadDialog
-          isOpen={isFabricUploadOpen}
-          onClose={() => setIsFabricUploadOpen(false)}
-          onUploaded={handleFabricUploaded}
-        />
-      </ProGate>
-
-      {/* Pro-gated layout settings panel */}
-      {isLayoutSettingsOpen && (
-        <ProGate fallback={null}>
-          <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
-        </ProGate>
       )}
 
-      {/* Pro-gated symmetry tool */}
-      <ProGate fallback={null}>
-        <SymmetryTool isOpen={isSymmetryOpen} onClose={() => setIsSymmetryOpen(false)} />
-      </ProGate>
+      {/* Pro-only dialogs — only rendered for pro users */}
+      {isPro && (
+        <>
+          <FabricUploadDialog
+            isOpen={isFabricUploadOpen}
+            onClose={() => setIsFabricUploadOpen(false)}
+            onUploaded={handleFabricUploaded}
+          />
+          {isLayoutSettingsOpen && (
+            <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
+          )}
+          <SymmetryTool isOpen={isSymmetryOpen} onClose={() => setIsSymmetryOpen(false)} />
+          <PhotoPatchworkDialog
+            isOpen={isPhotoPatchworkOpen}
+            onClose={() => setIsPhotoPatchworkOpen(false)}
+            onFinish={handlePhotoPatternFinish}
+          />
+          <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
+          <ImageExportDialog
+            isOpen={isImageExportOpen}
+            onClose={() => setIsImageExportOpen(false)}
+          />
+          <FussyCutDialog />
+        </>
+      )}
 
-      {/* Pro-gated serendipity tool */}
-      <ProGate fallback={null}>
-        <SerendipityTool isOpen={isSerendipityOpen} onClose={() => setIsSerendipityOpen(false)} />
-      </ProGate>
-
-      {/* Pro-gated PDF export dialog */}
-      <ProGate fallback={null}>
-        <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
-      </ProGate>
-
-      {/* Pro-gated image export dialog */}
-      <ProGate fallback={null}>
-        <ImageExportDialog isOpen={isImageExportOpen} onClose={() => setIsImageExportOpen(false)} />
-      </ProGate>
-
-      {/* Pro-gated Fussy Cut dialog */}
-      <ProGate fallback={null}>
-        <FussyCutDialog />
-      </ProGate>
+      {/* Pro upgrade dialog — shown when free users try pro features */}
+      {proUpgradeFeature && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
+          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6 text-center">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="text-secondary mx-auto mb-3"
+              aria-hidden="true"
+            >
+              <rect
+                x="5"
+                y="11"
+                width="14"
+                height="10"
+                rx="2"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M8 11V7a4 4 0 0 1 8 0v4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+            <p className="text-lg font-semibold text-on-surface mb-1">{proUpgradeFeature}</p>
+            <p className="text-sm text-secondary mb-4">
+              This feature requires a Pro subscription. Start at $8/month.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                type="button"
+                onClick={() => setProUpgradeFeature(null)}
+                className="rounded-md px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+              >
+                Maybe Later
+              </button>
+              <a
+                href="/profile/billing"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
+              >
+                Upgrade to Pro
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Resize quilt dialog */}
       <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />

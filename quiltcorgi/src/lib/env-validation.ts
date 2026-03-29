@@ -21,11 +21,14 @@ export function validateEnv(): void {
     errors.push('COGNITO_CLIENT_ID must be set');
   }
 
-  // Stripe — STRIPE_PRO_PRICE_ID is required when STRIPE_SECRET_KEY is present
-  if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_PRO_PRICE_ID) {
-    errors.push(
-      'STRIPE_PRO_PRICE_ID must be set when STRIPE_SECRET_KEY is configured'
-    );
+  // Stripe — price IDs required when STRIPE_SECRET_KEY is present
+  if (process.env.STRIPE_SECRET_KEY) {
+    if (!process.env.STRIPE_PRO_PRICE_MONTHLY) {
+      errors.push('STRIPE_PRO_PRICE_MONTHLY must be set when STRIPE_SECRET_KEY is configured');
+    }
+    if (!process.env.STRIPE_PRO_PRICE_YEARLY) {
+      errors.push('STRIPE_PRO_PRICE_YEARLY must be set when STRIPE_SECRET_KEY is configured');
+    }
   }
 
   // AWS S3 — all three vars must be set together
@@ -36,7 +39,8 @@ export function validateEnv(): void {
 
   if (awsVarsPresent) {
     if (!awsKeyId) errors.push('AWS_ACCESS_KEY_ID must be set when any AWS variable is configured');
-    if (!awsSecret) errors.push('AWS_SECRET_ACCESS_KEY must be set when any AWS variable is configured');
+    if (!awsSecret)
+      errors.push('AWS_SECRET_ACCESS_KEY must be set when any AWS variable is configured');
     if (!awsBucket) errors.push('AWS_S3_BUCKET must be set when any AWS variable is configured');
   }
 

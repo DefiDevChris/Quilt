@@ -143,12 +143,13 @@ export default function CommunityPreview() {
                 className="text-3xl md:text-4xl font-bold text-warm-text"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                Share &amp; Discover
+                Quilters Who Get It
               </h2>
             </div>
             <p className="text-lg text-warm-text-secondary leading-relaxed">
-              Join a community of passionate quilters. Share your patterns, discover inspiration
-              from fellow designers, and grow your skills with tutorials and blog posts.
+              Share your latest designs, discover inspiration from fellow quilters, and pick up new
+              techniques along the way. Whether it&apos;s your first quilt or your fiftieth,
+              there&apos;s always something new to learn and someone to cheer you on.
             </p>
 
             <div className="grid grid-cols-2 gap-4">
@@ -227,10 +228,10 @@ export default function CommunityPreview() {
             </div>
 
             <Link
-              href="/community"
+              href="/socialthreads"
               className="inline-block bg-warm-surface text-warm-text font-semibold px-8 py-4 rounded-full shadow-sm hover:shadow-md transition-shadow"
             >
-              Browse Community
+              See the Gallery
             </Link>
           </div>
         </div>

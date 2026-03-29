@@ -63,7 +63,7 @@ export async function PUT(
     const body = await request.json();
     const parsed = updateVariationSchema.safeParse(body);
     if (!parsed.success) {
-      return validationErrorResponse(parsed.error.message);
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
     const [updated] = await db

@@ -14,8 +14,13 @@ export const AUTO_SAVE_INTERVAL_MS = 30_000;
 export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
-export const FREE_PROJECT_LIMIT = 3;
-export const FREE_BLOCK_LIMIT = 100;
+export const FREE_BLOCK_LIMIT = 20;
+export const FREE_FABRIC_LIMIT = 10;
+
+// Pricing
+export const PRO_PRICE_MONTHLY = 8;
+export const PRO_PRICE_YEARLY = 60;
+export const PRO_YEARLY_SAVINGS_PERCENT = 37;
 
 export const PIXELS_PER_INCH = 96;
 export const PIXELS_PER_CM = PIXELS_PER_INCH / 2.54;
@@ -57,7 +62,6 @@ export const TEXT_FONTS = [
   'Verdana',
 ] as const;
 
-export const FREE_VARIATION_LIMIT = 3;
 export const MAX_MEDALLION_ROUNDS = 10;
 export const MIN_LONE_STAR_RINGS = 3;
 export const MAX_LONE_STAR_RINGS = 8;
@@ -127,6 +131,43 @@ export const RATE_LIMITS = {
 
 export const AUTO_HIDE_REPORT_THRESHOLD = 3;
 
+export const PATTERN_PAGINATION_DEFAULT_LIMIT = 24;
+export const PATTERN_PAGINATION_MAX_LIMIT = 50;
+export const SKILL_LEVELS = ['beginner', 'confident-beginner', 'intermediate', 'advanced'] as const;
+export const SKILL_LEVEL_LABELS: Record<string, string> = {
+  beginner: 'Beginner',
+  'confident-beginner': 'Confident Beginner',
+  intermediate: 'Intermediate',
+  advanced: 'Advanced',
+};
+
 export const GRID_CELL_SIZE_MIN = 0.125;
 export const GRID_CELL_SIZE_MAX = 12;
 export const GRID_CELL_SIZE_STEP = 0.125;
+
+// Photo to Pattern (Phase 21)
+export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
+export const PHOTO_PATTERN_MIN_DIMENSION = 200; // px
+export const PHOTO_PATTERN_DOWNSCALE_MAX = 2000; // px longest side
+export const PHOTO_PATTERN_SENSITIVITY_MIN = 0.2;
+export const PHOTO_PATTERN_SENSITIVITY_MAX = 2.0;
+export const PHOTO_PATTERN_SENSITIVITY_DEFAULT = 1.0;
+export const PHOTO_PATTERN_SENSITIVITY_DEBOUNCE_MS = 300;
+export const PHOTO_PATTERN_OVERLAY_COLOR = '#00E5FF';
+export const PHOTO_PATTERN_OVERLAY_OPACITY = 0.7;
+export const PHOTO_PATTERN_PIECE_MIN_AREA_RATIO = 0.005;
+export const PHOTO_PATTERN_PIECE_MAX_AREA_RATIO = 0.25;
+export const PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT = 0.4;
+
+export const QUILT_SIZE_PRESETS: readonly {
+  readonly label: string;
+  readonly width: number;
+  readonly height: number;
+}[] = [
+  { label: 'Baby', width: 36, height: 52 },
+  { label: 'Throw', width: 50, height: 65 },
+  { label: 'Twin', width: 68, height: 90 },
+  { label: 'Full/Double', width: 81, height: 96 },
+  { label: 'Queen', width: 90, height: 108 },
+  { label: 'King', width: 108, height: 108 },
+];
