@@ -28,10 +28,18 @@
 - **Stripe ~21** — subscription billing.
 - **pdf-lib** — client-side 1:1 scale PDF export.
 - **next-mdx-remote** — MDX in App Router server components. Tutorials in `src/content/tutorials/`.
-- **@techstark/opencv-js** — WASM (~8MB), lazy-loaded for photo-to-pattern.
+- **@techstark/opencv-js** — WASM (~8MB), lazy-loaded for Photo-to-Pattern.
 - **@upstash/ratelimit + @upstash/redis** — API rate limiting.
 - **ESLint 9** — flat config in `eslint.config.mjs`.
 - **Prettier** — config in `.prettierrc`.
+
+## Trust / Role System
+
+Simplified 3-role system in `src/lib/trust-engine.ts`:
+- `UserRole = 'free' | 'pro' | 'admin'`
+- `getRolePermissions(role)` returns `RolePermissions` (canLike, canSave, canComment, canPost, canModerate)
+- `getRateLimit(role, action)` for comments/posts rate limits
+- No trust levels, no follows, no reports, no auto-moderation queue
 
 ## Testing
 

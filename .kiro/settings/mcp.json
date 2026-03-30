@@ -20,7 +20,13 @@
         "list_allowed_directories",
         "read_text_file",
         "get_file_info",
-        "get_file_info"
+        "get_file_info",
+        "search_files",
+        "search_files",
+        "search_files",
+        "list_directory",
+        "list_directory",
+        "list_directory"
       ]
     }
   }
