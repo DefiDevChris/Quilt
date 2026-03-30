@@ -9,6 +9,8 @@ import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
 import { PhotoPatternModal } from '@/components/photo-pattern/PhotoPatternModal';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
+import { useToast } from '@/components/ui/ToastProvider';
+import { TUTORIAL_COUNT } from '@/lib/mdx-engine';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -229,6 +231,8 @@ export default function DashboardPage() {
   const [projectCount, setProjectCount] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
+  const [projectsFetchError, setProjectsFetchError] = useState(false);
+  const { toast } = useToast();
 
   const openPhotoPattern = usePhotoPatternStore((s) => s.openModal);
   const photoPatternStep = usePhotoPatternStore((s) => s.step);
@@ -258,6 +262,11 @@ export default function DashboardPage() {
         const data = await res.json();
         window.location.href = `/studio/${data.data.id}`;
       } catch {
+        toast({
+          type: 'error',
+          title: 'Import failed',
+          description: 'Could not create a project from your photo. Please try again.',
+        });
         usePhotoPatternStore.getState().setStep('dimensions');
       }
     }
@@ -267,13 +276,17 @@ export default function DashboardPage() {
 
   const fetchProjects = useCallback(async () => {
     try {
+      setProjectsFetchError(false);
       const res = await fetch('/api/projects?sort=updatedAt&order=desc&limit=50');
-      if (!res.ok) return;
+      if (!res.ok) {
+        setProjectsFetchError(true);
+        return;
+      }
       const data = await res.json();
       setProjects(data.data.projects);
       setProjectCount(data.data.projects.length);
     } catch {
-      /* silently fail — cards still render */
+      setProjectsFetchError(true);
     }
   }, []);
 
@@ -465,7 +478,7 @@ export default function DashboardPage() {
                 Tutorials
               </p>
               <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-                10 step-by-step guides
+                {TUTORIAL_COUNT} step-by-step guides
               </p>
             </Link>
 
@@ -682,6 +695,38 @@ export default function DashboardPage() {
               </div>
             </Link>
           </div>
+
+          {/* Project fetch error banner */}
+          {projectsFetchError && (
+            <div className="mt-6 rounded-xl bg-error/10 border border-error/20 p-4 flex items-center gap-3">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                className="text-error flex-shrink-0"
+                aria-hidden="true"
+              >
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                  d="M7 7l6 6M13 7l-6 6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <p className="text-sm text-on-surface">
+                Could not load your projects.{' '}
+                <button
+                  type="button"
+                  onClick={fetchProjects}
+                  className="font-medium text-primary hover:underline"
+                >
+                  Try again
+                </button>
+              </p>
+            </div>
+          )}
 
           {/* Recent Projects — only if user has projects */}
           {projects.length > 0 && (

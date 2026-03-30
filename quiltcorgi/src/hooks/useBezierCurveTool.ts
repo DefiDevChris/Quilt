@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { getPixelsPerUnit, snapToGrid } from '@/lib/canvas-utils';
+import { getPixelsPerUnit, snapToGrid, maybeSnap } from '@/lib/canvas-utils';
 
 interface AnchorPoint {
   x: number;
@@ -76,13 +76,6 @@ export function useBezierCurveTool() {
       const controlVisuals: InstanceType<typeof fabric.FabricObject>[] = [];
       let isDragging = false;
       let dragAnchorIndex = -1;
-
-      function maybeSnap(val: number): number {
-        const s = stateRef.current;
-        if (!s.gridSettings.snapToGrid) return val;
-        const gridPx = s.gridSettings.size * getPixelsPerUnit(s.unitSystem);
-        return snapToGrid(val, gridPx);
-      }
 
       function clearControlVisuals() {
         controlVisuals.forEach((v) => canvas.remove(v));
@@ -209,8 +202,9 @@ export function useBezierCurveTool() {
         if (stateRef.current.isSpacePressed || !fabric) return;
 
         const pointer = canvas.getScenePoint(e.e);
-        const sx = maybeSnap(pointer.x);
-        const sy = maybeSnap(pointer.y);
+        const s = stateRef.current;
+        const sx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
+        const sy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
         // Start dragging to set control points
         isDragging = true;

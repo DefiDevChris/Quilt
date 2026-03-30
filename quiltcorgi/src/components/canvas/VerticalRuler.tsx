@@ -6,6 +6,14 @@ import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 const RULER_WIDTH = 24;
 
+// Design system colors for canvas rendering
+const RULER_COLORS = {
+  background: '#fffcf7', // surface
+  tick: '#babab0', // outline-variant
+  text: '#6b5a4d', // secondary
+  cursor: '#8d4f00', // primary-dark
+} as const;
+
 function getTickConfig(zoomPxPerUnit: number) {
   const target = 80;
   const unitsPerTick = target / zoomPxPerUnit;
@@ -48,7 +56,7 @@ export function VerticalRuler() {
     const zoomPxPerUnit = pxPerUnit * currentZoom;
 
     ctx.clearRect(0, 0, RULER_WIDTH, el.height);
-    ctx.fillStyle = '#fffcf7';
+    ctx.fillStyle = RULER_COLORS.background;
     ctx.fillRect(0, 0, RULER_WIDTH, el.height);
 
     const { major, minor } = getTickConfig(zoomPxPerUnit);
@@ -56,8 +64,8 @@ export function VerticalRuler() {
     const startUnit = Math.floor(-panY / zoomPxPerUnit / major) * major;
     const endUnit = Math.ceil((el.height - panY) / zoomPxPerUnit / major) * major;
 
-    ctx.strokeStyle = '#babab0';
-    ctx.fillStyle = '#6c635a';
+    ctx.strokeStyle = RULER_COLORS.tick;
+    ctx.fillStyle = RULER_COLORS.text;
     ctx.font = '10px Manrope, system-ui, sans-serif';
     ctx.textAlign = 'right';
 
@@ -89,11 +97,11 @@ export function VerticalRuler() {
 
     const cursorScreenY = cursorPosition.y * pxPerUnit * currentZoom + panY;
     if (cursorScreenY >= 0 && cursorScreenY <= el.height) {
-      ctx.fillStyle = '#8d4f00';
+      ctx.fillStyle = RULER_COLORS.cursor;
       ctx.fillRect(0, cursorScreenY - 0.5, RULER_WIDTH, 1);
     }
 
-    ctx.strokeStyle = '#babab0';
+    ctx.strokeStyle = RULER_COLORS.tick;
     ctx.beginPath();
     ctx.moveTo(RULER_WIDTH - 0.5, 0);
     ctx.lineTo(RULER_WIDTH - 0.5, el.height);

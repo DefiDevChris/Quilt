@@ -63,11 +63,11 @@ function generateKonaCottonSolids(): FabricDefinition[] {
     { name: 'Light Blue', sku: 'K001-1192', colorFamily: 'Blue' },
     { name: 'Baby Blue', sku: 'K001-1010', colorFamily: 'Blue' },
     { name: 'Lake', sku: 'K001-1185', colorFamily: 'Blue' },
-    { name: 'Cornflower', sku: 'K001-1089', colorFamily: 'Blue' },
+    { name: 'Cornflower', sku: 'K001-1524', colorFamily: 'Blue' },
     { name: 'Periwinkle', sku: 'K001-1285', colorFamily: 'Blue' },
     { name: 'Blueprint', sku: 'K001-0848', colorFamily: 'Blue' },
     { name: 'Royal', sku: 'K001-1314', colorFamily: 'Blue' },
-    { name: 'Regatta', sku: 'K001-1309', colorFamily: 'Blue' },
+    { name: 'Regatta', sku: 'K001-0862', colorFamily: 'Blue' },
     { name: 'Pacific', sku: 'K001-1283', colorFamily: 'Blue' },
     { name: 'Celestial', sku: 'K001-1068', colorFamily: 'Blue' },
     { name: 'Windsor', sku: 'K001-1389', colorFamily: 'Blue' },
@@ -82,7 +82,7 @@ function generateKonaCottonSolids(): FabricDefinition[] {
     { name: 'Kelly', sku: 'K001-1187', colorFamily: 'Green' },
     { name: 'Grass Green', sku: 'K001-1703', colorFamily: 'Green' },
     { name: 'Peridot', sku: 'K001-1289', colorFamily: 'Green' },
-    { name: 'Lime', sku: 'K001-1192', colorFamily: 'Green' },
+    { name: 'Lime', sku: 'K001-0351', colorFamily: 'Green' },
     { name: 'Chartreuse', sku: 'K001-1072', colorFamily: 'Green' },
     { name: 'Kiwi', sku: 'K001-1188', colorFamily: 'Green' },
     { name: 'Sage', sku: 'K001-1321', colorFamily: 'Green' },
@@ -91,7 +91,7 @@ function generateKonaCottonSolids(): FabricDefinition[] {
     { name: 'Hunter', sku: 'K001-1171', colorFamily: 'Green' },
     { name: 'Evergreen', sku: 'K001-1137', colorFamily: 'Green' },
     { name: 'Spruce', sku: 'K001-1361', colorFamily: 'Green' },
-    { name: 'Tan', sku: 'K001-1369', colorFamily: 'Brown' },
+    { name: 'Tan', sku: 'K001-1371', colorFamily: 'Brown' },
     { name: 'Wheat', sku: 'K001-1386', colorFamily: 'Brown' },
     { name: 'Camel', sku: 'K001-1058', colorFamily: 'Brown' },
     { name: 'Sienna', sku: 'K001-1332', colorFamily: 'Brown' },
@@ -103,7 +103,7 @@ function generateKonaCottonSolids(): FabricDefinition[] {
     { name: 'Silver', sku: 'K001-1333', colorFamily: 'Gray' },
     { name: 'Medium Gray', sku: 'K001-1223', colorFamily: 'Gray' },
     { name: 'Pewter', sku: 'K001-1290', colorFamily: 'Gray' },
-    { name: 'Iron', sku: 'K001-1181', colorFamily: 'Gray' },
+    { name: 'Iron', sku: 'K001-1172', colorFamily: 'Gray' },
     { name: 'Charcoal', sku: 'K001-1071', colorFamily: 'Gray' },
     { name: 'Coal', sku: 'K001-1082', colorFamily: 'Gray' },
     { name: 'Black', sku: 'K001-1019', colorFamily: 'Black' },
@@ -183,14 +183,34 @@ function generateAdditionalFabrics(): FabricDefinition[] {
 
   // FreeSpirit Designer Solids
   const freeSpiritColors = [
-    'True White', 'Ivory', 'Lemon', 'Tangerine', 'Fire Engine Red',
-    'Bubblegum', 'Orchid', 'Sky Blue', 'Ocean', 'Leaf Green',
-    'Espresso', 'Pewter', 'Raven',
+    'True White',
+    'Ivory',
+    'Lemon',
+    'Tangerine',
+    'Fire Engine Red',
+    'Bubblegum',
+    'Orchid',
+    'Sky Blue',
+    'Ocean',
+    'Leaf Green',
+    'Espresso',
+    'Pewter',
+    'Raven',
   ];
   const freeSpiritFamilies = [
-    'White', 'Neutral', 'Yellow', 'Orange', 'Red',
-    'Pink', 'Purple', 'Blue', 'Blue', 'Green',
-    'Brown', 'Gray', 'Black',
+    'White',
+    'Neutral',
+    'Yellow',
+    'Orange',
+    'Red',
+    'Pink',
+    'Purple',
+    'Blue',
+    'Blue',
+    'Green',
+    'Brown',
+    'Gray',
+    'Black',
   ];
   freeSpiritColors.forEach((name, i) => {
     fabrics.push({
@@ -204,14 +224,36 @@ function generateAdditionalFabrics(): FabricDefinition[] {
 
   // Riley Blake Confetti Cottons
   const rileyBlakeColors = [
-    'White', 'Cream', 'Daisy', 'Pumpkin', 'Barn Red',
-    'Peony', 'Violet', 'Blueberry', 'Denim', 'Clover',
-    'Olive', 'Sienna', 'Steel', 'Jet Black',
+    'White',
+    'Cream',
+    'Daisy',
+    'Pumpkin',
+    'Barn Red',
+    'Peony',
+    'Violet',
+    'Blueberry',
+    'Denim',
+    'Clover',
+    'Olive',
+    'Sienna',
+    'Steel',
+    'Jet Black',
   ];
   const rileyBlakeFamilies = [
-    'White', 'Neutral', 'Yellow', 'Orange', 'Red',
-    'Pink', 'Purple', 'Blue', 'Blue', 'Green',
-    'Green', 'Brown', 'Gray', 'Black',
+    'White',
+    'Neutral',
+    'Yellow',
+    'Orange',
+    'Red',
+    'Pink',
+    'Purple',
+    'Blue',
+    'Blue',
+    'Green',
+    'Green',
+    'Brown',
+    'Gray',
+    'Black',
   ];
   rileyBlakeColors.forEach((name, i) => {
     fabrics.push({
@@ -225,14 +267,34 @@ function generateAdditionalFabrics(): FabricDefinition[] {
 
   // Art Gallery Pure Solids
   const artGalleryColors = [
-    'Bright White', 'Oat', 'Sunshine', 'Autumn', 'Scarlet',
-    'Fuchsia', 'Grape', 'Sapphire', 'Marine', 'Emerald',
-    'Walnut', 'Elephant', 'Panther',
+    'Bright White',
+    'Oat',
+    'Sunshine',
+    'Autumn',
+    'Scarlet',
+    'Fuchsia',
+    'Grape',
+    'Sapphire',
+    'Marine',
+    'Emerald',
+    'Walnut',
+    'Elephant',
+    'Panther',
   ];
   const artGalleryFamilies = [
-    'White', 'Neutral', 'Yellow', 'Orange', 'Red',
-    'Pink', 'Purple', 'Blue', 'Blue', 'Green',
-    'Brown', 'Gray', 'Black',
+    'White',
+    'Neutral',
+    'Yellow',
+    'Orange',
+    'Red',
+    'Pink',
+    'Purple',
+    'Blue',
+    'Blue',
+    'Green',
+    'Brown',
+    'Gray',
+    'Black',
   ];
   artGalleryColors.forEach((name, i) => {
     fabrics.push({
@@ -248,9 +310,5 @@ function generateAdditionalFabrics(): FabricDefinition[] {
 }
 
 export function getAllFabricDefinitions(): FabricDefinition[] {
-  return [
-    ...generateKonaCottonSolids(),
-    ...generateBellaSolids(),
-    ...generateAdditionalFabrics(),
-  ];
+  return [...generateKonaCottonSolids(), ...generateBellaSolids(), ...generateAdditionalFabrics()];
 }

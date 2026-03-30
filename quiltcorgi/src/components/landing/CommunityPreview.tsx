@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ImageIcon } from 'lucide-react';
 import Mascot from './Mascot';
 
 interface CommunityPost {
@@ -20,7 +21,7 @@ interface CommunityResponse {
   };
 }
 
-function PostCard({ post, index }: { post: CommunityPost; index: number }) {
+function PostCard({ post }: { post: CommunityPost }) {
   return (
     <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
       {post.thumbnailUrl ? (
@@ -30,7 +31,7 @@ function PostCard({ post, index }: { post: CommunityPost; index: number }) {
         />
       ) : (
         <div className="w-full h-full bg-warm-surface flex items-center justify-center">
-          <span className="material-symbols-outlined text-4xl text-warm-border">image</span>
+          <ImageIcon className="w-10 h-10 text-warm-border" />
         </div>
       )}
     </div>
@@ -110,7 +111,7 @@ export default function CommunityPreview() {
             {hasPosts ? (
               <div className="grid grid-cols-3 gap-4">
                 {posts.slice(0, 6).map((post, i) => (
-                  <PostCard key={post.id} post={post} index={i} />
+                  <PostCard key={post.id} post={post} />
                 ))}
               </div>
             ) : (

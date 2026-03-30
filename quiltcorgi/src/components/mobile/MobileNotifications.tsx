@@ -9,12 +9,6 @@ import type { Notification } from '@/stores/notificationStore';
 function getNavigationPath(notification: Notification): string | null {
   const metadata = notification.metadata as Record<string, unknown> | null;
 
-  if (notification.type === 'new_follower' && metadata) {
-    const username = metadata.followerUsername;
-    if (typeof username === 'string') return `/profile/${username}`;
-    return null;
-  }
-
   if (notification.type === 'blog_approved' || notification.type === 'blog_rejected') {
     if (metadata && typeof metadata.slug === 'string') return `/blog/${metadata.slug}`;
     return null;
@@ -79,7 +73,15 @@ export function MobileNotifications() {
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors"
           aria-label="Close notifications"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -117,11 +119,17 @@ export function MobileNotifications() {
                   />
                 )}
                 <div className={`flex-1 min-w-0 ${notification.isRead ? 'pl-5' : ''}`}>
-                  <p className={`text-sm ${notification.isRead ? 'text-secondary' : 'font-medium text-on-surface'}`}>
+                  <p
+                    className={`text-sm ${notification.isRead ? 'text-secondary' : 'font-medium text-on-surface'}`}
+                  >
                     {notification.title}
                   </p>
-                  <p className="text-sm text-secondary line-clamp-2 mt-0.5">{notification.message}</p>
-                  <p className="text-xs text-outline-variant mt-1">{formatRelativeTime(notification.createdAt)}</p>
+                  <p className="text-sm text-secondary line-clamp-2 mt-0.5">
+                    {notification.message}
+                  </p>
+                  <p className="text-xs text-outline-variant mt-1">
+                    {formatRelativeTime(notification.createdAt)}
+                  </p>
                 </div>
               </button>
             ))}

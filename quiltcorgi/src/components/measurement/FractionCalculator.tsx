@@ -206,9 +206,7 @@ export function FractionCalculator({ isOpen, onClose }: FractionCalculatorProps)
 
               {/* Input B */}
               <div>
-                <label className="text-xs text-secondary block mb-1">
-                  Value B
-                </label>
+                <label className="text-xs text-secondary block mb-1">Value B</label>
                 <input
                   type="text"
                   value={inputB}
@@ -290,7 +288,7 @@ export function FractionCalculator({ isOpen, onClose }: FractionCalculatorProps)
               <button
                 type="button"
                 onClick={convert}
-                className="w-full h-9 rounded-md bg-primary-container text-white text-sm font-medium hover:opacity-90 transition-opacity"
+                className="w-full h-9 rounded-md bg-primary-container text-on-primary-container text-sm font-medium hover:opacity-90 transition-opacity"
               >
                 Convert to {convertFrom === 'inches' ? 'cm' : 'inches'}
               </button>

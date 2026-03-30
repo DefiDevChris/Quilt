@@ -17,9 +17,11 @@ export default function ProfilePage() {
   const [isUpgradeLoading, setIsUpgradeLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState<string | null>(null);
   const [stats, setStats] = useState<ProfileStats>({ projectCount: 0, postCount: 0 });
+  const [statsError, setStatsError] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {
+      setStatsError(false);
       const [projectsRes, postsRes] = await Promise.all([
         fetch('/api/projects?limit=1'),
         fetch('/api/community?limit=1'),
@@ -31,7 +33,7 @@ export default function ProfilePage() {
         postCount: postsData?.data?.total ?? 0,
       });
     } catch {
-      /* stats are non-critical */
+      setStatsError(true);
     }
   }, []);
 
@@ -78,7 +80,7 @@ export default function ProfilePage() {
     free: { label: 'Free', className: 'text-slate-500 border-slate-200' },
     pro: { label: 'Pro', className: 'text-orange-500 bg-orange-50 border-orange-300' },
     admin: { label: 'Admin', className: 'text-red-500 bg-red-50 border-red-300' },
-  }[user.role];
+  }[user.role] ?? { label: 'Free', className: 'text-slate-500 border-slate-200' };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -126,7 +128,9 @@ export default function ProfilePage() {
           href="/dashboard"
           className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">{stats.projectCount}</p>
+          <p className="text-2xl font-bold text-slate-800">
+            {statsError ? '\u2014' : stats.projectCount}
+          </p>
           <p className="text-sm text-slate-600">
             {stats.projectCount === 1 ? 'Project' : 'Projects'}
           </p>
@@ -135,10 +139,20 @@ export default function ProfilePage() {
           href="/socialthreads"
           className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">{stats.postCount}</p>
+          <p className="text-2xl font-bold text-slate-800">
+            {statsError ? '\u2014' : stats.postCount}
+          </p>
           <p className="text-sm text-slate-600">{stats.postCount === 1 ? 'Post' : 'Posts'}</p>
         </Link>
       </div>
+      {statsError && (
+        <p className="text-xs text-slate-400 -mt-2 mb-4 pl-1">
+          Could not load stats.{' '}
+          <button type="button" onClick={fetchStats} className="underline hover:text-slate-600">
+            Retry
+          </button>
+        </p>
+      )}
 
       {/* Quick Links */}
       <div className="rounded-[1.5rem] glass-elevated divide-y divide-white/30 mb-4">
@@ -152,7 +166,12 @@ export default function ProfilePage() {
               {user.role === 'pro' ? 'Pro plan active' : 'Free plan — upgrade for more features'}
             </p>
           </div>
-          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>
@@ -164,7 +183,12 @@ export default function ProfilePage() {
             <p className="text-sm font-bold text-slate-800">My Projects</p>
             <p className="text-xs text-slate-600 mt-0.5">View and manage your quilt designs</p>
           </div>
-          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>
@@ -176,7 +200,12 @@ export default function ProfilePage() {
             <p className="text-sm font-bold text-slate-800">Tutorials</p>
             <p className="text-xs text-slate-600 mt-0.5">Step-by-step quilting guides</p>
           </div>
-          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>

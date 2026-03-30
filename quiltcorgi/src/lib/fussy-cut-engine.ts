@@ -9,6 +9,8 @@
  * return new objects — never mutate inputs.
  */
 
+import { boundingBoxFromPoints } from '@/lib/geometry-extraction';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -97,29 +99,7 @@ export function patchBoundingBox(vertices: readonly Point[]): {
   width: number;
   height: number;
 } {
-  if (vertices.length === 0) {
-    return { x: 0, y: 0, width: 0, height: 0 };
-  }
-
-  let minX = vertices[0].x;
-  let maxX = vertices[0].x;
-  let minY = vertices[0].y;
-  let maxY = vertices[0].y;
-
-  for (let i = 1; i < vertices.length; i++) {
-    const { x, y } = vertices[i];
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (y < minY) minY = y;
-    if (y > maxY) maxY = y;
-  }
-
-  return {
-    x: minX,
-    y: minY,
-    width: maxX - minX,
-    height: maxY - minY,
-  };
+  return boundingBoxFromPoints(vertices);
 }
 
 /**

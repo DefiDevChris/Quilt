@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Sync Docs on Source Change",
+  "description": "When source files change, prompts the agent to update README or docs/ to reflect the changes",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "quiltcorgi/src/**/*.ts",
+      "quiltcorgi/src/**/*.tsx",
+      "quiltcorgi/src/**/*.css",
+      "quiltcorgi/drizzle.config.ts",
+      "quiltcorgi/next.config.ts",
+      "quiltcorgi/package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A source file was just edited. Review the change and determine if any documentation needs updating. Check quiltcorgi/docs/ for relevant docs and the quiltcorgi/README.md. If the change affects public APIs, project structure, features, configuration, database schema, or setup instructions, update the appropriate doc file to reflect the current state. Only update docs if something meaningful changed — don't make trivial edits."
+  }
+}

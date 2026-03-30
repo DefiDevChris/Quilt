@@ -1,7 +1,7 @@
 'use client';
 
 import { useCanvasStore, type WorktableType, type ToolType } from '@/stores/canvasStore';
-import { useProjectStore } from '@/stores/projectStore';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface FloatingTool {
   id: string;
@@ -63,40 +63,6 @@ const REDO_ICON = (
     />
   </svg>
 );
-
-function performUndo() {
-  const canvas = useCanvasStore.getState().fabricCanvas as {
-    toJSON: () => unknown;
-    loadFromJSON: (json: unknown) => Promise<void>;
-    renderAll: () => void;
-  } | null;
-  if (!canvas) return;
-  const currentJson = JSON.stringify(canvas.toJSON());
-  const prevJson = useCanvasStore.getState().popUndo(currentJson);
-  if (prevJson) {
-    canvas.loadFromJSON(JSON.parse(prevJson)).then(() => {
-      canvas.renderAll();
-      useProjectStore.getState().setDirty(true);
-    });
-  }
-}
-
-function performRedo() {
-  const canvas = useCanvasStore.getState().fabricCanvas as {
-    toJSON: () => unknown;
-    loadFromJSON: (json: unknown) => Promise<void>;
-    renderAll: () => void;
-  } | null;
-  if (!canvas) return;
-  const currentJson = JSON.stringify(canvas.toJSON());
-  const nextJson = useCanvasStore.getState().popRedo(currentJson);
-  if (nextJson) {
-    canvas.loadFromJSON(JSON.parse(nextJson)).then(() => {
-      canvas.renderAll();
-      useProjectStore.getState().setDirty(true);
-    });
-  }
-}
 
 function useQuiltFloatingTools(): FloatingTool[] {
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);

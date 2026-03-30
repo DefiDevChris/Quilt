@@ -168,8 +168,9 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
     }
 
     case 'image': {
-      const src = (node.attrs?.src as string) ?? '';
+      const rawSrc = (node.attrs?.src as string) ?? '';
       const alt = (node.attrs?.alt as string) ?? '';
+      const src = isSafeHref(rawSrc) ? rawSrc : '#';
       return (
         <figure key={key} className="mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}

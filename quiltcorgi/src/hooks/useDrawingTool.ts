@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { getPixelsPerUnit, snapToGrid } from '@/lib/canvas-utils';
+import { getPixelsPerUnit, snapToGrid, maybeSnap } from '@/lib/canvas-utils';
 
 export function useDrawingTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -79,20 +79,14 @@ export function useDrawingTool() {
       let polygonPoints: { x: number; y: number }[] = [];
       let polygonPreviewLine: InstanceType<typeof fabric.Line> | null = null;
 
-      function maybeSnap(val: number): number {
-        const s = stateRef.current;
-        if (!s.gridSettings.snapToGrid) return val;
-        const gridPx = s.gridSettings.size * getPixelsPerUnit(s.unitSystem);
-        return snapToGrid(val, gridPx);
-      }
-
       function onMouseDown(e: { e: MouseEvent }) {
         if (stateRef.current.isSpacePressed) return;
         if (!fabric || !canvas) return;
 
         const pointer = canvas.getScenePoint(e.e);
-        const sx = maybeSnap(pointer.x);
-        const sy = maybeSnap(pointer.y);
+        const s = stateRef.current;
+        const sx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
+        const sy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
         if (activeTool === 'polygon') {
           polygonPoints.push({ x: sx, y: sy });
@@ -178,8 +172,9 @@ export function useDrawingTool() {
       function onMouseMove(e: { e: MouseEvent }) {
         if (!fabric || !canvas) return;
         const pointer = canvas.getScenePoint(e.e);
-        const cx = maybeSnap(pointer.x);
-        const cy = maybeSnap(pointer.y);
+        const s = stateRef.current;
+        const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
+        const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
         if (activeTool === 'polygon' && polygonPreviewLine) {
           polygonPreviewLine.set({ x2: cx, y2: cy });

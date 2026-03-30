@@ -8,9 +8,7 @@ export {
   commentStatusEnum,
   communityCategoryEnum,
   blogPostStatusEnum,
-  reportTargetTypeEnum,
-  reportReasonEnum,
-  reportStatusEnum,
+  blogPostCategoryEnum,
 } from './enums';
 export { users } from './users';
 export { projects } from './projects';
@@ -22,11 +20,7 @@ export { likes } from './likes';
 export { subscriptions } from './subscriptions';
 export { notifications } from './notifications';
 export { patternTemplates } from './patternTemplates';
-export { designVariations } from './designVariations';
 export { userProfiles } from './userProfiles';
 export { comments } from './comments';
-export { commentLikes } from './commentLikes';
-export { follows } from './follows';
 export { savedPosts } from './savedPosts';
 export { blogPosts } from './blogPosts';
-export { reports } from './reports';

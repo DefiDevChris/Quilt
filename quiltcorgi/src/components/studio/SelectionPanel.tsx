@@ -7,6 +7,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { useFabricPattern } from '@/hooks/useFabricPattern';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
+import { saveRecentFabric, getRecentFabrics, type RecentFabric } from '@/lib/recent-fabrics';
 
 // ── Types ──
 
@@ -89,29 +90,10 @@ function saveRecentColor(hex: string) {
 }
 
 // ── Recent fabrics persisted in localStorage ──
-
-export interface RecentFabric {
-  readonly id: string;
-  readonly name: string;
-  readonly imageUrl: string;
-  readonly timestamp: number;
-}
+// NOTE: RecentFabric type and saveRecentFabric/getRecentFabrics are now in @/lib/recent-fabrics
 
 function loadRecentFabrics(): RecentFabric[] {
-  try {
-    const raw = localStorage.getItem('qc_recent_fabrics');
-    if (!raw) return [];
-    return JSON.parse(raw) as RecentFabric[];
-  } catch {
-    return [];
-  }
-}
-
-export function saveRecentFabric(fabric: Omit<RecentFabric, 'timestamp'>) {
-  const recent = loadRecentFabrics().filter((f) => f.id !== fabric.id);
-  const updated = [{ ...fabric, timestamp: Date.now() }, ...recent].slice(0, MAX_RECENT_FABRICS);
-  localStorage.setItem('qc_recent_fabrics', JSON.stringify(updated));
-  return updated;
+  return getRecentFabrics();
 }
 
 // ── Shape Preview SVG ──

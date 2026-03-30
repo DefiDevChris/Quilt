@@ -10,12 +10,10 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
-
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl;
@@ -113,14 +111,8 @@ export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const trustCheck = await checkTrustLevel(session.user.id, 'canPost');
-  if (!trustCheck.allowed) {
-    return trustCheck.response!;
-  }
-
-  const rateLimitCheck = await checkRateLimit(session.user.id, trustCheck.trustLevel, 'posts');
-  if (!rateLimitCheck.allowed) {
-    return rateLimitCheck.response!;
+  if (session.user.role !== 'admin') {
+    return errorResponse('Only admins can create blog posts', 'FORBIDDEN', 403);
   }
 
   try {

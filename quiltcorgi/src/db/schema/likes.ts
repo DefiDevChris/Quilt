@@ -1,11 +1,10 @@
-import { pgTable, uuid, timestamp, unique, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, timestamp, primaryKey, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { communityPosts } from './communityPosts';
 
 export const likes = pgTable(
   'likes',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
     userId: uuid('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -15,7 +14,7 @@ export const likes = pgTable(
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    unique('idx_likes_userId_communityPostId').on(table.userId, table.communityPostId),
+    primaryKey({ columns: [table.userId, table.communityPostId] }),
     index('idx_likes_communityPostId').on(table.communityPostId),
   ]
 );

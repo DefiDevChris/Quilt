@@ -20,14 +20,14 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2 (App Router) + TypeScript + React 19 |
 | Styling | Tailwind CSS v4 (Material 3-inspired design system) |
 | Canvas | Fabric.js 7.2 |
-| State | Zustand (14 stores) |
+| State | Zustand (17 stores) |
 | Auth | AWS Cognito (email/password, JWT via JWKS) |
-| Database | PostgreSQL + Drizzle ORM 0.45 (21 tables) |
+| Database | PostgreSQL + Drizzle ORM 0.45 (19 tables) |
 | Storage | AWS S3 + CloudFront CDN |
 | Secrets | AWS Secrets Manager |
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe (checkout, webhooks, subscription management) |
-| Testing | Vitest (1,305 tests) + Playwright E2E |
+| Testing | Vitest + Playwright E2E |
 
 ## Brand Voice
 
@@ -58,15 +58,16 @@ quiltcorgi/
   src/
     app/            Next.js App Router -- pages + API routes
     components/     React components (25 directories)
-    hooks/          18 custom hooks (canvas, drawing, patterns)
-    stores/         14 Zustand stores
+    hooks/          22 hook files (canvas, drawing, patterns, etc.)
+    stores/         17 Zustand stores
     lib/            ~60 utility modules (engines, auth, S3, PDF)
-    db/             Drizzle schemas + seed data (659 blocks)
-    content/        MDX tutorials (10) + blog posts (5)
+    data/           Static data files (pattern definitions, etc.)
+    db/             Drizzle schemas (19 tables) + seed data (659 blocks)
+    content/        MDX tutorials (10)
     middleware/     Trust guard for community rate limiting
     types/          TypeScript type definitions
   tests/
-    unit/           69 test files, 1,305 tests
+    unit/           76 test files
 ```
 
 ## Architecture

@@ -1,6 +1,12 @@
 import { PIXELS_PER_INCH, PIXELS_PER_CM } from '@/lib/constants';
 import type { UnitSystem } from '@/types/canvas';
 
+export interface GridSettings {
+  enabled: boolean;
+  size: number;
+  snapToGrid: boolean;
+}
+
 export function getPixelsPerUnit(unitSystem: UnitSystem): number {
   return unitSystem === 'imperial' ? PIXELS_PER_INCH : PIXELS_PER_CM;
 }
@@ -67,4 +73,18 @@ export function fitToScreenZoom(
     (containerHeight - padding) / quiltHeightPx,
     1
   );
+}
+
+/**
+ * Conditionally snap a value to grid based on current grid settings.
+ * Used by drawing tools for snap-to-grid functionality.
+ */
+export function maybeSnap(
+  val: number,
+  gridSettings: GridSettings,
+  unitSystem: UnitSystem
+): number {
+  if (!gridSettings.snapToGrid) return val;
+  const gridPx = gridSettings.size * getPixelsPerUnit(unitSystem);
+  return snapToGrid(val, gridPx);
 }

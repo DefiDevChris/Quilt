@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { Package } from 'lucide-react';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
 
 interface PatternCardProps {
@@ -72,7 +73,7 @@ function PlaceholderFallback({ name }: { name: string }) {
   
   return (
     <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: color }}>
-      <span className="material-symbols-outlined text-4xl opacity-20 text-on-surface">inventory_2</span>
+      <Package className="w-10 h-10 opacity-20 text-on-surface" />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { computePatternTransform, type FussyCutConfig } from '@/lib/fussy-cut-engine';
-import { saveRecentFabric } from '@/components/studio/SelectionPanel';
+import { saveRecentFabric } from '@/lib/recent-fabrics';
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.

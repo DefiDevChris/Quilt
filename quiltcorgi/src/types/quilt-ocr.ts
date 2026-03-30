@@ -1,9 +1,4 @@
-export type LayoutClassification =
-  | 'grid'
-  | 'on-point'
-  | 'sashing'
-  | 'medallion'
-  | 'free-form';
+export type LayoutClassification = 'grid' | 'on-point' | 'sashing' | 'medallion' | 'free-form';
 
 export interface DetectedLine {
   readonly rho: number;
@@ -74,33 +69,3 @@ export interface QuiltMeasurements {
   readonly totalHeightInches: number;
   readonly seamAllowanceInches: number;
 }
-
-export interface OcrConfig {
-  readonly edgeThreshold: number;
-  readonly houghThreshold: number;
-  readonly minLineGap: number;
-  readonly referenceWidthInches?: number;
-  readonly seamAllowanceInches: number;
-}
-
-export interface OcrResult {
-  readonly grid: DetectedGrid;
-  readonly blocks: readonly RecognizedBlock[];
-  readonly colors: readonly BlockColorInfo[];
-  readonly measurements: QuiltMeasurements | null;
-  readonly pipelineSteps: readonly OcrPipelineStep[];
-}
-
-export interface OcrPipelineStep {
-  readonly name: string;
-  readonly status: 'pending' | 'running' | 'complete' | 'error';
-  readonly message?: string;
-  readonly durationMs?: number;
-}
-
-export const DEFAULT_OCR_CONFIG: OcrConfig = {
-  edgeThreshold: 50,
-  houghThreshold: 80,
-  minLineGap: 10,
-  seamAllowanceInches: 0.25,
-};

@@ -1,0 +1,2 @@
+✓ icon-192.png
+✓ og-image.png

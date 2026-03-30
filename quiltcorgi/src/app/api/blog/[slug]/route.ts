@@ -119,8 +119,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return notFoundResponse('Blog post not found.');
     }
 
-    const role = (session.user as { role?: string }).role ?? 'free';
-    const isAdmin = role === 'admin';
+    const isAdmin = session.user.role === 'admin';
     const isOwner = existing.authorId === session.user.id;
 
     if (!isAdmin && !isOwner) {

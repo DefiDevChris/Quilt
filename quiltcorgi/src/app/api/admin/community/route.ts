@@ -10,14 +10,9 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { formatCreatorName } from '@/lib/format-utils';
 
 export const dynamic = 'force-dynamic';
-
-function formatCreatorName(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length < 2) return parts[0] ?? '';
-  return `${parts[0]} ${parts[1]![0]}.`;
-}
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -29,20 +24,19 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl;
   const parsed = adminModerationListSchema.safeParse({
     status: url.searchParams.get('status') ?? undefined,
+    page: url.searchParams.get('page') ?? undefined,
+    limit: url.searchParams.get('limit') ?? undefined,
   });
 
   if (!parsed.success) {
     return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
   }
 
-  const { status } = parsed.data;
-
-  const page = Math.max(1, Number(request.nextUrl.searchParams.get('page')) || 1);
-  const limit = Math.min(100, Math.max(1, Number(request.nextUrl.searchParams.get('limit')) || 50));
+  const { status, page, limit } = parsed.data;
   const offset = (page - 1) * limit;
 
   try {
-    const whereClause = status !== 'all' ? eq(communityPosts.status, status) : undefined;
+    const whereClause = status && status !== 'all' ? eq(communityPosts.status, status) : undefined;
 
     const [postRows, [totalRow]] = await Promise.all([
       db

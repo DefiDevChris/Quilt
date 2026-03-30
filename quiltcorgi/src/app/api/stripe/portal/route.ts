@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 
 export const dynamic = 'force-dynamic';
@@ -23,12 +23,14 @@ export async function POST() {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
     if (!appUrl) {
-      throw new Error(
-        'NEXT_PUBLIC_APP_URL environment variable is required for Stripe portal redirects'
+      return errorResponse(
+        'Service configuration error',
+        'INTERNAL_ERROR',
+        500
       );
     }
 
-    const portalSession = await stripe.billingPortal.sessions.create({
+    const portalSession = await getStripe().billingPortal.sessions.create({
       customer: sub.stripeCustomerId,
       return_url: `${appUrl}/profile/billing`,
     });

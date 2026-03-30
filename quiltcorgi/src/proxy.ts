@@ -2,24 +2,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify, createRemoteJWKSet } from 'jose';
 
 const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
-const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID ?? '';
 
-if (!COGNITO_USER_POOL_ID && process.env.NODE_ENV === 'production') {
-  throw new Error('COGNITO_USER_POOL_ID must be set in production');
+// Lazy initialization to avoid race with instrumentation.ts secrets loading
+function getUserPoolId(): string {
+  const id = process.env.COGNITO_USER_POOL_ID ?? '';
+  if (!id && process.env.NODE_ENV === 'production') {
+    throw new Error('COGNITO_USER_POOL_ID must be set in production');
+  }
+  return id;
 }
 
-const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
-
-const jwks = COGNITO_USER_POOL_ID ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
+function logAudit(event: string, details: Record<string, string>) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    level: 'WARN',
+    service: 'proxy',
+    event,
+    ...details,
+  };
+  // Use console.log for structured logging (JSON) instead of console.warn
+  // This allows log aggregation systems to parse the structured data
+  console.log(JSON.stringify(logEntry));
+}
 
 const protectedRoutes = ['/dashboard', '/studio', '/profile', '/admin'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
+// Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading
+function getJwks() {
+  const userPoolId = getUserPoolId();
+  if (!userPoolId) return null;
+  const jwksUrl = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
+  return createRemoteJWKSet(new URL(jwksUrl));
+}
+
 async function verifyIdToken(token: string): Promise<{ sub: string; email: string } | null> {
+  const jwks = getJwks();
   if (!jwks) return null;
+  const userPoolId = getUserPoolId();
   try {
     const { payload } = await jwtVerify(token, jwks, {
-      issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`,
+      issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}`,
     });
     return {
       sub: payload.sub as string,
@@ -57,6 +80,7 @@ export async function proxy(req: NextRequest) {
     }
     const role = req.cookies.get('qc_user_role')?.value;
     if (role !== 'admin') {
+      logAudit('UNAUTHORIZED_ADMIN_ACCESS', { path: pathname });
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
   }

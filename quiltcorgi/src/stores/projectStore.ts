@@ -1,6 +1,10 @@
 'use client';
 
 import { create } from 'zustand';
+import {
+  DEFAULT_CANVAS_WIDTH,
+  DEFAULT_CANVAS_HEIGHT,
+} from '@/lib/constants';
 
 export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 
@@ -28,8 +32,8 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   projectId: null,
   projectName: 'Untitled Quilt',
   saveStatus: 'saved',
-  canvasWidth: 48,
-  canvasHeight: 48,
+  canvasWidth: DEFAULT_CANVAS_WIDTH,
+  canvasHeight: DEFAULT_CANVAS_HEIGHT,
   isDirty: false,
   lastSavedAt: null,
 
@@ -55,8 +59,8 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       projectId: null,
       projectName: 'Untitled Quilt',
       saveStatus: 'saved',
-      canvasWidth: 48,
-      canvasHeight: 48,
+      canvasWidth: DEFAULT_CANVAS_WIDTH,
+      canvasHeight: DEFAULT_CANVAS_HEIGHT,
       isDirty: false,
       lastSavedAt: null,
     }),

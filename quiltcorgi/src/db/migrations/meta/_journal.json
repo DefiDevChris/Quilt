@@ -22,6 +22,34 @@
       "when": 1774654592097,
       "tag": "0002_pattern-templates",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774654592098,
+      "tag": "0003_corrective-schema-fixes",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774654592099,
+      "tag": "0004_drop-password-hash",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774654592100,
+      "tag": "0005_schema-audit-fixes",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774654592101,
+      "tag": "0006_simplification",
+      "breakpoints": true
     }
   ]
 }

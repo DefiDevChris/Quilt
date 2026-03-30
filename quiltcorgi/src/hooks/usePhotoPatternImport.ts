@@ -10,8 +10,8 @@ import { PIXELS_PER_INCH, PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT } from '@/lib/
  * load them onto the Fabric.js canvas as polygon objects
  * with a reference photo background.
  *
- * Re-runs whenever scaledPieces changes (e.g. after a new
- * Photo Patchwork wizard finishes). The store resets at the
+ * Re-runs whenever scaledPieces changes (e.g. after the
+ * Photo to Pattern flow finishes). The store resets at the
  * end of loadPieces(), so the guard on length === 0 prevents
  * double-importing.
  */

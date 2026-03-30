@@ -24,13 +24,14 @@ interface BlockStoreState {
   fetchBlocks: () => Promise<void>;
   fetchUserBlocks: () => Promise<void>;
   deleteUserBlock: (blockId: string) => Promise<boolean>;
+  reset: () => void;
 }
 
 let blockAbortController: AbortController | null = null;
 
-export const useBlockStore = create<BlockStoreState>((set, get) => ({
-  blocks: [],
-  userBlocks: [],
+const INITIAL_STATE = {
+  blocks: [] as BlockListItem[],
+  userBlocks: [] as BlockListItem[],
   search: '',
   category: '',
   page: 1,
@@ -38,8 +39,12 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   total: 0,
   isLoading: false,
   isLoadingUserBlocks: false,
-  error: null,
+  error: null as string | null,
   isPanelOpen: false,
+};
+
+export const useBlockStore = create<BlockStoreState>((set, get) => ({
+  ...INITIAL_STATE,
 
   setSearch: (search) => {
     set({ search, page: 1 });
@@ -120,13 +125,13 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
       const json = await res.json();
 
       if (!res.ok) {
-        set({ isLoadingUserBlocks: false });
+        set({ error: json.error ?? 'Failed to load your blocks', isLoadingUserBlocks: false });
         return;
       }
 
       set({ userBlocks: json.data.blocks, isLoadingUserBlocks: false });
     } catch {
-      set({ isLoadingUserBlocks: false });
+      set({ error: 'Failed to load your blocks', isLoadingUserBlocks: false });
     }
   },
 
@@ -143,5 +148,11 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
     } catch {
       return false;
     }
+  },
+
+  reset: () => {
+    blockAbortController?.abort();
+    blockAbortController = null;
+    set({ ...INITIAL_STATE });
   },
 }));

@@ -16,5 +16,6 @@ export const savedPosts = pgTable(
   (table) => [
     primaryKey({ columns: [table.userId, table.postId] }),
     index('idx_saved_posts_postId').on(table.postId),
+    // Note: idx_saved_posts_userId is redundant - userId is the leading column of the primary key
   ]
 );

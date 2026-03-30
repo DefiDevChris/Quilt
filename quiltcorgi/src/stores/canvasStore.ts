@@ -13,6 +13,8 @@ import {
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
   REFERENCE_IMAGE_DEFAULT_OPACITY,
+  DEFAULT_FILL_COLOR,
+  DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
 
 export type ToolType =
@@ -66,7 +68,6 @@ interface CanvasStoreState {
   referenceImageOpacity: number;
   activeColorwayTool: ColorwayTool | null;
   fussyCutTarget: FussyCutTarget | null;
-  grayscaleMode: boolean;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -90,33 +91,40 @@ interface CanvasStoreState {
   setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorwayTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
-  toggleGrayscaleMode: () => void;
+  reset: () => void;
 }
 
-export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
-  fabricCanvas: null,
+const INITIAL_STATE = {
+  // WARNING: fabricCanvas is a mutable DOM object. Storing it in Zustand
+  // breaks serialization and time-travel debugging. This is a known
+  // anti-pattern but kept for pragmatic canvas state management.
+  // Consider using React context or a ref for future refactoring.
+  fabricCanvas: null as FabricCanvas | null,
   zoom: ZOOM_DEFAULT,
-  unitSystem: 'imperial',
+  unitSystem: 'imperial' as UnitSystem,
   gridSettings: {
     enabled: GRID_DEFAULT_ENABLED,
     size: GRID_DEFAULT_SIZE,
     snapToGrid: GRID_DEFAULT_SNAP,
   },
-  selectedObjectIds: [],
-  activeTool: 'select',
-  activeWorktable: 'quilt',
+  selectedObjectIds: [] as string[],
+  activeTool: 'select' as ToolType,
+  activeWorktable: 'quilt' as WorktableType,
   cursorPosition: { x: 0, y: 0 },
   isSpacePressed: false,
-  fillColor: '#8d4f00',
-  strokeColor: '#383831',
+  fillColor: DEFAULT_FILL_COLOR,
+  strokeColor: DEFAULT_STROKE_COLOR,
   strokeWidth: 1,
-  undoStack: [],
-  redoStack: [],
-  blockDraftingMode: 'freeform',
+  undoStack: [] as string[],
+  redoStack: [] as string[],
+  blockDraftingMode: 'freeform' as BlockDraftingMode,
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
-  activeColorwayTool: null,
-  fussyCutTarget: null,
-  grayscaleMode: false,
+  activeColorwayTool: null as ColorwayTool | null,
+  fussyCutTarget: null as FussyCutTarget | null,
+};
+
+export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
+  ...INITIAL_STATE,
 
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
 
@@ -140,9 +148,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   pushUndoState: (json) => {
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
-      console.warn(
-        `[canvasStore] Snapshot skipped: size ${json.length} bytes exceeds ${UNDO_SNAPSHOT_SIZE_LIMIT} byte limit.`
-      );
       return;
     }
     set((state) => ({
@@ -186,5 +191,5 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
 
-  toggleGrayscaleMode: () => set((state) => ({ grayscaleMode: !state.grayscaleMode })),
+  reset: () => set({ ...INITIAL_STATE }),
 }));

@@ -7,6 +7,7 @@
  * then inserts them into the `blocks` table as system blocks (isDefault=true, userId=null).
  */
 import { getAllBlockDefinitions, type BlockDefinition } from './blockDefinitions';
+import { eq } from 'drizzle-orm';
 
 /**
  * Convert an SVG block definition to Fabric.js group JSON.
@@ -178,23 +179,49 @@ async function main() {
   const db = drizzle(pool, { schema: { blocks } });
 
   const records = generateBlockRecords();
-  console.log(`Seeding ${records.length} blocks...`);
+  console.log(`Preparing to seed ${records.length} blocks...`);
+
+  // Check for existing blocks to ensure idempotency
+  const existingBlocks = await db
+    .select({ name: blocks.name })
+    .from(blocks)
+    .where(eq(blocks.isDefault, true));
+  const existingNames = new Set(existingBlocks.map((b) => b.name));
+
+  // Filter out already-existing blocks
+  const newRecords = records.filter((r) => !existingNames.has(r.name));
+
+  if (newRecords.length === 0) {
+    console.log('All blocks already exist. Skipping seed.');
+    await pool.end();
+    return;
+  }
+
+  console.log(
+    `Inserting ${newRecords.length} new blocks (${records.length - newRecords.length} already exist)...`
+  );
 
   // Insert in batches of 50
   const BATCH_SIZE = 50;
-  for (let i = 0; i < records.length; i += BATCH_SIZE) {
-    const batch = records.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < newRecords.length; i += BATCH_SIZE) {
+    const batch = newRecords.slice(i, i + BATCH_SIZE);
     await db.insert(blocks).values(batch);
-    console.log(`  Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(records.length / BATCH_SIZE)}`);
+    console.log(
+      `  Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(newRecords.length / BATCH_SIZE)}`
+    );
   }
 
-  console.log(`Done! Seeded ${records.length} blocks.`);
+  console.log(`Done! Seeded ${newRecords.length} new blocks.`);
   await pool.end();
 }
 
 // Only run main() when executed directly
 const isDirectExecution = process.argv[1]?.includes('seedBlocks');
 if (isDirectExecution) {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: Seed scripts cannot run in production. Aborting.');
+    process.exit(1);
+  }
   main().catch((err) => {
     console.error('Seed failed:', err);
     process.exit(1);

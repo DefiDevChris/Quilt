@@ -16,7 +16,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Secrets | AWS Secrets Manager (production configuration) |
 | PDF | pdf-lib (client-side 1:1 scale) |
 | Payments | Stripe |
-| Testing | Vitest (1,542 unit tests) + Playwright E2E |
+| Testing | Vitest + Playwright E2E |
 
 ## Brand Voice
 
@@ -85,17 +85,10 @@ Set `AWS_SECRET_NAME=skip` in `.env.local` — this tells the app to read env va
 Requires Docker (or Podman). Runs PostgreSQL 16 in a container with the same schema as production.
 
 ```bash
-npm run db:setup    # Start container + run migrations + seed all data
+npm run db:local:up   # Start the PostgreSQL container
+npm run db:migrate    # Run migrations
+npm run db:seed:blog  # Seed blog posts
 ```
-
-This creates a fully populated local database with:
-- 659 system blocks across 20+ categories
-- 169 system fabrics with color placeholders
-- 9 sample users with profiles
-- 25 community posts with likes
-- 11 blog posts
-- 2 pattern templates
-- 1 dev bypass user (pro tier, `dev@localhost`)
 
 ### 4. Start the dev server
 
@@ -107,15 +100,13 @@ npm run dev         # http://localhost:3000
 
 | Command | Purpose |
 |---------|---------|
-| `npm run db:setup` | First-time setup (container + migrations + seeds) |
 | `npm run db:local:up` | Start the PostgreSQL container |
 | `npm run db:local:down` | Stop the PostgreSQL container |
-| `npm run db:local:reset` | Drop and recreate everything from scratch |
-| `npm run db:seed:all` | Re-run all seeds (idempotent — skips existing data) |
 | `npm run db:studio` | Open Drizzle Studio web UI for the database |
 | `npm run db:generate` | Generate new Drizzle migration from schema changes |
 | `npm run db:migrate` | Run pending Drizzle migrations |
 | `npm run db:push` | Push schema directly to database (no migration file) |
+| `npm run db:seed:blog` | Seed blog posts |
 
 ### Local Database Details
 
@@ -141,13 +132,15 @@ Production uses AWS-managed infrastructure. Secrets are loaded at startup from A
 
 ### AWS Services
 
-| Service | Purpose |
-|---------|---------|
-| **RDS PostgreSQL** | Production database (same schema as local Docker) |
-| **Cognito** | User authentication (email/password with verification) |
-| **S3 + CloudFront** | Image/fabric uploads and CDN delivery |
-| **Secrets Manager** | Encrypted runtime secrets (DB URL, API keys, etc.) |
-| **Stripe** | Subscription billing (free/pro tiers) |
+| Service | Purpose | Status |
+|---------|---------|--------|
+| **RDS PostgreSQL** | Production database (same schema as local Docker) | ⬜ Provision |
+| **Cognito** | User authentication (email/password with verification) | ⬜ Provision |
+| **S3 + CloudFront** | Image/fabric uploads and CDN delivery | ⬜ Provision |
+| **Secrets Manager** | Encrypted runtime secrets — `quiltcorgi/prod` (KMS-encrypted via `alias/quiltcorgi-secrets`) | ✅ Created — Stripe price IDs written, remaining secrets need real values |
+| **KMS** | Encrypts the Secrets Manager secret | ✅ `alias/quiltcorgi-secrets` (`arn:aws:kms:us-east-1:463564115060:key/572355ff-d314-44cd-98df-8e98d37a0456`) |
+| **IAM** | App execution role with least-privilege policy | ✅ `quiltcorgi-app-role` + `quiltcorgi-app-policy` |
+| **Stripe** | Subscription billing (free/pro tiers) | ✅ Products and prices created — `prod_UExZDXTAZMZhXv`, `price_1TGTePIRtOHyc2V1azzQHUbq` (monthly), `price_1TGTeTIRtOHyc2V1KNPPoybb` (yearly) |
 
 ### Production Migrations
 
@@ -166,12 +159,13 @@ Migrations live in `src/db/migrations/`. The journal at `meta/_journal.json` tra
 ```
 src/
   app/              # Next.js App Router (pages + API routes)
-  components/       # React components (127 across 25 directories)
-  hooks/            # 19 custom hooks (canvas, drawing, patterns, colorway, text, resize, etc.)
-  stores/           # 16 Zustand stores
+  components/       # React components (25 directories)
+  hooks/            # 22 hook files (canvas, drawing, patterns, colorway, text, resize, etc.)
+  stores/           # 17 Zustand stores
   lib/              # ~60 utility modules (engines, math, PDF, S3, auth, etc.)
   types/            # TypeScript type definitions
-  db/               # Drizzle schemas (21 tables) + seed data
+  data/             # Static data files (pattern definitions, etc.)
+  db/               # Drizzle schemas (19 tables) + seed data
 ```
 
 ## Authentication & Access
@@ -217,17 +211,14 @@ npm run format         # Prettier
 npm run type-check     # TypeScript type checking
 
 # Testing
-npm test               # Vitest (1,542 tests)
+npm test               # Vitest (single run)
 npm run test:coverage  # Vitest with coverage
 npm run test:e2e       # Playwright E2E tests
 
 # Database
-npm run db:setup       # First-time local database setup
 npm run db:local:up    # Start PostgreSQL container
 npm run db:local:down  # Stop PostgreSQL container
-npm run db:local:reset # Drop and recreate from scratch
-npm run db:seed:all    # Run all seeds (idempotent)
-npm run db:seed:blog   # Seed blog posts only
+npm run db:seed:blog   # Seed blog posts
 npm run db:studio      # Open Drizzle Studio web UI
 npm run db:generate    # Generate migration from schema changes
 npm run db:migrate     # Run pending migrations

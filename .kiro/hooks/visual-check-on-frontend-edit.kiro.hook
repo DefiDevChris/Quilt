@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Visual Check on Frontend Edit",
+  "description": "After editing a frontend component or page, uses Playwright MCP to take a screenshot and visually confirm the UI looks correct",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.tsx",
+      "**/globals.css"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A frontend file was just edited. Use the Playwright MCP browser tools to navigate to the relevant page in the app (http://localhost:3000), take a screenshot, and visually confirm the UI looks correct and nothing is broken. If you can identify which component or page was changed, navigate directly to it."
+  }
+}

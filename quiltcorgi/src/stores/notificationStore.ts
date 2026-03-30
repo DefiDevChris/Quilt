@@ -23,6 +23,7 @@ interface NotificationState {
   markAsRead: (ids: string[]) => void;
   markAllAsRead: () => void;
   toggleDropdown: () => void;
+  reset: () => void;
 }
 
 const INITIAL_STATE = {
@@ -132,4 +133,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       get().fetchNotifications();
     }
   },
+
+  reset: () => set({ ...INITIAL_STATE }),
 }));

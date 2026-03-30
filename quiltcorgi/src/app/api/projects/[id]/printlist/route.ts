@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { printlists, projects } from '@/db/schema';
+import { printlists } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -10,25 +10,16 @@ import {
   notFoundResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { verifyProjectOwner } from '@/lib/project-auth';
 
 export const dynamic = 'force-dynamic';
-
-async function verifyProjectOwner(projectId: string, userId: string) {
-  const [project] = await db
-    .select({ id: projects.id })
-    .from(projects)
-    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
-    .limit(1);
-  return project ?? null;
-}
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
   // Pro-gate: printlist is Pro only
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role === 'free') {
+  if (session.user.role === 'free') {
     return forbiddenResponse('Printlist requires a Pro subscription.');
   }
 
@@ -64,8 +55,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const role = (session.user as { role?: string }).role ?? 'free';
-  if (role === 'free') {
+  if (session.user.role === 'free') {
     return forbiddenResponse('Printlist requires a Pro subscription.');
   }
 
@@ -88,7 +78,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .max(200);
 
     const parsedItems = printlistItemSchema.safeParse(body.items);
-    const items = parsedItems.success ? parsedItems.data : [];
+    if (!parsedItems.success) {
+      return Response.json(
+        { success: false, error: 'Invalid items payload', details: parsedItems.error.issues },
+        { status: 422 }
+      );
+    }
+    const items = parsedItems.data;
     const paperSize = body.paperSize === 'a4' ? 'a4' : 'letter';
 
     // Upsert: update if exists, insert if not

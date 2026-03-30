@@ -55,7 +55,7 @@ export function StudioTopBar({
             <div className="text-label-lg font-medium text-secondary truncate max-w-40">
               {projectName}
             </div>
-            <div className="text-body-sm text-outline-variant">Layer 1 Active</div>
+            <div className="text-body-sm text-outline-variant">Quilt Canvas</div>
           </div>
           <button
             type="button"

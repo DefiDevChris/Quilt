@@ -26,7 +26,9 @@ const avatarUpdateSchema = z.object({
 
           const cloudfrontUrl = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
           const s3Bucket = process.env.AWS_S3_BUCKET;
-          if (!cloudfrontUrl && !s3Bucket) return true;
+          if (!cloudfrontUrl && !s3Bucket) {
+            return false;
+          }
 
           const allowed: string[] = [];
           if (cloudfrontUrl) {

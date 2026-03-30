@@ -10,8 +10,7 @@ interface FeedTabsProps {
 
 const TABS: ReadonlyArray<{ id: FeedTab; label: string; requiresAuth: boolean }> = [
   { id: 'discover', label: 'Discover', requiresAuth: false },
-  { id: 'following', label: 'Following', requiresAuth: true },
-  { id: 'featured', label: 'Featured', requiresAuth: false },
+  { id: 'saved', label: 'Saved', requiresAuth: true },
 ];
 
 export function FeedTabs({ activeTab, onTabChange, isLoggedIn }: FeedTabsProps) {

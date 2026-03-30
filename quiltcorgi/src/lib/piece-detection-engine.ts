@@ -8,6 +8,7 @@
 
 import type { DetectedPiece, Point2D, Rect, ScaledPiece } from './photo-pattern-types';
 import { rgbToHex } from './color-math';
+import { gcd } from './math-utils';
 import {
   PHOTO_PATTERN_PIECE_MIN_AREA_RATIO,
   PHOTO_PATTERN_PIECE_MAX_AREA_RATIO,
@@ -46,9 +47,12 @@ export function roundToQuarterNearest(value: number): number {
  * Convert a decimal inch value to a quilter-friendly fraction string.
  * Rounds to nearest eighth, simplifies 2/8→1/4, 4/8→1/2, 6/8→3/4.
  *
+ * @param separator - Character between whole number and fraction. Default: ' '
+ *   Use ' ' for display text ("3 1/2"), '-' for cutting charts ("3-1/2").
+ *
  * Examples: 3.5 → "3 1/2", 4.875 → "4 7/8", 6.0 → "6", 0.25 → "1/4"
  */
-export function formatFraction(value: number): string {
+export function formatFraction(value: number, separator: string = ' '): string {
   const rounded = roundToEighthNearest(value);
   const whole = Math.floor(rounded);
   const eighths = Math.round((rounded - whole) * 8);
@@ -66,16 +70,7 @@ export function formatFraction(value: number): string {
     return `${numerator}/${denominator}`;
   }
 
-  return `${whole} ${numerator}/${denominator}`;
-}
-
-function gcd(a: number, b: number): number {
-  while (b !== 0) {
-    const temp = b;
-    b = a % b;
-    a = temp;
-  }
-  return a;
+  return `${whole}${separator}${numerator}/${denominator}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -90,7 +85,7 @@ export function filterContoursByArea(
   areas: readonly number[],
   imageArea: number,
   minRatio: number = PHOTO_PATTERN_PIECE_MIN_AREA_RATIO,
-  maxRatio: number = PHOTO_PATTERN_PIECE_MAX_AREA_RATIO,
+  maxRatio: number = PHOTO_PATTERN_PIECE_MAX_AREA_RATIO
 ): readonly boolean[] {
   const minArea = minRatio * imageArea;
   const maxArea = maxRatio * imageArea;
@@ -109,7 +104,7 @@ export function filterContoursByArea(
 export function extractDominantColor(
   pixels: Uint8ClampedArray,
   width: number,
-  height: number,
+  height: number
 ): string {
   const startCol = Math.floor(width * 0.25);
   const endCol = Math.floor(width * 0.75);
@@ -161,7 +156,7 @@ export function extractDominantColor(
 export function detectPieces(
   cv: unknown,
   correctedImage: unknown,
-  sensitivity: number,
+  sensitivity: number
 ): readonly DetectedPiece[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const opencv = cv as any;
@@ -175,10 +170,7 @@ export function detectPieces(
   const edges = new opencv.Mat();
   const hierarchy = new opencv.Mat();
   const contours = new opencv.MatVector();
-  const kernel = opencv.getStructuringElement(
-    opencv.MORPH_RECT,
-    new opencv.Size(3, 3),
-  );
+  const kernel = opencv.getStructuringElement(opencv.MORPH_RECT, new opencv.Size(3, 3));
 
   try {
     // Step 1: Convert to grayscale
@@ -186,12 +178,7 @@ export function detectPieces(
 
     // Step 2: Gaussian blur to reduce noise
     const blurSize = Math.max(3, Math.round(5 * sensitivity) | 1);
-    opencv.GaussianBlur(
-      gray,
-      blurred,
-      new opencv.Size(blurSize, blurSize),
-      0,
-    );
+    opencv.GaussianBlur(gray, blurred, new opencv.Size(blurSize, blurSize), 0);
 
     // Step 3: Adaptive threshold for varying lighting
     const blockSize = Math.max(3, Math.round(11 * sensitivity) | 1);
@@ -202,7 +189,7 @@ export function detectPieces(
       opencv.ADAPTIVE_THRESH_GAUSSIAN_C,
       opencv.THRESH_BINARY_INV,
       blockSize,
-      2,
+      2
     );
 
     // Step 4: Morphological close to fill small gaps
@@ -219,7 +206,7 @@ export function detectPieces(
       contours,
       hierarchy,
       opencv.RETR_EXTERNAL,
-      opencv.CHAIN_APPROX_SIMPLE,
+      opencv.CHAIN_APPROX_SIMPLE
     );
 
     // Step 7: Filter and extract pieces
@@ -311,7 +298,7 @@ export function scalePiecesToDimensions(
   imageHeight: number,
   targetWidthInches: number,
   targetHeightInches: number,
-  seamAllowanceInches: number,
+  seamAllowanceInches: number
 ): readonly ScaledPiece[] {
   const scaleX = targetWidthInches / imageWidth;
   const scaleY = targetHeightInches / imageHeight;

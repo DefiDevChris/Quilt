@@ -8,8 +8,6 @@ interface UserCardProps {
   username: string;
   avatarUrl: string | null;
   isPro: boolean;
-  showFollowButton?: boolean;
-  userId?: string;
 }
 
 function getInitials(name: string): string {

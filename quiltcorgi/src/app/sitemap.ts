@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, userProfiles, communityPosts } from '@/db/schema';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://quiltcorgi.com';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://quiltcorgi.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${BASE_URL}/community`,
+      url: `${BASE_URL}/socialthreads`,
       changeFrequency: 'daily',
       priority: 0.8,
     },
@@ -69,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const communityEntries: MetadataRoute.Sitemap = approvedCommunityPosts.map((post) => ({
-    url: `${BASE_URL}/community/${post.id}`,
+    url: `${BASE_URL}/socialthreads/${post.id}`,
     lastModified: post.createdAt,
     changeFrequency: 'monthly' as const,
     priority: 0.6,

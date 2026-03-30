@@ -75,12 +75,12 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <span className="mb-2 text-3xl">🔒</span>
               <p className="text-sm text-secondary">Upgrade to Pro to use this block</p>
-              <button
-                type="button"
-                className="mt-3 rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+              <a
+                href="/profile/billing"
+                className="mt-3 inline-block rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
               >
                 Upgrade to Pro
-              </button>
+              </a>
             </div>
           ) : fullBlock?.svgData ? (
             <div

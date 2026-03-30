@@ -62,8 +62,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
           collection: fabrics.collection,
           colorFamily: fabrics.colorFamily,
         })
-        .from(fabrics)
-        .where(eq(fabrics.manufacturer, 'Andover Fabrics')) as Promise<FabricRecord[]>,
+        .from(fabrics) as Promise<FabricRecord[]>,
       db
         .select({
           id: blocks.id,

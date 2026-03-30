@@ -5,6 +5,7 @@
  */
 
 import { getGeneratedBlocks } from './block-generators/index';
+import { svgWrap } from './block-generators/utils';
 
 export interface BlockDefinition {
   name: string;
@@ -12,10 +13,6 @@ export interface BlockDefinition {
   subcategory: string | null;
   svgData: string;
   tags: string[];
-}
-
-function svgWrap(innerPaths: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${innerPaths}</svg>`;
 }
 
 // --- Helper: generate a grid of squares ---

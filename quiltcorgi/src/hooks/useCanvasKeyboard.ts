@@ -7,6 +7,7 @@ import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -40,47 +41,28 @@ export function useCanvasKeyboard() {
 
         if (isCtrl && e.key === 'z' && !e.shiftKey) {
           e.preventDefault();
-          const currentJson = JSON.stringify(canvas.toJSON());
-          const prevJson = useCanvasStore.getState().popUndo(currentJson);
-          if (prevJson) {
-            canvas.loadFromJSON(JSON.parse(prevJson)).then(() => {
-              canvas.renderAll();
-              useProjectStore.getState().setDirty(true);
-            });
-          }
+          performUndo();
           return;
         }
 
         if (isCtrl && e.key === 'z' && e.shiftKey) {
           e.preventDefault();
-          const currentJson = JSON.stringify(canvas.toJSON());
-          const nextJson = useCanvasStore.getState().popRedo(currentJson);
-          if (nextJson) {
-            canvas.loadFromJSON(JSON.parse(nextJson)).then(() => {
-              canvas.renderAll();
-              useProjectStore.getState().setDirty(true);
-            });
-          }
+          performRedo();
           return;
         }
 
         if (isCtrl && e.key === 'y') {
           e.preventDefault();
-          const currentJson = JSON.stringify(canvas.toJSON());
-          const nextJson = useCanvasStore.getState().popRedo(currentJson);
-          if (nextJson) {
-            canvas.loadFromJSON(JSON.parse(nextJson)).then(() => {
-              canvas.renderAll();
-              useProjectStore.getState().setDirty(true);
-            });
-          }
+          performRedo();
           return;
         }
 
         if (isCtrl && e.key === 's') {
           e.preventDefault();
           const { projectId } = useProjectStore.getState();
-          saveProject(projectId, fabricCanvas);
+          if (projectId) {
+            saveProject({ projectId, fabricCanvas });
+          }
           return;
         }
 

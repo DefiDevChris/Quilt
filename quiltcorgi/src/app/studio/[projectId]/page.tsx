@@ -1,11 +1,12 @@
+import type { Metadata } from 'next';
 import { StudioClient } from '@/components/studio/StudioClient';
 import { StudioMobileGate } from '@/components/mobile/StudioMobileGate';
 
-export default async function StudioPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
+export const metadata: Metadata = {
+  title: 'Studio | QuiltCorgi',
+};
+
+export default async function StudioPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
 
   return (

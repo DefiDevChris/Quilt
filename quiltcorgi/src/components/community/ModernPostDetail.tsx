@@ -7,6 +7,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCommunityStore } from '@/stores/communityStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { RedditStyleComments } from './comments/RedditStyleComments';
+import { LikeButton } from './LikeButton';
+import { SaveButton } from './SaveButton';
 import type { CommunityPost } from '@/stores/communityStore';
 
 interface ModernPostDetailProps {
@@ -20,7 +22,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const fetchPost = useCallback(async () => {
@@ -79,20 +80,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
     }
   }, []);
 
-  const handleFollowToggle = useCallback(async () => {
-    if (!post?.creatorId || !user) return;
-    const nextState = !isFollowing;
-    setIsFollowing(nextState);
-    try {
-      const res = await fetch(`/api/follows/${post.creatorId}`, {
-        method: nextState ? 'POST' : 'DELETE',
-      });
-      if (!res.ok) setIsFollowing(!nextState);
-    } catch {
-      setIsFollowing(!nextState);
-    }
-  }, [post?.creatorId, user, isFollowing]);
-
   if (isLoading) {
     return <PostDetailSkeleton />;
   }
@@ -115,7 +102,7 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
             />
           </svg>
         </div>
-        <p className="text-slate-600 mb-5">
+        <p className="text-secondary mb-5">
           {error === 'not_found' ? 'This design was not found.' : error}
         </p>
         {error === 'not_found' ? (
@@ -140,15 +127,13 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
 
   if (!post) return null;
 
-  const isOwnPost = user?.id === post.creatorId;
-
   return (
     <div className="flex gap-5">
       {/* Main post column */}
       <main className="flex-1 min-w-0">
         <Link
           href="/socialthreads"
-          className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-orange-500 transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary transition-colors mb-4"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -185,37 +170,24 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
               <div>
                 <Link
                   href={post.creatorUsername ? `/members/${post.creatorUsername}` : '#'}
-                  className="font-bold text-slate-800 hover:text-orange-500 transition-colors"
+                  className="font-bold text-on-surface hover:text-primary transition-colors"
                 >
                   {post.creatorName}
                 </Link>
-                <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-0.5">
+                <p className="text-xs text-secondary font-medium flex items-center gap-1.5 mt-0.5">
                   {formatRelativeTime(post.createdAt)}
                 </p>
               </div>
             </div>
-
-            {!isOwnPost && user && (
-              <button
-                onClick={handleFollowToggle}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all shadow-sm ${
-                  isFollowing
-                    ? 'bg-white/60 text-slate-700 hover:bg-white/80 border border-white/60'
-                    : 'bg-gradient-to-r from-orange-400 to-rose-400 text-white hover:from-orange-500 hover:to-rose-500'
-                }`}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </button>
-            )}
           </div>
 
           {/* Post Content */}
           <div className="p-5">
-            <h1 className="text-2xl font-extrabold text-slate-800 mb-3 leading-tight">
+            <h1 className="text-2xl font-extrabold text-on-surface mb-3 leading-tight">
               {post.title}
             </h1>
             {post.description && (
-              <p className="text-slate-600 whitespace-pre-wrap leading-relaxed">
+              <p className="text-secondary whitespace-pre-wrap leading-relaxed">
                 {post.description}
               </p>
             )}
@@ -270,15 +242,15 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
                   </div>
                 )}
                 <div className="flex-1">
-                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                  <p className="text-[10px] font-extrabold text-secondary/70 uppercase tracking-wider">
                     View Project
                   </p>
-                  <p className="font-bold text-slate-800 group-hover:text-orange-500 transition-colors">
+                  <p className="font-bold text-on-surface group-hover:text-primary transition-colors">
                     {post.projectName || 'Untitled Project'}
                   </p>
                 </div>
                 <svg
-                  className="w-5 h-5 text-slate-400"
+                  className="w-5 h-5 text-secondary/70"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -297,13 +269,14 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
           {/* Action Bar */}
           <div className="p-5 border-t border-white/40 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <VoteButtons
+              <LikeButton
                 postId={post.id}
                 likeCount={post.likeCount}
                 isLikedByUser={post.isLikedByUser}
+                size="lg"
               />
 
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-slate-600 hover:bg-white/60 transition-colors text-sm font-medium">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-secondary hover:bg-white/60 transition-colors text-sm font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -317,7 +290,7 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
 
               <button
                 onClick={handleShareLink}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-slate-600 hover:bg-white/60 transition-colors text-sm font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-secondary hover:bg-white/60 transition-colors text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -359,100 +332,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
   );
 }
 
-function VoteButtons({
-  postId,
-  likeCount,
-  isLikedByUser,
-}: {
-  postId: string;
-  likeCount: number;
-  isLikedByUser: boolean;
-}) {
-  const user = useAuthStore((s) => s.user);
-  const likePost = useCommunityStore((s) => s.likePost);
-  const unlikePost = useCommunityStore((s) => s.unlikePost);
-
-  function handleVote(upvote: boolean) {
-    if (!user) return;
-    if (isLikedByUser && upvote) unlikePost(postId);
-    else if (!isLikedByUser && upvote) likePost(postId);
-  }
-
-  return (
-    <div className="flex items-center bg-white/50 border border-white/60 rounded-full overflow-hidden">
-      <button
-        onClick={() => handleVote(true)}
-        className={`p-2 hover:bg-white/70 transition-colors ${
-          isLikedByUser ? 'text-rose-500' : 'text-slate-500'
-        }`}
-        title="Like"
-      >
-        <svg
-          className="w-4 h-4"
-          fill={isLikedByUser ? 'currentColor' : 'none'}
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-          />
-        </svg>
-      </button>
-      <span
-        className={`px-1 text-sm font-bold ${isLikedByUser ? 'text-rose-500' : 'text-slate-700'}`}
-      >
-        {likeCount}
-      </span>
-    </div>
-  );
-}
-
-function SaveButton({
-  postId,
-  isSaved,
-  onToggle,
-}: {
-  postId: string;
-  isSaved: boolean;
-  onToggle: () => void;
-}) {
-  const user = useAuthStore((s) => s.user);
-  const toggleSavePost = useCommunityStore((s) => s.toggleSavePost);
-
-  function handleClick() {
-    if (!user) return;
-    toggleSavePost(postId, isSaved);
-    onToggle();
-  }
-
-  return (
-    <button
-      onClick={handleClick}
-      className={`p-2 rounded-full transition-colors ${
-        isSaved ? 'text-orange-500' : 'text-slate-500 hover:bg-white/60'
-      }`}
-      title={isSaved ? 'Unsave' : 'Save'}
-    >
-      <svg
-        className="w-5 h-5"
-        fill={isSaved ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
-        />
-      </svg>
-    </button>
-  );
-}
-
 function PostDetailSkeleton() {
   return (
     <div className="glass-panel-social rounded-[2rem] overflow-hidden animate-pulse">
@@ -486,7 +365,7 @@ function AboutQuilter({
 }) {
   return (
     <div className="glass-panel-social rounded-[1.5rem] p-5">
-      <h3 className="text-sm font-extrabold text-slate-800 mb-4">About the Quilter</h3>
+      <h3 className="text-sm font-extrabold text-on-surface mb-4">About the Quilter</h3>
 
       <div className="flex items-center gap-3 mb-4">
         {creatorAvatarUrl ? (
@@ -507,9 +386,9 @@ function AboutQuilter({
         )}
 
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-slate-800 truncate">{creatorName}</p>
+          <p className="font-bold text-on-surface truncate">{creatorName}</p>
           {creatorUsername && (
-            <p className="text-xs text-slate-500 font-medium">@{creatorUsername}</p>
+            <p className="text-xs text-secondary font-medium">@{creatorUsername}</p>
           )}
           {isPro && (
             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full mt-1">
@@ -524,7 +403,7 @@ function AboutQuilter({
 
       <Link
         href={creatorUsername ? `/members/${creatorUsername}` : '#'}
-        className="block w-full text-center py-2 rounded-full bg-white/60 hover:bg-white/90 border border-white/60 hover:border-orange-300 text-sm font-bold text-slate-700 hover:text-orange-600 transition-all"
+        className="block w-full text-center py-2 rounded-full bg-white/60 hover:bg-white/90 border border-white/60 hover:border-primary text-sm font-bold text-on-surface hover:text-primary transition-all"
       >
         View Profile
       </Link>
@@ -539,7 +418,9 @@ function MoreFromQuilter({
   creatorId: string | null;
   currentPostId: string;
 }) {
-  const [otherPosts, setOtherPosts] = useState<{ id: string; title: string; thumbnailUrl: string }[]>([]);
+  const [otherPosts, setOtherPosts] = useState<
+    { id: string; title: string; thumbnailUrl: string }[]
+  >([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -550,11 +431,16 @@ function MoreFromQuilter({
         const json = await res.json();
         if (res.ok && json.data?.posts) {
           const filtered = json.data.posts
-            .filter((p: { id: string; creatorId: string }) => p.creatorId === creatorId && p.id !== currentPostId)
+            .filter(
+              (p: { id: string; creatorId: string }) =>
+                p.creatorId === creatorId && p.id !== currentPostId
+            )
             .slice(0, 3);
           setOtherPosts(filtered);
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
       setLoaded(true);
     })();
   }, [creatorId, currentPostId]);
@@ -563,14 +449,14 @@ function MoreFromQuilter({
 
   return (
     <div className="glass-panel-social rounded-[1.5rem] p-5">
-      <h3 className="text-sm font-extrabold text-slate-800 mb-3">More from this Quilter</h3>
+      <h3 className="text-sm font-extrabold text-on-surface mb-3">More from this Quilter</h3>
       {!loaded ? (
         <div className="animate-pulse space-y-2">
           <div className="h-16 bg-white/50 rounded-xl" />
           <div className="h-16 bg-white/50 rounded-xl" />
         </div>
       ) : otherPosts.length === 0 ? (
-        <p className="text-xs text-slate-500 text-center py-3">No other designs yet</p>
+        <p className="text-xs text-secondary text-center py-3">No other designs yet</p>
       ) : (
         <div className="space-y-2">
           {otherPosts.map((p) => (
@@ -589,7 +475,7 @@ function MoreFromQuilter({
                   unoptimized
                 />
               )}
-              <p className="text-sm font-medium text-slate-700 truncate">{p.title}</p>
+              <p className="text-sm font-medium text-on-surface truncate">{p.title}</p>
             </Link>
           ))}
         </div>

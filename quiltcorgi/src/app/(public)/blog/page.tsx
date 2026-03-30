@@ -1,9 +1,15 @@
+import type { Metadata } from 'next';
 import { eq, desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { BlogContent } from '@/components/social/BlogContent';
 import type { BlogPostListItem } from '@/types/community';
 import { calculateReadTime } from '@/lib/read-time';
+
+export const metadata: Metadata = {
+  title: 'Blog | QuiltCorgi',
+  description: 'Tips, tutorials, and inspiration for quilters of every skill level.',
+};
 
 export const dynamic = 'force-dynamic';
 

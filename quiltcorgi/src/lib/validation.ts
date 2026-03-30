@@ -145,17 +145,6 @@ export const calibrationInputSchema = z.discriminatedUnion('method', [
   }),
 ]);
 
-export const createVariationSchema = z.object({
-  name: z.string().min(1).max(255).default('Variation'),
-  canvasData: z.record(z.string(), z.unknown()),
-});
-
-export const updateVariationSchema = z.object({
-  name: z.string().min(1).max(255).optional(),
-  canvasData: z.record(z.string(), z.unknown()).optional(),
-  thumbnailUrl: assetUrlSchema.optional(),
-});
-
 export const presignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
   contentType: z.enum(ACCEPTED_IMAGE_TYPES),
@@ -188,7 +177,9 @@ export const adminModerationSchema = z.object({
 });
 
 export const adminModerationListSchema = z.object({
-  status: z.enum(['pending', 'approved', 'rejected', 'all']).default('pending'),
+  status: z.enum(['all', 'pending', 'approved', 'rejected']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
 export const notificationQuerySchema = z.object({
@@ -203,13 +194,6 @@ export const markNotificationsReadSchema = z.union([
   z.object({ notificationIds: z.literal('all') }),
   z.object({ notificationIds: z.array(z.string().uuid()) }),
 ]);
-
-export const photoPatchworkConfigSchema = z.object({
-  gridWidth: z.number().int().min(4).max(48),
-  gridHeight: z.number().int().min(4).max(48),
-  colorCount: z.number().int().min(2).max(24),
-  maxIterations: z.number().int().min(1).max(100).optional(),
-});
 
 // Phase 17: Community, Profiles & Blog
 
@@ -245,11 +229,13 @@ export const updateProfileSchema = z.object({
 
 export const communityFeedSchema = z.object({
   search: z.string().optional(),
-  sort: z.enum(['newest', 'popular']).default('newest'),
-  tab: z.enum(['discover', 'following', 'featured']).default('discover'),
+  sort: z.enum(['newest', 'popular', 'most-saved']).default('newest'),
+  tab: z.enum(['discover', 'saved']).default('discover'),
   category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
+  saved: z.enum(['true']).optional(),
+  timeRange: z.enum(['month', 'all-time']).optional(),
 });
 
 export const createCommunityPostExtendedSchema = z.object({
@@ -269,12 +255,24 @@ export const commentsPaginationSchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 
+// Blog post category enum values matching the database
+export const BLOG_POST_CATEGORIES = [
+  'Product Updates',
+  'Behind the Scenes',
+  'Tutorials',
+  'Community',
+  'Tips',
+  'Inspiration',
+  'History',
+  'Organization',
+] as const;
+
 export const createBlogPostSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
   featuredImageUrl: z.string().url().optional(),
-  category: z.string().min(1).max(50),
+  category: z.enum(BLOG_POST_CATEGORIES),
   tags: z.array(z.string().max(50)).max(5).default([]),
   status: z.enum(['draft', 'pending']).default('draft'),
 });
@@ -284,14 +282,14 @@ export const updateBlogPostSchema = z.object({
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
   featuredImageUrl: z.string().url().optional(),
-  category: z.string().min(1).max(50).optional(),
+  category: z.enum(BLOG_POST_CATEGORIES).optional(),
   tags: z.array(z.string().max(50)).max(5).optional(),
   status: z.enum(['draft', 'pending']).optional(),
 });
 
 export const blogSearchSchema = z.object({
   search: z.string().optional(),
-  category: z.string().optional(),
+  category: z.enum(BLOG_POST_CATEGORIES).optional(),
   tag: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(20).default(10),
@@ -299,6 +297,12 @@ export const blogSearchSchema = z.object({
 
 export const blogAdminStatusSchema = z.object({
   status: z.enum(['published', 'rejected']),
+});
+
+export const blogAdminListSchema = z.object({
+  status: z.enum(['all', 'draft', 'pending', 'published', 'rejected']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
 export const createReportSchema = z.object({

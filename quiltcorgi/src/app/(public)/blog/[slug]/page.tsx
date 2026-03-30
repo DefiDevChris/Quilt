@@ -150,11 +150,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     publisher: {
       '@type': 'Organization',
       name: 'QuiltCorgi',
-      url: 'https://quiltcorgi.com',
+      url: process.env.NEXT_PUBLIC_APP_URL ?? 'https://quiltcorgi.com',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://quiltcorgi.com/blog/${post.slug}`,
+      '@id': `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://quiltcorgi.com'}/blog/${post.slug}`,
     },
   };
 

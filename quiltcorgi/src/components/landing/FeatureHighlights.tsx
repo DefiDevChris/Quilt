@@ -50,7 +50,11 @@ const features = [
       'Export true 1:1 scale PDFs with seam allowances baked right in. Generate Foundation Paper Piecing templates and rotary cutting charts that go straight from your printer to your sewing room.',
     iconSrc: '/icons/quilt-04-scissors-Photoroom.png',
     iconAlt: 'Quilting scissors',
-    checks: ['True-scale PDF with seam allowances', 'FPP template generation', 'Design variations'],
+    checks: [
+      'True-scale PDF with seam allowances',
+      'FPP template generation',
+      'Rotary cutting charts',
+    ],
   },
 ];
 

@@ -27,5 +27,7 @@ export const userProfiles = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('idx_user_profiles_username').on(table.username)]
+  (table) => [
+    // UNIQUE constraints already create indexes, no additional indexes needed
+  ]
 );

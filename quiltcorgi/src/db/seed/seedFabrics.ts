@@ -222,6 +222,11 @@ async function seedFabrics() {
   await pool.end();
 }
 
+if (process.env.NODE_ENV === 'production') {
+  console.error('ERROR: Seed scripts cannot run in production. Aborting.');
+  process.exit(1);
+}
+
 seedFabrics().catch((err) => {
   console.error('Seeding failed:', err);
   process.exit(1);

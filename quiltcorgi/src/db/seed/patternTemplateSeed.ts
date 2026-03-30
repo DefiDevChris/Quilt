@@ -8,6 +8,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import type { ParsedPattern } from '../../lib/pattern-parser-types';
 
 export interface PatternTemplateSeed {
@@ -26,6 +27,9 @@ export interface PatternTemplateSeed {
   isPublished: boolean;
 }
 
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const PATTERNS_DIR = path.resolve(__dirname, '../../data/patterns');
 
 /**
@@ -54,8 +58,8 @@ function loadPatternFiles(): ParsedPattern[] {
       const raw = fs.readFileSync(filePath, 'utf-8');
       const parsed: ParsedPattern = JSON.parse(raw);
       patterns.push(parsed);
-    } catch {
-      // Skip files that fail to parse
+    } catch (error) {
+      console.warn(`Failed to parse pattern file ${entry.name}:`, error);
     }
   }
 

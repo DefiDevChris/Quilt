@@ -4,19 +4,7 @@
  */
 
 import type { BlockRegion, ExtractedColor, BlockColorInfo } from '@/types/quilt-ocr';
-
-interface RGB {
-  readonly r: number;
-  readonly g: number;
-  readonly b: number;
-}
-
-function rgbToHex(rgb: RGB): string {
-  const r = Math.max(0, Math.min(255, Math.round(rgb.r)));
-  const g = Math.max(0, Math.min(255, Math.round(rgb.g)));
-  const b = Math.max(0, Math.min(255, Math.round(rgb.b)));
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-}
+import { rgbToHex, type RGB } from '@/lib/color-math';
 
 /**
  * Extract top-k dominant colors from RGBA pixel data using a simple
@@ -30,8 +18,10 @@ export function extractDominantColors(
   const bucketCount = Math.ceil(256 / bucketSize);
   const totalBuckets = bucketCount * bucketCount * bucketCount;
   const histogram = new Uint32Array(totalBuckets);
-  const bucketSums: { r: number; g: number; b: number; count: number }[] =
-    Array.from({ length: totalBuckets }, () => ({ r: 0, g: 0, b: 0, count: 0 }));
+  const bucketSums: { r: number; g: number; b: number; count: number }[] = Array.from(
+    { length: totalBuckets },
+    () => ({ r: 0, g: 0, b: 0, count: 0 })
+  );
 
   const pixelCount = pixelData.length / 4;
 
@@ -48,8 +38,7 @@ export function extractDominantColors(
     const rBucket = Math.floor(r / bucketSize);
     const gBucket = Math.floor(g / bucketSize);
     const bBucket = Math.floor(b / bucketSize);
-    const bucketIdx =
-      rBucket * bucketCount * bucketCount + gBucket * bucketCount + bBucket;
+    const bucketIdx = rBucket * bucketCount * bucketCount + gBucket * bucketCount + bBucket;
 
     histogram[bucketIdx]++;
     const entry = bucketSums[bucketIdx];
@@ -64,10 +53,7 @@ export function extractDominantColors(
   indices.sort((a, b) => histogram[b] - histogram[a]);
 
   const topBuckets = indices.slice(0, topK).filter((i) => histogram[i] > 0);
-  const totalOpaquePixels = topBuckets.reduce(
-    (sum, i) => sum + histogram[i],
-    0
-  );
+  const totalOpaquePixels = topBuckets.reduce((sum, i) => sum + histogram[i], 0);
 
   return topBuckets.map((bucketIdx) => {
     const entry = bucketSums[bucketIdx];
@@ -81,9 +67,7 @@ export function extractDominantColors(
     return {
       hex: rgbToHex(avgRgb),
       percentage:
-        totalOpaquePixels > 0
-          ? Math.round((histogram[bucketIdx] / totalOpaquePixels) * 100)
-          : 0,
+        totalOpaquePixels > 0 ? Math.round((histogram[bucketIdx] / totalOpaquePixels) * 100) : 0,
     };
   });
 }

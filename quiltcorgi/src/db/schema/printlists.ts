@@ -22,5 +22,8 @@ export const printlists = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('idx_printlists_userId').on(table.userId)]
+  (table) => [
+    index('idx_printlists_userId').on(table.userId),
+    // Note: idx_printlists_projectId is redundant - projectId has a UNIQUE constraint
+  ]
 );

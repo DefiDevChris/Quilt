@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { BillingClient } from '@/components/billing/BillingClient';
+
+export const metadata: Metadata = {
+  title: 'Billing | QuiltCorgi',
+  robots: { index: false },
+};
 
 export default function BillingPage() {
   return (

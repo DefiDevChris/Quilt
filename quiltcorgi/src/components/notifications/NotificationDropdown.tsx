@@ -40,18 +40,6 @@ const WARNING_ICON = (
   </svg>
 );
 
-const SOCIAL_ICON = (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-primary shrink-0">
-    <circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-    <path
-      d="M3.5 17.5c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
 const INFO_ICON = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-secondary shrink-0">
     <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
@@ -70,15 +58,10 @@ function getNotificationIcon(type: string) {
     case NOTIFICATION_TYPES.POST_REJECTED:
     case NOTIFICATION_TYPES.BLOG_REJECTED:
       return ERROR_ICON;
-    case NOTIFICATION_TYPES.REPORT_REVIEWED:
-    case NOTIFICATION_TYPES.CONTENT_AUTO_HIDDEN:
     case 'payment_failed':
       return WARNING_ICON;
-    case NOTIFICATION_TYPES.NEW_FOLLOWER:
-      return SOCIAL_ICON;
     case NOTIFICATION_TYPES.COMMENT_ON_POST:
     case NOTIFICATION_TYPES.REPLY_TO_COMMENT:
-    case NOTIFICATION_TYPES.COMMENT_LIKED:
       return INFO_ICON;
     default:
       return INFO_ICON;
@@ -87,14 +70,6 @@ function getNotificationIcon(type: string) {
 
 function getNavigationPath(notification: Notification): string | null {
   const metadata = notification.metadata as Record<string, unknown> | null;
-
-  if (notification.type === NOTIFICATION_TYPES.NEW_FOLLOWER && metadata) {
-    const username = metadata.followerUsername;
-    if (typeof username === 'string') {
-      return `/profile/${username}`;
-    }
-    return null;
-  }
 
   if (
     notification.type === NOTIFICATION_TYPES.BLOG_APPROVED ||
@@ -115,7 +90,7 @@ function getNavigationPath(notification: Notification): string | null {
   }
 
   if (metadata && metadata.postId && typeof metadata.postId === 'string') {
-    return `/community/${metadata.postId}`;
+    return `/socialthreads/${metadata.postId}`;
   }
 
   return null;

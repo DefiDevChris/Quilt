@@ -9,6 +9,8 @@
 
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
+import { formatFraction } from '@/lib/piece-detection-engine';
+export { formatFraction };
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -157,7 +159,7 @@ export function classifyPatchShape(svgData: string, seamAllowance: number): Patc
       finishedHeight: finishedSize,
       cutWidth: cutSize,
       cutHeight: cutSize,
-      specialInstructions: `Cut ${formatFraction(cutSize)}" square, then cut once diagonally`,
+      specialInstructions: `Cut ${formatFraction(cutSize, '-')}" square, then cut once diagonally`,
     };
   }
 
@@ -345,40 +347,4 @@ export function optimizeStripCutting(
   }
 
   return plans;
-}
-
-// ── Fraction Formatting ────────────────────────────────────────────
-
-const FRACTION_MAP: ReadonlyArray<readonly [number, string]> = [
-  [0.875, '7/8'],
-  [0.75, '3/4'],
-  [0.625, '5/8'],
-  [0.5, '1/2'],
-  [0.375, '3/8'],
-  [0.25, '1/4'],
-  [0.125, '1/8'],
-];
-
-/**
- * Format a decimal measurement as a quilting fraction (e.g., 3.875 -> "3-7/8").
- */
-export function formatFraction(value: number): string {
-  const whole = Math.floor(value);
-  const fractional = value - whole;
-
-  if (fractional < 0.01) {
-    return `${whole}`;
-  }
-
-  for (const [threshold, label] of FRACTION_MAP) {
-    if (Math.abs(fractional - threshold) < 0.01) {
-      return whole === 0 ? label : `${whole}-${label}`;
-    }
-  }
-
-  // Fallback: round to nearest 1/8
-  const eighths = Math.round(fractional * 8);
-  if (eighths === 0) return `${whole}`;
-  if (eighths === 8) return `${whole + 1}`;
-  return whole === 0 ? `${eighths}/8` : `${whole}-${eighths}/8`;
 }

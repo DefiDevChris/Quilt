@@ -60,17 +60,13 @@ export function SocialThreadsHeader() {
             Feed
           </NavLink>
           <NavLink
-            href="/socialthreads?section=featured"
-            active={pathname.startsWith('/socialthreads/explore')}
+            href="/socialthreads?tab=featured"
+            active={pathname === '/socialthreads'}
             icon="explore"
           >
             Explore
           </NavLink>
-          <NavLink
-            href="/profile"
-            active={pathname.startsWith('/socialthreads/saved')}
-            icon="saved"
-          >
+          <NavLink href="/profile?tab=saved" active={pathname === '/profile'} icon="saved">
             Saved
           </NavLink>
         </nav>

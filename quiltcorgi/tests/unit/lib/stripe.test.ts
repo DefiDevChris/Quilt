@@ -30,13 +30,22 @@ describe('stripe lib', () => {
     expect(PAYMENT_FAILURE_GRACE_DAYS).toBe(7);
   });
 
-  it('exports stripe client instance', async () => {
-    const { stripe } = await import('@/lib/stripe');
+  it('getStripe returns a configured Stripe client', async () => {
+    const { getStripe } = await import('@/lib/stripe');
+    const stripe = getStripe();
     expect(stripe).toBeDefined();
     expect(typeof stripe.checkout).toBe('object');
     expect(typeof stripe.webhooks).toBe('object');
     expect(typeof stripe.billingPortal).toBe('object');
     expect(typeof stripe.customers).toBe('object');
     expect(typeof stripe.subscriptions).toBe('object');
+  });
+
+  it('getStripe throws when price ID is missing', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake_key_for_testing');
+    vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', '');
+    const { getStripePriceId } = await import('@/lib/stripe');
+    expect(() => getStripePriceId('monthly')).toThrow('STRIPE_PRO_PRICE_MONTHLY must be set when STRIPE_SECRET_KEY is configured');
   });
 });

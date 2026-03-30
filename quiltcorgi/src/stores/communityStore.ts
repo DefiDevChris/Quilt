@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import type { CommunityCategory } from '@/types/community';
 
-export type FeedTab = 'discover' | 'following' | 'featured';
+export type FeedTab = 'discover' | 'saved';
 
 export interface CommunityPost {
   id: string;
@@ -65,6 +65,21 @@ const INITIAL_STATE = {
 
 let communityAbortController: AbortController | null = null;
 const inFlightActions = new Set<string>();
+
+// Helper to revert optimistic like updates on failure
+function revertPostLike(
+  postId: string,
+  original: CommunityPost
+): (state: CommunityState) => CommunityState {
+  return (state) => ({
+    ...state,
+    posts: state.posts.map((p) =>
+      p.id === postId
+        ? { ...p, likeCount: original.likeCount, isLikedByUser: original.isLikedByUser }
+        : p
+    ),
+  });
+}
 
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   ...INITIAL_STATE,
@@ -130,9 +145,14 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
   loadMore: async () => {
     if (get().isLoading) return;
-    const { page } = get();
-    set({ page: page + 1 });
-    return get().fetchPosts(true);
+    const prevPage = get().page;
+    set({ page: prevPage + 1 });
+    try {
+      await get().fetchPosts(true);
+    } catch {
+      // Revert page on failure to prevent counter drift
+      set({ page: prevPage });
+    }
   },
 
   likePost: (postId) => {
@@ -152,24 +172,12 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       .then((res) => {
         inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {
-          set({
-            posts: get().posts.map((p) =>
-              p.id === postId
-                ? { ...p, likeCount: original.likeCount, isLikedByUser: original.isLikedByUser }
-                : p
-            ),
-          });
+          set(revertPostLike(postId, original));
         }
       })
       .catch(() => {
         inFlightActions.delete(`like:${postId}`);
-        set({
-          posts: get().posts.map((p) =>
-            p.id === postId
-              ? { ...p, likeCount: original.likeCount, isLikedByUser: original.isLikedByUser }
-              : p
-          ),
-        });
+        set(revertPostLike(postId, original));
       });
   },
 
@@ -192,24 +200,12 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       .then((res) => {
         inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {
-          set({
-            posts: get().posts.map((p) =>
-              p.id === postId
-                ? { ...p, likeCount: original.likeCount, isLikedByUser: original.isLikedByUser }
-                : p
-            ),
-          });
+          set(revertPostLike(postId, original));
         }
       })
       .catch(() => {
         inFlightActions.delete(`like:${postId}`);
-        set({
-          posts: get().posts.map((p) =>
-            p.id === postId
-              ? { ...p, likeCount: original.likeCount, isLikedByUser: original.isLikedByUser }
-              : p
-          ),
-        });
+        set(revertPostLike(postId, original));
       });
   },
 
@@ -225,8 +221,9 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     });
 
     fetch(`/api/community/${postId}/save`, { method: currentlySaved ? 'DELETE' : 'POST' })
-      .then(() => {
+      .then((res) => {
         inFlightActions.delete(`save:${postId}`);
+        if (!res.ok) throw new Error('Save failed');
       })
       .catch(() => {
         inFlightActions.delete(`save:${postId}`);
@@ -238,5 +235,10 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       });
   },
 
-  reset: () => set({ ...INITIAL_STATE }),
+  reset: () => {
+    communityAbortController?.abort();
+    communityAbortController = null;
+    inFlightActions.clear();
+    set({ ...INITIAL_STATE });
+  },
 }));

@@ -28,20 +28,11 @@ export function CuttingChartPanel({
 }: CuttingChartPanelProps) {
   const [wof, setWof] = useState<WOF>(42);
 
-  const chart = useMemo(
-    () => generateCuttingChart(items, seamAllowance),
-    [items, seamAllowance]
-  );
+  const chart = useMemo(() => generateCuttingChart(items, seamAllowance), [items, seamAllowance]);
 
-  const allPatches = useMemo(
-    () => chart.flatMap((entry) => entry.patches),
-    [chart]
-  );
+  const allPatches = useMemo(() => chart.flatMap((entry) => entry.patches), [chart]);
 
-  const stripPlans = useMemo(
-    () => optimizeStripCutting(allPatches, wof),
-    [allPatches, wof]
-  );
+  const stripPlans = useMemo(() => optimizeStripCutting(allPatches, wof), [allPatches, wof]);
 
   const totalPieces = chart.reduce((sum, entry) => sum + entry.totalPieces, 0);
 
@@ -60,9 +51,7 @@ export function CuttingChartPanel({
             <h3 className="text-sm font-semibold text-on-surface">
               Cutting Chart
               {totalPieces > 0 && (
-                <span className="ml-1 text-xs text-secondary">
-                  ({totalPieces} pieces)
-                </span>
+                <span className="ml-1 text-xs text-secondary">({totalPieces} pieces)</span>
               )}
             </h3>
             <button
@@ -83,7 +72,9 @@ export function CuttingChartPanel({
               className="rounded-sm border border-outline-variant bg-surface px-2 py-1 text-xs text-on-surface"
             >
               {WOF_OPTIONS.map((w) => (
-                <option key={w} value={w}>{w}&quot;</option>
+                <option key={w} value={w}>
+                  {w}&quot;
+                </option>
               ))}
             </select>
           </div>
@@ -107,9 +98,7 @@ export function CuttingChartPanel({
                   <span className="text-xs font-medium text-on-surface">
                     {entry.fabricDisplayName}
                   </span>
-                  <span className="text-[10px] text-secondary">
-                    ({entry.totalPieces} pieces)
-                  </span>
+                  <span className="text-[10px] text-secondary">({entry.totalPieces} pieces)</span>
                 </div>
 
                 {/* Patches Table */}
@@ -125,18 +114,14 @@ export function CuttingChartPanel({
                   <tbody>
                     {entry.patches.map((patch, idx) => (
                       <tr key={idx} className="border-t border-outline-variant/50">
-                        <td className="px-4 py-1.5 text-on-surface capitalize">
-                          {patch.shape}
-                        </td>
+                        <td className="px-4 py-1.5 text-on-surface capitalize">{patch.shape}</td>
                         <td className="px-2 py-1.5 text-on-surface whitespace-nowrap">
-                          {formatFraction(patch.cutWidth)}&quot;
+                          {formatFraction(patch.cutWidth, '-')}&quot;
                           {patch.shape === 'rectangle' && (
-                            <> x {formatFraction(patch.cutHeight)}&quot;</>
+                            <> x {formatFraction(patch.cutHeight, '-')}&quot;</>
                           )}
                         </td>
-                        <td className="px-2 py-1.5 text-on-surface text-right">
-                          {patch.quantity}
-                        </td>
+                        <td className="px-2 py-1.5 text-on-surface text-right">{patch.quantity}</td>
                         <td className="px-2 py-1.5 text-secondary text-[10px]">
                           {patch.specialInstructions ?? '-'}
                         </td>
@@ -156,8 +141,8 @@ export function CuttingChartPanel({
                 <div className="space-y-1">
                   {stripPlans.map((plan, idx) => (
                     <div key={idx} className="text-xs text-secondary">
-                      Cut {plan.stripsNeeded} strip(s) at {formatFraction(plan.stripWidth)}&quot;
-                      {' '}({plan.piecesPerStrip} per strip)
+                      Cut {plan.stripsNeeded} strip(s) at {formatFraction(plan.stripWidth, '-')}
+                      &quot; ({plan.piecesPerStrip} per strip)
                     </div>
                   ))}
                 </div>

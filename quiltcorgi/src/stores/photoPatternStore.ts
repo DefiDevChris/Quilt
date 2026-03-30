@@ -18,8 +18,19 @@ import {
 interface PhotoPatternState {
   step: PhotoPatternStep;
   isModalOpen: boolean;
+  /**
+   * WARNING: Storing HTMLImageElement in Zustand state is an anti-pattern
+   * as DOM objects break serialization and time-travel debugging.
+   * Kept for pragmatic image processing workflow; consider using React
+   * context or refs for future refactoring.
+   */
   originalImage: HTMLImageElement | null;
   originalImageUrl: string;
+  /**
+   * WARNING: Storing ImageData in Zustand state is an anti-pattern
+   * as it can be very large (width×height×4 bytes) and breaks serialization.
+   * Consider processing in a Web Worker or using refs instead.
+   */
   correctedImageData: ImageData | null;
   perspectiveCorners: [Point2D, Point2D, Point2D, Point2D] | null;
   detectedPieces: readonly DetectedPiece[];

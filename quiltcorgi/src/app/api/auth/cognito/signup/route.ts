@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
 import { cognitoSignUp } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';

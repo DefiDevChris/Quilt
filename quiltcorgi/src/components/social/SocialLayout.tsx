@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, LayoutDashboard, User, Bell, Bookmark, Settings, LifeBuoy } from 'lucide-react';
+import { LayoutDashboard, User, Bell, Bookmark, Settings, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { SocialQuickViewModal } from '@/components/social/SocialQuickViewModal';
 
-export type SectionId = 'feed' | 'blog' | 'featured' | 'trending' | 'profile';
+export type SectionId = 'feed' | 'blog' | 'saved' | 'most-saved' | 'profile';
 
 interface Section {
   id: SectionId;
@@ -31,17 +31,17 @@ export const SECTIONS: Section[] = [
     image: '/images/quilts/quilt_02_bed_hexagon.png',
   },
   {
-    id: 'featured',
-    label: 'Featured',
-    subtitle: 'Curated collections',
-    href: '/socialthreads?section=featured',
+    id: 'saved',
+    label: 'Saved',
+    subtitle: 'Your bookmarked posts',
+    href: '/socialthreads?section=saved',
     image: '/images/quilts/quilt_06_wall_art.png',
   },
   {
-    id: 'trending',
-    label: 'Trending',
-    subtitle: 'What is popular now',
-    href: '/socialthreads?section=trending',
+    id: 'most-saved',
+    label: 'Most Saved',
+    subtitle: 'Community favorites',
+    href: '/socialthreads?section=most-saved',
     image: '/images/quilts/quilt_22_porch_railing.png',
   },
 ];
@@ -124,7 +124,9 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
 
         {/* Center: Section Title (mobile) */}
         <div className="flex justify-center">
-          <span className="md:hidden text-sm font-bold text-slate-700">{activeSectionData.label}</span>
+          <span className="md:hidden text-sm font-bold text-slate-700">
+            {activeSectionData.label}
+          </span>
         </div>
 
         {/* Right: Avatar + Dropdown */}
@@ -153,17 +155,17 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
                   <DropdownButton
                     icon={<Bell size={28} strokeWidth={1.5} />}
                     label="Notifications"
-                    href="/profile"
+                    href="/profile?tab=notifications"
                   />
                   <DropdownButton
                     icon={<Bookmark size={28} strokeWidth={1.5} />}
                     label="Saved"
-                    href="/profile"
+                    href="/profile?tab=saved"
                   />
                   <DropdownButton
                     icon={<Settings size={28} strokeWidth={1.5} />}
                     label="Settings"
-                    href="/profile"
+                    href="/profile?tab=settings"
                   />
                   <DropdownButton
                     icon={<LifeBuoy size={28} strokeWidth={1.5} />}

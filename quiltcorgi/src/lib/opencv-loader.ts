@@ -3,14 +3,14 @@
  * ~8MB — only imported when the Photo to Pattern flow starts.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let cvInstance: any | null = null;
+import type { OpenCV } from '@/types/opencv-js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function loadOpenCv(): Promise<any> {
+let cvInstance: OpenCV | null = null;
+
+export async function loadOpenCv(): Promise<OpenCV> {
   if (cvInstance) return cvInstance;
 
-  const cv = await import('@techstark/opencv-js');
+  const cv = await import('@techstark/opencv-js') as unknown as OpenCV;
 
   await new Promise<void>((resolve, reject) => {
     if (cv.Mat) {

@@ -27,6 +27,7 @@ export function ProjectCard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [editName, setEditName] = useState(name);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -137,9 +138,7 @@ export function ProjectCard({
               type="button"
               onClick={() => {
                 setMenuOpen(false);
-                if (confirm('Delete this project? This cannot be undone.')) {
-                  onDelete(id);
-                }
+                setShowDeleteConfirm(true);
               }}
               className="w-full text-left px-3 py-1.5 text-sm text-error hover:bg-surface-container"
             >
@@ -148,6 +147,37 @@ export function ProjectCard({
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
+          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6">
+            <h3 className="text-lg font-semibold text-on-surface mb-2">Delete Project</h3>
+            <p className="text-sm text-secondary mb-6">
+              Delete &ldquo;{name}&rdquo;? This cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="rounded-md px-4 py-2.5 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  onDelete(id);
+                }}
+                className="rounded-md bg-error px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
