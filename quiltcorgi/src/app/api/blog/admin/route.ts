@@ -4,6 +4,8 @@ import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { blogAdminListSchema } from '@/lib/validation';
+import { validationErrorResponse } from '@/lib/api-responses';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
@@ -19,17 +21,22 @@ export async function GET(request: NextRequest) {
   }
 
   const url = request.nextUrl;
-  const statusFilter = url.searchParams.get('status') ?? undefined;
-  const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10) || 1);
-  const limit = Math.min(
-    100,
-    Math.max(1, parseInt(url.searchParams.get('limit') ?? '50', 10) || 50)
-  );
+  const parsed = blogAdminListSchema.safeParse({
+    status: url.searchParams.get('status') ?? undefined,
+    page: url.searchParams.get('page') ?? undefined,
+    limit: url.searchParams.get('limit') ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
+  }
+
+  const { status: statusFilter, page, limit } = parsed.data;
 
   try {
     const whereClause =
       statusFilter && statusFilter !== 'all'
-        ? eq(blogPosts.status, statusFilter as 'draft' | 'pending' | 'published' | 'rejected')
+        ? eq(blogPosts.status, statusFilter)
         : undefined;
 
     const [postRows, [totalRow]] = await Promise.all([

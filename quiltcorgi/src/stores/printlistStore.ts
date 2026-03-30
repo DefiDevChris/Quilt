@@ -104,7 +104,7 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
 
   setPaperSize: (size) => set({ paperSize: size }),
 
-  clear: () => set({ items: [] }),
+  clear: () => set({ items: [], paperSize: 'letter', projectId: null, lastSaveError: null }),
 
   togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),
 

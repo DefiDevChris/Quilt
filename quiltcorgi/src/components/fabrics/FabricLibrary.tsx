@@ -166,6 +166,10 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               </>
             ) : (
               <>
+                {/* Mobile uploads (via MobileFabricUpload / UploadSheet) land here.
+                    Fabrics uploaded from mobile have userId set and isDefault=false,
+                    making them indistinguishable from desktop uploads — which is fine.
+                    Users see all their custom fabrics in one place on desktop. */}
                 <div className="flex-1 overflow-y-auto px-3 py-2">
                   {!isPro ? (
                     <div className="py-8 text-center">

@@ -9,13 +9,11 @@ interface CommentThreadProps {
   postId: string;
   currentUserId?: string;
   isAdmin?: boolean;
-  trustLevel?: string;
 }
 
-const COMMENTER_LEVELS = ['commenter', 'poster', 'trusted', 'moderator'];
 const MAX_VISIBLE_REPLIES = 3;
 
-export function CommentThread({ postId, currentUserId, isAdmin, trustLevel }: CommentThreadProps) {
+export function CommentThread({ postId, currentUserId, isAdmin }: CommentThreadProps) {
   const comments = useCommentStore((s) => s.comments);
   const isLoading = useCommentStore((s) => s.isLoading);
   const isSubmitting = useCommentStore((s) => s.isSubmitting);
@@ -28,7 +26,7 @@ export function CommentThread({ postId, currentUserId, isAdmin, trustLevel }: Co
   const [replyTarget, setReplyTarget] = useState<{ commentId: string; username: string } | null>(null);
   const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
 
-  const canComment = Boolean(currentUserId) && Boolean(trustLevel) && COMMENTER_LEVELS.includes(trustLevel ?? '');
+  const canComment = Boolean(currentUserId);
 
   useEffect(() => {
     fetchComments(postId);
@@ -78,9 +76,7 @@ export function CommentThread({ postId, currentUserId, isAdmin, trustLevel }: Co
 
   const disabledMessage = !currentUserId
     ? 'Sign in to join the conversation.'
-    : !canComment
-      ? 'You need to build up trust before commenting. Keep engaging with the community!'
-      : undefined;
+    : undefined;
 
   return (
     <div className="space-y-4">
@@ -88,7 +84,6 @@ export function CommentThread({ postId, currentUserId, isAdmin, trustLevel }: Co
 
       {/* Top-level comment input */}
       <CommentInput
-        postId={postId}
         onSubmit={handleTopLevelSubmit}
         isSubmitting={isSubmitting && !replyTarget}
         disabled={!canComment}
@@ -180,7 +175,6 @@ export function CommentThread({ postId, currentUserId, isAdmin, trustLevel }: Co
                 {replyTarget?.commentId === comment.id && (
                   <div className="ml-10 mt-2">
                     <CommentInput
-                      postId={postId}
                       replyToId={replyTarget.commentId}
                       replyToUsername={replyTarget.username}
                       onCancel={handleCancelReply}

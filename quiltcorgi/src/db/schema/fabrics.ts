@@ -33,6 +33,10 @@ export const fabrics = pgTable(
     calibrated: boolean('calibrated').notNull().default(false),
     isDefault: boolean('isDefault').notNull().default(false),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_fabrics_userId').on(table.userId),

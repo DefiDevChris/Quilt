@@ -1,7 +1,7 @@
 /**
  * Color Math — Pure color conversion and distance utilities.
  *
- * Shared by Photo Patchwork and OCR engines. Zero external dependencies.
+ * Shared by Photo to Pattern and OCR engines. Zero external dependencies.
  * All functions are pure and immutable.
  *
  * Uses the D65 illuminant reference white for sRGB -> XYZ -> LAB conversion.
@@ -119,6 +119,40 @@ export function rgbToHsl(rgb: RGB): HSL {
   }
 
   return { h: h * 360, s, l };
+}
+
+// ---------------------------------------------------------------------------
+// Conversion: HSL -> RGB
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert HSL (h: 0-360, s: 0-1, l: 0-1) to RGB (0-255).
+ */
+export function hslToRgb(hsl: HSL): RGB {
+  const h = hsl.h / 360;
+  const { s, l } = hsl;
+
+  if (s === 0) {
+    const gray = Math.round(l * 255);
+    return { r: gray, g: gray, b: gray };
+  }
+
+  const hue2rgb = (p: number, q: number, t: number): number => {
+    const t2 = t < 0 ? t + 1 : t > 1 ? t - 1 : t;
+    if (t2 < 1 / 6) return p + (q - p) * 6 * t2;
+    if (t2 < 1 / 2) return q;
+    if (t2 < 2 / 3) return p + (q - p) * (2 / 3 - t2) * 6;
+    return p;
+  };
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+
+  return {
+    r: Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+    g: Math.round(hue2rgb(p, q, h) * 255),
+    b: Math.round(hue2rgb(p, q, h - 1 / 3) * 255),
+  };
 }
 
 // ---------------------------------------------------------------------------

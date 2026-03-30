@@ -45,7 +45,7 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
       {/* Back Link */}
       <Link
         href="/blog"
-        className="text-sm text-slate-500 hover:text-slate-800 transition-colors mb-6 inline-block font-medium"
+        className="text-sm text-secondary hover:text-on-surface transition-colors mb-6 inline-block font-medium"
       >
         &larr; Back to Blog
       </Link>
@@ -72,12 +72,12 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
           {post.category}
         </span>
 
-        <h1 className="text-4xl font-extrabold text-slate-800 mb-4 leading-tight tracking-tight">
+        <h1 className="text-4xl font-extrabold text-on-surface mb-4 leading-tight tracking-tight">
           {post.title}
         </h1>
 
         {/* Meta */}
-        <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+        <div className="flex items-center gap-3 text-sm text-secondary font-medium">
           {post.author.avatarUrl ? (
             <Image
               src={post.author.avatarUrl}
@@ -94,7 +94,7 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
               </span>
             </div>
           )}
-          <span className="font-bold text-slate-800">{post.author.name}</span>
+          <span className="font-bold text-on-surface">{post.author.name}</span>
           <span aria-hidden="true">&middot;</span>
           {post.publishedAt && (
             <time dateTime={new Date(post.publishedAt).toISOString()}>
@@ -145,9 +145,9 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
             </div>
           )}
           <div>
-            <p className="text-xs text-slate-500 font-medium mb-1">Written by</p>
-            <p className="font-bold text-slate-800">{post.author.name}</p>
-            {post.author.bio && <p className="text-sm text-slate-600 mt-1">{post.author.bio}</p>}
+            <p className="text-xs text-secondary font-medium mb-1">Written by</p>
+            <p className="font-bold text-on-surface">{post.author.name}</p>
+            {post.author.bio && <p className="text-sm text-secondary mt-1">{post.author.bio}</p>}
             <Link
               href="/blog"
               className="text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors mt-2 inline-block"
@@ -161,7 +161,7 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <div className="border-t border-white/40 pt-8">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">Related Posts</h2>
+          <h2 className="text-xl font-bold text-on-surface mb-4">Related Posts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {relatedPosts.map((related) => (
               <Link
@@ -181,10 +181,10 @@ export function BlogPostView({ post, relatedPosts = [] }: BlogPostViewProps) {
                     />
                   </div>
                 )}
-                <h3 className="text-sm font-bold text-slate-800 group-hover:text-orange-500 transition-colors line-clamp-2">
+                <h3 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2">
                   {related.title}
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mt-1">
+                <p className="text-xs text-secondary font-medium mt-1">
                   {related.readTimeMinutes} min read
                 </p>
               </Link>

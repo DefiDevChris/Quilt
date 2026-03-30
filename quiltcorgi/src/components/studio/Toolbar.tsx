@@ -9,6 +9,7 @@ import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface ToolDef {
   id: string;
@@ -33,7 +34,6 @@ function ToolIcon({
   isActive,
 }: {
   tool: ToolDef;
-  activeTool: ToolType;
   onClick: () => void;
   isActive: boolean;
 }) {
@@ -450,17 +450,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isDisabled: !canUndo,
       onClick: () => {
         if (!canUndo) return;
-        const canvas = useCanvasStore.getState().fabricCanvas as {
-          toJSON: () => unknown;
-          loadFromJSON: (json: unknown) => Promise<void>;
-          renderAll: () => void;
-        } | null;
-        if (!canvas) return;
-        const currentJson = JSON.stringify(canvas.toJSON());
-        const prevJson = useCanvasStore.getState().popUndo(currentJson);
-        if (prevJson) {
-          canvas.loadFromJSON(JSON.parse(prevJson)).then(() => canvas.renderAll());
-        }
+        performUndo();
       },
       isActive: () => false,
       icon: (
@@ -492,17 +482,7 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isDisabled: !canRedo,
       onClick: () => {
         if (!canRedo) return;
-        const canvas = useCanvasStore.getState().fabricCanvas as {
-          toJSON: () => unknown;
-          loadFromJSON: (json: unknown) => Promise<void>;
-          renderAll: () => void;
-        } | null;
-        if (!canvas) return;
-        const currentJson = JSON.stringify(canvas.toJSON());
-        const nextJson = useCanvasStore.getState().popRedo(currentJson);
-        if (nextJson) {
-          canvas.loadFromJSON(JSON.parse(nextJson)).then(() => canvas.renderAll());
-        }
+        performRedo();
       },
       isActive: () => false,
       icon: (
@@ -735,7 +715,6 @@ function renderToolGroup(
           <ToolIcon
             key={tool.id}
             tool={tool}
-            activeTool={activeTool}
             isActive={isActive}
             onClick={() => {
               if (tool.onClick) {

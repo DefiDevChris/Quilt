@@ -11,29 +11,27 @@ const manrope = Manrope({
   variable: '--font-manrope',
 });
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+
 export const metadata: Metadata = {
   title: {
-    default: 'QuiltCorgi — Design Quilts in Your Browser',
-    template: '%s | QuiltCorgi',
+    default: `${APP_NAME} — Design Quilts in Your Browser`,
+    template: `%s | ${APP_NAME}`,
   },
   description:
-    'A modern, browser-based quilt design studio with a 6,000+ block library, fabric visualization, and 1:1 PDF pattern export. Free to start.',
-  metadataBase: new URL('https://quiltcorgi.com'),
+    'A modern, browser-based quilt design studio with a 659+ block library, fabric visualization, and 1:1 PDF pattern export. Free to start.',
+  metadataBase: new URL(APP_URL),
   openGraph: {
-    title: 'QuiltCorgi — Design Quilts in Your Browser',
+    title: `${APP_NAME} — Design Quilts in Your Browser`,
     description:
       'A modern, browser-based quilt design studio. Free to start, low-cost Pro subscription.',
     type: 'website',
-    siteName: 'QuiltCorgi',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'QuiltCorgi' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'QuiltCorgi — Design Quilts in Your Browser',
-    description: 'A modern, browser-based quilt design studio. Free to start.',
+    siteName: APP_NAME,
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: APP_NAME }],
   },
   icons: {
-    icon: '/flavicon.png',
+    icon: '/favicon.png',
     apple: '/icon-192.png',
   },
   manifest: '/manifest.json',

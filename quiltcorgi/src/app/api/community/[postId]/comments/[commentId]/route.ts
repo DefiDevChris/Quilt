@@ -21,39 +21,51 @@ export async function DELETE(
   const { postId, commentId } = await params;
 
   try {
-    const [comment] = await db
-      .select({
-        id: comments.id,
-        postId: comments.postId,
-        authorId: comments.authorId,
-        status: comments.status,
-      })
-      .from(comments)
-      .where(eq(comments.id, commentId))
-      .limit(1);
-
-    if (!comment || comment.postId !== postId) {
-      return notFoundResponse('Comment not found.');
-    }
-
-    if (comment.status === 'deleted') {
-      return notFoundResponse('Comment already deleted.');
-    }
-
     const role = (session.user as { role?: string }).role ?? 'free';
     const isAdmin = role === 'admin';
-    const isAuthor = comment.authorId === session.user.id;
 
-    if (!isAuthor && !isAdmin) {
-      return errorResponse('You can only delete your own comments.', 'FORBIDDEN', 403);
+    let validationError: Response | null = null;
+
+    await db.transaction(async (tx) => {
+      const [comment] = await tx
+        .select({
+          id: comments.id,
+          postId: comments.postId,
+          authorId: comments.authorId,
+          status: comments.status,
+        })
+        .from(comments)
+        .where(eq(comments.id, commentId))
+        .limit(1);
+
+      if (!comment || comment.postId !== postId) {
+        validationError = notFoundResponse('Comment not found.');
+        return;
+      }
+
+      if (comment.status === 'deleted') {
+        validationError = notFoundResponse('Comment already deleted.');
+        return;
+      }
+
+      const isAuthor = comment.authorId === session.user.id;
+
+      if (!isAuthor && !isAdmin) {
+        validationError = errorResponse('You can only delete your own comments.', 'FORBIDDEN', 403);
+        return;
+      }
+
+      await tx.update(comments).set({ status: 'deleted' }).where(eq(comments.id, commentId));
+
+      await tx
+        .update(communityPosts)
+        .set({ commentCount: sql`GREATEST(${communityPosts.commentCount} - 1, 0)` })
+        .where(eq(communityPosts.id, postId));
+    });
+
+    if (validationError) {
+      return validationError;
     }
-
-    await db.update(comments).set({ status: 'deleted' }).where(eq(comments.id, commentId));
-
-    await db
-      .update(communityPosts)
-      .set({ commentCount: sql`GREATEST(${communityPosts.commentCount} - 1, 0)` })
-      .where(eq(communityPosts.id, postId));
 
     return Response.json({
       success: true,

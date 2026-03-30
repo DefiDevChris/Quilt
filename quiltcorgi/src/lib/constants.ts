@@ -16,6 +16,7 @@ export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as
 
 export const FREE_BLOCK_LIMIT = 20;
 export const FREE_FABRIC_LIMIT = 10;
+export const FREE_PATTERN_LIST_LIMIT = 6;
 
 // Pricing
 export const PRO_PRICE_MONTHLY = 8;
@@ -99,7 +100,6 @@ export const OCR_CONFIDENCE_LOW = 0.3;
 export const BLOG_PER_PAGE = 10;
 export const TUTORIAL_DIFFICULTIES = ['beginner', 'intermediate', 'advanced'] as const;
 
-// Phase 17: Community, Profiles & Blog
 export const COMMENTS_PER_PAGE = 20;
 export const REPLIES_INLINE_LIMIT = 3;
 export const MAX_COMMENT_LENGTH = 2000;
@@ -115,21 +115,6 @@ export const COMMUNITY_CATEGORIES = [
   'inspiration',
   'general',
 ] as const;
-
-export const TRUST_ACCOUNT_AGE_HOURS = 24;
-export const TRUST_COMMENTER_APPROVED_COMMENTS = 3;
-export const TRUST_POSTER_APPROVED_POSTS = 5;
-export const TRUST_MOD_QUEUE_COMMENTS = 3;
-export const TRUST_MOD_QUEUE_POSTS = 2;
-
-export const RATE_LIMITS = {
-  comments: { free: 20, pro: 100 },
-  posts: { free: 3, pro: 20 },
-  follows: { free: 50, pro: 200 },
-  reports: { all: 10 },
-} as const;
-
-export const AUTO_HIDE_REPORT_THRESHOLD = 3;
 
 export const PATTERN_PAGINATION_DEFAULT_LIMIT = 24;
 export const PATTERN_PAGINATION_MAX_LIMIT = 50;
@@ -171,3 +156,18 @@ export const QUILT_SIZE_PRESETS: readonly {
   { label: 'Queen', width: 90, height: 108 },
   { label: 'King', width: 108, height: 108 },
 ];
+
+// Support contact
+export const SUPPORT_EMAIL = 'support@quiltcorgi.com';
+
+// Social/Featured fallback images (files exist in public/images/quilts/)
+export const SOCIAL_FALLBACK_IMAGES = {
+  spotlight: '/images/quilts/quilt_06_wall_art.png',
+  medium: '/images/quilts/quilt_01_bed_geometric.png',
+  wide: '/images/quilts/quilt_02_bed_hexagon.png',
+  small: '/images/quilts/quilt_22_porch_railing.png',
+} as const;
+
+// Default canvas colors (RULER_COLORS.primary-dark and surface color)
+export const DEFAULT_FILL_COLOR = '#8d4f00';
+export const DEFAULT_STROKE_COLOR = '#383831';

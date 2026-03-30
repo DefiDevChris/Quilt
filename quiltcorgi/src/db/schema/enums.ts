@@ -28,11 +28,13 @@ export const blogPostStatusEnum = pgEnum('blog_post_status', [
   'published',
   'rejected',
 ]);
-export const reportTargetTypeEnum = pgEnum('report_target_type', ['post', 'comment', 'user']);
-export const reportReasonEnum = pgEnum('report_reason', [
-  'spam',
-  'harassment',
-  'inappropriate',
-  'other',
+export const blogPostCategoryEnum = pgEnum('blog_post_category', [
+  'Product Updates',
+  'Behind the Scenes',
+  'Tutorials',
+  'Community',
+  'Tips',
+  'Inspiration',
+  'History',
+  'Organization',
 ]);
-export const reportStatusEnum = pgEnum('report_status', ['pending', 'reviewed', 'dismissed']);

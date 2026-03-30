@@ -216,8 +216,6 @@ export function useEasyDraw({
     gridCols,
     gridRows,
     snapToGridPoint,
-    fillColor,
-    strokeColor,
   ]);
 
   const clearSegments = useCallback(() => {

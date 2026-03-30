@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { Point2D } from '@/lib/photo-pattern-types';
+import type { OpenCV, OpenCVMat, OpenCVMatVector } from '@/types/opencv-js';
 import {
   sortCornersClockwise,
   autoDetectQuiltBoundary,
@@ -9,14 +10,14 @@ import {
 
 // ── Mock Helpers ────────────────────────────────────────────────
 
-function createMockMat(cols: number, rows: number) {
+function createMockMat(cols: number, rows: number): OpenCVMat {
   return {
     cols,
     rows,
-    data32F: new Float32Array(cols * rows),
+    data: new Uint8Array(cols * rows * 4),
     delete: vi.fn(),
-    size: () => ({ width: cols, height: rows }),
-  };
+    intPtr: () => [0, 0],
+  } as unknown as OpenCVMat;
 }
 
 interface MockCvOpts {
@@ -25,15 +26,15 @@ interface MockCvOpts {
   readonly arcLengthValue?: number;
 }
 
-function createMockCv(opts: MockCvOpts = {}) {
+function createMockCv(opts: MockCvOpts = {}): OpenCV {
   const { approxVertexCount = 4, contourAreaValue = 50000, arcLengthValue = 1000 } = opts;
 
-  const mockContour = {
-    data32S: new Int32Array(approxVertexCount * 2),
+  const mockContour: OpenCVMat = {
     rows: approxVertexCount,
     cols: 1,
-    size: () => ({ height: approxVertexCount, width: 1 }),
-    intPtr: (row: number, _col: number) => {
+    data: new Uint8Array(approxVertexCount * 8),
+    delete: vi.fn(),
+    intPtr: (row: number) => {
       // Return [x, y] pairs that form a rectangle for 4 vertices
       const points = [
         [10, 10],
@@ -46,69 +47,82 @@ function createMockCv(opts: MockCvOpts = {}) {
       }
       return [250, 250];
     },
-    delete: vi.fn(),
-  };
+  } as unknown as OpenCVMat;
 
-  const mockApprox = {
+  const mockApprox: OpenCVMat = {
     rows: approxVertexCount,
     cols: 1,
-    size: () => ({ height: approxVertexCount, width: 1 }),
-    intPtr: mockContour.intPtr,
+    data: new Uint8Array(approxVertexCount * 8),
     delete: vi.fn(),
-  };
+    intPtr: mockContour.intPtr,
+  } as unknown as OpenCVMat;
 
-  const mockContours = {
+  const mockContours: OpenCVMatVector = {
     size: () => 1,
     get: () => mockContour,
     delete: vi.fn(),
-  };
+  } as unknown as OpenCVMatVector;
 
   const mockHierarchy = createMockMat(4, 1);
   const mockTransformMat = createMockMat(3, 3);
 
-  // Use function constructors so `new cv.Mat()` and `new cv.MatVector()` work
-  function MockMat() {
-    return createMockMat(0, 0);
+  // Use class constructors so `new cv.Mat()` and `new cv.MatVector()` work
+  class MockMatClass {
+    cols = 0;
+    rows = 0;
+    data = new Uint8Array(0);
+    delete = vi.fn();
+    intPtr = () => [0, 0];
+    constructor() {}
   }
 
-  function MockMatVector() {
-    return mockContours;
+  class MockMatVectorClass {
+    size = () => 1;
+    get = () => mockContour;
+    delete = vi.fn();
+    constructor() {}
   }
 
-  function MockSize(w: number, h: number) {
-    return { width: w, height: h };
+  class MockSizeClass {
+    width: number;
+    height: number;
+    constructor(w: number, h: number) {
+      this.width = w;
+      this.height = h;
+    }
   }
 
   return {
-    Mat: MockMat,
-    MatVector: MockMatVector,
+    Mat: MockMatClass as unknown as new () => OpenCVMat,
+    MatVector: MockMatVectorClass as unknown as new () => OpenCVMatVector,
     cvtColor: vi.fn(),
     GaussianBlur: vi.fn(),
     Canny: vi.fn(),
-    findContours: vi.fn((_image: any, contours: any, _hierarchy: any) => {
-      contours.size = () => 1;
-      contours.get = () => mockContour;
+    findContours: vi.fn((_image: OpenCVMat, contours: OpenCVMatVector) => {
+      (contours as typeof mockContours).size = () => 1;
+      (contours as typeof mockContours).get = () => mockContour;
     }),
     contourArea: vi.fn(() => contourAreaValue),
     arcLength: vi.fn(() => arcLengthValue),
-    approxPolyDP: vi.fn((_contour: any, approx: any) => {
-      approx.rows = approxVertexCount;
-      approx.size = () => ({ height: approxVertexCount, width: 1 });
-      approx.intPtr = mockApprox.intPtr;
+    approxPolyDP: vi.fn((_contour: OpenCVMat, approx: OpenCVMat) => {
+      const a = approx as typeof mockApprox;
+      a.rows = approxVertexCount;
+      a.intPtr = mockApprox.intPtr;
     }),
     getPerspectiveTransform: vi.fn(() => mockTransformMat),
     warpPerspective: vi.fn(),
-    matFromArray: vi.fn((rows: number, cols: number) => createMockMat(cols, rows)),
-    Size: MockSize,
+    matFromArray: vi.fn((_rows: number, _cols: number) => createMockMat(1, 1)),
+    Size: MockSizeClass as unknown as new (w: number, h: number) => { width: number; height: number },
     COLOR_RGBA2GRAY: 11,
     RETR_EXTERNAL: 0,
     CHAIN_APPROX_SIMPLE: 2,
     INTER_LINEAR: 1,
     CV_32FC2: 13,
+    // Internal helpers for tests
     _mockHierarchy: mockHierarchy,
     _mockContours: mockContours,
     _mockApprox: mockApprox,
-  };
+  } as unknown as OpenCV;
 }
 
 // ── Tests ───────────────────────────────────────────────────────

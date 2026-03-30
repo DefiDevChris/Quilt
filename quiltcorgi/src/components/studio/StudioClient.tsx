@@ -18,10 +18,10 @@ import { BlockDraftingModal } from '@/components/blocks/BlockDraftingModal';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { PatternAdjuster } from '@/components/fabrics/PatternAdjuster';
+import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
 import { SymmetryTool } from '@/components/generators/SymmetryTool';
 import { YardagePanel } from '@/components/measurement/YardagePanel';
-import { PhotoPatchworkDialog } from '@/components/studio/PhotoPatchworkDialog';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
@@ -47,8 +47,6 @@ import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
-import type { PatchworkWizardData } from '@/components/studio/PhotoPatchworkDialog';
-import type { ScaledPiece } from '@/lib/photo-pattern-types';
 
 function PrintOptionsPanel({
   onOpenPdfExport,
@@ -143,7 +141,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isPhotoPatchworkOpen, setIsPhotoPatchworkOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
@@ -160,7 +157,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
-    saveProject(projectId, fabricCanvas);
+    if (projectId) {
+      saveProject({ projectId, fabricCanvas });
+    }
   }, [fabricCanvas]);
 
   const handleBlockSaved = useCallback(() => {
@@ -169,37 +168,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   const handleFabricUploaded = useCallback(() => {
     useFabricStore.getState().fetchUserFabrics();
-  }, []);
-
-  const handlePhotoPatternFinish = useCallback((data: PatchworkWizardData) => {
-    setIsPhotoPatchworkOpen(false);
-    if (!data.grid) return;
-
-    const { canvasWidth, canvasHeight } = useProjectStore.getState();
-    const cellW = canvasWidth / data.grid.cols;
-    const cellH = canvasHeight / data.grid.rows;
-
-    const pieces: ScaledPiece[] = data.grid.cells.map((cell, i) => ({
-      id: `patchwork-${i}`,
-      contourInches: [
-        { x: cell.col * cellW, y: cell.row * cellH },
-        { x: (cell.col + 1) * cellW, y: cell.row * cellH },
-        { x: (cell.col + 1) * cellW, y: (cell.row + 1) * cellH },
-        { x: cell.col * cellW, y: (cell.row + 1) * cellH },
-      ],
-      finishedWidth: `${cellW.toFixed(2)}"`,
-      finishedHeight: `${cellH.toFixed(2)}"`,
-      cutWidth: `${(cellW + 0.5).toFixed(2)}"`,
-      cutHeight: `${(cellH + 0.5).toFixed(2)}"`,
-      finishedWidthNum: cellW,
-      finishedHeightNum: cellH,
-      dominantColor: cell.color,
-    }));
-
-    const store = usePhotoPatternStore.getState();
-    store.setTargetDimensions(canvasWidth, canvasHeight);
-    usePhotoPatternStore.setState({ originalImageUrl: data.imagePreviewUrl });
-    store.setScaledPieces(pieces);
   }, []);
 
   const combinedDragOver = useCallback(
@@ -300,7 +268,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
               isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
             }
             onOpenPhotoPatchwork={() =>
-              isPro ? setIsPhotoPatchworkOpen(true) : setProUpgradeFeature('Photo to Pattern')
+              isPro
+                ? usePhotoPatternStore.getState().openModal()
+                : setProUpgradeFeature('Photo to Pattern')
             }
             onOpenResize={() => setIsResizeOpen(true)}
           />
@@ -388,11 +358,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
             <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
           )}
           <SymmetryTool isOpen={isSymmetryOpen} onClose={() => setIsSymmetryOpen(false)} />
-          <PhotoPatchworkDialog
-            isOpen={isPhotoPatchworkOpen}
-            onClose={() => setIsPhotoPatchworkOpen(false)}
-            onFinish={handlePhotoPatternFinish}
-          />
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
             isOpen={isImageExportOpen}
@@ -432,7 +397,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             </svg>
             <p className="text-lg font-semibold text-on-surface mb-1">{proUpgradeFeature}</p>
             <p className="text-sm text-secondary mb-4">
-              This feature requires a Pro subscription. Start at $8/month.
+              This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
             </p>
             <div className="flex gap-3 justify-center">
               <button

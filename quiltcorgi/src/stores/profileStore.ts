@@ -9,7 +9,6 @@ interface ProfileState {
   isLoading: boolean;
   error: string | null;
   fetchProfile: (username: string) => Promise<void>;
-  toggleFollow: (userId: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -20,7 +19,7 @@ const INITIAL_STATE = {
   error: null as string | null,
 };
 
-export const useProfileStore = create<ProfileState>((set, get) => ({
+export const useProfileStore = create<ProfileState>((set) => ({
   ...INITIAL_STATE,
 
   fetchProfile: async (username) => {
@@ -51,52 +50,4 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
 
   reset: () => set({ ...INITIAL_STATE }),
-
-  toggleFollow: async (userId) => {
-    const { profile } = get();
-    if (!profile) return;
-
-    const wasFollowing = profile.isFollowedByUser;
-    const originalCount = profile.followerCount;
-
-    set({
-      profile: {
-        ...profile,
-        isFollowedByUser: !wasFollowing,
-        followerCount: wasFollowing ? Math.max(0, originalCount - 1) : originalCount + 1,
-      },
-    });
-
-    try {
-      const res = await fetch('/api/follows', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetUserId: userId }),
-      });
-
-      if (!res.ok) {
-        const current = get().profile;
-        if (current) {
-          set({
-            profile: {
-              ...current,
-              isFollowedByUser: wasFollowing,
-              followerCount: originalCount,
-            },
-          });
-        }
-      }
-    } catch {
-      const current = get().profile;
-      if (current) {
-        set({
-          profile: {
-            ...current,
-            isFollowedByUser: wasFollowing,
-            followerCount: originalCount,
-          },
-        });
-      }
-    }
-  },
 }));

@@ -7,6 +7,7 @@
 
 export function validateEnv(): void {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   // DATABASE_URL — always required
   if (!process.env.DATABASE_URL) {
@@ -42,6 +43,25 @@ export function validateEnv(): void {
     if (!awsSecret)
       errors.push('AWS_SECRET_ACCESS_KEY must be set when any AWS variable is configured');
     if (!awsBucket) errors.push('AWS_S3_BUCKET must be set when any AWS variable is configured');
+  }
+
+  // Upstash Redis — required in production for distributed rate limiting.
+  // Falls back to in-memory in dev (single process), but in production this
+  // means rate limits don't survive restarts or span multiple instances.
+  if (process.env.NODE_ENV === 'production') {
+    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+      warnings.push(
+        'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are not set. ' +
+          'Auth rate limiting will fall back to in-memory (does not survive restarts or span instances). ' +
+          'Add these to the quiltcorgi/prod Secrets Manager secret.'
+      );
+    }
+  }
+
+  if (warnings.length > 0) {
+    for (const warning of warnings) {
+      console.warn(`[env] WARNING: ${warning}`);
+    }
   }
 
   if (errors.length > 0) {

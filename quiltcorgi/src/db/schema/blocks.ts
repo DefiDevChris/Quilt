@@ -27,6 +27,10 @@ export const blocks = pgTable(
     isDefault: boolean('isDefault').notNull().default(false),
     thumbnailUrl: text('thumbnailUrl'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_blocks_category').on(table.category),

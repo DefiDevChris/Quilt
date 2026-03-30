@@ -147,7 +147,7 @@ export function useQuiltResize() {
       // 9. Render and save
       canvas.renderAll();
       if (projectId) {
-        saveProject(projectId, canvas);
+        saveProject({ projectId, fabricCanvas: canvas });
       }
     },
     []

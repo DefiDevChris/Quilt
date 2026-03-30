@@ -13,19 +13,16 @@ interface CommentsProps {
   postId: string;
   currentUserId?: string;
   isAdmin?: boolean;
-  trustLevel?: string;
 }
 
-const COMMENTER_LEVELS = ['commenter', 'poster', 'trusted', 'moderator'];
 const PREVIEW_COUNT = 2;
 
-export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel }: CommentsProps) {
+export function RedditStyleComments({ postId, currentUserId, isAdmin }: CommentsProps) {
   const comments = useCommentStore((s) => s.comments);
   const isLoading = useCommentStore((s) => s.isLoading);
   const isSubmitting = useCommentStore((s) => s.isSubmitting);
   const fetchComments = useCommentStore((s) => s.fetchComments);
   const addComment = useCommentStore((s) => s.addComment);
-  const likeComment = useCommentStore((s) => s.likeComment);
   const deleteComment = useCommentStore((s) => s.deleteComment);
   const reset = useCommentStore((s) => s.reset);
 
@@ -33,8 +30,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
   const [showAll, setShowAll] = useState(false);
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
 
-  const canComment =
-    Boolean(currentUserId) && Boolean(trustLevel) && COMMENTER_LEVELS.includes(trustLevel ?? '');
+  const canComment = Boolean(currentUserId);
 
   useEffect(() => {
     fetchComments(postId);
@@ -81,11 +77,6 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
     [postId, replyTo, addComment]
   );
 
-  function handleLike(commentId: string) {
-    if (!currentUserId) return;
-    likeComment(postId, commentId);
-  }
-
   function handleDelete(commentId: string) {
     deleteComment(postId, commentId);
   }
@@ -103,7 +94,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
                 setShowAll(s !== 'recent');
               }}
               className={`text-sm font-semibold transition-colors ${
-                sort === s ? 'text-slate-800' : 'text-slate-500 hover:text-slate-800'
+                sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
               }`}
             >
               {s === 'recent' ? 'Recent' : 'Top'}
@@ -123,7 +114,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
 
       {/* Empty */}
       {!isLoading && flat.length === 0 && (
-        <p className="text-sm text-slate-500 py-4">No comments yet</p>
+        <p className="text-sm text-secondary py-4">No comments yet</p>
       )}
 
       {/* Comments */}
@@ -134,7 +125,6 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
             comment={comment}
             currentUserId={currentUserId}
             isAdmin={isAdmin}
-            onLike={() => handleLike(comment.id)}
             onReply={() => setReplyTo({ id: comment.id, name: comment.authorName })}
             onDelete={() => handleDelete(comment.id)}
           />
@@ -161,9 +151,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin, trustLevel
             onCancel={replyTo ? () => setReplyTo(null) : undefined}
           />
         ) : (
-          <p className="text-xs text-slate-500">
-            {!currentUserId ? 'Sign in to comment' : 'Build trust to unlock commenting'}
-          </p>
+          <p className="text-xs text-slate-500">Sign in to comment</p>
         )}
       </div>
     </div>
@@ -174,14 +162,12 @@ function CommentRow({
   comment,
   currentUserId,
   isAdmin,
-  onLike,
   onReply,
   onDelete,
 }: {
   comment: Comment;
   currentUserId?: string;
   isAdmin?: boolean;
-  onLike: () => void;
   onReply: () => void;
   onDelete: () => void;
 }) {
@@ -223,18 +209,14 @@ function CommentRow({
         <div className="flex items-center gap-4 mt-1">
           <span className="text-xs text-slate-500">{formatRelativeTime(comment.createdAt)}</span>
 
-          {comment.likeCount > 0 && (
-            <span className="text-xs font-semibold text-slate-500">
-              {comment.likeCount} {comment.likeCount === 1 ? 'like' : 'likes'}
-            </span>
+          {currentUserId && (
+            <button
+              onClick={onReply}
+              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            >
+              Reply
+            </button>
           )}
-
-          <button
-            onClick={onReply}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-          >
-            Reply
-          </button>
 
           {(isOwn || isAdmin) && (
             <button
@@ -246,23 +228,6 @@ function CommentRow({
           )}
         </div>
       </div>
-
-      {/* Like heart */}
-      <button onClick={onLike} className="shrink-0 self-center p-1" disabled={!currentUserId}>
-        <svg
-          className={`w-4 h-4 transition-colors ${
-            comment.isLikedByUser
-              ? 'text-rose-500 fill-current'
-              : 'text-slate-400 hover:text-rose-500'
-          }`}
-          viewBox="0 0 24 24"
-          fill={comment.isLikedByUser ? 'currentColor' : 'none'}
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-        </svg>
-      </button>
     </div>
   );
 }

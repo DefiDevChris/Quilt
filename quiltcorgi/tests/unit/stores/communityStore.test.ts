@@ -98,8 +98,8 @@ describe('communityStore', () => {
 
   it('setTab resets page to 1 and updates tab', () => {
     useCommunityStore.setState({ page: 3 });
-    useCommunityStore.getState().setTab('featured');
-    expect(useCommunityStore.getState().tab).toBe('featured');
+    useCommunityStore.getState().setTab('saved');
+    expect(useCommunityStore.getState().tab).toBe('saved');
     expect(useCommunityStore.getState().page).toBe(1);
   });
 
@@ -390,12 +390,12 @@ describe('communityStore', () => {
   });
 
   it('fetchPosts includes tab and category in params', async () => {
-    useCommunityStore.setState({ tab: 'featured', category: 'help', page: 1 });
+    useCommunityStore.setState({ tab: 'saved', category: 'help', page: 1 });
 
     await useCommunityStore.getState().fetchPosts();
 
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-    expect(callUrl).toContain('tab=featured');
+    expect(callUrl).toContain('tab=saved');
     expect(callUrl).toContain('category=help');
   });
 

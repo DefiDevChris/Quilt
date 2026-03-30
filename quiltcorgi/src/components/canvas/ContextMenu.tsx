@@ -236,7 +236,6 @@ export function ContextMenu() {
       unitSystem,
     });
 
-    void bounds;
     closeMenu();
   }, [fabricCanvas, quantity, unitSystem, closeMenu]);
 

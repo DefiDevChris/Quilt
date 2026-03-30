@@ -28,6 +28,10 @@ export const comments = pgTable(
     likeCount: integer('likeCount').notNull().default(0),
     status: commentStatusEnum('status').notNull().default('visible'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_comments_postId_createdAt').on(table.postId, table.createdAt),

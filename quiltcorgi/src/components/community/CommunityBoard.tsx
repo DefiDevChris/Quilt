@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommunityStore } from '@/stores/communityStore';
 import { ModernCommunityCard } from '@/components/community/ModernCommunityCard';
@@ -146,7 +146,10 @@ export function CommunityBoard() {
             {isLoading && posts.length === 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-background rounded-2xl border border-outline-variant overflow-hidden animate-pulse">
+                  <div
+                    key={i}
+                    className="bg-background rounded-2xl border border-outline-variant overflow-hidden animate-pulse"
+                  >
                     <div className="aspect-[4/3] bg-surface-container-high" />
                     <div className="p-4 space-y-3">
                       <div className="h-4 bg-surface-container-high rounded-full w-3/4" />
@@ -164,8 +167,18 @@ export function CommunityBoard() {
             {error && (
               <div className="text-center py-16 bg-background rounded-2xl border border-outline-variant">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error-container flex items-center justify-center">
-                  <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  <svg
+                    className="w-8 h-8 text-error"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                    />
                   </svg>
                 </div>
                 <p className="text-secondary mb-4">{error}</p>
@@ -193,7 +206,12 @@ export function CommunityBoard() {
                     className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-on hover:opacity-90 transition-opacity"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.5v15m7.5-7.5h-15" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
                     </svg>
                     Share Your Design
                   </Link>
@@ -222,8 +240,19 @@ export function CommunityBoard() {
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
                       </svg>
                       Loading...
                     </span>
@@ -260,9 +289,7 @@ function SortButton({
       type="button"
       onClick={onClick}
       className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-        active
-          ? 'bg-background text-on-surface shadow-sm'
-          : 'text-secondary hover:text-on-surface'
+        active ? 'bg-background text-on-surface shadow-sm' : 'text-secondary hover:text-on-surface'
       }`}
     >
       {children}
@@ -271,66 +298,29 @@ function SortButton({
 }
 
 function TrendingSection() {
-  const trends = [
-    { tag: '#SpringQuilts', posts: 234 },
-    { tag: '#ModernQuilting', posts: 189 },
-    { tag: '#Patchwork', posts: 156 },
-    { tag: '#QuiltBlockDesign', posts: 142 },
-    { tag: '#FabricLove', posts: 98 },
-  ];
-
   return (
     <div className="bg-background rounded-2xl border border-outline-variant p-4 mb-4">
       <h3 className="font-semibold text-on-surface mb-4 flex items-center gap-2">
         <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
+          />
         </svg>
         Trending
       </h3>
-      <div className="space-y-3">
-        {trends.map((trend) => (
-          <Link
-            key={trend.tag}
-            href={`/socialthreads?tag=${encodeURIComponent(trend.tag)}`}
-            className="flex items-center justify-between group"
-          >
-            <span className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
-              {trend.tag}
-            </span>
-            <span className="text-xs text-secondary">{trend.posts} posts</span>
-          </Link>
-        ))}
-      </div>
+      <p className="text-sm text-secondary">Trending topics coming soon.</p>
     </div>
   );
 }
 
 function SuggestedQuilters() {
-  const suggestions = [
-    { name: 'Sarah Stitches', handle: '@sarahstitches', avatar: null },
-    { name: 'Modern Quilter', handle: '@modernquilter', avatar: null },
-    { name: 'Patchwork Pam', handle: '@patchworkpam', avatar: null },
-  ];
-
   return (
     <div className="bg-background rounded-2xl border border-outline-variant p-4">
       <h3 className="font-semibold text-on-surface mb-4">Suggested Quilters</h3>
-      <div className="space-y-4">
-        {suggestions.map((user) => (
-          <div key={user.handle} className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
-              <span className="text-sm font-semibold text-primary">{user.name[0]}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-on-surface truncate">{user.name}</p>
-              <p className="text-xs text-secondary truncate">{user.handle}</p>
-            </div>
-            <button className="text-xs font-semibold text-primary hover:bg-primary-container px-3 py-1.5 rounded-full transition-colors">
-              Follow
-            </button>
-          </div>
-        ))}
-      </div>
+      <p className="text-sm text-secondary">Suggested quilters coming soon.</p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { users, userProfiles, communityPosts, blogPosts, likes, projects } from '@/db/schema';
+import { users, userProfiles, communityPosts, likes, projects } from '@/db/schema';
 
 // Sample quilter users
 const QUILTERS = [
@@ -280,14 +280,16 @@ const FEED_POSTS = [
   },
 ];
 
-// Blog posts - mix of long and short
-const BLOG_POSTS = [
+// Blog posts are seeded separately via seed-blog.ts / blog-seed.ts.
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _BLOG_POSTS_DEPRECATED = [
   {
     title: "The Complete Beginner's Guide to Machine Quilting",
     slug: 'beginners-guide-machine-quilting',
     excerpt:
       'Everything you need to know to start machine quilting your first project, from choosing batting to mastering your walking foot.',
-    category: 'Tutorial',
+    category: 'Tutorials',
     tags: ['machine quilting', 'beginner', 'tutorial'],
     image: '/images/quilts/quilt_16_longarm_studio.png',
     content: {
@@ -735,7 +737,7 @@ const BLOG_POSTS = [
     slug: 'color-theory-quilters',
     excerpt:
       'Understanding color relationships to create stunning quilts with confidence. From complementary colors to value and saturation.',
-    category: 'Tutorial',
+    category: 'Tutorials',
     tags: ['color theory', 'design', 'tutorial'],
     image: '/images/quilts/quilt_07_closeup_modern.png',
     content: {
@@ -929,9 +931,13 @@ async function seedContent() {
   console.log('Creating likes for engagement...');
   const featuredPosts = createdPosts.filter((p) => p.isFeatured);
   for (const post of featuredPosts) {
-    // Add likes from random users
+    // Add likes from random users using Fisher-Yates shuffle for unbiased randomization
     const numLikes = Math.min(post.likeCount, allUsers.length);
-    const shuffledUsers = [...allUsers].sort(() => 0.5 - Math.random());
+    const shuffledUsers = [...allUsers];
+    for (let i = shuffledUsers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledUsers[i], shuffledUsers[j]] = [shuffledUsers[j], shuffledUsers[i]];
+    }
 
     for (let i = 0; i < numLikes; i++) {
       await db
@@ -945,33 +951,12 @@ async function seedContent() {
   }
   console.log(`✅ Added likes to featured posts\n`);
 
-  // Create blog posts
-  console.log('Creating blog posts...');
-  const adminUser = allUsers[0];
-  for (const blogPost of BLOG_POSTS) {
-    await db
-      .insert(blogPosts)
-      .values({
-        authorId: adminUser.id,
-        title: blogPost.title,
-        slug: blogPost.slug,
-        content: blogPost.content,
-        excerpt: blogPost.excerpt,
-        featuredImageUrl: blogPost.image,
-        category: blogPost.category,
-        tags: blogPost.tags,
-        status: 'published',
-        publishedAt: new Date(),
-      })
-      .onConflictDoNothing();
-  }
-  console.log(`✅ Created ${BLOG_POSTS.length} blog posts\n`);
+  // Blog posts are seeded separately via `npm run db:seed:blog` (seed-blog.ts)
 
   console.log('🎉 Content seeding complete!');
   console.log('\nSummary:');
   console.log(`- ${createdUsers.length} quilter users`);
   console.log(`- ${createdPosts.length} community posts (${featuredPosts.length} featured)`);
-  console.log(`- ${BLOG_POSTS.length} blog posts`);
   console.log('\nFeatured posts (most liked):');
   featuredPosts
     .sort((a, b) => b.likeCount - a.likeCount)
@@ -982,11 +967,19 @@ async function seedContent() {
 }
 
 // Only run when executed directly, not when imported
-const isDirectRun = process.argv[1]?.endsWith('seed-community-content.ts') ||
+const isDirectRun =
+  process.argv[1]?.endsWith('seed-community-content.ts') ||
   process.argv[1]?.endsWith('seed-community-content.js');
 
 if (isDirectRun) {
-  seedContent().catch(console.error);
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: Seed scripts cannot run in production. Aborting.');
+    process.exit(1);
+  }
+  seedContent().catch((error) => {
+    console.error('Seed failed:', error);
+    process.exit(1);
+  });
 }
 
 export { seedContent };

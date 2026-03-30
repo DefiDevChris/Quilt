@@ -72,12 +72,22 @@ export default async function TutorialPage({ params }: { params: Promise<{ slug:
 
   const { prev, next } = getAdjacentTutorials(slug);
 
+  // Convert estimatedTime to ISO 8601 duration format (e.g., "20 min" -> "PT20M")
+  const isoDuration = tutorial.estimatedTime
+    .replace(/\s+/g, '')
+    .replace(/minutes?/gi, 'M')
+    .replace(/mins?/gi, 'M')
+    .replace(/hours?/gi, 'H')
+    .replace(/hrs?/gi, 'H')
+    .replace(/seconds?/gi, 'S')
+    .replace(/secs?/gi, 'S');
+
   const howToJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: tutorial.title,
     description: tutorial.description,
-    totalTime: `PT${tutorial.estimatedTime.replace(/\s/g, '').toUpperCase()}`,
+    totalTime: `PT${isoDuration.toUpperCase()}`,
     tool: [
       {
         '@type': 'HowToTool',
@@ -90,7 +100,7 @@ export default async function TutorialPage({ params }: { params: Promise<{ slug:
     <article>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd).replace(/</g, '\\u003c') }}
       />
 
       {/* Header */}

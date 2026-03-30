@@ -9,6 +9,7 @@ import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { ZOOM_STEP } from '@/lib/constants';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface HamburgerDrawerProps {
   isOpen: boolean;
@@ -41,31 +42,9 @@ export function HamburgerDrawer({
   const router = useRouter();
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
-  const handleUndo = useCallback(async () => {
-    if (!fabricCanvas) return;
-    const fabric = await import('fabric');
-    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-    const currentJson = JSON.stringify(canvas.toJSON());
-    const prevJson = useCanvasStore.getState().popUndo(currentJson);
-    if (prevJson) {
-      await canvas.loadFromJSON(JSON.parse(prevJson));
-      canvas.renderAll();
-      useProjectStore.getState().setDirty(true);
-    }
-  }, [fabricCanvas]);
+  const handleUndo = useCallback(() => performUndo(), []);
 
-  const handleRedo = useCallback(async () => {
-    if (!fabricCanvas) return;
-    const fabric = await import('fabric');
-    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-    const currentJson = JSON.stringify(canvas.toJSON());
-    const nextJson = useCanvasStore.getState().popRedo(currentJson);
-    if (nextJson) {
-      await canvas.loadFromJSON(JSON.parse(nextJson));
-      canvas.renderAll();
-      useProjectStore.getState().setDirty(true);
-    }
-  }, [fabricCanvas]);
+  const handleRedo = useCallback(() => performRedo(), []);
 
   const handleDelete = useCallback(async () => {
     if (!fabricCanvas) return;
@@ -168,8 +147,16 @@ export function HamburgerDrawer({
     {
       title: 'Libraries',
       items: [
-        { label: 'Block Library', shortcut: 'B', onClick: () => useBlockStore.getState().togglePanel() },
-        { label: 'Fabric Library', shortcut: 'F', onClick: () => useFabricStore.getState().togglePanel() },
+        {
+          label: 'Block Library',
+          shortcut: 'B',
+          onClick: () => useBlockStore.getState().togglePanel(),
+        },
+        {
+          label: 'Fabric Library',
+          shortcut: 'F',
+          onClick: () => useFabricStore.getState().togglePanel(),
+        },
       ],
     },
     {
@@ -219,9 +206,7 @@ export function HamburgerDrawer({
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12">
-              <span className="font-semibold text-[1.125rem] text-on-surface">
-                QuiltCorgi
-              </span>
+              <span className="font-semibold text-[1.125rem] text-on-surface">QuiltCorgi</span>
               <button
                 type="button"
                 onClick={onClose}
@@ -229,7 +214,12 @@ export function HamburgerDrawer({
                 aria-label="Close menu"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path
+                    d="M4 4L14 14M14 4L4 14"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </button>
             </div>

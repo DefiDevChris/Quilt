@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
 
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +8,9 @@ export default async function StudioLayout({ children }: { children: React.React
   const user = idToken ? await verifySessionToken(idToken) : null;
 
   if (!user) {
-    redirect('/auth/signin?callbackUrl=/dashboard');
+    const headersList = await headers();
+    const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || '/dashboard';
+    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`);
   }
 
   return <>{children}</>;

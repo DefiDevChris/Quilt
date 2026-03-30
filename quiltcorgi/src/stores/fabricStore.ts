@@ -26,13 +26,14 @@ interface FabricStoreState {
   fetchFabrics: () => Promise<void>;
   fetchUserFabrics: () => Promise<void>;
   deleteUserFabric: (fabricId: string) => Promise<boolean>;
+  reset: () => void;
 }
 
 let fabricAbortController: AbortController | null = null;
 
-export const useFabricStore = create<FabricStoreState>((set, get) => ({
-  fabrics: [],
-  userFabrics: [],
+const INITIAL_STATE = {
+  fabrics: [] as FabricListItem[],
+  userFabrics: [] as FabricListItem[],
   search: '',
   manufacturer: '',
   colorFamily: '',
@@ -41,8 +42,12 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   total: 0,
   isLoading: false,
   isLoadingUserFabrics: false,
-  error: null,
+  error: null as string | null,
   isPanelOpen: false,
+};
+
+export const useFabricStore = create<FabricStoreState>((set, get) => ({
+  ...INITIAL_STATE,
 
   setSearch: (search) => {
     set({ search, page: 1 });
@@ -129,13 +134,13 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
       const json = await res.json();
 
       if (!res.ok) {
-        set({ isLoadingUserFabrics: false });
+        set({ error: json.error ?? 'Failed to load your fabrics', isLoadingUserFabrics: false });
         return;
       }
 
       set({ userFabrics: json.data.fabrics, isLoadingUserFabrics: false });
     } catch {
-      set({ isLoadingUserFabrics: false });
+      set({ error: 'Failed to load your fabrics', isLoadingUserFabrics: false });
     }
   },
 
@@ -152,5 +157,11 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
     } catch {
       return false;
     }
+  },
+
+  reset: () => {
+    fabricAbortController?.abort();
+    fabricAbortController = null;
+    set({ ...INITIAL_STATE });
   },
 }));

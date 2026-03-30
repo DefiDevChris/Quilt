@@ -1,80 +1,34 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { users, comments, communityPosts, subscriptions, follows, reports } from '@/db/schema';
+import { users, comments, communityPosts } from '@/db/schema';
 import {
-  calculateTrustLevel,
-  getTrustPermissions,
+  getRolePermissions,
   getRateLimit,
-  type TrustLevel,
-  type TrustUserInput,
+  type UserRole,
 } from '@/lib/trust-engine';
 import { errorResponse } from '@/lib/api-responses';
 
 type RequiredPermission =
   | 'canLike'
-  | 'canFollow'
   | 'canSave'
   | 'canComment'
   | 'canPost'
-  | 'canModerate'
-  | 'canReport';
+  | 'canModerate';
 
 interface TrustCheckResult {
   allowed: boolean;
-  trustLevel: TrustLevel;
+  role: UserRole;
   userId: string;
   response?: Response;
 }
 
-const TRUST_LEVEL_DESCRIPTIONS: Record<TrustLevel, string> = {
-  visitor: 'You must be logged in and verify your email to perform this action.',
-  verified: 'Your account must be at least 24 hours old to perform this action.',
-  commenter: 'You need 3 approved comments to create posts.',
-  poster: 'You need 5 approved posts to become a trusted member.',
-  trusted: 'This action requires a Pro subscription.',
-  pro: 'This action requires admin privileges.',
-  admin: '',
+const PERMISSION_MESSAGES: Record<RequiredPermission, string> = {
+  canLike: 'You must be logged in to like content.',
+  canSave: 'You must be logged in to save content.',
+  canComment: 'You must be logged in to comment.',
+  canPost: 'A Pro subscription is required to create community posts.',
+  canModerate: 'This action requires admin privileges.',
 };
-
-export async function buildTrustUserInput(userId: string): Promise<TrustUserInput | null> {
-  const [user] = await db
-    .select({
-      id: users.id,
-      role: users.role,
-      emailVerified: users.emailVerified,
-      createdAt: users.createdAt,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
-
-  if (!user) return null;
-
-  const [[approvedCommentsRow], [approvedPostsRow], [activeSubRow]] = await Promise.all([
-    db
-      .select({ count: count() })
-      .from(comments)
-      .where(and(eq(comments.authorId, userId), eq(comments.status, 'visible'))),
-    db
-      .select({ count: count() })
-      .from(communityPosts)
-      .where(and(eq(communityPosts.userId, userId), eq(communityPosts.status, 'approved'))),
-    db
-      .select({ count: count() })
-      .from(subscriptions)
-      .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, 'active'))),
-  ]);
-
-  return {
-    id: userId,
-    role: user.role,
-    emailVerified: user.emailVerified,
-    createdAt: user.createdAt,
-    isSubscriptionActive: (activeSubRow?.count ?? 0) > 0,
-    approvedCommentCount: approvedCommentsRow?.count ?? 0,
-    approvedPostCount: approvedPostsRow?.count ?? 0,
-  };
-}
 
 export async function checkTrustLevel(
   userId: string | null,
@@ -83,47 +37,52 @@ export async function checkTrustLevel(
   if (!userId) {
     return {
       allowed: false,
-      trustLevel: 'visitor',
+      role: 'free',
       userId: '',
-      response: errorResponse(TRUST_LEVEL_DESCRIPTIONS.visitor, 'TRUST_INSUFFICIENT', 403),
+      response: errorResponse('You must be logged in to perform this action.', 'TRUST_INSUFFICIENT', 403),
     };
   }
 
-  const trustUser = await buildTrustUserInput(userId);
-  if (!trustUser) {
+  const [user] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) {
     return {
       allowed: false,
-      trustLevel: 'visitor',
+      role: 'free',
       userId,
       response: errorResponse('User not found.', 'NOT_FOUND', 404),
     };
   }
 
-  const trustLevel = calculateTrustLevel(trustUser);
-  const permissions = getTrustPermissions(trustLevel);
+  const role = user.role;
+  const permissions = getRolePermissions(role);
 
   if (!permissions[requiredPermission]) {
     return {
       allowed: false,
-      trustLevel,
+      role,
       userId,
-      response: errorResponse(TRUST_LEVEL_DESCRIPTIONS[trustLevel], 'TRUST_INSUFFICIENT', 403),
+      response: errorResponse(PERMISSION_MESSAGES[requiredPermission], 'TRUST_INSUFFICIENT', 403),
     };
   }
 
   return {
     allowed: true,
-    trustLevel,
+    role,
     userId,
   };
 }
 
 export async function checkRateLimit(
   userId: string,
-  trustLevel: TrustLevel,
-  action: 'comments' | 'posts' | 'follows' | 'reports'
+  role: UserRole,
+  action: 'comments' | 'posts'
 ): Promise<{ allowed: boolean; response?: Response }> {
-  const limit = getRateLimit(trustLevel, action);
+  const limit = getRateLimit(role, action);
   if (limit === Infinity) return { allowed: true };
 
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -141,18 +100,6 @@ export async function checkRateLimit(
       .select({ count: count() })
       .from(communityPosts)
       .where(and(eq(communityPosts.userId, userId), gte(communityPosts.createdAt, oneDayAgo)));
-    currentCount = row?.count ?? 0;
-  } else if (action === 'follows') {
-    const [row] = await db
-      .select({ count: count() })
-      .from(follows)
-      .where(and(eq(follows.followerId, userId), gte(follows.createdAt, oneDayAgo)));
-    currentCount = row?.count ?? 0;
-  } else if (action === 'reports') {
-    const [row] = await db
-      .select({ count: count() })
-      .from(reports)
-      .where(and(eq(reports.reporterId, userId), gte(reports.createdAt, oneDayAgo)));
     currentCount = row?.count ?? 0;
   }
 

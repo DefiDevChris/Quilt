@@ -6,6 +6,21 @@ import { communityPosts, users } from '@/db/schema';
 import { ModernPostDetail } from '@/components/community/ModernPostDetail';
 import { SocialLayout } from '@/components/social/SocialLayout';
 
+function PostDetailSkeleton() {
+  return (
+    <div className="glass-panel-social rounded-[2rem] p-6 animate-pulse space-y-4">
+      <div className="h-8 w-3/4 bg-surface-container-high rounded" />
+      <div className="h-4 w-1/2 bg-surface-container-high rounded" />
+      <div className="aspect-video bg-surface-container-high rounded-xl" />
+      <div className="space-y-2">
+        <div className="h-4 w-full bg-surface-container-high rounded" />
+        <div className="h-4 w-5/6 bg-surface-container-high rounded" />
+        <div className="h-4 w-4/6 bg-surface-container-high rounded" />
+      </div>
+    </div>
+  );
+}
+
 interface PageProps {
   params: Promise<{ postId: string }>;
 }
@@ -58,7 +73,7 @@ export default async function PostDetailPage({ params }: PageProps) {
 
   return (
     <SocialLayout activeSection="feed" contentClassName="pb-10">
-      <Suspense fallback={null}>
+      <Suspense fallback={<PostDetailSkeleton />}>
         <ModernPostDetail postId={postId} />
       </Suspense>
     </SocialLayout>

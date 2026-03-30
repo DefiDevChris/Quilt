@@ -6,6 +6,8 @@
  * Pure logic — no React, Fabric.js, or DOM dependencies.
  */
 
+import { gcd } from './math-utils';
+
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface GridPoint {
@@ -346,11 +348,6 @@ function splitSegmentAtGridPoints(seg: Segment): Segment[] {
     result.push({ from: points[i], to: points[i + 1] });
   }
   return result;
-}
-
-function gcd(a: number, b: number): number {
-  if (b === 0) return a;
-  return gcd(b, a % b);
 }
 
 function deduplicateSegments(segments: Segment[]): Segment[] {

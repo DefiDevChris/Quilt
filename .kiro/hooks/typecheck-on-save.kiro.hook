@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Type Check on Save",
+  "description": "Runs npm run type-check whenever a TypeScript file is saved, surfacing type errors immediately without needing to run it manually",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.ts",
+      "**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm run type-check"
+  }
+}

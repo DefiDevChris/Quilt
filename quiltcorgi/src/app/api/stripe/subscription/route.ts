@@ -36,7 +36,7 @@ export async function GET() {
     return Response.json({ success: true, data: sub });
   } catch {
     return Response.json(
-      { success: false, error: 'Failed to fetch subscription' },
+      { success: false, error: 'Failed to fetch subscription', code: 'INTERNAL_ERROR' },
       { status: 500 }
     );
   }

@@ -1,25 +1,14 @@
+import { NextRequest } from 'next/server';
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import {
-  communityPosts,
-  likes,
-  users,
-  projects,
-  userProfiles,
-  savedPosts,
-} from '@/db/schema';
+import { communityPosts, likes, users, projects, userProfiles, savedPosts } from '@/db/schema';
 import { getRequiredSession, errorResponse } from '@/lib/auth-helpers';
+import { formatCreatorName } from '@/lib/format-utils';
 
 export const dynamic = 'force-dynamic';
 
-function formatCreatorName(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length < 2) return parts[0] ?? '';
-  return `${parts[0]} ${parts[1]![0]}.`;
-}
-
 export async function GET(
-  _request: Request,
+  _request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
   const { postId } = await params;
@@ -64,22 +53,12 @@ export async function GET(
         db
           .select({ communityPostId: likes.communityPostId })
           .from(likes)
-          .where(
-            and(
-              eq(likes.userId, session.user.id),
-              sql`${likes.communityPostId} = ${postId}`
-            )
-          )
+          .where(and(eq(likes.userId, session.user.id), sql`${likes.communityPostId} = ${postId}`))
           .limit(1),
         db
           .select({ postId: savedPosts.postId })
           .from(savedPosts)
-          .where(
-            and(
-              eq(savedPosts.userId, session.user.id),
-              sql`${savedPosts.postId} = ${postId}`
-            )
-          )
+          .where(and(eq(savedPosts.userId, session.user.id), sql`${savedPosts.postId} = ${postId}`))
           .limit(1),
       ]);
       isLikedByUser = userLike.length > 0;

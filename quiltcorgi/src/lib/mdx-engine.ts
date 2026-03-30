@@ -218,3 +218,6 @@ ${items}
   </channel>
 </rss>`;
 }
+
+// Tutorial count constant - update when adding/removing tutorials
+export const TUTORIAL_COUNT = 10;

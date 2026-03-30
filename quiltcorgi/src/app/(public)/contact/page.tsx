@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Mail, MessageSquare } from 'lucide-react';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
@@ -28,22 +29,26 @@ export default function ContactPage() {
             className="flex-1 p-8 rounded-2xl bg-surface border border-outline-variant hover:border-primary transition-colors duration-200"
           >
             <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-2xl">mail</span>
+              <Mail className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-semibold text-on-surface mb-2">Email Support</h3>
-            <p className="text-secondary text-sm">Reach out to our team directly at support@quiltcorgi.com</p>
+            <p className="text-secondary text-sm">
+              Reach out to our team directly at support@quiltcorgi.com
+            </p>
           </a>
 
-          <a
-            href="#"
-            className="flex-1 p-8 rounded-2xl bg-surface border border-outline-variant hover:border-primary transition-colors duration-200"
-          >
+          <div className="flex-1 p-8 rounded-2xl bg-surface border border-outline-variant opacity-60 cursor-default relative">
+            <span className="absolute top-3 right-3 text-xs font-medium bg-warm-text/10 text-warm-text-secondary px-2 py-0.5 rounded-full">
+              Coming Soon
+            </span>
             <div className="w-12 h-12 rounded-full bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-2xl">forum</span>
+              <MessageSquare className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-semibold text-on-surface mb-2">Community Discord</h3>
-            <p className="text-secondary text-sm">Join our community to chat with other quilters and get help.</p>
-          </a>
+            <p className="text-secondary text-sm">
+              Join our community to chat with other quilters and get help.
+            </p>
+          </div>
         </div>
       </main>
       <Footer />

@@ -43,7 +43,8 @@ describe('cutting-chart-generator', () => {
     });
 
     it('classifies irregular shapes with 5+ vertices', () => {
-      const svg = '<svg viewBox="0 0 100 100"><polygon points="0,0 60,0 100,50 60,100 0,100"/></svg>';
+      const svg =
+        '<svg viewBox="0 0 100 100"><polygon points="0,0 60,0 100,50 60,100 0,100"/></svg>';
       const result = classifyPatchShape(svg, 0.25);
       expect(['trapezoid', 'irregular']).toContain(result.shape);
     });
@@ -159,15 +160,20 @@ describe('cutting-chart-generator', () => {
       expect(formatFraction(3)).toBe('3');
     });
 
-    it('formats common fractions', () => {
-      expect(formatFraction(3.5)).toBe('3-1/2');
-      expect(formatFraction(3.25)).toBe('3-1/4');
-      expect(formatFraction(3.75)).toBe('3-3/4');
+    it('formats common fractions with hyphen separator', () => {
+      expect(formatFraction(3.5, '-')).toBe('3-1/2');
+      expect(formatFraction(3.25, '-')).toBe('3-1/4');
+      expect(formatFraction(3.75, '-')).toBe('3-3/4');
     });
 
-    it('formats eighth fractions', () => {
-      expect(formatFraction(3.875)).toBe('3-7/8');
-      expect(formatFraction(3.125)).toBe('3-1/8');
+    it('formats eighth fractions with hyphen separator', () => {
+      expect(formatFraction(3.875, '-')).toBe('3-7/8');
+      expect(formatFraction(3.125, '-')).toBe('3-1/8');
+    });
+
+    it('defaults to space separator', () => {
+      expect(formatFraction(3.5)).toBe('3 1/2');
+      expect(formatFraction(3.25)).toBe('3 1/4');
     });
 
     it('formats pure fractions (less than 1)', () => {

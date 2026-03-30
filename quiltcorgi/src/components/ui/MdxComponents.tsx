@@ -108,12 +108,24 @@ function Blockquote(props: ComponentPropsWithoutRef<'blockquote'>) {
   );
 }
 
+function isSafeImageSrc(src: string): boolean {
+  try {
+    const url = new URL(src);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return src.startsWith('/') || src.startsWith('#');
+  }
+}
+
 function Image(props: ComponentPropsWithoutRef<'img'>) {
+  const src = typeof props.src === 'string' ? props.src : '#';
+  const safeSrc = src && isSafeImageSrc(src) ? src : '#';
   return (
     <img
       className="rounded-lg shadow-elevation-1 max-w-full h-auto my-4"
       loading="lazy"
       {...props}
+      src={safeSrc}
     />
   );
 }

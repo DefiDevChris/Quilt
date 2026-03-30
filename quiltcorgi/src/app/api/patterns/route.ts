@@ -11,15 +11,12 @@ import {
 } from '@/lib/auth-helpers';
 import { escapeLikePattern } from '@/lib/escape-like';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
-
-const FREE_PATTERN_LIST_LIMIT = 6;
+import { FREE_PATTERN_LIST_LIMIT } from '@/lib/constants';
 
 const patternQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),
-  skillLevel: z
-    .enum(['beginner', 'confident-beginner', 'intermediate', 'advanced'])
-    .optional(),
+  skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),
   search: z.string().max(200).optional(),
   sort: z.enum(['popular', 'name', 'newest']).default('popular'),
 });
@@ -72,6 +69,9 @@ export async function GET(request: NextRequest) {
 
     const isPro = session.user.role === 'pro' || session.user.role === 'admin';
 
+    const effectiveLimit = isPro ? limit : Math.min(limit, FREE_PATTERN_LIST_LIMIT);
+    const effectiveOffset = isPro ? offset : 0;
+
     const [rows, [totalRow]] = await Promise.all([
       db
         .select({
@@ -89,29 +89,26 @@ export async function GET(request: NextRequest) {
         .from(patternTemplates)
         .where(whereClause)
         .orderBy(sortColumn)
-        .limit(limit)
-        .offset(offset),
-      db
-        .select({ count: count() })
-        .from(patternTemplates)
-        .where(whereClause),
+        .limit(effectiveLimit)
+        .offset(effectiveOffset),
+      db.select({ count: count() }).from(patternTemplates).where(whereClause),
     ]);
 
     const total = totalRow?.count ?? 0;
     const upgradeRequired = !isPro && total > FREE_PATTERN_LIST_LIMIT;
 
-    const data: PatternTemplateListItem[] = isPro
-      ? (rows as PatternTemplateListItem[])
-      : (rows.slice(0, FREE_PATTERN_LIST_LIMIT) as PatternTemplateListItem[]);
+    const data = rows as PatternTemplateListItem[];
 
     return Response.json({
       success: true,
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+      data: {
+        patterns: data,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
         upgradeRequired,
       },
     });

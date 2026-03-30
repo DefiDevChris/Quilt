@@ -1,17 +1,8 @@
+import { gcd } from './math-utils';
+
 export interface Fraction {
   readonly numerator: number;
   readonly denominator: number;
-}
-
-function gcd(a: number, b: number): number {
-  a = Math.abs(a);
-  b = Math.abs(b);
-  while (b !== 0) {
-    const t = b;
-    b = a % b;
-    a = t;
-  }
-  return a;
 }
 
 export function fraction(numerator: number, denominator: number): Fraction {

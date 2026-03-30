@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and, isNull, desc, count, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { comments, commentLikes, communityPosts, users, userProfiles } from '@/db/schema';
+import { comments, communityPosts, users, userProfiles } from '@/db/schema';
 import { createCommentSchema, commentsPaginationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
@@ -11,8 +11,6 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
-import { buildTrustUserInput } from '@/middleware/trust-guard';
-import { shouldModerateContent } from '@/lib/trust-engine';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -162,21 +160,7 @@ export async function GET(
       replyCountRows = replyCounts;
     }
 
-    const allCommentIds = [...topLevelIds, ...replyRows.map((r) => r.id)];
-
-    let likedCommentIds = new Set<string>();
-    if (session && allCommentIds.length > 0) {
-      const userLikes = await db
-        .select({ commentId: commentLikes.commentId })
-        .from(commentLikes)
-        .where(
-          and(
-            eq(commentLikes.userId, session.user.id),
-            sql`${commentLikes.commentId} = ANY(${allCommentIds})`
-          )
-        );
-      likedCommentIds = new Set(userLikes.map((l) => l.commentId));
-    }
+    const likedCommentIds = new Set<string>();
 
     const replyCountMap = new Map(replyCountRows.map((r) => [r.replyToId, r.count]));
 
@@ -229,7 +213,7 @@ export async function POST(
   const trustCheck = await checkTrustLevel(session.user.id, 'canComment');
   if (!trustCheck.allowed) return trustCheck.response!;
 
-  const rateCheck = await checkRateLimit(session.user.id, trustCheck.trustLevel, 'comments');
+  const rateCheck = await checkRateLimit(session.user.id, trustCheck.role, 'comments');
   if (!rateCheck.allowed) return rateCheck.response!;
 
   try {
@@ -278,10 +262,6 @@ export async function POST(
       parentComment = { id: parent.id, authorId: parent.authorId, replyToId: parent.replyToId };
     }
 
-    const trustUser = await buildTrustUserInput(session.user.id);
-    const approvedCount = trustUser?.approvedCommentCount ?? 0;
-    const needsModeration = shouldModerateContent(trustCheck.trustLevel, 'comment', approvedCount);
-
     const [created] = await db
       .insert(comments)
       .values({
@@ -289,16 +269,14 @@ export async function POST(
         authorId: session.user.id,
         content,
         replyToId: effectiveReplyToId,
-        status: needsModeration ? 'hidden' : 'visible',
+        status: 'visible',
       })
       .returning();
 
-    if (!needsModeration) {
-      await db
-        .update(communityPosts)
-        .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
-        .where(eq(communityPosts.id, postId));
-    }
+    await db
+      .update(communityPosts)
+      .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
+      .where(eq(communityPosts.id, postId));
 
     const authorName = session.user.name ?? 'Someone';
 

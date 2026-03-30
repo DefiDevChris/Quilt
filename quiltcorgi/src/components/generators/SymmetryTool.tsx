@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useToast } from '@/components/ui/ToastProvider';
 import {
   computeActiveZone,
   filterObjectsInZone,
@@ -31,6 +32,7 @@ export function SymmetryTool({ isOpen, onClose }: SymmetryToolProps) {
   const [symmetryType, setSymmetryType] = useState<SymmetryType>('mirror-both');
   const [foldCount, setFoldCount] = useState(4);
   const [isApplying, setIsApplying] = useState(false);
+  const { toast } = useToast();
 
   const handleApply = useCallback(async () => {
     const canvas = useCanvasStore.getState().fabricCanvas;
@@ -102,8 +104,12 @@ export function SymmetryTool({ isOpen, onClose }: SymmetryToolProps) {
 
       fabricCanvas.requestRenderAll();
       onClose();
-    } catch (err) {
-      console.error('Symmetry apply failed:', err);
+    } catch {
+      toast({
+        type: 'error',
+        title: 'Symmetry failed',
+        description: 'Something went wrong applying symmetry. Please try again.',
+      });
     } finally {
       setIsApplying(false);
     }

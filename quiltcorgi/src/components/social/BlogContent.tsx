@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { BlogPostListItem } from '@/types/community';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 function formatDate(date: Date | string | null): string {
   if (!date) return '';
@@ -200,7 +201,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
 
   useEffect(() => {
     if (posts.length === 0) fetchPosts(1);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchPosts, posts.length]);
 
   const loadMore = () => {
     const next = page + 1;
@@ -284,6 +285,21 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
           </button>
         </div>
       )}
+
+      {/* Submit your story CTA */}
+      <div className="glass-card p-8 text-center mt-12 rounded-2xl">
+        <h3 className="text-lg font-semibold text-on-surface mb-2">Got a story to share?</h3>
+        <p className="text-secondary mb-4 max-w-md mx-auto">
+          We love hearing about your quilting journey — a finished project, a lesson learned, a
+          technique you swear by. Submit your story and we might feature it here.
+        </p>
+        <a
+          href={`mailto:${SUPPORT_EMAIL}?subject=Blog%20Submission`}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-on-primary font-medium hover:opacity-90 transition-opacity"
+        >
+          Submit Your Story
+        </a>
+      </div>
     </div>
   );
 }

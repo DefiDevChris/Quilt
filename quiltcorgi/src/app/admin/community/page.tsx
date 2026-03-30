@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { ModerationPanel } from '@/components/admin/ModerationPanel';
 
 export const metadata: Metadata = {
@@ -26,19 +25,8 @@ function ModerationSkeleton() {
 
 export default function AdminCommunityPage() {
   return (
-    <>
-      <nav className="max-w-4xl mx-auto mb-6 flex gap-3 text-sm">
-        <span className="font-semibold text-primary">Moderation</span>
-        <Link
-          href="/admin/reports"
-          className="text-secondary hover:text-on-surface transition-colors"
-        >
-          Reports
-        </Link>
-      </nav>
-      <Suspense fallback={<ModerationSkeleton />}>
-        <ModerationPanel />
-      </Suspense>
-    </>
+    <Suspense fallback={<ModerationSkeleton />}>
+      <ModerationPanel />
+    </Suspense>
   );
 }

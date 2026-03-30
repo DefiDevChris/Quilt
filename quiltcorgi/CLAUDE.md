@@ -44,7 +44,7 @@ The dashboard (`/dashboard`) is **publicly accessible** but with auth-gated feat
 
 | Route | Protection | Behavior for Guests |
 |-------|-----------|---------------------|
-| `/studio/*` | Server layout | Redirect to `/auth/signin?callbackUrl=/dashboard` |
+| `/studio/*` | Server layout | Redirect to `/auth/signin?callbackUrl=<original-path>` |
 | `/profile/*` | Proxy redirect | Redirect to `/auth/signin` |
 | `/admin/*` | Cookie + trust check | Redirect to home |
 | `/dashboard` | None | Shows auth modal on protected actions |
@@ -67,7 +67,9 @@ The dashboard (`/dashboard`) is **publicly accessible** but with auth-gated feat
 | Community | Browse + comment | Browse + comment + post |
 | Tutorials / Blog | All | All |
 
-**Key constants:** `FREE_BLOCK_LIMIT=20`, `FREE_FABRIC_LIMIT=10`, `PRO_PRICE_MONTHLY=8`, `PRO_PRICE_YEARLY=60`
+**Key constants:** `FREE_BLOCK_LIMIT=20`, `FREE_FABRIC_LIMIT=10`, `PRO_PRICE_MONTHLY=8`, `PRO_PRICE_YEARLY=60`, `SUPPORT_EMAIL`
+
+**Confirmation dialogs:** Always use design system modal pattern (fixed overlay + glass surface) instead of native `confirm()`. See `ProjectCard.tsx` delete confirmation for reference implementation.
 
 **Stripe env vars (production):** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_MONTHLY`, `STRIPE_PRO_PRICE_YEARLY`
 
@@ -123,7 +125,8 @@ Warm-cream glassmorphic design system defined in `src/app/globals.css` via Tailw
 - **Borders:** outline-variant `#E8DCCB`
 - **Status:** success `#4a7c59`, error `#D4726A`, warning `#C6942E`
 - **Mobile accent:** golden `#c48a28`, golden-light `#daa545`
-- **Landing warm palette:** peach-dark `#FF9D6B golden `#FFD166`
+- **Landing warm palette:** peach-dark `#FF9D6B`, golden `#FFD166`
+- **Canvas rendering:** Ruler components use `RULER_COLORS` constant mapping design system colors (surface `#fffcf7`, outline-variant `#babab0`, secondary `#6b5a4d`, primary-dark `#8d4f00`)
 
 ### Radii
 sm 6px, md 10px, lg 16px, xl 24px
@@ -164,7 +167,7 @@ Four worktables (QUILT, BLOCK, IMAGE, PRINT) switchable via segmented tab contro
 
 **Toolbar layout (Quilt worktable):** Three-tier vertical rail — **Primary** (always visible: Select, Block Library, Fabric Library, Photo to Pattern, Layout Settings), **Advanced** (collapsed behind a "..." toggle: Rectangle, Triangle, Line, Curve, Grid & Dimensions, Resize, Puzzle View, Symmetry, Yardage, Printlist, Export Image), **Pinned** (always at bottom: Undo/Redo with disabled state when stacks empty). `ToolDef.tier` controls placement; `ToolDef.isDisabled` controls grayed-out state. Removed from toolbar: Polygon, Text, Serendipity, Fraction Calculator. Photo to Pattern moved to dashboard card (opens `PhotoPatternModal`).
 
-**Selection panel (right context panel):** `SelectionPanel.tsx` renders at top of `QuiltPanel` when a shape is selected. Shows: shape type label, SVG preview with fill color, real-time W/H dimensions in fractional inches (updates on `object:scaling`/`object:modified` etc.), fill color indicator with recent colors (localStorage `qc_recent_colors`), preset swatches, expandable color wheel picker, recent fabrics grid with click-to-apply (clicking a recent fabric applies it as pattern fill on the selected object via `useFabricPattern`, localStorage `qc_recent_fabrics`), and "Browse Fabric Library" button. `saveRecentFabric()` is exported and also called by `useFabricDrop` after drag-drop fabric application.
+**Selection panel (right context panel):** `SelectionPanel.tsx` renders at top of `QuiltPanel` when a shape is selected. Shows: shape type label, SVG preview with fill color, real-time W/H dimensions in fractional inches (updates on `object:scaling`/`object:modified` etc.), fill color indicator with recent colors (localStorage `qc_recent_colors`), preset swatches, expandable color wheel picker, recent fabrics grid with click-to-apply (clicking a recent fabric applies it as pattern fill on the selected object via `useFabricPattern`, localStorage `qc_recent_fabrics`), and "Browse Fabric Library" button. `saveRecentFabric()` lives in `lib/recent-fabrics.ts` and is called by `useFabricDrop` after drag-drop fabric application.
 
 **Precision bar (right context panel):** In `ContextPanel.tsx` `QuiltPanel`, Block Width/Height read from `projectStore.canvasWidth/canvasHeight` and write back on change. Snaps H/V compute from `canvasWidth / gridSettings.size` and update `canvasStore.setGridSettings({ size })`. Snap to Grid toggles `gridSettings.snapToGrid`. All changes push undo state. Canvas Color swatch opens a native color picker that sets `canvas.backgroundColor` via Fabric.js.
 
@@ -197,7 +200,7 @@ Six design tools added via pure engine + hook + component pattern:
 
 ## Production Tools (Phase 15)
 
-Seven production features added:
+Six production features added:
 
 | Feature | Engine | Component |
 |---------|--------|-----------|
@@ -206,7 +209,6 @@ Seven production features added:
 | Pieced Borders | `border-generator.ts` | (extends LayoutSettingsPanel) |
 | Medallion Layout | `layouts/medallion-layout.ts` | (extends LayoutSettingsPanel) |
 | Lone Star Layout | `layouts/lone-star-layout.ts` | (extends LayoutSettingsPanel) |
-| Design Sketchbook | `sketchbookStore.ts` | `SketchbookPanel.tsx` |
 | Fabric Calibration | `fabric-calibration.ts` | (extends FabricUploadDialog) |
 
 **LayoutType union:** `'free-form' | 'grid' | 'sashing' | 'on-point' | 'medallion' | 'lone-star'`
@@ -217,6 +219,8 @@ Seven production features added:
 
 **Design variations:** `designVariations` DB table. API at `/api/projects/[id]/variations`. Pro-only (saving requires Pro).
 
+**Generator Tools Error Handling:** All generator tools (Serendipity, Symmetry, Kaleidoscope, Frame) use `useToast()` hook for consistent error reporting. Catch blocks show user-friendly error messages via `toast({ type: 'error', title, description })` instead of failing silently.
+
 ## Intelligence & Content (Phase 16)
 
 **Onboarding tour:** `onboarding-engine.ts` + `onboardingStore.ts` + `OnboardingTour.tsx`. 9-step overlay tour auto-starts on first studio visit. Targets elements via `data-tour` attributes. Uses Framer Motion for spotlight transitions.
@@ -225,7 +229,7 @@ Seven production features added:
 
 **Help panel:** `HelpPanel.tsx` slides out from right. Contextual help keyed by `canvasStore.activeTool`. 15 FAQ entries, 18 keyboard shortcuts, search.
 
-**Tutorials:** 10 MDX files in `src/content/tutorials/` with `featuredImage` frontmatter. Routes at `/tutorials` (redesigned) and `/tutorials/[slug]`. Features: Featured carousel (first 3), horizontal 3:4 ratio cards (image left ~55%, content right), search + difficulty filter. Removed from header nav, accessible via dashboard bento grid only. HowTo JSON-LD schema.
+**Tutorials:** 10 MDX files in `src/content/tutorials/` with `featuredImage` frontmatter. Routes at `/tutorials` (redesigned) and `/tutorials/[slug]`. Features: Featured carousel (first 3), horizontal 3:4 ratio cards (image left ~55%, content right), search + difficulty filter. Removed from header nav, accessible via dashboard bento grid only. HowTo JSON-LD schema. **Tutorial count:** `TUTORIAL_COUNT` constant exported from `mdx-engine.ts` — update when adding/removing tutorials.
 
 **MDX pipeline:** `mdx-engine.ts` reads `src/content/` dirs, parses frontmatter with Zod, serves to server components. `MdxComponents.tsx` provides styled MDX component map. Used for tutorials.
 
@@ -293,6 +297,21 @@ Seven production features added:
 
 **Dashboard Bento Grid:** 8 glass-elevated cards — "New Design" (col-span-7 row-span-2, gradient hero), "My Quiltbook" (5 cols), "Browse Patterns" (5 cols, inline SVG pattern), "Browse Fabrics" (4 cols, row-span-2, background image), "Tutorials" (4 cols), "Community" (4 cols), "Settings" (3 cols, compact), "Blog" (5 cols). Custom quilting SVG icons. Recent Projects horizontal scroll below grid if user has projects.
 
+## Layout Patterns
+
+**Shared Layout Conventions:**
+
+| Layout | Location | Purpose |
+|--------|----------|---------|
+| `auth/layout.tsx` | `/app/auth/` | Shared wrapper for all auth pages (signin, signup, forgot-password, verify-email). Provides centered flex container and Suspense wrapper. Individual pages only contain form components. |
+| `admin/layout.tsx` | `/app/admin/` | Shared breadcrumb navigation for admin pages (reports, community, blog). Uses client-side pathname detection for active state. Individual pages only contain content panels. |
+| `(protected)/layout.tsx` | `/app/(protected)/` | Auth gate for protected routes. Redirects to `/auth/signin` if not authenticated. |
+
+**404 Page:**
+- `not-found.tsx` at root provides branded 404 page with navigation to dashboard and home
+- Uses `PublicNav` and `Footer` for consistent layout
+- 404 pages automatically handled by Next.js App Router
+
 ## Canvas Grid + Piece Inspector (Phase 19)
 
 **Two-layer grid system:** Quilt boundary dimensions (set via `QuiltDimensionsPanel.tsx`) define the outer frame with fractional-inch dimension labels and corner marks rendered on the canvas. Cell grid size is independently adjustable via a slider (1/8" to 12" increments). Quilt dimensions use `projectStore.setCanvasWidth/setCanvasHeight`; cell grid uses `canvasStore.setGridSettings`.
@@ -339,19 +358,57 @@ Seven production features added:
 - **Webhook secret:** `STRIPE_WEBHOOK_SECRET` is required — `getWebhookSecret()` throws at invocation if env var is missing (no empty-string fallback). Webhook route also has in-memory event ID dedup guard.
 - **Free tier gating:** Free users can use all studio tools but cannot save, export, or access OCR/FPP/cutting charts. Projects API POST returns 403 `PRO_REQUIRED` for free users. Fabric API returns first 10 defaults for free, full library for pro. Block API returns first 20 for free. Follow/unfollow count updates are transactional.
 - **Admin pagination:** Admin community endpoint supports `page` and `limit` query params (max 100, default 50) to prevent unbounded queries.
-- **Blog image validation:** `BlogEditor.tsx` only renders featured images with `https?://` protocol to prevent `javascript:` URL injection.
+- **Image URL validation:** All image sources validated via `isSafeHref()` / `isSafeImageSrc()` helpers — only allow `http:`/`https:` protocols or relative paths. Used in `TiptapRenderer.tsx` (blog content), `MdxComponents.tsx` (MDX content), and `BlogEditor.tsx` (featured images).
+- **Contact constants:** `SUPPORT_EMAIL` constant defined in `lib/constants.ts` for all support contact references.
 - **Error response safety:** API routes never leak stack traces — all catch blocks use `errorResponse()` with generic messages.
 - **Admin route gating:** `proxy.ts` checks `qc_user_role` cookie (set during sign-in via `setRoleCookie()` in `cognito-session.ts`). Non-admin users are redirected from `/admin`. All admin API routes enforce access via `checkTrustLevel('canModerate')` from `trust-guard.ts`.
 - **S3 client:** `s3Client` is `null` when AWS env vars are absent. `generatePresignedUrl()` throws a clear error if called without configuration.
-- **CSP:** `connect-src` includes `*.s3.amazonaws.com` and `*.s3.*.amazonaws.com` for Pro user presigned uploads.
+- **CSP:** `connect-src` includes `*.s3.amazonaws.com` and `*.s3.*.amazonaws.com` for Pro user presigned uploads. `Permissions-Policy` allows `camera=(self)` for mobile fabric photo uploads.
 - **Cookie write safety:** `tryRefreshSession()` wraps `setAuthCookies()` in its own try/catch — cookie write failures in RSC context don't cause the session to return `null`.
 - **Avatar URL domain restriction:** `avatar/route.ts` validates avatar URLs against CloudFront/S3 domains (same pattern as `validation.ts` assetUrlSchema).
 - **DB pool hardening:** `db.ts` pool capped at `max: 5` with `statement_timeout: 30_000` to prevent runaway queries.
 - **drizzle.config.ts safety:** Throws a clear error if `DATABASE_URL` is missing (no `!` assertion).
 - **Members 404:** `members/[username]/page.tsx` calls `notFound()` for non-existent usernames (proper SEO 404).
+- **Structured audit logging:** `proxy.ts` uses JSON-structured logging via `logAudit()` instead of `console.warn` for security events (admin access attempts, etc.).
+- **Lazy JWKS initialization:** `proxy.ts` uses lazy initialization for Cognito JWKS to avoid race conditions with `instrumentation.ts` secrets loading.
+
+## Zustand Store Patterns
+
+**Immutability:** All state updates use immutable patterns — spread operators for objects, `map()` for arrays. Never mutate state directly.
+
+**Reset Pattern:** Stores that manage complex state expose a `reset()` method that resets to `INITIAL_STATE` and cleans up module-level resources:
+```typescript
+reset: () => {
+  communityAbortController?.abort();
+  communityAbortController = null;
+  inFlightActions.clear();
+  set({ ...INITIAL_STATE });
+},
+```
+
+**DOM Objects in Zustand:** Storing mutable DOM objects (FabricCanvas, HTMLImageElement, ImageData) in Zustand is an anti-pattern that breaks serialization and time-travel debugging. Known cases are documented with warning comments. Consider React context or refs for future refactoring.
+
+**Module-Level Private State:** Internal lookup maps (e.g., `commentMap`) use module-level variables instead of exposing them in the public state interface. Use `reset()` to clear them on store cleanup.
+
+**Optimistic Updates:** Optimistic revert logic should be extracted into helper functions to avoid duplication:
+```typescript
+function revertPostLike(postId: string, original: CommunityPost): (state: CommunityState) => CommunityState {
+  return (state) => ({ ...state, posts: state.posts.map(...) });
+}
+```
+
+**Abort Controllers:** Module-level `AbortController` variables are used for request cancellation. Aborted before each new fetch; abort on `reset()`.
+
+**Default Colors:** Use constants from `lib/constants.ts` (`DEFAULT_FILL_COLOR`, `DEFAULT_STROKE_COLOR`) instead of hardcoded hex values.
+
+**Default Dimensions:** Use `DEFAULT_CANVAS_WIDTH` and `DEFAULT_CANVAS_HEIGHT` from `lib/constants.ts` instead of hardcoded `48` values.
+
+**Type Safety:** Filter/payload methods should use proper union types (e.g., `PatternFilters[keyof PatternFilters]`) instead of `unknown`.
 
 ## Gotchas
 - `calculateReadTime()` lives in `src/lib/read-time.ts` — shared across all blog routes. Do not duplicate locally.
+
+- Avoid `(obj as any)` type casts — use proper typed interfaces instead. Fabric.js objects should extend the base type with optional properties (`id?: string`, `blockName?: string`, `fill?: string`).
 
 - `validationErrorResponse()` in `api-responses.ts` takes a `string`, not a `ZodError` — use `parsed.error.message`
 - Vitest can't resolve bare directory imports — use `./block-generators/index` not `./block-generators`
@@ -365,10 +422,12 @@ Seven production features added:
 - `normalizeColor()` in `colorway-engine.ts` validates hex input — invalid strings return `#000000` (not pass-through).
 - `verifySessionToken()` in `cognito-session.ts` returns `{ sub, email }` only — no `role` field (role requires DB lookup via `getSession()`).
 - Blog `[slug]/page.tsx` uses React `cache()` to deduplicate the post query between `generateMetadata` and the page component.
-- `manifest.json` references `flavicon.png` and `logo.png` for PWA icons.
+- `manifest.json` references `favicon.png` and `logo.png` for PWA icons.
 - `saveProject()` lives in `lib/save-project.ts` (shared by `useCanvasKeyboard`, `useAutoSave`, and `StudioClient` via hamburger menu Save). Has max 3 retries on failure.
 - `BorderConfig.id` is optional — the store's `createBorder()` generates a UUID, but test fixtures and engine functions may omit it.
+- **Suspense fallbacks:** Always provide a `fallback` prop with a loading skeleton or spinner — never use `fallback={null}` in production pages.
+- **Base URL:** Use `NEXT_PUBLIC_APP_URL` for all base URL needs (Stripe redirects, sitemap, etc.). `NEXT_PUBLIC_BASE_URL` has been removed.
 
 ## Stats
 
-~420 source files, 17 Zustand stores, 20 DB tables, 84 test files (~1,550 tests), 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify. OpenCV.js WASM for Photo to Pattern feature.
+~420 source files, 17 Zustand stores, 19 DB tables, 76 test files, 659 blocks, 10 tutorials, 5 blog seed posts. Auth via AWS Cognito + rate-limited auth endpoints. SVG sanitization via isomorphic-dompurify. OpenCV.js WASM for Photo to Pattern feature.

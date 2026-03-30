@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface CommentInputProps {
-  postId: string;
   replyToId?: string;
   replyToUsername?: string;
   onCancel?: () => void;

@@ -1,7 +1,4 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { verifySessionToken } from '@/lib/cognito-session';
 import { ProfileEditForm } from '@/components/community/profiles/ProfileEditForm';
 
 export const metadata: Metadata = {
@@ -10,13 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfileEditPage() {
-  const cookieStore = await cookies();
-  const idToken = cookieStore.get('qc_id_token')?.value;
-  const user = idToken ? await verifySessionToken(idToken) : null;
-
-  if (!user) {
-    redirect('/auth/signin');
-  }
-
+  // Auth check is handled by (protected)/layout.tsx
   return <ProfileEditForm />;
 }

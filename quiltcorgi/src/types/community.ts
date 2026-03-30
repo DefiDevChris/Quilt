@@ -107,25 +107,5 @@ export interface UserProfile {
   youtubeHandle: string | null;
   tiktokHandle: string | null;
   publicEmail: string | null;
-  followerCount: number;
-  followingCount: number;
   isPro: boolean;
-  isFollowedByUser: boolean;
-}
-
-export type ReportTargetType = 'post' | 'comment' | 'user';
-export type ReportReason = 'spam' | 'harassment' | 'inappropriate' | 'other';
-export type ReportStatus = 'pending' | 'reviewed' | 'dismissed';
-
-export interface Report {
-  id: string;
-  reporterId: string;
-  reporterName: string;
-  targetType: ReportTargetType;
-  targetId: string;
-  reason: ReportReason;
-  details: string | null;
-  status: ReportStatus;
-  reviewedBy: string | null;
-  createdAt: Date;
 }

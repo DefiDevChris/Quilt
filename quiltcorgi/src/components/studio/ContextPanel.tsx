@@ -396,14 +396,92 @@ function QuiltPanel() {
 }
 
 function BlockPanel() {
-  const [blockWidth, setBlockWidth] = useState('12.000');
-  const [blockHeight, setBlockHeight] = useState('12.000');
-  const [snapsH, setSnapsH] = useState('24');
-  const [snapsV, setSnapsV] = useState('24');
-  const [graphH, setGraphH] = useState('4');
-  const [graphV, setGraphV] = useState('4');
-  const [snapToGrid, setSnapToGrid] = useState(true);
-  const [snapToNodes, setSnapToNodes] = useState(false);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const gridSettings = useCanvasStore((s) => s.gridSettings);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+
+  const [blockWidth, setBlockWidth] = useState(() => canvasWidth.toFixed(3));
+  const [blockHeight, setBlockHeight] = useState(() => canvasHeight.toFixed(3));
+  const [snapsH, setSnapsH] = useState(() =>
+    String(Math.max(1, Math.round(canvasWidth / Math.max(gridSettings.size, 0.01))))
+  );
+  const [snapsV, setSnapsV] = useState(() =>
+    String(Math.max(1, Math.round(canvasHeight / Math.max(gridSettings.size, 0.01))))
+  );
+  const [snapToGrid, setSnapToGrid] = useState(() => gridSettings.snapToGrid);
+
+  useEffect(() => {
+    setBlockWidth(canvasWidth.toFixed(3));
+  }, [canvasWidth]);
+  useEffect(() => {
+    setBlockHeight(canvasHeight.toFixed(3));
+  }, [canvasHeight]);
+
+  const pushUndo = useCallback(() => {
+    if (!fabricCanvas) return;
+    const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
+    const json = JSON.stringify(canvas.toJSON());
+    useCanvasStore.getState().pushUndoState(json);
+    useProjectStore.getState().setDirty(true);
+  }, [fabricCanvas]);
+
+  const handleBlockWidthChange = useCallback(
+    (val: string) => {
+      setBlockWidth(val);
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        useProjectStore.getState().setCanvasWidth(num);
+        const gridSize = useCanvasStore.getState().gridSettings.size;
+        setSnapsH(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleBlockHeightChange = useCallback(
+    (val: string) => {
+      setBlockHeight(val);
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        pushUndo();
+        useProjectStore.getState().setCanvasHeight(num);
+        const gridSize = useCanvasStore.getState().gridSettings.size;
+        setSnapsV(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
+      }
+    },
+    [pushUndo]
+  );
+
+  const handleSnapsHChange = useCallback(
+    (val: string) => {
+      setSnapsH(val);
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num > 0) {
+        const newSize = canvasWidth / num;
+        useCanvasStore.getState().setGridSettings({ size: newSize });
+      }
+    },
+    [canvasWidth]
+  );
+
+  const handleSnapsVChange = useCallback(
+    (val: string) => {
+      setSnapsV(val);
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num > 0) {
+        const newSize = canvasHeight / num;
+        useCanvasStore.getState().setGridSettings({ size: newSize });
+      }
+    },
+    [canvasHeight]
+  );
+
+  const handleSnapToGridChange = useCallback((val: boolean) => {
+    setSnapToGrid(val);
+    useCanvasStore.getState().setGridSettings({ snapToGrid: val });
+  }, []);
 
   return (
     <div className="flex flex-col gap-[2.75rem]">
@@ -414,20 +492,19 @@ function BlockPanel() {
       <div>
         <SectionTitle>Precision</SectionTitle>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Block Width" value={blockWidth} onChange={setBlockWidth} />
-          <NumberInput label="Block Height" value={blockHeight} onChange={setBlockHeight} />
+          <NumberInput label="Block Width" value={blockWidth} onChange={handleBlockWidthChange} />
+          <NumberInput
+            label="Block Height"
+            value={blockHeight}
+            onChange={handleBlockHeightChange}
+          />
         </div>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Snaps Horiz" value={snapsH} onChange={setSnapsH} />
-          <NumberInput label="Snaps Vert" value={snapsV} onChange={setSnapsV} />
-        </div>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Graph Horiz" value={graphH} onChange={setGraphH} />
-          <NumberInput label="Graph Vert" value={graphV} onChange={setGraphV} />
+          <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
+          <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
         </div>
         <div className="flex flex-col gap-2">
-          <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={setSnapToGrid} />
-          <Checkbox label="Snap to Nodes" checked={snapToNodes} onChange={setSnapToNodes} />
+          <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
         </div>
       </div>
     </div>
@@ -566,12 +643,6 @@ function ImagePanel() {
       {/* Background */}
       <div>
         <SectionTitle>Background</SectionTitle>
-        <button
-          type="button"
-          className="w-full bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors mb-3"
-        >
-          Change Canvas Color
-        </button>
         <Checkbox
           label="Crop image after rotation"
           checked={cropAfterRotation}

@@ -69,13 +69,14 @@ export async function setAuthCookies(tokens: {
 }
 
 /**
- * Set a non-httpOnly role cookie for proxy-level admin route gating.
+ * Set role cookie for proxy-level admin route gating.
+ * Only read server-side (proxy.ts) — no client JS needs access, so httpOnly is safe.
  * This is NOT security-critical — API routes still enforce DB-based role checks.
  */
 export async function setRoleCookie(role: string): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set('qc_user_role', role, {
-    httpOnly: false,
+    httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
@@ -119,7 +120,21 @@ export async function getSession(): Promise<CognitoSession | null> {
     return null;
   }
 
-  // Import DB lazily to avoid circular deps
+  const sessionUser = await resolveUserFromPayload(payload);
+
+  return {
+    user: sessionUser,
+    accessToken,
+  };
+}
+
+/**
+ * Shared user-lookup logic: finds user by cognitoSub (with email fallback),
+ * backfills cognitoSub for pre-migration users, and returns session user data.
+ */
+async function resolveUserFromPayload(
+  payload: Record<string, unknown>
+): Promise<CognitoSession['user']> {
   const { db } = await import('./db');
   const { users } = await import('@/db/schema');
   const { eq } = await import('drizzle-orm');
@@ -152,16 +167,7 @@ export async function getSession(): Promise<CognitoSession | null> {
   const role = (dbUser?.role as 'free' | 'pro' | 'admin') ?? 'free';
   const userId = dbUser?.id ?? cognitoSub;
 
-  return {
-    user: {
-      id: userId,
-      email,
-      name,
-      role,
-      emailVerified,
-    },
-    accessToken,
-  };
+  return { id: userId, email, name, role, emailVerified };
 }
 
 async function tryRefreshSession(refreshToken: string): Promise<CognitoSession | null> {
@@ -186,44 +192,10 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
     const payload = await verifyToken(newTokens.idToken);
     if (!payload) return null;
 
-    const { db } = await import('./db');
-    const { users } = await import('@/db/schema');
-    const { eq } = await import('drizzle-orm');
-
-    const cognitoSub = payload.sub as string;
-    const email = (payload.email as string) ?? '';
-    const name = (payload.name as string) ?? '';
-    const emailVerified = (payload.email_verified as boolean) ?? false;
-
-    let [dbUser] = await db
-      .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
-      .from(users)
-      .where(eq(users.cognitoSub, cognitoSub))
-      .limit(1);
-
-    if (!dbUser) {
-      [dbUser] = await db
-        .select({ id: users.id, role: users.role, cognitoSub: users.cognitoSub })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      if (dbUser && !dbUser.cognitoSub) {
-        await db.update(users).set({ cognitoSub }).where(eq(users.id, dbUser.id));
-      }
-    }
-
-    const role = (dbUser?.role as 'free' | 'pro' | 'admin') ?? 'free';
-    const userId = dbUser?.id ?? cognitoSub;
+    const sessionUser = await resolveUserFromPayload(payload);
 
     return {
-      user: {
-        id: userId,
-        email,
-        name,
-        role,
-        emailVerified,
-      },
+      user: sessionUser,
       accessToken: newTokens.accessToken,
     };
   } catch {

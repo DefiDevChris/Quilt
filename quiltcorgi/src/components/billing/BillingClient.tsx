@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, PRO_YEARLY_SAVINGS_PERCENT } from '@/lib/constants';
+import { useToast } from '@/components/ui/ToastProvider';
 
 type SubscriptionInfo = {
   plan: 'free' | 'pro';
@@ -22,6 +23,7 @@ export function BillingClient() {
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('yearly');
+  const { toast } = useToast();
 
   const fetchSubscription = useCallback(async () => {
     try {
@@ -62,7 +64,11 @@ export function BillingClient() {
         window.location.href = data.data.checkoutUrl;
       }
     } catch {
-      // Checkout session creation failed
+      toast({
+        type: 'error',
+        title: 'Checkout failed',
+        description: 'Unable to start checkout. Please try again.',
+      });
     } finally {
       setIsCheckoutLoading(false);
     }
@@ -77,7 +83,11 @@ export function BillingClient() {
         window.location.href = data.data.portalUrl;
       }
     } catch {
-      // Portal session creation failed
+      toast({
+        type: 'error',
+        title: 'Portal error',
+        description: 'Unable to open billing portal. Please try again.',
+      });
     } finally {
       setIsPortalLoading(false);
     }

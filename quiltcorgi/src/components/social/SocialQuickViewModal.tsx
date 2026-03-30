@@ -44,9 +44,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
 
   const handleShare = async () => {
     try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/socialthreads/${item.id}`
-      );
+      await navigator.clipboard.writeText(`${window.location.origin}/socialthreads/${item.id}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -59,15 +57,16 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
       {/* Left: Image */}
       <div className="flex-1 min-w-0 bg-black/10 flex items-center justify-center overflow-hidden">
         {item.imageUrl ? (
-          <img
-            src={item.imageUrl}
-            alt={item.title}
-            className="w-full h-full object-contain"
-          />
+          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-slate-300 gap-4">
             <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
             <span className="text-sm font-medium">No image</span>
           </div>
@@ -99,9 +98,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
               )}
             </div>
           </div>
-          <h2 className="font-extrabold text-slate-800 text-lg leading-snug mb-1">
-            {item.title}
-          </h2>
+          <h2 className="font-extrabold text-slate-800 text-lg leading-snug mb-1">{item.title}</h2>
           {item.description && (
             <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
               {item.description}
@@ -114,9 +111,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
           <button
             onClick={handleLike}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
-              liked
-                ? 'text-rose-500 bg-rose-50'
-                : 'text-slate-600 bg-white/50 hover:bg-white/80'
+              liked ? 'text-rose-500 bg-rose-50' : 'text-slate-600 bg-white/50 hover:bg-white/80'
             }`}
           >
             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
@@ -159,7 +154,6 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
             postId={item.id}
             currentUserId={user?.id}
             isAdmin={user?.role === 'admin'}
-            trustLevel={user ? 'commenter' : undefined}
           />
         </div>
       </div>
@@ -173,11 +167,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
       {/* Left: image */}
       <div className="flex-1 min-w-0 overflow-hidden">
         {item.imageUrl ? (
-          <img
-            src={item.imageUrl}
-            alt={item.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-orange-100 via-rose-50 to-orange-50" />
         )}
@@ -188,9 +178,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
         <span className="inline-flex self-start bg-gradient-to-r from-orange-400 to-rose-400 text-white text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full mb-5 shadow-sm">
           {item.category}
         </span>
-        <h2 className="text-2xl font-extrabold text-slate-800 leading-tight mb-4">
-          {item.title}
-        </h2>
+        <h2 className="text-2xl font-extrabold text-slate-800 leading-tight mb-4">{item.title}</h2>
         {item.excerpt && (
           <p className="text-slate-600 leading-relaxed mb-6 text-sm">{item.excerpt}</p>
         )}
@@ -235,11 +223,7 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
   return (
     <>
       <div className="flex-1 min-w-0 overflow-hidden">
-        <img
-          src={item.imageUrl}
-          alt={item.name}
-          className="w-full h-full object-cover"
-        />
+        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
       </div>
       <div className="w-full md:w-[340px] shrink-0 flex flex-col p-8 border-l border-white/30">
         <span className="inline-flex self-start bg-white/60 border border-white/60 text-slate-600 text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full mb-5">
@@ -275,8 +259,18 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
             className="w-full h-full object-contain max-h-[70vh]"
           />
         ) : (
-          <svg className="w-32 h-32 text-orange-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+          <svg
+            className="w-32 h-32 text-orange-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+            />
           </svg>
         )}
       </div>

@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/chrishoran/Desktop/Quilt"
+      ],
+      "autoApprove": [
+        "read_media_file",
+        "list_allowed_directories",
+        "read_text_file",
+        "get_file_info",
+        "get_file_info"
+      ]
+    }
+  }
+}

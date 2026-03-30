@@ -10,14 +10,15 @@
 // ── Manufacturer Names ────────────────────────────────────────────
 
 const MANUFACTURER_NAMES = [
-  /andover\s*fabrics?/gi,
-  /makower\s*uk/gi,
-  /\bmakower\b/gi,
-  /\bandover\b/gi,
+  /andover\s*fabrics?/i,
+  /makower\s*uk/i,
+  /\bmakower\b/i,
+  /\bandover\b/i,
 ];
 
 // ── Line-Level Removal Patterns ───────────────────────────────────
 // Each pattern matches an entire line that should be removed.
+// Note: No 'g' flag needed — these are tested once per line.
 
 const LINE_REMOVAL_PATTERNS: RegExp[] = [
   // Designer credit lines:
@@ -25,65 +26,97 @@ const LINE_REMOVAL_PATTERNS: RegExp[] = [
   //   "Quilt designed by Jane Doe"
   //   "Pattern by Jane Doe"
   //   "designed by: **Jennifer Strauser**"
-  /^\s*(?:quilt\s+)?(?:pattern\s+)?designed\s+by[:\s]*\**[^*\n]+\**\s*$/gim,
-  /^\s*pattern\s+by[:\s]+.+$/gim,
+  /^\s*(?:quilt\s+)?(?:pattern\s+)?designed\s+by[:\s]*\**[^*\n]+\**\s*$/im,
+  /^\s*pattern\s+by[:\s]+.+$/im,
 
   // "Introducing Andover Fabrics new collection: SUGARBERRY by Andover Fabrics"
-  /^\s*introducing\s+.+(?:collection|line|series).*/gim,
+  /^\s*introducing\s+.+\s*(?:collection|line|series).*/im,
 
   // "Free Pattern Download" / "Free Pattern Download Available at www..."
-  /^\s*free\s+pattern\s+download\b.*/gim,
+  /^\s*free\s+pattern\s+download\b.*/im,
 
   // Copyright lines: "© 2024 Andover Fabrics", "Copyright 2024", "All rights reserved"
-  /^\s*[©]\s*\d{4}\b.*/gim,
-  /^\s*copyright\b.*/gim,
-  /^\s*all\s+rights\s+reserved\.?\s*$/gim,
+  /^\s*[©]\s*\d{4}\b.*/im,
+  /^\s*copyright\b.*/im,
+  /^\s*all\s+rights\s+reserved\.?\s*$/im,
 
   // "Page N of M" footers
-  /^\s*page\s+\d+\s+of\s+\d+\s*$/gim,
+  /^\s*page\s+\d+\s+of\s+\d+\s*$/im,
 
   // Date stamps: "10/1/24", "9/15/22", "8/16/24"
-  /^\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*$/gim,
+  /^\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*$/im,
 
   // Phone numbers: "(800) 223-5678", "Tel. (800) 223-5678"
-  /^\s*(?:tel\.?\s*)?[(]?\d{3}[)]\s*\d{3}[-]\d{4}\s*$/gim,
+  /^\s*(?:tel\.?\s*)?[(]?\d{3}[)]\s*\d{3}[-]\d{4}\s*$/im,
 
   // Physical addresses: "1384 Broadway, 24th Floor, New York, NY 10018"
-  /^\s*\d+\s+broadway\b.*/gim,
-  /^\s*\d+[^,\n]*,\s*(?:\d+\w*\s+floor\s*,\s*)?new\s+york\b.*/gim,
+  /^\s*\d+\s+broadway\b.*/im,
+  /^\s*\d+[^,\n]*,\s*(?:\d+\w*\s+floor\s*,\s*)?new\s+york\b.*/im,
 
   // URLs: "www.andoverfabrics.com", "andoverfabrics.com"
-  /^\s*(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+\.[a-z]{2,}(?:\/\S*)?\s*$/gim,
+  /^\s*(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+\.[a-z]{2,}(?:\/\S*)?\s*$/im,
 ];
 
 // ── Inline Removal Patterns ───────────────────────────────────────
 // These strip branding text that appears inline within a longer line
 // (e.g., inside a footer line that also contains useful content).
+// Stored as strings to create fresh RegExp instances for each use.
 
-const INLINE_REMOVAL_PATTERNS: RegExp[] = [
+const INLINE_REMOVAL_PATTERNS: string[] = [
   // URLs embedded in longer lines
-  /(?:https?:\/\/)?(?:www\.)?andoverfabrics\.com/gi,
-  /(?:https?:\/\/)?(?:www\.)?makower\.co\.uk/gi,
+  '(?:https?:\\/\\/)?(?:www\\.)?andoverfabrics\\.com',
+  '(?:https?:\\/\\/)?(?:www\\.)?makower\\.co\\.uk',
 
   // "Free Pattern Download Available at" prefix/suffix in mixed lines
-  /free\s+pattern\s+download\s+available\s+at\s*/gi,
-  /free\s+pattern\s+download\s+available/gi,
-  /free\s+pattern\s+download/gi,
+  'free\\s+pattern\\s+download\\s+available\\s+at\\s*',
+  'free\\s+pattern\\s+download\\s+available',
+  'free\\s+pattern\\s+download',
 
   // Phone number patterns inline: "Tel. (800) 223-5678" with bullet separators
-  /(?:tel\.?\s*)?[(]?\d{3}[)]\s*\d{3}[-]\d{4}/gi,
+  '(?:tel\\.?\\s*)?[(]?\\d{3}[)]\\s*\\d{3}[-]\\d{4}',
 
   // Copyright inline: "© 2024 Andover Fabrics"
-  /[©]\s*\d{4}\s*(?:andover\s*fabrics?)?/gi,
+  '[©]\\s*\\d{4}\\s*(?:andover\\s*fabrics?)?',
 
   // Date stamps inline: "10/1/24" at end of line
-  /\s+\d{1,2}\/\d{1,2}\/\d{2,4}\s*$/gim,
+  '\\s+\\d{1,2}\\/\\d{1,2}\\/\\d{2,4}\\s*$',
 ];
 
 // ── Pattern Name Separators ───────────────────────────────────────
 // Ordered by specificity — " by " and " from " first, then dash variants.
 
 const NAME_SEPARATORS = [/ by /i, / from /i, / — /, / - /];
+
+/**
+ * Test if a line matches any of the removal patterns.
+ * Creates a fresh regex for each test to avoid lastIndex issues.
+ */
+function shouldRemoveLine(line: string): boolean {
+  for (const pattern of LINE_REMOVAL_PATTERNS) {
+    // Create a fresh regex from the source to avoid lastIndex pollution
+    const freshPattern = new RegExp(pattern.source, pattern.flags.replace('g', ''));
+    if (freshPattern.test(line)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Remove inline branding fragments from text.
+ * Creates fresh regex instances for each replacement pass.
+ */
+function removeInlineBranding(text: string): string {
+  let result = text;
+
+  for (const patternSource of INLINE_REMOVAL_PATTERNS) {
+    // Create fresh regex with global flag for replace
+    const freshPattern = new RegExp(patternSource, 'gi');
+    result = result.replace(freshPattern, '');
+  }
+
+  return result;
+}
 
 // ── stripBranding ─────────────────────────────────────────────────
 
@@ -105,18 +138,7 @@ export function stripBranding(text: string): string {
   const filtered: string[] = [];
 
   for (const line of lines) {
-    let shouldRemove = false;
-
-    for (const pattern of LINE_REMOVAL_PATTERNS) {
-      // Reset lastIndex for global regexps
-      pattern.lastIndex = 0;
-      if (pattern.test(line)) {
-        shouldRemove = true;
-        break;
-      }
-    }
-
-    if (!shouldRemove) {
+    if (!shouldRemoveLine(line)) {
       filtered.push(line);
     }
   }
@@ -124,17 +146,14 @@ export function stripBranding(text: string): string {
   result = filtered.join('\n');
 
   // Pass 2: Remove inline branding fragments from surviving lines.
-  for (const pattern of INLINE_REMOVAL_PATTERNS) {
-    pattern.lastIndex = 0;
-    result = result.replace(pattern, '');
-  }
+  result = removeInlineBranding(result);
 
   // Pass 3: Remove standalone manufacturer name lines.
   // Only remove when the line is essentially just the manufacturer name
   // (possibly with surrounding whitespace, bullets, or punctuation).
   for (const namePattern of MANUFACTURER_NAMES) {
     // Remove lines that are nothing but the manufacturer name
-    const lineOnlyPattern = new RegExp(`^[\\s•·|]*${namePattern.source}[\\s•·|]*$`, 'gim');
+    const lineOnlyPattern = new RegExp(`^[\\s•·|]*${namePattern.source}[\\s•·|]*$`, 'im');
     result = result.replace(lineOnlyPattern, '');
   }
 
@@ -212,18 +231,20 @@ export function stripPatternName(rawName: string): string {
  *   "Quilt designed by: **Jennifer Strauser**"
  */
 export function stripDesignerName(text: string): string {
-  const designerPatterns: RegExp[] = [
+  // Pattern sources stored as strings to avoid lastIndex issues
+  const designerPatternSources: string[] = [
     // "Quilt designed by: **Name**" / "Quilt designed by Name"
-    /^\s*(?:quilt\s+)?designed\s+by[:\s]*\**[^*\n]+\**\s*$/gim,
+    '^\\s*(?:quilt\\s+)?designed\\s+by[:\\s]*\\**[^*\\n]+\\**\\s*$',
     // "Pattern by Name"
-    /^\s*pattern\s+by[:\s]+.+$/gim,
+    '^\\s*pattern\\s+by[:\\s]+.+$',
   ];
 
   let result = text;
 
-  for (const pattern of designerPatterns) {
-    pattern.lastIndex = 0;
-    result = result.replace(pattern, '');
+  for (const patternSource of designerPatternSources) {
+    // Create fresh regex with global and multiline flags
+    const freshPattern = new RegExp(patternSource, 'gim');
+    result = result.replace(freshPattern, '');
   }
 
   // Collapse multiple blank lines

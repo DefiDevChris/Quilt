@@ -299,15 +299,15 @@ export default function CoreCapabilities() {
             </div>
 
             <p className="text-lg text-warm-text-secondary mb-8">
-              Whether you&apos;re converting a favorite photo into a patchwork design, positioning
-              fabric motifs with Fussy Cut, or letting the Serendipity Generator surprise you with
-              unexpected color combinations — every tool is made to help you create something
-              you&apos;ll be proud of.
+              Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
+              positioning fabric motifs with Fussy Cut, or letting the Serendipity Generator
+              surprise you with unexpected color combinations — every tool is made to help you
+              create something you&apos;ll be proud of.
             </p>
 
             <ul className="space-y-4 mb-10">
               <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
-              <CheckItem>Fussy Cut previewing and Photo Patchwork conversion</CheckItem>
+              <CheckItem>Fussy Cut previewing and precision fabric positioning</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
               <CheckItem>EasyDraw for drafting custom blocks by seam line</CheckItem>
               <CheckItem>Applique layering and one-click Colorway recoloring</CheckItem>

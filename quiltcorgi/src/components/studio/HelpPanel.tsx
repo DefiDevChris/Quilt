@@ -11,6 +11,7 @@ import {
   type FaqEntry,
   type FaqCategory,
 } from '@/lib/help-content';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 interface HelpPanelProps {
   readonly isOpen: boolean;
@@ -46,7 +47,10 @@ function ShortcutsSection() {
         <table className="w-full text-body-sm">
           <tbody>
             {KEYBOARD_SHORTCUTS.map((shortcut) => (
-              <tr key={shortcut.key} className="border-b border-outline-variant/[0.08] last:border-0">
+              <tr
+                key={shortcut.key}
+                className="border-b border-outline-variant/[0.08] last:border-0"
+              >
                 <td className="px-3 py-1.5 text-secondary w-[120px]">
                   <span className="font-mono bg-surface-container-high px-1.5 py-0.5 rounded-sm text-on-surface">
                     {shortcut.label}
@@ -137,20 +141,10 @@ function LinksSection() {
         Learn More
       </h3>
       <div className="flex flex-col gap-1">
-        <a
-          href="https://quiltcorgi.com/tutorials"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-body-sm text-primary hover:underline px-1 py-1"
-        >
+        <a href="/tutorials" className="text-body-sm text-primary hover:underline px-1 py-1">
           Video Tutorials
         </a>
-        <a
-          href="https://quiltcorgi.com/blog"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-body-sm text-primary hover:underline px-1 py-1"
-        >
+        <a href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
           Blog & Tips
         </a>
       </div>
@@ -159,10 +153,10 @@ function LinksSection() {
         Contact Support
       </h3>
       <a
-        href="mailto:support@quiltcorgi.com"
+        href={`mailto:${SUPPORT_EMAIL}`}
         className="text-body-sm text-primary hover:underline px-1 py-1"
       >
-        support@quiltcorgi.com
+        {SUPPORT_EMAIL}
       </a>
     </section>
   );

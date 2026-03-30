@@ -1,288 +1,297 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Heart, TrendingUp } from 'lucide-react';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { useSocialQuickView } from '@/stores/socialQuickViewStore';
+import { formatRelativeTime } from '@/lib/format-time';
 
-interface QuiltPin {
-  image: string;
+interface CommunityPost {
+  id: string;
   title: string;
-  creator: string;
-  handle: string;
-  likes: number;
-  tag: string;
-  aspect: string;
+  description: string | null;
+  thumbnailUrl: string;
+  likeCount: number;
+  commentCount: number;
+  saveCount: number;
+  category: string;
+  createdAt: string;
+  creatorName: string;
+  creatorUsername: string | null;
+  creatorAvatarUrl: string | null;
+  isLikedByUser: boolean;
 }
 
-const QUILT_PINS: QuiltPin[] = [
-  {
-    image: '/images/quilts/quilt_06_wall_art.png',
-    title: 'Mountain Sunrise',
-    creator: 'Sarah Stitches',
-    handle: '@sarahstitches',
-    likes: 234,
-    tag: '#SpringQuilts',
-    aspect: 'aspect-[3/4]',
-  },
-  {
-    image: '/images/quilts/quilt_01_bed_geometric.png',
-    title: 'Geometric Dreams',
-    creator: 'Modern Quilter',
-    handle: '@modernquilter',
-    likes: 189,
-    tag: '#ModernQuilting',
-    aspect: 'aspect-[4/5]',
-  },
-  {
-    image: '/images/quilts/quilt_22_porch_railing.png',
-    title: 'Summer Porch Vibes',
-    creator: 'Patchwork Pam',
-    handle: '@patchworkpam',
-    likes: 156,
-    tag: '#Patchwork',
-    aspect: 'aspect-[2/3]',
-  },
-  {
-    image: '/images/quilts/quilt_02_bed_hexagon.png',
-    title: 'Hexagon Heaven',
-    creator: 'Quilt Addict',
-    handle: '@quiltaddict',
-    likes: 142,
-    tag: '#QuiltBlockDesign',
-    aspect: 'aspect-[4/3]',
-  },
-  {
-    image: '/images/quilts/quilt_03_closeup_scrappy.png',
-    title: 'Scrappy Medley',
-    creator: 'Sarah Stitches',
-    handle: '@sarahstitches',
-    likes: 98,
-    tag: '#FabricLove',
-    aspect: 'aspect-square',
-  },
-  {
-    image: '/images/quilts/quilt_07_ladder_ring.png',
-    title: 'Rings & Ladders',
-    creator: 'Modern Quilter',
-    handle: '@modernquilter',
-    likes: 87,
-    tag: '#HandQuilting',
-    aspect: 'aspect-[3/4]',
-  },
-  {
-    image: '/images/quilts/quilt_23_nursery_floor.png',
-    title: 'Nursery Floor Art',
-    creator: 'Patchwork Pam',
-    handle: '@patchworkpam',
-    likes: 76,
-    tag: '#SpringQuilts',
-    aspect: 'aspect-[4/5]',
-  },
-  {
-    image: '/images/quilts/quilt_08_rack_cabin.png',
-    title: 'Log Cabin Classic',
-    creator: 'Quilt Addict',
-    handle: '@quiltaddict',
-    likes: 65,
-    tag: '#Traditional',
-    aspect: 'aspect-[4/3]',
-  },
-  {
-    image: '/images/quilts/quilt_03_bed_modern.png',
-    title: 'Modern Lines',
-    creator: 'Sarah Stitches',
-    handle: '@sarahstitches',
-    likes: 54,
-    tag: '#ModernQuilting',
-    aspect: 'aspect-[4/5]',
-  },
-  {
-    image: '/images/quilts/quilt_21_bed_unmade.png',
-    title: 'Sunday Morning',
-    creator: 'Quilt Addict',
-    handle: '@quiltaddict',
-    likes: 43,
-    tag: '#Cozy',
-    aspect: 'aspect-[3/4]',
-  },
-];
+type TimeRange = 'month' | 'all-time';
 
-const TRENDING_TOPICS = [
-  { tag: '#SpringQuilts', posts: 234 },
-  { tag: '#ModernQuilting', posts: 189 },
-  { tag: '#Patchwork', posts: 156 },
-  { tag: '#QuiltBlockDesign', posts: 142 },
-  { tag: '#FabricLove', posts: 98 },
-  { tag: '#HandQuilting', posts: 87 },
-];
+export function MostSavedContent() {
+  const [timeRange, setTimeRange] = useState<TimeRange>('month');
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const TRENDING_CREATORS = [
-  { name: 'Sarah Stitches', handle: '@sarahstitches', followers: '12.5k' },
-  { name: 'Modern Quilter', handle: '@modernquilter', followers: '8.2k' },
-  { name: 'Patchwork Pam', handle: '@patchworkpam', followers: '6.7k' },
-  { name: 'Quilt Addict', handle: '@quiltaddict', followers: '5.1k' },
-];
+  const fetchPosts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/community?sort=most-saved&timeRange=${timeRange}&limit=20`
+      );
+      const json = await res.json();
 
-function PinCard({ pin }: { pin: QuiltPin }) {
+      if (!res.ok) {
+        throw new Error(json.error || 'Failed to load posts');
+      }
+
+      setPosts(json.data?.posts || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load most saved posts');
+    } finally {
+      setLoading(false);
+    }
+  }, [timeRange]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
+
   return (
-    <div className="break-inside-avoid mb-4">
-      <Link
-        href={`/socialthreads?tag=${encodeURIComponent(pin.tag)}`}
-        className="block glass-panel-social rounded-[1.5rem] overflow-hidden glass-panel-social-hover group cursor-pointer"
-      >
-        <div className={`${pin.aspect} overflow-hidden`}>
-          <Image src={pin.image} alt={pin.title} width={400} height={400} className="w-full h-full object-cover" />
+    <div className="max-w-2xl mx-auto space-y-5">
+      {/* Header with time range toggle */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-on-surface">Most Saved</h2>
+        <div className="flex gap-1 p-1 rounded-full bg-white/40 border border-white/50">
+          <button
+            onClick={() => setTimeRange('month')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+              timeRange === 'month'
+                ? 'bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-sm'
+                : 'text-secondary hover:bg-white/50'
+            }`}
+          >
+            This Month
+          </button>
+          <button
+            onClick={() => setTimeRange('all-time')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+              timeRange === 'all-time'
+                ? 'bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-sm'
+                : 'text-secondary hover:bg-white/50'
+            }`}
+          >
+            All Time
+          </button>
         </div>
-        <div className="p-3">
-          <span className="text-[10px] font-extrabold text-orange-500 uppercase tracking-wide">
-            {pin.tag}
-          </span>
-          <p className="text-sm font-bold text-slate-800 leading-tight mt-0.5">{pin.title}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-orange-300 to-rose-300 flex items-center justify-center text-white text-[8px] font-bold shrink-0">
-              {pin.creator[0]}
+      </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="space-y-8">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="glass-panel rounded-[2rem] p-6 animate-pulse">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-white/50" />
+                <div className="space-y-2">
+                  <div className="h-4 bg-white/50 rounded-full w-32" />
+                  <div className="h-3 bg-white/50 rounded-full w-20" />
+                </div>
+              </div>
+              <div className="h-64 bg-white/50 rounded-2xl mb-4" />
             </div>
-            <span className="text-[10px] text-slate-500 font-medium truncate">{pin.handle}</span>
-            <span className="ml-auto text-[10px] text-slate-400 font-medium flex items-center gap-0.5 shrink-0">
-              <Heart size={9} className="text-rose-400 fill-rose-400" /> {pin.likes}
-            </span>
-          </div>
+          ))}
         </div>
-      </Link>
-    </div>
-  );
-}
+      )}
 
-function TrendingTagsCard() {
-  return (
-    <div className="break-inside-avoid mb-4">
-      <div className="glass-panel-social rounded-[1.5rem] p-4">
-        <h4 className="text-sm font-extrabold text-slate-800 mb-3 flex items-center gap-1.5">
-          <span className="text-orange-400 font-black">#</span> Trending Tags
-        </h4>
-        <div className="space-y-2">
-          {TRENDING_TOPICS.map((topic, rank) => (
-            <Link
-              key={topic.tag}
-              href={`/socialthreads?tag=${encodeURIComponent(topic.tag)}`}
-              className="flex items-center gap-2 group py-0.5"
+      {/* Error State */}
+      {!loading && error && (
+        <div className="glass-panel rounded-[2rem] p-10 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-rose-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <span className="text-xs font-black text-orange-200 group-hover:text-orange-400 transition-colors w-5 text-right shrink-0">
-                #{rank + 1}
-              </span>
-              <span className="text-xs font-bold text-slate-700 group-hover:text-orange-500 transition-colors flex-1 truncate">
-                {topic.tag}
-              </span>
-              <span className="text-[10px] text-slate-400 shrink-0">{topic.posts}</span>
-            </Link>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+              />
+            </svg>
+          </div>
+          <p className="text-secondary mb-4 font-medium">{error}</p>
+          <button
+            onClick={fetchPosts}
+            className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition-all"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && !error && posts.length === 0 && (
+        <div className="glass-panel rounded-[2rem] p-10 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-100 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-orange-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+              />
+            </svg>
+          </div>
+          <p className="text-xl font-bold text-on-surface mb-2">
+            {timeRange === 'month' ? 'No saves this month yet' : 'No saved posts yet'}
+          </p>
+          <p className="text-secondary text-sm font-medium mb-6">
+            Posts that quilters save will appear here
+          </p>
+          <Link
+            href="/socialthreads"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition-all"
+          >
+            Browse the Feed
+          </Link>
+        </div>
+      )}
+
+      {/* Posts */}
+      {!loading && !error && posts.length > 0 && (
+        <div className="space-y-6">
+          {posts.map((post, index) => (
+            <MostSavedPostCard key={post.id} post={post} rank={index + 1} />
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-function TrendingCreatorsCard() {
+function MostSavedPostCard({ post, rank }: { post: CommunityPost; rank: number }) {
+  const { open } = useSocialQuickView();
+  const [liked, setLiked] = useState(post.isLikedByUser);
+  const [likeCount, setLikeCount] = useState(post.likeCount);
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const response = await fetch(`/api/community/${post.id}/like`, { method: 'POST' });
+      if (response.ok) {
+        setLiked(!liked);
+        setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const openModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    open({
+      type: 'post',
+      id: post.id,
+      title: post.title,
+      imageUrl: post.thumbnailUrl,
+      creatorName: post.creatorName,
+      creatorUsername: post.creatorUsername,
+      creatorAvatarUrl: post.creatorAvatarUrl,
+      likeCount,
+      commentCount: post.commentCount,
+      isLikedByUser: liked,
+      isSavedByUser: false,
+      description: post.description,
+      category: post.category,
+    });
+  };
+
+  const authorHandle =
+    post.creatorUsername || `@${post.creatorName.toLowerCase().replace(/\s/g, '')}`;
+
   return (
-    <div className="break-inside-avoid mb-4">
-      <div className="glass-panel-social rounded-[1.5rem] p-4">
-        <h4 className="text-sm font-extrabold text-slate-800 mb-3">Top Creators</h4>
-        <div className="space-y-3">
-          {TRENDING_CREATORS.map((creator) => (
-            <div key={creator.handle} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-300 to-rose-300 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                {creator.name[0]}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-slate-800 truncate">{creator.name}</p>
-                <p className="text-[10px] text-orange-500 font-medium">
-                  {creator.followers} followers
-                </p>
-              </div>
-              <button className="text-[10px] font-bold bg-gradient-to-r from-orange-400 to-rose-400 text-white px-2.5 py-1 rounded-full shrink-0 hover:from-orange-500 hover:to-rose-500 transition-all">
-                Follow
-              </button>
+    <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
+      <div className="flex items-center justify-between mb-3">
+        <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm">
+              <span className="text-sm font-bold text-orange-500">
+                {post.creatorName.charAt(0).toUpperCase()}
+              </span>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CategoriesCard() {
-  return (
-    <div className="break-inside-avoid mb-4">
-      <div className="glass-panel-social rounded-[1.5rem] p-4">
-        <h4 className="text-sm font-extrabold text-slate-800 mb-3">Browse</h4>
-        <div className="flex flex-wrap gap-1.5">
-          {['Show & Tell', 'WIP', 'Help', 'Inspiration', 'Modern', 'Traditional', 'Art Quilts'].map(
-            (cat) => (
-              <Link
-                key={cat}
-                href={`/socialthreads?category=${encodeURIComponent(cat.toLowerCase().replace(/ /g, '-'))}`}
-                className="bg-white/50 hover:bg-white/80 border border-white/60 hover:border-orange-300 px-2.5 py-1 rounded-full text-[10px] font-bold text-slate-700 hover:text-orange-600 transition-all"
-              >
-                {cat}
-              </Link>
-            )
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Builds the interleaved masonry item list
-type MasonryItem = { type: 'quilt'; pin: QuiltPin } | { type: 'tags' | 'creators' | 'categories' };
-
-function buildMasonryItems(): MasonryItem[] {
-  const items: MasonryItem[] = [];
-  QUILT_PINS.forEach((pin, i) => {
-    items.push({ type: 'quilt', pin });
-    if (i === 1) items.push({ type: 'tags' });
-    if (i === 4) items.push({ type: 'creators' });
-    if (i === 7) items.push({ type: 'categories' });
-  });
-  return items;
-}
-
-export function TrendingContent() {
-  const items = buildMasonryItems();
-
-  return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-md">
-            <TrendingUp size={16} />
+            {/* Rank badge */}
+            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 flex items-center justify-center shadow-sm">
+              <span className="text-[10px] font-bold text-white">{rank}</span>
+            </div>
           </div>
           <div>
-            <h3 className="text-xl font-extrabold text-slate-800 tracking-tight leading-tight">
-              Trending Now
-            </h3>
-            <p className="text-xs text-slate-500 font-medium">What the community is pinning</p>
+            <h4 className="font-bold text-on-surface text-base group-hover:text-primary transition-colors">
+              {post.creatorName}
+            </h4>
+            <p className="text-xs text-secondary font-medium">
+              {authorHandle} • {formatRelativeTime(post.createdAt)}
+            </p>
           </div>
-        </div>
-        <Link
-          href="/socialthreads"
-          className="text-xs font-bold text-orange-500 hover:text-orange-600 bg-white/50 px-3 py-1.5 rounded-full shadow-sm transition-colors border border-white/60"
-        >
-          View All
         </Link>
+        {/* Save count badge */}
+        <div className="flex items-center gap-1.5 text-xs font-bold text-orange-500 bg-orange-50/60 px-2.5 py-1 rounded-full">
+          <svg
+            className="w-3.5 h-3.5"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+          </svg>
+          {post.saveCount}
+        </div>
       </div>
 
-      {/* Pinterest Masonry Grid */}
-      <div className="columns-2 gap-4">
-        {items.map((item, i) => {
-          if (item.type === 'quilt') return <PinCard key={i} pin={item.pin} />;
-          if (item.type === 'tags') return <TrendingTagsCard key={i} />;
-          if (item.type === 'creators') return <TrendingCreatorsCard key={i} />;
-          if (item.type === 'categories') return <CategoriesCard key={i} />;
-          return null;
-        })}
+      <p className="text-on-surface/80 mb-3 text-[15px] leading-relaxed">
+        {post.description || post.title}
+      </p>
+
+      {post.thumbnailUrl && (
+        <button
+          onClick={openModal}
+          className="w-full rounded-2xl overflow-hidden shadow-sm border border-white/50 mb-3 block cursor-zoom-in"
+        >
+          <img
+            src={post.thumbnailUrl}
+            alt={post.title}
+            className="w-full h-auto max-h-96 object-cover"
+          />
+        </button>
+      )}
+
+      <div className="flex gap-2 border-t border-white/40 pt-4">
+        <button
+          onClick={handleLike}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-rose-500 bg-rose-50/50' : 'text-secondary hover:bg-white/50'}`}
+        >
+          <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
+          {likeCount}
+        </button>
+        <button
+          onClick={openModal}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
+        >
+          <MessageCircle size={20} /> {post.commentCount}
+        </button>
+        <Link
+          href={`/socialthreads/${post.id}`}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
+        >
+          <Share2 size={20} /> Full Post
+        </Link>
       </div>
-    </div>
+    </article>
   );
 }

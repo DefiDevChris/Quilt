@@ -8,10 +8,8 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12 bg-surface">
-      <Suspense fallback={<div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />}>
-        <AuthForm mode="signin" />
-      </Suspense>
-    </main>
+    <Suspense fallback={<div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />}>
+      <AuthForm mode="signin" />
+    </Suspense>
   );
 }

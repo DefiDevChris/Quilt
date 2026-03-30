@@ -3,6 +3,16 @@
  * and are pre-set to 'published' status with publishedAt timestamps.
  */
 
+type BlogCategory =
+  | 'Product Updates'
+  | 'Behind the Scenes'
+  | 'Tutorials'
+  | 'Community'
+  | 'Tips'
+  | 'Inspiration'
+  | 'History'
+  | 'Organization';
+
 interface TiptapNode {
   readonly type: string;
   readonly content?: readonly TiptapNode[];
@@ -116,7 +126,7 @@ const whyFreeQuiltTool: TiptapDoc = {
       ),
       bold('Pro'),
       text(
-        ' adds advanced features like unlimited design variations, photo-to-quilt conversion, OCR import, and priority support.'
+        ' adds advanced features like photo-to-quilt conversion, PDF export, cutting charts, and priority support.'
       )
     ),
     p(
@@ -249,7 +259,7 @@ export interface BlogSeedPost {
   readonly slug: string;
   readonly content: TiptapDoc;
   readonly excerpt: string;
-  readonly category: string;
+  readonly category: BlogCategory;
   readonly tags: string[];
   readonly status: 'published';
   readonly publishedAt: Date;

@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 
 export type QuickViewItem =
@@ -50,11 +52,17 @@ interface SocialQuickViewState {
   isOpen: boolean;
   open: (item: QuickViewItem) => void;
   close: () => void;
+  reset: () => void;
 }
 
-export const useSocialQuickView = create<SocialQuickViewState>((set) => ({
-  item: null,
+const INITIAL_STATE = {
+  item: null as QuickViewItem | null,
   isOpen: false,
+};
+
+export const useSocialQuickView = create<SocialQuickViewState>((set) => ({
+  ...INITIAL_STATE,
   open: (item) => set({ item, isOpen: true }),
-  close: () => set({ isOpen: false }),
+  close: () => set({ item: null, isOpen: false }),
+  reset: () => set({ ...INITIAL_STATE }),
 }));

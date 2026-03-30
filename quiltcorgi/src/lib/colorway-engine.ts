@@ -5,6 +5,9 @@
  * and never mutate their arguments. No React, no Fabric.js, no DOM dependencies.
  */
 
+import { mulberry32 } from './math-utils';
+import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb, type RGB, type HSL } from './color-math';
+
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
@@ -105,21 +108,6 @@ export function swapColors(patches: PatchColor[], colorA: string, colorB: string
 // ---------------------------------------------------------------------------
 
 /**
- * Mulberry32 — a fast, seedable 32-bit PRNG.
- * Returns a function that produces the next pseudo-random float in [0, 1).
- */
-function mulberry32(seed: number): () => number {
-  let s = seed >>> 0;
-  return function () {
-    s += 0x6d2b79f5;
-    let z = s;
-    z = Math.imul(z ^ (z >>> 15), z | 1);
-    z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
-    return ((z ^ (z >>> 14)) >>> 0) / 0x100000000;
-  };
-}
-
-/**
  * Assign a random color from palette to every patch.
  *
  * When seed is provided the output is deterministic; omitting seed uses
@@ -187,110 +175,7 @@ export type ColorSchemeType =
   | 'split-complementary'
   | 'tetradic';
 
-export interface RGB {
-  r: number;
-  g: number;
-  b: number;
-}
-
-export interface HSL {
-  h: number;
-  s: number;
-  l: number;
-}
-
-/**
- * Convert hex color to RGB.
- */
-function hexToRgb(hex: string): RGB {
-  const normalized = normalizeColor(hex);
-  const r = parseInt(normalized.slice(1, 3), 16);
-  const g = parseInt(normalized.slice(3, 5), 16);
-  const b = parseInt(normalized.slice(5, 7), 16);
-  return { r, g, b };
-}
-
-/**
- * Convert RGB to HSL.
- */
-function rgbToHsl(rgb: RGB): HSL {
-  const r = rgb.r / 255;
-  const g = rgb.g / 255;
-  const b = rgb.b / 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const diff = max - min;
-
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
-
-  if (diff !== 0) {
-    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
-
-    switch (max) {
-      case r:
-        h = ((g - b) / diff + (g < b ? 6 : 0)) / 6;
-        break;
-      case g:
-        h = ((b - r) / diff + 2) / 6;
-        break;
-      case b:
-        h = ((r - g) / diff + 4) / 6;
-        break;
-    }
-  }
-
-  return { h: h * 360, s: s * 100, l: l * 100 };
-}
-
-/**
- * Convert HSL to RGB.
- */
-function hslToRgb(hsl: HSL): RGB {
-  const h = hsl.h / 360;
-  const s = hsl.s / 100;
-  const l = hsl.l / 100;
-
-  if (s === 0) {
-    const gray = Math.round(l * 255);
-    return { r: gray, g: gray, b: gray };
-  }
-
-  const hue2rgb = (p: number, q: number, t: number): number => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-
-  const r = hue2rgb(p, q, h + 1 / 3);
-  const g = hue2rgb(p, q, h);
-  const b = hue2rgb(p, q, h - 1 / 3);
-
-  return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255),
-  };
-}
-
-/**
- * Convert RGB to hex.
- */
-function rgbToHex(rgb: RGB): string {
-  const toHex = (n: number) =>
-    Math.max(0, Math.min(255, Math.round(n)))
-      .toString(16)
-      .padStart(2, '0');
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-}
+export type { RGB, HSL };
 
 /**
  * Generate harmonious color palette based on color theory.
@@ -307,8 +192,8 @@ export function generateColorScheme(
   switch (schemeType) {
     case 'monochromatic':
       for (let i = 1; i < count; i++) {
-        const lightness = Math.max(10, Math.min(90, hsl.l + (i - count / 2) * 15));
-        const saturation = Math.max(20, Math.min(100, hsl.s + (i % 2 === 0 ? -10 : 10)));
+        const lightness = Math.max(0.1, Math.min(0.9, hsl.l + (i - count / 2) * 0.15));
+        const saturation = Math.max(0.2, Math.min(1.0, hsl.s + (i % 2 === 0 ? -0.1 : 0.1)));
         const newHsl: HSL = { h: hsl.h, s: saturation, l: lightness };
         colors.push(rgbToHex(hslToRgb(newHsl)));
       }
@@ -330,7 +215,7 @@ export function generateColorScheme(
       for (let i = 2; i < count; i++) {
         const useBase = i % 2 === 0;
         const baseHue = useBase ? hsl.h : compHue;
-        const lightness = Math.max(20, Math.min(80, hsl.l + (i - count / 2) * 10));
+        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - count / 2) * 0.1));
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
       }
       break;
@@ -342,7 +227,7 @@ export function generateColorScheme(
       // Add variations
       for (let i = 3; i < count; i++) {
         const baseHue = [hsl.h, (hsl.h + 120) % 360, (hsl.h + 240) % 360][i % 3];
-        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 3) * 15));
+        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 3) * 0.15));
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.7, l: lightness })));
       }
       break;
@@ -354,7 +239,7 @@ export function generateColorScheme(
       // Add variations
       for (let i = 3; i < count; i++) {
         const baseHue = [hsl.h, (hsl.h + 150) % 360, (hsl.h + 210) % 360][i % 3];
-        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 3) * 12));
+        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 3) * 0.12));
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
       }
       break;
@@ -369,7 +254,7 @@ export function generateColorScheme(
         const baseHue = [hsl.h, (hsl.h + 90) % 360, (hsl.h + 180) % 360, (hsl.h + 270) % 360][
           i % 4
         ];
-        const lightness = Math.max(20, Math.min(80, hsl.l + (i - 4) * 10));
+        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 4) * 0.1));
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.9, l: lightness })));
       }
       break;

@@ -29,11 +29,14 @@ interface PatternState {
 
   fetchPatterns: () => Promise<void>;
   fetchPatternDetail: (id: string) => Promise<void>;
-  importPattern: (id: string) => Promise<{ projectId: string; blockCount: number; fabricCount: number } | null>;
-  setFilter: (key: keyof PatternFilters, value: unknown) => void;
+  importPattern: (
+    id: string
+  ) => Promise<{ projectId: string; blockCount: number; fabricCount: number } | null>;
+  setFilter: (key: keyof PatternFilters, value: PatternFilters[keyof PatternFilters]) => void;
   setPage: (page: number) => void;
   clearSelectedPattern: () => void;
   clearError: () => void;
+  reset: () => void;
 }
 
 const INITIAL_STATE = {
@@ -168,4 +171,6 @@ export const usePatternStore = create<PatternState>((set, get) => ({
   clearSelectedPattern: () => set({ selectedPattern: null }),
 
   clearError: () => set({ error: null }),
+
+  reset: () => set({ ...INITIAL_STATE }),
 }));

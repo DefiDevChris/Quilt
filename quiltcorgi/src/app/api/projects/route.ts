@@ -39,41 +39,45 @@ export async function GET(request: NextRequest) {
 
   const orderFn = order === 'asc' ? asc : desc;
 
-  const [userProjects, [totalRow]] = await Promise.all([
-    db
-      .select({
-        id: projects.id,
-        name: projects.name,
-        description: projects.description,
-        thumbnailUrl: projects.thumbnailUrl,
-        unitSystem: projects.unitSystem,
-        isPublic: projects.isPublic,
-        lastSavedAt: projects.lastSavedAt,
-        createdAt: projects.createdAt,
-        updatedAt: projects.updatedAt,
-      })
-      .from(projects)
-      .where(eq(projects.userId, session.user.id))
-      .orderBy(orderFn(sortColumn))
-      .limit(limit)
-      .offset(offset),
-    db.select({ count: count() }).from(projects).where(eq(projects.userId, session.user.id)),
-  ]);
+  try {
+    const [userProjects, [totalRow]] = await Promise.all([
+      db
+        .select({
+          id: projects.id,
+          name: projects.name,
+          description: projects.description,
+          thumbnailUrl: projects.thumbnailUrl,
+          unitSystem: projects.unitSystem,
+          isPublic: projects.isPublic,
+          lastSavedAt: projects.lastSavedAt,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
+        })
+        .from(projects)
+        .where(eq(projects.userId, session.user.id))
+        .orderBy(orderFn(sortColumn))
+        .limit(limit)
+        .offset(offset),
+      db.select({ count: count() }).from(projects).where(eq(projects.userId, session.user.id)),
+    ]);
 
-  const total = totalRow?.count ?? 0;
+    const total = totalRow?.count ?? 0;
 
-  return Response.json({
-    success: true,
-    data: {
-      projects: userProjects,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+    return Response.json({
+      success: true,
+      data: {
+        projects: userProjects,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
-    },
-  });
+    });
+  } catch {
+    return errorResponse('Failed to fetch projects', 'INTERNAL_ERROR', 500);
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -82,11 +86,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const parsed = createProjectSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
-    }
 
     const isPro = session.user.role === 'pro' || session.user.role === 'admin';
     if (!isPro) {
@@ -95,6 +94,41 @@ export async function POST(request: NextRequest) {
         'PRO_REQUIRED',
         403
       );
+    }
+
+    // --- Duplicate project flow ---
+    if (body.sourceProjectId && typeof body.sourceProjectId === 'string') {
+      const [source] = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.id, body.sourceProjectId))
+        .limit(1);
+
+      if (!source || source.userId !== session.user.id) {
+        return errorResponse('Source project not found', 'NOT_FOUND', 404);
+      }
+
+      const [duplicated] = await db
+        .insert(projects)
+        .values({
+          userId: session.user.id,
+          name: `${source.name} (copy)`,
+          canvasData: source.canvasData,
+          canvasWidth: source.canvasWidth,
+          canvasHeight: source.canvasHeight,
+          unitSystem: source.unitSystem,
+          gridSettings: source.gridSettings,
+        })
+        .returning();
+
+      return Response.json({ success: true, data: duplicated }, { status: 201 });
+    }
+
+    // --- Standard create flow ---
+    const parsed = createProjectSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
     const { name, unitSystem, canvasWidth, canvasHeight, gridSettings } = parsed.data;

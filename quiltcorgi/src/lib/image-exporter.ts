@@ -55,19 +55,10 @@ export async function exportCanvasImage(
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, offscreen.width, offscreen.height);
 
-  // Render Fabric.js canvas content (excluding grid — grid is on a separate canvas)
-  // Filter out layout elements that shouldn't be in the export
-  const objects = canvas.getObjects().filter((obj: unknown) => {
-    const o = obj as Record<string, unknown>;
-    return !o._layoutElement;
-  });
-
-  // Use Fabric.js toCanvasElement for accurate rendering
+  // Use Fabric.js toCanvasElement for accurate rendering (renders all visible objects)
   const sourceCanvas = canvas.toCanvasElement(multiplier);
 
   ctx.drawImage(sourceCanvas, 0, 0);
-
-  void objects; // Used for documentation — toCanvasElement renders all visible objects
 
   return new Promise<Blob>((resolve, reject) => {
     offscreen.toBlob(

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommentStore } from '@/stores/commentStore';
@@ -25,12 +26,13 @@ function AuthorAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | n
 
   if (avatarUrl) {
     return (
-      <img
+      <Image
         src={avatarUrl}
         alt={name}
         width={32}
         height={32}
         className="w-8 h-8 rounded-full object-cover"
+        unoptimized
       />
     );
   }
@@ -42,38 +44,6 @@ function AuthorAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | n
   );
 }
 
-function HeartIcon({ filled }: { filled: boolean }) {
-  if (filled) {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        className="w-4 h-4 text-error"
-      >
-        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="w-4 h-4 text-secondary"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-      />
-    </svg>
-  );
-}
-
 export function CommentCard({
   comment,
   postId,
@@ -82,13 +52,10 @@ export function CommentCard({
   onReply,
 }: CommentCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [reportSent, setReportSent] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const user = useAuthStore((s) => s.user);
-  const likeComment = useCommentStore((s) => s.likeComment);
   const deleteComment = useCommentStore((s) => s.deleteComment);
-  const reportComment = useCommentStore((s) => s.reportComment);
 
   const isOwn = currentUserId === comment.authorId;
   const canDelete = isOwn || isAdmin;
@@ -108,12 +75,6 @@ export function CommentCard({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpen, closeMenu]);
 
-  function handleLike(e: React.MouseEvent) {
-    e.stopPropagation();
-    if (!user) return;
-    likeComment(postId, comment.id);
-  }
-
   function handleReply(e: React.MouseEvent) {
     e.stopPropagation();
     onReply(comment.id, comment.authorUsername ?? comment.authorName);
@@ -122,12 +83,6 @@ export function CommentCard({
   async function handleDelete() {
     setMenuOpen(false);
     await deleteComment(postId, comment.id);
-  }
-
-  async function handleReport() {
-    setMenuOpen(false);
-    await reportComment(postId, comment.id, 'inappropriate');
-    setReportSent(true);
   }
 
   const authorLink = comment.authorUsername ? `/members/${comment.authorUsername}` : undefined;
@@ -168,22 +123,6 @@ export function CommentCard({
       {/* Actions row */}
       {!isRemoved && (
         <div className="flex items-center gap-4 mt-3">
-          {/* Like button */}
-          <button
-            type="button"
-            onClick={handleLike}
-            disabled={!user}
-            className={`inline-flex items-center gap-1 text-xs transition-colors ${
-              !user ? 'cursor-default opacity-60' : 'cursor-pointer hover:opacity-80'
-            }`}
-            title={!user ? 'Sign in to like' : comment.isLikedByUser ? 'Unlike' : 'Like'}
-          >
-            <HeartIcon filled={comment.isLikedByUser} />
-            <span className={comment.isLikedByUser ? 'text-error font-medium' : 'text-secondary'}>
-              {comment.likeCount > 0 ? comment.likeCount : ''}
-            </span>
-          </button>
-
           {/* Reply button */}
           {user && (
             <button
@@ -209,8 +148,8 @@ export function CommentCard({
             </button>
           )}
 
-          {/* More menu */}
-          {user && (
+          {/* Delete menu */}
+          {canDelete && user && (
             <div className="relative ml-auto" ref={menuRef}>
               <button
                 type="button"
@@ -236,28 +175,13 @@ export function CommentCard({
 
               {menuOpen && (
                 <div className="absolute right-0 top-full mt-1 w-36 rounded-lg bg-surface shadow-elevation-2 border border-outline-variant py-1 z-10">
-                  {!isOwn && (
-                    <button
-                      type="button"
-                      onClick={handleReport}
-                      disabled={reportSent}
-                      className="w-full text-left px-3 py-2 text-sm text-secondary hover:bg-surface-container-high transition-colors disabled:opacity-50"
-                    >
-                      {reportSent ? 'Reported' : 'Report'}
-                    </button>
-                  )}
-                  {canDelete && (
-                    <>
-                      {!isOwn && <div className="border-t border-outline-variant my-1" />}
-                      <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="w-full text-left px-3 py-2 text-sm text-error hover:bg-surface-container-high transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="w-full text-left px-3 py-2 text-sm text-error hover:bg-surface-container-high transition-colors"
+                  >
+                    Delete
+                  </button>
                 </div>
               )}
             </div>

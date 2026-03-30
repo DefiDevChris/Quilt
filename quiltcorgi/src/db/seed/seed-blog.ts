@@ -22,36 +22,28 @@ async function seedBlogPosts() {
     console.log(`Using existing admin user: ${adminUser.email}`);
     systemUserId = adminUser.id;
   } else {
-    // Check for any existing user
-    const anyUser = await db.query.users.findFirst();
-    
-    if (anyUser) {
-      console.log(`Using existing user: ${anyUser.email}`);
-      systemUserId = anyUser.id;
-    } else {
-      // Create a system user for blog posts
-      console.log('Creating system user for blog posts...');
-      const [newUser] = await db
-        .insert(users)
-        .values({
-          name: 'QuiltCorgi Team',
-          email: 'team@quiltcorgi.com',
-          role: 'admin',
-        })
-        .returning();
-      
-      systemUserId = newUser.id;
-      console.log(`Created system user: ${newUser.email} (${newUser.id})`);
+    // Create a system user for blog posts - don't fall back to random users
+    console.log('No admin user found. Creating system user for blog posts...');
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        name: 'QuiltCorgi Team',
+        email: 'team@quiltcorgi.com',
+        role: 'admin',
+      })
+      .returning();
 
-      // Create user profile
-      await db.insert(userProfiles).values({
-        userId: newUser.id,
-        displayName: 'QuiltCorgi Team',
-        username: 'quiltcorgi-team',
-        bio: 'The team behind QuiltCorgi - building tools for quilters everywhere.',
-      });
-      console.log('Created user profile\n');
-    }
+    systemUserId = newUser.id;
+    console.log(`Created system user: ${newUser.email} (${newUser.id})`);
+
+    // Create user profile
+    await db.insert(userProfiles).values({
+      userId: newUser.id,
+      displayName: 'QuiltCorgi Team',
+      username: 'quiltcorgi-team',
+      bio: 'The team behind QuiltCorgi - building tools for quilters everywhere.',
+    });
+    console.log('Created user profile\n');
   }
 
   // Check for existing posts
@@ -88,6 +80,11 @@ async function seedBlogPosts() {
 
   console.log(`\n🎉 Done! Inserted ${inserted} posts, skipped ${skipped} posts.`);
   process.exit(0);
+}
+
+if (process.env.NODE_ENV === 'production') {
+  console.error('ERROR: Seed scripts cannot run in production. Aborting.');
+  process.exit(1);
 }
 
 seedBlogPosts().catch((error) => {

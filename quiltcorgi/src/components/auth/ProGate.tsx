@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/components/ui/ToastProvider';
+import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 
 interface ProGateProps {
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface ProGateProps {
 
 function DefaultFallback({ featureName }: { featureName?: string }) {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   async function handleUpgrade() {
     setIsLoading(true);
@@ -19,9 +22,19 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
       const data = await res.json();
       if (data.success && data.data.checkoutUrl) {
         window.location.href = data.data.checkoutUrl;
+      } else {
+        toast({
+          type: 'error',
+          title: 'Checkout failed',
+          description: data.error ?? 'Unable to start checkout. Please try again.',
+        });
       }
     } catch {
-      console.error('Failed to create checkout session');
+      toast({
+        type: 'error',
+        title: 'Connection error',
+        description: 'Unable to connect. Please check your connection and try again.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +72,7 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
             <p className="text-headline-sm text-on-surface font-semibold mb-1">{featureName}</p>
           )}
           <p className="text-body-md text-secondary mb-4">
-            Upgrade to Pro to unlock this feature. Starting at $8/month.
+            Upgrade to Pro to unlock this feature. Starting at ${PRO_PRICE_MONTHLY}/month.
           </p>
           <button
             type="button"

@@ -1,4 +1,5 @@
 import type { Point2D } from '@/lib/photo-pattern-types';
+import type { OpenCV, OpenCVMat, OpenCVMatVector } from '@/types/opencv-js';
 
 /**
  * Sort four corner points into clockwise order: TL, TR, BR, BL.
@@ -54,8 +55,8 @@ export function sortCornersClockwise(
  * All intermediate cv.Mat objects are deleted in a finally block.
  */
 export function autoDetectQuiltBoundary(
-  cv: any,
-  imageMat: any,
+  cv: OpenCV,
+  imageMat: OpenCVMat,
 ): [Point2D, Point2D, Point2D, Point2D] | null {
   const gray = new cv.Mat();
   const blurred = new cv.Mat();
@@ -79,7 +80,7 @@ export function autoDetectQuiltBoundary(
     );
 
     // Find the largest contour by area
-    let largestContour: any = null;
+    let largestContour: OpenCVMat | null = null;
     let largestArea = 0;
 
     for (let i = 0; i < contours.size(); i++) {
@@ -135,11 +136,11 @@ export function autoDetectQuiltBoundary(
  * is owned by the caller.
  */
 export function computePerspectiveTransform(
-  cv: any,
+  cv: OpenCV,
   srcCorners: readonly [Point2D, Point2D, Point2D, Point2D],
   destWidth: number,
   destHeight: number,
-): any {
+): OpenCVMat {
   const srcData = [
     srcCorners[0].x, srcCorners[0].y,
     srcCorners[1].x, srcCorners[1].y,
@@ -171,12 +172,12 @@ export function computePerspectiveTransform(
  * Returns a new cv.Mat (caller owns it and must call delete()).
  */
 export function applyPerspectiveCorrection(
-  cv: any,
-  imageMat: any,
-  transformMatrix: any,
+  cv: OpenCV,
+  imageMat: OpenCVMat,
+  transformMatrix: OpenCVMat,
   width: number,
   height: number,
-): any {
+): OpenCVMat {
   const dst = new cv.Mat();
   const dsize = new cv.Size(width, height);
 

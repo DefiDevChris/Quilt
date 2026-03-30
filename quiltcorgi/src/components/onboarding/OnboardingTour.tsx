@@ -94,7 +94,9 @@ export function OnboardingTour() {
     }, AUTO_START_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Auto-start timer only - no dependencies needed
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle Escape key to skip tour
   useEffect(() => {

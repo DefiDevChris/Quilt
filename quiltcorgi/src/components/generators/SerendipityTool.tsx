@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
+import { useToast } from '@/components/ui/ToastProvider';
 import {
   extractPolygons,
   generateVariations,
@@ -26,6 +27,7 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [selectingSlot, setSelectingSlot] = useState<'A' | 'B' | null>(null);
 
+  const { toast } = useToast();
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
   const allBlocks = useMemo(() => [...blocks, ...userBlocks].filter(
@@ -76,7 +78,11 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
           setVariations(vars);
         }
       } catch {
-        // Silently handle errors
+        toast({
+          type: 'error',
+          title: 'Generation failed',
+          description: 'Could not generate variations. Please try again.',
+        });
       } finally {
         if (!cancelled) setIsGenerating(false);
       }
@@ -115,9 +121,20 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
 
       if (res.ok) {
         useBlockStore.getState().fetchUserBlocks();
+        toast({
+          type: 'success',
+          title: 'Block saved',
+          description: 'The variation has been added to your library.',
+        });
+      } else {
+        throw new Error('Save failed');
       }
     } catch {
-      // Silently handle errors
+      toast({
+        type: 'error',
+        title: 'Save failed',
+        description: 'Could not save the variation. Please try again.',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -154,11 +171,20 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
         fabricCanvas.requestRenderAll();
 
         onClose();
+        toast({
+          type: 'success',
+          title: 'Added to canvas',
+          description: 'The variation has been added to your design.',
+        });
       } catch {
-        // Silently handle errors
+        toast({
+          type: 'error',
+          title: 'Add failed',
+          description: 'Could not add the variation to canvas. Please try again.',
+        });
       }
     },
-    [onClose]
+    [onClose, toast]
   );
 
   const handleSelectBlock = useCallback(

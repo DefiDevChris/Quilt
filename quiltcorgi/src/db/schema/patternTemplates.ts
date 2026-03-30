@@ -29,6 +29,10 @@ export const patternTemplates = pgTable(
     importCount: integer('importCount').notNull().default(0),
     isPublished: boolean('isPublished').notNull().default(true),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_pattern_templates_skillLevel').on(table.skillLevel),

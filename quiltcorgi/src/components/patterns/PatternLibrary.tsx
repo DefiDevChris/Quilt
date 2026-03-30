@@ -332,7 +332,7 @@ export function PatternLibrary() {
                   Unlock the full pattern library with a Pro subscription.
                 </p>
                 <a
-                  href="/pricing"
+                  href="/profile/billing"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 rounded-[var(--radius-md)] transition-opacity hover:opacity-90"
                   style={{
                     backgroundColor: 'var(--color-primary)',

@@ -4,7 +4,7 @@ import { blogPosts, users } from '@/db/schema';
 
 export const dynamic = 'force-dynamic';
 
-const SITE_URL = 'https://quiltcorgi.com';
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://quiltcorgi.com';
 
 function escapeXml(str: string): string {
   return str
@@ -74,9 +74,12 @@ ${items}
       },
     });
   } catch {
-    return new Response('<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>QuiltCorgi Blog</title></channel></rss>', {
-      status: 500,
-      headers: { 'Content-Type': 'application/xml; charset=utf-8' },
-    });
+    return new Response(
+      '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>QuiltCorgi Blog</title></channel></rss>',
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+      }
+    );
   }
 }

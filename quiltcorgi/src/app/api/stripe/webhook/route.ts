@@ -2,8 +2,9 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
-import { subscriptions, users, notifications } from '@/db/schema';
-import { stripe } from '@/lib/stripe';
+import { subscriptions, users } from '@/db/schema';
+import { getStripe } from '@/lib/stripe';
+import { createNotification } from '@/lib/create-notification';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,7 +42,8 @@ async function upsertSubscription(
   stripeCustomerId: string,
   stripeSubscription: Stripe.Subscription
 ) {
-  const plan = stripeSubscription.status === 'active' ? 'pro' : 'free';
+  // Map stripe status to plan: active/trialing = pro, everything else = free
+  const plan = (stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing') ? 'pro' : 'free';
   const firstItem = stripeSubscription.items.data[0];
   const values = {
     userId,
@@ -94,22 +96,6 @@ async function syncUserRole(userId: string, role: 'free' | 'pro') {
   await db.update(users).set({ role, updatedAt: new Date() }).where(eq(users.id, userId));
 }
 
-async function createNotification(
-  userId: string,
-  type: string,
-  title: string,
-  message: string,
-  metadata?: Record<string, unknown>
-) {
-  await db.insert(notifications).values({
-    userId,
-    type,
-    title,
-    message,
-    metadata: metadata ?? null,
-  });
-}
-
 async function getUserIdFromCustomerId(customerId: string): Promise<string | null> {
   const [sub] = await db
     .select({ userId: subscriptions.userId })
@@ -130,16 +116,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Retrieve the full subscription
-  const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);
 
   await upsertSubscription(userId, customerId, stripeSubscription);
   await syncUserRole(userId, 'pro');
-  await createNotification(
+  await createNotification({
     userId,
-    'subscription_activated',
-    'Welcome to Pro!',
-    'Your Pro subscription is now active. You have access to all QuiltCorgi features.'
-  );
+    type: 'subscription_activated',
+    title: 'Welcome to Pro!',
+    message: 'Your Pro subscription is now active. You have access to all QuiltCorgi features.',
+  });
 }
 
 async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
@@ -157,12 +143,12 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   }
 
   if (sub.cancel_at_period_end && updated.status === 'active') {
-    await createNotification(
+    await createNotification({
       userId,
-      'subscription_canceled',
-      'Subscription canceling',
-      `Your Pro subscription will end on ${new Date((sub.items.data[0]?.current_period_end ?? 0) * 1000).toLocaleDateString()}. You'll retain Pro access until then.`
-    );
+      type: 'subscription_canceled',
+      title: 'Subscription canceling',
+      message: `Your Pro subscription will end on ${new Date((sub.items.data[0]?.current_period_end ?? 0) * 1000).toLocaleDateString()}. You'll retain Pro access until then.`,
+    });
   }
 }
 
@@ -182,12 +168,12 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
     .where(eq(subscriptions.userId, userId));
 
   await syncUserRole(userId, 'free');
-  await createNotification(
+  await createNotification({
     userId,
-    'subscription_canceled',
-    'Pro subscription ended',
-    'Your Pro subscription has ended. You can upgrade again anytime from the billing page.'
-  );
+    type: 'subscription_canceled',
+    title: 'Pro subscription ended',
+    message: 'Your Pro subscription has ended. You can upgrade again anytime from the billing page.',
+  });
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -203,13 +189,13 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     })
     .where(eq(subscriptions.userId, userId));
 
-  await createNotification(
+  await createNotification({
     userId,
-    'payment_failed',
-    'Payment failed',
-    'We were unable to process your payment. Please update your payment method within 7 days to keep your Pro access.',
-    { invoiceId: invoice.id }
-  );
+    type: 'payment_failed',
+    title: 'Payment failed',
+    message: 'We were unable to process your payment. Please update your payment method within 7 days to keep your Pro access.',
+    metadata: { invoiceId: invoice.id },
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -225,7 +211,7 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, signature, getWebhookSecret());
+    event = Stripe.webhooks.constructEvent(body, signature, getWebhookSecret());
   } catch (error) {
     console.error('Webhook signature verification failed:', error);
     return Response.json({ success: false, error: 'Invalid signature' }, { status: 401 });
