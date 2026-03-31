@@ -11,6 +11,6 @@ test.describe('Export Flows', () => {
 
   test('signup page accessible for export features', async ({ page }) => {
     await page.goto('/auth/signup');
-    await expect(page.getByText(/sign up/i)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Create your account');
   });
 });

@@ -5,31 +5,47 @@
 
 import type { OpenCV } from '@/types/opencv-js';
 
+export type { OpenCV };
+export type { Mat as OpenCVMat } from '@techstark/opencv-js';
+
 let cvInstance: OpenCV | null = null;
+let loadPromise: Promise<OpenCV> | null = null;
 
 export async function loadOpenCv(): Promise<OpenCV> {
   if (cvInstance) return cvInstance;
+  if (loadPromise) return loadPromise;
 
-  const cv = await import('@techstark/opencv-js') as unknown as OpenCV;
+  loadPromise = (async (): Promise<OpenCV> => {
+    try {
+      const mod = await import('@techstark/opencv-js');
+      const cv = mod as unknown as OpenCV;
 
-  await new Promise<void>((resolve, reject) => {
-    if (cv.Mat) {
-      resolve();
-      return;
+      await new Promise<void>((resolve, reject) => {
+        if (cv.Mat) {
+          resolve();
+          return;
+        }
+
+        const timeout = setTimeout(() => {
+          reject(new Error('OpenCV.js WASM initialization timed out after 30s'));
+        }, 30_000);
+
+        // onRuntimeInitialized is a WASM callback not in the TS types
+        (cv as Record<string, unknown>).onRuntimeInitialized = () => {
+          clearTimeout(timeout);
+          resolve();
+        };
+      });
+
+      cvInstance = cv;
+      return cv;
+    } catch (error) {
+      loadPromise = null;
+      throw error;
     }
+  })();
 
-    const timeout = setTimeout(() => {
-      reject(new Error('OpenCV.js WASM initialization timed out after 30s'));
-    }, 30_000);
-
-    cv.onRuntimeInitialized = () => {
-      clearTimeout(timeout);
-      resolve();
-    };
-  });
-
-  cvInstance = cv;
-  return cv;
+  return loadPromise;
 }
 
 export function isOpenCvLoaded(): boolean {

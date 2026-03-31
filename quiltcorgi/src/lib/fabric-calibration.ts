@@ -44,8 +44,13 @@ export function computeCalibration(input: CalibrationInput): CalibrationResult |
 
 function calculatePpi(input: CalibrationInput): number | null {
   switch (input.method) {
-    case 'manual-dpi':
-      return input.manualDpi ?? null;
+    case 'manual-dpi': {
+      const dpi = input.manualDpi;
+      if (dpi === undefined || dpi === null) return null;
+      // Reject NaN and Infinity
+      if (!Number.isFinite(dpi)) return null;
+      return dpi;
+    }
 
     case 'ruler-reference': {
       const inches = input.rulerLengthInches;

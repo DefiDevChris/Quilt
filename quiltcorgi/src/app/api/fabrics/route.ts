@@ -10,6 +10,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { FREE_FABRIC_LIMIT } from '@/lib/constants';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,6 +116,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`fabrics:${session.user.id}`, API_RATE_LIMITS.fabrics);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const userRole = session.user.role;
   const isPro = userRole === 'pro' || userRole === 'admin';

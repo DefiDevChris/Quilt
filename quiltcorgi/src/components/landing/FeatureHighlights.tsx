@@ -27,7 +27,7 @@ const features = [
   {
     title: 'Your Design Studio',
     description:
-      'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from six layout modes including sashing, on-point, medallion, and lone star.',
+      'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from four layout modes including sashing and on-point.',
     iconSrc: '/icons/quilt-13-dashed-squares-Photoroom.png',
     iconAlt: 'Quilt layout squares',
     checks: ['4 connected worktables', '659+ block library', '6 layout modes'],

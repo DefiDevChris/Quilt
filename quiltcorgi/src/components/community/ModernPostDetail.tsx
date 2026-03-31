@@ -8,7 +8,6 @@ import { useCommunityStore } from '@/stores/communityStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { RedditStyleComments } from './comments/RedditStyleComments';
 import { LikeButton } from './LikeButton';
-import { SaveButton } from './SaveButton';
 import type { CommunityPost } from '@/stores/communityStore';
 
 interface ModernPostDetailProps {
@@ -21,7 +20,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
   const [post, setPost] = useState<CommunityPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSaved, setIsSaved] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const fetchPost = useCallback(async () => {
@@ -32,7 +30,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
     const fromStore = currentStorePosts.find((p) => p.id === postId);
     if (fromStore) {
       setPost(fromStore);
-      setIsSaved(fromStore.isSavedByUser);
       setIsLoading(false);
       return;
     }
@@ -50,7 +47,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
       const found = json.data as CommunityPost | undefined;
       if (found) {
         setPost(found);
-        setIsSaved(found.isSavedByUser);
       } else {
         setError('not_found');
       }
@@ -303,8 +299,6 @@ export function ModernPostDetail({ postId }: ModernPostDetailProps) {
                 {copiedLink ? 'Copied!' : 'Share'}
               </button>
             </div>
-
-            <SaveButton postId={post.id} isSaved={isSaved} onToggle={() => setIsSaved(!isSaved)} />
           </div>
         </article>
 
@@ -427,14 +421,13 @@ function MoreFromQuilter({
     if (!creatorId) return;
     (async () => {
       try {
-        const res = await fetch(`/api/community?sort=newest&limit=4`);
+        // Fetch posts filtered by creatorId on the server
+        const res = await fetch(`/api/community?sort=newest&creatorId=${creatorId}&limit=4`);
         const json = await res.json();
         if (res.ok && json.data?.posts) {
+          // Filter out current post client-side (can't exclude in query param easily)
           const filtered = json.data.posts
-            .filter(
-              (p: { id: string; creatorId: string }) =>
-                p.creatorId === creatorId && p.id !== currentPostId
-            )
+            .filter((p: { id: string }) => p.id !== currentPostId)
             .slice(0, 3);
           setOtherPosts(filtered);
         }

@@ -9,7 +9,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { notFoundResponse } from '@/lib/api-responses';
-import { updateBlogPostSchema } from '@/lib/validation';
+import { updateBlogPostSchema, BLOG_POST_CATEGORIES } from '@/lib/validation';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
@@ -134,10 +134,28 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       );
     }
 
-    const updateData: Record<string, unknown> = {
-      ...parsed.data,
+    // Explicitly pick only allowed fields to prevent injection
+    type BlogCategory = typeof BLOG_POST_CATEGORIES[number];
+    const updateData: {
+      title?: string;
+      content?: unknown;
+      excerpt?: string;
+      featuredImageUrl?: string;
+      category?: BlogCategory;
+      tags?: string[];
+      status?: 'draft' | 'pending';
+      updatedAt: Date;
+    } = {
       updatedAt: new Date(),
     };
+
+    if (parsed.data.title !== undefined) updateData.title = parsed.data.title;
+    if (parsed.data.content !== undefined) updateData.content = parsed.data.content;
+    if (parsed.data.excerpt !== undefined) updateData.excerpt = parsed.data.excerpt;
+    if (parsed.data.featuredImageUrl !== undefined) updateData.featuredImageUrl = parsed.data.featuredImageUrl;
+    if (parsed.data.category !== undefined) updateData.category = parsed.data.category;
+    if (parsed.data.tags !== undefined) updateData.tags = parsed.data.tags;
+    if (parsed.data.status !== undefined) updateData.status = parsed.data.status;
 
     const [updated] = await db
       .update(blogPosts)

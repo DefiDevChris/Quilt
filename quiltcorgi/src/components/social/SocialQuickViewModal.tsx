@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { X, Heart, Bookmark, Share2, ExternalLink, Clock } from 'lucide-react';
+import { X, Heart, Share2, ExternalLink, Clock } from 'lucide-react';
 import { useSocialQuickView, type QuickViewItem } from '@/stores/socialQuickViewStore';
 import { useAuthStore } from '@/stores/authStore';
 import { RedditStyleComments } from '@/components/community/comments/RedditStyleComments';
@@ -12,7 +12,6 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
   const user = useAuthStore((s) => s.user);
   const [liked, setLiked] = useState(item.isLikedByUser ?? false);
   const [likeCount, setLikeCount] = useState(item.likeCount);
-  const [saved, setSaved] = useState(item.isSavedByUser ?? false);
   const [copied, setCopied] = useState(false);
 
   const handleLike = async () => {
@@ -25,20 +24,6 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
     } catch {
       setLiked(!next);
       setLikeCount(next ? likeCount - 1 : likeCount + 1);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!user) return;
-    const next = !saved;
-    setSaved(next);
-    try {
-      const res = await fetch(`/api/community/${item.id}/save`, {
-        method: next ? 'POST' : 'DELETE',
-      });
-      if (!res.ok) setSaved(!next);
-    } catch {
-      setSaved(!next);
     }
   };
 
@@ -116,17 +101,6 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
           >
             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
             {likeCount}
-          </button>
-          <button
-            onClick={handleSave}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
-              saved
-                ? 'text-orange-500 bg-orange-50'
-                : 'text-slate-600 bg-white/50 hover:bg-white/80'
-            }`}
-          >
-            <Bookmark size={15} fill={saved ? 'currentColor' : 'none'} />
-            {saved ? 'Saved' : 'Save'}
           </button>
           <button
             onClick={handleShare}
@@ -301,7 +275,8 @@ export function SocialQuickViewModal() {
   const { item, isOpen, close } = useSocialQuickView();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!isOpen) return;

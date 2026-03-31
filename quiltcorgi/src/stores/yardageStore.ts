@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import type { WOF, YardageResult } from '@/lib/yardage-engine';
 import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
+import { clamp } from '@/lib/math-utils';
 
 interface YardageStoreState {
   isPanelOpen: boolean;
@@ -15,18 +16,23 @@ interface YardageStoreState {
   setWof: (wof: WOF) => void;
   setWasteMargin: (margin: number) => void;
   setResults: (results: YardageResult[]) => void;
+  reset: () => void;
 }
 
-export const useYardageStore = create<YardageStoreState>((set) => ({
+const INITIAL_STATE = {
   isPanelOpen: false,
   wof: DEFAULT_WOF,
   wasteMargin: DEFAULT_WASTE_MARGIN,
-  results: [],
+  results: [] as YardageResult[],
+};
+
+export const useYardageStore = create<YardageStoreState>((set) => ({
+  ...INITIAL_STATE,
 
   togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),
   setPanelOpen: (isPanelOpen) => set({ isPanelOpen }),
   setWof: (wof) => set({ wof }),
-  setWasteMargin: (wasteMargin) =>
-    set({ wasteMargin: Math.max(0.05, Math.min(0.25, wasteMargin)) }),
+  setWasteMargin: (wasteMargin) => set({ wasteMargin: clamp(wasteMargin, 0.05, 0.25) }),
   setResults: (results) => set({ results }),
+  reset: () => set({ ...INITIAL_STATE }),
 }));

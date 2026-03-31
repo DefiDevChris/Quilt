@@ -27,6 +27,17 @@ function trianglePolygonSvg(w: number, h: number): string {
 }
 
 /**
+ * Build an isosceles right triangle SVG polygon (HST - Half Square Triangle).
+ * This is a right triangle with two equal legs, suitable for HST classification.
+ * The triangle fits in a w x w square with the right angle at the bottom right.
+ */
+function hstPolygonSvg(w: number): string {
+  // Points: bottom-left, bottom-right, top-right - forms a right triangle
+  // with right angle at (w, w) and equal legs of length w
+  return `<polygon points="0,${w} ${w},${w} ${w},0"/>`;
+}
+
+/**
  * Build a rectangle as bare path data (no SVG element wrapper).
  */
 function rectPathData(w: number, h: number): string {
@@ -67,12 +78,21 @@ describe('piece-inspector-engine', () => {
       expect(result!.boundingBox.height).toBeCloseTo(1, 2);
     });
 
-    it('classifies triangle shape as hst', () => {
-      const svg = trianglePolygonSvg(96, 96);
+    it('classifies isosceles right triangle shape as hst', () => {
+      const svg = hstPolygonSvg(96);
       const result = extractPieceGeometry(svg, PIXELS_PER_INCH);
 
       expect(result).not.toBeNull();
       expect(result!.shapeType).toBe('hst');
+    });
+
+    it('classifies non-right isosceles triangle as irregular', () => {
+      // This triangle is isosceles but not a right triangle
+      const svg = trianglePolygonSvg(96, 96);
+      const result = extractPieceGeometry(svg, PIXELS_PER_INCH);
+
+      expect(result).not.toBeNull();
+      expect(result!.shapeType).toBe('irregular');
     });
 
     it('extracts geometry from a bare path data string', () => {
@@ -174,7 +194,7 @@ describe('piece-inspector-engine', () => {
     });
 
     it('computes HST dimensions with special instructions mentioning diagonal', () => {
-      const svg = trianglePolygonSvg(96, 96);
+      const svg = hstPolygonSvg(96);
       const geometry = extractPieceGeometry(svg, PIXELS_PER_INCH)!;
       const dims = computePieceDimensions(geometry, 0.25);
 
@@ -182,8 +202,8 @@ describe('piece-inspector-engine', () => {
       expect(dims.specialInstructions).toContain('diagonally');
     });
 
-    it('includes HST 7/8 inch addition for triangles', () => {
-      const svg = trianglePolygonSvg(96, 96);
+    it('includes HST 7/8 inch addition for isosceles right triangles', () => {
+      const svg = hstPolygonSvg(96);
       const geometry = extractPieceGeometry(svg, PIXELS_PER_INCH)!;
       const dims = computePieceDimensions(geometry, 0.25);
 
@@ -414,7 +434,7 @@ describe('piece-inspector-engine', () => {
     });
 
     it('generates PDF for a triangle shape', async () => {
-      const geometry = extractPieceGeometry(trianglePolygonSvg(96, 96), PIXELS_PER_INCH)!;
+      const geometry = extractPieceGeometry(hstPolygonSvg(96), PIXELS_PER_INCH)!;
       const pdf = await generateSinglePiecePdf(geometry, 0.25, 'letter');
 
       expect(pdf).toBeInstanceOf(Uint8Array);

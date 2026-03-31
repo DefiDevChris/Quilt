@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { cognitoForgotPassword, cognitoConfirmForgotPassword } from '@/lib/cognito';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 
 const initiateSchema = z.object({
   email: z.string().email(),
@@ -24,10 +25,7 @@ export async function POST(request: NextRequest) {
     const parsed = initiateSchema.safeParse(body);
 
     if (!parsed.success) {
-      return Response.json(
-        { success: false, error: 'Invalid email', code: 'VALIDATION_ERROR' },
-        { status: 422 }
-      );
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid email');
     }
 
     await cognitoForgotPassword(parsed.data.email);
@@ -52,10 +50,7 @@ export async function PUT(request: NextRequest) {
 
     if (!parsed.success) {
       const firstError = parsed.error.issues[0]?.message ?? 'Invalid input';
-      return Response.json(
-        { success: false, error: firstError, code: 'VALIDATION_ERROR' },
-        { status: 422 }
-      );
+      return validationErrorResponse(firstError);
     }
 
     const { email, code, newPassword } = parsed.data;
@@ -67,37 +62,17 @@ export async function PUT(request: NextRequest) {
     const message = err instanceof Error ? err.message : 'Reset failed';
 
     if (message.includes('CodeMismatchException')) {
-      return Response.json(
-        { success: false, error: 'Invalid reset code', code: 'INVALID_CODE' },
-        { status: 400 }
-      );
+      return validationErrorResponse('Invalid reset code');
     }
 
     if (message.includes('ExpiredCodeException')) {
-      return Response.json(
-        {
-          success: false,
-          error: 'Reset code has expired. Please request a new one.',
-          code: 'EXPIRED_CODE',
-        },
-        { status: 400 }
-      );
+      return validationErrorResponse('Reset code has expired. Please request a new one.');
     }
 
     if (message.includes('InvalidPasswordException')) {
-      return Response.json(
-        {
-          success: false,
-          error: 'Password must include uppercase, lowercase, and numbers',
-          code: 'VALIDATION_ERROR',
-        },
-        { status: 422 }
-      );
+      return validationErrorResponse('Password must include uppercase, lowercase, and numbers');
     }
 
-    return Response.json(
-      { success: false, error: 'Password reset failed', code: 'INTERNAL_ERROR' },
-      { status: 500 }
-    );
+    return errorResponse('Password reset failed', 'INTERNAL_ERROR', 500);
   }
 }

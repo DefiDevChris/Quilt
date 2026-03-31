@@ -1,16 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import {
-  tutorialFrontmatterSchema,
-  blogFrontmatterSchema,
-  DIFFICULTY_ORDER,
-  type TutorialEntry,
-  type BlogEntry,
-  type TutorialFrontmatter,
-} from '@/lib/mdx-schemas';
+import yaml from 'js-yaml';
+import { blogFrontmatterSchema, type BlogEntry } from '@/lib/mdx-schemas';
 
 const CONTENT_DIR = path.join(process.cwd(), 'src', 'content');
-const TUTORIALS_DIR = path.join(CONTENT_DIR, 'tutorials');
 const BLOG_DIR = path.join(CONTENT_DIR, 'blog');
 
 // --- Frontmatter parsing ---
@@ -26,35 +19,15 @@ function parseFrontmatter(raw: string): {
 
   const frontmatterRaw = match[1];
   const content = match[2];
-  const data: Record<string, unknown> = {};
 
-  for (const line of frontmatterRaw.split('\n')) {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex === -1) continue;
-
-    const key = line.slice(0, colonIndex).trim();
-    let value: unknown = line.slice(colonIndex + 1).trim();
-
-    // Handle YAML-like arrays
-    if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
-      value = value
-        .slice(1, -1)
-        .split(',')
-        .map((s) => s.trim().replace(/^["']|["']$/g, ''));
-    }
-    // Handle numbers
-    else if (typeof value === 'string' && /^\d+$/.test(value)) {
-      value = parseInt(value, 10);
-    }
-    // Strip surrounding quotes
-    else if (typeof value === 'string') {
-      value = value.replace(/^["']|["']$/g, '');
-    }
-
-    data[key] = value;
+  try {
+    // Use js-yaml for proper YAML parsing (supports multi-line, arrays, etc.)
+    const data = (yaml.load(frontmatterRaw) as Record<string, unknown>) ?? {};
+    return { data, content: content.trim() };
+  } catch {
+    // Fallback to empty data if YAML parsing fails
+    return { data: {}, content: content.trim() };
   }
-
-  return { data, content: content.trim() };
 }
 
 // --- File reading ---
@@ -66,42 +39,6 @@ function readMdxFiles(dir: string): readonly { filename: string; raw: string }[]
     filename,
     raw: fs.readFileSync(path.join(dir, filename), 'utf-8'),
   }));
-}
-
-// --- Tutorials ---
-
-export function getAllTutorials(): readonly TutorialEntry[] {
-  const files = readMdxFiles(TUTORIALS_DIR);
-
-  return files
-    .map(({ raw }) => {
-      const { data, content } = parseFrontmatter(raw);
-      const parsed = tutorialFrontmatterSchema.safeParse(data);
-      if (!parsed.success) return null;
-      return { ...parsed.data, content } as TutorialEntry;
-    })
-    .filter((entry): entry is TutorialEntry => entry !== null)
-    .sort((a, b) => {
-      if (a.order !== undefined && b.order !== undefined) {
-        return a.order - b.order;
-      }
-      return DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty];
-    });
-}
-
-export function getTutorialBySlug(slug: string): TutorialEntry | null {
-  const tutorials = getAllTutorials();
-  return tutorials.find((t) => t.slug === slug) ?? null;
-}
-
-export function getTutorialSlugs(): readonly string[] {
-  return getAllTutorials().map((t) => t.slug);
-}
-
-export function filterTutorialsByDifficulty(
-  difficulty: TutorialFrontmatter['difficulty']
-): readonly TutorialEntry[] {
-  return getAllTutorials().filter((t) => t.difficulty === difficulty);
 }
 
 // --- Blog ---
@@ -163,31 +100,6 @@ export function paginateBlogPosts(
   return { posts, totalPages, totalPosts };
 }
 
-// --- Search ---
-
-export function searchContent(query: string): {
-  readonly tutorials: readonly TutorialEntry[];
-  readonly blogPosts: readonly BlogEntry[];
-} {
-  const lowerQuery = query.toLowerCase();
-
-  const tutorials = getAllTutorials().filter(
-    (t) =>
-      t.title.toLowerCase().includes(lowerQuery) ||
-      t.description.toLowerCase().includes(lowerQuery) ||
-      t.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
-  );
-
-  const blogPosts = getAllBlogPosts().filter(
-    (p) =>
-      p.title.toLowerCase().includes(lowerQuery) ||
-      p.description.toLowerCase().includes(lowerQuery) ||
-      p.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
-  );
-
-  return { tutorials, blogPosts };
-}
-
 // --- RSS ---
 
 export function generateRssFeed(siteUrl: string, posts: readonly BlogEntry[]): string {
@@ -218,6 +130,3 @@ ${items}
   </channel>
 </rss>`;
 }
-
-// Tutorial count constant - update when adding/removing tutorials
-export const TUTORIAL_COUNT = 10;

@@ -13,7 +13,7 @@ export type VariationType = 'intersection' | 'union' | 'difference-ab' | 'differ
 export interface BlockGeometry {
   blockId: string;
   blockName: string;
-  polygons: MultiPolygon;
+  polygons: MultiPolygon[];
 }
 
 export interface GeneratedVariation {
@@ -102,9 +102,7 @@ function objectToPolygon(obj: Record<string, unknown>): Polygon | null {
     case 'polygon': {
       const points = obj.points as Array<{ x: number; y: number }> | undefined;
       if (!points || points.length < 3) return null;
-      const ring = points.map(
-        (p) => [left + p.x * scaleX, top + p.y * scaleY] as [number, number]
-      );
+      const ring = points.map((p) => [left + p.x * scaleX, top + p.y * scaleY] as [number, number]);
       // Close the ring
       ring.push([...ring[0]] as [number, number]);
       return [ring];
@@ -280,7 +278,7 @@ export function generateVariations(
       });
     }
   } catch {
-    // Skip if operation fails (degenerate geometry)
+    // polygon-clipping can fail on degenerate inputs — skip silently
   }
 
   // Union
@@ -297,10 +295,9 @@ export function generateVariations(
       });
     }
   } catch {
-    // Skip if operation fails
+    // skip
   }
 
-  // Difference A - B
   try {
     const result = polygonClipping.difference(multiA, multiB);
     if (result.length > 0) {
@@ -314,10 +311,9 @@ export function generateVariations(
       });
     }
   } catch {
-    // Skip if operation fails
+    // skip
   }
 
-  // Difference B - A
   try {
     const result = polygonClipping.difference(multiB, multiA);
     if (result.length > 0) {
@@ -331,7 +327,7 @@ export function generateVariations(
       });
     }
   } catch {
-    // Skip if operation fails
+    // skip
   }
 
   return variations;
@@ -390,6 +386,28 @@ export function multiPolygonToFabricData(
 ): Record<string, unknown> {
   const svgPath = multiPolygonToSvgPath(mp);
 
+  // Handle empty multipolygon
+  if (mp.length === 0) {
+    return {
+      type: 'Path',
+      path: '',
+      left: 0,
+      top: 0,
+      width: 100,
+      height: 100,
+      scaleX: 1,
+      scaleY: 1,
+      fill: '#D4883C',
+      stroke: '#2D2D2D',
+      strokeWidth: 1,
+      _metadata: {
+        generatedBy: 'serendipity',
+        parentBlockIds,
+        name,
+      },
+    };
+  }
+
   // Compute bounding box
   let minX = Infinity;
   let minY = Infinity;
@@ -405,6 +423,19 @@ export function multiPolygonToFabricData(
         if (y > maxY) maxY = y;
       }
     }
+  }
+
+  // Guard against empty/invalid polygons
+  if (
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
+    minX = 0;
+    minY = 0;
+    maxX = 100;
+    maxY = 100;
   }
 
   const width = maxX - minX;
@@ -435,6 +466,13 @@ export function multiPolygonToFabricData(
  * Normalizes coordinates to fit within a 100x100 viewBox.
  */
 export function variationToSvg(variation: GeneratedVariation): string {
+  // Handle empty polygons
+  if (variation.polygons.length === 0) {
+    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="50" y="50" text-anchor="middle" fill="#999">Empty variation</text>
+</svg>`;
+  }
+
   // Compute bounding box
   let minX = Infinity;
   let minY = Infinity;
@@ -450,6 +488,19 @@ export function variationToSvg(variation: GeneratedVariation): string {
         if (y > maxY) maxY = y;
       }
     }
+  }
+
+  // Guard against invalid bounds
+  if (
+    !Number.isFinite(minX) ||
+    !Number.isFinite(minY) ||
+    !Number.isFinite(maxX) ||
+    !Number.isFinite(maxY)
+  ) {
+    minX = 0;
+    minY = 0;
+    maxX = 100;
+    maxY = 100;
   }
 
   const w = maxX - minX || 100;

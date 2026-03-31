@@ -6,6 +6,7 @@
  * correctly routes them to the dashboard where they can see their projects.
  */
 
+// @vitest-environment jsdom
 /// <reference types="vitest/globals" />
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

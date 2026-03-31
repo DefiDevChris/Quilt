@@ -2,7 +2,6 @@ export type UserRole = 'free' | 'pro' | 'admin';
 
 export interface RolePermissions {
   canLike: boolean;
-  canSave: boolean;
   canComment: boolean;
   canPost: boolean;
   canModerate: boolean;
@@ -10,17 +9,17 @@ export interface RolePermissions {
 
 export function getRolePermissions(role: UserRole | null): RolePermissions {
   if (!role) {
-    return { canLike: false, canSave: false, canComment: false, canPost: false, canModerate: false };
+    return { canLike: false, canComment: false, canPost: false, canModerate: false };
   }
 
   switch (role) {
     case 'admin':
-      return { canLike: true, canSave: true, canComment: true, canPost: true, canModerate: true };
+      return { canLike: true, canComment: true, canPost: true, canModerate: true };
     case 'pro':
-      return { canLike: true, canSave: true, canComment: true, canPost: true, canModerate: false };
+      return { canLike: true, canComment: true, canPost: true, canModerate: false };
     case 'free':
     default:
-      return { canLike: true, canSave: true, canComment: true, canPost: false, canModerate: false };
+      return { canLike: true, canComment: true, canPost: false, canModerate: false };
   }
 }
 

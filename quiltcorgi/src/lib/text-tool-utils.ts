@@ -3,7 +3,8 @@
  * No React, Fabric.js, or DOM dependencies.
  */
 
-import { TEXT_FONTS, TEXT_DEFAULT_FONT_SIZE, TEXT_DEFAULT_FONT_FAMILY } from '@/lib/constants';
+import { TEXT_FONTS, TEXT_DEFAULT_FONT_SIZE, TEXT_DEFAULT_FONT_FAMILY, DEFAULT_STROKE_COLOR } from '@/lib/constants';
+import { clamp } from '@/lib/math-utils';
 
 export const TEXT_FONT_OPTIONS: readonly string[] = TEXT_FONTS;
 
@@ -22,7 +23,7 @@ export interface TextConfig {
 }
 
 export function clampFontSize(size: number): number {
-  return Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size));
+  return clamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
 }
 
 export function validateTextConfig(input: Record<string, unknown>): TextConfig {
@@ -45,7 +46,7 @@ export function validateTextConfig(input: Record<string, unknown>): TextConfig {
   const fill =
     typeof input.fill === 'string' && input.fill.length > 0
       ? input.fill
-      : '#383831';
+      : DEFAULT_STROKE_COLOR;
 
   const fontWeight =
     input.fontWeight === 'bold' ? 'bold' : 'normal';

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
-import { COGNITO_USER_POOL_ID, COGNITO_REGION, cognitoRefreshTokens } from './cognito';
+import { COGNITO_USER_POOL_ID, COGNITO_REGION, COGNITO_CLIENT_ID, cognitoRefreshTokens } from './cognito';
 
 const COOKIE_ID_TOKEN = 'qc_id_token';
 const COOKIE_ACCESS_TOKEN = 'qc_access_token';
@@ -8,7 +8,15 @@ const COOKIE_REFRESH_TOKEN = 'qc_refresh_token';
 
 const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
 
-const jwks = createRemoteJWKSet(new URL(JWKS_URL));
+// Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading
+let jwksInstance: ReturnType<typeof createRemoteJWKSet> | null = null;
+
+function getJwks() {
+  if (!jwksInstance) {
+    jwksInstance = createRemoteJWKSet(new URL(JWKS_URL));
+  }
+  return jwksInstance;
+}
 
 export interface CognitoSession {
   user: {
@@ -24,8 +32,9 @@ export interface CognitoSession {
 /** Verify a Cognito JWT and return its payload. */
 async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, jwks, {
+    const { payload } = await jwtVerify(token, getJwks(), {
       issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`,
+      audience: COGNITO_CLIENT_ID,
     });
     return payload;
   } catch {
@@ -184,8 +193,9 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
         refreshToken,
         expiresIn: newTokens.expiresIn,
       });
-    } catch {
-      // Cookie write failed (likely RSC context) — session data is still valid
+    } catch (error) {
+      // Cookie write failed (likely RSC context) — log for monitoring
+      console.warn('[cognito-session] Failed to set auth cookies during refresh:', error);
     }
 
     // Re-parse the new id token
@@ -198,7 +208,8 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
       user: sessionUser,
       accessToken: newTokens.accessToken,
     };
-  } catch {
+  } catch (error) {
+    console.error('[cognito-session] Token refresh failed:', error);
     return null;
   }
 }

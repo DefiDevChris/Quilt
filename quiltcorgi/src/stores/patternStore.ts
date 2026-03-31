@@ -59,10 +59,14 @@ const INITIAL_STATE = {
   upgradeRequired: false,
 };
 
+let patternAbortController: AbortController | null = null;
+
 export const usePatternStore = create<PatternState>((set, get) => ({
   ...INITIAL_STATE,
 
   fetchPatterns: async () => {
+    patternAbortController?.abort();
+    patternAbortController = new AbortController();
     const { filters, pagination } = get();
     set({ isLoading: true, error: null });
 
@@ -80,7 +84,9 @@ export const usePatternStore = create<PatternState>((set, get) => ({
         params.set('search', filters.search);
       }
 
-      const res = await fetch(`/api/patterns?${params.toString()}`);
+      const res = await fetch(`/api/patterns?${params.toString()}`, {
+        signal: patternAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -102,7 +108,8 @@ export const usePatternStore = create<PatternState>((set, get) => ({
         upgradeRequired: json.data.upgradeRequired ?? false,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load patterns', isLoading: false });
     }
   },
@@ -172,5 +179,9 @@ export const usePatternStore = create<PatternState>((set, get) => ({
 
   clearError: () => set({ error: null }),
 
-  reset: () => set({ ...INITIAL_STATE }),
+  reset: () => {
+    patternAbortController?.abort();
+    patternAbortController = null;
+    set({ ...INITIAL_STATE });
+  },
 }));

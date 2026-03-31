@@ -193,7 +193,7 @@ export default function ProfilePage() {
           </svg>
         </Link>
         <Link
-          href="/tutorials"
+          href="/blog"
           className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors last:rounded-b-[1.5rem]"
         >
           <div>

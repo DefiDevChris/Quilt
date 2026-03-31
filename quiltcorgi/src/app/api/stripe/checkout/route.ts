@@ -1,14 +1,23 @@
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
 import { getStripe, getStripePriceId } from '@/lib/stripe';
-import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
+import { getRequiredSession, unauthorizedResponse, errorResponse, validationErrorResponse } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
+
+const checkoutSchema = z.object({
+  interval: z.enum(['monthly', 'yearly']),
+});
 
 export async function POST(request: Request) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`stripe:${session.user.id}`, API_RATE_LIMITS.stripe);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   if (session.user.role === 'pro' || session.user.role === 'admin') {
     return errorResponse('You already have a Pro subscription.', 'FORBIDDEN', 403);
@@ -26,8 +35,12 @@ export async function POST(request: Request) {
     } catch {
       return errorResponse('Invalid request body', 'VALIDATION_ERROR', 422);
     }
-    const interval: 'monthly' | 'yearly' =
-      body.interval === 'yearly' ? 'yearly' : 'monthly';
+
+    const parsed = checkoutSchema.safeParse(body);
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid interval');
+    }
+    const interval = parsed.data.interval;
 
     // Look up or create Stripe customer
     let stripeCustomerId: string;

@@ -299,10 +299,24 @@ describe('layout-engine', () => {
       const borders = [{ width: bw, color: '#000', fabricId: null }];
       const strips = computeBorderStrips(200, 150, borders, 1);
       const top = strips.find((s) => s.side === 'top')!;
-      expect(top.x).toBe(-bw);
+      // Top strip spans only innerWidth (not including corners)
+      // Corners are covered by left/right strips
+      expect(top.x).toBe(0);
       expect(top.y).toBe(-bw);
-      expect(top.width).toBe(200 + 2 * bw);
+      expect(top.width).toBe(200);
       expect(top.height).toBe(bw);
+    });
+
+    it('left strip covers full height including corners', () => {
+      const bw = 10;
+      const borders = [{ width: bw, color: '#000', fabricId: null }];
+      const strips = computeBorderStrips(200, 150, borders, 1);
+      const left = strips.find((s) => s.side === 'left')!;
+      // Left strip spans full outer height including corners
+      expect(left.x).toBe(-bw);
+      expect(left.y).toBe(-bw);
+      expect(left.width).toBe(bw);
+      expect(left.height).toBe(150 + 2 * bw);
     });
 
     it('preserves border color and fabricId', () => {

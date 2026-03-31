@@ -98,8 +98,8 @@ describe('communityStore', () => {
 
   it('setTab resets page to 1 and updates tab', () => {
     useCommunityStore.setState({ page: 3 });
-    useCommunityStore.getState().setTab('saved');
-    expect(useCommunityStore.getState().tab).toBe('saved');
+    useCommunityStore.getState().setTab('discover');
+    expect(useCommunityStore.getState().tab).toBe('discover');
     expect(useCommunityStore.getState().page).toBe(1);
   });
 
@@ -332,70 +332,13 @@ describe('communityStore', () => {
     });
   });
 
-  it('toggleSavePost saves an unsaved post', () => {
-    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
-    useCommunityStore.setState({ posts: [post] });
-
-    useCommunityStore.getState().toggleSavePost('post-1', false);
-
-    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
-  });
-
-  it('toggleSavePost unsaves a saved post', () => {
-    const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
-    useCommunityStore.setState({ posts: [post] });
-
-    useCommunityStore.getState().toggleSavePost('post-1', true);
-
-    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
-  });
-
-  it('toggleSavePost (save) reverts on server error', async () => {
-    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
-    useCommunityStore.setState({ posts: [post] });
-
-    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
-
-    useCommunityStore.getState().toggleSavePost('post-1', false);
-
-    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
-
-    await vi.waitFor(() => {
-      expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
-    });
-  });
-
-  it('toggleSavePost (unsave) reverts on server error', async () => {
-    const post = makeMockPost({ id: 'post-1', isSavedByUser: true });
-    useCommunityStore.setState({ posts: [post] });
-
-    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
-
-    useCommunityStore.getState().toggleSavePost('post-1', true);
-
-    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
-
-    await vi.waitFor(() => {
-      expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(true);
-    });
-  });
-
-  it('toggleSavePost is a no-op for unknown postId', () => {
-    const post = makeMockPost({ id: 'post-1', isSavedByUser: false });
-    useCommunityStore.setState({ posts: [post] });
-
-    useCommunityStore.getState().toggleSavePost('nonexistent', false);
-
-    expect(useCommunityStore.getState().posts[0].isSavedByUser).toBe(false);
-  });
-
   it('fetchPosts includes tab and category in params', async () => {
-    useCommunityStore.setState({ tab: 'saved', category: 'help', page: 1 });
+    useCommunityStore.setState({ tab: 'discover', category: 'help', page: 1 });
 
     await useCommunityStore.getState().fetchPosts();
 
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-    expect(callUrl).toContain('tab=saved');
+    expect(callUrl).toContain('tab=discover');
     expect(callUrl).toContain('category=help');
   });
 

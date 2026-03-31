@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { renderGrid } from '@/lib/canvas-grid';
@@ -13,9 +13,13 @@ export function useCanvasInit(
   containerRef: RefObject<HTMLDivElement | null>,
   project: Project
 ) {
+  const generationRef = useRef(0);
+
   useEffect(() => {
+    const generation = ++generationRef.current;
     let disposed = false;
     let resizeObserver: ResizeObserver | null = null;
+    let canvasInstance: import('fabric').Canvas | null = null;
 
     (async () => {
       const fabric = await import('fabric');
@@ -36,6 +40,8 @@ export function useCanvasInit(
         selection: true,
         preserveObjectStacking: true,
       });
+
+      canvasInstance = canvas;
 
       const wrapper = canvas.wrapperEl as HTMLDivElement;
       wrapper.style.position = 'absolute';
@@ -58,9 +64,14 @@ export function useCanvasInit(
       const panY = (rect.height - quiltHeightPx * initZoom) / 2;
       canvas.setViewportTransform([initZoom, 0, 0, initZoom, panX, panY]);
 
-      canvas.on('after:render', () => {
+      let lastGridKey = '';
+      const onAfterRender = () => {
         const state = useCanvasStore.getState();
         const proj = useProjectStore.getState();
+        const vt = canvas.viewportTransform;
+        const key = `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.gridSettings.enabled},${state.gridSettings.snapToGrid},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight}`;
+        if (key === lastGridKey) return;
+        lastGridKey = key;
         renderGrid(
           gridEl,
           canvas as unknown as { getZoom: () => number; viewportTransform: number[] },
@@ -71,31 +82,42 @@ export function useCanvasInit(
             quiltHeight: proj.canvasHeight,
           }
         );
-      });
+      };
 
-      canvas.on('mouse:move', (e) => {
-        const pointer = canvas.getScenePoint(e.e);
+      let lastCursorX = -1;
+      let lastCursorY = -1;
+      const CURSOR_THRESHOLD = 0.01;
+      const onMouseMove = (e: { e: Event }) => {
+        const pointer = canvas.getScenePoint(e.e as MouseEvent);
         const us = useCanvasStore.getState().unitSystem;
         const ppu = getPixelsPerUnit(us);
-        useCanvasStore.getState().setCursorPosition({
-          x: pointer.x / ppu,
-          y: pointer.y / ppu,
-        });
-      });
+        const x = pointer.x / ppu;
+        const y = pointer.y / ppu;
+        if (
+          Math.abs(x - lastCursorX) < CURSOR_THRESHOLD &&
+          Math.abs(y - lastCursorY) < CURSOR_THRESHOLD
+        )
+          return;
+        lastCursorX = x;
+        lastCursorY = y;
+        useCanvasStore.getState().setCursorPosition({ x, y });
+      };
 
-      canvas.on('selection:created', (e) => {
+      const onSelectionCreated = (e: { selected?: unknown[] }) => {
         const ids = (e.selected ?? []).map((o) => (o as { id?: string }).id ?? '').filter(Boolean);
         useCanvasStore.getState().setSelectedObjectIds(ids);
-      });
-      canvas.on('selection:updated', (e) => {
+      };
+
+      const onSelectionUpdated = (e: { selected?: unknown[] }) => {
         const ids = (e.selected ?? []).map((o) => (o as { id?: string }).id ?? '').filter(Boolean);
         useCanvasStore.getState().setSelectedObjectIds(ids);
-      });
-      canvas.on('selection:cleared', () => {
+      };
+
+      const onSelectionCleared = () => {
         useCanvasStore.getState().setSelectedObjectIds([]);
-      });
+      };
 
-      canvas.on('object:moving', (e) => {
+      const onObjectMoving = (e: { target?: import('fabric').FabricObject }) => {
         const { gridSettings, unitSystem: us } = useCanvasStore.getState();
         if (!gridSettings.snapToGrid || !e.target) return;
         const gridSizePx = gridSettings.size * getPixelsPerUnit(us);
@@ -103,13 +125,21 @@ export function useCanvasInit(
           left: snapToGrid(e.target.left ?? 0, gridSizePx),
           top: snapToGrid(e.target.top ?? 0, gridSizePx),
         });
-      });
+      };
 
-      canvas.on('object:modified', () => {
+      const onObjectModified = () => {
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);
         useProjectStore.getState().setDirty(true);
-      });
+      };
+
+      canvas.on('after:render', onAfterRender);
+      canvas.on('mouse:move', onMouseMove);
+      canvas.on('selection:created', onSelectionCreated);
+      canvas.on('selection:updated', onSelectionUpdated);
+      canvas.on('selection:cleared', onSelectionCleared);
+      canvas.on('object:moving', onObjectMoving);
+      canvas.on('object:modified', onObjectModified);
 
       const handleResize = () => {
         if (disposed) return;
@@ -130,27 +160,53 @@ export function useCanvasInit(
       const initialJson = JSON.stringify(canvas.toJSON());
       useCanvasStore.getState().pushUndoState(initialJson);
 
-      if (!disposed) {
-        useCanvasStore.getState().setFabricCanvas(canvas);
-        useCanvasStore.getState().setZoom(initZoom);
-        useCanvasStore.getState().setUnitSystem(project.unitSystem);
-        useCanvasStore.getState().setGridSettings(project.gridSettings);
-        useProjectStore.getState().setProject({
-          id: project.id,
-          name: project.name,
-          width: project.canvasWidth,
-          height: project.canvasHeight,
-        });
+      // Check generation before mutating store (prevents race condition)
+      if (disposed || generation !== generationRef.current) {
+        // Clean up this orphaned canvas instance
+        canvas.off('after:render', onAfterRender);
+        canvas.off('mouse:move', onMouseMove);
+        canvas.off('selection:created', onSelectionCreated);
+        canvas.off('selection:updated', onSelectionUpdated);
+        canvas.off('selection:cleared', onSelectionCleared);
+        canvas.off('object:moving', onObjectMoving);
+        canvas.off('object:modified', onObjectModified);
+        resizeObserver?.disconnect();
+        canvas.dispose();
+        return;
       }
+
+      useCanvasStore.getState().setFabricCanvas(canvas);
+      useCanvasStore.getState().setZoom(initZoom);
+      useCanvasStore.getState().setUnitSystem(project.unitSystem);
+      useCanvasStore.getState().setGridSettings(project.gridSettings);
+      useProjectStore.getState().setProject({
+        id: project.id,
+        name: project.name,
+        width: project.canvasWidth,
+        height: project.canvasHeight,
+      });
     })();
 
     return () => {
       disposed = true;
       resizeObserver?.disconnect();
-      const canvas = useCanvasStore.getState().fabricCanvas;
-      if (canvas && typeof (canvas as { dispose?: () => void }).dispose === 'function') {
-        (canvas as { dispose: () => void }).dispose();
+
+      if (canvasInstance) {
+        canvasInstance.off('after:render');
+        canvasInstance.off('mouse:move');
+        canvasInstance.off('selection:created');
+        canvasInstance.off('selection:updated');
+        canvasInstance.off('selection:cleared');
+        canvasInstance.off('object:moving');
+        canvasInstance.off('object:modified');
+        canvasInstance.dispose();
+      } else {
+        const canvas = useCanvasStore.getState().fabricCanvas;
+        if (canvas && typeof (canvas as { dispose?: () => void }).dispose === 'function') {
+          (canvas as { dispose: () => void }).dispose();
+        }
       }
+
       useCanvasStore.getState().setFabricCanvas(null);
       useCanvasStore.getState().resetHistory();
       useProjectStore.getState().reset();

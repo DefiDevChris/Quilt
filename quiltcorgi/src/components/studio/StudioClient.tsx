@@ -267,7 +267,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenImageExport={() =>
               isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
             }
-            onOpenPhotoPatchwork={() =>
+            onOpenPhotoToPattern={() =>
               isPro
                 ? usePhotoPatternStore.getState().openModal()
                 : setProUpgradeFeature('Photo to Pattern')

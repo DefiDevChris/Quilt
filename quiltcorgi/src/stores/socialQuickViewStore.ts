@@ -13,7 +13,6 @@ export type QuickViewItem =
       creatorAvatarUrl?: string | null;
       likeCount: number;
       commentCount: number;
-      isSavedByUser?: boolean;
       isLikedByUser?: boolean;
       description?: string | null;
       category?: string;

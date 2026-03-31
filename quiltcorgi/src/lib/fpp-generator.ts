@@ -14,7 +14,7 @@ import type { Point } from '@/lib/seam-allowance';
 
 export interface FppPatch {
   readonly id: number;
-  readonly vertices: Point[];
+  readonly vertices: readonly Point[];
   readonly color: string;
   readonly sewingOrder: number;
   readonly adjacentPatches: number[];
@@ -42,7 +42,12 @@ function parsePolygonPoints(pointsStr: string): Point[] {
     .trim()
     .split(/\s+/)
     .map((pair) => {
-      const [x, y] = pair.split(',').map(Number);
+      const [xStr, yStr] = pair.split(',');
+      const x = Number(xStr);
+      const y = Number(yStr);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        throw new Error(`Invalid polygon point coordinates: ${pair}`);
+      }
       return { x, y };
     });
 }
@@ -128,16 +133,24 @@ export function parseSvgToPatches(svgData: string): FppPatch[] {
     const vertices = parseRectToVertices(attrs);
     const color = attrs.fill ?? '#888888';
 
-    // Skip viewBox-level rects (background)
-    if (vertices.every((v) => v.x === 0 || v.y === 0)) {
-      const w = parseFloat(attrs.width ?? '0');
-      const h = parseFloat(attrs.height ?? '0');
-      if (
-        w >= 100 &&
-        h >= 100 &&
-        parseFloat(attrs.x ?? '0') === 0 &&
-        parseFloat(attrs.y ?? '0') === 0
-      ) {
+    // Skip viewBox-level rects (background) - only skip if it's a full-canvas rect at (0,0)
+    const x = parseFloat(attrs.x ?? '0');
+    const y = parseFloat(attrs.y ?? '0');
+    const w = parseFloat(attrs.width ?? '0');
+    const h = parseFloat(attrs.height ?? '0');
+    
+    // A background rect must:
+    // 1. Start at (0,0)
+    // 2. Be large (>= 100px)
+    // 3. Have all vertices touching both axes (meaning it's aligned to origin)
+    if (x === 0 && y === 0 && w >= 100 && h >= 100) {
+      // Only skip if all vertices are on the boundary (touches both axes)
+      const isFullBoundary = vertices.every((v) => v.x === 0 || v.y === 0);
+      const isCornerAtOrigin = vertices.some((v) => v.x === 0 && v.y === 0);
+      const spansFullWidth = vertices.some((v) => v.x === w);
+      const spansFullHeight = vertices.some((v) => v.y === h);
+      
+      if (isFullBoundary && isCornerAtOrigin && spansFullWidth && spansFullHeight) {
         continue;
       }
     }
@@ -159,7 +172,7 @@ export function parseSvgToPatches(svgData: string): FppPatch[] {
 
 const ADJACENCY_THRESHOLD = 2.0; // Pixels
 
-function edgesFromVertices(vertices: Point[]): Array<[Point, Point]> {
+function edgesFromVertices(vertices: readonly Point[]): Array<[Point, Point]> {
   const edges: Array<[Point, Point]> = [];
   for (let i = 0; i < vertices.length; i++) {
     const next = (i + 1) % vertices.length;
@@ -237,7 +250,7 @@ function buildAdjacencyGraph(patches: FppPatch[]): Map<number, Set<number>> {
 
 // ── Sewing Order (BFS from largest patch) ──────────────────────────
 
-function patchArea(vertices: Point[]): number {
+function patchArea(vertices: readonly Point[]): number {
   let area = 0;
   for (let i = 0; i < vertices.length; i++) {
     const j = (i + 1) % vertices.length;

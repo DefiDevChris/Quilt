@@ -471,8 +471,7 @@ const tabs = [
     id: 'quilt',
     label: 'Quilt Worktable',
     shortLabel: 'Quilt',
-    caption:
-      'Choose from six layout modes — grid, sashing, on-point, medallion, lone star, or go completely free-form.',
+    caption: 'Choose from four layout modes — grid, sashing, on-point, or go completely free-form.',
     component: <QuiltWorktableMockup />,
   },
   {

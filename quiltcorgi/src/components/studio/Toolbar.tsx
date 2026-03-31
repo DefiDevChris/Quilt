@@ -163,13 +163,13 @@ function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'photo-patchwork',
+      id: 'photo-to-pattern',
       label: 'Photo to Pattern',
       description: 'Turn any photo into a quilt pattern — the fastest way to start a design',
       group: 'create',
       tier: 'primary',
-      onClick: callbacks.onOpenPhotoPatchwork,
-      dataTour: 'photo-patchwork',
+      onClick: callbacks.onOpenPhotoToPattern,
+      dataTour: 'photo-to-pattern',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
@@ -655,11 +655,11 @@ interface ToolbarCallbacks {
   onOpenGridDimensions?: () => void;
   onOpenSymmetry?: () => void;
   onOpenImageExport?: () => void;
-  onOpenPhotoPatchwork?: () => void;
+  onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
 }
 
-interface ToolbarProps extends ToolbarCallbacks {}
+type ToolbarProps = ToolbarCallbacks;
 
 function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
@@ -735,7 +735,7 @@ export function Toolbar({
   onOpenGridDimensions,
   onOpenSymmetry,
   onOpenImageExport,
-  onOpenPhotoPatchwork,
+  onOpenPhotoToPattern,
   onOpenResize,
 }: ToolbarProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -748,7 +748,7 @@ export function Toolbar({
     onOpenGridDimensions,
     onOpenSymmetry,
     onOpenImageExport,
-    onOpenPhotoPatchwork,
+    onOpenPhotoToPattern,
     onOpenResize,
   };
 

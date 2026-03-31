@@ -16,6 +16,7 @@ import {
   DEFAULT_FILL_COLOR,
   DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
+import { clamp } from '@/lib/math-utils';
 
 export type ToolType =
   | 'select'
@@ -81,7 +82,7 @@ interface CanvasStoreState {
   setFillColor: (color: string) => void;
   setStrokeColor: (color: string) => void;
   setStrokeWidth: (width: number) => void;
-  pushUndoState: (json: string) => void;
+  pushUndoState: (json: string) => boolean;
   popUndo: (currentJson: string) => string | null;
   popRedo: (currentJson: string) => string | null;
   canUndo: () => boolean;
@@ -128,7 +129,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
 
-  setZoom: (zoom) => set({ zoom: Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom)) }),
+  setZoom: (zoom) => set({ zoom: clamp(zoom, ZOOM_MIN, ZOOM_MAX) }),
 
   setUnitSystem: (unitSystem) => set({ unitSystem }),
 
@@ -148,12 +149,19 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   pushUndoState: (json) => {
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
-      return;
+       
+      console.warn(
+        `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
+          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+          'Undo disabled for this action. Consider reducing canvas complexity.'
+      );
+      return false;
     }
     set((state) => ({
       undoStack: [...state.undoStack.slice(-(UNDO_HISTORY_MAX - 1)), json],
       redoStack: [],
     }));
+    return true;
   },
 
   popUndo: (currentJson) => {
@@ -184,12 +192,14 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
 
-  setReferenceImageOpacity: (opacity) =>
-    set({ referenceImageOpacity: Math.max(0, Math.min(1, opacity)) }),
+  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
   setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
 
-  reset: () => set({ ...INITIAL_STATE }),
+  reset: () => {
+    // Canvas disposal is handled by useCanvasInit cleanup — only reset store state
+    set({ ...INITIAL_STATE });
+  },
 }));

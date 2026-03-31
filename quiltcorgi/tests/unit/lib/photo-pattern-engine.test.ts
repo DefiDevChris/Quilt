@@ -2,9 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createInitialPipeline,
   advancePipelineStep,
-  downscaleIfNeeded,
 } from '@/lib/photo-pattern-engine';
-import { PHOTO_PATTERN_DOWNSCALE_MAX } from '@/lib/constants';
 
 // ── createInitialPipeline ──────────────────────────────────────
 
@@ -74,57 +72,5 @@ describe('advancePipelineStep', () => {
 
     expect(initial[0].status).toBe('pending');
     expect(updated).not.toBe(initial);
-  });
-});
-
-// ── downscaleIfNeeded ──────────────────────────────────────────
-
-describe('downscaleIfNeeded', () => {
-  it('returns original dimensions when within limit', () => {
-    const result = downscaleIfNeeded(800, 600);
-
-    expect(result).toEqual({ width: 800, height: 600, scaled: false });
-  });
-
-  it('scales down proportionally when width exceeds the limit', () => {
-    const result = downscaleIfNeeded(4000, 2000);
-
-    expect(result.width).toBe(PHOTO_PATTERN_DOWNSCALE_MAX);
-    expect(result.height).toBe(1000);
-    expect(result.scaled).toBe(true);
-  });
-
-  it('scales down proportionally when height exceeds the limit', () => {
-    const result = downscaleIfNeeded(1000, 3000);
-
-    expect(result.width).toBe(Math.round(1000 * (PHOTO_PATTERN_DOWNSCALE_MAX / 3000)));
-    expect(result.height).toBe(PHOTO_PATTERN_DOWNSCALE_MAX);
-    expect(result.scaled).toBe(true);
-  });
-
-  it('scales a square image correctly', () => {
-    const result = downscaleIfNeeded(4000, 4000);
-
-    expect(result.width).toBe(PHOTO_PATTERN_DOWNSCALE_MAX);
-    expect(result.height).toBe(PHOTO_PATTERN_DOWNSCALE_MAX);
-    expect(result.scaled).toBe(true);
-  });
-
-  it('accepts a custom maxDimension override', () => {
-    const result = downscaleIfNeeded(2000, 1000, 500);
-
-    expect(result.width).toBe(500);
-    expect(result.height).toBe(250);
-    expect(result.scaled).toBe(true);
-  });
-
-  it('does not scale when dimensions exactly equal the limit', () => {
-    const result = downscaleIfNeeded(PHOTO_PATTERN_DOWNSCALE_MAX, 1000);
-
-    expect(result).toEqual({
-      width: PHOTO_PATTERN_DOWNSCALE_MAX,
-      height: 1000,
-      scaled: false,
-    });
   });
 });

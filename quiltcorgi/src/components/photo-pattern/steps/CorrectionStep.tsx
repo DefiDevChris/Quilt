@@ -247,8 +247,9 @@ export function CorrectionStep() {
       const imageMat = cv.imread(canvas);
       try {
         const detected = autoDetectQuiltBoundary(cv, imageMat);
-        if (detected) {
-          setPerspectiveCorners(sortCornersClockwise(detected));
+        const sorted = detected ? sortCornersClockwise(detected) : null;
+        if (sorted) {
+          setPerspectiveCorners(sorted);
         } else {
           setError('No quilt boundary detected. Try adjusting corners manually.');
         }
@@ -350,9 +351,7 @@ export function CorrectionStep() {
           </svg>
         </button>
 
-        {error && (
-          <p className="text-body-sm text-error ml-2">{error}</p>
-        )}
+        {error && <p className="text-body-sm text-error ml-2">{error}</p>}
       </div>
 
       {/* Canvas area */}
@@ -372,9 +371,7 @@ export function CorrectionStep() {
 
       {/* Bottom action */}
       <div className="flex items-center justify-between flex-shrink-0">
-        <p className="text-body-sm text-secondary">
-          Drag corners to align with your quilt edges
-        </p>
+        <p className="text-body-sm text-secondary">Drag corners to align with your quilt edges</p>
         <button
           type="button"
           onClick={handleRenderPattern}

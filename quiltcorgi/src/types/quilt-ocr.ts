@@ -1,4 +1,4 @@
-export type LayoutClassification = 'grid' | 'on-point' | 'sashing' | 'medallion' | 'free-form';
+export type LayoutClassification = 'grid' | 'on-point' | 'sashing' | 'free-form';
 
 export interface DetectedLine {
   readonly rho: number;

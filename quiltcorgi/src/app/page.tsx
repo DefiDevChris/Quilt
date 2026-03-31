@@ -19,6 +19,7 @@ import HeroSection from '@/components/landing/HeroSection';
 import FeatureHighlights from '@/components/landing/FeatureHighlights';
 import WorkspacePreview from '@/components/landing/WorkspacePreview';
 import CoreCapabilities from '@/components/landing/CoreCapabilities';
+import SocialThreadsSection from '@/components/landing/SocialThreadsSection';
 import CommunityPreview from '@/components/landing/CommunityPreview';
 import CtaSection from '@/components/landing/CtaSection';
 import Footer from '@/components/landing/Footer';
@@ -32,6 +33,7 @@ export default function LandingPage() {
         <FeatureHighlights />
         <WorkspacePreview />
         <CoreCapabilities />
+        <SocialThreadsSection />
         <CommunityPreview />
         <CtaSection />
       </main>

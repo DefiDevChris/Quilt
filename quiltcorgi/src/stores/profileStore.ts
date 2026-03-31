@@ -12,6 +12,8 @@ interface ProfileState {
   reset: () => void;
 }
 
+let profileAbortController: AbortController | null = null;
+
 const INITIAL_STATE = {
   profile: null as UserProfile | null,
   posts: [] as CommunityPostListItem[],
@@ -23,10 +25,14 @@ export const useProfileStore = create<ProfileState>((set) => ({
   ...INITIAL_STATE,
 
   fetchProfile: async (username) => {
+    profileAbortController?.abort();
+    profileAbortController = new AbortController();
     set({ isLoading: true, error: null });
 
     try {
-      const res = await fetch(`/api/members/${encodeURIComponent(username)}`);
+      const res = await fetch(`/api/members/${encodeURIComponent(username)}`, {
+        signal: profileAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -44,10 +50,15 @@ export const useProfileStore = create<ProfileState>((set) => ({
         posts,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load profile', isLoading: false });
     }
   },
 
-  reset: () => set({ ...INITIAL_STATE }),
+  reset: () => {
+    profileAbortController?.abort();
+    profileAbortController = null;
+    set({ ...INITIAL_STATE });
+  },
 }));

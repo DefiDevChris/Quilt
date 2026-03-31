@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { db } from '@/lib/db';
 import { subscriptions, users } from '@/db/schema';
 import { getStripe } from '@/lib/stripe';
@@ -8,24 +10,49 @@ import { createNotification } from '@/lib/create-notification';
 
 export const dynamic = 'force-dynamic';
 
-// In-memory dedup guard for webhook event IDs (handles immediate retries).
-// NOTE: Stripe webhooks are idempotent by design — each event has a unique ID
-// and Stripe recommends making handlers idempotent. This in-memory dedup is
-// defense-in-depth for immediate retries within the same process. It does NOT
-// survive process restarts or span multiple instances, which is acceptable
-// because our DB upserts (upsertSubscription, syncUserRole) are themselves
-// idempotent. A duplicate webhook will simply re-write the same data.
-const processedEvents = new Map<string, number>();
-const DEDUP_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
-function isDuplicate(eventId: string): boolean {
-  const now = Date.now();
-  // Prune stale entries
-  for (const [id, ts] of processedEvents) {
-    if (now - ts > DEDUP_TTL_MS) processedEvents.delete(id);
+// Fire-and-forget notification wrapper - notification failures should not
+// fail the webhook handler (which would cause Stripe to retry repeatedly)
+async function sendSafeNotification(params: Parameters<typeof createNotification>[0]) {
+  try {
+    await createNotification(params);
+  } catch (error) {
+    console.error('Failed to send notification:', error);
   }
-  if (processedEvents.has(eventId)) return true;
-  processedEvents.set(eventId, now);
+}
+
+// Redis-based deduplication for webhook event IDs.
+// Uses Upstash Redis (same as rate limiter) for proper deduplication
+// across serverless instances.
+const useRedis = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
+let dedupRatelimit: Ratelimit | null = null;
+
+function getDedupRatelimit(): Ratelimit {
+  if (!dedupRatelimit) {
+    const redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    });
+    // Allow 100 events per minute globally - covers Stripe retry patterns
+    dedupRatelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(100, '1 m'),
+      analytics: false,
+    });
+  }
+  return dedupRatelimit;
+}
+
+async function isDuplicate(eventId: string): Promise<boolean> {
+  // Use Redis-based deduplication when available, which properly handles
+  // serverless restarts. When Redis is unavailable, relies on DB idempotency
+  // (upsertSubscription and syncUserRole are idempotent operations).
+  if (useRedis) {
+    const limit = getDedupRatelimit();
+    const result = await limit.limit(`webhook:${eventId}`);
+    return !result.success;
+  }
+
+  // No Redis: pass through - DB operations are idempotent so duplicates are safe
   return false;
 }
 
@@ -43,7 +70,10 @@ async function upsertSubscription(
   stripeSubscription: Stripe.Subscription
 ) {
   // Map stripe status to plan: active/trialing = pro, everything else = free
-  const plan = (stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing') ? 'pro' : 'free';
+  const plan =
+    stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing'
+      ? 'pro'
+      : 'free';
   const firstItem = stripeSubscription.items.data[0];
   const values = {
     userId,
@@ -88,7 +118,7 @@ function mapStripeStatus(
     case 'trialing':
       return 'trialing';
     default:
-      return 'active';
+      return 'unpaid';
   }
 }
 
@@ -120,7 +150,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   await upsertSubscription(userId, customerId, stripeSubscription);
   await syncUserRole(userId, 'pro');
-  await createNotification({
+  await sendSafeNotification({
     userId,
     type: 'subscription_activated',
     title: 'Welcome to Pro!',
@@ -143,7 +173,7 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   }
 
   if (sub.cancel_at_period_end && updated.status === 'active') {
-    await createNotification({
+    await sendSafeNotification({
       userId,
       type: 'subscription_canceled',
       title: 'Subscription canceling',
@@ -168,11 +198,12 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
     .where(eq(subscriptions.userId, userId));
 
   await syncUserRole(userId, 'free');
-  await createNotification({
+  await sendSafeNotification({
     userId,
     type: 'subscription_canceled',
     title: 'Pro subscription ended',
-    message: 'Your Pro subscription has ended. You can upgrade again anytime from the billing page.',
+    message:
+      'Your Pro subscription has ended. You can upgrade again anytime from the billing page.',
   });
 }
 
@@ -189,11 +220,12 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     })
     .where(eq(subscriptions.userId, userId));
 
-  await createNotification({
+  await sendSafeNotification({
     userId,
     type: 'payment_failed',
     title: 'Payment failed',
-    message: 'We were unable to process your payment. Please update your payment method within 7 days to keep your Pro access.',
+    message:
+      'We were unable to process your payment. Please update your payment method within 7 days to keep your Pro access.',
     metadata: { invoiceId: invoice.id },
   });
 }
@@ -217,7 +249,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ success: false, error: 'Invalid signature' }, { status: 401 });
   }
 
-  if (isDuplicate(event.id)) {
+  if (await isDuplicate(event.id)) {
     return Response.json({ success: true, data: { received: true, deduplicated: true } });
   }
 

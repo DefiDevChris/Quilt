@@ -1,0 +1,309 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+
+const CORGI_COUNT = 29;
+const CORGI_IMAGES = Array.from({ length: CORGI_COUNT }, (_, i) => ({
+  id: i + 1,
+  src: `/mascots&avatars/corgi${i + 1}.png`,
+  alt: `Corgi ${i + 1}`,
+}));
+
+export function OnboardingForm() {
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState('');
+  const [selectedCorgi, setSelectedCorgi] = useState<number | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [error, setError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    async function loadSession() {
+      try {
+        const res = await fetch('/api/auth/cognito/session');
+        const data = await res.json();
+        if (data.data?.user?.name) {
+          setDisplayName(data.data.user.name);
+        }
+      } catch {
+        // session fetch failed — user will fill in name manually
+      }
+    }
+    loadSession();
+  }, []);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError('Please upload a JPG, PNG, or WebP image.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be under 5 MB.');
+      return;
+    }
+
+    setError('');
+    setSelectedCorgi(null);
+    setUploadedFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setUploadedImage(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async function uploadAvatar(): Promise<string | null> {
+    if (!uploadedFile) return null;
+
+    const presignRes = await fetch('/api/upload/avatar-presign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: uploadedFile.name,
+        contentType: uploadedFile.type,
+      }),
+    });
+
+    if (!presignRes.ok) return null;
+
+    const { data } = await presignRes.json();
+
+    const uploadRes = await fetch(data.uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': uploadedFile.type },
+      body: uploadedFile,
+    });
+
+    if (!uploadRes.ok) return null;
+    return data.publicUrl as string;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+
+    const name = displayName.trim();
+    if (!name) {
+      setError('Please enter your name.');
+      return;
+    }
+
+    if (!selectedCorgi && !uploadedImage) {
+      setError('Pick a corgi or upload your own avatar.');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      let avatarUrl: string | null = null;
+
+      if (selectedCorgi) {
+        avatarUrl = `/mascots&avatars/corgi${selectedCorgi}.png`;
+      }
+
+      // Step 1: Create profile (with corgi URL or without avatar for uploads)
+      const profileRes = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          displayName: name,
+          avatarUrl,
+        }),
+      });
+
+      if (!profileRes.ok) {
+        const data = await profileRes.json();
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        setIsSaving(false);
+        return;
+      }
+
+      // Step 2: If user uploaded a file, upload it and update avatar
+      if (uploadedFile) {
+        const uploadedUrl = await uploadAvatar();
+        if (!uploadedUrl) {
+          setError('Avatar upload failed. Your profile was saved — you can set an avatar later.');
+          setIsSaving(false);
+          router.push('/dashboard');
+          return;
+        }
+
+        const avatarRes = await fetch('/api/profile/avatar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ avatarUrl: uploadedUrl }),
+        });
+
+        if (!avatarRes.ok) {
+          // Profile was created, just avatar update failed — not fatal
+          router.push('/dashboard');
+          return;
+        }
+      }
+
+      router.push('/dashboard');
+      router.refresh();
+    } catch {
+      setError('Something went wrong. Please try again.');
+      setIsSaving(false);
+    }
+  }
+
+  const isComplete =
+    displayName.trim().length > 0 && (selectedCorgi !== null || uploadedImage !== null);
+
+  return (
+    <div className="w-full max-w-[540px] mx-auto glass-elevated rounded-2xl p-[2.75rem]">
+      <div className="flex flex-col items-center mb-8">
+        <Image
+          src="/logo.png"
+          alt="QuiltCorgi"
+          width={64}
+          height={64}
+          className="object-contain mb-4"
+          priority
+        />
+        <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface text-center">
+          Welcome to QuiltCorgi!
+        </h1>
+        <p className="mt-2 text-[length:var(--font-size-body-md)] text-secondary text-center">
+          Pick a name and a corgi to get started.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-[length:var(--font-size-body-sm)] text-error">
+            {error}
+          </div>
+        )}
+
+        {/* Name */}
+        <div>
+          <label
+            htmlFor="displayName"
+            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+          >
+            Your name
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            required
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
+            placeholder="How should we call you?"
+            autoComplete="name"
+            maxLength={60}
+          />
+        </div>
+
+        {/* Avatar Selection */}
+        <div>
+          <label className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-3">
+            Choose your corgi
+          </label>
+          <div className="grid grid-cols-6 sm:grid-cols-7 gap-2 max-h-[280px] overflow-y-auto pr-1 pb-2">
+            {CORGI_IMAGES.map((corgi) => (
+              <button
+                key={corgi.id}
+                type="button"
+                onClick={() => {
+                  setSelectedCorgi(corgi.id);
+                  setUploadedImage(null);
+                  setUploadedFile(null);
+                }}
+                className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${
+                  selectedCorgi === corgi.id
+                    ? 'border-primary shadow-[var(--shadow-elevation-2)] ring-2 ring-primary/30'
+                    : 'border-outline-variant/20 hover:border-outline-variant/40'
+                }`}
+                aria-label={corgi.alt}
+              >
+                <Image
+                  src={corgi.src}
+                  alt={corgi.alt}
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Upload Own */}
+        <div>
+          <p className="text-[length:var(--font-size-body-sm)] text-secondary mb-2">
+            Or upload your own
+          </p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          {uploadedImage ? (
+            <div className="flex items-center gap-3">
+              <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-primary ring-2 ring-primary/30">
+                <Image
+                  src={uploadedImage}
+                  alt="Uploaded avatar"
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-[length:var(--font-size-body-sm)] text-primary hover:underline"
+              >
+                Change image
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 rounded-lg border border-dashed border-outline-variant/40 hover:border-primary/50 px-4 py-3 text-[length:var(--font-size-body-sm)] text-secondary hover:text-on-surface transition-colors w-full"
+            >
+              <svg
+                className="w-5 h-5 shrink-0"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  d="M3 15V13M3 15C2.44772 15 2 14.5523 2 14V6C2 5.44772 2.44772 5 3 5H17C17.5523 5 18 5.44772 18 6V14C18 14.5523 17.5523 15 17 15M3 15H17M10 8V12M8 10H12"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>Upload a photo (JPG, PNG, or WebP — max 5 MB)</span>
+            </button>
+          )}
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isSaving || !isComplete}
+          className="w-full bg-primary text-primary-on rounded-md px-4 py-3 text-[length:var(--font-size-body-md)] font-medium hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? 'Setting up your account...' : "Let's go!"}
+        </button>
+      </form>
+    </div>
+  );
+}

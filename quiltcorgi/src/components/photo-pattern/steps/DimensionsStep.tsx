@@ -110,7 +110,7 @@ export function DimensionsStep() {
             >
               <span className="block font-medium">{preset.label}</span>
               <span className="block text-label-sm mt-0.5">
-                {preset.width}" \u00d7 {preset.height}"
+                {preset.width}&quot; \u00d7 {preset.height}&quot;
               </span>
             </button>
           ))}
@@ -191,7 +191,7 @@ export function DimensionsStep() {
                 : 'border-outline-variant/20 bg-surface-container text-secondary hover:bg-surface-container-high'
             }`}
           >
-            1/4"
+            1/4&quot;
           </button>
           <button
             type="button"
@@ -202,7 +202,7 @@ export function DimensionsStep() {
                 : 'border-outline-variant/20 bg-surface-container text-secondary hover:bg-surface-container-high'
             }`}
           >
-            3/8"
+            3/8&quot;
           </button>
         </div>
       </div>

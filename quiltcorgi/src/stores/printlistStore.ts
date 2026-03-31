@@ -3,10 +3,23 @@
 import { create } from 'zustand';
 import type { PrintlistItem } from '@/types/printlist';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
+import { clamp } from '@/lib/math-utils';
 import type { PaperSize } from '@/lib/pdf-generator';
 
 const QUANTITY_MIN = 1;
 const QUANTITY_MAX = 9999;
+
+let printlistAbortController: AbortController | null = null;
+
+const INITIAL_STATE = {
+  items: [] as PrintlistItem[],
+  paperSize: 'letter' as PaperSize,
+  isPanelOpen: false,
+  projectId: null as string | null,
+  isSaving: false,
+  isLoading: false,
+  lastSaveError: null as string | null,
+};
 
 interface PrintlistStoreState {
   items: PrintlistItem[];
@@ -35,19 +48,14 @@ interface PrintlistStoreState {
   loadFromServer: (projectId: string) => Promise<void>;
   saveToServer: (projectId: string) => Promise<void>;
   setProjectId: (id: string) => void;
+  reset: () => void;
 }
 
 export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
-  items: [],
-  paperSize: 'letter',
-  isPanelOpen: false,
-  projectId: null,
-  isSaving: false,
-  isLoading: false,
-  lastSaveError: null,
+  ...INITIAL_STATE,
 
   addItem: (item) => {
-    const clampedQuantity = Math.min(Math.max(item.quantity, QUANTITY_MIN), QUANTITY_MAX);
+    const clampedQuantity = clamp(item.quantity, QUANTITY_MIN, QUANTITY_MAX);
     const newItem: PrintlistItem = {
       ...item,
       quantity: clampedQuantity,
@@ -77,16 +85,14 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
   updateQuantity: (shapeId, quantity) =>
     set((state) => ({
       items: state.items.map((i) =>
-        i.shapeId === shapeId
-          ? { ...i, quantity: Math.min(Math.max(quantity, QUANTITY_MIN), QUANTITY_MAX) }
-          : i
+        i.shapeId === shapeId ? { ...i, quantity: clamp(quantity, QUANTITY_MIN, QUANTITY_MAX) } : i
       ),
     })),
 
   updateSeamAllowance: (shapeId, seamAllowance) =>
     set((state) => ({
       items: state.items.map((i) =>
-        i.shapeId === shapeId ? { ...i, seamAllowance: Math.max(0, Math.min(1, seamAllowance)) } : i
+        i.shapeId === shapeId ? { ...i, seamAllowance: clamp(seamAllowance, 0, 1) } : i
       ),
     })),
 
@@ -111,9 +117,13 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
   setProjectId: (id) => set({ projectId: id }),
 
   loadFromServer: async (projectId: string) => {
+    printlistAbortController?.abort();
+    printlistAbortController = new AbortController();
     set({ isLoading: true });
     try {
-      const res = await fetch(`/api/projects/${projectId}/printlist`);
+      const res = await fetch(`/api/projects/${projectId}/printlist`, {
+        signal: printlistAbortController.signal,
+      });
       if (!res.ok) {
         if (res.status === 404) {
           // No printlist yet — that's fine
@@ -130,7 +140,8 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
         projectId,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ isLoading: false });
     }
   },
@@ -155,5 +166,11 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
     } finally {
       set({ isSaving: false });
     }
+  },
+
+  reset: () => {
+    printlistAbortController?.abort();
+    printlistAbortController = null;
+    set({ ...INITIAL_STATE });
   },
 }));

@@ -6,6 +6,8 @@
  * All coordinates are in pixels. Callers handle Fabric.js integration.
  */
 
+import { EPSILON } from './math-utils';
+
 export type SymmetryType = 'mirror-x' | 'mirror-y' | 'mirror-both' | 'diagonal' | 'radial';
 
 export interface SymmetryConfig {
@@ -33,7 +35,10 @@ export interface ActiveZone {
  */
 export type AffineMatrix = [number, number, number, number, number, number];
 
-export interface TransformedObject {
+/**
+ * Describes a symmetry transformation to apply to an object.
+ */
+export interface SymmetryTransform {
   /** The original object data (caller-supplied opaque blob). */
   original: SerializedObject;
   /** The affine transform to apply. */
@@ -197,10 +202,15 @@ export function computeTransforms(config: SymmetryConfig): AffineMatrix[] {
         [-1, 0, 0, -1, w, h], // Bottom-right (mirror both)
       ];
 
-    case 'diagonal':
+    case 'diagonal': {
       // Reflect across the main diagonal (y=x scaled to canvas):
       // x' = y * (w/h), y' = x * (h/w)
+      // Guard against division by zero
+      if (w === 0 || h === 0) {
+        return [];
+      }
       return [[0, h / w, w / h, 0, 0, 0]];
+    }
 
     case 'radial': {
       // N-1 rotations around center by multiples of 360/N
@@ -273,11 +283,11 @@ export function applyTransform(
       newAngle = -obj.angle;
     } else if (symmetryType === 'mirror-both') {
       // Check which specific mirror this transform is
-      if (Math.abs(a - -1) < 0.01 && Math.abs(d - 1) < 0.01) {
+      if (Math.abs(a - -1) < EPSILON && Math.abs(d - 1) < EPSILON) {
         // Mirror Y transform
         flipX = true;
         newAngle = -obj.angle;
-      } else if (Math.abs(a - 1) < 0.01 && Math.abs(d - -1) < 0.01) {
+      } else if (Math.abs(a - 1) < EPSILON && Math.abs(d - -1) < EPSILON) {
         // Mirror X transform
         flipY = true;
         newAngle = -obj.angle;

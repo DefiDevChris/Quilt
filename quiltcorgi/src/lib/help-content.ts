@@ -112,7 +112,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'design-tools',
     title: 'How do I set up a grid layout?',
     content:
-      'Click the Layout Settings icon (four squares) in the toolbar. Pick your layout type — Grid, Sashing, On-Point, Medallion, or Lone Star — and adjust from there.',
+      'Click the Layout Settings icon (four squares) in the toolbar. Pick your layout type — Grid, Sashing, or On-Point — and adjust from there.',
   },
   // Export
   {
@@ -142,7 +142,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'account',
     title: 'What do I get with Pro?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, Symmetry and Serendipity tools, FPP template generation, advanced layouts (Medallion, Lone Star), and PDF export.',
+      'Pro gives you unlimited projects, the full Fabric Library, Symmetry and Serendipity tools, FPP template generation, and PDF export.',
   },
   {
     id: 'ac-2',

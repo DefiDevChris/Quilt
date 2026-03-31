@@ -1,5 +1,5 @@
 import type { Point2D } from '@/lib/photo-pattern-types';
-import type { OpenCV, OpenCVMat, OpenCVMatVector } from '@/types/opencv-js';
+import type { OpenCV, OpenCVMat } from '@/types/opencv-js';
 
 /**
  * Sort four corner points into clockwise order: TL, TR, BR, BL.
@@ -8,8 +8,8 @@ import type { OpenCV, OpenCVMat, OpenCVMatVector } from '@/types/opencv-js';
  * and the difference (x-y) to identify TR (max diff) and BL (min diff).
  */
 export function sortCornersClockwise(
-  corners: readonly [Point2D, Point2D, Point2D, Point2D],
-): [Point2D, Point2D, Point2D, Point2D] {
+  corners: readonly [Point2D, Point2D, Point2D, Point2D]
+): [Point2D, Point2D, Point2D, Point2D] | null {
   const pts = [...corners];
 
   let tlIdx = 0;
@@ -44,6 +44,10 @@ export function sortCornersClockwise(
     }
   }
 
+  // Verify all four indices are unique (degenerate when quilt is rotated exactly 45°)
+  const indices = new Set([tlIdx, trIdx, brIdx, blIdx]);
+  if (indices.size !== 4) return null;
+
   return [pts[tlIdx], pts[trIdx], pts[brIdx], pts[blIdx]];
 }
 
@@ -56,7 +60,7 @@ export function sortCornersClockwise(
  */
 export function autoDetectQuiltBoundary(
   cv: OpenCV,
-  imageMat: OpenCVMat,
+  imageMat: OpenCVMat
 ): [Point2D, Point2D, Point2D, Point2D] | null {
   const gray = new cv.Mat();
   const blurred = new cv.Mat();
@@ -71,13 +75,7 @@ export function autoDetectQuiltBoundary(
     cv.Canny(blurred, edges, 50, 150);
 
     // Find contours
-    cv.findContours(
-      edges,
-      contours,
-      hierarchy,
-      cv.RETR_EXTERNAL,
-      cv.CHAIN_APPROX_SIMPLE,
-    );
+    cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
     // Find the largest contour by area
     let largestContour: OpenCVMat | null = null;
@@ -92,7 +90,9 @@ export function autoDetectQuiltBoundary(
       }
     }
 
-    if (!largestContour) {
+    // Reject if no contour found or if it's too small relative to the image
+    const imageArea = imageMat.rows * imageMat.cols;
+    if (!largestContour || largestArea < imageArea * 0.1) {
       return null;
     }
 
@@ -139,21 +139,20 @@ export function computePerspectiveTransform(
   cv: OpenCV,
   srcCorners: readonly [Point2D, Point2D, Point2D, Point2D],
   destWidth: number,
-  destHeight: number,
+  destHeight: number
 ): OpenCVMat {
   const srcData = [
-    srcCorners[0].x, srcCorners[0].y,
-    srcCorners[1].x, srcCorners[1].y,
-    srcCorners[2].x, srcCorners[2].y,
-    srcCorners[3].x, srcCorners[3].y,
+    srcCorners[0].x,
+    srcCorners[0].y,
+    srcCorners[1].x,
+    srcCorners[1].y,
+    srcCorners[2].x,
+    srcCorners[2].y,
+    srcCorners[3].x,
+    srcCorners[3].y,
   ];
 
-  const dstData = [
-    0, 0,
-    destWidth, 0,
-    destWidth, destHeight,
-    0, destHeight,
-  ];
+  const dstData = [0, 0, destWidth, 0, destWidth, destHeight, 0, destHeight];
 
   const srcMat = cv.matFromArray(4, 1, cv.CV_32FC2, srcData);
   const dstMat = cv.matFromArray(4, 1, cv.CV_32FC2, dstData);
@@ -176,18 +175,12 @@ export function applyPerspectiveCorrection(
   imageMat: OpenCVMat,
   transformMatrix: OpenCVMat,
   width: number,
-  height: number,
+  height: number
 ): OpenCVMat {
   const dst = new cv.Mat();
   const dsize = new cv.Size(width, height);
 
-  cv.warpPerspective(
-    imageMat,
-    dst,
-    transformMatrix,
-    dsize,
-    cv.INTER_LINEAR,
-  );
+  cv.warpPerspective(imageMat, dst, transformMatrix, dsize, cv.INTER_LINEAR);
 
   return dst;
 }

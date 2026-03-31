@@ -46,7 +46,6 @@ interface CommunityState {
   loadMore: () => Promise<void>;
   likePost: (postId: string) => void;
   unlikePost: (postId: string) => void;
-  toggleSavePost: (postId: string, currentlySaved: boolean) => void;
   reset: () => void;
 }
 
@@ -66,7 +65,7 @@ const INITIAL_STATE = {
 let communityAbortController: AbortController | null = null;
 const inFlightActions = new Set<string>();
 
-// Helper to revert optimistic like updates on failure
+// Helper to revert optimistic like update on failure
 function revertPostLike(
   postId: string,
   original: CommunityPost
@@ -206,32 +205,6 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       .catch(() => {
         inFlightActions.delete(`like:${postId}`);
         set(revertPostLike(postId, original));
-      });
-  },
-
-  toggleSavePost: (postId, currentlySaved) => {
-    if (inFlightActions.has(`save:${postId}`)) return;
-    const { posts } = get();
-    const original = posts.find((p) => p.id === postId);
-    if (!original) return;
-    inFlightActions.add(`save:${postId}`);
-
-    set({
-      posts: posts.map((p) => (p.id === postId ? { ...p, isSavedByUser: !currentlySaved } : p)),
-    });
-
-    fetch(`/api/community/${postId}/save`, { method: currentlySaved ? 'DELETE' : 'POST' })
-      .then((res) => {
-        inFlightActions.delete(`save:${postId}`);
-        if (!res.ok) throw new Error('Save failed');
-      })
-      .catch(() => {
-        inFlightActions.delete(`save:${postId}`);
-        set({
-          posts: get().posts.map((p) =>
-            p.id === postId ? { ...p, isSavedByUser: original.isSavedByUser } : p
-          ),
-        });
       });
   },
 

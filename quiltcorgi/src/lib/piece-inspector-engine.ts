@@ -33,6 +33,8 @@ export interface PieceGeometry {
   readonly shapeType: PatchShape;
   readonly svgPathData: string;
   readonly isCurved: boolean;
+  /** Original SVG data for classification caching */
+  readonly _originalSvgData?: string;
 }
 
 export interface PieceDimensions {
@@ -171,6 +173,7 @@ export function extractPieceGeometry(
       shapeType: classification.shape,
       svgPathData: pathData,
       isCurved: false,
+      _originalSvgData: svgData,
     };
   }
 
@@ -189,6 +192,7 @@ export function extractPieceGeometry(
         shapeType: classification.shape,
         svgPathData: svgData.trim(),
         isCurved: detectCurves(svgData.trim()),
+        _originalSvgData: `<path d="${svgData.trim()}"/>`,
       };
     }
     return null;
@@ -206,6 +210,7 @@ export function extractPieceGeometry(
     shapeType: classification.shape,
     svgPathData: pathD,
     isCurved: detectCurves(pathD),
+    _originalSvgData: svgData,
   };
 }
 
@@ -222,21 +227,11 @@ export function computePieceDimensions(
   geometry: PieceGeometry,
   seamAllowance: number
 ): PieceDimensions {
-  // Scale vertices back to pixels for classifyPatchShape (it expects pixel-based SVG)
-  const pxVertices = geometry.vertices.map((v) => ({
-    x: v.x * PIXELS_PER_INCH,
-    y: v.y * PIXELS_PER_INCH,
-  }));
-  const pxPathData =
-    `M ${pxVertices[0].x} ${pxVertices[0].y} ` +
-    pxVertices
-      .slice(1)
-      .map((p) => `L ${p.x} ${p.y}`)
-      .join(' ') +
-    ' Z';
-  const pxSvg = `<path d="${pxPathData}"/>`;
+  // Use cached SVG data if available to avoid redundant reconstruction
+  const svgData = geometry._originalSvgData ?? 
+    `<path d="${geometry.svgPathData}"/>`;
 
-  const classification = classifyPatchShape(pxSvg, seamAllowance);
+  const classification = classifyPatchShape(svgData, seamAllowance);
 
   return {
     finishedWidth: classification.finishedWidth,

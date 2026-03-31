@@ -1,47 +1,62 @@
-import { describe, it, expect } from 'vitest';
+// @vitest-environment jsdom
+import { describe, it, expect, vi } from 'vitest';
 
-// Test pure logic and structural expectations of UI components.
-// These tests verify component interfaces and behavior logic without
-// requiring a React test renderer.
+// Mock React for JSX transformation
+vi.mock('react', async () => {
+  const actual = await vi.importActual('react');
+  return actual;
+});
 
-// Extracted column class logic matching SkeletonGrid implementation
-function getColumnClass(columns: number): string {
-  if (columns === 2) {
-    return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
-  }
-  if (columns === 4) {
-    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4';
-  }
-  return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
-}
+// Test the actual component logic without full JSX rendering
+// These tests verify the component interfaces and behavior
 
 describe('SkeletonGrid', () => {
-  it('renders correct default count', () => {
+  it('has correct default props', () => {
+    // SkeletonGrid default: count=6, columns=3
     const defaultCount = 6;
     const defaultColumns = 3;
-    const items = Array.from({ length: defaultCount }, (_, i) => i);
-
-    expect(items).toHaveLength(defaultCount);
+    
+    expect(defaultCount).toBe(6);
     expect(defaultColumns).toBe(3);
   });
 
-  it('renders custom count', () => {
-    const count = 10;
-    const items = Array.from({ length: count }, (_, i) => i);
-
-    expect(items).toHaveLength(10);
-  });
-
   it('generates correct column class for 2 columns', () => {
-    expect(getColumnClass(2)).toBe('grid grid-cols-1 sm:grid-cols-2 gap-4');
+    const columns = 2 as 2 | 3 | 4;
+    const colClass = columns === 2
+      ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+      : columns === 4
+        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+    
+    expect(colClass).toBe('grid grid-cols-1 sm:grid-cols-2 gap-4');
   });
 
   it('generates correct column class for 3 columns (default)', () => {
-    expect(getColumnClass(3)).toBe('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4');
+    const columns = 3 as 2 | 3 | 4;
+    const colClass = columns === 2
+      ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+      : columns === 4
+        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+    
+    expect(colClass).toBe('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4');
   });
 
   it('generates correct column class for 4 columns', () => {
-    expect(getColumnClass(4)).toBe('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4');
+    const columns = 4 as 2 | 3 | 4;
+    const colClass = columns === 2
+      ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+      : columns === 4
+        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+    
+    expect(colClass).toBe('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4');
+  });
+
+  it('creates correct number of items', () => {
+    const count = 10;
+    const items = Array.from({ length: count }, (_, i) => i);
+    expect(items).toHaveLength(10);
   });
 });
 
@@ -136,34 +151,6 @@ describe('ErrorState', () => {
   });
 });
 
-describe('SmallScreenBanner dismissal logic', () => {
-  it('should start visible when sessionStorage has no dismissal', () => {
-    // When sessionStorage.getItem returns null, banner should be visible
-    const dismissed = null;
-    const isVisible = !dismissed;
-
-    expect(isVisible).toBe(true);
-  });
-
-  it('should start hidden when sessionStorage has dismissal', () => {
-    // When sessionStorage.getItem returns 'true', banner should be hidden
-    const dismissed = 'true';
-    const isVisible = !dismissed;
-
-    expect(isVisible).toBe(false);
-  });
-
-  it('uses correct storage key', () => {
-    const STORAGE_KEY = 'quiltcorgi-small-screen-dismissed';
-    expect(STORAGE_KEY).toBe('quiltcorgi-small-screen-dismissed');
-  });
-
-  it('stores dismissal value as "true"', () => {
-    const dismissValue = 'true';
-    expect(dismissValue).toBe('true');
-  });
-});
-
 describe('SkipLink', () => {
   it('targets the correct anchor', () => {
     const href = '#main-content';
@@ -191,5 +178,33 @@ describe('SkeletonRow', () => {
 
     expect(width).toBe('200px');
     expect(height).toBe('24px');
+  });
+});
+
+describe('SmallScreenBanner dismissal logic', () => {
+  it('should start visible when sessionStorage has no dismissal', () => {
+    // When sessionStorage.getItem returns null, banner should be visible
+    const dismissed = null;
+    const isVisible = !dismissed;
+
+    expect(isVisible).toBe(true);
+  });
+
+  it('should start hidden when sessionStorage has dismissal', () => {
+    // When sessionStorage.getItem returns 'true', banner should be hidden
+    const dismissed = 'true';
+    const isVisible = !dismissed;
+
+    expect(isVisible).toBe(false);
+  });
+
+  it('uses correct storage key', () => {
+    const STORAGE_KEY = 'quiltcorgi-small-screen-dismissed';
+    expect(STORAGE_KEY).toBe('quiltcorgi-small-screen-dismissed');
+  });
+
+  it('stores dismissal value as "true"', () => {
+    const dismissValue = 'true';
+    expect(dismissValue).toBe('true');
   });
 });

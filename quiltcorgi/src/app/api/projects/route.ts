@@ -9,6 +9,8 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
+import { z } from 'zod';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -80,9 +82,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
+const duplicateProjectSchema = z.object({
+  sourceProjectId: z.string().uuid('Invalid source project ID'),
+});
+
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`projects:${session.user.id}`, API_RATE_LIMITS.projects);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
     const body = await request.json();
@@ -97,11 +106,15 @@ export async function POST(request: NextRequest) {
     }
 
     // --- Duplicate project flow ---
-    if (body.sourceProjectId && typeof body.sourceProjectId === 'string') {
+    if (body.sourceProjectId) {
+      const duplicateParsed = duplicateProjectSchema.safeParse({ sourceProjectId: body.sourceProjectId });
+      if (!duplicateParsed.success) {
+        return validationErrorResponse(duplicateParsed.error.issues[0]?.message ?? 'Invalid source project ID');
+      }
       const [source] = await db
         .select()
         .from(projects)
-        .where(eq(projects.id, body.sourceProjectId))
+        .where(eq(projects.id, duplicateParsed.data.sourceProjectId))
         .limit(1);
 
       if (!source || source.userId !== session.user.id) {

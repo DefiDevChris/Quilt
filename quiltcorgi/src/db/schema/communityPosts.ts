@@ -24,6 +24,10 @@ export const communityPosts = pgTable(
     commentCount: integer('commentCount').notNull().default(0),
     category: communityCategoryEnum('category').notNull().default('general'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_community_posts_status_createdAt').on(table.status, table.createdAt),

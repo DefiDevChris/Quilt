@@ -4,43 +4,13 @@ import fs from 'fs';
 vi.mock('fs');
 
 import {
-  getAllTutorials,
-  getTutorialBySlug,
-  filterTutorialsByDifficulty,
   getAllBlogPosts,
   getBlogPostBySlug,
   getBlogPostsByTag,
   getAllBlogTags,
   paginateBlogPosts,
-  searchContent,
   generateRssFeed,
 } from '@/lib/mdx-engine';
-
-const SAMPLE_TUTORIAL = `---
-title: "Getting Started"
-slug: "getting-started"
-difficulty: "beginner"
-description: "Your first quilt design"
-estimatedTime: "15 min"
-publishedAt: "2026-01-15"
-tags: ["beginner", "basics"]
-order: 0
----
-
-Welcome to QuiltCorgi!`;
-
-const SAMPLE_TUTORIAL_2 = `---
-title: "Advanced Layouts"
-slug: "advanced-layouts"
-difficulty: "advanced"
-description: "Medallion and Lone Star"
-estimatedTime: "25 min"
-publishedAt: "2026-02-01"
-tags: ["layout", "advanced"]
-order: 2
----
-
-Learn about layouts.`;
 
 const SAMPLE_BLOG_POST = `---
 title: "Introducing QuiltCorgi"
@@ -64,10 +34,9 @@ tags: ["philosophy", "free"]
 
 Everyone deserves access.`;
 
-function setupMocks(tutorialFiles: Record<string, string>, blogFiles: Record<string, string>) {
+function setupMocks(blogFiles: Record<string, string>) {
   vi.mocked(fs.existsSync).mockImplementation((dir: fs.PathLike) => {
     const dirStr = String(dir);
-    if (dirStr.includes('tutorials')) return Object.keys(tutorialFiles).length > 0;
     if (dirStr.includes('blog')) return Object.keys(blogFiles).length > 0;
     return false;
   });
@@ -75,16 +44,12 @@ function setupMocks(tutorialFiles: Record<string, string>, blogFiles: Record<str
   // @ts-expect-error -- mock returns string[] instead of Dirent[]
   vi.mocked(fs.readdirSync).mockImplementation((dir: fs.PathLike) => {
     const dirStr = String(dir);
-    if (dirStr.includes('tutorials')) return Object.keys(tutorialFiles);
     if (dirStr.includes('blog')) return Object.keys(blogFiles);
     return [];
   });
 
   vi.mocked(fs.readFileSync).mockImplementation((filePath: fs.PathOrFileDescriptor) => {
     const fileStr = String(filePath);
-    for (const [name, content] of Object.entries(tutorialFiles)) {
-      if (fileStr.endsWith(name)) return content;
-    }
     for (const [name, content] of Object.entries(blogFiles)) {
       if (fileStr.endsWith(name)) return content;
     }
@@ -97,83 +62,12 @@ describe('mdx-engine', () => {
     vi.clearAllMocks();
   });
 
-  describe('getAllTutorials', () => {
-    it('parses and returns tutorials sorted by order', () => {
-      setupMocks(
-        {
-          'getting-started.mdx': SAMPLE_TUTORIAL,
-          'advanced-layouts.mdx': SAMPLE_TUTORIAL_2,
-        },
-        {}
-      );
-
-      const tutorials = getAllTutorials();
-      expect(tutorials).toHaveLength(2);
-      expect(tutorials[0].slug).toBe('getting-started');
-      expect(tutorials[0].difficulty).toBe('beginner');
-      expect(tutorials[0].content).toContain('Welcome to QuiltCorgi!');
-      expect(tutorials[1].slug).toBe('advanced-layouts');
-    });
-
-    it('returns empty array when directory does not exist', () => {
-      setupMocks({}, {});
-      expect(getAllTutorials()).toHaveLength(0);
-    });
-
-    it('skips files with invalid frontmatter', () => {
-      setupMocks(
-        {
-          'getting-started.mdx': SAMPLE_TUTORIAL,
-          'broken.mdx': 'No frontmatter at all, just content',
-        },
-        {}
-      );
-
-      const tutorials = getAllTutorials();
-      expect(tutorials).toHaveLength(1);
-      expect(tutorials[0].slug).toBe('getting-started');
-    });
-  });
-
-  describe('getTutorialBySlug', () => {
-    it('returns matching tutorial', () => {
-      setupMocks({ 'getting-started.mdx': SAMPLE_TUTORIAL }, {});
-      const tutorial = getTutorialBySlug('getting-started');
-      expect(tutorial).not.toBeNull();
-      expect(tutorial?.title).toBe('Getting Started');
-    });
-
-    it('returns null for unknown slug', () => {
-      setupMocks({ 'getting-started.mdx': SAMPLE_TUTORIAL }, {});
-      expect(getTutorialBySlug('nonexistent')).toBeNull();
-    });
-  });
-
-  describe('filterTutorialsByDifficulty', () => {
-    it('filters by difficulty level', () => {
-      setupMocks(
-        {
-          'getting-started.mdx': SAMPLE_TUTORIAL,
-          'advanced-layouts.mdx': SAMPLE_TUTORIAL_2,
-        },
-        {}
-      );
-
-      const beginnerTutorials = filterTutorialsByDifficulty('beginner');
-      expect(beginnerTutorials).toHaveLength(1);
-      expect(beginnerTutorials[0].slug).toBe('getting-started');
-    });
-  });
-
   describe('getAllBlogPosts', () => {
     it('parses and returns posts sorted by date descending', () => {
-      setupMocks(
-        {},
-        {
-          'introducing.mdx': SAMPLE_BLOG_POST,
-          'why-free.mdx': SAMPLE_BLOG_POST_2,
-        }
-      );
+      setupMocks({
+        'introducing.mdx': SAMPLE_BLOG_POST,
+        'why-free.mdx': SAMPLE_BLOG_POST_2,
+      });
 
       const posts = getAllBlogPosts();
       expect(posts).toHaveLength(2);
@@ -184,7 +78,7 @@ describe('mdx-engine', () => {
 
   describe('getBlogPostBySlug', () => {
     it('returns matching post', () => {
-      setupMocks({}, { 'introducing.mdx': SAMPLE_BLOG_POST });
+      setupMocks({ 'introducing.mdx': SAMPLE_BLOG_POST });
       const post = getBlogPostBySlug('introducing-quiltcorgi');
       expect(post).not.toBeNull();
       expect(post?.author).toBe('QuiltCorgi Team');
@@ -193,13 +87,10 @@ describe('mdx-engine', () => {
 
   describe('getBlogPostsByTag', () => {
     it('filters by tag case-insensitively', () => {
-      setupMocks(
-        {},
-        {
-          'introducing.mdx': SAMPLE_BLOG_POST,
-          'why-free.mdx': SAMPLE_BLOG_POST_2,
-        }
-      );
+      setupMocks({
+        'introducing.mdx': SAMPLE_BLOG_POST,
+        'why-free.mdx': SAMPLE_BLOG_POST_2,
+      });
 
       const launches = getBlogPostsByTag('Launch');
       expect(launches).toHaveLength(1);
@@ -209,13 +100,10 @@ describe('mdx-engine', () => {
 
   describe('getAllBlogTags', () => {
     it('returns deduplicated sorted tags', () => {
-      setupMocks(
-        {},
-        {
-          'introducing.mdx': SAMPLE_BLOG_POST,
-          'why-free.mdx': SAMPLE_BLOG_POST_2,
-        }
-      );
+      setupMocks({
+        'introducing.mdx': SAMPLE_BLOG_POST,
+        'why-free.mdx': SAMPLE_BLOG_POST_2,
+      });
 
       const tags = getAllBlogTags();
       expect(tags).toEqual(['announcement', 'free', 'launch', 'philosophy']);
@@ -224,13 +112,10 @@ describe('mdx-engine', () => {
 
   describe('paginateBlogPosts', () => {
     it('returns correct page of posts', () => {
-      setupMocks(
-        {},
-        {
-          'introducing.mdx': SAMPLE_BLOG_POST,
-          'why-free.mdx': SAMPLE_BLOG_POST_2,
-        }
-      );
+      setupMocks({
+        'introducing.mdx': SAMPLE_BLOG_POST,
+        'why-free.mdx': SAMPLE_BLOG_POST_2,
+      });
 
       const result = paginateBlogPosts(1, 1);
       expect(result.posts).toHaveLength(1);
@@ -239,33 +124,9 @@ describe('mdx-engine', () => {
     });
   });
 
-  describe('searchContent', () => {
-    it('searches across tutorials and blog posts', () => {
-      setupMocks(
-        { 'getting-started.mdx': SAMPLE_TUTORIAL },
-        { 'introducing.mdx': SAMPLE_BLOG_POST }
-      );
-
-      const results = searchContent('quilt');
-      expect(results.tutorials).toHaveLength(1);
-      expect(results.blogPosts).toHaveLength(1);
-    });
-
-    it('returns empty results for no matches', () => {
-      setupMocks(
-        { 'getting-started.mdx': SAMPLE_TUTORIAL },
-        { 'introducing.mdx': SAMPLE_BLOG_POST }
-      );
-
-      const results = searchContent('zzzznonexistent');
-      expect(results.tutorials).toHaveLength(0);
-      expect(results.blogPosts).toHaveLength(0);
-    });
-  });
-
   describe('generateRssFeed', () => {
     it('generates valid RSS XML', () => {
-      setupMocks({}, { 'introducing.mdx': SAMPLE_BLOG_POST });
+      setupMocks({ 'introducing.mdx': SAMPLE_BLOG_POST });
       const posts = getAllBlogPosts();
       const rss = generateRssFeed('https://quiltcorgi.com', posts);
 

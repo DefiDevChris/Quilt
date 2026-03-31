@@ -1,11 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, User, Bell, Bookmark, Settings, LifeBuoy } from 'lucide-react';
+import { LayoutDashboard, User, Bell, Settings, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { SocialQuickViewModal } from '@/components/social/SocialQuickViewModal';
+import { SocialSplitPane, type SplitPanelId } from '@/components/social/SocialSplitPane';
 
-export type SectionId = 'feed' | 'blog' | 'saved' | 'most-saved' | 'profile';
+const SPLIT_HEADERS: Record<SplitPanelId, { label: string; subtitle: string }> = {
+  blog: { label: 'Blog', subtitle: 'Insights and tutorials' },
+  saved: { label: 'Saved', subtitle: 'Your favorite posts' },
+  feed: { label: 'Feed', subtitle: 'Explore the latest updates' },
+  profile: { label: 'Profile', subtitle: 'Manage your account' },
+};
+
+export type SectionId = 'feed' | 'blog' | 'profile';
 
 interface Section {
   id: SectionId;
@@ -29,20 +37,6 @@ export const SECTIONS: Section[] = [
     subtitle: 'Insights and tutorials',
     href: '/blog',
     image: '/images/quilts/quilt_02_bed_hexagon.png',
-  },
-  {
-    id: 'saved',
-    label: 'Saved',
-    subtitle: 'Your bookmarked posts',
-    href: '/socialthreads?section=saved',
-    image: '/images/quilts/quilt_06_wall_art.png',
-  },
-  {
-    id: 'most-saved',
-    label: 'Most Saved',
-    subtitle: 'Community favorites',
-    href: '/socialthreads?section=most-saved',
-    image: '/images/quilts/quilt_22_porch_railing.png',
   },
 ];
 
@@ -74,14 +68,21 @@ const DropdownButton = ({ icon, label, href, onClick }: DropdownButtonProps) => 
 };
 
 interface SocialLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   activeSection: SectionId;
   contentClassName?: string;
+  splitMode?: boolean;
 }
 
-export function SocialLayout({ children, activeSection, contentClassName }: SocialLayoutProps) {
+export function SocialLayout({
+  children,
+  activeSection,
+  contentClassName,
+  splitMode = false,
+}: SocialLayoutProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [splitPanel, setSplitPanel] = useState<SplitPanelId>('feed');
 
   const isProfile = activeSection === 'profile';
   const activeSectionData = isProfile
@@ -116,9 +117,11 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
           <div className="hidden sm:block w-px h-8 bg-slate-300/50 mx-2" />
           <div className="text-left hidden sm:block">
             <h1 className="text-xl font-extrabold text-slate-800 tracking-tight leading-tight">
-              {activeSectionData.label}
+              {splitMode ? SPLIT_HEADERS[splitPanel].label : activeSectionData.label}
             </h1>
-            <p className="text-xs text-slate-500 font-medium">{activeSectionData.subtitle}</p>
+            <p className="text-xs text-slate-500 font-medium">
+              {splitMode ? SPLIT_HEADERS[splitPanel].subtitle : activeSectionData.subtitle}
+            </p>
           </div>
         </div>
 
@@ -155,22 +158,17 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
                   <DropdownButton
                     icon={<Bell size={28} strokeWidth={1.5} />}
                     label="Notifications"
-                    href="/profile?tab=notifications"
-                  />
-                  <DropdownButton
-                    icon={<Bookmark size={28} strokeWidth={1.5} />}
-                    label="Saved"
-                    href="/profile?tab=saved"
+                    href="/profile"
                   />
                   <DropdownButton
                     icon={<Settings size={28} strokeWidth={1.5} />}
                     label="Settings"
-                    href="/profile?tab=settings"
+                    href="/profile/billing"
                   />
                   <DropdownButton
                     icon={<LifeBuoy size={28} strokeWidth={1.5} />}
                     label="Support"
-                    href="/tutorials"
+                    href="/blog"
                   />
                 </div>
               </div>
@@ -183,32 +181,38 @@ export function SocialLayout({ children, activeSection, contentClassName }: Soci
       <SocialQuickViewModal />
 
       {/* Main Layout */}
-      <div className="relative z-10 flex h-screen pt-20">
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto relative animate-expand pt-4 px-4 lg:px-6">
-          <div className={contentClassName ?? 'pb-10 max-w-2xl mx-auto'}>{children}</div>
-        </main>
+      {splitMode ? (
+        <div className="relative z-10 h-screen pt-20">
+          <SocialSplitPane onPanelChange={setSplitPanel} />
+        </div>
+      ) : (
+        <div className="relative z-10 flex h-screen pt-20">
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto relative animate-expand pt-4 px-4 lg:px-6">
+            <div className={contentClassName ?? 'pb-10 max-w-2xl mx-auto'}>{children}</div>
+          </main>
 
-        {/* Right Sidebar — static image per section */}
-        <aside className="w-72 hidden lg:flex flex-col h-full flex-shrink-0">
-          {miniSections.map((section) => (
-            <Link
-              key={section.id}
-              href={section.href}
-              className="flex-1 relative w-full overflow-hidden group"
-            >
-              <img
-                src={section.image}
-                alt={section.label}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute top-0 left-0 right-0 p-3 z-10 bg-gradient-to-b from-black/60 to-transparent">
-                <h5 className="text-white font-bold text-xl drop-shadow">{section.label}</h5>
-              </div>
-            </Link>
-          ))}
-        </aside>
-      </div>
+          {/* Right Sidebar — static image per section */}
+          <aside className="w-72 hidden lg:flex flex-col h-full flex-shrink-0">
+            {miniSections.map((section) => (
+              <Link
+                key={section.id}
+                href={section.href}
+                className="flex-1 relative w-full overflow-hidden group"
+              >
+                <img
+                  src={section.image}
+                  alt={section.label}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute top-0 left-0 right-0 p-3 z-10 bg-gradient-to-b from-black/60 to-transparent">
+                  <h5 className="text-white font-bold text-xl drop-shadow">{section.label}</h5>
+                </div>
+              </Link>
+            ))}
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

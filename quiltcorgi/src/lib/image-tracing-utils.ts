@@ -4,6 +4,7 @@
  */
 
 import { ACCEPTED_IMAGE_TYPES } from '@/lib/constants';
+import { clamp } from '@/lib/math-utils';
 
 /**
  * Checks whether the given MIME type is an accepted image type.
@@ -14,7 +15,8 @@ export function isValidImageType(type: string): boolean {
 
 /**
  * Clamps an opacity value to the valid range [0, 1].
+ * Returns 1 for invalid (non-finite) inputs.
  */
 export function clampOpacity(value: number): number {
-  return Math.max(0, Math.min(1, value));
+  return clamp(value, 0, 1);
 }

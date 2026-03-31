@@ -13,6 +13,7 @@ import {
 import { checkTrustLevel } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,9 @@ export async function PATCH(
 ) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`admin:${session.user.id}`, API_RATE_LIMITS.admin);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
   if (!trustCheck.allowed) return trustCheck.response!;

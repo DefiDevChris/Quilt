@@ -289,26 +289,28 @@ export function generatePiecedBorder(
   const rightRaw = generator(innerHeight, unitSizePx, color1, color2);
 
   // Offset positions for each side
+  // Top/bottom strips span only innerWidth (not including corner widths)
+  // Left/right strips span full innerHeight + 2*borderWidth (including corners)
   const topOffset = offset;
   const topUnits = offsetUnits(topRaw, borderWidthPx + offset, topOffset - borderWidthPx);
   const bottomUnits = offsetUnits(bottomRaw, borderWidthPx + offset, innerHeight + offset);
   const leftUnits = offsetUnits(
     leftRaw.map((u) => ({ ...u, x: u.y, y: u.x, rotation: 90 })),
     offset - borderWidthPx,
-    borderWidthPx + offset
+    offset
   );
   const rightUnits = offsetUnits(
     rightRaw.map((u) => ({ ...u, x: u.y, y: u.x, rotation: 90 })),
     innerWidth + offset,
-    borderWidthPx + offset
+    offset
   );
 
-  // Generate corner units
+  // Generate corner units - placed at the four corners
   const corner = generateCornerUnit(cornerTreatment, borderWidthPx, color1, color2);
   const cornerUnits: BorderPieceUnit[] = [
-    { ...corner, x: offset - borderWidthPx, y: topOffset - borderWidthPx },
-    { ...corner, x: innerWidth + offset, y: topOffset - borderWidthPx, rotation: 90 },
-    { ...corner, x: offset - borderWidthPx, y: innerHeight + offset, rotation: 270 },
+    { ...corner, x: offset, y: offset - borderWidthPx },
+    { ...corner, x: innerWidth + offset, y: offset - borderWidthPx, rotation: 90 },
+    { ...corner, x: offset, y: innerHeight + offset, rotation: 270 },
     { ...corner, x: innerWidth + offset, y: innerHeight + offset, rotation: 180 },
   ];
 

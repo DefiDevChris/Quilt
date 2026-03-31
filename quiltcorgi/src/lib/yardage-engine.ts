@@ -1,3 +1,5 @@
+import { clamp } from './math-utils';
+
 export interface CanvasShapeData {
   id: string;
   widthPx: number;
@@ -81,7 +83,9 @@ export function calculateYardage(
   wasteMargin: number
 ): number {
   if (totalAreaSqIn === 0 || wofInches <= 0) return 0;
-  const areaWithWaste = totalAreaSqIn * (1 + wasteMargin);
+  // Clamp wasteMargin to reasonable range [0, 0.5]
+  const validWasteMargin = clamp(wasteMargin, 0, 0.5);
+  const areaWithWaste = totalAreaSqIn * (1 + validWasteMargin);
   const lengthInches = areaWithWaste / wofInches;
   return lengthInches / INCHES_PER_YARD;
 }

@@ -7,12 +7,16 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`upload:${session.user.id}`, API_RATE_LIMITS.upload);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const userRole = session.user.role;
   const isPro = userRole === 'pro' || userRole === 'admin';

@@ -7,6 +7,7 @@
 import type { ParsedPattern, ParsedBlock, ParsedLayout } from './pattern-parser-types';
 import type { FabricMatch } from './pattern-fabric-matcher';
 import type { BlockMatchResult } from './pattern-block-matcher';
+import { DEFAULT_STROKE_COLOR } from './constants';
 
 export interface ImportedProject {
   readonly name: string;
@@ -91,7 +92,7 @@ export interface BuildContext {
 // Internal constants
 export const CANVAS_DATA_VERSION = '7.2.0';
 export const CANVAS_BACKGROUND = 'transparent';
-export const DEFAULT_STROKE_COLOR = '#333333';
+export { DEFAULT_STROKE_COLOR } from './constants';
 export const DEFAULT_STROKE_WIDTH = 1;
 export const BORDER_FILL = '#f5f0e6';
 export const SASHING_FILL = '#eae8de';

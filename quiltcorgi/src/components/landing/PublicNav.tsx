@@ -30,9 +30,6 @@ export default function PublicNav() {
           >
             QuiltCorgi
           </span>
-          <span className="hidden sm:inline-block text-sm text-warm-text-muted ml-2">
-            Quilt Design Studio
-          </span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-6">
@@ -42,30 +39,12 @@ export default function PublicNav() {
           >
             Features
           </a>
-          <Link
-            href="/socialthreads"
+          <a
+            href="#social-threads"
             className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
           >
             Social Threads
-          </Link>
-          <Link
-            href="/blog"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
-          >
-            Blog
-          </Link>
-          <Link
-            href="/tutorials"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
-          >
-            Tutorials
-          </Link>
-          <Link
-            href="/auth/signin"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
-          >
-            Sign In
-          </Link>
+          </a>
           <Link
             href="/auth/signup"
             className="px-5 py-2 bg-warm-peach text-warm-text rounded-full font-semibold hover:bg-warm-peach-dark transition-colors whitespace-nowrap"
@@ -108,34 +87,13 @@ export default function PublicNav() {
           >
             Features
           </a>
-          <Link
-            href="/socialthreads"
+          <a
+            href="#social-threads"
             className="block text-warm-text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Social Threads
-          </Link>
-          <Link
-            href="/blog"
-            className="block text-warm-text-secondary font-medium py-2"
-            onClick={() => setMenuOpen(false)}
-          >
-            Blog
-          </Link>
-          <Link
-            href="/tutorials"
-            className="block text-warm-text-secondary font-medium py-2"
-            onClick={() => setMenuOpen(false)}
-          >
-            Tutorials
-          </Link>
-          <Link
-            href="/auth/signin"
-            className="block text-warm-text-secondary font-medium py-2"
-            onClick={() => setMenuOpen(false)}
-          >
-            Sign In
-          </Link>
+          </a>
           <Link
             href="/auth/signup"
             className="block text-center px-6 py-3 bg-warm-peach text-warm-text rounded-full font-semibold"

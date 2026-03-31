@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 
 const MOBILE_BREAKPOINT = '(max-width: 767px)';
 
@@ -10,7 +10,8 @@ export function useIsMobile(): boolean {
     return window.matchMedia(MOBILE_BREAKPOINT).matches;
   });
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => {
     const mql = window.matchMedia(MOBILE_BREAKPOINT);
     setIsMobile(mql.matches);
 

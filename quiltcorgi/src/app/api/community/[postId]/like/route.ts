@@ -9,6 +9,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,9 @@ export async function POST(
   if (!session) return unauthorizedResponse();
 
   const { postId } = await params;
+
+  const rl = await checkRateLimit(`like:${session.user.id}`, API_RATE_LIMITS.like);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const trustCheck = await checkTrustLevel(session.user.id, 'canLike');
   if (!trustCheck.allowed) return trustCheck.response!;

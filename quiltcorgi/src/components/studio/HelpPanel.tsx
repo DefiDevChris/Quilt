@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '@/stores/canvasStore';
 import {
@@ -141,12 +142,12 @@ function LinksSection() {
         Learn More
       </h3>
       <div className="flex flex-col gap-1">
-        <a href="/tutorials" className="text-body-sm text-primary hover:underline px-1 py-1">
+        <Link href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
           Video Tutorials
-        </a>
-        <a href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
+        </Link>
+        <Link href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
           Blog & Tips
-        </a>
+        </Link>
       </div>
 
       <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mt-4 mb-2">

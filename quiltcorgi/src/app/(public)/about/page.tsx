@@ -20,8 +20,8 @@ export default function AboutPage() {
         </h1>
         <p className="text-lg text-warm-text-secondary leading-relaxed">
           QuiltCorgi was born from a simple idea: quilting design software should be as joyful 
-          and creative as quilting itself. We've built a modern, browser-based studio that 
-          empowers quilters of all skill levels to bring their visions to life. Whether you're 
+          and creative as quilting itself. We&apos;ve built a modern, browser-based studio that 
+          empowers quilters of all skill levels to bring their visions to life. Whether you&apos;re 
           drafting a custom block, calculating complex yardage, or exploring new colorways, 
           QuiltCorgi provides the intuitive tools you need without the steep learning curve. 
           Join our community of passionate makers and start designing your next masterpiece today.

@@ -13,8 +13,7 @@ import {
 
 export const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
 export const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID ?? '';
-
-const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID ?? '';
+export const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID ?? '';
 
 function getClient() {
   if (!COGNITO_CLIENT_ID || !COGNITO_USER_POOL_ID) {
