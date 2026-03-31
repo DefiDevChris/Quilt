@@ -7,13 +7,16 @@ import type {
   ScaledPiece,
   PipelineStep,
   Point2D,
+  QuiltDetectionConfig,
 } from '@/lib/photo-pattern-types';
+import { DEFAULT_QUILT_DETECTION_CONFIG } from '@/lib/photo-pattern-types';
 import {
   PHOTO_PATTERN_SENSITIVITY_DEFAULT,
   DEFAULT_SEAM_ALLOWANCE_INCHES,
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
+import { terminateDetectionWorker } from '@/lib/photo-pattern-engine';
 
 interface PhotoPatternState {
   step: PhotoPatternStep;
@@ -41,6 +44,11 @@ interface PhotoPatternState {
   seamAllowance: 0.25 | 0.375;
   lockAspectRatio: boolean;
   scaledPieces: readonly ScaledPiece[];
+  /**
+   * Scan configuration / Quilt Profile settings.
+   * These "priors" help the CV engine make better decisions.
+   */
+  scanConfig: QuiltDetectionConfig;
 
   openModal: () => void;
   closeModal: () => void;
@@ -55,6 +63,7 @@ interface PhotoPatternState {
   setSeamAllowance: (value: 0.25 | 0.375) => void;
   setLockAspectRatio: (locked: boolean) => void;
   setScaledPieces: (pieces: readonly ScaledPiece[]) => void;
+  setScanConfig: (config: QuiltDetectionConfig) => void;
   reset: () => void;
 }
 
@@ -73,14 +82,21 @@ const initialState = {
   seamAllowance: DEFAULT_SEAM_ALLOWANCE_INCHES as 0.25 | 0.375,
   lockAspectRatio: true,
   scaledPieces: [] as readonly ScaledPiece[],
+  scanConfig: DEFAULT_QUILT_DETECTION_CONFIG,
 };
 
-export const usePhotoPatternStore = create<PhotoPatternState>((set) => ({
+export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
   ...initialState,
 
   openModal: () => set({ isModalOpen: true }),
 
-  closeModal: () => set({ isModalOpen: false }),
+  closeModal: () => {
+    const { originalImageUrl } = get();
+    if (originalImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(originalImageUrl);
+    }
+    set({ ...initialState, isModalOpen: false });
+  },
 
   setStep: (step) => set({ step }),
 
@@ -104,5 +120,14 @@ export const usePhotoPatternStore = create<PhotoPatternState>((set) => ({
 
   setScaledPieces: (pieces) => set({ scaledPieces: pieces }),
 
-  reset: () => set({ ...initialState }),
+  setScanConfig: (config) => set({ scanConfig: config }),
+
+  reset: () => {
+    const { originalImageUrl } = get();
+    if (originalImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(originalImageUrl);
+    }
+    terminateDetectionWorker();
+    set({ ...initialState });
+  },
 }));

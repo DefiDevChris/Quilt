@@ -10,6 +10,7 @@ import {
   notFoundResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,6 +53,9 @@ const avatarUpdateSchema = z.object({
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`profile:${session.user.id}`, API_RATE_LIMITS.profile);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
     const body = await request.json();

@@ -22,5 +22,4 @@ export { notifications } from './notifications';
 export { patternTemplates } from './patternTemplates';
 export { userProfiles } from './userProfiles';
 export { comments } from './comments';
-export { savedPosts } from './savedPosts';
 export { blogPosts } from './blogPosts';

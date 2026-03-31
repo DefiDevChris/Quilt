@@ -26,6 +26,8 @@ interface NotificationState {
   reset: () => void;
 }
 
+let notificationAbortController: AbortController | null = null;
+
 const INITIAL_STATE = {
   notifications: [] as Notification[],
   unreadCount: 0,
@@ -34,14 +36,25 @@ const INITIAL_STATE = {
   error: null as string | null,
 };
 
+function revertNotifications(
+  previousNotifications: Notification[],
+  previousUnreadCount: number
+): Partial<NotificationState> {
+  return { notifications: previousNotifications, unreadCount: previousUnreadCount };
+}
+
 export const useNotificationStore = create<NotificationState>((set, get) => ({
   ...INITIAL_STATE,
 
   fetchNotifications: async () => {
+    notificationAbortController?.abort();
+    notificationAbortController = new AbortController();
     set({ isLoading: true, error: null });
 
     try {
-      const res = await fetch('/api/notifications?limit=20');
+      const res = await fetch('/api/notifications?limit=20', {
+        signal: notificationAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -55,7 +68,8 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         unreadCount: data.unreadCount,
         isLoading: false,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load notifications', isLoading: false });
     }
   },
@@ -63,6 +77,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   markAsRead: (ids: string[]) => {
     const { notifications: prev, unreadCount: previousUnreadCount } = get();
     const previousNotifications = [...prev];
+    const revert = revertNotifications(previousNotifications, previousUnreadCount);
 
     set((state) => {
       const markedCount = state.notifications.filter((n) => !n.isRead && ids.includes(n.id)).length;
@@ -80,25 +95,17 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       body: JSON.stringify({ notificationIds: ids }),
     })
       .then((res) => {
-        if (!res.ok) {
-          set({
-            notifications: previousNotifications,
-            unreadCount: previousUnreadCount,
-          });
-        }
+        if (!res.ok) set(revert);
       })
       .catch(() => {
-        set({
-          notifications: previousNotifications,
-          unreadCount: previousUnreadCount,
-        });
+        set(revert);
       });
   },
 
   markAllAsRead: () => {
-    const { notifications: prev } = get();
+    const { notifications: prev, unreadCount: previousUnreadCount } = get();
     const previousNotifications = [...prev];
-    const previousUnreadCount = get().unreadCount;
+    const revert = revertNotifications(previousNotifications, previousUnreadCount);
 
     set({
       notifications: prev.map((n) => ({ ...n, isRead: true })),
@@ -111,18 +118,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       body: JSON.stringify({ notificationIds: 'all' }),
     })
       .then((res) => {
-        if (!res.ok) {
-          set({
-            notifications: previousNotifications,
-            unreadCount: previousUnreadCount,
-          });
-        }
+        if (!res.ok) set(revert);
       })
       .catch(() => {
-        set({
-          notifications: previousNotifications,
-          unreadCount: previousUnreadCount,
-        });
+        set(revert);
       });
   },
 
@@ -134,5 +133,9 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }
   },
 
-  reset: () => set({ ...INITIAL_STATE }),
+  reset: () => {
+    notificationAbortController?.abort();
+    notificationAbortController = null;
+    set({ ...INITIAL_STATE });
+  },
 }));

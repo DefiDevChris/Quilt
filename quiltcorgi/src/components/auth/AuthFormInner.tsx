@@ -70,7 +70,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       }
 
       onSuccess?.();
-      router.push(callbackUrl);
+      router.push(data.needsOnboarding ? '/onboarding' : callbackUrl);
       router.refresh();
     } catch {
       setError('Something went wrong. Please try again.');

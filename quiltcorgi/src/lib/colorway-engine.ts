@@ -5,7 +5,7 @@
  * and never mutate their arguments. No React, no Fabric.js, no DOM dependencies.
  */
 
-import { mulberry32 } from './math-utils';
+import { mulberry32, clamp } from './math-utils';
 import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb, type RGB, type HSL } from './color-math';
 
 // ---------------------------------------------------------------------------
@@ -185,22 +185,25 @@ export function generateColorScheme(
   schemeType: ColorSchemeType,
   count: number = 5
 ): string[] {
+  // Validate count - must be at least 1
+  const validCount = Math.max(1, Math.floor(count));
+
   const rgb = hexToRgb(baseColor);
   const hsl = rgbToHsl(rgb);
   const colors: string[] = [normalizeColor(baseColor)];
 
   switch (schemeType) {
     case 'monochromatic':
-      for (let i = 1; i < count; i++) {
-        const lightness = Math.max(0.1, Math.min(0.9, hsl.l + (i - count / 2) * 0.15));
-        const saturation = Math.max(0.2, Math.min(1.0, hsl.s + (i % 2 === 0 ? -0.1 : 0.1)));
+      for (let i = 1; i < validCount; i++) {
+        const lightness = clamp(hsl.l + (i - validCount / 2) * 0.15, 0.1, 0.9);
+        const saturation = clamp(hsl.s + (i % 2 === 0 ? -0.1 : 0.1), 0.2, 1.0);
         const newHsl: HSL = { h: hsl.h, s: saturation, l: lightness };
         colors.push(rgbToHex(hslToRgb(newHsl)));
       }
       break;
 
     case 'analogous':
-      for (let i = 1; i < count; i++) {
+      for (let i = 1; i < validCount; i++) {
         const hue = (hsl.h + i * 30) % 360;
         const newHsl: HSL = { h: hue, s: hsl.s, l: hsl.l };
         colors.push(rgbToHex(hslToRgb(newHsl)));
@@ -212,10 +215,10 @@ export function generateColorScheme(
       colors.push(rgbToHex(hslToRgb({ h: compHue, s: hsl.s, l: hsl.l })));
 
       // Add variations
-      for (let i = 2; i < count; i++) {
+      for (let i = 2; i < validCount; i++) {
         const useBase = i % 2 === 0;
         const baseHue = useBase ? hsl.h : compHue;
-        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - count / 2) * 0.1));
+        const lightness = clamp(hsl.l + (i - validCount / 2) * 0.1, 0.2, 0.8);
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
       }
       break;
@@ -225,9 +228,9 @@ export function generateColorScheme(
       colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 240) % 360, s: hsl.s, l: hsl.l })));
 
       // Add variations
-      for (let i = 3; i < count; i++) {
+      for (let i = 3; i < validCount; i++) {
         const baseHue = [hsl.h, (hsl.h + 120) % 360, (hsl.h + 240) % 360][i % 3];
-        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 3) * 0.15));
+        const lightness = clamp(hsl.l + (i - 3) * 0.15, 0.2, 0.8);
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.7, l: lightness })));
       }
       break;
@@ -237,9 +240,9 @@ export function generateColorScheme(
       colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 210) % 360, s: hsl.s, l: hsl.l })));
 
       // Add variations
-      for (let i = 3; i < count; i++) {
+      for (let i = 3; i < validCount; i++) {
         const baseHue = [hsl.h, (hsl.h + 150) % 360, (hsl.h + 210) % 360][i % 3];
-        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 3) * 0.12));
+        const lightness = clamp(hsl.l + (i - 3) * 0.12, 0.2, 0.8);
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.8, l: lightness })));
       }
       break;
@@ -250,17 +253,17 @@ export function generateColorScheme(
       colors.push(rgbToHex(hslToRgb({ h: (hsl.h + 270) % 360, s: hsl.s, l: hsl.l })));
 
       // Add variations
-      for (let i = 4; i < count; i++) {
+      for (let i = 4; i < validCount; i++) {
         const baseHue = [hsl.h, (hsl.h + 90) % 360, (hsl.h + 180) % 360, (hsl.h + 270) % 360][
           i % 4
         ];
-        const lightness = Math.max(0.2, Math.min(0.8, hsl.l + (i - 4) * 0.1));
+        const lightness = clamp(hsl.l + (i - 4) * 0.1, 0.2, 0.8);
         colors.push(rgbToHex(hslToRgb({ h: baseHue, s: hsl.s * 0.9, l: lightness })));
       }
       break;
   }
 
-  return colors.slice(0, count);
+  return colors.slice(0, validCount);
 }
 
 /**

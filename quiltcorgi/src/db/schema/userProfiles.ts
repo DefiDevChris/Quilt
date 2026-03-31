@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, timestamp, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
 export const userProfiles = pgTable(
@@ -19,15 +19,13 @@ export const userProfiles = pgTable(
     youtubeHandle: varchar('youtubeHandle', { length: 50 }),
     tiktokHandle: varchar('tiktokHandle', { length: 50 }),
     publicEmail: varchar('publicEmail', { length: 255 }),
-    followerCount: integer('followerCount').notNull().default(0),
-    followingCount: integer('followingCount').notNull().default(0),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [
+  () => [
     // UNIQUE constraints already create indexes, no additional indexes needed
   ]
 );

@@ -11,6 +11,7 @@ import {
 } from '@/lib/auth-helpers';
 import { FREE_BLOCK_LIMIT } from '@/lib/constants';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -135,6 +136,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`blocks:${session.user.id}`, API_RATE_LIMITS.blocks);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const userRole = session.user.role;
   const isPro = userRole === 'pro' || userRole === 'admin';

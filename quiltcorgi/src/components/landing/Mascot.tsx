@@ -26,19 +26,19 @@ const sizePx: Record<Size, number> = {
 };
 
 const poseMap: Record<Pose, string> = {
-  walking: '/corgi1.png',
-  standing: '/corgi2.png',
-  sitting: '/corgi4.png',
-  jumping: '/corgi-02-jumping-Photoroom.png',
-  running: '/corgi-03-running-Photoroom.png',
-  sleeping: '/corgi-05-sleeping-Photoroom.png',
-  wagging: '/corgi-20-yawning-Photoroom.png',
-  fetching: '/corgi-10-fetching-Photoroom.png',
-  howling: '/corgi-11-howling-Photoroom.png',
-  begging: '/corgi-13-begging-Photoroom.png',
-  scratching: '/corgi-22-scratching-Photoroom.png',
-  licking: '/corgi-16-licking-Photoroom.png',
-  waving: '/corgi-01-sit-shake-Photoroom.png',
+  walking: '/mascots&avatars/corgi27.png',
+  standing: '/mascots&avatars/corgi28.png',
+  sitting: '/mascots&avatars/corgi29.png',
+  jumping: '/mascots&avatars/corgi13.png',
+  running: '/mascots&avatars/corgi14.png',
+  sleeping: '/mascots&avatars/corgi15.png',
+  wagging: '/mascots&avatars/corgi25.png',
+  fetching: '/mascots&avatars/corgi18.png',
+  howling: '/mascots&avatars/corgi19.png',
+  begging: '/mascots&avatars/corgi20.png',
+  scratching: '/mascots&avatars/corgi26.png',
+  licking: '/mascots&avatars/corgi23.png',
+  waving: '/mascots&avatars/corgi12.png',
 };
 
 export default function Mascot({

@@ -10,7 +10,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { PhotoPatternModal } from '@/components/photo-pattern/PhotoPatternModal';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useToast } from '@/components/ui/ToastProvider';
-import { TUTORIAL_COUNT } from '@/lib/mdx-engine';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -470,7 +469,7 @@ export default function DashboardPage() {
 
             {/* Tutorials — 4 cols */}
             <Link
-              href="/tutorials"
+              href="/blog"
               className="col-span-6 md:col-span-4 glass-elevated rounded-[18px] p-6 transition-all duration-200 hover:shadow-elevation-3 block"
             >
               <TutorialsIcon />
@@ -478,7 +477,7 @@ export default function DashboardPage() {
                 Tutorials
               </p>
               <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-                {TUTORIAL_COUNT} step-by-step guides
+                Step-by-step guides and tutorials
               </p>
             </Link>
 

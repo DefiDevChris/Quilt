@@ -3,28 +3,24 @@ import { test, expect } from '@playwright/test';
 test.describe('Blog Section', () => {
   test('blog index page loads with posts', async ({ page }) => {
     await page.goto('/blog');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Blog'
-    );
-    // Should have blog post cards
-    const cards = page.locator('[data-testid="blog-card"]');
-    await expect(cards.first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
+    // Posts render as buttons in the blog feed
+    const posts = page.getByRole('button').filter({ hasText: /QuiltCorgi Team/i });
+    await expect(posts.first()).toBeVisible();
   });
 
   test('individual blog post renders', async ({ page }) => {
     await page.goto('/blog/introducing-quiltcorgi');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'Introducing QuiltCorgi'
-    );
-    // Should show author
-    await expect(page.getByText(/QuiltCorgi Team/i)).toBeVisible();
+    // Use the article heading specifically (page has two h1s — nav and article)
+    await expect(
+      page.getByRole('heading', { name: /Introducing QuiltCorgi/i })
+    ).toBeVisible();
+    await expect(page.getByText(/QuiltCorgi Team/i).first()).toBeVisible();
   });
 
   test('blog post has Article schema', async ({ page }) => {
     await page.goto('/blog/introducing-quiltcorgi');
-    const schemaScript = page.locator(
-      'script[type="application/ld+json"]'
-    );
+    const schemaScript = page.locator('script[type="application/ld+json"]');
     const content = await schemaScript.first().textContent();
     expect(content).toContain('Article');
   });
@@ -56,8 +52,8 @@ test.describe('Blog Section', () => {
     if (await tagButton.isVisible()) {
       await tagButton.click();
       // Should filter posts
-      const cards = page.locator('[data-testid="blog-card"]');
-      const count = await cards.count();
+      const posts = page.getByRole('button').filter({ hasText: /QuiltCorgi Team/i });
+      const count = await posts.count();
       expect(count).toBeGreaterThan(0);
     }
   });

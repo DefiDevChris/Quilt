@@ -31,14 +31,27 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 ## Brand Voice
 
-All user-facing copy follows a warm, quilter-friendly voice. See `quiltcorgi/README.md` for the full style guide. The short version:
+All user-facing copy — headlines, descriptions, tooltips, onboarding, FAQs, CTAs, error messages — follows a consistent voice.
 
-- **Warm and welcoming**, like a knowledgeable friend in a quilt shop
-- **Playful** — punchy headlines, occasional wordplay
-- **Address quilters directly** with "you" / "your"
-- **Use quilting vocabulary naturally** — trust the quilter to know the terms
-- **Lead with what the quilter gets**, not what the software does
-- **Avoid** generic SaaS language ("professional-grade", "comprehensive suite", "leverage", "robust")
+### Tone
+
+- **Warm and welcoming** — like a knowledgeable friend in a quilt shop, never cold or corporate
+- **Playful** — short, catchy headlines with occasional wordplay ("Everything But the Fabric", "what you see is what you sew")
+- **Encouraging** — beginners are welcomed, nothing feels elitist or intimidating
+- **Confident without overselling** — we know the tools are good; let them speak
+- **Emotionally grounded** — quilts are heirlooms, gifts, creative expression; the copy connects to that
+
+### Writing Rules
+
+- Address quilters directly with **"you" / "your"** — never third person
+- Use quilting vocabulary naturally: seam allowance, yardage, WOF, fat quarter, foundation paper piecing, rotary cutting — trust the quilter
+- Lead with **what the quilter gets**, not what the software does ("Calculate how much fabric you need" not "Automatic yardage calculation engine")
+- **Headlines:** 2-6 words, punchy. Alliteration and wordplay welcome.
+- **CTAs:** action-oriented and warm ("Start Designing Free", "See the Gallery"), never pushy
+- **Descriptions:** 1-2 sentences. Conversational, not spec-sheet.
+- **Tooltips:** concise, imperative. One sentence.
+- **Tutorials/instructions:** numbered steps, imperative voice ("Cut", "Press", "Stitch"), bold labels for fabric/section names, practical tips woven in naturally
+- **Avoid these words:** "professional-grade", "comprehensive suite", "cutting-edge", "leverage", "utilize", "enterprise", "robust", "state-of-the-art" — any generic SaaS marketing language
 
 ## Getting Started
 

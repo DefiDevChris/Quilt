@@ -152,6 +152,9 @@ export function teardropPath(cx: number, cy: number, size: number): string {
  * Returns SVG path data for the given shape type, centered at (cx, cy)
  * with the given size.  Dispatches to the appropriate shape generator.
  * For 'freeform', returns an empty string as a placeholder.
+ * 
+ * Invalid sizes (NaN, negative, or zero) are clamped to a minimum value
+to prevent degenerate shapes.
  */
 export function generateShapePath(
   type: ShapeType,
@@ -159,17 +162,21 @@ export function generateShapePath(
   cy: number,
   size: number
 ): string {
+  // Validate and clamp size to prevent degenerate shapes
+  const MIN_SIZE = 1;
+  const validSize = !Number.isFinite(size) || size < MIN_SIZE ? MIN_SIZE : size;
+  
   switch (type) {
     case 'circle':
-      return circlePath(cx, cy, size / 2);
+      return circlePath(cx, cy, validSize / 2);
     case 'oval':
-      return ovalPath(cx, cy, size / 2, size * 0.3);
+      return ovalPath(cx, cy, validSize / 2, validSize * 0.3);
     case 'heart':
-      return heartPath(cx, cy, size);
+      return heartPath(cx, cy, validSize);
     case 'leaf':
-      return leafPath(cx, cy, size);
+      return leafPath(cx, cy, validSize);
     case 'teardrop':
-      return teardropPath(cx, cy, size);
+      return teardropPath(cx, cy, validSize);
     case 'freeform':
       return '';
   }

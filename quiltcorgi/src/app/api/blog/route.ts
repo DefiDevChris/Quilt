@@ -136,22 +136,44 @@ export async function POST(request: NextRequest) {
       slug = appendSlugSuffix(slug);
     }
 
-    const [created] = await db
-      .insert(blogPosts)
-      .values({
-        authorId: session.user.id,
-        title,
-        slug,
-        content: content ?? null,
-        excerpt: excerpt ?? null,
-        featuredImageUrl: featuredImageUrl ?? null,
-        category,
-        tags,
-        status,
-      })
-      .returning();
+    // Attempt insert with retry logic for race condition handling
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    return Response.json({ success: true, data: created }, { status: 201 });
+    while (attempts < maxAttempts) {
+      try {
+        const [created] = await db
+          .insert(blogPosts)
+          .values({
+            authorId: session.user.id,
+            title,
+            slug,
+            content: content ?? null,
+            excerpt: excerpt ?? null,
+            featuredImageUrl: featuredImageUrl ?? null,
+            category,
+            tags,
+            status,
+          })
+          .returning();
+
+        return Response.json({ success: true, data: created }, { status: 201 });
+      } catch (err) {
+        // Check for unique constraint violation (PostgreSQL error code 23505)
+        if (err && typeof err === 'object' && 'code' in err && err.code === '23505') {
+          attempts++;
+          if (attempts >= maxAttempts) {
+            break;
+          }
+          // Generate new slug with different suffix and retry
+          slug = appendSlugSuffix(slug);
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    return errorResponse('Failed to create blog post: slug conflict', 'SLUG_CONFLICT', 409);
   } catch {
     return errorResponse('Failed to create blog post', 'INTERNAL_ERROR', 500);
   }

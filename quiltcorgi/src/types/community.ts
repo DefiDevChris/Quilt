@@ -29,7 +29,6 @@ export interface CommunityPostListItem {
   creatorAvatarUrl: string | null;
   createdAt: Date;
   isLikedByUser: boolean;
-  isSavedByUser: boolean;
 }
 
 export type CommentStatus = 'visible' | 'hidden' | 'deleted';

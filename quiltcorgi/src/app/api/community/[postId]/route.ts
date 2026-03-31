@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, likes, users, projects, userProfiles, savedPosts } from '@/db/schema';
+import { communityPosts, likes, users, projects, userProfiles } from '@/db/schema';
 import { getRequiredSession, errorResponse } from '@/lib/auth-helpers';
 import { formatCreatorName } from '@/lib/format-utils';
 
@@ -46,23 +46,14 @@ export async function GET(
     }
 
     let isLikedByUser = false;
-    let isSavedByUser = false;
 
     if (session) {
-      const [userLike, userSave] = await Promise.all([
-        db
-          .select({ communityPostId: likes.communityPostId })
-          .from(likes)
-          .where(and(eq(likes.userId, session.user.id), sql`${likes.communityPostId} = ${postId}`))
-          .limit(1),
-        db
-          .select({ postId: savedPosts.postId })
-          .from(savedPosts)
-          .where(and(eq(savedPosts.userId, session.user.id), sql`${savedPosts.postId} = ${postId}`))
-          .limit(1),
-      ]);
+      const userLike = await db
+        .select({ communityPostId: likes.communityPostId })
+        .from(likes)
+        .where(and(eq(likes.userId, session.user.id), eq(likes.communityPostId, postId)))
+        .limit(1);
       isLikedByUser = userLike.length > 0;
-      isSavedByUser = userSave.length > 0;
     }
 
     const post = {
@@ -83,7 +74,6 @@ export async function GET(
       projectThumbnailUrl: row.projectThumbnailUrl ?? null,
       createdAt: row.createdAt,
       isLikedByUser,
-      isSavedByUser,
     };
 
     return Response.json({ success: true, data: post });

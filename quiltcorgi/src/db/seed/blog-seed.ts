@@ -85,7 +85,7 @@ const introducingQuiltcorgi: TiptapDoc = {
     heading(2, 'Built for Quilters'),
     p(
       text(
-        'Every feature in QuiltCorgi was designed with real quilting workflows in mind. From seam allowances to rotary cutting charts, from foundation paper piecing templates to medallion layouts -- we have built the tools that quilters actually need.'
+        'Every feature in QuiltCorgi was designed with real quilting workflows in mind. From seam allowances to rotary cutting charts, from foundation paper piecing templates to on-point layouts -- we have built the tools that quilters actually need.'
       )
     ),
     p(
@@ -320,5 +320,288 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
     tags: ['beginner', 'getting-started', 'tutorial'],
     status: 'published',
     publishedAt: new Date('2026-03-01T12:00:00Z'),
+  },
+  {
+    title: 'Using the Block Library',
+    slug: 'block-library-guide',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            'QuiltCorgi includes over 650 traditional quilt blocks across 20+ categories. Here is how to find the perfect block for your design.'
+          )
+        ),
+        heading(2, 'Browsing Blocks'),
+        p(
+          text(
+            'Open the block library from the left panel in the Quilt Worktable. Blocks are organized into categories like Nine Patch, Log Cabin, Star, Flying Geese, and more. Use the search bar to find blocks by name or scroll through categories.'
+          )
+        ),
+        heading(2, 'Adding Blocks to Your Design'),
+        p(
+          text(
+            'Click any block to add it to your canvas. Blocks snap to the grid automatically. You can rotate, resize, and recolor any block after placing it. Drag blocks between cells to rearrange your layout.'
+          )
+        ),
+        heading(2, 'Block Categories'),
+        bulletList(
+          "Stars — Ohio Star, Hunter's Star, and 80+ variations",
+          'Nine Patch — Classic nine patch, disappearing nine patch, and more',
+          'Log Cabin — Traditional, courthouse steps, pineapple',
+          'Flying Geese — Single, paired, and stacked arrangements',
+          'Pinwheels — Simple and complex spinning designs'
+        ),
+        p(
+          text(
+            'Every block can be customized with your own fabric choices and colors. Experiment freely — you can always undo.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Browse, search, and preview 650+ quilt blocks across 20+ categories. Learn to drag-and-drop blocks into your design.',
+    category: 'Tutorials',
+    tags: ['beginner', 'blocks', 'library', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-05T12:00:00Z'),
+  },
+  {
+    title: 'Drawing Custom Blocks with EasyDraw',
+    slug: 'custom-blocks-easydraw',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            "EasyDraw is QuiltCorgi's freehand block drafting tool. Use it to create original quilt blocks from scratch by drawing seam lines on a grid."
+          )
+        ),
+        heading(2, 'Getting Started with EasyDraw'),
+        p(
+          text(
+            'Switch to the Block Worktable and click "New Block." The EasyDraw canvas opens with a snap-to-grid system. Draw lines between grid points to define your block\'s seam lines. Each enclosed region becomes a fabric piece.'
+          )
+        ),
+        heading(2, 'Drawing Tools'),
+        bulletList(
+          'Line tool — Click two grid points to draw a straight seam line',
+          'Edit mode — Click and drag nodes to adjust existing lines',
+          'Delete — Remove individual lines or clear the entire block',
+          'Undo/Redo — Full history support while drafting'
+        ),
+        heading(2, 'Saving Your Block'),
+        p(
+          text(
+            'When you are happy with your design, click "Save to Library." Your custom block appears alongside the built-in blocks and can be used in any project. Name it, add tags, and it is ready to use.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      "Draft original quilt blocks using EasyDraw's seam-line drawing tool. Draw lines, edit nodes, and save blocks to your library.",
+    category: 'Tutorials',
+    tags: ['intermediate', 'easydraw', 'blocks', 'drafting', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-08T12:00:00Z'),
+  },
+  {
+    title: 'Creating Applique Designs',
+    slug: 'applique-designs-guide',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            'Applique lets you layer shapes on top of a background block to create pictorial and decorative designs. QuiltCorgi supports both needle-turn and fusible applique workflows.'
+          )
+        ),
+        heading(2, 'The Applique Canvas'),
+        p(
+          text(
+            'Switch to the Block Worktable and choose "Applique Mode." You get a blank background with shape tools: circle, rectangle, triangle, freeform, and heart. Layer shapes to build your design.'
+          )
+        ),
+        heading(2, 'Working with Layers'),
+        bulletList(
+          'Drag shapes to position them precisely',
+          'Use the layer panel to reorder shapes (front to back)',
+          'Overlap detection highlights where shapes intersect',
+          'Assign different fabrics to each shape'
+        ),
+        heading(2, 'Exporting Applique Templates'),
+        p(
+          text(
+            'Export your applique block as a PDF template with seam allowances. Each shape is printed at full size, ready to trace onto fusible web or template plastic.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Design layered applique blocks with shape tools, overlap detection, fabric assignment, and export options.',
+    category: 'Tutorials',
+    tags: ['intermediate', 'applique', 'design', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-10T12:00:00Z'),
+  },
+  {
+    title: 'Fabric Management & Fussy Cutting',
+    slug: 'fabric-fussy-cutting-guide',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            'Upload your own fabric images, calibrate their scale, and use fussy cutting to position specific motifs on individual patches.'
+          )
+        ),
+        heading(2, 'Uploading Fabrics'),
+        p(
+          text(
+            'Click "Upload Fabric" in the Fabric panel. Take a photo of your fabric next to a ruler, upload it, and QuiltCorgi will help you calibrate the scale so your design looks true to life on screen.'
+          )
+        ),
+        heading(2, 'Fabric Calibration'),
+        p(
+          text(
+            'After uploading, use the calibration tool to set the real-world scale. Place two markers a known distance apart (like 1 inch on your ruler) and QuiltCorgi maps pixels to inches automatically.'
+          )
+        ),
+        heading(2, 'Fussy Cutting'),
+        p(
+          text(
+            'Fussy cutting lets you position a specific part of a fabric print on a specific patch. Click any patch in your block, then drag the fabric overlay to align the motif exactly where you want it. This is perfect for centering a flower, animal, or geometric print.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Upload fabric images, calibrate scale, and use fussy cutting to position specific motifs on individual patches.',
+    category: 'Tutorials',
+    tags: ['intermediate', 'fabric', 'fussy-cutting', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-12T12:00:00Z'),
+  },
+  {
+    title: 'Using Generators: Symmetry & Serendipity',
+    slug: 'generators-symmetry-serendipity',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            "QuiltCorgi's generator tools help you explore design possibilities you might not discover on your own. Symmetry mirrors your work in real time. Serendipity creates surprising combinations."
+          )
+        ),
+        heading(2, 'Symmetry Tool'),
+        bulletList(
+          'Mirror modes — Horizontal, vertical, and quadrant mirroring',
+          'Radial symmetry — 4-fold, 6-fold, and 8-fold rotational patterns',
+          'Live preview — See changes reflected instantly as you design',
+          'Great for medallion-style designs and kaleidoscope effects'
+        ),
+        heading(2, 'Serendipity Tool'),
+        p(
+          text(
+            'Serendipity generates random color and block combinations using a seed value. Set a seed number and the tool produces deterministic results — the same seed always gives the same design. Tweak the seed to explore variations.'
+          )
+        ),
+        heading(2, 'Combining Both'),
+        p(
+          text(
+            'Use Serendipity to generate a starting palette, then Symmetry to mirror it across your quilt. This is one of the fastest ways to produce polished, balanced designs.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Explore mirror modes, radial symmetry, random color generation, and seed values to create surprising quilt designs.',
+    category: 'Tutorials',
+    tags: ['advanced', 'generators', 'symmetry', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-15T12:00:00Z'),
+  },
+  {
+    title: 'Layout Types: Grid, Sashing & On-Point',
+    slug: 'layout-types-guide',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            'QuiltCorgi offers four layout modes to arrange your blocks. Each creates a different visual effect and changes how your quilt comes together.'
+          )
+        ),
+        heading(2, 'Grid Layout'),
+        p(
+          text(
+            'The simplest layout — blocks sit side by side in rows and columns. Great for sampler quilts and designs where every block is unique. Adjust rows, columns, and block size from the Layout Settings panel.'
+          )
+        ),
+        heading(2, 'Sashing Layout'),
+        p(
+          text(
+            'Adds strips of fabric (sashing) between blocks. Sashing frames each block individually and adds visual breathing room. Adjust sashing width and color. Cornerstones appear automatically at intersections.'
+          )
+        ),
+        heading(2, 'On-Point Layout'),
+        p(
+          text(
+            'Rotates every block 45 degrees so they sit on their points like diamonds. Setting triangles fill the edges automatically. On-point layouts give a dynamic, sophisticated look to traditional blocks.'
+          )
+        ),
+        heading(2, 'Free-Form'),
+        p(
+          text(
+            'No grid at all — place blocks anywhere on the canvas at any size and rotation. Perfect for art quilts, asymmetric designs, and mixed-media compositions.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Explore all layout types available in QuiltCorgi: grid, sashing, on-point, and free-form.',
+    category: 'Tutorials',
+    tags: ['intermediate', 'layout', 'grid', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-18T12:00:00Z'),
+  },
+  {
+    title: 'Photo to Quilt: Turn Any Image into a Pattern',
+    slug: 'photo-to-quilt-guide',
+    content: {
+      type: 'doc',
+      content: [
+        p(
+          text(
+            "QuiltCorgi's Photo to Pattern tool converts any photograph into a quilt pattern. Upload a photo and our computer vision engine detects the shapes, colors, and layout automatically."
+          )
+        ),
+        heading(2, 'How It Works'),
+        bulletList(
+          'Upload any photo of a quilt or image you want to recreate',
+          'The engine detects individual pieces using contour detection',
+          'Colors are mapped to your fabric library',
+          'Pieces are placed on the design canvas in the original layout'
+        ),
+        heading(2, 'Getting the Best Results'),
+        p(
+          text(
+            'For best results, use a photo taken straight-on with even lighting. The perspective correction tool can fix mild angles. High-contrast quilts with clearly defined pieces produce the most accurate results.'
+          )
+        ),
+        heading(2, 'After Import'),
+        p(
+          text(
+            'Once imported, every piece is fully editable. Change colors, swap fabrics, resize blocks, and adjust the layout just like any other design. The photo gives you a starting point — make it your own.'
+          )
+        ),
+      ],
+    },
+    excerpt:
+      'Convert any photograph into a quilt pattern using computer vision. Detect pieces, map colors, and edit the result.',
+    category: 'Tutorials',
+    tags: ['advanced', 'photo', 'patchwork', 'image', 'tutorial'],
+    status: 'published',
+    publishedAt: new Date('2026-03-20T12:00:00Z'),
   },
 ];

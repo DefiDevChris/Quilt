@@ -28,6 +28,7 @@ interface BlockStoreState {
 }
 
 let blockAbortController: AbortController | null = null;
+let userBlockAbortController: AbortController | null = null;
 
 const INITIAL_STATE = {
   blocks: [] as BlockListItem[],
@@ -115,13 +116,17 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   },
 
   fetchUserBlocks: async () => {
+    userBlockAbortController?.abort();
+    userBlockAbortController = new AbortController();
     set({ isLoadingUserBlocks: true });
     try {
       const params = new URLSearchParams();
       params.set('scope', 'user');
       params.set('limit', '100');
 
-      const res = await fetch(`/api/blocks?${params.toString()}`);
+      const res = await fetch(`/api/blocks?${params.toString()}`, {
+        signal: userBlockAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -130,7 +135,8 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
       }
 
       set({ userBlocks: json.data.blocks, isLoadingUserBlocks: false });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load your blocks', isLoadingUserBlocks: false });
     }
   },
@@ -153,6 +159,8 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   reset: () => {
     blockAbortController?.abort();
     blockAbortController = null;
+    userBlockAbortController?.abort();
+    userBlockAbortController = null;
     set({ ...INITIAL_STATE });
   },
 }));

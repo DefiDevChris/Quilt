@@ -9,33 +9,75 @@ import type { PipelineStepStatus } from '@/lib/photo-pattern-types';
 function StepIcon({ status }: { readonly status: PipelineStepStatus }) {
   if (status === 'complete') {
     return (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-success flex-shrink-0">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        className="text-success flex-shrink-0"
+      >
         <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M6 10L9 13L14 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M6 10L9 13L14 7"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     );
   }
 
   if (status === 'running') {
     return (
-      <svg width="20" height="20" viewBox="0 0 20 20" className="text-primary flex-shrink-0 animate-spin">
-        <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeDasharray="40 20" />
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        className="text-primary flex-shrink-0 animate-spin"
+      >
+        <circle
+          cx="10"
+          cy="10"
+          r="9"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeDasharray="40 20"
+        />
       </svg>
     );
   }
 
   if (status === 'error') {
     return (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-error flex-shrink-0">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        className="text-error flex-shrink-0"
+      >
         <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 7L13 13M13 7L7 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path
+          d="M7 7L13 13M13 7L7 13"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
       </svg>
     );
   }
 
   // pending
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-secondary/40 flex-shrink-0">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      className="text-secondary/40 flex-shrink-0"
+    >
       <circle cx="10" cy="10" r="4" fill="currentColor" />
     </svg>
   );
@@ -44,6 +86,7 @@ function StepIcon({ status }: { readonly status: PipelineStepStatus }) {
 export function ProcessingStep() {
   const originalImage = usePhotoPatternStore((s) => s.originalImage);
   const sensitivity = usePhotoPatternStore((s) => s.sensitivity);
+  const scanConfig = usePhotoPatternStore((s) => s.scanConfig);
   const pipelineSteps = usePhotoPatternStore((s) => s.pipelineSteps);
   const setPipelineSteps = usePhotoPatternStore((s) => s.setPipelineSteps);
   const setDetectedPieces = usePhotoPatternStore((s) => s.setDetectedPieces);
@@ -63,10 +106,10 @@ export function ProcessingStep() {
         const result = await runDetectionPipeline(
           cv,
           originalImage,
-          sensitivity,
           (steps) => {
             setPipelineSteps(steps);
-          }
+          },
+          { sensitivity, scanConfig }
         );
 
         setDetectedPieces(result.pieces);
@@ -87,6 +130,7 @@ export function ProcessingStep() {
   }, [
     originalImage,
     sensitivity,
+    scanConfig,
     setPipelineSteps,
     setDetectedPieces,
     setCorrectedImage,

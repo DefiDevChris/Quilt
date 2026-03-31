@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { useEffect, useCallback, useRef, useState, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import { usePatternStore } from '@/stores/patternStore';
 import { formatDimensionDisplay } from '@/components/patterns/PatternCard';
@@ -71,8 +71,6 @@ const SHAPE_LABELS: Record<string, string> = {
 const LAYOUT_TYPE_LABELS: Record<string, string> = {
   grid: 'Grid',
   'on-point': 'On Point',
-  medallion: 'Medallion',
-  'lone-star': 'Lone Star',
   custom: 'Custom',
 };
 
@@ -108,7 +106,8 @@ export function PatternDetailDialog({
   const [importedProjectId, setImportedProjectId] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => {
     if (patternId) {
       setImportedProjectId(null);
       clearError();

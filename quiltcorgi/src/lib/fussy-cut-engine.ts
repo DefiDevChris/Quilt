@@ -10,6 +10,7 @@
  */
 
 import { boundingBoxFromPoints } from '@/lib/geometry-extraction';
+import { clamp, floatEquals } from '@/lib/math-utils';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -123,10 +124,14 @@ export function centerConfigOnPatch(
   const patchCenterX = bb.x + bb.width / 2;
   const patchCenterY = bb.y + bb.height / 2;
 
+  // Guard against NaN/Infinity in fabric dimensions
+  const validFabricWidth = Number.isFinite(fabricWidth) ? fabricWidth : 0;
+  const validFabricHeight = Number.isFinite(fabricHeight) ? fabricHeight : 0;
+
   return {
     ...config,
-    offsetX: patchCenterX - fabricWidth / 2,
-    offsetY: patchCenterY - fabricHeight / 2,
+    offsetX: patchCenterX - validFabricWidth / 2,
+    offsetY: patchCenterY - validFabricHeight / 2,
   };
 }
 
@@ -141,23 +146,24 @@ export function centerConfigOnPatch(
 export function clampConfig(config: FussyCutConfig): FussyCutConfig {
   return {
     fabricId: config.fabricId,
-    offsetX: Math.min(OFFSET_MAX, Math.max(OFFSET_MIN, config.offsetX)),
-    offsetY: Math.min(OFFSET_MAX, Math.max(OFFSET_MIN, config.offsetY)),
-    rotation: Math.min(ROTATION_MAX, Math.max(ROTATION_MIN, config.rotation)),
-    scale: Math.min(SCALE_MAX, Math.max(SCALE_MIN, config.scale)),
+    offsetX: clamp(config.offsetX, OFFSET_MIN, OFFSET_MAX),
+    offsetY: clamp(config.offsetY, OFFSET_MIN, OFFSET_MAX),
+    rotation: clamp(config.rotation, ROTATION_MIN, ROTATION_MAX),
+    scale: clamp(config.scale, SCALE_MIN, SCALE_MAX),
   };
 }
 
 /**
  * Returns true when both FussyCutConfig objects have identical field values.
- * Uses strict equality for all fields (including floating-point numbers).
+ * Uses epsilon-based comparison for floating-point numbers to handle
+ * rounding errors from calculations.
  */
 export function configsEqual(a: FussyCutConfig, b: FussyCutConfig): boolean {
   return (
     a.fabricId === b.fabricId &&
-    a.offsetX === b.offsetX &&
-    a.offsetY === b.offsetY &&
-    a.rotation === b.rotation &&
-    a.scale === b.scale
+    floatEquals(a.offsetX, b.offsetX) &&
+    floatEquals(a.offsetY, b.offsetY) &&
+    floatEquals(a.rotation, b.rotation) &&
+    floatEquals(a.scale, b.scale)
   );
 }

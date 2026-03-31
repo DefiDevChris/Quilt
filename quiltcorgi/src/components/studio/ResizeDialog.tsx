@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useLayoutEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -32,7 +32,8 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
   const aspectRatio = canvasWidth / canvasHeight;
   const isSameDimensions = width === canvasWidth && height === canvasHeight;
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => {
     if (isOpen) {
       setWidth(canvasWidth);
       setHeight(canvasHeight);
@@ -68,7 +69,6 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
 
   const getAddBlocksLabel = useCallback(() => {
     if (layoutType === 'free-form') return 'Expand Canvas';
-    if (layoutType === 'medallion' || layoutType === 'lone-star') return 'Expand Background';
     return 'Add Empty Blocks';
   }, [layoutType]);
 
@@ -217,19 +217,17 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               This changes the entire quilt dimensions from {formattedCurrent} to {formattedNew}.
             </p>
 
-            {layoutType !== 'free-form' &&
-              layoutType !== 'medallion' &&
-              layoutType !== 'lone-star' && (
-                <label className="flex items-center gap-2 mb-4 text-body-sm text-secondary cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={tilePattern}
-                    onChange={(e) => setTilePattern(e.target.checked)}
-                    className="rounded border-outline-variant"
-                  />
-                  Tile existing pattern into new blocks
-                </label>
-              )}
+            {layoutType !== 'free-form' && (
+              <label className="flex items-center gap-2 mb-4 text-body-sm text-secondary cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={tilePattern}
+                  onChange={(e) => setTilePattern(e.target.checked)}
+                  className="rounded border-outline-variant"
+                />
+                Tile existing pattern into new blocks
+              </label>
+            )}
 
             <div className="flex flex-col gap-2">
               <button

@@ -2,16 +2,39 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 
 const MAX_SAVE_RETRIES = 3;
-const RETRY_DELAY_MS = 10_000;
+const RETRY_DELAY_BASE_MS = 2000;
+const RETRY_DELAY_MAX_MS = 30000;
 
-// Track active save operations for cleanup
-const activeSaveControllers = new Map<string, AbortController>();
+// Track active save operations for cleanup - separate by source
+const manualSaveControllers = new Map<string, AbortController>();
+const autoSaveControllers = new Map<string, AbortController>();
+
+export type SaveSource = 'manual' | 'auto';
 
 export interface SaveProjectOptions {
   projectId: string | null;
   fabricCanvas: unknown;
   retryCount?: number;
   signal?: AbortSignal;
+  source?: SaveSource;
+}
+
+/**
+ * Calculate exponential backoff delay for retries.
+ * Formula: base * 2^retryCount, capped at max delay.
+ */
+function getRetryDelayMs(retryCount: number): number {
+  return Math.min(
+    RETRY_DELAY_BASE_MS * Math.pow(2, retryCount),
+    RETRY_DELAY_MAX_MS
+  );
+}
+
+/**
+ * Get the appropriate controller map based on save source.
+ */
+function getControllerMap(source: SaveSource): Map<string, AbortController> {
+  return source === 'manual' ? manualSaveControllers : autoSaveControllers;
 }
 
 /**
@@ -21,8 +44,12 @@ export interface SaveProjectOptions {
  * @returns Promise that resolves when save completes or rejects on abort/permanent failure
  *
  * @example
- * // Basic usage
+ * // Basic usage (manual save)
  * await saveProject({ projectId: '123', fabricCanvas });
+ *
+ * @example
+ * // Auto-save usage
+ * await saveProject({ projectId: '123', fabricCanvas, source: 'auto' });
  *
  * @example
  * // With cancellation support
@@ -32,19 +59,41 @@ export interface SaveProjectOptions {
  * controller.abort();
  */
 export async function saveProject(options: SaveProjectOptions): Promise<void> {
-  const { projectId, fabricCanvas, retryCount = 0, signal } = options;
+  const { 
+    projectId, 
+    fabricCanvas, 
+    retryCount = 0, 
+    signal, 
+    source = 'manual' 
+  } = options;
 
   if (!projectId || !fabricCanvas) return;
 
-  // Cancel any existing save for this project
-  const existingController = activeSaveControllers.get(projectId);
+  // Auto-save yields to in-flight manual saves
+  if (source === 'auto' && manualSaveControllers.has(projectId)) {
+    return;
+  }
+
+  const controllerMap = getControllerMap(source);
+
+  // Cancel any existing save of the same type for this project
+  const existingController = controllerMap.get(projectId);
   if (existingController) {
     existingController.abort();
   }
 
+  // Manual saves also cancel auto-saves (manual has priority)
+  if (source === 'manual') {
+    const autoController = autoSaveControllers.get(projectId);
+    if (autoController) {
+      autoController.abort();
+      autoSaveControllers.delete(projectId);
+    }
+  }
+
   // Create new abort controller for this save operation
   const controller = new AbortController();
-  activeSaveControllers.set(projectId, controller);
+  controllerMap.set(projectId, controller);
 
   // If caller provided a signal, connect it to our controller
   if (signal) {
@@ -82,19 +131,26 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
     store.setSaveStatus('error');
 
     if (retryCount < MAX_SAVE_RETRIES && !controller.signal.aborted) {
+      const delayMs = getRetryDelayMs(retryCount);
       setTimeout(() => {
-        // Only retry if this is still the active controller for this project
-        if (activeSaveControllers.get(projectId) === controller &&
+        // Only retry if this is still the active controller for this project and source
+        if (controllerMap.get(projectId) === controller &&
             useProjectStore.getState().saveStatus === 'error' &&
             !controller.signal.aborted) {
-          saveProject({ projectId, fabricCanvas, retryCount: retryCount + 1, signal: controller.signal });
+          saveProject({ 
+            projectId, 
+            fabricCanvas, 
+            retryCount: retryCount + 1, 
+            signal: controller.signal,
+            source 
+          });
         }
-      }, RETRY_DELAY_MS);
+      }, delayMs);
     }
   } finally {
-    // Clean up controller if it's still the active one for this project
-    if (activeSaveControllers.get(projectId) === controller) {
-      activeSaveControllers.delete(projectId);
+    // Clean up controller if it's still the active one for this project and source
+    if (controllerMap.get(projectId) === controller) {
+      controllerMap.delete(projectId);
     }
   }
 }
@@ -105,10 +161,15 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
  * @param projectId - The project ID to cancel saves for
  */
 export function cancelSaveProject(projectId: string): void {
-  const controller = activeSaveControllers.get(projectId);
-  if (controller) {
-    controller.abort();
-    activeSaveControllers.delete(projectId);
+  const manualController = manualSaveControllers.get(projectId);
+  if (manualController) {
+    manualController.abort();
+    manualSaveControllers.delete(projectId);
+  }
+  const autoController = autoSaveControllers.get(projectId);
+  if (autoController) {
+    autoController.abort();
+    autoSaveControllers.delete(projectId);
   }
 }
 
@@ -117,8 +178,12 @@ export function cancelSaveProject(projectId: string): void {
  * Useful when navigating away from the studio.
  */
 export function cancelAllSaveProjects(): void {
-  for (const [projectId, controller] of activeSaveControllers) {
+  for (const [projectId, controller] of manualSaveControllers) {
     controller.abort();
-    activeSaveControllers.delete(projectId);
+    manualSaveControllers.delete(projectId);
+  }
+  for (const [projectId, controller] of autoSaveControllers) {
+    controller.abort();
+    autoSaveControllers.delete(projectId);
   }
 }

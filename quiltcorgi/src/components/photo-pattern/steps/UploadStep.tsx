@@ -104,7 +104,7 @@ export function UploadStep() {
   }, []);
 
   const handleContinue = useCallback(() => {
-    setStep('correction');
+    setStep('scanSettings');
   }, [setStep]);
 
   return (

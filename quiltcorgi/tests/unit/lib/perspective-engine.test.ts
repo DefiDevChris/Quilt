@@ -112,7 +112,10 @@ function createMockCv(opts: MockCvOpts = {}): OpenCV {
     getPerspectiveTransform: vi.fn(() => mockTransformMat),
     warpPerspective: vi.fn(),
     matFromArray: vi.fn((_rows: number, _cols: number) => createMockMat(1, 1)),
-    Size: MockSizeClass as unknown as new (w: number, h: number) => { width: number; height: number },
+    Size: MockSizeClass as unknown as new (
+      w: number,
+      h: number
+    ) => { width: number; height: number },
     COLOR_RGBA2GRAY: 11,
     RETR_EXTERNAL: 0,
     CHAIN_APPROX_SIMPLE: 2,
@@ -138,15 +141,16 @@ describe('perspective-engine', () => {
       ];
 
       const result = sortCornersClockwise(scrambled);
+      expect(result).not.toBeNull();
 
       // TL: min sum (0+0=0)
-      expect(result[0]).toEqual({ x: 0, y: 0 });
+      expect(result![0]).toEqual({ x: 0, y: 0 });
       // TR: max diff (100-0=100)
-      expect(result[1]).toEqual({ x: 100, y: 0 });
+      expect(result![1]).toEqual({ x: 100, y: 0 });
       // BR: max sum (100+100=200)
-      expect(result[2]).toEqual({ x: 100, y: 100 });
+      expect(result![2]).toEqual({ x: 100, y: 100 });
       // BL: min diff (0-100=-100)
-      expect(result[3]).toEqual({ x: 0, y: 100 });
+      expect(result![3]).toEqual({ x: 0, y: 100 });
     });
 
     it('sorts a tilted quadrilateral with distinct sum/diff values', () => {
@@ -160,15 +164,16 @@ describe('perspective-engine', () => {
       ];
 
       const result = sortCornersClockwise(tilted);
+      expect(result).not.toBeNull();
 
       // TL: min sum=60 → (20,40)
-      expect(result[0]).toEqual({ x: 20, y: 40 });
+      expect(result![0]).toEqual({ x: 20, y: 40 });
       // TR: max diff=120 → (150,30)
-      expect(result[1]).toEqual({ x: 150, y: 30 });
+      expect(result![1]).toEqual({ x: 150, y: 30 });
       // BR: max sum=290 → (130,160)
-      expect(result[2]).toEqual({ x: 130, y: 160 });
+      expect(result![2]).toEqual({ x: 130, y: 160 });
       // BL: min diff=-110 → (40,150)
-      expect(result[3]).toEqual({ x: 40, y: 150 });
+      expect(result![3]).toEqual({ x: 40, y: 150 });
     });
   });
 

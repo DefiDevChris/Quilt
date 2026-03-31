@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify, createRemoteJWKSet } from 'jose';
+import { COGNITO_CLIENT_ID } from './lib/cognito';
 
 const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
 
@@ -25,7 +26,7 @@ function logAudit(event: string, details: Record<string, string>) {
   console.log(JSON.stringify(logEntry));
 }
 
-const protectedRoutes = ['/dashboard', '/studio', '/profile', '/admin'];
+const protectedRoutes = ['/dashboard', '/studio', '/profile', '/admin', '/onboarding'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
 // Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading
@@ -43,6 +44,7 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
   try {
     const { payload } = await jwtVerify(token, jwks, {
       issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}`,
+      audience: COGNITO_CLIENT_ID,
     });
     return {
       sub: payload.sub as string,
@@ -95,5 +97,6 @@ export const config = {
     '/profile/:path*',
     '/admin/:path*',
     '/auth/:path*',
+    '/onboarding/:path*',
   ],
 };

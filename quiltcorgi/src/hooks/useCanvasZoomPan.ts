@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { ZOOM_MIN, ZOOM_MAX } from '@/lib/constants';
+import { isInputElement } from '@/lib/dom-utils';
 
 export function useCanvasZoomPan() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -66,6 +67,8 @@ export function useCanvasZoomPan() {
       }
 
       function onKeyDown(e: KeyboardEvent) {
+        // Guard: don't activate pan mode when typing in input fields
+        if (isInputElement(e.target)) return;
         if (e.code === 'Space' && !e.repeat) {
           e.preventDefault();
           useCanvasStore.getState().setIsSpacePressed(true);
@@ -75,6 +78,8 @@ export function useCanvasZoomPan() {
       }
 
       function onKeyUp(e: KeyboardEvent) {
+        // Guard: don't process when typing in input fields
+        if (isInputElement(e.target)) return;
         if (e.code === 'Space') {
           useCanvasStore.getState().setIsSpacePressed(false);
           isPanning = false;

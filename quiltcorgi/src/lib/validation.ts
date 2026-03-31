@@ -177,7 +177,7 @@ export const adminModerationSchema = z.object({
 });
 
 export const adminModerationListSchema = z.object({
-  status: z.enum(['all', 'pending', 'approved', 'rejected']).optional(),
+  status: z.enum(['all', 'pending', 'approved', 'rejected']).default('pending'),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
@@ -225,17 +225,23 @@ export const updateProfileSchema = z.object({
   youtubeHandle: z.string().max(50).optional(),
   tiktokHandle: z.string().max(50).optional(),
   publicEmail: z.string().email().max(255).optional(),
+  // Username can be changed, but must be unique (validated server-side)
+  username: z
+    .string()
+    .min(3)
+    .max(60)
+    .regex(/^[a-z0-9\-]+$/, 'Username must be lowercase alphanumeric with hyphens only')
+    .optional(),
 });
 
 export const communityFeedSchema = z.object({
   search: z.string().optional(),
-  sort: z.enum(['newest', 'popular', 'most-saved']).default('newest'),
-  tab: z.enum(['discover', 'saved']).default('discover'),
+  sort: z.enum(['newest', 'popular']).default('newest'),
+  tab: z.enum(['discover']).default('discover'),
   category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).optional(),
+  creatorId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
-  saved: z.enum(['true']).optional(),
-  timeRange: z.enum(['month', 'all-time']).optional(),
 });
 
 export const createCommunityPostExtendedSchema = z.object({
@@ -305,13 +311,10 @@ export const blogAdminListSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
-export const createReportSchema = z.object({
-  targetType: z.enum(['post', 'comment', 'user']),
-  targetId: z.string().uuid(),
-  reason: z.enum(['spam', 'harassment', 'inappropriate', 'other']),
-  details: z.string().max(500).optional(),
-});
-
-export const reviewReportSchema = z.object({
-  action: z.enum(['dismiss', 'hide_content', 'warn_user']),
+export const patternQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(24),
+  skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),
+  search: z.string().max(200).optional(),
+  sort: z.enum(['popular', 'name', 'newest']).default('popular'),
 });

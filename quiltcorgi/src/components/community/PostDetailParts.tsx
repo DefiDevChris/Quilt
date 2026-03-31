@@ -81,7 +81,7 @@ export function LinkedProjectCard({
 }: LinkedProjectCardProps) {
   return (
     <Link
-      href={`/studio?project=${projectId}`}
+      href={`/studio/${projectId}`}
       className="flex items-center gap-4 p-4 rounded-lg border border-outline-variant/30 bg-surface-container-low hover:bg-surface-container transition-colors"
     >
       {projectThumbnailUrl ? (

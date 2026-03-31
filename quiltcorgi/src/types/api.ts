@@ -7,11 +7,13 @@ export type ApiErrorCode =
   | 'NOT_FOUND'
   | 'CONFLICT'
   | 'ALREADY_SHARED'
-  | 'DUPLICATE_REPORT'
   | 'VALIDATION_ERROR'
   | 'RATE_LIMITED'
   | 'TRUST_INSUFFICIENT'
-  | 'INTERNAL_ERROR';
+  | 'INTERNAL_ERROR'
+  | 'USERNAME_CONFLICT'
+  | 'SLUG_CONFLICT'
+  | 'ALREADY_REPORTED';
 
 export type ApiResponse<T> =
   | { success: true; data: T }

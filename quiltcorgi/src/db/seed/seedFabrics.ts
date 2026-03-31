@@ -188,12 +188,32 @@ async function seedFabrics() {
   console.log(`Seeding ${definitions.length} system fabrics...`);
 
   const { fabrics } = await import('@/db/schema');
+  const { eq } = await import('drizzle-orm');
+
+  // Check for existing default fabrics to ensure idempotency
+  const existingFabrics = await db
+    .select({ name: fabrics.name })
+    .from(fabrics)
+    .where(eq(fabrics.isDefault, true));
+  const existingNames = new Set(existingFabrics.map((f) => f.name));
+
+  const newDefinitions = definitions.filter((def) => !existingNames.has(def.name));
+
+  if (newDefinitions.length === 0) {
+    console.log('All fabrics already exist. Skipping seed.');
+    await pool.end();
+    return;
+  }
+
+  console.log(
+    `Inserting ${newDefinitions.length} new fabrics (${definitions.length - newDefinitions.length} already exist)...`
+  );
 
   const BATCH_SIZE = 50;
   let inserted = 0;
 
-  for (let i = 0; i < definitions.length; i += BATCH_SIZE) {
-    const batch = definitions.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < newDefinitions.length; i += BATCH_SIZE) {
+    const batch = newDefinitions.slice(i, i + BATCH_SIZE);
     const values = batch.map((def) => {
       const hex = getColorHex(def.name);
       const placeholderUrl = generatePlaceholderSvg(hex);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
@@ -264,10 +265,9 @@ function QuiltPanel() {
   }, [fabricCanvas]);
 
   const applyTransform = useCallback(
-    async (transformFn: (active: any, canvas: any) => void) => {
+    async (transformFn: (active: FabricObject, canvas: FabricCanvas) => void) => {
       if (!fabricCanvas) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const canvas = fabricCanvas as FabricCanvas;
       const active = canvas.getActiveObject();
       if (!active) return;
 
@@ -519,10 +519,9 @@ function ImagePanel() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
   const applyTransform = useCallback(
-    async (transformFn: (active: any, canvas: any) => void) => {
+    async (transformFn: (active: FabricObject, canvas: FabricCanvas) => void) => {
       if (!fabricCanvas) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const canvas = fabricCanvas as FabricCanvas;
       const active = canvas.getActiveObject();
       if (!active) return;
 

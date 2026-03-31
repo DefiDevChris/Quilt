@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { eq, and, desc, asc, count, ilike, or, sql } from 'drizzle-orm';
-import { z } from 'zod';
 import { db } from '@/lib/db';
 import { patternTemplates } from '@/db/schema';
+import { patternQuerySchema } from '@/lib/validation';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -12,14 +12,6 @@ import {
 import { escapeLikePattern } from '@/lib/escape-like';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
 import { FREE_PATTERN_LIST_LIMIT } from '@/lib/constants';
-
-const patternQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(24),
-  skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),
-  search: z.string().max(200).optional(),
-  sort: z.enum(['popular', 'name', 'newest']).default('popular'),
-});
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();

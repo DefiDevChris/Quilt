@@ -193,28 +193,6 @@ describe('resize-engine', () => {
       );
       expect(result.layoutSettings).toEqual({ rows: 5, cols: 5, blockSize: 12 });
     });
-
-    it('returns no layout change for medallion (expand background only)', () => {
-      const result = computeResize(
-        makeInput({
-          mode: 'add-blocks',
-          layoutType: 'medallion',
-          layoutSettings: { rows: 1, cols: 1, blockSize: 24 },
-        })
-      );
-      expect(result.addedCells).toEqual([]);
-    });
-
-    it('returns no layout change for lone-star (expand background only)', () => {
-      const result = computeResize(
-        makeInput({
-          mode: 'add-blocks',
-          layoutType: 'lone-star',
-          layoutSettings: { rows: 1, cols: 1, blockSize: 24 },
-        })
-      );
-      expect(result.addedCells).toEqual([]);
-    });
   });
 
   describe('validation', () => {

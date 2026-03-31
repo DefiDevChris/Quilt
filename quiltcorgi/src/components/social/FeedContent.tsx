@@ -197,7 +197,6 @@ function PostCard({ post }: { post: CommunityPost }) {
       likeCount,
       commentCount: post.commentCount,
       isLikedByUser: liked,
-      isSavedByUser: false,
       description: post.description,
       category: post.category,
     });
@@ -213,10 +212,10 @@ function PostCard({ post }: { post: CommunityPost }) {
       <div className="flex items-center justify-between mb-3">
         <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
           <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm">
-              <span className="text-sm font-bold text-orange-500">
-                {post.creatorName.charAt(0).toUpperCase()}
-              </span>
-            </div>
+            <span className="text-sm font-bold text-orange-500">
+              {post.creatorName.charAt(0).toUpperCase()}
+            </span>
+          </div>
           <div>
             <h4 className="font-bold text-on-surface text-base group-hover:text-primary transition-colors">
               {post.creatorName}

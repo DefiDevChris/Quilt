@@ -197,7 +197,10 @@ describe('notificationStore', () => {
     useNotificationStore.getState().toggleDropdown();
 
     expect(useNotificationStore.getState().isOpen).toBe(true);
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/notifications'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/notifications?limit=20',
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
   });
 
   it('toggleDropdown closes when already open', () => {
@@ -226,7 +229,10 @@ describe('notificationStore', () => {
   it('fetchNotifications initiates fetch', () => {
     useNotificationStore.getState().fetchNotifications();
 
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/notifications'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/notifications?limit=20',
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
   });
 
   it('markAsRead sends correct PATCH request', () => {

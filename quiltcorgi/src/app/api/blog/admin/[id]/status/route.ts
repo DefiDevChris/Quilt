@@ -11,6 +11,7 @@ import {
 } from '@/lib/auth-helpers';
 import { notFoundResponse } from '@/lib/api-responses';
 import { checkTrustLevel } from '@/middleware/trust-guard';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -19,6 +20,9 @@ export const dynamic = 'force-dynamic';
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`blog-admin:${session.user.id}`, API_RATE_LIMITS.admin);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
   if (!trustCheck.allowed) {

@@ -48,6 +48,11 @@ export interface AddedCell {
   readonly sourceObjectIds: readonly string[];
 }
 
+export interface ResizeSashingConfig {
+  readonly width: number;
+  readonly enabled: boolean;
+}
+
 export interface ResizeInput {
   readonly currentWidth: number;
   readonly currentHeight: number;
@@ -59,6 +64,8 @@ export interface ResizeInput {
   readonly layoutSettings: LayoutSettingsUpdate | null;
   readonly objects: readonly CanvasObjectData[];
   readonly tilePattern: boolean;
+  /** Sashing configuration for accurate cell position calculation */
+  readonly sashing?: ResizeSashingConfig | null;
 }
 
 export interface ResizeResult {
@@ -115,12 +122,8 @@ function computeAddBlocksResize(input: ResizeInput): ResizeResult {
     type: obj.type,
   }));
 
-  // Free-form, medallion, lone-star: just expand canvas, no new cells
-  if (
-    input.layoutType === 'free-form' ||
-    input.layoutType === 'medallion' ||
-    input.layoutType === 'lone-star'
-  ) {
+  // Free-form: just expand canvas, no new cells
+  if (input.layoutType === 'free-form') {
     return {
       newCanvasWidth: input.newWidth,
       newCanvasHeight: input.newHeight,
@@ -151,12 +154,24 @@ function computeAddBlocksResize(input: ResizeInput): ResizeResult {
       if (row < oldRows && col < oldCols) continue;
 
       const sourceObjectIds: string[] = [];
+
+      // Calculate cell stride (accounts for sashing if enabled)
+      const sashingWidth = input.sashing?.enabled ? input.sashing.width : 0;
+      const cellStride = blockSize + sashingWidth;
+
       if (input.tilePattern && oldRows > 0 && oldCols > 0) {
         const sourceRow = row % oldRows;
         const sourceCol = col % oldCols;
         const sourceObjs = input.objects.filter((obj) => {
-          const objCol = Math.floor(obj.left / (blockSize * (input.currentWidth / oldCols)));
-          const objRow = Math.floor(obj.top / (blockSize * (input.currentHeight / oldRows)));
+          const oldCellStride = blockSize + sashingWidth;
+          const objCol = Math.floor(
+            obj.left /
+              (oldCellStride * (input.currentWidth / (oldCols * oldCellStride - sashingWidth)))
+          );
+          const objRow = Math.floor(
+            obj.top /
+              (oldCellStride * (input.currentHeight / (oldRows * oldCellStride - sashingWidth)))
+          );
           return objRow === sourceRow && objCol === sourceCol;
         });
         sourceObjectIds.push(...sourceObjs.map((o) => o.id));
@@ -165,8 +180,8 @@ function computeAddBlocksResize(input: ResizeInput): ResizeResult {
       addedCells.push({
         row,
         col,
-        centerX: col * blockSize + blockSize / 2,
-        centerY: row * blockSize + blockSize / 2,
+        centerX: col * cellStride + blockSize / 2,
+        centerY: row * cellStride + blockSize / 2,
         size: blockSize,
         sourceObjectIds,
       });
@@ -183,10 +198,13 @@ function computeAddBlocksResize(input: ResizeInput): ResizeResult {
 }
 
 export function computeResize(input: ResizeInput): ResizeResult {
-  let newWidth = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, input.newWidth));
+  const newWidth = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, input.newWidth));
   let newHeight = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, input.newHeight));
 
   if (input.lockAspectRatio) {
+    if (input.currentHeight === 0) {
+      throw new Error('Cannot resize with zero current height when aspect ratio is locked');
+    }
     const aspectRatio = input.currentWidth / input.currentHeight;
     newHeight = Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, newWidth / aspectRatio));
   }

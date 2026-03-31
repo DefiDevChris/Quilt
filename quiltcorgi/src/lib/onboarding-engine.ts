@@ -63,7 +63,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     id: 'layout-settings',
     title: 'Layout Settings',
     description:
-      'Set up your quilt layout — grid, sashing, on-point, medallion, or lone star. Adjust rows, columns, block sizes, and sashing widths.',
+      'Set up your quilt layout — grid, sashing, or on-point. Adjust rows, columns, block sizes, and sashing widths.',
     targetSelector: '[data-tour="layout-settings"]',
     placement: 'right',
     showPointer: true,

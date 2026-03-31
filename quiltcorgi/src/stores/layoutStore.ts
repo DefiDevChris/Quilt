@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-engine';
+import { DEFAULT_SASHING_COLOR, DEFAULT_BORDER_COLOR } from '@/lib/constants';
 
 interface LayoutStoreState {
   layoutType: LayoutType;
@@ -27,7 +28,7 @@ interface LayoutStoreState {
 
 const DEFAULT_SASHING: SashingConfig = {
   width: 1,
-  color: '#F5F0E8',
+  color: DEFAULT_SASHING_COLOR,
   fabricId: null,
 };
 
@@ -35,7 +36,7 @@ function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
   return {
     id: crypto.randomUUID(),
     width: 2,
-    color: '#2D2D2D',
+    color: DEFAULT_BORDER_COLOR,
     fabricId: null,
     type: 'solid',
     ...overrides,

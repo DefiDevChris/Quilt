@@ -5,6 +5,7 @@ import { cognitoConfirmSignUp, cognitoResendVerification } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 
 const verifySchema = z.object({
   email: z.string().email(),
@@ -26,10 +27,7 @@ export async function POST(request: NextRequest) {
     const parsed = verifySchema.safeParse(body);
 
     if (!parsed.success) {
-      return Response.json(
-        { success: false, error: 'Invalid verification code', code: 'VALIDATION_ERROR' },
-        { status: 422 }
-      );
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid verification code');
     }
 
     const { email, code } = parsed.data;
@@ -44,27 +42,14 @@ export async function POST(request: NextRequest) {
     const message = err instanceof Error ? err.message : 'Verification failed';
 
     if (message.includes('CodeMismatchException')) {
-      return Response.json(
-        { success: false, error: 'Invalid verification code', code: 'INVALID_CODE' },
-        { status: 400 }
-      );
+      return validationErrorResponse('Invalid verification code');
     }
 
     if (message.includes('ExpiredCodeException')) {
-      return Response.json(
-        {
-          success: false,
-          error: 'Verification code has expired. Please request a new one.',
-          code: 'EXPIRED_CODE',
-        },
-        { status: 400 }
-      );
+      return validationErrorResponse('Verification code has expired. Please request a new one.');
     }
 
-    return Response.json(
-      { success: false, error: 'Verification failed', code: 'INTERNAL_ERROR' },
-      { status: 500 }
-    );
+    return errorResponse('Verification failed', 'INTERNAL_ERROR', 500);
   }
 }
 
@@ -79,19 +64,13 @@ export async function PUT(request: NextRequest) {
     const parsed = resendSchema.safeParse(body);
 
     if (!parsed.success) {
-      return Response.json(
-        { success: false, error: 'Invalid email', code: 'VALIDATION_ERROR' },
-        { status: 422 }
-      );
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid email');
     }
 
     await cognitoResendVerification(parsed.data.email);
 
     return Response.json({ success: true });
   } catch {
-    return Response.json(
-      { success: false, error: 'Failed to resend code', code: 'INTERNAL_ERROR' },
-      { status: 500 }
-    );
+    return errorResponse('Failed to resend code', 'INTERNAL_ERROR', 500);
   }
 }

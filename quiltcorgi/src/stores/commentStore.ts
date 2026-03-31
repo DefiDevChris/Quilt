@@ -24,6 +24,7 @@ interface CommentState {
 
 // Internal map for O(1) lookups - not part of public state
 let commentMap: Record<string, Comment> = {};
+let commentAbortController: AbortController | null = null;
 
 const INITIAL_STATE = {
   comments: [] as CommentWithReplies[],
@@ -48,6 +49,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   ...INITIAL_STATE,
 
   fetchComments: async (postId, append = false) => {
+    commentAbortController?.abort();
+    commentAbortController = new AbortController();
     const { page } = get();
     set({ isLoading: true, error: null });
 
@@ -56,7 +59,9 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       params.set('page', String(append ? page : 1));
       params.set('limit', '20');
 
-      const res = await fetch(`/api/community/${postId}/comments?${params.toString()}`);
+      const res = await fetch(`/api/community/${postId}/comments?${params.toString()}`, {
+        signal: commentAbortController.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -76,7 +81,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
           isLoading: false,
         };
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load comments', isLoading: false });
     }
   },
@@ -173,6 +179,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   },
 
   reset: () => {
+    commentAbortController?.abort();
+    commentAbortController = null;
     commentMap = {};
     set({ ...INITIAL_STATE });
   },

@@ -29,7 +29,7 @@ export const FabricRoleSchema = z.enum([
   'accent',
 ]);
 
-export const LayoutTypeSchema = z.enum(['grid', 'on-point', 'medallion', 'lone-star', 'custom']);
+export const LayoutTypeSchema = z.enum(['grid', 'on-point', 'custom']);
 
 export const CuttingDirectionScopeSchema = z.enum(['per-block', 'whole-quilt']);
 

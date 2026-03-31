@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { loadOpenCv } from '@/lib/opencv-loader';
 import { UploadStep } from './steps/UploadStep';
+import { ScanSettingsStep } from './steps/ScanSettingsStep';
 import { CorrectionStep } from './steps/CorrectionStep';
 import { ProcessingStep } from './steps/ProcessingStep';
 import { ResultsStep } from './steps/ResultsStep';
@@ -12,6 +13,7 @@ import type { PhotoPatternStep } from '@/lib/photo-pattern-types';
 
 const VISIBLE_STEPS: readonly PhotoPatternStep[] = [
   'upload',
+  'scanSettings',
   'correction',
   'processing',
   'results',
@@ -20,6 +22,7 @@ const VISIBLE_STEPS: readonly PhotoPatternStep[] = [
 
 const STEP_SUBTITLES: Record<PhotoPatternStep, string> = {
   upload: 'Upload your quilt photo',
+  scanSettings: 'Tell us about your quilt',
   correction: 'Adjust perspective',
   processing: 'Analyzing...',
   results: 'Review detected pieces',
@@ -31,6 +34,8 @@ function StepContent({ step }: { readonly step: PhotoPatternStep }) {
   switch (step) {
     case 'upload':
       return <UploadStep />;
+    case 'scanSettings':
+      return <ScanSettingsStep />;
     case 'correction':
       return <CorrectionStep />;
     case 'processing':

@@ -31,7 +31,7 @@ export const DEFAULT_CANVAS_WIDTH = 48;
 export const DEFAULT_CANVAS_HEIGHT = 48;
 
 export const DEFAULT_SEAM_ALLOWANCE_INCHES = 0.25;
-export const DEFAULT_WOF: 44 = 44;
+export const DEFAULT_WOF = 44 as const;
 export const DEFAULT_WASTE_MARGIN = 0.1;
 
 export const PAGINATION_DEFAULT_LIMIT = 20;
@@ -62,10 +62,6 @@ export const TEXT_FONTS = [
   'Trebuchet MS',
   'Verdana',
 ] as const;
-
-export const MAX_MEDALLION_ROUNDS = 10;
-export const MIN_LONE_STAR_RINGS = 3;
-export const MAX_LONE_STAR_RINGS = 8;
 
 export const COLOR_FAMILIES = [
   'Red',
@@ -133,7 +129,18 @@ export const GRID_CELL_SIZE_STEP = 0.125;
 // Photo to Pattern (Phase 21)
 export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 export const PHOTO_PATTERN_MIN_DIMENSION = 200; // px
-export const PHOTO_PATTERN_DOWNSCALE_MAX = 2000; // px longest side
+
+// Resolution tiers based on piece scale - optimizes for scan quality vs memory usage
+export const PHOTO_PATTERN_DOWNSCALE_MAX = 2000; // px longest side (legacy default)
+export const PHOTO_PATTERN_RESOLUTION_TIERS = {
+  tiny: 2400, // High resolution for small pieces (postage stamp quilts)
+  standard: 1600, // Balanced for typical patchwork
+  large: 1200, // Lower resolution sufficient for large-piece quilts
+} as const;
+
+// Maximum memory budget for ImageData (~32MB to stay under common browser limits)
+export const PHOTO_PATTERN_MAX_IMAGE_DATA_SIZE = 32 * 1024 * 1024; // 32 MB
+export const PHOTO_PATTERN_ABSOLUTE_MAX_DIMENSION = 2800; // Hard cap regardless of piece scale
 export const PHOTO_PATTERN_SENSITIVITY_MIN = 0.2;
 export const PHOTO_PATTERN_SENSITIVITY_MAX = 2.0;
 export const PHOTO_PATTERN_SENSITIVITY_DEFAULT = 1.0;
@@ -171,3 +178,7 @@ export const SOCIAL_FALLBACK_IMAGES = {
 // Default canvas colors (RULER_COLORS.primary-dark and surface color)
 export const DEFAULT_FILL_COLOR = '#8d4f00';
 export const DEFAULT_STROKE_COLOR = '#383831';
+
+// Default layout colors
+export const DEFAULT_SASHING_COLOR = '#F5F0E8';
+export const DEFAULT_BORDER_COLOR = '#2D2D2D';

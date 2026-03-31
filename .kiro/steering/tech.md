@@ -9,7 +9,7 @@
 
 ## Data & Auth
 
-- **Drizzle ORM 0.45** — `pgTable` 3rd arg returns array. Uses `pgEnum`. Migrations in `src/db/migrations/`.
+- **Drizzle ORM ~0.45** — `pgTable` 3rd arg returns array. Uses `pgEnum`. Migrations in `src/db/migrations/`.
 - **PostgreSQL** — local via Docker, production via AWS RDS.
 - **AWS Cognito** — email/password auth. Sessions in HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). JWT verified via JWKS.
 - **AWS Secrets Manager** — production secrets loaded at startup via `instrumentation.ts`. Set `AWS_SECRET_NAME=skip` for local dev.
@@ -17,14 +17,14 @@
 
 ## Canvas & UI
 
-- **Fabric.js 7.2.0** — always `import('fabric')` dynamically in hooks (SSR safety).
+- **Fabric.js 7.2.0** — always `import('fabric')` dynamically in hooks (SSR safety). Never import at module level.
 - **Zustand 5** — global state. 17 stores in `src/stores/`.
 - **Framer Motion** — animations and transitions.
 - **Lucide React** — icons.
 
 ## Other Libraries
 
-- **Zod 4.3** — `z.record()` requires two args. `z.url()`/`z.uuid()` show cosmetic deprecation warnings.
+- **Zod 4.3** — `z.record()` requires two args. `z.url()`/`z.uuid()` show cosmetic deprecation warnings (safe to ignore).
 - **Stripe ~21** — subscription billing.
 - **pdf-lib** — client-side 1:1 scale PDF export.
 - **next-mdx-remote** — MDX in App Router server components. Tutorials in `src/content/tutorials/`.
@@ -32,19 +32,6 @@
 - **@upstash/ratelimit + @upstash/redis** — API rate limiting.
 - **ESLint 9** — flat config in `eslint.config.mjs`.
 - **Prettier** — config in `.prettierrc`.
-
-## Trust / Role System
-
-Simplified 3-role system in `src/lib/trust-engine.ts`:
-- `UserRole = 'free' | 'pro' | 'admin'`
-- `getRolePermissions(role)` returns `RolePermissions` (canLike, canSave, canComment, canPost, canModerate)
-- `getRateLimit(role, action)` for comments/posts rate limits
-- No trust levels, no follows, no reports, no auto-moderation queue
-
-## Testing
-
-- **Vitest** — unit tests. Environment: `node` for pure engine tests, `jsdom` for component tests.
-- **Playwright** — E2E tests (`playwright.config.ts`).
 
 ## Commands
 
@@ -74,4 +61,7 @@ npm run db:seed:blog    # Seed blog posts only
 
 ## Environment
 
-Set `AWS_SECRET_NAME=skip` in `.env.local` to bypass Secrets Manager locally. `DATABASE_URL` defaults to the local Docker PostgreSQL instance. `NEXT_PUBLIC_*` vars are build-time only. Dev mode returns a hardcoded pro session (`DEV_SESSION`) — all features unlocked locally.
+- Set `AWS_SECRET_NAME=skip` in `.env.local` to bypass Secrets Manager locally.
+- `DATABASE_URL` defaults to local Docker PostgreSQL.
+- `NEXT_PUBLIC_*` vars are build-time only.
+- Dev mode returns a hardcoded pro session (`DEV_SESSION`) — all features unlocked locally.

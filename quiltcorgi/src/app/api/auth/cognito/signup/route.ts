@@ -4,6 +4,7 @@ import { cognitoSignUp } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 
 const signupSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
@@ -22,10 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       const firstError = parsed.error.issues[0]?.message ?? 'Invalid input';
-      return Response.json(
-        { success: false, error: firstError, code: 'VALIDATION_ERROR' },
-        { status: 422 }
-      );
+      return validationErrorResponse(firstError);
     }
 
     const { name, email, password } = parsed.data;
@@ -57,26 +55,13 @@ export async function POST(request: NextRequest) {
     const message = err instanceof Error ? err.message : 'Registration failed';
 
     if (message.includes('UsernameExistsException')) {
-      return Response.json(
-        { success: false, error: 'An account with this email already exists', code: 'CONFLICT' },
-        { status: 409 }
-      );
+      return errorResponse('An account with this email already exists', 'CONFLICT', 409);
     }
 
     if (message.includes('InvalidPasswordException')) {
-      return Response.json(
-        {
-          success: false,
-          error: 'Password must include uppercase, lowercase, and numbers',
-          code: 'VALIDATION_ERROR',
-        },
-        { status: 422 }
-      );
+      return validationErrorResponse('Password must include uppercase, lowercase, and numbers');
     }
 
-    return Response.json(
-      { success: false, error: 'Registration failed', code: 'INTERNAL_ERROR' },
-      { status: 500 }
-    );
+    return errorResponse('Registration failed', 'INTERNAL_ERROR', 500);
   }
 }

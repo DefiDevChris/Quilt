@@ -1,19 +1,10 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { users, comments, communityPosts } from '@/db/schema';
-import {
-  getRolePermissions,
-  getRateLimit,
-  type UserRole,
-} from '@/lib/trust-engine';
+import { getRolePermissions, getRateLimit, type UserRole } from '@/lib/trust-engine';
 import { errorResponse } from '@/lib/api-responses';
 
-type RequiredPermission =
-  | 'canLike'
-  | 'canSave'
-  | 'canComment'
-  | 'canPost'
-  | 'canModerate';
+type RequiredPermission = 'canLike' | 'canComment' | 'canPost' | 'canModerate';
 
 interface TrustCheckResult {
   allowed: boolean;
@@ -24,7 +15,6 @@ interface TrustCheckResult {
 
 const PERMISSION_MESSAGES: Record<RequiredPermission, string> = {
   canLike: 'You must be logged in to like content.',
-  canSave: 'You must be logged in to save content.',
   canComment: 'You must be logged in to comment.',
   canPost: 'A Pro subscription is required to create community posts.',
   canModerate: 'This action requires admin privileges.',
@@ -39,7 +29,11 @@ export async function checkTrustLevel(
       allowed: false,
       role: 'free',
       userId: '',
-      response: errorResponse('You must be logged in to perform this action.', 'TRUST_INSUFFICIENT', 403),
+      response: errorResponse(
+        'You must be logged in to perform this action.',
+        'TRUST_INSUFFICIENT',
+        403
+      ),
     };
   }
 

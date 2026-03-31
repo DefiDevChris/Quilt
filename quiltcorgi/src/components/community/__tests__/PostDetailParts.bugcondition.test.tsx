@@ -11,6 +11,7 @@
  * DO NOT fix the source code to make these pass — they are intentionally failing.
  */
 
+// @vitest-environment jsdom
 /// <reference types="vitest/globals" />
 
 import { describe, it, expect, vi } from 'vitest';

@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3_UPLOAD_EXPIRY_SECONDS } from '@/lib/constants';
+import { S3_UPLOAD_EXPIRY_SECONDS, MAX_FILE_SIZE_BYTES } from '@/lib/constants';
 
 const awsVarsPresent =
   process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_S3_BUCKET;

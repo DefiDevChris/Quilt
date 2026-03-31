@@ -97,7 +97,7 @@ export async function GET(
           authorId: comments.authorId,
           content: comments.content,
           replyToId: comments.replyToId,
-          likeCount: comments.likeCount,
+          likeCount: sql<number>`0`.as('likeCount'),
           status: comments.status,
           createdAt: comments.createdAt,
           authorName: users.name,
@@ -133,7 +133,7 @@ export async function GET(
             authorId: comments.authorId,
             content: comments.content,
             replyToId: comments.replyToId,
-            likeCount: comments.likeCount,
+            likeCount: sql<number>`0`.as('likeCount'),
             status: comments.status,
             createdAt: comments.createdAt,
             authorName: users.name,
@@ -262,21 +262,25 @@ export async function POST(
       parentComment = { id: parent.id, authorId: parent.authorId, replyToId: parent.replyToId };
     }
 
-    const [created] = await db
-      .insert(comments)
-      .values({
-        postId,
-        authorId: session.user.id,
-        content,
-        replyToId: effectiveReplyToId,
-        status: 'visible',
-      })
-      .returning();
+    const [created] = await db.transaction(async (tx) => {
+      const [comment] = await tx
+        .insert(comments)
+        .values({
+          postId,
+          authorId: session.user.id,
+          content,
+          replyToId: effectiveReplyToId,
+          status: 'visible',
+        })
+        .returning();
 
-    await db
-      .update(communityPosts)
-      .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
-      .where(eq(communityPosts.id, postId));
+      await tx
+        .update(communityPosts)
+        .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
+        .where(eq(communityPosts.id, postId));
+
+      return [comment];
+    });
 
     const authorName = session.user.name ?? 'Someone';
 

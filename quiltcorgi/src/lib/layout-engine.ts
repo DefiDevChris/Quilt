@@ -2,14 +2,11 @@
  * Layout Engine — Pure computation functions for quilt layout generation.
  *
  * Computes cell positions, sashing strips, setting triangles, and borders
- * for Grid, Sashing, On-Point, Medallion, Lone Star, and Free-Form layout types.
+ * for Grid, Sashing, On-Point, and Free-Form layout types.
  * All outputs are in pixels. Callers convert from units using pxPerUnit.
  */
 
-import { computeMedallionLayout } from '@/lib/layouts/medallion-layout';
-import { computeLoneStarLayout } from '@/lib/layouts/lone-star-layout';
-
-export type LayoutType = 'free-form' | 'grid' | 'sashing' | 'on-point' | 'medallion' | 'lone-star';
+export type LayoutType = 'free-form' | 'grid' | 'sashing' | 'on-point';
 
 export interface SashingConfig {
   width: number;
@@ -31,27 +28,6 @@ export interface BorderConfig {
   customBlockId?: string;
 }
 
-export interface MedallionRound {
-  type: 'solid' | 'pieced';
-  width: number;
-  color: string;
-  fabricId: string | null;
-  pattern?: string;
-  unitSize?: number;
-  secondaryColor?: string;
-}
-
-export interface MedallionConfig {
-  centerBlockSize: number;
-  rounds: MedallionRound[];
-}
-
-export interface LoneStarConfig {
-  diamondRings: number;
-  ringColors: string[];
-  backgroundFill: string;
-}
-
 export interface LayoutConfig {
   type: LayoutType;
   rows: number;
@@ -59,8 +35,6 @@ export interface LayoutConfig {
   blockSize: number;
   sashing: SashingConfig;
   borders: BorderConfig[];
-  medallion?: MedallionConfig;
-  loneStar?: LoneStarConfig;
 }
 
 export interface LayoutCell {
@@ -84,6 +58,8 @@ export interface LayoutSashingStrip {
 export interface LayoutSettingTriangle {
   points: Array<{ x: number; y: number }>;
   type: 'side' | 'corner';
+  /** Optional fill color for setting shapes */
+  fill?: string;
 }
 
 export interface LayoutBorderStrip {
@@ -155,10 +131,6 @@ export function computeLayout(config: LayoutConfig, pxPerUnit: number): LayoutRe
     case 'on-point':
       result = computeOnPointLayout(config.rows, config.cols, blockSizePx);
       break;
-    case 'medallion':
-      return computeMedallionLayout(config, pxPerUnit);
-    case 'lone-star':
-      return computeLoneStarLayout(config, pxPerUnit);
     default:
       return { ...EMPTY_RESULT };
   }
@@ -437,14 +409,15 @@ export function computeBorderStrips(
     const bw = border.width * pxPerUnit;
     const outerX = -offset - bw;
     const outerY = -offset - bw;
+    // Strips span the full outer dimension including corners
     const outerW = innerWidth + 2 * (offset + bw);
     const outerH = innerHeight + 2 * (offset + bw);
 
-    // Top strip
+    // Top strip - spans only innerWidth (not corners)
     strips.push({
-      x: outerX,
+      x: outerX + bw,
       y: outerY,
-      width: outerW,
+      width: innerWidth + 2 * offset,
       height: bw,
       color: border.color,
       fabricId: border.fabricId,
@@ -452,11 +425,11 @@ export function computeBorderStrips(
       side: 'top',
     });
 
-    // Bottom strip
+    // Bottom strip - spans only innerWidth (not corners)
     strips.push({
-      x: outerX,
+      x: outerX + bw,
       y: innerHeight + offset,
-      width: outerW,
+      width: innerWidth + 2 * offset,
       height: bw,
       color: border.color,
       fabricId: border.fabricId,
@@ -464,24 +437,24 @@ export function computeBorderStrips(
       side: 'bottom',
     });
 
-    // Left strip
+    // Left strip - spans full outer height including corners
     strips.push({
       x: outerX,
-      y: outerY + bw,
+      y: outerY,
       width: bw,
-      height: outerH - 2 * bw,
+      height: outerH,
       color: border.color,
       fabricId: border.fabricId,
       borderIndex: i,
       side: 'left',
     });
 
-    // Right strip
+    // Right strip - spans full outer height including corners
     strips.push({
       x: innerWidth + offset,
-      y: outerY + bw,
+      y: outerY,
       width: bw,
-      height: outerH - 2 * bw,
+      height: outerH,
       color: border.color,
       fabricId: border.fabricId,
       borderIndex: i,

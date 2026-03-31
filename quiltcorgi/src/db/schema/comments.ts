@@ -1,12 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  text,
-  integer,
-  timestamp,
-  index,
-  type AnyPgColumn,
-} from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, index, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { communityPosts } from './communityPosts';
 import { commentStatusEnum } from './enums';
@@ -25,7 +17,6 @@ export const comments = pgTable(
     replyToId: uuid('replyToId').references((): AnyPgColumn => comments.id, {
       onDelete: 'set null',
     }),
-    likeCount: integer('likeCount').notNull().default(0),
     status: commentStatusEnum('status').notNull().default('visible'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })

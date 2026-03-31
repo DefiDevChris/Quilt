@@ -1,33 +1,26 @@
 import { describe, it, expect } from 'vitest';
-import {
-  getRolePermissions,
-  getRateLimit,
-  type UserRole,
-} from '@/lib/trust-engine';
+import { getRolePermissions, getRateLimit } from '@/lib/trust-engine';
 
 describe('getRolePermissions', () => {
   it('returns all false when role is null', () => {
     const perms = getRolePermissions(null);
     expect(perms.canLike).toBe(false);
-    expect(perms.canSave).toBe(false);
     expect(perms.canComment).toBe(false);
     expect(perms.canPost).toBe(false);
     expect(perms.canModerate).toBe(false);
   });
 
-  it('free users can like, save, and comment but not post or moderate', () => {
+  it('free users can like and comment but not post or moderate', () => {
     const perms = getRolePermissions('free');
     expect(perms.canLike).toBe(true);
-    expect(perms.canSave).toBe(true);
     expect(perms.canComment).toBe(true);
     expect(perms.canPost).toBe(false);
     expect(perms.canModerate).toBe(false);
   });
 
-  it('pro users can like, save, comment, and post but not moderate', () => {
+  it('pro users can like, comment, and post but not moderate', () => {
     const perms = getRolePermissions('pro');
     expect(perms.canLike).toBe(true);
-    expect(perms.canSave).toBe(true);
     expect(perms.canComment).toBe(true);
     expect(perms.canPost).toBe(true);
     expect(perms.canModerate).toBe(false);
@@ -36,7 +29,6 @@ describe('getRolePermissions', () => {
   it('admin users can do everything', () => {
     const perms = getRolePermissions('admin');
     expect(perms.canLike).toBe(true);
-    expect(perms.canSave).toBe(true);
     expect(perms.canComment).toBe(true);
     expect(perms.canPost).toBe(true);
     expect(perms.canModerate).toBe(true);

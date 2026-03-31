@@ -111,8 +111,10 @@ function Blockquote(props: ComponentPropsWithoutRef<'blockquote'>) {
 function isSafeImageSrc(src: string): boolean {
   try {
     const url = new URL(src);
-    return url.protocol === 'https:' || url.protocol === 'http:';
+    // Only allow HTTPS URLs (not HTTP) for external images
+    return url.protocol === 'https:';
   } catch {
+    // Allow relative paths and anchors for local images
     return src.startsWith('/') || src.startsWith('#');
   }
 }

@@ -9,6 +9,7 @@ import {
   forbiddenResponse,
   notFoundResponse,
   errorResponse,
+  validationErrorResponse,
 } from '@/lib/auth-helpers';
 import { verifyProjectOwner } from '@/lib/project-auth';
 
@@ -79,10 +80,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const parsedItems = printlistItemSchema.safeParse(body.items);
     if (!parsedItems.success) {
-      return Response.json(
-        { success: false, error: 'Invalid items payload', details: parsedItems.error.issues },
-        { status: 422 }
-      );
+      return validationErrorResponse(parsedItems.error.issues[0]?.message ?? 'Invalid items payload');
     }
     const items = parsedItems.data;
     const paperSize = body.paperSize === 'a4' ? 'a4' : 'letter';

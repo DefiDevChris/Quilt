@@ -8,6 +8,7 @@ import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
+import { isInputElement } from '@/lib/dom-utils';
 
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -35,9 +36,7 @@ export function useCanvasKeyboard() {
 
       function onKeyDown(e: KeyboardEvent) {
         const isCtrl = e.ctrlKey || e.metaKey;
-        const target = e.target as HTMLElement;
-        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
-          return;
+        if (isInputElement(e.target)) return;
 
         if (isCtrl && e.key === 'z' && !e.shiftKey) {
           e.preventDefault();
@@ -149,10 +148,9 @@ export function useCanvasKeyboard() {
             useFabricStore.getState().togglePanel();
             return;
           }
-        }
 
-        if (e.key === 'i' || e.key === 'I') {
-          if (!isCtrl) {
+          // Puzzle view toggle
+          if (e.key === 'i' || e.key === 'I') {
             e.preventDefault();
             usePieceInspectorStore.getState().togglePuzzleView();
             return;

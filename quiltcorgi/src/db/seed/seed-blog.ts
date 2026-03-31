@@ -12,7 +12,7 @@ async function seedBlogPosts() {
   console.log('🌱 Seeding blog posts...\n');
 
   // Check if we have an admin user, if not create a system user
-  let adminUser = await db.query.users.findFirst({
+  const adminUser = await db.query.users.findFirst({
     where: eq(users.role, 'admin'),
   });
 

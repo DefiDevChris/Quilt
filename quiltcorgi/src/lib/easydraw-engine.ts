@@ -67,6 +67,14 @@ export function segmentsEqual(a: Segment, b: Segment): boolean {
 // ─── Boundary generation ────────────────────────────────────────────────────
 
 export function addBoundarySegments(gridCols: number, gridRows: number): Segment[] {
+  // Validate inputs
+  if (!Number.isFinite(gridCols) || !Number.isFinite(gridRows)) {
+    throw new Error('gridCols and gridRows must be finite numbers');
+  }
+  if (gridCols <= 0 || gridRows <= 0) {
+    return [];
+  }
+  
   const segments: Segment[] = [];
 
   // Top edge
@@ -296,7 +304,12 @@ export function detectPatches(
 
 function parseKey(key: string): { x: number; y: number } {
   const [rowStr, colStr] = key.split(',');
-  return { x: Number(colStr), y: Number(rowStr) };
+  const x = Number(colStr);
+  const y = Number(rowStr);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    throw new Error(`Invalid grid point key: ${key}`);
+  }
+  return { x, y };
 }
 
 function verticesToPath(vertices: { x: number; y: number }[]): string {

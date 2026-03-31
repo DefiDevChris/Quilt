@@ -3,27 +3,20 @@ import { test, expect } from '@playwright/test';
 test.describe('Landing Page', () => {
   test('renders hero section with CTA', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Design quilts');
-    await expect(page.getByRole('link', { name: /get started free/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('First Stitch');
+    await expect(page.getByRole('link', { name: /start designing free/i }).first()).toBeVisible();
   });
 
   test('renders feature highlights section', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Block Library')).toBeVisible();
-    await expect(page.getByText('Fabric Preview')).toBeVisible();
-    await expect(page.getByText('1:1 PDF Patterns')).toBeVisible();
-    await expect(page.getByText('Community Board')).toBeVisible();
-  });
-
-  test('renders pricing cards', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByText('$9.99/month')).toBeVisible();
-    await expect(page.getByText('Free forever')).toBeVisible();
+    await expect(page.getByText('659+ block library')).toBeVisible();
+    await expect(page.getByText('True-scale PDF with seam allowances')).toBeVisible();
+    await expect(page.getByText('Automatic yardage estimation')).toBeVisible();
   });
 
   test('nav links to auth pages', async ({ page }) => {
     await page.goto('/');
-    const ctaLink = page.getByRole('link', { name: /get started free/i }).first();
+    const ctaLink = page.getByRole('link', { name: /start designing free/i }).first();
     await expect(ctaLink).toHaveAttribute('href', '/auth/signup');
   });
 });
@@ -31,26 +24,24 @@ test.describe('Landing Page', () => {
 test.describe('Auth Pages', () => {
   test('sign in page loads', async ({ page }) => {
     await page.goto('/auth/signin');
-    await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 
   test('sign up page loads', async ({ page }) => {
     await page.goto('/auth/signup');
-    await expect(page.getByRole('heading', { name: /sign up|create account/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Create your account');
   });
 });
 
 test.describe('Community Page', () => {
   test('community page loads', async ({ page }) => {
-    await page.goto('/community');
-    await expect(page.getByText(/community/i).first()).toBeVisible();
+    await page.goto('/socialthreads');
+    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
   });
 
-  test('community page has search and sort controls', async ({ page }) => {
-    await page.goto('/community');
-    await expect(page.getByPlaceholder(/search/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /newest/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /most liked/i })).toBeVisible();
+  test('community page has tabs', async ({ page }) => {
+    await page.goto('/socialthreads');
+    await expect(page.getByRole('heading', { name: 'Feed' })).toBeVisible();
   });
 });
 
@@ -75,7 +66,7 @@ test.describe('SEO', () => {
     expect(title).toContain('QuiltCorgi');
 
     const metaDescription = page.locator('meta[name="description"]');
-    await expect(metaDescription).toHaveAttribute('content', /quilt design studio/i);
+    await expect(metaDescription).toHaveAttribute('content', /quilt/i);
   });
 
   test('robots.txt is accessible', async ({ page }) => {

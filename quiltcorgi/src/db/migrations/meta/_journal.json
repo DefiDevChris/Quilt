@@ -50,6 +50,13 @@
       "when": 1774654592101,
       "tag": "0006_simplification",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774654592102,
+      "tag": "0007_db-audit-fixes",
+      "breakpoints": true
     }
   ]
 }

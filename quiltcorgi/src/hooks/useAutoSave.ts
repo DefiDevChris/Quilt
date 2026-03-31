@@ -24,7 +24,8 @@ export function useAutoSave() {
       saveProject({ 
         projectId, 
         fabricCanvas, 
-        signal: abortControllerRef.current?.signal 
+        signal: abortControllerRef.current?.signal,
+        source: 'auto'
       });
     }, AUTO_SAVE_INTERVAL_MS);
 
