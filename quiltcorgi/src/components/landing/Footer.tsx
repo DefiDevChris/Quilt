@@ -42,11 +42,6 @@ export default function Footer() {
                   Yardage Calculator
                 </a>
               </li>
-              <li>
-                <Link href="/blog" className="hover:text-warm-peach transition-colors">
-                  Blog
-                </Link>
-              </li>
             </ul>
           </div>
 

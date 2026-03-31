@@ -10,7 +10,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
+import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -212,6 +212,9 @@ export async function POST(
 
   const trustCheck = await checkTrustLevel(session.user.id, 'canComment');
   if (!trustCheck.allowed) return trustCheck.response!;
+
+  const privacyCheck = await checkPrivacyPermission(session.user.id, 'canComment');
+  if (!privacyCheck.allowed) return privacyCheck.response!;
 
   const rateCheck = await checkRateLimit(session.user.id, trustCheck.role, 'comments');
   if (!rateCheck.allowed) return rateCheck.response!;

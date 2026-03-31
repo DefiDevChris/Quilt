@@ -56,6 +56,11 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
 }
 
 export async function proxy(req: NextRequest) {
+  // Dev auth bypass — allows testing all pages without Cognito credentials
+  if (process.env.DEV_AUTH_BYPASS === 'true') {
+    return NextResponse.next();
+  }
+
   const { pathname } = req.nextUrl;
   const idToken = req.cookies.get('qc_id_token')?.value;
 

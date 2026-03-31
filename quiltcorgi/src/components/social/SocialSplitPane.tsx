@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bookmark, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
@@ -8,8 +8,6 @@ import { BlogContent } from '@/components/social/BlogContent';
 import { FeedContent } from '@/components/social/FeedContent';
 
 export type SplitPanelId = 'blog' | 'saved' | 'feed' | 'profile';
-
-// ── Mock data (development phase) ───────────────────────────────────────────
 
 const MOCK_SAVED = [
   {
@@ -32,134 +30,83 @@ const MOCK_SAVED = [
   },
 ];
 
-// ── Quilting icons (social palette: slate + orange, stroke-based) ───────────
-
-function FeedPatchworkIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <rect x="2" y="2" width="16" height="16" rx="3" fill="#fb923c" />
-      <rect x="22" y="2" width="16" height="16" rx="3" fill="#f97316" opacity="0.55" />
-      <rect x="2" y="22" width="16" height="16" rx="3" fill="#f97316" opacity="0.35" />
-      <rect x="22" y="22" width="16" height="16" rx="3" fill="#fb923c" opacity="0.75" />
-      <path
-        d="M10 2L2 10M18 2L2 18M30 2L22 10M38 2L22 18"
-        stroke="currentColor"
-        strokeWidth="0.5"
-        opacity="0.1"
-      />
-      <path
-        d="M10 22L2 30M18 22L2 38M30 22L22 30M38 22L22 38"
-        stroke="currentColor"
-        strokeWidth="0.5"
-        opacity="0.1"
-      />
-    </svg>
-  );
-}
-
-function BlogBookIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <path
-        d="M5 6h12a3 3 0 013 3v24c0-2-1.5-3.5-3.5-3.5H5V6z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M35 6H23a3 3 0 00-3 3v24c0-2 1.5-3.5 3.5-3.5H35V6z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <rect x="8" y="11" width="5" height="5" rx="0.5" fill="#fb923c" opacity="0.6" />
-      <rect x="8" y="18" width="5" height="5" rx="0.5" fill="#f97316" opacity="0.35" />
-      <rect x="27" y="11" width="5" height="5" rx="0.5" fill="#f97316" opacity="0.35" />
-      <rect x="27" y="18" width="5" height="5" rx="0.5" fill="#fb923c" opacity="0.6" />
-    </svg>
-  );
-}
-
-function SavedHeartIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <path
-        d="M20 34L6 20c-2.5-3.5-2.5-9 1-11.5s8 .5 13 7c5-6.5 9.5-8 13-5.5s3.5 8 1 11.5L20 34z"
-        stroke="#fb923c"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M13 17l4 4m0-4l-4 4"
-        stroke="#f97316"
-        strokeWidth="1"
-        strokeLinecap="round"
-        opacity="0.4"
-      />
-      <path
-        d="M23 17l4 4m0-4l-4 4"
-        stroke="#f97316"
-        strokeWidth="1"
-        strokeLinecap="round"
-        opacity="0.4"
-      />
-      <path
-        d="M18 23l4 4m0-4l-4 4"
-        stroke="#f97316"
-        strokeWidth="1"
-        strokeLinecap="round"
-        opacity="0.4"
-      />
-    </svg>
-  );
-}
-
-function ProfileSpoolIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <ellipse cx="20" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.4" fill="none" />
-      <line x1="10" y1="8" x2="10" y2="32" stroke="currentColor" strokeWidth="1.4" />
-      <line x1="30" y1="8" x2="30" y2="32" stroke="currentColor" strokeWidth="1.4" />
-      <ellipse cx="20" cy="32" rx="10" ry="4" stroke="currentColor" strokeWidth="1.4" fill="none" />
-      <path d="M12 14h16M12 20h16M12 26h16" stroke="#fb923c" strokeWidth="0.8" opacity="0.35" />
-      <path
-        d="M30 15c3-1.5 5-4 4-7"
-        stroke="#64748b"
-        strokeWidth="1"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.5"
-      />
-    </svg>
-  );
-}
-
-function StudioScissorsIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <circle cx="7" cy="21" r="4" stroke="white" strokeWidth="1.4" fill="none" />
-      <circle cx="21" cy="21" r="4" stroke="white" strokeWidth="1.4" fill="none" />
-      <line x1="10" y1="18" x2="22" y2="4" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="18" y1="18" x2="6" y2="4" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-// ── Collapsed strips ────────────────────────────────────────────────────────
-// glass-panel base, social palette (slate + orange). Vertical ~10vw, Horizontal ~3vw.
+// ── Blog Strip: Pattern book with stitching lines ────────────────────────────
 
 function BlogStripVertical() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex flex-col items-center justify-between py-5 px-3 overflow-hidden transition-all duration-300 group-hover:bg-white/80">
-      <BlogBookIcon />
-      <div className="text-center">
-        <span className="text-slate-800 font-extrabold text-lg tracking-tight block">Blog</span>
-        <span className="text-slate-500 text-[10px] font-medium mt-0.5 block">
-          Insights & tutorials
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+      {/* Base glass */}
+      <div className="absolute inset-0 glass-panel" />
+
+      {/* Quilt block pattern - log cabin style */}
+      <div className="absolute inset-0 opacity-[0.06]">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="blog-block"
+              x="0"
+              y="0"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect x="0" y="0" width="40" height="40" fill="#FFF9F2" />
+              <rect x="0" y="0" width="40" height="12" fill="#FFB085" opacity="0.7" />
+              <rect x="0" y="0" width="12" height="28" fill="#F4A261" opacity="0.6" />
+              <rect x="0" y="0" width="20" height="20" fill="#E76F51" opacity="0.4" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#blog-block)" />
+        </svg>
+      </div>
+
+      {/* Stitching lines */}
+      <div
+        className="absolute left-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
+        }}
+      />
+      <div
+        className="absolute right-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
+        {/* Title at top */}
+        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+          Blog
         </span>
+
+        {/* Big simple graphic - centered */}
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="relative">
+            {/* Warm glow */}
+            <div className="absolute inset-0 bg-orange-300/30 rounded-full blur-2xl scale-[1.8]" />
+            {/* Icon - NO ring */}
+            <div className="relative w-28 h-28 flex items-center justify-center">
+              <img
+                src="/icons/quilt-13-dashed-squares-Photoroom.png"
+                alt="Blog"
+                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mascot at bottom */}
+        <div className="relative mt-3">
+          <img
+            src="/mascots&avatars/corgi29.png"
+            alt=""
+            className="w-20 h-20 object-contain drop-shadow-md"
+          />
+        </div>
       </div>
     </div>
   );
@@ -167,46 +114,123 @@ function BlogStripVertical() {
 
 function BlogStripHorizontal() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex items-center gap-3 px-5 transition-all duration-300 group-hover:bg-white/80">
-      <span className="text-sm font-extrabold text-slate-800 tracking-wide">Blog</span>
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 40 40"
-        fill="none"
-        className="ml-auto shrink-0 opacity-60"
-      >
-        <path
-          d="M5 6h12a3 3 0 013 3v24c0-2-1.5-3.5-3.5-3.5H5V6z"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-          fill="none"
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+      {/* Stitching top & bottom */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
+        }}
+      />
+      {/* Pattern book icon */}
+      <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center relative shrink-0">
+        <img
+          src="/icons/quilt-13-dashed-squares-Photoroom.png"
+          alt="Blog"
+          className="w-8 h-8 object-contain drop-shadow"
         />
-        <path
-          d="M35 6H23a3 3 0 00-3 3v24c0-2 1.5-3.5 3.5-3.5H35V6z"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-          fill="none"
-        />
-      </svg>
+      </div>
+
+      {/* Title */}
+      <span className="text-base font-extrabold text-slate-800 tracking-wide">Blog</span>
+
+      {/* Mascot */}
+      <img
+        src="/mascots&avatars/corgi29.png"
+        alt=""
+        className="ml-auto w-14 h-14 object-contain drop-shadow"
+      />
     </div>
   );
 }
 
+// ── Saved Strip: Fabric swatch collection with hearts ────────────────────────
+
 function SavedStripVertical() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex flex-col items-center justify-between py-5 px-3 overflow-hidden transition-all duration-300 group-hover:bg-white/80">
-      <div className="relative">
-        <SavedHeartIcon />
-        <span className="absolute -top-1 -right-2 text-[9px] font-bold bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
-          {MOCK_SAVED.length}
-        </span>
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+      {/* Base glass */}
+      <div className="absolute inset-0 glass-panel" />
+
+      {/* Fabric swatch pattern - scattered hearts */}
+      <div className="absolute inset-0 opacity-[0.07]">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="saved-hearts"
+              x="0"
+              y="0"
+              width="32"
+              height="32"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect x="0" y="0" width="32" height="32" fill="#FFF9F2" />
+              <path
+                d="M16 28 C16 28 4 20 4 12 C4 6 10 4 16 10 C22 4 28 6 28 12 C28 20 16 28 16 28Z"
+                fill="#F43F5E"
+                opacity="0.5"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#saved-hearts)" />
+        </svg>
       </div>
-      <div className="text-center">
-        <span className="text-slate-800 font-extrabold text-lg tracking-tight block">Saved</span>
-        <span className="text-slate-500 text-[10px] font-medium mt-0.5 block">Your favorites</span>
+
+      {/* Stitching lines */}
+      <div
+        className="absolute left-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+        }}
+      />
+      <div
+        className="absolute right-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
+        {/* Title at top */}
+        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+          Saved
+        </span>
+
+        {/* Big simple graphic - centered */}
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="relative">
+            {/* Warm rose glow */}
+            <div className="absolute inset-0 bg-rose-300/30 rounded-full blur-2xl scale-[1.8]" />
+            {/* Icon - NO ring */}
+            <div className="relative w-28 h-28 flex items-center justify-center">
+              <img
+                src="/icons/quilt-10-pincushion-Photoroom.png"
+                alt="Saved"
+                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mascot at bottom */}
+        <div className="relative mt-3">
+          <img
+            src="/mascots&avatars/corgi20.png"
+            alt=""
+            className="w-20 h-20 object-contain drop-shadow-md"
+          />
+        </div>
       </div>
     </div>
   );
@@ -214,21 +238,121 @@ function SavedStripVertical() {
 
 function SavedStripHorizontal() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex items-center gap-3 px-5 transition-all duration-300 group-hover:bg-white/80">
-      <Bookmark size={14} className="text-orange-500 shrink-0" />
-      <span className="text-sm font-extrabold text-slate-800 tracking-wide">Saved</span>
-      <span className="text-[10px] text-slate-500 font-medium">{MOCK_SAVED.length}</span>
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+      {/* Stitching top & bottom */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+        }}
+      />
+      {/* Pincushion icon - NO ring */}
+      <div className="w-10 h-10 rounded-xl bg-transparent shadow-md flex items-center justify-center relative shrink-0">
+        <img
+          src="/icons/quilt-10-pincushion-Photoroom.png"
+          alt="Saved"
+          className="w-8 h-8 object-contain drop-shadow"
+        />
+      </div>
+
+      {/* Title */}
+      <span className="text-base font-extrabold text-slate-800 tracking-wide">Saved</span>
+
+      {/* Mascot */}
+      <img
+        src="/mascots&avatars/corgi20.png"
+        alt=""
+        className="ml-auto w-14 h-14 object-contain drop-shadow"
+      />
     </div>
   );
 }
 
+// ── Feed Strip: Community quilt with flying geese ────────────────────────────
+
 function FeedStripVertical() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex flex-col items-center justify-between py-5 px-3 overflow-hidden transition-all duration-300 group-hover:bg-white/80">
-      <FeedPatchworkIcon />
-      <div className="text-center">
-        <span className="text-slate-800 font-extrabold text-lg tracking-tight block">Feed</span>
-        <span className="text-slate-500 text-[10px] font-medium mt-0.5 block">Latest designs</span>
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+      {/* Base glass */}
+      <div className="absolute inset-0 glass-panel" />
+
+      {/* Flying geese pattern - community quilt */}
+      <div className="absolute inset-0 opacity-[0.08]">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="feed-geese"
+              x="0"
+              y="0"
+              width="48"
+              height="48"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect x="0" y="0" width="48" height="48" fill="#FFF9F2" />
+              <path d="M0 48 L24 24 L48 48 Z" fill="#FBBF24" opacity="0.6" />
+              <path d="M0 36 L12 24 L24 36 Z" fill="#FB923C" opacity="0.5" />
+              <path d="M24 36 L36 24 L48 36 Z" fill="#F59E0B" opacity="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#feed-geese)" />
+        </svg>
+      </div>
+
+      {/* Stitching lines */}
+      <div
+        className="absolute left-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+        }}
+      />
+      <div
+        className="absolute right-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
+        {/* Title at top */}
+        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+          Feed
+        </span>
+
+        {/* Big simple graphic - centered */}
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="relative">
+            {/* Warm amber glow */}
+            <div className="absolute inset-0 bg-amber-300/30 rounded-full blur-2xl scale-[1.8]" />
+            {/* Icon - NO ring */}
+            <div className="relative w-28 h-28 flex items-center justify-center">
+              <img
+                src="/icons/quilt-01-spool-Photoroom.png"
+                alt="Feed"
+                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mascot at bottom */}
+        <div className="relative mt-3">
+          <img
+            src="/mascots&avatars/corgi12.png"
+            alt=""
+            className="w-20 h-20 object-contain drop-shadow-md"
+          />
+        </div>
       </div>
     </div>
   );
@@ -236,49 +360,157 @@ function FeedStripVertical() {
 
 function FeedStripHorizontal() {
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex items-center gap-3 px-5 transition-all duration-300 group-hover:bg-white/80">
-      <span className="text-sm font-extrabold text-slate-800 tracking-wide">Feed</span>
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 40 40"
-        fill="none"
-        className="ml-auto shrink-0 opacity-60"
-      >
-        <rect x="2" y="2" width="16" height="16" rx="3" fill="#fb923c" />
-        <rect x="22" y="2" width="16" height="16" rx="3" fill="#f97316" opacity="0.55" />
-        <rect x="2" y="22" width="16" height="16" rx="3" fill="#f97316" opacity="0.35" />
-        <rect x="22" y="22" width="16" height="16" rx="3" fill="#fb923c" opacity="0.75" />
-      </svg>
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+      {/* Stitching top & bottom */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+        }}
+      />
+      {/* Thread spool icon */}
+      <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center shrink-0">
+        <img
+          src="/icons/quilt-01-spool-Photoroom.png"
+          alt="Feed"
+          className="w-8 h-8 object-contain drop-shadow"
+        />
+      </div>
+
+      {/* Title */}
+      <span className="text-base font-extrabold text-slate-800 tracking-wide">Feed</span>
+
+      {/* Mascot */}
+      <img
+        src="/mascots&avatars/corgi12.png"
+        alt=""
+        className="ml-auto w-14 h-14 object-contain drop-shadow"
+      />
     </div>
   );
 }
+
+// ── Profile Strip: Personal sewing kit with measuring tape ───────────────────
 
 function ProfileStripVertical() {
   const user = useAuthStore((s) => s.user);
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex flex-col items-center justify-between py-5 px-3 overflow-hidden transition-all duration-300 group-hover:bg-white/80">
-      {user?.image ? (
-        <img
-          src={user.image}
-          alt={user.name}
-          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm shrink-0"
-        />
-      ) : (
-        <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center border-2 border-white shadow-sm shrink-0">
-          <span className="text-lg font-bold text-orange-500">{initial}</span>
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+      {/* Base glass */}
+      <div className="absolute inset-0 glass-panel" />
+
+      {/* Measuring tape pattern - sewing notion */}
+      <div className="absolute inset-0 opacity-[0.06]">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="profile-tape"
+              x="0"
+              y="0"
+              width="48"
+              height="48"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect x="0" y="0" width="48" height="48" fill="#FFF9F2" />
+              <line x1="8" y1="0" x2="8" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
+              <line
+                x1="16"
+                y1="0"
+                x2="16"
+                y2="8"
+                stroke="#FB923C"
+                strokeWidth="0.7"
+                opacity="0.3"
+              />
+              <line x1="24" y1="0" x2="24" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
+              <line
+                x1="32"
+                y1="0"
+                x2="32"
+                y2="8"
+                stroke="#FB923C"
+                strokeWidth="0.7"
+                opacity="0.3"
+              />
+              <line x1="40" y1="0" x2="40" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
+              <rect x="0" y="20" width="48" height="8" fill="#FB923C" opacity="0.15" rx="1" />
+              <circle cx="24" cy="36" r="2" fill="#E76F51" opacity="0.4" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#profile-tape)" />
+        </svg>
+      </div>
+
+      {/* Stitching lines */}
+      <div
+        className="absolute left-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+        }}
+      />
+      <div
+        className="absolute right-2 top-0 bottom-0 w-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
+        {/* Title at top */}
+        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+          Profile
+        </span>
+
+        {/* User avatar and name */}
+        <div className="flex-1 flex flex-col items-center justify-center w-full gap-3">
+          <div className="relative">
+            {/* Warm glow */}
+            <div className="absolute inset-0 bg-orange-300/30 rounded-full blur-2xl scale-[1.8]" />
+            {/* Avatar */}
+            {user?.image ? (
+              <img
+                src={user.image}
+                alt={user.name}
+                className="relative w-24 h-24 rounded-full object-cover shadow-xl"
+              />
+            ) : (
+              <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-xl">
+                <span className="text-4xl font-bold text-orange-600">{initial}</span>
+              </div>
+            )}
+          </div>
+          {/* Name and username */}
+          <div className="text-center">
+            <p className="text-slate-800 font-extrabold text-base leading-tight">
+              {user?.name ?? 'Your Name'}
+            </p>
+            <p className="text-orange-500 font-semibold text-xs leading-tight">
+              @{user?.email?.split('@')[0] ?? 'username'}
+            </p>
+          </div>
         </div>
-      )}
-      <ProfileSpoolIcon />
-      <div className="text-center shrink-0">
-        <p className="text-sm font-bold text-slate-800 truncate max-w-full px-1">
-          {user?.name ?? 'Profile'}
-        </p>
-        <p className="text-[10px] text-slate-500 font-medium mt-0.5">
-          {user?.email ? user.email.split('@')[0] : 'View account'}
-        </p>
+
+        {/* Mascot at bottom */}
+        <div className="relative mt-3">
+          <img
+            src="/mascots&avatars/corgi28.png"
+            alt=""
+            className="w-20 h-20 object-contain drop-shadow-md"
+          />
+        </div>
       </div>
     </div>
   );
@@ -289,21 +521,48 @@ function ProfileStripHorizontal() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 glass-panel border-0 flex items-center gap-3 px-5 transition-all duration-300 group-hover:bg-white/80">
-      {user?.image ? (
-        <img
-          src={user.image}
-          alt={user.name}
-          className="w-7 h-7 rounded-full object-cover border border-white shrink-0"
-        />
-      ) : (
-        <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center border border-white shrink-0">
-          <span className="text-[10px] font-bold text-orange-500">{initial}</span>
-        </div>
-      )}
-      <span className="text-xs font-bold text-slate-800 tracking-wide">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+      {/* Stitching top & bottom */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to right, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+        }}
+      />
+      {/* Avatar */}
+      <div className="relative shrink-0">
+        {user?.image ? (
+          <img
+            src={user.image}
+            alt={user.name}
+            className="w-9 h-9 rounded-full object-cover shadow-md relative"
+          />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-md relative">
+            <span className="text-sm font-bold text-orange-600">{initial}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Title */}
+      <span className="text-base font-extrabold text-slate-800 tracking-wide truncate">
         {user?.name ?? 'Profile'}
       </span>
+
+      {/* Mascot */}
+      <img
+        src="/mascots&avatars/corgi28.png"
+        alt=""
+        className="ml-auto w-14 h-14 object-contain drop-shadow"
+      />
     </div>
   );
 }
@@ -357,52 +616,190 @@ function SavedContent() {
 function ProfileContentPanel() {
   const user = useAuthStore((s) => s.user);
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
+  const [stats, setStats] = useState<{ projectCount: number; postCount: number } | null>(null);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const [projectsRes, postsRes] = await Promise.all([
+          fetch('/api/projects?limit=1'),
+          fetch('/api/community?limit=1'),
+        ]);
+        const projectsData = projectsRes.ok ? await projectsRes.json() : null;
+        const postsData = postsRes.ok ? await postsRes.json() : null;
+        setStats({
+          projectCount: projectsData?.data?.projects?.length ?? 0,
+          postCount: postsData?.data?.total ?? 0,
+        });
+      } catch {
+        // silent
+      }
+    }
+    if (user) loadStats();
+  }, [user]);
+
+  if (!user) {
+    return (
+      <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 w-24 rounded-full bg-white/50 mx-auto" />
+          <div className="h-6 bg-white/50 rounded-full w-1/3 mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
+  const avatarSrc = user.image;
+  const displayName = user.name;
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh] p-8">
-      <div className="glass-panel rounded-[2rem] p-12 flex flex-col items-center text-center max-w-md w-full">
-        {user?.image ? (
-          <img
-            src={user.image}
-            alt={user.name}
-            className="h-24 w-24 rounded-full object-cover mb-5 ring-4 ring-white/60 shadow-md"
-          />
-        ) : (
-          <div className="h-24 w-24 rounded-full bg-orange-100 flex items-center justify-center mb-5 ring-4 ring-white/60 shadow-md">
-            <span className="text-3xl font-bold text-orange-500">{initial}</span>
+    <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
+      <h2 className="font-extrabold text-xl text-slate-800 mb-6">Profile</h2>
+
+      {/* Profile Summary Card */}
+      <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
+        <div className="flex items-start gap-4">
+          {avatarSrc ? (
+            <img
+              src={avatarSrc}
+              alt={displayName}
+              className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-sm"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-sm flex items-center justify-center text-2xl font-bold text-orange-500">
+              {initial}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-bold text-slate-800 truncate">{displayName}</h3>
+            <p className="text-sm text-slate-600 truncate">{user.email}</p>
           </div>
-        )}
-        <h2 className="font-extrabold text-2xl mb-2 text-slate-800">
-          {user?.name ?? 'Your Profile'}
-        </h2>
-        <p className="text-sm text-slate-500 leading-relaxed mb-6">
-          Manage your account, billing, and preferences.
-        </p>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <Link
+          href="/dashboard"
+          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
+        >
+          <p className="text-2xl font-bold text-slate-800">
+            {stats?.projectCount ?? '\u2014'}
+          </p>
+          <p className="text-sm text-slate-600">
+            {(stats?.projectCount ?? 0) === 1 ? 'Project' : 'Projects'}
+          </p>
+        </Link>
+        <Link
+          href="/socialthreads"
+          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
+        >
+          <p className="text-2xl font-bold text-slate-800">
+            {stats?.postCount ?? '\u2014'}
+          </p>
+          <p className="text-sm text-slate-600">
+            {(stats?.postCount ?? 0) === 1 ? 'Post' : 'Posts'}
+          </p>
+        </Link>
+      </div>
+
+      {/* Link to full profile & settings */}
+      <div className="rounded-[1.5rem] glass-elevated divide-y divide-white/30">
         <Link
           href="/profile"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-sm hover:shadow-md transition-all"
+          className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem] last:rounded-b-[1.5rem]"
         >
-          View Profile
+          <div>
+            <p className="text-sm font-bold text-slate-800">All Settings</p>
+            <p className="text-xs text-slate-600 mt-0.5">Edit profile, billing, and account</p>
+          </div>
+          <svg
+            className="w-4 h-4 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
     </div>
   );
 }
 
-// ── Design Studio divider ──────────────────────────────────────────────────
+// ── Design Studio divider: Rotary cutter & ruler theme ───────────────────────
 
 function StudioDivider() {
   return (
     <Link
       href="/dashboard"
-      className="relative z-20 shrink-0 w-full aspect-square flex flex-col items-center justify-center gap-2 glass-panel border-0 bg-gradient-to-br from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 transition-all duration-300 cursor-pointer"
+      className="relative z-20 shrink-0 w-full aspect-square flex flex-col items-center justify-center gap-2 cursor-pointer overflow-hidden group"
     >
-      <StudioScissorsIcon />
-      <span className="text-[11px] font-bold text-white drop-shadow-sm tracking-tight leading-tight text-center">
-        Design
-        <br />
-        Studio
-      </span>
+      {/* Gradient background - warm orange to rose */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-400" />
+
+      {/* Ruler grid overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="studio-ruler"
+              x="0"
+              y="0"
+              width="16"
+              height="16"
+              patternUnits="userSpaceOnUse"
+            >
+              <line x1="0" y1="0" x2="0" y2="8" stroke="white" strokeWidth="1" />
+              <line x1="8" y1="0" x2="8" y2="4" stroke="white" strokeWidth="0.5" />
+              <line x1="0" y1="0" x2="16" y2="0" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#studio-ruler)" />
+        </svg>
+      </div>
+
+      {/* Diagonal stitch lines */}
+      <div
+        className="absolute inset-0 opacity-15"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(45deg, transparent, transparent 4px, white 4px, white 5px)',
+        }}
+      />
+
+      {/* Hover lift effect */}
+      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+
+      {/* Content - BIGGER */}
+      <div className="relative z-10 flex flex-col items-center gap-2">
+        {/* Icon container with glow - BIGGER */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-white/40 rounded-3xl blur-xl" />
+          <div className="relative w-20 h-20 rounded-2xl bg-white/25 backdrop-blur-sm border-3 border-white/50 flex items-center justify-center shadow-2xl">
+            <img
+              src="/icons/quilt-04-scissors-Photoroom.png"
+              alt="Design Studio"
+              className="w-12 h-12 object-contain drop-shadow-lg brightness-0 invert"
+            />
+          </div>
+        </div>
+
+        {/* Text label - BIGGER */}
+        <div className="text-center">
+          <span className="text-white text-lg font-extrabold tracking-wider uppercase drop-shadow-lg leading-none block">
+            Design
+          </span>
+          <span className="text-white/90 text-base font-bold tracking-widest uppercase leading-none block mt-1">
+            Studio
+          </span>
+        </div>
+      </div>
+
+      {/* Bottom sparkle accents */}
+      <div className="absolute bottom-3 w-1.5 h-1.5 rounded-full bg-white/70" />
+      <div className="absolute bottom-4 right-4 w-1 h-1 rounded-full bg-white/50" />
+      <div className="absolute bottom-6 left-6 w-0.5 h-0.5 rounded-full bg-white/40" />
     </Link>
   );
 }
@@ -439,7 +836,6 @@ function PanelSlot({
       ].join(' ')}
       style={{ height }}
     >
-      {/* Active content */}
       <div
         className={[
           'absolute inset-0 overflow-y-auto overscroll-contain transition-opacity duration-700',
@@ -449,7 +845,6 @@ function PanelSlot({
         {children}
       </div>
 
-      {/* Collapsed strip */}
       <div
         className={[
           'absolute inset-0 transition-opacity duration-700',
@@ -481,9 +876,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
 
   return (
     <>
-      {/* Desktop: 2D accordion */}
       <div className="hidden lg:flex h-full w-full overflow-hidden">
-        {/* Left group: Blog + Saved */}
         <div
           className="h-full relative flex flex-col border-r border-white/40 flex-shrink-0 transition-all duration-700 ease-in-out"
           style={{ width: isLeftActive ? '90%' : '10%' }}
@@ -517,7 +910,6 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
           </PanelSlot>
         </div>
 
-        {/* Right group: Feed + Profile */}
         <div
           className="h-full relative flex flex-col flex-shrink-0 transition-all duration-700 ease-in-out"
           style={{ width: isRightActive ? '90%' : '10%' }}
@@ -552,7 +944,6 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
         </div>
       </div>
 
-      {/* Mobile: tab layout */}
       <div className="lg:hidden flex flex-col h-full">
         <div className="flex shrink-0 border-b border-outline-variant bg-background/80 backdrop-blur-sm">
           {(['blog', 'saved', 'feed', 'profile'] as SplitPanelId[]).map((panel) => (

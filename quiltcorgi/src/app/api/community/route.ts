@@ -2,21 +2,22 @@ import { NextRequest } from 'next/server';
 import { eq, and, ilike, desc, count, inArray } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { communityPosts, users, projects, userProfiles, likes } from '@/db/schema';
-import { communityFeedSchema, createCommunityPostExtendedSchema } from '@/lib/validation';
+import { communityFeedSchema, createCommunityPostExtendedSchema, createCommunityPostSimpleSchema } from '@/lib/validation';
+import { getSession } from '@/lib/cognito-session';
 import {
   getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkRateLimit } from '@/middleware/trust-guard';
+import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
 import { escapeLikePattern } from '@/lib/escape-like';
 import { formatCreatorName } from '@/lib/format-utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
+  const session = await getSession();
 
   const url = request.nextUrl;
   const parsed = communityFeedSchema.safeParse({
@@ -152,6 +153,9 @@ export async function POST(request: NextRequest) {
     return trustCheck.response!;
   }
 
+  const privacyCheck = await checkPrivacyPermission(session.user.id, 'canPost');
+  if (!privacyCheck.allowed) return privacyCheck.response!;
+
   const rateLimitCheck = await checkRateLimit(session.user.id, trustCheck.role, 'posts');
   if (!rateLimitCheck.allowed) {
     return rateLimitCheck.response!;
@@ -159,49 +163,63 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const parsed = createCommunityPostExtendedSchema.safeParse(body);
+    
+    // Try extended schema first (with projectId), then simple schema
+    const extendedParsed = createCommunityPostExtendedSchema.safeParse(body);
+    const simpleParsed = createCommunityPostSimpleSchema.safeParse(body);
+    
+    const parsed = extendedParsed.success ? extendedParsed : simpleParsed;
+    
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
     }
 
-    const { projectId, title, description, category } = parsed.data;
-
-    const [project] = await db
-      .select({ id: projects.id, userId: projects.userId, thumbnailUrl: projects.thumbnailUrl })
-      .from(projects)
-      .where(and(eq(projects.id, projectId), eq(projects.userId, session.user.id)))
-      .limit(1);
-
-    if (!project) {
-      return errorResponse('Project not found.', 'NOT_FOUND', 404);
-    }
-
-    const [existingPost] = await db
-      .select({ id: communityPosts.id })
-      .from(communityPosts)
-      .where(eq(communityPosts.projectId, projectId))
-      .limit(1);
-
-    if (existingPost) {
-      return errorResponse(
-        'This project has already been shared to the community.',
-        'ALREADY_SHARED',
-        409
-      );
-    }
-
-    // Auto-approve for admins, pending for everyone else (enables moderation)
     const isAdmin = session.user.role === 'admin';
+    let thumbnailUrl = '';
+
+    // If projectId is provided, validate and get thumbnail
+    if ('projectId' in parsed.data && parsed.data.projectId) {
+      const [project] = await db
+        .select({ id: projects.id, userId: projects.userId, thumbnailUrl: projects.thumbnailUrl })
+        .from(projects)
+        .where(and(eq(projects.id, parsed.data.projectId), eq(projects.userId, session.user.id)))
+        .limit(1);
+
+      if (!project) {
+        return errorResponse('Project not found.', 'NOT_FOUND', 404);
+      }
+
+      const [existingPost] = await db
+        .select({ id: communityPosts.id })
+        .from(communityPosts)
+        .where(eq(communityPosts.projectId, parsed.data.projectId))
+        .limit(1);
+
+      if (existingPost) {
+        return errorResponse(
+          'This project has already been shared to the community.',
+          'ALREADY_SHARED',
+          409
+        );
+      }
+
+      thumbnailUrl = project.thumbnailUrl ?? '';
+    } else if ('imageUrl' in parsed.data && parsed.data.imageUrl) {
+      // Simple post with image URL
+      thumbnailUrl = parsed.data.imageUrl;
+    }
+
+    const projectId = 'projectId' in parsed.data ? (parsed.data.projectId ?? null) : null;
 
     const [created] = await db
       .insert(communityPosts)
       .values({
         userId: session.user.id,
-        projectId,
-        title,
-        description: description ?? null,
-        thumbnailUrl: project.thumbnailUrl ?? '',
-        category,
+        projectId: projectId,
+        title: parsed.data.title,
+        description: parsed.data.description ?? null,
+        thumbnailUrl,
+        category: parsed.data.category,
         status: isAdmin ? 'approved' : 'pending',
       })
       .returning();

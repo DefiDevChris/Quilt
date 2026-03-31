@@ -76,7 +76,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
               <span className="mb-2 text-3xl">🔒</span>
               <p className="text-sm text-secondary">Upgrade to Pro to use this block</p>
               <a
-                href="/profile/billing"
+                href="/profile#billing"
                 className="mt-3 inline-block rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
               >
                 Upgrade to Pro

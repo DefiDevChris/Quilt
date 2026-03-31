@@ -10,10 +10,7 @@ export const communityPosts = pgTable(
     userId: uuid('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    projectId: uuid('projectId')
-      .notNull()
-      .unique()
-      .references(() => projects.id, { onDelete: 'cascade' }),
+    projectId: uuid('projectId').references(() => projects.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
     description: text('description'),
     thumbnailUrl: text('thumbnailUrl').notNull(),

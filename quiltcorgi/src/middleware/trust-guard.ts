@@ -1,6 +1,6 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { users, comments, communityPosts } from '@/db/schema';
+import { users, comments, communityPosts, userProfiles } from '@/db/schema';
 import { getRolePermissions, getRateLimit, type UserRole } from '@/lib/trust-engine';
 import { errorResponse } from '@/lib/api-responses';
 
@@ -67,6 +67,36 @@ export async function checkTrustLevel(
   return {
     allowed: true,
     role,
+    userId,
+  };
+}
+
+export async function checkPrivacyPermission(
+  userId: string,
+  requiredPermission: 'canComment' | 'canPost'
+): Promise<TrustCheckResult> {
+  const [profile] = await db
+    .select({ privacyMode: userProfiles.privacyMode })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
+
+  if (profile?.privacyMode === 'private') {
+    const message =
+      requiredPermission === 'canComment'
+        ? 'Your account is set to private. Switch to public to comment on posts.'
+        : 'Your account is set to private. Switch to public to create posts.';
+    return {
+      allowed: false,
+      role: 'free',
+      userId,
+      response: errorResponse(message, 'PRIVATE_PROFILE', 403),
+    };
+  }
+
+  return {
+    allowed: true,
+    role: 'free',
     userId,
   };
 }

@@ -13,6 +13,7 @@ interface ProfileFormData {
   youtubeHandle: string;
   tiktokHandle: string;
   publicEmail: string;
+  privacyMode: 'public' | 'private';
 }
 
 interface ProfileData extends ProfileFormData {
@@ -28,6 +29,7 @@ const EMPTY_FORM: ProfileFormData = {
   youtubeHandle: '',
   tiktokHandle: '',
   publicEmail: '',
+  privacyMode: 'public',
 };
 
 const BIO_MAX = 500;
@@ -65,6 +67,7 @@ export function ProfileEditForm() {
           youtubeHandle: profile.youtubeHandle ?? '',
           tiktokHandle: profile.tiktokHandle ?? '',
           publicEmail: profile.publicEmail ?? '',
+          privacyMode: profile.privacyMode ?? 'public',
         });
         setAvatarUrl(profile.avatarUrl);
         setAvatarPreview(profile.avatarUrl);
@@ -155,6 +158,7 @@ export function ProfileEditForm() {
       youtubeHandle: form.youtubeHandle || undefined,
       tiktokHandle: form.tiktokHandle || undefined,
       publicEmail: form.publicEmail || undefined,
+      privacyMode: form.privacyMode,
     });
 
     if (!parsed.success) {
@@ -243,6 +247,36 @@ export function ProfileEditForm() {
           <span className="text-body-sm text-secondary ml-auto">
             {form.bio.length}/{BIO_MAX}
           </span>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-body-sm font-medium text-on-surface mb-3">Community visibility</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => updateField('privacyMode', 'public')}
+            className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
+              form.privacyMode === 'public'
+                ? 'border-primary bg-primary/10 text-on-surface'
+                : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
+            }`}
+          >
+            <div className="font-medium">Public</div>
+            <div className="mt-0.5 text-body-sm text-secondary/80">View, post, comment &amp; heart</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => updateField('privacyMode', 'private')}
+            className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
+              form.privacyMode === 'private'
+                ? 'border-primary bg-primary/10 text-on-surface'
+                : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
+            }`}
+          >
+            <div className="font-medium">Private</div>
+            <div className="mt-0.5 text-body-sm text-secondary/80">View &amp; heart only</div>
+          </button>
         </div>
       </div>
 

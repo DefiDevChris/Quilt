@@ -75,10 +75,7 @@ function getNavigationPath(notification: Notification): string | null {
     notification.type === NOTIFICATION_TYPES.BLOG_APPROVED ||
     notification.type === NOTIFICATION_TYPES.BLOG_REJECTED
   ) {
-    if (metadata && typeof metadata.slug === 'string') {
-      return `/blog/${metadata.slug}`;
-    }
-    return null;
+    return '/socialthreads';
   }
 
   if (
@@ -86,7 +83,7 @@ function getNavigationPath(notification: Notification): string | null {
     notification.type === 'subscription_activated' ||
     notification.type === 'subscription_canceled'
   ) {
-    return '/profile/billing';
+    return '/profile#billing';
   }
 
   if (metadata && metadata.postId && typeof metadata.postId === 'string') {

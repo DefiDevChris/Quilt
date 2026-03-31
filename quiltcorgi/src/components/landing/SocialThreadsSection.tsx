@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import Mascot from './Mascot';
 
 // Real screenshot-like mockup using actual app styling
 function SocialThreadsScreenshot() {
@@ -24,11 +23,6 @@ function SocialThreadsScreenshot() {
               <span className="text-sm font-bold text-slate-700">Social Threads</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-sm font-bold text-orange-500">
-              Q
-            </div>
-          </div>
         </div>
 
         {/* App content - matching actual SocialLayout styling */}
@@ -41,8 +35,14 @@ function SocialThreadsScreenshot() {
             {/* Create post card */}
             <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-4 border border-white/60 shadow-sm">
               <div className="flex gap-3 items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm shrink-0 text-sm font-bold text-orange-500">
-                  Q
+                <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm shrink-0 overflow-hidden">
+                  <Image
+                    src="/logo.png"
+                    alt="QuiltCorgi"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1 bg-white/60 border border-white/50 rounded-2xl px-4 py-2.5 text-sm text-slate-500">
                   Share your latest quilt design...
@@ -62,7 +62,8 @@ function SocialThreadsScreenshot() {
                 </div>
               </div>
               <p className="text-slate-700 mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The fussy cut feature helped me position the center motifs perfectly 🌟
+                Finally finished my Ohio Star quilt! The fussy cut feature helped me position the
+                center motifs perfectly 🌟
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
@@ -81,13 +82,27 @@ function SocialThreadsScreenshot() {
                   24
                 </button>
                 <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                   </svg>
                   8
                 </button>
                 <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="18" cy="5" r="3" />
                     <circle cx="6" cy="12" r="3" />
                     <circle cx="18" cy="19" r="3" />
@@ -111,7 +126,8 @@ function SocialThreadsScreenshot() {
                 </div>
               </div>
               <p className="text-slate-700 mb-3 text-sm leading-relaxed">
-                Playing with improv piecing on this one. Love how the layout tool lets me visualize different arrangements!
+                Playing with improv piecing on this one. Love how the layout tool lets me visualize
+                different arrangements!
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
@@ -124,19 +140,40 @@ function SocialThreadsScreenshot() {
               </div>
               <div className="flex gap-1 pt-2">
                 <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                   42
                 </button>
                 <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                   </svg>
                   15
                 </button>
                 <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="18" cy="5" r="3" />
                     <circle cx="6" cy="12" r="3" />
                     <circle cx="18" cy="19" r="3" />
@@ -150,42 +187,29 @@ function SocialThreadsScreenshot() {
           </div>
         </div>
       </div>
-
-      {/* Floating notification */}
-      <div className="absolute -right-4 top-20 glass-elevated p-3 rounded-xl shadow-xl hidden lg:block z-20 animate-pulse">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 flex items-center justify-center text-white text-xs font-bold">
-            JD
-          </div>
-          <div>
-            <div className="text-xs font-bold text-warm-text">Jane saved your quilt</div>
-            <div className="text-[10px] text-warm-text-muted">Just now</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Trending indicator */}
-      <div className="absolute -left-3 bottom-24 glass-elevated p-2.5 rounded-lg shadow-lg hidden lg:flex items-center gap-2 z-20">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center text-white">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-            <polyline points="17 6 23 6 23 12" />
-          </svg>
-        </div>
-        <span className="text-xs font-bold text-warm-text">Trending +156%</span>
-      </div>
     </div>
   );
 }
 
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
   return (
     <div className="glass-panel rounded-xl p-4 flex items-start gap-3 hover:shadow-lg transition-all">
       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-warm-peach flex-shrink-0">
         {icon}
       </div>
       <div>
-        <h4 className="font-bold text-warm-text text-sm mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+        <h4
+          className="font-bold text-warm-text text-sm mb-1"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
           {title}
         </h4>
         <p className="text-xs text-warm-text-secondary leading-relaxed">{description}</p>
@@ -196,7 +220,10 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
 
 export default function SocialThreadsSection() {
   return (
-    <section id="social-threads" className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden">
+    <section
+      id="social-threads"
+      className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden"
+    >
       {/* Background gradient orbs */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-orange-200/20 to-rose-200/20 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 -translate-x-1/3" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-warm-peach/10 to-warm-golden/10 rounded-full blur-[80px] pointer-events-none translate-y-1/2 translate-x-1/3" />
@@ -211,16 +238,6 @@ export default function SocialThreadsSection() {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <div className="flex items-center gap-4">
-              <Mascot pose="wagging" size="lg" />
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-100 to-rose-100 text-orange-700 text-xs font-semibold">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-                Community Favorites
-              </div>
-            </div>
-
             <h2
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-warm-text leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
@@ -242,7 +259,14 @@ export default function SocialThreadsSection() {
             <div className="grid sm:grid-cols-2 gap-3 pt-2">
               <FeatureCard
                 icon={
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                     <polyline points="16 6 12 2 8 6" />
                     <line x1="12" y1="2" x2="12" y2="15" />
@@ -253,7 +277,14 @@ export default function SocialThreadsSection() {
               />
               <FeatureCard
                 icon={
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 }
@@ -262,17 +293,31 @@ export default function SocialThreadsSection() {
               />
               <FeatureCard
                 icon={
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <polyline points="12 6 12 12 16 14" />
                   </svg>
                 }
                 title="Discover Trends"
-                description="See what&apos;s popular and find new techniques to try"
+                description="See what's popular and find new techniques to try"
               />
               <FeatureCard
                 icon={
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -290,13 +335,13 @@ export default function SocialThreadsSection() {
                 className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
               >
                 Explore Social Threads
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
                 </svg>
               </Link>
               <span className="text-sm text-warm-text-muted self-center">
@@ -313,14 +358,6 @@ export default function SocialThreadsSection() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            {/* Mascots around the screenshot */}
-            <div className="absolute -top-6 -left-6 z-10 hidden lg:block">
-              <Mascot pose="begging" size="md" className="drop-shadow-lg" />
-            </div>
-            <div className="absolute -bottom-4 -right-4 z-10 hidden lg:block">
-              <Mascot pose="fetching" size="lg" className="drop-shadow-lg" />
-            </div>
-
             <SocialThreadsScreenshot />
           </motion.div>
         </div>

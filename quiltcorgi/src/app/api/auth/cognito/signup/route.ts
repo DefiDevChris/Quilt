@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
+import { eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
 import { cognitoSignUp } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
@@ -27,6 +29,31 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, password } = parsed.data;
+
+    // Dev bypass: skip Cognito, create verified pro user directly in DB
+    if (process.env.DEV_AUTH_BYPASS === 'true') {
+      await db
+        .insert(users)
+        .values({ name, email, role: 'pro', emailVerified: new Date() })
+        .onConflictDoNothing({ target: users.email });
+
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (user) {
+        const cookieStore = await cookies();
+        cookieStore.set('qc_dev_user_id', user.id, { httpOnly: true, path: '/', maxAge: 86400 });
+        cookieStore.set('qc_user_role', 'pro', { httpOnly: true, path: '/', maxAge: 86400 });
+      }
+
+      return Response.json(
+        { success: true, data: { message: 'Dev account created.', devMode: true } },
+        { status: 201 }
+      );
+    }
 
     // Register with Cognito first — let Cognito be the source of truth for
     // duplicate detection. This avoids a TOCTOU race where the DB check passes

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Settings } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { BillingSection } from '@/components/billing/BillingSection';
 
 interface ProfileStats {
   projectCount: number;
@@ -14,48 +15,120 @@ interface ProfileStats {
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
-  const [isUpgradeLoading, setIsUpgradeLoading] = useState(false);
-  const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
+
   const [stats, setStats] = useState<ProfileStats>({ projectCount: 0, postCount: 0 });
   const [statsError, setStatsError] = useState(false);
 
-  const fetchStats = useCallback(async () => {
-    try {
-      setStatsError(false);
-      const [projectsRes, postsRes] = await Promise.all([
-        fetch('/api/projects?limit=1'),
-        fetch('/api/community?limit=1'),
-      ]);
-      const projectsData = projectsRes.ok ? await projectsRes.json() : null;
-      const postsData = postsRes.ok ? await postsRes.json() : null;
-      setStats({
-        projectCount: projectsData?.data?.projects?.length ?? 0,
-        postCount: postsData?.data?.total ?? 0,
-      });
-    } catch {
-      setStatsError(true);
-    }
-  }, []);
+  const [profile, setProfile] = useState<{
+    displayName: string;
+    bio: string;
+    avatarUrl: string | null;
+    privacyMode: 'public' | 'private';
+  } | null>(null);
+  const [editingName, setEditingName] = useState(false);
+  const [editingBio, setEditingBio] = useState(false);
+  const [nameValue, setNameValue] = useState('');
+  const [bioValue, setBioValue] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    if (user) fetchStats();
-  }, [user, fetchStats]);
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-  async function handleUpgrade() {
-    setIsUpgradeLoading(true);
-    setUpgradeError(null);
-    try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      } else {
-        setUpgradeError(data.error ?? 'Failed to start checkout. Please try again.');
+    async function loadData() {
+      try {
+        const [profileRes, projectsRes, postsRes] = await Promise.all([
+          fetch('/api/profile', { signal: controller.signal }),
+          fetch('/api/projects?limit=1', { signal: controller.signal }),
+          fetch('/api/community?limit=1', { signal: controller.signal }),
+        ]);
+        if (controller.signal.aborted) return;
+
+        if (profileRes.ok) {
+          const profileJson = await profileRes.json();
+          if (profileJson.success && profileJson.data) {
+            const p = profileJson.data;
+            setProfile({
+              displayName: p.displayName ?? user?.name ?? '',
+              bio: p.bio ?? '',
+              avatarUrl: p.avatarUrl ?? null,
+              privacyMode: p.privacyMode ?? 'public',
+            });
+            setNameValue(p.displayName ?? user?.name ?? '');
+            setBioValue(p.bio ?? '');
+          }
+        }
+
+        const projectsData = projectsRes.ok ? await projectsRes.json() : null;
+        const postsData = postsRes.ok ? await postsRes.json() : null;
+        if (controller.signal.aborted) return;
+        setStats({
+          projectCount: projectsData?.data?.projects?.length ?? 0,
+          postCount: postsData?.data?.total ?? 0,
+        });
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        if (!controller.signal.aborted) setStatsError(true);
       }
+    }
+    if (user) loadData();
+    return () => controller.abort();
+  }, [user]);
+
+  async function saveProfile(
+    updates: Partial<{ displayName: string; bio: string; privacyMode: 'public' | 'private' }>
+  ) {
+    if (!profile) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...profile, ...updates }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? 'Failed to save');
+      setProfile((prev) => (prev ? { ...prev, ...updates } : prev));
+      setEditingName(false);
+      setEditingBio(false);
     } catch {
-      setUpgradeError('Unable to connect. Please check your connection and try again.');
+      setSaveError('Failed to save. Try again.');
     } finally {
-      setIsUpgradeLoading(false);
+      setSaving(false);
+    }
+  }
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    try {
+      const presignedRes = await fetch('/api/upload/presigned-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, purpose: 'thumbnail' }),
+      });
+      const presignedJson = await presignedRes.json();
+      if (!presignedRes.ok) throw new Error(presignedJson.error ?? 'Failed to get upload URL');
+      const { uploadUrl, publicUrl } = presignedJson.data;
+      await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+      await fetch('/api/profile/avatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarUrl: publicUrl }),
+      });
+      setProfile((prev) => (prev ? { ...prev, avatarUrl: publicUrl } : prev));
+    } catch {
+      setSaveError('Failed to upload avatar');
+    } finally {
+      setAvatarUploading(false);
     }
   }
 
@@ -69,58 +142,200 @@ export default function ProfilePage() {
     return (
       <div className="max-w-2xl mx-auto py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-white/50 rounded-full w-1/3" />
-          <div className="h-4 bg-white/50 rounded-full w-1/2" />
+          <div className="h-24 w-24 rounded-full bg-white/50 mx-auto" />
+          <div className="h-6 bg-white/50 rounded-full w-1/3 mx-auto" />
+          <div className="h-4 bg-white/50 rounded-full w-1/2 mx-auto" />
         </div>
       </div>
     );
   }
 
-  const roleBadge = {
-    free: { label: 'Free', className: 'text-slate-500 border-slate-200' },
-    pro: { label: 'Pro', className: 'text-orange-500 bg-orange-50 border-orange-300' },
-    admin: { label: 'Admin', className: 'text-red-500 bg-red-50 border-red-300' },
-  }[user.role] ?? { label: 'Free', className: 'text-slate-500 border-slate-200' };
+  const avatarSrc = profile?.avatarUrl ?? user.image;
+  const displayName = profile?.displayName ?? user.name;
+  const bio = profile?.bio ?? '';
+  const privacyMode = profile?.privacyMode ?? 'public';
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Profile</h1>
+      {/* Header with Edit Profile link */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Profile</h1>
+        <Link
+          href="/profile/edit"
+          className="w-10 h-10 rounded-full glass-elevated flex items-center justify-center hover:bg-white/60 transition-colors"
+          title="Edit Profile"
+        >
+          <Settings size={20} className="text-slate-600" />
+        </Link>
+      </div>
 
       {/* Profile Card */}
       <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
         <div className="flex items-start gap-4">
-          {user.image ? (
-            <Image
-              src={user.image}
-              alt={user.name}
-              width={64}
-              height={64}
-              className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-sm"
-            />
-          ) : (
-            <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-sm flex items-center justify-center text-2xl font-bold text-orange-500">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <h2 className="text-lg font-bold text-slate-800 truncate">{user.name}</h2>
-              <span
-                className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 flex-shrink-0 ${roleBadge.className}`}
+          {/* Avatar with upload */}
+          <label className="relative cursor-pointer group shrink-0">
+            {avatarSrc ? (
+              <img
+                src={avatarSrc}
+                alt={displayName}
+                className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-sm"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-sm flex items-center justify-center text-2xl font-bold text-orange-500">
+                {initial}
+              </div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="white"
+                className="w-5 h-5"
               >
-                {roleBadge.label}
-              </span>
+                <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110-8 4 4 0 010 8z" />
+              </svg>
             </div>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleAvatarUpload}
+              className="hidden"
+            />
+          </label>
+          {avatarUploading && <span className="text-xs text-slate-400 mt-2">Uploading...</span>}
+
+          <div className="flex-1 min-w-0">
+            {/* Editable Display Name */}
+            {editingName ? (
+              <div className="flex gap-2 items-center mb-0.5">
+                <input
+                  type="text"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  maxLength={60}
+                  className="flex-1 text-lg font-bold bg-white/60 rounded px-2 py-0.5 border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveProfile({ displayName: nameValue });
+                    if (e.key === 'Escape') {
+                      setEditingName(false);
+                      setNameValue(displayName);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (nameValue && nameValue !== displayName)
+                      saveProfile({ displayName: nameValue });
+                    else setEditingName(false);
+                  }}
+                />
+              </div>
+            ) : (
+              <h2
+                className="text-lg font-bold text-slate-800 truncate cursor-pointer hover:text-orange-500 transition-colors mb-0.5"
+                onClick={() => {
+                  setEditingName(true);
+                  setNameValue(displayName);
+                }}
+                title="Click to edit name"
+              >
+                {displayName}
+              </h2>
+            )}
             <p className="text-sm text-slate-600 truncate">{user.email}</p>
           </div>
-          <Link
-            href="/profile/edit"
-            className="text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors flex-shrink-0"
-          >
-            Edit
-          </Link>
+        </div>
+
+        {/* Bio */}
+        <div className="mt-4 pt-4 border-t border-white/30">
+          {editingBio ? (
+            <div>
+              <textarea
+                value={bioValue}
+                onChange={(e) => setBioValue(e.target.value)}
+                maxLength={500}
+                rows={3}
+                className="w-full text-sm bg-white/60 rounded-lg px-3 py-2 border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none"
+                autoFocus
+                placeholder="Tell the community about yourself..."
+              />
+              <div className="flex justify-between mt-1">
+                <span className="text-xs text-slate-400">{bioValue.length}/500</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingBio(false);
+                      setBioValue(bio);
+                    }}
+                    className="text-xs text-slate-500 hover:text-slate-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => saveProfile({ bio: bioValue })}
+                    disabled={saving}
+                    className="text-xs font-bold text-orange-500 hover:text-orange-600 disabled:opacity-50"
+                  >
+                    {saving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-sm text-slate-600 leading-relaxed flex-1">
+                {bio || (
+                  <span className="text-slate-400 italic">Add a bio to introduce yourself...</span>
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingBio(true);
+                  setBioValue(bio);
+                }}
+                className="text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors shrink-0"
+              >
+                Edit
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Privacy Toggle */}
+        <div className="mt-4 pt-4 border-t border-white/30">
+          <p className="text-xs font-medium text-slate-500 mb-2">Community visibility</p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => saveProfile({ privacyMode: 'public' })}
+              className={`flex-1 rounded-lg border-2 px-3 py-2 text-center transition-all duration-150 ${
+                privacyMode === 'public'
+                  ? 'border-orange-300 bg-orange-50 text-slate-800'
+                  : 'border-white/30 text-slate-500 hover:border-white/50'
+              }`}
+            >
+              <div className="text-sm font-bold">Public</div>
+              <div className="text-xs text-slate-500 mt-0.5">View, post, comment & heart</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => saveProfile({ privacyMode: 'private' })}
+              className={`flex-1 rounded-lg border-2 px-3 py-2 text-center transition-all duration-150 ${
+                privacyMode === 'private'
+                  ? 'border-orange-300 bg-orange-50 text-slate-800'
+                  : 'border-white/30 text-slate-500 hover:border-white/50'
+              }`}
+            >
+              <div className="text-sm font-bold">Private</div>
+              <div className="text-xs text-slate-500 mt-0.5">View & heart only</div>
+            </button>
+          </div>
         </div>
       </div>
+
+      {saveError && <p className="text-xs text-red-500 mb-3">{saveError}</p>}
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
@@ -148,7 +363,24 @@ export default function ProfilePage() {
       {statsError && (
         <p className="text-xs text-slate-400 -mt-2 mb-4 pl-1">
           Could not load stats.{' '}
-          <button type="button" onClick={fetchStats} className="underline hover:text-slate-600">
+          <button type="button" onClick={() => {
+            setStatsError(false);
+            if (user) {
+              Promise.all([
+                fetch('/api/projects?limit=1'),
+                fetch('/api/community?limit=1'),
+              ]).then(([projectsRes, postsRes]) => {
+                const projectsData = projectsRes.ok ? projectsRes.json() : null;
+                const postsData = postsRes.ok ? postsRes.json() : null;
+                return Promise.all([projectsData, postsData]);
+              }).then(([projectsData, postsData]) => {
+                setStats({
+                  projectCount: projectsData?.data?.projects?.length ?? 0,
+                  postCount: postsData?.data?.total ?? 0,
+                });
+              }).catch(() => setStatsError(true));
+            }
+          }} className="underline hover:text-slate-600">
             Retry
           </button>
         </p>
@@ -157,27 +389,8 @@ export default function ProfilePage() {
       {/* Quick Links */}
       <div className="rounded-[1.5rem] glass-elevated divide-y divide-white/30 mb-4">
         <Link
-          href="/profile/billing"
-          className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem]"
-        >
-          <div>
-            <p className="text-sm font-bold text-slate-800">Billing & Plan</p>
-            <p className="text-xs text-slate-600 mt-0.5">
-              {user.role === 'pro' ? 'Pro plan active' : 'Free plan — upgrade for more features'}
-            </p>
-          </div>
-          <svg
-            className="w-4 h-4 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
-        <Link
           href="/dashboard"
-          className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors"
+          className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem]"
         >
           <div>
             <p className="text-sm font-bold text-slate-800">My Projects</p>
@@ -193,12 +406,12 @@ export default function ProfilePage() {
           </svg>
         </Link>
         <Link
-          href="/blog"
+          href="/socialthreads"
           className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors last:rounded-b-[1.5rem]"
         >
           <div>
-            <p className="text-sm font-bold text-slate-800">Tutorials</p>
-            <p className="text-xs text-slate-600 mt-0.5">Step-by-step quilting guides</p>
+            <p className="text-sm font-bold text-slate-800">Community</p>
+            <p className="text-xs text-slate-600 mt-0.5">Share and view quilt designs</p>
           </div>
           <svg
             className="w-4 h-4 text-slate-400"
@@ -211,32 +424,10 @@ export default function ProfilePage() {
         </Link>
       </div>
 
-      {/* Upgrade CTA (free users only) */}
-      {user.role === 'free' && (
-        <div className="rounded-[1.5rem] bg-orange-50 p-4 mb-4 border border-orange-200">
-          <h3 className="text-sm font-bold text-orange-500 mb-1">Upgrade to Pro</h3>
-          <p className="text-xs text-slate-600 mb-3">
-            Unlock unlimited projects, full block library, fabric system, pattern export, and more.
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleUpgrade}
-              disabled={isUpgradeLoading}
-              className="rounded-full bg-gradient-to-r from-orange-400 to-rose-400 px-4 py-2 text-sm font-bold text-white hover:from-orange-500 hover:to-rose-500 transition-all disabled:opacity-50 shadow-sm"
-            >
-              {isUpgradeLoading ? 'Loading...' : 'Upgrade Now'}
-            </button>
-            <Link
-              href="/profile/billing"
-              className="text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors"
-            >
-              View plans
-            </Link>
-            {upgradeError && <p className="text-sm text-red-500">{upgradeError}</p>}
-          </div>
-        </div>
-      )}
+      {/* Billing & Plan */}
+      <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
+        <BillingSection />
+      </div>
 
       {/* Sign Out */}
       <button
