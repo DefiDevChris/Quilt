@@ -6,35 +6,6 @@ import { usePatternStore } from '@/stores/patternStore';
 import { formatDimensionDisplay } from '@/components/patterns/PatternCard';
 import type { ParsedPiece } from '@/lib/pattern-parser-types';
 
-interface PatternDetailDialogProps {
-  patternId: string | null;
-  onClose: () => void;
-  onImportSuccess: (projectId: string) => void;
-}
-
-const SKILL_LEVEL_STYLES: Record<string, { label: string; bg: string; text: string }> = {
-  beginner: {
-    label: 'Beginner',
-    bg: 'rgba(74, 124, 89, 0.12)',
-    text: '#4a7c59',
-  },
-  'confident-beginner': {
-    label: 'Confident Beginner',
-    bg: 'rgba(59, 105, 149, 0.12)',
-    text: '#3b6995',
-  },
-  intermediate: {
-    label: 'Intermediate',
-    bg: 'rgba(198, 148, 46, 0.12)',
-    text: '#a07824',
-  },
-  advanced: {
-    label: 'Advanced',
-    bg: 'rgba(212, 114, 106, 0.12)',
-    text: '#b85a53',
-  },
-};
-
 const COLOR_FAMILY_MAP: Record<string, string> = {
   red: '#D4726A',
   orange: '#E89B6C',
@@ -178,7 +149,6 @@ export function PatternDetailDialog({
   if (!patternId) return null;
 
   const pattern = selectedPattern;
-  const skill = pattern ? SKILL_LEVEL_STYLES[pattern.skillLevel] : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
@@ -244,7 +214,7 @@ export function PatternDetailDialog({
         )}
 
         {/* Pattern content */}
-        {pattern && skill && (
+        {pattern && (
           <>
             {/* Header */}
             <div className="px-4 md:px-6 pt-4 md:pt-6 pb-4 flex items-start justify-between gap-4">
@@ -257,15 +227,6 @@ export function PatternDetailDialog({
                   {pattern.name}
                 </h2>
                 <div className="flex items-center gap-3 mt-2 flex-wrap">
-                  <span
-                    className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    style={{
-                      backgroundColor: skill.bg,
-                      color: skill.text,
-                    }}
-                  >
-                    {skill.label}
-                  </span>
                   <span className="text-sm font-medium" style={{ color: 'var(--color-secondary)' }}>
                     {formatDimensionDisplay(pattern.finishedWidth)}&Prime; &times;{' '}
                     {formatDimensionDisplay(pattern.finishedHeight)}&Prime;

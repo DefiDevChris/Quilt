@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { useProfileStore } from '@/stores/profileStore';
 import { useAuthStore } from '@/stores/authStore';
+import { LikeButton } from '@/components/community/LikeButton';
+import { formatRelativeTime } from '@/lib/format-time';
 
 interface UserProfilePageProps {
   username: string;
@@ -104,12 +107,18 @@ function EmailIcon() {
   );
 }
 
+type ProfileTab = 'posts' | 'about';
+
 export function UserProfilePage({ username }: UserProfilePageProps) {
-  const { profile, posts, isLoading, error, fetchProfile } = useProfileStore();
-  const user = useAuthStore((s) => s.user);
+  const { profile, posts, pagination, isLoading, error, fetchProfile, loadMore } = useProfileStore();
+  const currentUser = useAuthStore((s) => s.user);
+  const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
 
   useEffect(() => {
     fetchProfile(username);
+    return () => {
+      useProfileStore.getState().reset();
+    };
   }, [username, fetchProfile]);
 
   if (isLoading) {
@@ -128,9 +137,13 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
     );
   }
 
+  const isOwner = currentUser?.id === profile.userId;
+  const hasMore = pagination ? pagination.page < pagination.totalPages : false;
+
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-surface-container rounded-xl p-6 shadow-elevation-1 mb-8">
+      {/* Profile Header */}
+      <div className="bg-surface-container rounded-xl p-6 shadow-elevation-1 mb-6">
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           {profile.avatarUrl ? (
             <Image
@@ -161,7 +174,9 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
 
             <p className="text-body-md text-secondary mb-3">@{profile.username}</p>
 
-            {profile.bio && <p className="text-body-md text-secondary mb-3">{profile.bio}</p>}
+            {profile.bio && (
+              <p className="text-body-md text-secondary mb-3">{profile.bio}</p>
+            )}
 
             {profile.location && (
               <div className="flex items-center gap-1.5 text-body-sm text-secondary mb-3">
@@ -171,11 +186,261 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
             )}
 
             <SocialLinks profile={profile} />
+
+            {isOwner && (
+              <div className="mt-4">
+                <Link
+                  href="/profile/edit"
+                  className="inline-flex items-center gap-2 rounded-lg border border-outline-variant px-4 py-2 text-body-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                    />
+                  </svg>
+                  Edit Profile
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <PostsGrid posts={posts} displayName={profile.displayName} />
+      {/* Tabs */}
+      <div className="flex items-center gap-1 border-b border-outline-variant mb-6">
+        <button
+          onClick={() => setActiveTab('posts')}
+          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
+            activeTab === 'posts'
+              ? 'text-primary'
+              : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          Posts ({pagination?.total ?? 0})
+          {activeTab === 'posts' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('about')}
+          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
+            activeTab === 'about'
+              ? 'text-primary'
+              : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          About
+          {activeTab === 'about' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+          )}
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'posts' && (
+        <>
+          {posts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-secondary text-body-lg">
+                {isOwner
+                  ? "You haven't shared any projects yet."
+                  : `${profile.displayName} hasn't shared any projects yet.`}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  creatorName={profile.displayName}
+                  creatorUsername={profile.username}
+                  creatorAvatarUrl={profile.avatarUrl}
+                />
+              ))}
+
+              {hasMore && (
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={loadMore}
+                    disabled={isLoading}
+                    className="rounded-lg border border-outline-variant px-6 py-2.5 text-body-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? 'Loading...' : 'Load More'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {activeTab === 'about' && <AboutTab profile={profile} />}
+    </div>
+  );
+}
+
+interface PostCardProps {
+  post: {
+    id: string;
+    title: string;
+    description: string | null;
+    thumbnailUrl: string | null;
+    likeCount: number;
+    commentCount: number;
+    category: string;
+    createdAt: string;
+    isLikedByUser: boolean;
+  };
+  creatorName: string;
+  creatorUsername: string;
+  creatorAvatarUrl: string | null;
+}
+
+function PostCard({ post, creatorName, creatorUsername, creatorAvatarUrl }: PostCardProps) {
+  return (
+    <article className="glass-panel rounded-xl overflow-hidden shadow-elevation-1 hover:shadow-elevation-2 transition-shadow">
+      <Link href={`/socialthreads/${post.id}`} className="block">
+        {post.thumbnailUrl ? (
+          <div className="relative w-full aspect-[16/10] bg-surface-container-low">
+            <Image
+              src={post.thumbnailUrl}
+              alt={post.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        ) : (
+          <div className="w-full aspect-[16/10] bg-primary-container flex items-center justify-center">
+            <span className="text-5xl text-primary/40">&#9632;</span>
+          </div>
+        )}
+      </Link>
+
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          {creatorAvatarUrl ? (
+            <Image
+              src={creatorAvatarUrl}
+              alt={creatorName}
+              width={24}
+              height={24}
+              className="w-6 h-6 rounded-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center">
+              <span className="text-xs font-bold text-primary-on-container">
+                {getInitials(creatorName)}
+              </span>
+            </div>
+          )}
+          <Link
+            href={`/members/${creatorUsername}`}
+            className="text-body-sm font-medium text-secondary hover:text-primary transition-colors"
+          >
+            {creatorName}
+          </Link>
+          <span className="text-body-sm text-secondary/60">·</span>
+          <span className="text-body-sm text-secondary/60">
+            {formatRelativeTime(post.createdAt)}
+          </span>
+        </div>
+
+        <Link href={`/socialthreads/${post.id}`}>
+          <h3 className="text-body-lg font-semibold text-on-surface line-clamp-2 mb-1 hover:text-primary transition-colors">
+            {post.title}
+          </h3>
+        </Link>
+
+        {post.description && (
+          <p className="text-body-sm text-secondary line-clamp-2 mb-3">{post.description}</p>
+        )}
+
+        <div className="flex items-center gap-4">
+          <LikeButton
+            postId={post.id}
+            likeCount={post.likeCount}
+            isLikedByUser={post.isLikedByUser}
+            size="sm"
+          />
+
+          <Link
+            href={`/socialthreads/${post.id}`}
+            className="flex items-center gap-1 text-body-sm text-secondary hover:text-on-surface transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+              />
+            </svg>
+            {post.commentCount}
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function AboutTab({
+  profile,
+}: {
+  profile: {
+    bio: string | null;
+    location: string | null;
+    websiteUrl: string | null;
+    instagramHandle: string | null;
+    youtubeHandle: string | null;
+    tiktokHandle: string | null;
+    publicEmail: string | null;
+    createdAt: string;
+    isPro: boolean;
+  };
+}) {
+  return (
+    <div className="space-y-6">
+      {profile.bio && (
+        <div>
+          <h3 className="text-body-sm font-medium text-secondary mb-2">About</h3>
+          <p className="text-body-md text-on-surface whitespace-pre-wrap">{profile.bio}</p>
+        </div>
+      )}
+
+      <div>
+        <h3 className="text-body-sm font-medium text-secondary mb-2">Details</h3>
+        <div className="space-y-2 text-body-md">
+          {profile.location && (
+            <div className="flex items-center gap-2 text-on-surface">
+              <MapPinIcon />
+              <span>{profile.location}</span>
+            </div>
+          )}
+          {profile.isPro && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-label-sm font-semibold">
+                PRO Member
+              </span>
+            </div>
+          )}
+          <div className="text-secondary text-body-sm">
+            Joined{' '}
+            {new Date(profile.createdAt).toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </div>
+        </div>
+      </div>
+
+      <SocialLinks profile={profile} />
     </div>
   );
 }
@@ -231,57 +496,6 @@ function SocialLinks({
           {link.icon}
         </a>
       ))}
-    </div>
-  );
-}
-
-interface PostItem {
-  id: string;
-  title: string;
-  thumbnailUrl: string;
-}
-
-function PostsGrid({ posts, displayName }: { posts: PostItem[]; displayName: string }) {
-  if (posts.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-secondary text-body-lg">
-          {displayName} hasn&apos;t shared any projects yet.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h2 className="text-headline-sm font-bold text-on-surface mb-4">Projects</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {posts.map((post) => (
-          <a
-            key={post.id}
-            href={`/socialthreads/${post.id}`}
-            className="block rounded-lg overflow-hidden bg-surface-container shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
-          >
-            {post.thumbnailUrl ? (
-              <Image
-                src={post.thumbnailUrl}
-                alt={post.title}
-                width={300}
-                height={225}
-                className="w-full aspect-[4/3] object-cover"
-                unoptimized
-              />
-            ) : (
-              <div className="w-full aspect-[4/3] bg-primary-container flex items-center justify-center">
-                <span className="text-3xl text-primary/40">&#9632;</span>
-              </div>
-            )}
-            <div className="p-2">
-              <p className="text-body-sm font-medium text-on-surface line-clamp-2">{post.title}</p>
-            </div>
-          </a>
-        ))}
-      </div>
     </div>
   );
 }

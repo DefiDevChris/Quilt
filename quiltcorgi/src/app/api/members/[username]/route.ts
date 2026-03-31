@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, count, and } from 'drizzle-orm';
+import { eq, desc, count, and, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { userProfiles, users, communityPosts } from '@/db/schema';
+import { userProfiles, users, communityPosts, likes } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
+import { getSession } from '@/lib/cognito-session';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +29,7 @@ export async function GET(
         youtubeHandle: userProfiles.youtubeHandle,
         tiktokHandle: userProfiles.tiktokHandle,
         publicEmail: userProfiles.publicEmail,
+        privacyMode: userProfiles.privacyMode,
         createdAt: userProfiles.createdAt,
         role: users.role,
       })
@@ -37,6 +39,14 @@ export async function GET(
       .limit(1);
 
     if (!profile) {
+      return notFoundResponse('User not found.');
+    }
+
+    const session = await getSession();
+    const currentUserId = session?.user.id ?? null;
+    const isOwner = currentUserId === profile.userId;
+
+    if (profile.privacyMode === 'private' && !isOwner) {
       return notFoundResponse('User not found.');
     }
 
@@ -56,6 +66,7 @@ export async function GET(
           description: communityPosts.description,
           thumbnailUrl: communityPosts.thumbnailUrl,
           likeCount: communityPosts.likeCount,
+          commentCount: communityPosts.commentCount,
           category: communityPosts.category,
           createdAt: communityPosts.createdAt,
         })
@@ -81,6 +92,22 @@ export async function GET(
     ]);
 
     const total = totalRow?.count ?? 0;
+
+    let likedPostIds = new Set<string>();
+    if (currentUserId && postRows.length > 0) {
+      const postIds = postRows.map((p) => p.id);
+      const likedRows = await db
+        .select({ postId: likes.communityPostId })
+        .from(likes)
+        .where(and(eq(likes.userId, currentUserId), sql`${likes.communityPostId} = ANY(${postIds})`));
+      likedPostIds = new Set(likedRows.map((r) => r.postId as string));
+    }
+
+    const posts = postRows.map((p) => ({
+      ...p,
+      isLikedByUser: likedPostIds.has(p.id),
+    }));
+
     const isPro = profile.role === 'pro' || profile.role === 'admin';
 
     return Response.json({
@@ -100,9 +127,10 @@ export async function GET(
           tiktokHandle: profile.tiktokHandle,
           publicEmail: profile.publicEmail,
           isPro,
+          privacyMode: profile.privacyMode ?? 'public',
           createdAt: profile.createdAt,
         },
-        posts: postRows,
+        posts,
         pagination: {
           page,
           limit,

@@ -88,7 +88,7 @@
   --glass-surface: rgba(255, 252, 247, 0.72);
   --glass-warm: rgba(252, 249, 243, 0.65);
   --glass-frosted: rgba(255, 255, 255, 0.55);
-  --glass-elevated: rgba(255, 255, 255, 0.70);
+  --glass-elevated: rgba(255, 255, 255, 0.85);
   --glass-blur: 24px;
   --glass-blur-heavy: 32px;
   --glass-border: rgba(255, 255, 255, 0.55);
@@ -281,6 +281,7 @@ body {
   0% { opacity: 0; transform: scale(0.95); }
   100% { opacity: 1; transform: scale(1); }
 }
+
 
 /* Custom scrollbar for social threads */
 .social-scroll::-webkit-scrollbar { 

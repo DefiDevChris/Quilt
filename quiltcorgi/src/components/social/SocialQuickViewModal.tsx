@@ -148,46 +148,72 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
       </div>
 
       {/* Right: info */}
-      <div className="w-full md:w-[380px] shrink-0 flex flex-col p-8 border-l border-white/30 overflow-y-auto">
-        <span className="inline-flex self-start bg-gradient-to-r from-orange-400 to-rose-400 text-white text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full mb-5 shadow-sm">
-          {item.category}
-        </span>
-        <h2 className="text-2xl font-extrabold text-slate-800 leading-tight mb-4">{item.title}</h2>
-        {item.excerpt && (
-          <p className="text-slate-600 leading-relaxed mb-6 text-sm">{item.excerpt}</p>
-        )}
+      <div className="w-full md:w-[380px] shrink-0 flex flex-col border-l border-white/20 overflow-y-auto bg-[#FFF9F2]">
+        {/* Header */}
+        <div className="p-6 pb-4 border-b border-warm-border/40">
+          <p className="text-xs font-semibold text-warm-peach uppercase tracking-widest mb-2">
+            {item.category}
+          </p>
+          <h2 className="text-xl font-extrabold text-warm-text leading-snug mb-3">{item.title}</h2>
+          {item.excerpt && (
+            <p className="text-warm-text-secondary leading-relaxed text-sm">{item.excerpt}</p>
+          )}
+        </div>
 
         {/* Author row */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="px-6 py-4 flex items-center gap-3 border-b border-warm-border/40">
           {item.authorAvatarUrl ? (
             <img
               src={item.authorAvatarUrl}
               alt={item.authorName}
-              className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-warm-border shadow-sm"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white shadow-sm flex items-center justify-center">
-              <span className="text-xs font-bold text-orange-500">
-                {item.authorName.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-warm-border shadow-sm shrink-0">
+              <img src="/logo.png" alt={item.authorName} className="w-full h-full object-cover" />
             </div>
           )}
           <div>
-            <p className="text-sm font-bold text-slate-800">{item.authorName}</p>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <p className="text-sm font-bold text-warm-text">{item.authorName}</p>
+            <div className="flex items-center gap-1.5 text-xs text-warm-text-muted">
               <Clock size={11} />
               {item.readTimeMinutes} min read
             </div>
           </div>
         </div>
 
-        <Link
-          href={`/blog/${item.slug}`}
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm shadow-sm hover:from-orange-500 hover:to-rose-500 transition-all mt-auto"
-        >
-          Read full article
-          <ExternalLink size={14} />
-        </Link>
+        {/* Article preview lines */}
+        <div className="px-6 py-5 flex-1">
+          <div className="space-y-2.5">
+            {[100, 88, 95, 72, 90, 60].map((w, i) => (
+              <div
+                key={i}
+                className="h-2.5 rounded-full bg-warm-border/60"
+                style={{ width: `${w}%` }}
+              />
+            ))}
+          </div>
+          <div className="mt-5 space-y-2.5">
+            {[85, 92, 68, 80].map((w, i) => (
+              <div
+                key={i}
+                className="h-2.5 rounded-full bg-warm-border/50"
+                style={{ width: `${w}%` }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="p-6 pt-0">
+          <Link
+            href="/socialthreads"
+            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-warm-peach text-warm-text font-bold text-sm shadow-sm hover:bg-warm-peach-dark transition-all"
+          >
+            View Community
+            <ExternalLink size={14} />
+          </Link>
+        </div>
       </div>
     </>
   );
@@ -200,10 +226,10 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
       </div>
       <div className="w-full md:w-[340px] shrink-0 flex flex-col p-8 border-l border-white/30">
-        <span className="inline-flex self-start bg-white/60 border border-white/60 text-slate-600 text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full mb-5">
+        <p className="text-xs font-semibold text-warm-peach uppercase tracking-widest mb-2">
           Fabric
-        </span>
-        <h2 className="text-2xl font-extrabold text-slate-800 mb-3">{item.name}</h2>
+        </p>
+        <h2 className="text-2xl font-extrabold text-warm-text mb-3">{item.name}</h2>
         {item.manufacturer && (
           <p className="text-sm text-slate-500 font-medium mb-1">By {item.manufacturer}</p>
         )}
@@ -249,9 +275,6 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
         )}
       </div>
       <div className="w-full md:w-[340px] shrink-0 flex flex-col p-8 border-l border-white/30">
-        <span className="inline-flex self-start bg-white/60 border border-white/60 text-slate-600 text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full mb-5">
-          Pattern
-        </span>
         <h2 className="text-2xl font-extrabold text-slate-800 mb-3">{item.name}</h2>
         {item.skillLevel && (
           <p className="text-sm text-slate-500 font-medium mb-1">Level: {item.skillLevel}</p>

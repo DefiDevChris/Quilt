@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
 import { cognitoSignIn } from '@/lib/cognito';
 import { setAuthCookies, setRoleCookie } from '@/lib/cognito-session';
 import { db } from '@/lib/db';
@@ -23,10 +24,37 @@ export async function POST(request: NextRequest) {
     const parsed = signinSchema.safeParse(body);
 
     if (!parsed.success) {
-      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid email or password');
+      return validationErrorResponse(
+        parsed.error.issues[0]?.message ?? 'Invalid email or password'
+      );
     }
 
     const { email, password } = parsed.data;
+
+    // Dev bypass: skip Cognito, look up by email with no password check
+    if (process.env.DEV_AUTH_BYPASS === 'true') {
+      const [existing] = await db
+        .select({ id: users.id, role: users.role })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (!existing) {
+        return errorResponse('No dev account with this email. Sign up first.', 'NOT_FOUND', 404);
+      }
+
+      const cookieStore = await cookies();
+      cookieStore.set('qc_dev_user_id', existing.id, { httpOnly: true, path: '/', maxAge: 86400 });
+      cookieStore.set('qc_user_role', existing.role, { httpOnly: true, path: '/', maxAge: 86400 });
+
+      const [profile] = await db
+        .select({ id: userProfiles.id })
+        .from(userProfiles)
+        .where(eq(userProfiles.userId, existing.id))
+        .limit(1);
+
+      return Response.json({ success: true, needsOnboarding: !profile });
+    }
 
     const tokens = await cognitoSignIn(email, password);
     await setAuthCookies(tokens);

@@ -152,7 +152,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     Profile
                   </Link>
                   <Link
-                    href="/profile/billing"
+                    href="/profile#billing"
                     className="block px-4 py-2 text-sm text-secondary hover:bg-surface-container transition-colors"
                     onClick={() => setDropdownOpen(false)}
                   >

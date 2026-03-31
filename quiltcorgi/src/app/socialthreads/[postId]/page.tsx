@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { communityPosts, users } from '@/db/schema';
-import { ModernPostDetail } from '@/components/community/ModernPostDetail';
+import { PostDetail } from '@/components/social/PostDetail';
 import { SocialLayout } from '@/components/social/SocialLayout';
 
 function PostDetailSkeleton() {
@@ -74,7 +74,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   return (
     <SocialLayout activeSection="feed" contentClassName="pb-10">
       <Suspense fallback={<PostDetailSkeleton />}>
-        <ModernPostDetail postId={postId} />
+        <PostDetail postId={postId} />
       </Suspense>
     </SocialLayout>
   );

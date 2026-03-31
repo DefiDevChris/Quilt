@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCommentStore } from '@/stores/commentStore';
+import { useAuthStore } from '@/stores/authStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import type { Comment } from '@/types/community';
 
@@ -25,12 +26,13 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
   const addComment = useCommentStore((s) => s.addComment);
   const deleteComment = useCommentStore((s) => s.deleteComment);
   const reset = useCommentStore((s) => s.reset);
+  const isPrivate = useAuthStore((s) => s.isPrivate);
 
   const [sort, setSort] = useState<SortMode>('recent');
   const [showAll, setShowAll] = useState(false);
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
 
-  const canComment = Boolean(currentUserId);
+  const canComment = Boolean(currentUserId) && !isPrivate;
 
   useEffect(() => {
     fetchComments(postId);
@@ -150,6 +152,12 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
             placeholder={replyTo ? `Reply to ${replyTo.name}...` : 'Add a comment...'}
             onCancel={replyTo ? () => setReplyTo(null) : undefined}
           />
+        ) : isPrivate ? (
+          <div className="rounded-lg bg-surface-container-high p-4 text-center">
+            <p className="text-sm text-secondary">
+              Your account is set to private. Switch to public to comment on posts.
+            </p>
+          </div>
         ) : (
           <p className="text-xs text-slate-500">Sign in to comment</p>
         )}

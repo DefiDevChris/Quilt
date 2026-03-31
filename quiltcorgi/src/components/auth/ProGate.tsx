@@ -83,7 +83,7 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
             {isLoading ? 'Loading...' : 'Upgrade to Pro'}
           </button>
           <div className="mt-3">
-            <a href="/profile/billing" className="text-sm text-primary hover:underline">
+            <a href="/profile#billing" className="text-sm text-primary hover:underline">
               Learn more
             </a>
           </div>

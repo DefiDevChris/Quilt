@@ -11,19 +11,6 @@ function formatDate(date: Date | string | null): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-// Bento grid size pattern — repeats every 9 posts
-const BENTO_PATTERN = [
-  { col: 'md:col-span-2', row: 'md:row-span-2', style: 'hero' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-1', style: 'side' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-1', style: 'side' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-1', style: 'compact' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-1', style: 'compact' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-1', style: 'compact' as const },
-  { col: 'md:col-span-2', row: 'md:row-span-1', style: 'wide' as const },
-  { col: 'md:col-span-1', row: 'md:row-span-2', style: 'tall' as const },
-  { col: 'md:col-span-2', row: 'md:row-span-1', style: 'wide' as const },
-];
-
 type BentoStyle = 'hero' | 'side' | 'compact' | 'wide' | 'tall';
 
 function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: boolean }) {
@@ -225,13 +212,27 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
 
   if (loading && posts.length === 0) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 md:[grid-auto-rows:220px] gap-4">
-        {BENTO_PATTERN.map((p, i) => (
+      <div className="space-y-6">
+        <div className="rounded-[1.5rem] bg-white/40 animate-pulse" style={{ height: '460px' }} />
+        <div className="flex gap-6">
           <div
-            key={i}
-            className={`${p.col} ${p.row} rounded-[1.5rem] bg-white/40 animate-pulse min-h-[180px] md:min-h-0`}
+            className="flex-1 rounded-[1.5rem] bg-white/40 animate-pulse"
+            style={{ height: '320px' }}
           />
-        ))}
+          <div
+            className="flex-1 rounded-[1.5rem] bg-white/40 animate-pulse"
+            style={{ height: '320px' }}
+          />
+        </div>
+        <div className="flex gap-6">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-[1.5rem] bg-white/40 animate-pulse"
+              style={{ height: '240px' }}
+            />
+          ))}
+        </div>
       </div>
     );
   }
@@ -248,31 +249,85 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">From the Blog</h2>
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:block">
+        <span className="text-xs font-medium text-slate-400 hidden sm:block">
           Tap any post to preview
         </span>
       </div>
 
-      {/* Asymmetric bento grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 md:[grid-auto-rows:220px] gap-4">
-        {posts.map((post, idx) => {
-          const pattern = BENTO_PATTERN[idx % BENTO_PATTERN.length];
-          return (
-            <div key={post.id} className={`${pattern.col} ${pattern.row} min-h-[200px] md:min-h-0`}>
-              <BentoCard post={post} bentoStyle={pattern.style} onOpen={() => openModal(post)} />
+      {/* Bento layout */}
+      <div className="space-y-6">
+        {/* Row 1: Full-width hero */}
+        {posts.length > 0 && (
+          <div style={{ height: '460px' }}>
+            <BentoCard post={posts[0]} bentoStyle="hero" onOpen={() => openModal(posts[0])} />
+          </div>
+        )}
+
+        {/* Row 2: Two equal tall cards */}
+        {posts.length > 1 && (
+          <div className="flex gap-6">
+            {posts.slice(1, 3).map((post) => (
+              <div key={post.id} className="flex-1" style={{ height: '320px' }}>
+                <BentoCard post={post} bentoStyle="tall" onOpen={() => openModal(post)} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Row 3: Three equal compact cards */}
+        {posts.length > 3 && (
+          <div className="flex gap-6">
+            {posts.slice(3, 6).map((post) => (
+              <div key={post.id} className="flex-1" style={{ height: '240px' }}>
+                <BentoCard post={post} bentoStyle="compact" onOpen={() => openModal(post)} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Row 4: Wide (3/5) + tall (2/5) */}
+        {posts.length > 6 && (
+          <div className="flex gap-6">
+            <div className="flex-[3]" style={{ height: '300px' }}>
+              <BentoCard post={posts[6]} bentoStyle="wide" onOpen={() => openModal(posts[6])} />
             </div>
-          );
-        })}
-        {loading &&
-          BENTO_PATTERN.slice(0, 3).map((p, i) => (
-            <div
-              key={`sk-${i}`}
-              className={`${p.col} ${p.row} rounded-[1.5rem] bg-white/40 animate-pulse min-h-[180px] md:min-h-0`}
-            />
-          ))}
+            {posts[7] && (
+              <div className="flex-[2]" style={{ height: '300px' }}>
+                <BentoCard post={posts[7]} bentoStyle="tall" onOpen={() => openModal(posts[7])} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Row 5: Tall (2/5) + wide (3/5) */}
+        {posts.length > 8 && (
+          <div className="flex gap-6">
+            {posts[8] && (
+              <div className="flex-[2]" style={{ height: '300px' }}>
+                <BentoCard post={posts[8]} bentoStyle="tall" onOpen={() => openModal(posts[8])} />
+              </div>
+            )}
+            {posts[9] && (
+              <div className="flex-[3]" style={{ height: '300px' }}>
+                <BentoCard post={posts[9]} bentoStyle="wide" onOpen={() => openModal(posts[9])} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Remaining: 4-column grid */}
+        {posts.length > 10 && (
+          <div className="grid grid-cols-4 gap-6">
+            {posts.slice(10).map((post) => (
+              <div key={post.id} style={{ height: '200px' }}>
+                <BentoCard post={post} bentoStyle="compact" onOpen={() => openModal(post)} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {hasMore && !loading && (
@@ -287,7 +342,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
       )}
 
       {/* Submit your story CTA */}
-      <div className="glass-card p-8 text-center mt-12 rounded-2xl">
+      <div className="glass-card p-10 text-center mt-16 rounded-2xl">
         <h3 className="text-lg font-semibold text-on-surface mb-2">Got a story to share?</h3>
         <p className="text-secondary mb-4 max-w-md mx-auto">
           We love hearing about your quilting journey — a finished project, a lesson learned, a

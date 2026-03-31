@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Plus, ArrowLeft } from 'lucide-react';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
@@ -18,198 +19,12 @@ const PatternLibrary = dynamic(
 
 type DashboardTab = 'my-quilts' | 'patterns';
 
-/* ------------------------------------------------------------------ */
-/*  Custom Quilting Icons (SVG)                                       */
-/* ------------------------------------------------------------------ */
-
-function NewDesignIcon() {
-  return (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-      <rect x="2" y="2" width="24" height="24" rx="4" fill="var(--color-primary)" />
-      <rect
-        x="30"
-        y="2"
-        width="24"
-        height="24"
-        rx="4"
-        fill="var(--color-primary-dark)"
-        opacity="0.55"
-      />
-      <rect
-        x="2"
-        y="30"
-        width="24"
-        height="24"
-        rx="4"
-        fill="var(--color-primary-dark)"
-        opacity="0.35"
-      />
-      <rect
-        x="30"
-        y="30"
-        width="24"
-        height="24"
-        rx="4"
-        fill="var(--color-primary)"
-        opacity="0.75"
-      />
-      <path
-        d="M14 2L2 14M26 2L2 26M40 2L30 12M54 2L30 26"
-        stroke="var(--color-on-surface)"
-        strokeWidth="0.6"
-        opacity="0.12"
-      />
-      <path
-        d="M14 30L2 42M26 30L2 54M40 30L30 40M54 30L30 54"
-        stroke="var(--color-on-surface)"
-        strokeWidth="0.6"
-        opacity="0.12"
-      />
-    </svg>
-  );
-}
-
-function QuiltbookIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <path
-        d="M5 6h12a3 3 0 013 3v24c0-2-1.5-3.5-3.5-3.5H5V6z"
-        stroke="var(--color-on-surface)"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M35 6H23a3 3 0 00-3 3v24c0-2 1.5-3.5 3.5-3.5H35V6z"
-        stroke="var(--color-on-surface)"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <rect x="8" y="11" width="5" height="5" rx="0.5" fill="var(--color-primary)" opacity="0.6" />
-      <rect
-        x="8"
-        y="18"
-        width="5"
-        height="5"
-        rx="0.5"
-        fill="var(--color-primary-dark)"
-        opacity="0.35"
-      />
-      <rect
-        x="27"
-        y="11"
-        width="5"
-        height="5"
-        rx="0.5"
-        fill="var(--color-primary-dark)"
-        opacity="0.35"
-      />
-      <rect x="27" y="18" width="5" height="5" rx="0.5" fill="var(--color-primary)" opacity="0.6" />
-    </svg>
-  );
-}
-
-function TutorialsIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <line
-        x1="8"
-        y1="32"
-        x2="28"
-        y2="8"
-        stroke="var(--color-secondary)"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-      <ellipse
-        cx="30"
-        cy="6"
-        rx="2.5"
-        ry="4"
-        fill="none"
-        stroke="var(--color-secondary)"
-        strokeWidth="1.4"
-        transform="rotate(-25 30 6)"
-      />
-      <path
-        d="M8 32c4-2 6 2 10 0s6-4 10-2"
-        stroke="var(--color-primary)"
-        strokeWidth="1.2"
-        fill="none"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function CommunityIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <circle
-        cx="14"
-        cy="14"
-        r="5"
-        fill="none"
-        stroke="var(--color-on-surface)"
-        strokeWidth="1.4"
-      />
-      <circle cx="26" cy="14" r="5" fill="none" stroke="var(--color-primary)" strokeWidth="1.4" />
-      <path
-        d="M6 34c0-5.5 4-10 9-10"
-        stroke="var(--color-on-surface)"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M34 34c0-5.5-4-10-9-10"
-        stroke="var(--color-primary)"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M15 24c2.5-1 7.5-1 10 0"
-        stroke="var(--color-primary-dark)"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.5"
-      />
-    </svg>
-  );
-}
-
-function SettingsIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <circle cx="16" cy="16" r="6" fill="none" stroke="var(--color-secondary)" strokeWidth="1.3" />
-      <circle cx="16" cy="16" r="2.5" fill="var(--color-secondary)" opacity="0.3" />
-      <path
-        d="M16 4v4M16 24v4M4 16h4M24 16h4"
-        stroke="var(--color-secondary)"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Greeting                                                          */
-/* ------------------------------------------------------------------ */
-
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return 'Good morning';
   if (hour < 17) return 'Good afternoon';
   return 'Good evening';
 }
-
-/* ------------------------------------------------------------------ */
-/*  Dashboard Page                                                    */
-/* ------------------------------------------------------------------ */
 
 interface ProjectListItem {
   id: string;
@@ -230,7 +45,6 @@ export default function DashboardPage() {
   const [projectCount, setProjectCount] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
-  const [projectsFetchError, setProjectsFetchError] = useState(false);
   const { toast } = useToast();
 
   const openPhotoPattern = usePhotoPatternStore((s) => s.openModal);
@@ -275,17 +89,13 @@ export default function DashboardPage() {
 
   const fetchProjects = useCallback(async () => {
     try {
-      setProjectsFetchError(false);
       const res = await fetch('/api/projects?sort=updatedAt&order=desc&limit=50');
-      if (!res.ok) {
-        setProjectsFetchError(true);
-        return;
-      }
+      if (!res.ok) return;
       const data = await res.json();
       setProjects(data.data.projects);
       setProjectCount(data.data.projects.length);
     } catch {
-      setProjectsFetchError(true);
+      // silent
     }
   }, []);
 
@@ -298,524 +108,380 @@ export default function DashboardPage() {
   const displayName = user?.name?.split(' ')[0] ?? 'there';
   const greeting = getGreeting();
 
-  return (
-    <div className="p-5 md:p-[2.75rem] max-w-[1200px] mx-auto">
-      {/* Greeting */}
-      <p className="text-[length:var(--font-size-body-md)] text-secondary mb-0.5 tracking-wide">
-        {greeting}
-      </p>
-      <h1 className="text-[length:var(--font-size-headline-lg)] font-bold text-on-surface tracking-tight mb-6">
-        Hello, {displayName}
-      </h1>
-
-      {/* Tab Bar */}
-      <div className="flex gap-1 mb-6 p-1 rounded-lg bg-surface-container-low w-fit">
-        <button
-          type="button"
-          onClick={() => setActiveTab('my-quilts')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'my-quilts'
-              ? 'bg-surface text-on-surface shadow-sm'
-              : 'text-secondary hover:text-on-surface'
-          }`}
-        >
-          My Quilts
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('patterns')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'patterns'
-              ? 'bg-surface text-on-surface shadow-sm'
-              : 'text-secondary hover:text-on-surface'
-          }`}
-        >
-          Pattern Library
-        </button>
+  /* ── Pattern Library view ────────────────────────────────────────── */
+  if (activeTab === 'patterns') {
+    return (
+      <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
+        <div className="flex items-center gap-4 px-6 py-3.5 border-b border-white/50 bg-white/40 backdrop-blur-xl flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab('my-quilts')}
+            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            <ArrowLeft size={16} strokeWidth={2} />
+            <span className="text-sm font-semibold">Dashboard</span>
+          </button>
+          <div className="w-px h-4 bg-slate-300/60" />
+          <h1 className="text-slate-800 font-bold text-sm">Pattern Library</h1>
+        </div>
+        <div className="flex-1 overflow-auto p-6">
+          <PatternLibrary />
+        </div>
       </div>
+    );
+  }
 
-      {activeTab === 'patterns' ? (
-        <PatternLibrary />
-      ) : (
-        <>
-          {/* Asymmetric Bento Grid */}
-          <div className="grid grid-cols-12 gap-3.5">
-            {/* New Design — hero card, 7 cols, 2 rows */}
-            <button
-              type="button"
-              onClick={() => setDialogOpen(true)}
-              className="col-span-12 md:col-span-7 md:row-span-2 rounded-[18px] p-8 text-left cursor-pointer transition-all duration-200 shadow-elevation-2 hover:shadow-elevation-3 min-h-[220px] flex flex-col justify-between"
-              style={{
-                background:
-                  'linear-gradient(145deg, var(--color-primary-container) 0%, color-mix(in srgb, var(--color-primary-container) 40%, var(--color-surface)) 60%, var(--color-surface) 100%)',
-              }}
-            >
-              <NewDesignIcon />
-              <div className="mt-auto">
-                <p className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface tracking-tight">
-                  New Design
-                </p>
-                <p className="text-[length:var(--font-size-body-md)] text-secondary mt-1">
-                  Start a fresh quilt from scratch
-                </p>
-              </div>
-            </button>
+  /* ── Main bento grid ─────────────────────────────────────────────── */
+  return (
+    <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden">
+      <div className="h-full p-2 grid grid-cols-12 grid-rows-[3fr_2fr] gap-2">
+        {/* ── 1. New Design — col 1-7, row 1 ──────────────────────── */}
+        <button
+          type="button"
+          onClick={() => setDialogOpen(true)}
+          className="col-start-1 col-span-12 md:col-span-7 row-start-1 min-h-[160px] md:min-h-0 rounded-xl p-5 text-left relative overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-br from-[#FFE4D0]/95 via-[#FFF4EB]/80 to-white/50 backdrop-blur-xl border border-white/70 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.07)]"
+        >
+          {/* Decorative background quilt blocks */}
+          <div className="absolute bottom-0 right-0 w-40 h-40 opacity-[0.08] pointer-events-none translate-x-6 translate-y-6">
+            <svg viewBox="0 0 56 56" fill="none" className="w-full h-full">
+              <rect x="2" y="2" width="24" height="24" rx="4" fill="#C67B5C" />
+              <rect x="30" y="2" width="24" height="24" rx="4" fill="#FFB085" />
+              <rect x="2" y="30" width="24" height="24" rx="4" fill="#FFB085" />
+              <rect x="30" y="30" width="24" height="24" rx="4" fill="#C67B5C" />
+              <path
+                d="M14 2L2 14M26 2L2 26M40 2L30 12M54 2L30 26M14 30L2 42M26 30L2 54M40 30L30 40M54 30L30 54"
+                stroke="#4A3B32"
+                strokeWidth="0.6"
+                strokeLinecap="round"
+                opacity="0.12"
+              />
+            </svg>
+          </div>
 
-            {/* My Quiltbook — 5 cols */}
-            <Link
-              href="/dashboard"
-              className="col-span-6 md:col-span-5 glass-elevated rounded-[18px] p-6 transition-all duration-200 hover:shadow-elevation-3 block"
-            >
-              <QuiltbookIcon />
-              <p className="text-[length:var(--font-size-body-lg)] font-semibold text-on-surface mt-3.5">
-                My Quiltbook
-              </p>
-              <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
+          {/* Greeting */}
+          <div className="relative z-10">
+            <p className="text-slate-500 text-xs font-medium tracking-wide">{greeting}</p>
+            <h1 className="text-slate-800 text-lg font-extrabold tracking-tight mt-0.5">
+              Hello, {displayName}
+            </h1>
+          </div>
+
+          {/* CTA */}
+          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10">
+            <div>
+              <p className="text-slate-800 font-extrabold text-base tracking-tight">New Design</p>
+              <p className="text-slate-500 text-xs mt-0.5">Start a fresh quilt from scratch</p>
+            </div>
+            <div className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center shadow-lg group-hover:bg-orange-600 group-hover:shadow-orange-200/80 group-hover:shadow-xl transition-all flex-shrink-0">
+              <Plus size={18} className="text-white" strokeWidth={2.5} />
+            </div>
+          </div>
+        </button>
+
+        {/* ── 2. Photo to Pattern — col 8-12, rows 1+2 (full height) ─ */}
+        <button
+          type="button"
+          onClick={() => openPhotoPattern()}
+          className="col-start-1 md:col-start-8 col-span-12 md:col-span-5 row-start-2 md:row-start-1 md:row-span-2 min-h-[200px] md:min-h-0 rounded-xl overflow-hidden relative group cursor-pointer text-left transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5"
+        >
+          <Image
+            src="/images/quilts/quilt_01_closeup_churndash.png"
+            alt="Photo to Pattern"
+            fill
+            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+          />
+
+          {/* Scan overlay SVG */}
+          <svg
+            className="absolute inset-0 w-full h-full opacity-70 mix-blend-screen"
+            viewBox="0 0 400 600"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <rect
+              x="28"
+              y="38"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.9"
+            />
+            <rect
+              x="130"
+              y="38"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.9"
+            />
+            <rect
+              x="232"
+              y="38"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.7"
+            />
+            <rect
+              x="334"
+              y="38"
+              width="60"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.6"
+            />
+            <rect
+              x="28"
+              y="140"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.8"
+            />
+            <rect
+              x="130"
+              y="140"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.6"
+            />
+            <rect
+              x="232"
+              y="140"
+              width="92"
+              height="92"
+              rx="3"
+              fill="none"
+              stroke="#00ff88"
+              strokeWidth="2.2"
+              opacity="0.5"
+            />
+            <line
+              x1="28"
+              y1="38"
+              x2="120"
+              y2="130"
+              stroke="#00ccff"
+              strokeWidth="1.4"
+              opacity="0.55"
+            />
+            <line
+              x1="120"
+              y1="38"
+              x2="28"
+              y2="130"
+              stroke="#00ccff"
+              strokeWidth="1.4"
+              opacity="0.55"
+            />
+            <line
+              x1="130"
+              y1="38"
+              x2="222"
+              y2="130"
+              stroke="#00ccff"
+              strokeWidth="1.4"
+              opacity="0.45"
+            />
+            <line
+              x1="222"
+              y1="38"
+              x2="130"
+              y2="130"
+              stroke="#00ccff"
+              strokeWidth="1.4"
+              opacity="0.45"
+            />
+            {(
+              [
+                [28, 38],
+                [120, 38],
+                [28, 130],
+                [120, 130],
+                [130, 38],
+                [222, 38],
+                [130, 130],
+                [222, 130],
+                [232, 38],
+                [324, 38],
+                [232, 130],
+                [324, 130],
+              ] as [number, number][]
+            ).map(([cx, cy], i) => (
+              <circle key={i} cx={cx} cy={cy} r="4" fill="#00ff88" opacity="0.95" />
+            ))}
+          </svg>
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+          {/* Label */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+            <span className="text-orange-300 text-[9px] font-bold uppercase tracking-[0.18em]">
+              AI Feature
+            </span>
+            <p className="text-white text-base md:text-lg font-extrabold tracking-tight mt-1">
+              Photo to Pattern
+            </p>
+            <p className="text-white/70 text-xs mt-1">
+              Import a quilt photo &amp; extract blocks
+            </p>
+          </div>
+        </button>
+
+        {/* ── 3. Quiltbook — col 1-3, row 2 ───────────────────────── */}
+        <Link
+          href="/studio"
+          className="col-start-1 col-span-12 md:col-span-3 row-start-3 md:row-start-2 rounded-xl p-4 relative overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.06)]"
+        >
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-slate-800 font-extrabold text-sm tracking-tight">My Quiltbook</p>
+              <p className="text-slate-500 text-xs mt-0.5">
                 {projectCount !== null
                   ? `${projectCount} ${projectCount === 1 ? 'project' : 'projects'}`
                   : 'Your saved designs'}
               </p>
-              {projects.length > 0 && (
-                <div className="flex -space-x-2 mt-3">
-                  {projects.slice(0, 4).map((p) => (
-                    <div
-                      key={p.id}
-                      className="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden"
-                      style={{ border: '2px solid var(--color-surface-container)' }}
-                    >
-                      {p.thumbnailUrl ? (
-                        <Image
-                          src={p.thumbnailUrl}
-                          alt={p.name}
-                          width={28}
-                          height={28}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-[10px] text-secondary font-medium">
-                          {p.name.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Link>
-
-            {/* Browse Patterns — 5 cols, with inline SVG pattern */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('patterns')}
-              className="col-span-6 md:col-span-5 glass-elevated rounded-[18px] overflow-hidden transition-all duration-200 hover:shadow-elevation-3 block"
-            >
-              <div className="h-[100px] relative overflow-hidden">
-                <svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 320 100"
-                  preserveAspectRatio="xMidYMid slice"
-                  className="absolute inset-0"
-                >
-                  {/* HST pattern grid */}
-                  {[0, 40, 80, 120, 160, 200, 240, 280].map((x, xi) =>
-                    [0, 40, 80].map((y, yi) => (
-                      <g key={`${xi}-${yi}`}>
-                        <polygon
-                          points={`${x},${y} ${x + 40},${y} ${x},${y + 40}`}
-                          fill="var(--color-primary)"
-                          opacity={(xi + yi) % 3 === 0 ? 0.7 : 0.4}
-                        />
-                        <polygon
-                          points={`${x + 40},${y} ${x + 40},${y + 40} ${x},${y + 40}`}
-                          fill="var(--color-primary-dark)"
-                          opacity={(xi + yi) % 2 === 0 ? 0.35 : 0.2}
-                        />
-                      </g>
-                    ))
-                  )}
-                </svg>
-              </div>
-              <div className="p-5">
-                <p className="text-[length:var(--font-size-body-lg)] font-semibold text-on-surface">
-                  Browse Patterns
-                </p>
-                <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-                  Start from a pre-made design
-                </p>
-              </div>
-            </button>
-
-            {/* Browse Fabrics — 4 cols, tall, with real image */}
-            <Link
-              href="/dashboard"
-              className="col-span-6 md:col-span-4 md:row-span-2 rounded-[18px] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-elevation-1 relative group"
-            >
-              <Image
-                src="/images/quilts/quilt_03_closeup_scrappy.png"
-                alt="Fabric swatches"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-              <div className="relative mt-auto p-6">
-                <p className="text-[length:var(--font-size-body-lg)] font-semibold text-white">
-                  Browse Fabrics
-                </p>
-                <p className="text-[length:var(--font-size-body-sm)] text-white/75 mt-1">
-                  Your fabric library
-                </p>
-              </div>
-            </Link>
-
-            {/* Tutorials — 4 cols */}
-            <Link
-              href="/blog"
-              className="col-span-6 md:col-span-4 glass-elevated rounded-[18px] p-6 transition-all duration-200 hover:shadow-elevation-3 block"
-            >
-              <TutorialsIcon />
-              <p className="text-[length:var(--font-size-body-lg)] font-semibold text-on-surface mt-3.5">
-                Tutorials
-              </p>
-              <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-                Step-by-step guides and tutorials
-              </p>
-            </Link>
-
-            {/* Community — 4 cols */}
-            <Link
-              href="/socialthreads"
-              className="col-span-6 md:col-span-4 glass-elevated rounded-[18px] p-6 transition-all duration-200 hover:shadow-elevation-3 block"
-            >
-              <CommunityIcon />
-              <p className="text-[length:var(--font-size-body-lg)] font-semibold text-on-surface mt-3.5">
-                Community
-              </p>
-              <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-1">
-                Share & discover
-              </p>
-            </Link>
-
-            {/* Photo to Pattern — 5 cols, with quilt image + opencv overlay */}
-            <button
-              type="button"
-              onClick={() => openPhotoPattern()}
-              className="col-span-12 md:col-span-5 rounded-[18px] overflow-hidden transition-all duration-200 hover:shadow-elevation-2 block relative group text-left"
-            >
-              <div className="relative h-[180px] md:h-full min-h-[180px]">
-                <Image
-                  src="/images/quilts/quilt_01_closeup_churndash.png"
-                  alt="Photo to pattern"
-                  fill
-                  className="object-cover"
-                />
-                {/* OpenCV-style shape detection overlay */}
-                <svg
-                  className="absolute inset-0 w-full h-full"
-                  viewBox="0 0 400 200"
-                  preserveAspectRatio="xMidYMid slice"
-                >
-                  {/* Detected block outlines */}
-                  <rect
-                    x="30"
-                    y="20"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="120"
-                    y="20"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="210"
-                    y="20"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="300"
-                    y="20"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="30"
-                    y="110"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="120"
-                    y="110"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  <rect
-                    x="210"
-                    y="110"
-                    width="80"
-                    height="80"
-                    rx="2"
-                    fill="none"
-                    stroke="#00ff88"
-                    strokeWidth="2"
-                    opacity="0.7"
-                  />
-                  {/* Diagonal piece detection lines */}
-                  <line
-                    x1="30"
-                    y1="20"
-                    x2="110"
-                    y2="100"
-                    stroke="#00ccff"
-                    strokeWidth="1.2"
-                    opacity="0.5"
-                  />
-                  <line
-                    x1="110"
-                    y1="20"
-                    x2="30"
-                    y2="100"
-                    stroke="#00ccff"
-                    strokeWidth="1.2"
-                    opacity="0.5"
-                  />
-                  <line
-                    x1="120"
-                    y1="20"
-                    x2="200"
-                    y2="100"
-                    stroke="#00ccff"
-                    strokeWidth="1.2"
-                    opacity="0.5"
-                  />
-                  <line
-                    x1="200"
-                    y1="20"
-                    x2="120"
-                    y2="100"
-                    stroke="#00ccff"
-                    strokeWidth="1.2"
-                    opacity="0.5"
-                  />
-                  {/* Corner points */}
-                  {[
-                    [30, 20],
-                    [110, 20],
-                    [30, 100],
-                    [110, 100],
-                    [120, 20],
-                    [200, 20],
-                    [120, 100],
-                    [200, 100],
-                    [210, 20],
-                    [290, 20],
-                    [210, 100],
-                    [290, 100],
-                  ].map(([cx, cy], i) => (
-                    <circle key={i} cx={cx} cy={cy} r="3" fill="#00ff88" opacity="0.8" />
-                  ))}
-                </svg>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <p className="text-[length:var(--font-size-body-lg)] font-semibold text-white">
-                  Photo to Pattern
-                </p>
-                <p className="text-[length:var(--font-size-body-sm)] text-white/75 mt-1">
-                  Import a quilt photo & extract blocks
-                </p>
-              </div>
-            </button>
-
-            {/* Settings — 3 cols (compact) */}
-            <Link
-              href="/profile"
-              className="col-span-4 md:col-span-3 glass-elevated rounded-[18px] p-5 transition-all duration-200 hover:shadow-elevation-3 block"
-            >
-              <SettingsIcon />
-              <p className="text-[length:var(--font-size-body-md)] font-semibold text-on-surface mt-2.5">
-                Settings
-              </p>
-            </Link>
-
-            {/* Blog — 4 cols, with real quilt image */}
-            <Link
-              href="/blog"
-              className="col-span-8 md:col-span-4 rounded-[18px] overflow-hidden transition-all duration-200 hover:shadow-elevation-1 block relative group"
-            >
-              <div className="relative h-[140px]">
-                <Image
-                  src="/images/quilts/quilt_06_wall_art.png"
-                  alt="Quilting blog"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <p className="text-[length:var(--font-size-body-lg)] font-semibold text-white">
-                  Blog
-                </p>
-                <p className="text-[length:var(--font-size-body-sm)] text-white/75 mt-0.5">
-                  Tips, stories & inspiration
-                </p>
-              </div>
-            </Link>
-          </div>
-
-          {/* Project fetch error banner */}
-          {projectsFetchError && (
-            <div className="mt-6 rounded-xl bg-error/10 border border-error/20 p-4 flex items-center gap-3">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                className="text-error flex-shrink-0"
-                aria-hidden="true"
-              >
-                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+            </div>
+            <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
+              <svg width="14" height="14" viewBox="0 0 40 40" fill="none">
                 <path
-                  d="M7 7l6 6M13 7l-6 6"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
+                  d="M5 6h12a3 3 0 013 3v24c0-2-1.5-3.5-3.5-3.5H5V6z"
+                  stroke="#f97316"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                <path
+                  d="M35 6H23a3 3 0 00-3 3v24c0-2 1.5-3.5 3.5-3.5H35V6z"
+                  stroke="#f97316"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  fill="none"
                 />
               </svg>
-              <p className="text-sm text-on-surface">
-                Could not load your projects.{' '}
-                <button
-                  type="button"
-                  onClick={fetchProjects}
-                  className="font-medium text-primary hover:underline"
+            </div>
+          </div>
+
+          {projects.length > 0 ? (
+            <div className="flex gap-1.5 mt-3">
+              {projects.slice(0, 4).map((p) => (
+                <div
+                  key={p.id}
+                  className="flex-1 aspect-square rounded-md bg-slate-100/80 overflow-hidden border border-white/80"
                 >
-                  Try again
-                </button>
-              </p>
+                  {p.thumbnailUrl ? (
+                    <Image
+                      src={p.thumbnailUrl}
+                      alt={p.name}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-slate-400 text-[10px] font-bold">
+                        {p.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-3 flex gap-1.5">
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex-1 aspect-square rounded-md bg-slate-100/60 border border-dashed border-slate-200"
+                />
+              ))}
             </div>
           )}
 
-          {/* Recent Projects — only if user has projects */}
-          {projects.length > 0 && (
-            <div className="mt-10">
-              <h2 className="text-[length:var(--font-size-headline-sm)] font-bold text-on-surface mb-5">
-                Recent Projects
-              </h2>
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
-                {projects.slice(0, 4).map((project) => (
-                  <Link
-                    key={project.id}
-                    href={`/studio/${project.id}`}
-                    className="flex-shrink-0 w-[220px] glass-elevated rounded-xl overflow-hidden hover:shadow-elevation-3 transition-all duration-200"
-                  >
-                    <div className="aspect-video bg-surface-container-high/50 relative overflow-hidden">
-                      {project.thumbnailUrl ? (
-                        <Image
-                          src={project.thumbnailUrl}
-                          alt={project.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <svg
-                            width="32"
-                            height="32"
-                            viewBox="0 0 32 32"
-                            fill="none"
-                            className="text-outline-variant"
-                          >
-                            <rect
-                              x="3"
-                              y="3"
-                              width="11"
-                              height="11"
-                              rx="2"
-                              stroke="currentColor"
-                              strokeWidth="1.3"
-                            />
-                            <rect
-                              x="18"
-                              y="3"
-                              width="11"
-                              height="11"
-                              rx="2"
-                              stroke="currentColor"
-                              strokeWidth="1.3"
-                            />
-                            <rect
-                              x="3"
-                              y="18"
-                              width="11"
-                              height="11"
-                              rx="2"
-                              stroke="currentColor"
-                              strokeWidth="1.3"
-                            />
-                            <rect
-                              x="18"
-                              y="18"
-                              width="11"
-                              height="11"
-                              rx="2"
-                              stroke="currentColor"
-                              strokeWidth="1.3"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-[length:var(--font-size-body-md)] font-medium text-on-surface truncate">
-                        {project.name}
-                      </p>
-                      <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-0.5">
-                        {formatRelativeTime(project.updatedAt)}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+          <p className="text-[10px] text-slate-400 mt-2 font-medium">
+            {projects.length > 0
+              ? `Last edited ${formatRelativeTime(projects[0].updatedAt)}`
+              : 'No projects yet'}
+          </p>
+        </Link>
 
-          <PhotoPatternModal />
-        </>
-      )}
+        {/* ── 4. Browse Patterns — col 4-5, row 2 ─────────────────── */}
+        <button
+          type="button"
+          onClick={() => setActiveTab('patterns')}
+          className="col-start-1 md:col-start-4 col-span-6 md:col-span-2 row-start-4 md:row-start-2 rounded-xl overflow-hidden relative transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-left bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.06)]"
+        >
+          <div className="h-[55%] relative overflow-hidden">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 200 120"
+              preserveAspectRatio="xMidYMid slice"
+              className="absolute inset-0"
+            >
+              {([0, 40, 80, 120, 160] as number[]).map((x, xi) =>
+                ([0, 40, 80] as number[]).map((y, yi) => (
+                  <g key={`${xi}-${yi}`}>
+                    <polygon
+                      points={`${x},${y} ${x + 40},${y} ${x},${y + 40}`}
+                      fill="#FFB085"
+                      opacity={(xi + yi) % 3 === 0 ? 0.85 : 0.5}
+                    />
+                    <polygon
+                      points={`${x + 40},${y} ${x + 40},${y + 40} ${x},${y + 40}`}
+                      fill="#C67B5C"
+                      opacity={(xi + yi) % 2 === 0 ? 0.45 : 0.28}
+                    />
+                  </g>
+                ))
+              )}
+            </svg>
+          </div>
+          <div className="p-3.5">
+            <p className="text-slate-800 font-extrabold text-sm tracking-tight">Browse Patterns</p>
+            <p className="text-slate-500 text-xs mt-0.5">Pre-made designs</p>
+          </div>
+        </button>
 
-      {/* New Project Dialog */}
+        {/* ── 5. Community — col 6-7, row 2 ───────────────────────── */}
+        <Link
+          href="/socialthreads"
+          className="col-start-7 md:col-start-6 col-span-6 md:col-span-2 row-start-4 md:row-start-2 min-h-[140px] md:min-h-0 rounded-xl overflow-hidden relative transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 block"
+        >
+          <Image
+            src="/images/quilts/quilt_03_closeup_scrappy.png"
+            alt="Community"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-3.5">
+            <p className="text-white font-extrabold text-sm tracking-tight">Community</p>
+            <p className="text-white/70 text-xs mt-0.5">Share &amp; discover</p>
+          </div>
+        </Link>
+      </div>
+
+      <PhotoPatternModal />
       <NewProjectDialog
         open={dialogOpen}
         onClose={() => {

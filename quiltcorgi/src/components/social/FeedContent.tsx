@@ -7,6 +7,7 @@ import Mascot from '@/components/landing/Mascot';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
+import { CreatePostComposer } from './CreatePostComposer';
 
 interface CommunityPost {
   id: string;
@@ -60,24 +61,8 @@ export function FeedContent() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      {/* Create Post Card */}
-      {user && (
-        <div className="glass-panel rounded-[1.5rem] p-4 shadow-sm">
-          <div className="flex gap-4 items-center">
-            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm shrink-0">
-              <span className="text-lg font-bold text-orange-500">
-                {user.name?.charAt(0)?.toUpperCase() ?? '?'}
-              </span>
-            </div>
-            <Link
-              href="/dashboard"
-              className="flex-1 bg-white/40 border border-white/50 rounded-2xl px-4 py-3 text-secondary font-medium hover:bg-white/60 transition-all"
-            >
-              Share your latest quilt design...
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* Create Post Composer */}
+      <CreatePostComposer onSuccess={fetchPosts} />
 
       {/* Loading State */}
       {loading && (

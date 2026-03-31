@@ -28,6 +28,13 @@ export function validationErrorResponse(message: string) {
   );
 }
 
+export function unauthorizedResponseWithMessage(message: string) {
+  return Response.json(
+    { success: false, error: message, code: 'UNAUTHORIZED' as ApiErrorCode },
+    { status: 401 }
+  );
+}
+
 export function errorResponse(message: string, code: ApiErrorCode, status: number) {
   return Response.json({ success: false, error: message, code }, { status });
 }

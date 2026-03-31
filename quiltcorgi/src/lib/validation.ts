@@ -225,6 +225,7 @@ export const updateProfileSchema = z.object({
   youtubeHandle: z.string().max(50).optional(),
   tiktokHandle: z.string().max(50).optional(),
   publicEmail: z.string().email().max(255).optional(),
+  privacyMode: z.enum(['public', 'private']).default('public').optional(),
   // Username can be changed, but must be unique (validated server-side)
   username: z
     .string()
@@ -249,6 +250,14 @@ export const createCommunityPostExtendedSchema = z.object({
   title: z.string().min(1).max(100),
   description: z.string().max(2000).optional(),
   category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']),
+});
+
+export const createCommunityPostSimpleSchema = z.object({
+  title: z.string().min(1).max(255),
+  description: z.string().max(2000).optional(),
+  imageUrl: z.string().url().optional(),
+  projectId: z.string().uuid().optional(),
+  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).default('general'),
 });
 
 export const createCommentSchema = z.object({

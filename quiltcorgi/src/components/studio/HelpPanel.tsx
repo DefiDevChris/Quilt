@@ -142,11 +142,11 @@ function LinksSection() {
         Learn More
       </h3>
       <div className="flex flex-col gap-1">
-        <Link href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
-          Video Tutorials
+        <Link href="/socialthreads" className="text-body-sm text-primary hover:underline px-1 py-1">
+          Community
         </Link>
-        <Link href="/blog" className="text-body-sm text-primary hover:underline px-1 py-1">
-          Blog & Tips
+        <Link href="/socialthreads" className="text-body-sm text-primary hover:underline px-1 py-1">
+          Gallery
         </Link>
       </div>
 

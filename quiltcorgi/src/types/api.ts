@@ -13,7 +13,8 @@ export type ApiErrorCode =
   | 'INTERNAL_ERROR'
   | 'USERNAME_CONFLICT'
   | 'SLUG_CONFLICT'
-  | 'ALREADY_REPORTED';
+  | 'ALREADY_REPORTED'
+  | 'PRIVATE_PROFILE';
 
 export type ApiResponse<T> =
   | { success: true; data: T }

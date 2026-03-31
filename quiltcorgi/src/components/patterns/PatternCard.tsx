@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Package } from 'lucide-react';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
+import { SKILL_LEVEL_LABELS } from '@/lib/constants';
 
 interface PatternCardProps {
   pattern: PatternTemplateListItem;
@@ -70,155 +71,75 @@ const PASTEL_PALETTE = [
 function PlaceholderFallback({ name }: { name: string }) {
   const hash = hashString(name);
   const color = PASTEL_PALETTE[hash % PASTEL_PALETTE.length];
-  
+
   return (
-    <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: color }}>
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ backgroundColor: color }}
+    >
       <Package className="w-10 h-10 opacity-20 text-on-surface" />
     </div>
   );
 }
 
-const SKILL_LEVEL_STYLES: Record<
-  PatternTemplateListItem['skillLevel'],
-  { label: string; bg: string; text: string }
-> = {
-  beginner: {
-    label: 'Beginner',
-    bg: 'rgba(74, 124, 89, 0.12)',
-    text: '#4a7c59',
-  },
-  'confident-beginner': {
-    label: 'Confident Beginner',
-    bg: 'rgba(59, 105, 149, 0.12)',
-    text: '#3b6995',
-  },
-  intermediate: {
-    label: 'Intermediate',
-    bg: 'rgba(198, 148, 46, 0.12)',
-    text: '#a07824',
-  },
-  advanced: {
-    label: 'Advanced',
-    bg: 'rgba(212, 114, 106, 0.12)',
-    text: '#b85a53',
-  },
-};
-
 export function PatternCard({ pattern, onPreview }: PatternCardProps) {
-  const skill = SKILL_LEVEL_STYLES[pattern.skillLevel];
-  const dimensions = `${formatDimensionDisplay(pattern.finishedWidth)}\u2033 \u00D7 ${formatDimensionDisplay(pattern.finishedHeight)}\u2033`;
+  const w = formatDimensionDisplay(pattern.finishedWidth);
+  const h = formatDimensionDisplay(pattern.finishedHeight);
+  const label = SKILL_LEVEL_LABELS[pattern.skillLevel] ?? pattern.skillLevel;
 
   return (
-    <article
-      className="group flex flex-col rounded-[var(--radius-lg)] overflow-hidden transition-shadow duration-300"
+    <button
+      type="button"
+      onClick={() => onPreview(pattern.id)}
+      className="text-left rounded-[var(--radius-lg)] overflow-hidden transition-all duration-200 hover:shadow-elevation-3 hover:-translate-y-0.5 cursor-pointer w-full"
       style={{
         backgroundColor: 'var(--color-surface-container-low)',
         boxShadow: 'var(--shadow-elevation-1)',
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-elevation-2)';
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-elevation-1)';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
     >
       {/* Thumbnail */}
-      <div
-        className="relative aspect-[3/2] overflow-hidden"
-        style={{ backgroundColor: 'var(--color-surface-container)' }}
-      >
+      <div className="aspect-[3/2] relative overflow-hidden bg-surface-container">
         {pattern.thumbnailUrl ? (
           <Image
             src={pattern.thumbnailUrl}
             alt={pattern.name}
             fill
             className="object-cover"
-            unoptimized
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <PlaceholderFallback name={pattern.name} />
         )}
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col flex-1 px-4 pt-3 pb-4 gap-2">
-        {/* Name */}
-        <h3
-          className="font-semibold text-sm leading-tight truncate"
+      {/* Info */}
+      <div className="px-4 pt-3 pb-4">
+        <p
+          className="text-sm font-semibold leading-snug truncate"
           style={{ color: 'var(--color-on-surface)' }}
-          title={pattern.name}
         >
           {pattern.name}
-        </h3>
+        </p>
 
-        {/* Skill level badge */}
         <span
-          className="inline-flex self-start items-center rounded-full px-2 py-0.5 text-xs font-medium"
+          className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-semibold rounded-full"
           style={{
-            backgroundColor: skill.bg,
-            color: skill.text,
+            backgroundColor: 'var(--color-primary-container)',
+            color: 'var(--color-primary-on-container)',
           }}
         >
-          {skill.label}
+          {label}
         </span>
 
-        {/* Dimensions */}
-        <p className="text-xs font-medium" style={{ color: 'var(--color-on-surface)' }}>
-          {dimensions}
+        <p className="mt-2 text-xs" style={{ color: 'var(--color-secondary)' }}>
+          {w}&Prime; × {h}&Prime; finished
         </p>
-
-        {/* Stats */}
         <p className="text-xs" style={{ color: 'var(--color-secondary)' }}>
-          {pattern.blockCount} block{pattern.blockCount !== 1 ? 's' : ''} &middot;{' '}
-          {pattern.fabricCount} fabric{pattern.fabricCount !== 1 ? 's' : ''}
+          {pattern.blockCount} {pattern.blockCount === 1 ? 'block' : 'blocks'} &middot;{' '}
+          {pattern.fabricCount} {pattern.fabricCount === 1 ? 'fabric' : 'fabrics'}
         </p>
-
-        {/* Import count */}
-        {pattern.importCount > 0 && (
-          <span
-            className="inline-flex self-start items-center gap-1 text-xs"
-            style={{ color: 'var(--color-secondary)' }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-3.5 h-3.5"
-              style={{ color: 'var(--color-primary-dark)' }}
-            >
-              <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.723.723 0 01-.692 0h-.002z" />
-            </svg>
-            {pattern.importCount}
-          </span>
-        )}
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Preview button */}
-        <button
-          type="button"
-          onClick={() => onPreview(pattern.id)}
-          className="self-start text-xs font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 cursor-pointer"
-          style={{
-            color: 'var(--color-secondary)',
-            backgroundColor: 'transparent',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = 'var(--color-primary-dark)';
-            e.currentTarget.style.backgroundColor = 'var(--color-primary-container)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--color-secondary)';
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }}
-        >
-          Preview
-        </button>
       </div>
-    </article>
+    </button>
   );
 }
 

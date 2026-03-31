@@ -46,6 +46,13 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           return;
         }
 
+        // Dev bypass: skip email verification, go straight to onboarding
+        if (data.data?.devMode) {
+          router.push('/onboarding');
+          router.refresh();
+          return;
+        }
+
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
         return;
       }

@@ -4,21 +4,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Mascot from './Mascot';
 
-function CheckBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2">
-      <svg className="w-5 h-5 text-warm-peach" fill="currentColor" viewBox="0 0 20 20">
-        <path
-          fillRule="evenodd"
-          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-          clipRule="evenodd"
-        />
-      </svg>
-      <span className="text-sm text-warm-text-secondary">{children}</span>
-    </div>
-  );
-}
-
 function StudioMockup() {
   return (
     <div className="bg-white rounded-2xl shadow-2xl border border-warm-border overflow-hidden">
@@ -150,18 +135,6 @@ export default function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Text */}
           <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-3 px-4 py-2 glass-panel rounded-full"
-            >
-              <Mascot pose="wagging" size="xs" />
-              <span className="text-warm-text-secondary text-sm font-medium">
-                Your next quilt starts here
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -196,17 +169,6 @@ export default function HeroSection() {
               >
                 Start Designing Free
               </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex items-center gap-6 pt-4"
-            >
-              <CheckBadge>No credit card needed</CheckBadge>
-              <CheckBadge>True-scale PDF patterns</CheckBadge>
-              <CheckBadge>659+ quilt blocks</CheckBadge>
             </motion.div>
           </div>
 

@@ -19,6 +19,7 @@ export const userProfiles = pgTable(
     youtubeHandle: varchar('youtubeHandle', { length: 50 }),
     tiktokHandle: varchar('tiktokHandle', { length: 50 }),
     publicEmail: varchar('publicEmail', { length: 255 }),
+    privacyMode: text('privacyMode').notNull().default('public'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()

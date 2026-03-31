@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, User, Bell, Settings, LifeBuoy } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useAuthStore } from '@/stores/authStore';
+import { AuthGateModal } from '@/components/auth/AuthGateModal';
 import { SocialQuickViewModal } from '@/components/social/SocialQuickViewModal';
 import { SocialSplitPane, type SplitPanelId } from '@/components/social/SocialSplitPane';
 
@@ -13,7 +16,7 @@ const SPLIT_HEADERS: Record<SplitPanelId, { label: string; subtitle: string }> =
   profile: { label: 'Profile', subtitle: 'Manage your account' },
 };
 
-export type SectionId = 'feed' | 'blog' | 'profile';
+export type SectionId = 'feed' | 'profile';
 
 interface Section {
   id: SectionId;
@@ -31,40 +34,11 @@ export const SECTIONS: Section[] = [
     href: '/socialthreads',
     image: '/images/quilts/quilt_01_closeup_churndash.png',
   },
-  {
-    id: 'blog',
-    label: 'Blog',
-    subtitle: 'Insights and tutorials',
-    href: '/blog',
-    image: '/images/quilts/quilt_02_bed_hexagon.png',
-  },
 ];
 
 const PROFILE_HEADER = {
   label: 'My Profile',
   subtitle: 'Your account and settings',
-};
-
-interface DropdownButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  href?: string;
-  onClick?: () => void;
-}
-
-const DropdownButton = ({ icon, label, href, onClick }: DropdownButtonProps) => {
-  const content = (
-    <div className="flex flex-col items-center justify-center gap-3 p-6 rounded-[1.5rem] bg-white/50 hover:bg-white/90 transition-all duration-300 border border-white/60 hover:border-orange-300 shadow-sm hover:shadow-md hover:-translate-y-1 text-slate-600 hover:text-orange-600 group cursor-pointer">
-      <div className="text-slate-500 group-hover:text-orange-500 transition-colors">{icon}</div>
-      <span className="text-sm font-bold tracking-tight">{label}</span>
-    </div>
-  );
-
-  if (href) {
-    return <Link href={href}>{content}</Link>;
-  }
-
-  return <button onClick={onClick}>{content}</button>;
 };
 
 interface SocialLayoutProps {
@@ -80,7 +54,11 @@ export function SocialLayout({
   contentClassName,
   splitMode = false,
 }: SocialLayoutProps) {
+  const router = useRouter();
+  const user = useAuthStore((s) => s.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [splitPanel, setSplitPanel] = useState<SplitPanelId>('feed');
 
@@ -99,6 +77,29 @@ export function SocialLayout({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleAvatarClick = () => {
+    if (!user) {
+      setAuthModalOpen(true);
+    } else {
+      setDropdownOpen((prev) => !prev);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    setDropdownOpen(false);
+    try {
+      await fetch('/api/auth/cognito/signout', { method: 'POST' });
+      useAuthStore.getState().reset();
+      router.push('/');
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  };
+
+  const initial = user?.name?.charAt(0)?.toUpperCase() ?? '?';
 
   return (
     <div className="min-h-screen bg-[#FDF9F6] relative overflow-hidden font-sans selection:bg-orange-200 selection:text-orange-900">
@@ -136,46 +137,72 @@ export function SocialLayout({
         <div className="flex items-center gap-4 justify-end">
           <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative group bg-orange-100 flex items-center justify-center"
+              onClick={handleAvatarClick}
+              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative bg-orange-100 flex items-center justify-center"
+              aria-label={user ? 'Account menu' : 'Sign in'}
             >
-              <span className="text-lg font-bold text-orange-500">Q</span>
+              {user?.image ? (
+                <Image
+                  src={user.image}
+                  alt={user.name}
+                  fill
+                  className="object-cover"
+                  sizes="48px"
+                />
+              ) : (
+                <span className="text-lg font-bold text-orange-500">{initial}</span>
+              )}
             </button>
 
-            {dropdownOpen && (
-              <div className="absolute top-16 right-0 w-[340px] glass-panel rounded-[2rem] p-4 shadow-2xl z-50 animate-expand origin-top-right border border-white/80">
-                <div className="grid grid-cols-2 gap-3">
-                  <DropdownButton
-                    icon={<LayoutDashboard size={28} strokeWidth={1.5} />}
-                    label="Dashboard"
-                    href="/dashboard"
-                  />
-                  <DropdownButton
-                    icon={<User size={28} strokeWidth={1.5} />}
-                    label="My Profile"
+            {dropdownOpen && user && (
+              <div className="absolute top-16 right-0 w-56 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl z-50 border border-white/80 overflow-hidden">
+                {/* User info */}
+                <div className="px-4 py-3 border-b border-slate-100">
+                  <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
+                  <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                </div>
+
+                {/* Links */}
+                <div className="py-1">
+                  <Link
                     href="/profile"
-                  />
-                  <DropdownButton
-                    icon={<Bell size={28} strokeWidth={1.5} />}
-                    label="Notifications"
-                    href="/profile"
-                  />
-                  <DropdownButton
-                    icon={<Settings size={28} strokeWidth={1.5} />}
-                    label="Settings"
+                    onClick={() => setDropdownOpen(false)}
+                    className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                  >
+                    Profile
+                  </Link>
+                  <Link
                     href="/profile/billing"
-                  />
-                  <DropdownButton
-                    icon={<LifeBuoy size={28} strokeWidth={1.5} />}
-                    label="Support"
-                    href="/blog"
-                  />
+                    onClick={() => setDropdownOpen(false)}
+                    className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                  >
+                    Billing
+                  </Link>
+                </div>
+
+                {/* Sign out */}
+                <div className="py-1 border-t border-slate-100">
+                  <button
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  >
+                    {signingOut ? 'Signing out…' : 'Sign Out'}
+                  </button>
                 </div>
               </div>
             )}
           </div>
         </div>
       </header>
+
+      {/* Auth gate modal for unauthenticated users */}
+      <AuthGateModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        title="Join QuiltCorgi"
+        description="Sign up to share your designs and connect with the quilting community."
+      />
 
       {/* Quick-view modal — rendered at root so it overlays everything */}
       <SocialQuickViewModal />

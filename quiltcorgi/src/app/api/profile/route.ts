@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid profile data');
     }
 
-    const { displayName, bio, location, websiteUrl, instagramHandle, youtubeHandle, tiktokHandle, publicEmail, username } = parsed.data;
+    const { displayName, bio, location, websiteUrl, instagramHandle, youtubeHandle, tiktokHandle, publicEmail, username, privacyMode } = parsed.data;
 
     const [existing] = await db
       .select({ id: userProfiles.id, username: userProfiles.username })
@@ -120,6 +120,7 @@ export async function PUT(request: NextRequest) {
         youtubeHandle: string | null;
         tiktokHandle: string | null;
         publicEmail: string | null;
+        privacyMode: string;
         username?: string;
         updatedAt: Date;
       } = {
@@ -131,6 +132,7 @@ export async function PUT(request: NextRequest) {
         youtubeHandle: youtubeHandle ?? null,
         tiktokHandle: tiktokHandle ?? null,
         publicEmail: publicEmail ?? null,
+        privacyMode: privacyMode ?? 'public',
         updatedAt: new Date(),
       };
 
@@ -173,6 +175,7 @@ export async function PUT(request: NextRequest) {
         youtubeHandle: youtubeHandle ?? null,
         tiktokHandle: tiktokHandle ?? null,
         publicEmail: publicEmail ?? null,
+        privacyMode: privacyMode ?? 'public',
       })
       .returning();
 

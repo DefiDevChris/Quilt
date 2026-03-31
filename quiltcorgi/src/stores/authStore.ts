@@ -8,6 +8,7 @@ interface AuthUser {
   email: string;
   image: string | null;
   role: 'free' | 'pro' | 'admin';
+  privacyMode: 'public' | 'private';
 }
 
 interface AuthState {
@@ -15,6 +16,7 @@ interface AuthState {
   isLoading: boolean;
   isPro: boolean;
   isAdmin: boolean;
+  isPrivate: boolean;
   setUser: (user: AuthUser | null) => void;
   setLoading: (loading: boolean) => void;
   reset: () => void;
@@ -25,6 +27,7 @@ const INITIAL_STATE = {
   isLoading: true,
   isPro: false,
   isAdmin: false,
+  isPrivate: false,
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -35,6 +38,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       isLoading: false,
       isPro: user?.role === 'pro' || user?.role === 'admin',
       isAdmin: user?.role === 'admin',
+      isPrivate: user?.privacyMode === 'private',
     }),
   setLoading: (isLoading) => set({ isLoading }),
   reset: () => set({ ...INITIAL_STATE }),

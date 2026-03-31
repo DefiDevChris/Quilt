@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Mascot from './Mascot';
@@ -38,13 +37,6 @@ const QUILT_GRID: string[][] = [
   ['#FFF5E6', '#C67B5C', '#FFB085', '#C67B5C', '#FFF5E6', '#C67B5C'],
   ['#FFB085', '#FFF5E6', '#C67B5C', '#FFF5E6', '#FFB085', '#FFF5E6'],
   ['#FFF5E6', '#C67B5C', '#FFB085', '#C67B5C', '#FFF5E6', '#C67B5C'],
-];
-
-/* Cutting-list data — mirrors what the real cutting-chart engine produces */
-const CUTTING_LIST = [
-  { fabric: 'Warm Peach', color: '#FFB085', pieces: 12, size: '3½" × 3½"' },
-  { fabric: 'Rust', color: '#C67B5C', pieces: 12, size: '3½" × 3½"' },
-  { fabric: 'Cream', color: '#FFF5E6', pieces: 12, size: '3½" × 3½"' },
 ];
 
 function StudioPreviewMockup() {
@@ -175,7 +167,11 @@ function StudioPreviewMockup() {
             <div className="text-[8px] font-bold text-warm-text-muted uppercase tracking-wider">
               Fabrics
             </div>
-            {CUTTING_LIST.map((item) => (
+            {[
+              { fabric: 'Warm Peach', color: '#FFB085', pieces: 12 },
+              { fabric: 'Rust', color: '#C67B5C', pieces: 12 },
+              { fabric: 'Cream', color: '#FFF5E6', pieces: 12 },
+            ].map((item) => (
               <div key={item.fabric} className="flex items-center gap-1.5">
                 <div
                   className="w-4 h-4 rounded-sm border border-warm-border shrink-0"
@@ -198,75 +194,6 @@ function StudioPreviewMockup() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Cutting Chart — positioned below the studio window */}
-      <div className="absolute -right-4 -bottom-14 glass-elevated p-3 rounded-xl shadow-xl hidden lg:block z-20 w-44">
-        <div className="flex items-center gap-2 mb-2">
-          <Image
-            src="/icons/quilt-04-scissors-Photoroom.png"
-            alt="Scissors"
-            width={20}
-            height={20}
-            className="object-contain"
-          />
-          <span className="text-[10px] font-bold text-warm-text">Cutting Chart</span>
-        </div>
-        <div className="space-y-1.5">
-          {CUTTING_LIST.map((item) => (
-            <div key={item.fabric} className="flex items-center gap-2 text-[9px]">
-              <div
-                className="w-2.5 h-2.5 rounded-sm shrink-0"
-                style={{ backgroundColor: item.color }}
-              />
-              <span className="text-warm-text-secondary flex-1">{item.pieces}×</span>
-              <span className="font-mono font-medium text-warm-text">{item.size}</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 pt-1.5 border-t border-warm-border/60 flex items-center justify-between">
-          <span className="text-[8px] text-warm-text-muted">Total fabric</span>
-          <span className="text-[10px] font-bold text-warm-peach">2⅜ yds</span>
-        </div>
-      </div>
-
-      {/* Photo to Pattern — left side, below center */}
-      <div className="absolute -left-4 bottom-4 glass-elevated p-2.5 rounded-xl shadow-xl hidden lg:flex items-center gap-2 z-20">
-        <div className="w-7 h-7 rounded-lg bg-warm-peach/15 flex items-center justify-center text-warm-peach shrink-0">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <path d="M21 15l-5-5L5 21" />
-          </svg>
-        </div>
-        <div>
-          <div className="font-bold text-[10px] text-warm-text">Photo to Pattern</div>
-          <div className="text-[8px] text-warm-text-muted">Snap, detect, sew</div>
-        </div>
-      </div>
-
-      {/* PDF export — top left */}
-      <div className="absolute -left-3 top-6 glass-elevated p-2 rounded-lg shadow-lg hidden lg:flex items-center gap-1.5 z-20">
-        <div className="w-5 h-5 rounded bg-green-100 flex items-center justify-center text-green-600 shrink-0">
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-        <span className="text-[9px] font-bold text-warm-text">1:1 PDF ready</span>
       </div>
     </div>
   );
