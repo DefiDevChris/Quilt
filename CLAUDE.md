@@ -1,21 +1,38 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Coding agent instructions for the QuiltCorgi repository.
+
+## Repository Layout
+
+The Next.js app lives in `quiltcorgi/`. All commands below must be run from that directory.
+
+```
+src/
+├── app/          # Next.js App Router pages, layouts, API routes
+├── components/   # React UI components (feature-subfoldered)
+├── db/           # Drizzle schema, migrations, seed scripts
+├── hooks/        # React hooks (use*.ts)
+├── lib/          # Pure engine logic, utilities, constants
+├── stores/       # Zustand state stores
+├── types/        # Shared TypeScript interfaces
+├── middleware/   # Rate limiting middleware
+└── proxy.ts      # JWT verification & route protection
+```
 
 ## Commands
-
-All commands run from `quiltcorgi/`:
 
 ```bash
 npm run dev              # Dev server at localhost:3000
 npm run build            # Production build
 npm run type-check       # tsc --noEmit
-npm test                 # Vitest (all unit tests)
-npm test -- --run path   # Single test file
-npm run test:e2e         # Playwright (Chrome + Firefox)
+npm test                 # Vitest run (all unit tests)
+npm test -- --run path   # Run a single test file (e.g. npm test -- --run tests/unit/lib/resize-engine.test.ts)
+npm run test:watch       # Vitest watch mode
+npm run test:coverage    # Vitest with coverage (80% threshold for lines/functions/statements)
+npm run test:e2e         # Playwright E2E (Chrome + Firefox)
 npm run lint             # ESLint
-npm run format           # Prettier
-npm run db:local:up      # Start local Postgres (docker-compose)
+npm run format           # Prettier (format src/**/*.{ts,tsx,css,json})
+npm run db:local:up      # Start local Postgres via docker-compose
 npm run db:push          # Push Drizzle schema to DB
 npm run db:migrate       # Run migrations
 npm run db:generate      # Generate migration from schema diff
@@ -24,13 +41,89 @@ npm run db:seed:blog     # Seed blog posts
 
 Local dev requires `.env.local` with `AWS_SECRET_NAME=skip` and `DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi`.
 
-## Architecture
+## Stack
 
-**Stack:** Next.js 16.2.1 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Fabric.js 7.2 + Zustand + Drizzle ORM + PostgreSQL + AWS Cognito + Stripe
+Next.js 16.2.1 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Fabric.js 7.2 + Zustand + Drizzle ORM + PostgreSQL + AWS Cognito + Stripe
 
-### Engine → Hook → Component Pattern
+## Code Style
+
+### Formatting (Prettier)
+
+- Semicolons: yes
+- Quotes: single
+- Tab width: 2 spaces
+- Trailing commas: ES5
+- Print width: 100
+- Arrow parens: always
+- Line endings: LF
+
+### TypeScript
+
+- Strict mode enabled. Use proper types, avoid `any`.
+- Prefer `interface` over `type` for object shapes (exported APIs).
+- Use `readonly` on interface properties and array parameters.
+- Use `as const` for literal constant arrays/objects.
+
+### Imports
+
+- Use `@/` path alias for all `src/` imports (e.g. `import { foo } from '@/lib/constants'`).
+- Group imports: node modules first, then `@/` imports, then relative.
+- Use `import type { ... }` for type-only imports.
+- Fabric.js must be dynamically imported (`import('fabric')`) inside hooks only — never at module top level.
+
+### Naming
+
+| Item | Convention | Example |
+|------|-----------|---------|
+| Variables, functions | `camelCase` | `computeResize()` |
+| Interfaces, types | `PascalCase` | `ResizeInput` |
+| Constants | `SCREAMING_SNAKE_CASE` | `FREE_BLOCK_LIMIT` |
+| Stores | `camelCase` file + `create()` | `canvasStore.ts` |
+| Hooks | `use` prefix, `camelCase` | `useCanvasInit.ts` |
+| Engine files | kebab-case `*-engine.ts` | `resize-engine.ts` |
+| Components | PascalCase in PascalCase dirs | `components/canvas/CanvasWorkspace.tsx` |
+| API routes | `route.ts` in semantic paths | `app/api/projects/[id]/route.ts` |
+
+### Immutability
+
+Engine functions and Zustand stores must be pure and immutable. Return new objects/arrays via spread or `.map()`. Never mutate arguments or store state directly.
+
+### Error Handling
+
+- API routes: use helpers from `@/lib/api-responses` (`unauthorizedResponse`, `validationErrorResponse`, `errorResponse`).
+- Zod validation: use `.safeParse()` and return the first issue message.
+- `validationErrorResponse()` takes a `string` — use `parsed.error.issues[0]?.message`.
+- Catch blocks in API routes: return a generic error, never leak internal details.
+- Engines: throw `Error` with descriptive messages for invalid preconditions.
+
+### Shared Utilities
+
+Reuse existing shared code — do not duplicate:
+- `saveProject()` in `lib/save-project.ts` — used by keyboard, auto-save, and menu
+- `calculateReadTime()` in `lib/read-time.ts`
+- `normalizeColor()` in `colorway-engine.ts` (returns `#000000` for invalid hex)
+- `color-math.ts` — D65 illuminant for sRGB→XYZ→LAB
+- Default constants from `lib/constants.ts` — `DEFAULT_CANVAS_WIDTH/HEIGHT`, `DEFAULT_FILL_COLOR/STROKE_COLOR`
+
+## Architecture Patterns
+
+### Engine → Hook → Component
 
 All computational logic lives in pure `src/lib/*-engine.ts` files with zero React/Fabric.js/DOM dependencies — fully testable in Vitest node environment. Hooks bridge engines to Fabric.js canvas. Components handle UI only. Example: `resize-engine.ts` → `useQuiltResize.ts` → `ResizeDialog.tsx`.
+
+### Zustand Stores
+
+- Use immutable updates (spread/map)
+- Module-level `AbortController` maps for cancellation
+- Provide `reset()` methods that clean up private state
+
+### API Route Handlers
+
+- `await params` is required in Next.js 16 route handlers for dynamic segments
+- Validate input with Zod schemas from `@/lib/validation`
+- Check auth via `getRequiredSession()` from `@/lib/auth-helpers`
+- Rate limit with `checkRateLimit()` from `@/lib/rate-limit`
+- Pro gating: check `session.user.role` and return 403 `PRO_REQUIRED`
 
 ### Auth
 
@@ -48,9 +141,14 @@ Studio has 4 canvas contexts: QUILT, BLOCK, IMAGE, PRINT — each with its own t
 
 Companion experience only (5-tab nav: Feed, Library, Discover, Profile, Notifications). Studio is desktop-only — `StudioGate` redirects mobile users.
 
-## Brand Voice
+## Testing
 
-Warm, quilter-friendly, conversational — like a knowledgeable friend in a quilt shop. Address quilters directly ("you"/"your"). Use quilting vocabulary naturally (seam allowance, yardage, WOF, fat quarter). Lead with what the quilter gets, not what the software does. Headlines: 2–6 words, punchy, wordplay welcome. **Avoid**: "professional-grade", "comprehensive suite", "cutting-edge", "leverage", "utilize", "enterprise", "robust" — any generic SaaS language.
+- Unit tests in `tests/unit/` — mirror source structure (`tests/unit/lib/`, `tests/unit/stores/`)
+- Component tests may also live in `src/components/**/__tests__/`
+- E2E tests in `tests/e2e/` — Playwright with Chromium and Firefox
+- Vitest runs in `node` environment (use `jsdom` per-file if DOM needed)
+- Coverage thresholds: lines 80%, functions 80%, statements 80%, branches 70%
+- Vitest can't resolve bare directory imports — use `./block-generators/index` not `./block-generators`
 
 ## Design System
 
@@ -68,15 +166,36 @@ Warm-cream glassmorphic system in `src/app/globals.css` via Tailwind v4 `@theme`
 
 Use design system modal pattern (fixed overlay + glass surface) instead of native `confirm()`.
 
-## Gotchas
+## Brand Voice
 
-- **`proxy.ts` not middleware.ts** for JWT verification and route protection
-- **Tailwind v4** uses `@theme` in `globals.css` — no `tailwind.config.ts` file
+Warm, quilter-friendly, conversational — like a knowledgeable friend in a quilt shop. Address quilters directly ("you"/"your"). Use quilting vocabulary naturally (seam allowance, yardage, WOF, fat quarter). Lead with what the quilter gets, not what the software does. Headlines: 2–6 words, punchy, wordplay welcome. **Avoid**: "professional-grade", "comprehensive suite", "cutting-edge", "leverage", "utilize", "enterprise", "robust" — any generic SaaS language.
+
+## Community Trust System
+
+**3 roles: free → pro → admin.** Implemented in `trust-engine.ts` (pure function) + `trust-guard.ts` (middleware).
+
+| Role | canComment | canPost | canModerate | Rate Limits (24h) |
+|------|------------|---------|-------------|-------------------|
+| free | ✓ | ✗ | ✗ | 20 comments, 3 posts |
+| pro | ✓ | ✓ | ✗ | 100 comments, 20 posts |
+| admin | ✓ | ✓ | ✓ | Unlimited |
+
+- **Free users** can like, save, and comment on community posts
+- **Pro subscription** required to create community posts (paywall, not activity-based)
+- **Admins** can moderate content (approve/reject posts, hide comments)
+- New community posts from non-admins enter "pending" status for moderation
+- Rate limiting: Redis-based (per-minute) for likes/saves/profile, DB-based (per-24h) for comments/posts
+- The trust system is **role-based**, not activity-based. Users do not earn elevated privileges through participation.
+
+## Key Gotchas
+
+- **`proxy.ts` not `middleware.ts`** — JWT verification and route protection live in `proxy.ts`
+- **Tailwind v4** uses `@theme` in `globals.css` — there is no `tailwind.config.ts`
 - **Fabric.js must be dynamically imported** — `import('fabric')` in hooks only, for SSR safety
 - **`await params`** required in Next.js 16 route handlers
 - **Drizzle `pgTable`** returns array as 3rd arg; uses `pgEnum`
 - **OpenCV.js** (~8MB WASM) lazy-loaded only for Photo to Pattern. Turbopack aliases shim `fs`/`path`/`crypto` in `next.config.ts`
-- **`validationErrorResponse()`** takes a `string`, not a ZodError — use `parsed.error.message`
+- **`validationErrorResponse()`** takes a `string`, not a ZodError — use `parsed.error.issues[0]?.message`
 - **Vitest** can't resolve bare directory imports — use `./block-generators/index` not `./block-generators`
 - **`NEXT_PUBLIC_APP_URL`** for all base URL needs — `NEXT_PUBLIC_BASE_URL` was removed
 - **`AWS_SECRET_NAME=skip`** in `.env.local` bypasses Secrets Manager for local dev
@@ -90,28 +209,3 @@ Use design system modal pattern (fixed overlay + glass surface) instead of nativ
 - `color-math.ts` uses D65 illuminant for sRGB→XYZ→LAB, shared across photo-patchwork, photo-pattern, and OCR modules
 - Blog `[slug]/page.tsx` uses React `cache()` to deduplicate between `generateMetadata` and the page component
 - Zustand stores use immutable updates (spread/map), module-level abort controllers, and `reset()` methods that clean up private state
-
-## Community Trust System
-
-**3 roles: free → pro → admin.** Implemented in `trust-engine.ts` (pure function) + `trust-guard.ts` (middleware).
-
-### Role Permissions
-| Role | canComment | canPost | canModerate | Rate Limits (24h) |
-|------|------------|---------|-------------|-------------------|
-| free | ✓ | ✗ | ✗ | 20 comments, 3 posts |
-| pro | ✓ | ✓ | ✗ | 100 comments, 20 posts |
-| admin | ✓ | ✓ | ✓ | Unlimited |
-
-### Key Behaviors
-- **Free users** can like, save, and comment on community posts
-- **Pro subscription** required to create community posts (paywall, not activity-based)
-- **Admins** can moderate content (approve/reject posts, hide comments)
-- New community posts from non-admins enter "pending" status for moderation
-- Posts are auto-approved only for admin users
-
-### Rate Limiting
-Two systems are used:
-1. **Redis-based** (per-minute): Used for likes, saves, profile updates, admin actions
-2. **DB-based** (per-24h): Used for comments and posts via `trust-guard.ts`
-
-The trust system is **role-based**, not activity-based. Users do not earn elevated privileges through participation.
