@@ -35,10 +35,8 @@ describe('cutting-chart-generator', () => {
     });
 
     it('calculates correct cut size for a square with 0.25" seam allowance', () => {
-      // A 3" finished square needs 3.5" cut size (add 0.5" total)
       const svg = '<svg viewBox="0 0 100 100"><path d="M 0 0 L 100 0 L 100 100 L 0 100 Z"/></svg>';
       const result = classifyPatchShape(svg, 0.25);
-      // cutWidth should be finishedWidth + 2 * seamAllowance
       expect(result.cutWidth).toBeCloseTo(result.finishedWidth + 0.5, 2);
     });
 
@@ -47,6 +45,14 @@ describe('cutting-chart-generator', () => {
         '<svg viewBox="0 0 100 100"><polygon points="0,0 60,0 100,50 60,100 0,100"/></svg>';
       const result = classifyPatchShape(svg, 0.25);
       expect(['trapezoid', 'irregular']).toContain(result.shape);
+    });
+
+    it('classifies trapezoid (4 vertices, non-right-angle)', () => {
+      const svg =
+        '<svg viewBox="0 0 100 100"><polygon points="0,0 100,0 80,100 20,100"/></svg>';
+      const result = classifyPatchShape(svg, 0.25);
+      expect(result.shape).toBe('trapezoid');
+      expect(result.specialInstructions).toContain('Template cut');
     });
 
     it('provides special instructions for HST', () => {
@@ -108,6 +114,38 @@ describe('cutting-chart-generator', () => {
       expect(chart.length).toBeGreaterThan(0);
       expect(chart[0].totalPieces).toBe(8);
     });
+
+    it('merges identical patches in same fabric group', () => {
+      const items = [
+        {
+          shapeId: 's1',
+          shapeName: 'Square',
+          svgData: '<svg viewBox="0 0 100 100"><path d="M 0 0 L 100 0 L 100 100 L 0 100 Z"/></svg>',
+          quantity: 4,
+          seamAllowance: 0.25,
+          unitSystem: 'imperial' as const,
+          fabricId: 'fabric-red',
+          fabricName: 'Red Solid',
+          fillColor: '#FF0000',
+        },
+        {
+          shapeId: 's2',
+          shapeName: 'Square',
+          svgData: '<svg viewBox="0 0 100 100"><path d="M 0 0 L 100 0 L 100 100 L 0 100 Z"/></svg>',
+          quantity: 6,
+          seamAllowance: 0.25,
+          unitSystem: 'imperial' as const,
+          fabricId: 'fabric-red',
+          fabricName: 'Red Solid',
+          fillColor: '#FF0000',
+        },
+      ];
+
+      const chart = generateCuttingChart(items, 0.25);
+      const redGroup = chart.find((g) => g.fabricId === 'fabric-red');
+      expect(redGroup).toBeDefined();
+      expect(redGroup!.totalPieces).toBe(10);
+    });
   });
 
   describe('optimizeStripCutting', () => {
@@ -126,9 +164,7 @@ describe('cutting-chart-generator', () => {
 
       const plans = optimizeStripCutting(patches, 42);
       expect(plans.length).toBeGreaterThan(0);
-      // 42" WOF / 3.5" per piece = 12 pieces per strip
       expect(plans[0].piecesPerStrip).toBe(12);
-      // 20 pieces / 12 per strip = 2 strips needed (ceil)
       expect(plans[0].stripsNeeded).toBe(2);
     });
 
@@ -150,7 +186,6 @@ describe('cutting-chart-generator', () => {
       ];
 
       const plans = optimizeStripCutting(patches, 42);
-      // Irregular shapes should be skipped or handled separately
       expect(plans.length).toBe(0);
     });
   });

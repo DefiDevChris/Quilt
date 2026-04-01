@@ -7,6 +7,7 @@ export interface ToolDef {
   shortcut?: string;
   description?: string;
   isProFeature?: boolean;
+  mascot?: string;
   toolType?: ToolType;
   group?: string;
   icon: React.ReactNode;
@@ -58,6 +59,7 @@ export function ToolIcon({
           shortcut={tool.shortcut}
           description={tool.description}
           isProFeature={tool.isProFeature}
+          mascot={tool.mascot}
         >
           {button}
         </TooltipHint>

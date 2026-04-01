@@ -48,7 +48,14 @@ export function OnboardingTooltip({
       <h2 className="text-title-md font-semibold text-on-surface mb-2">{step.title}</h2>
 
       {/* Description */}
-      <p className="text-body-md text-secondary mb-5 leading-relaxed">{step.description}</p>
+      <p className="text-body-md text-secondary mb-3 leading-relaxed">{step.description}</p>
+
+      {/* Mascot */}
+      {step.mascot && (
+        <div className="flex justify-center mb-4">
+          <img src={step.mascot} alt="" className="w-20 h-20 object-contain" />
+        </div>
+      )}
 
       {/* Don't show again checkbox (last step only) */}
       {isLast && (

@@ -98,4 +98,22 @@ describe('authStore', () => {
 
     expect(useAuthStore.getState().isPrivate).toBe(false);
   });
+
+  it('setLoading updates loading state', () => {
+    useAuthStore.getState().setLoading(false);
+    expect(useAuthStore.getState().isLoading).toBe(false);
+  });
+
+  it('reset restores initial state', () => {
+    useAuthStore.getState().setUser(defaultUser);
+    useAuthStore.getState().setLoading(false);
+    useAuthStore.getState().reset();
+
+    const state = useAuthStore.getState();
+    expect(state.user).toBeNull();
+    expect(state.isLoading).toBe(true);
+    expect(state.isPro).toBe(false);
+    expect(state.isAdmin).toBe(false);
+    expect(state.isPrivate).toBe(false);
+  });
 });

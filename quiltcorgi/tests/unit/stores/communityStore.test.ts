@@ -351,4 +351,38 @@ describe('communityStore', () => {
     expect(callUrl).toContain('tab=discover');
     expect(callUrl).not.toContain('category=');
   });
+
+  it('likePost reverts on network error (catch branch)', async () => {
+    const post = makeMockPost({ id: 'post-1', likeCount: 3, isLikedByUser: false });
+    useCommunityStore.setState({ posts: [post] });
+
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+    useCommunityStore.getState().likePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].likeCount).toBe(4);
+
+    await vi.waitFor(() => {
+      const current = useCommunityStore.getState().posts[0];
+      expect(current.likeCount).toBe(3);
+      expect(current.isLikedByUser).toBe(false);
+    });
+  });
+
+  it('unlikePost reverts on network error (catch branch)', async () => {
+    const post = makeMockPost({ id: 'post-1', likeCount: 5, isLikedByUser: true });
+    useCommunityStore.setState({ posts: [post] });
+
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+    useCommunityStore.getState().unlikePost('post-1');
+
+    expect(useCommunityStore.getState().posts[0].likeCount).toBe(4);
+
+    await vi.waitFor(() => {
+      const current = useCommunityStore.getState().posts[0];
+      expect(current.likeCount).toBe(5);
+      expect(current.isLikedByUser).toBe(true);
+    });
+  });
 });

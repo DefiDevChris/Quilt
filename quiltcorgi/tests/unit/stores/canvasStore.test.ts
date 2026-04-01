@@ -1,31 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { ToolType } from '@/stores/canvasStore';
-import { ZOOM_MIN, ZOOM_MAX, UNDO_HISTORY_MAX } from '@/lib/constants';
-
-function resetStore() {
-  useCanvasStore.setState({
-    fabricCanvas: null,
-    zoom: 1,
-    unitSystem: 'imperial',
-    gridSettings: { enabled: true, size: 1, snapToGrid: true },
-    selectedObjectIds: [],
-    activeTool: 'select',
-    cursorPosition: { x: 0, y: 0 },
-    isSpacePressed: false,
-    fillColor: '#D4883C',
-    strokeColor: '#2D2D2D',
-    strokeWidth: 1,
-    undoStack: [],
-    redoStack: [],
-    blockDraftingMode: 'freeform',
-    referenceImageOpacity: 0.5,
-    activeColorwayTool: null,
-  });
-}
+import { ZOOM_MIN, ZOOM_MAX, UNDO_HISTORY_MAX, UNDO_SNAPSHOT_SIZE_LIMIT, DEFAULT_FILL_COLOR, DEFAULT_STROKE_COLOR } from '@/lib/constants';
 
 describe('canvasStore', () => {
-  beforeEach(resetStore);
+  beforeEach(() => {
+    useCanvasStore.getState().reset();
+  });
 
   describe('zoom', () => {
     it('sets zoom within bounds', () => {
@@ -63,6 +44,18 @@ describe('canvasStore', () => {
     it('sets curve tool', () => {
       useCanvasStore.getState().setActiveTool('curve');
       expect(useCanvasStore.getState().activeTool).toBe('curve');
+    });
+
+    it('setActiveTool saves previous tool settings', () => {
+      useCanvasStore.getState().setFillColor('#FF0000');
+      useCanvasStore.getState().setStrokeColor('#00FF00');
+      useCanvasStore.getState().setStrokeWidth(3);
+      useCanvasStore.getState().setActiveTool('rectangle');
+      expect(useCanvasStore.getState().toolSettings.select).toEqual({
+        fillColor: '#FF0000',
+        strokeColor: '#00FF00',
+        strokeWidth: 3,
+      });
     });
   });
 
@@ -125,6 +118,19 @@ describe('canvasStore', () => {
       expect(useCanvasStore.getState().undoStack).toEqual([]);
       expect(useCanvasStore.getState().redoStack).toEqual([]);
     });
+
+    it('pushUndoState returns false when exceeding size limit', () => {
+      const largeState = 'x'.repeat(UNDO_SNAPSHOT_SIZE_LIMIT + 1);
+      const result = useCanvasStore.getState().pushUndoState(largeState);
+      expect(result).toBe(false);
+      expect(useCanvasStore.getState().undoStack).toEqual([]);
+    });
+
+    it('pushUndoState returns true when within size limit', () => {
+      const result = useCanvasStore.getState().pushUndoState('normal-state');
+      expect(result).toBe(true);
+      expect(useCanvasStore.getState().undoStack).toEqual(['normal-state']);
+    });
   });
 
   describe('colors', () => {
@@ -141,6 +147,53 @@ describe('canvasStore', () => {
     it('sets stroke width', () => {
       useCanvasStore.getState().setStrokeWidth(3);
       expect(useCanvasStore.getState().strokeWidth).toBe(3);
+    });
+  });
+
+  describe('toolSettings', () => {
+    it('saveToolSettings saves current colors and stroke', () => {
+      useCanvasStore.getState().setFillColor('#AAAA00');
+      useCanvasStore.getState().setStrokeColor('#BBBB00');
+      useCanvasStore.getState().setStrokeWidth(5);
+      useCanvasStore.getState().saveToolSettings('rectangle');
+      expect(useCanvasStore.getState().toolSettings.rectangle).toEqual({
+        fillColor: '#AAAA00',
+        strokeColor: '#BBBB00',
+        strokeWidth: 5,
+      });
+    });
+
+    it('saveToolSettings saves current colors and stroke', () => {
+      useCanvasStore.getState().setFillColor('#AAAA00');
+      useCanvasStore.getState().setStrokeColor('#BBBB00');
+      useCanvasStore.getState().setStrokeWidth(5);
+      useCanvasStore.getState().saveToolSettings('rectangle');
+      expect(useCanvasStore.getState().toolSettings.rectangle).toEqual({
+        fillColor: '#AAAA00',
+        strokeColor: '#BBBB00',
+        strokeWidth: 5,
+      });
+    });
+
+    it('loadToolSettings restores saved settings', () => {
+      useCanvasStore.getState().setFillColor('#AAAA00');
+      useCanvasStore.getState().setStrokeColor('#BBBB00');
+      useCanvasStore.getState().setStrokeWidth(5);
+      useCanvasStore.getState().saveToolSettings('rectangle');
+      useCanvasStore.getState().setFillColor('#FFFFFF');
+      useCanvasStore.getState().setStrokeColor('#FFFFFF');
+      useCanvasStore.getState().setStrokeWidth(1);
+      useCanvasStore.getState().loadToolSettings('rectangle');
+      expect(useCanvasStore.getState().fillColor).toBe('#AAAA00');
+      expect(useCanvasStore.getState().strokeColor).toBe('#BBBB00');
+      expect(useCanvasStore.getState().strokeWidth).toBe(5);
+    });
+
+    it('loadToolSettings uses defaults when no settings saved', () => {
+      useCanvasStore.getState().loadToolSettings('eyedropper');
+      expect(useCanvasStore.getState().fillColor).toBe(DEFAULT_FILL_COLOR);
+      expect(useCanvasStore.getState().strokeColor).toBe(DEFAULT_STROKE_COLOR);
+      expect(useCanvasStore.getState().strokeWidth).toBe(1);
     });
   });
 
@@ -242,6 +295,57 @@ describe('canvasStore', () => {
       useCanvasStore.getState().setActiveColorwayTool('spraycan');
       useCanvasStore.getState().setActiveColorwayTool(null);
       expect(useCanvasStore.getState().activeColorwayTool).toBeNull();
+    });
+  });
+
+  describe('viewport and other settings', () => {
+    it('setViewportLocked sets isViewportLocked', () => {
+      useCanvasStore.getState().setViewportLocked(false);
+      expect(useCanvasStore.getState().isViewportLocked).toBe(false);
+      useCanvasStore.getState().setViewportLocked(true);
+      expect(useCanvasStore.getState().isViewportLocked).toBe(true);
+    });
+
+    it('toggleSeamAllowance toggles showSeamAllowance', () => {
+      expect(useCanvasStore.getState().showSeamAllowance).toBe(true);
+      useCanvasStore.getState().toggleSeamAllowance();
+      expect(useCanvasStore.getState().showSeamAllowance).toBe(false);
+    });
+
+    it('setPrintScale clamps to 0.1-2.0', () => {
+      useCanvasStore.getState().setPrintScale(0.05);
+      expect(useCanvasStore.getState().printScale).toBe(0.1);
+      useCanvasStore.getState().setPrintScale(3);
+      expect(useCanvasStore.getState().printScale).toBe(2.0);
+      useCanvasStore.getState().setPrintScale(1.5);
+      expect(useCanvasStore.getState().printScale).toBe(1.5);
+    });
+
+    it('setClipboard sets clipboard', () => {
+      useCanvasStore.getState().setClipboard([{ type: 'rect' }]);
+      expect(useCanvasStore.getState().clipboard).toEqual([{ type: 'rect' }]);
+    });
+
+    it('setActiveWorktable sets active worktable', () => {
+      useCanvasStore.getState().setActiveWorktable('block');
+      expect(useCanvasStore.getState().activeWorktable).toBe('block');
+      useCanvasStore.getState().setActiveWorktable('print');
+      expect(useCanvasStore.getState().activeWorktable).toBe('print');
+    });
+
+    it('reset restores initial state', () => {
+      useCanvasStore.getState().setActiveTool('rectangle');
+      useCanvasStore.getState().setZoom(2);
+      useCanvasStore.getState().setFillColor('#FF0000');
+      useCanvasStore.getState().pushUndoState('test');
+
+      useCanvasStore.getState().reset();
+
+      const state = useCanvasStore.getState();
+      expect(state.activeTool).toBe('select');
+      expect(state.zoom).toBe(1);
+      expect(state.fillColor).toBe(DEFAULT_FILL_COLOR);
+      expect(state.undoStack).toEqual([]);
     });
   });
 });

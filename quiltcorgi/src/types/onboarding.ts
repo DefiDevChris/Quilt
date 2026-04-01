@@ -5,6 +5,7 @@ export interface TourStep {
   readonly targetSelector: string; // CSS selector for spotlight target
   readonly placement: 'top' | 'bottom' | 'left' | 'right';
   readonly showPointer?: boolean;
+  readonly mascot?: string;
 }
 
 export interface TourConfig {

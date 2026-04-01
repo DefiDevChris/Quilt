@@ -1,16 +1,32 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { 
-  saveProject, 
-  cancelSaveProject, 
+import {
+  saveProject,
+  cancelSaveProject,
   cancelAllSaveProjects,
-  type SaveProjectOptions 
+  type SaveProjectOptions
 } from '@/lib/save-project';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAuthStore } from '@/stores/authStore';
+import { saveTempProject } from '@/lib/temp-project-storage';
 
 // Mock global fetch
-const mockFetch = vi.fn();
+const mockFetch = vi.fn().mockImplementation(async (url, options) => {
+  await new Promise(resolve => setTimeout(resolve, 10));
+  if (options?.signal?.aborted) {
+    const error = new Error('Aborted');
+    error.name = 'AbortError';
+    throw error;
+  }
+  return { ok: true };
+});
 global.fetch = mockFetch;
+
+// Mock temp project storage
+vi.mock('@/lib/temp-project-storage', () => ({ saveTempProject: vi.fn() }));
+
+// Spy on AbortController abort
+const abortSpy = vi.spyOn(AbortController.prototype, 'abort');
 
 describe('save-project', () => {
   const mockFabricCanvas = {
@@ -19,7 +35,8 @@ describe('save-project', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+    abortSpy.mockClear();
+
     // Reset stores
     useProjectStore.getState().reset();
     useProjectStore.getState().setProject({
@@ -34,6 +51,15 @@ describe('save-project', () => {
     useCanvasStore.getState().resetHistory();
     useCanvasStore.getState().setUnitSystem('imperial');
     useCanvasStore.getState().setGridSettings({ enabled: true, size: 1, snapToGrid: true });
+    
+    // Mock auth as pro user so server save path is taken
+    vi.spyOn(useAuthStore, 'getState').mockReturnValue({
+      isPro: true,
+      user: { id: 'test-user', email: 'test@test.com' },
+      isLoading: false,
+      isAuthenticated: true,
+      cognitoSub: 'test-sub',
+    } as ReturnType<typeof useAuthStore.getState>);
     
     // Reset fetch mock
     mockFetch.mockReset();
@@ -208,6 +234,13 @@ describe('save-project', () => {
         cancelSaveProject('non-existent');
       }).not.toThrow();
     });
+
+    it('cancels active controllers', async () => {
+      const savePromise = saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas, source: 'manual' });
+      cancelSaveProject('test-project');
+      await expect(savePromise).resolves.toBeUndefined();
+      expect(abortSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('cancelAllSaveProjects', () => {
@@ -215,6 +248,48 @@ describe('save-project', () => {
       expect(() => {
         cancelAllSaveProjects();
       }).not.toThrow();
+    });
+
+    it('cancels all active controllers', async () => {
+      const manualPromise = saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas, source: 'manual' });
+      const autoPromise = saveProject({ projectId: 'test-project-2', fabricCanvas: mockFabricCanvas, source: 'auto' });
+      cancelAllSaveProjects();
+      await expect(manualPromise).resolves.toBeUndefined();
+      await expect(autoPromise).resolves.toBeUndefined();
+      expect(abortSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('free-user save path', () => {
+    it('saves to temp storage when not pro', async () => {
+      vi.spyOn(useAuthStore, 'getState').mockReturnValue({
+        isPro: false,
+        user: null,
+        isLoading: false,
+        isAuthenticated: false,
+        cognitoSub: null,
+      });
+      await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
+      expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith('test-project', expect.objectContaining({
+        canvasData: { version: '1.0', objects: [] },
+        unitSystem: 'imperial',
+        gridSettings: { enabled: true, size: 1, snapToGrid: true },
+      }));
+      expect(useProjectStore.getState().saveStatus).toBe('saved');
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('pro required handling', () => {
+    it('sets error status on 403 PRO_REQUIRED without retry', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: () => Promise.resolve({ code: 'PRO_REQUIRED' }),
+      });
+      await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
+      expect(useProjectStore.getState().saveStatus).toBe('error');
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
 });

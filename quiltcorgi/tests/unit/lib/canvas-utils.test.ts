@@ -9,6 +9,7 @@ import {
   formatMeasurement,
   getUnitLabel,
   fitToScreenZoom,
+  maybeSnap,
 } from '@/lib/canvas-utils';
 import { PIXELS_PER_INCH, PIXELS_PER_CM } from '@/lib/constants';
 
@@ -117,5 +118,22 @@ describe('fitToScreenZoom', () => {
     const zoomSmall = fitToScreenZoom(1200, 800, 12, 12, 'imperial');
     const zoomLarge = fitToScreenZoom(1200, 800, 96, 96, 'imperial');
     expect(zoomSmall).toBeGreaterThan(zoomLarge);
+  });
+});
+
+describe('maybeSnap', () => {
+  it('returns value unchanged when snapToGrid is disabled', () => {
+    const result = maybeSnap(50, { enabled: true, size: 1, snapToGrid: false }, 'imperial');
+    expect(result).toBe(50);
+  });
+
+  it('snaps value when snapToGrid is enabled', () => {
+    const result = maybeSnap(96, { enabled: true, size: 1, snapToGrid: true }, 'imperial');
+    expect(result).toBe(96);
+  });
+
+  it('snaps to 192 with size 2 inch grid', () => {
+    const result = maybeSnap(100, { enabled: true, size: 2, snapToGrid: true }, 'imperial');
+    expect(result).toBe(192);
   });
 });
