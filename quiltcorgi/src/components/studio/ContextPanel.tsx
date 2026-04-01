@@ -11,6 +11,8 @@ import { SelectionPanel } from '@/components/studio/SelectionPanel';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { Minimap } from '@/components/canvas/Minimap';
+import { QuickColorPalette } from '@/components/studio/QuickColorPalette';
 
 function usePrecisionControls() {
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
@@ -343,9 +345,14 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
 }
 
 function QuiltPanel() {
+  const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
+  const hasSelection = selectedObjectIds.length > 0;
+
   return (
     <div className="flex flex-col gap-[2.75rem]">
+      {!hasSelection && <Minimap />}
       <SelectionPanel />
+      <QuickColorPalette />
       <PrecisionBar />
       <RotateAndShear includeCanvasColor={true} />
       <ColorwayTools />

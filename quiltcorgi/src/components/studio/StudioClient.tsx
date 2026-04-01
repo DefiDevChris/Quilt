@@ -42,6 +42,8 @@ import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
 
 import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
+import { HistoryPanel } from '@/components/studio/HistoryPanel';
+import { SmartGuides } from '@/components/canvas/SmartGuides';
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
@@ -198,6 +200,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
   const [isReferenceImageOpen, setIsReferenceImageOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
   const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
@@ -357,6 +360,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
         onOpenImageExport={() => setIsImageExportOpen(true)}
         onOpenPdfExport={() => setIsPdfExportOpen(true)}
         onOpenHelp={() => setIsHelpOpen(true)}
+        onOpenHistory={() => setIsHistoryOpen(true)}
         onSave={handleSave}
       />
 
@@ -411,6 +415,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             >
               <VerticalRuler />
               <CanvasWorkspace project={project} />
+              <SmartGuides />
               <FloatingToolbar />
             </div>
           </CanvasErrorBoundary>
@@ -542,6 +547,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* Help panel (opened from top bar) */}
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+
+      {/* History panel (opened from top bar) */}
+      <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
 
       {/* Onboarding tour */}
       <OnboardingTour />
