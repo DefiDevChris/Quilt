@@ -9,7 +9,7 @@ import {
   type FussyCutConfig,
   type Point,
   type PatternTransformMatrix,
-} from '@/lib/fussy-cut-engine';
+} from '@/lib/fussy-cut-utils';
 
 // ---------------------------------------------------------------------------
 // Helpers

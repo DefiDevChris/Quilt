@@ -105,9 +105,7 @@ export function ImageTracingPanel() {
       />
 
       {error && (
-        <div className="mb-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
-          {error}
-        </div>
+        <div className="mb-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">{error}</div>
       )}
 
       {!hasImage ? (
@@ -128,10 +126,7 @@ export function ImageTracingPanel() {
         <div className="space-y-4">
           {/* Opacity slider */}
           <div>
-            <label
-              htmlFor="ref-opacity-slider"
-              className="block text-xs text-secondary mb-1"
-            >
+            <label htmlFor="ref-opacity-slider" className="block text-xs text-secondary mb-1">
               Opacity: {opacityToPercent(referenceImageOpacity)}%
             </label>
             <input

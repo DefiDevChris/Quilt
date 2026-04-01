@@ -23,10 +23,10 @@ export function DimensionsStep() {
 
   const imageWidth = correctedImageData
     ? correctedImageData.width
-    : originalImage?.naturalWidth ?? 1;
+    : (originalImage?.naturalWidth ?? 1);
   const imageHeight = correctedImageData
     ? correctedImageData.height
-    : originalImage?.naturalHeight ?? 1;
+    : (originalImage?.naturalHeight ?? 1);
   const aspectRatio = imageWidth / imageHeight;
 
   const handlePresetSelect = useCallback(
@@ -93,9 +93,7 @@ export function DimensionsStep() {
     <div className="flex flex-col gap-6 h-full overflow-y-auto">
       {/* Presets */}
       <div>
-        <h3 className="text-body-md font-medium text-on-surface mb-3">
-          Choose a quilt size
-        </h3>
+        <h3 className="text-body-md font-medium text-on-surface mb-3">Choose a quilt size</h3>
         <div className="grid grid-cols-3 gap-2">
           {QUILT_SIZE_PRESETS.map((preset) => (
             <button
@@ -147,13 +145,37 @@ export function DimensionsStep() {
           >
             {lockAspectRatio ? (
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <rect x="5" y="9" width="10" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9" stroke="currentColor" strokeWidth="1.4" />
+                <rect
+                  x="5"
+                  y="9"
+                  width="10"
+                  height="8"
+                  rx="1.5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
               </svg>
             ) : (
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <rect x="5" y="9" width="10" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6" stroke="currentColor" strokeWidth="1.4" />
+                <rect
+                  x="5"
+                  y="9"
+                  width="10"
+                  height="8"
+                  rx="1.5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
               </svg>
             )}
           </button>
@@ -178,9 +200,7 @@ export function DimensionsStep() {
 
       {/* Seam allowance */}
       <div>
-        <h3 className="text-body-md font-medium text-on-surface mb-3">
-          Seam allowance
-        </h3>
+        <h3 className="text-body-md font-medium text-on-surface mb-3">Seam allowance</h3>
         <div className="flex gap-2">
           <button
             type="button"

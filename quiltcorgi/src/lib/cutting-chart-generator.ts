@@ -125,24 +125,24 @@ function isApproxEqual(a: number, b: number, tolerance: number = 0.05): boolean 
  */
 function isIsoscelesRightTriangle(vertices: Point[]): boolean {
   if (vertices.length !== 3) return false;
-  
+
   const [a, b, c] = vertices;
-  
+
   // Calculate squared side lengths
   const ab2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
   const bc2 = (c.x - b.x) ** 2 + (c.y - b.y) ** 2;
   const ca2 = (a.x - c.x) ** 2 + (a.y - c.y) ** 2;
-  
+
   // Sort sides
   const sides = [ab2, bc2, ca2].sort((x, y) => x - y);
   const [s1, s2, s3] = sides;
-  
+
   // For an isosceles right triangle:
   // - Two legs should be equal (within tolerance)
   // - Hypotenuse should be approximately 2x a leg (Pythagorean theorem)
   const legsEqual = isApproxEqual(s1, s2, 0.02);
   const rightAngle = isApproxEqual(s3, s1 + s2, 0.02);
-  
+
   return legsEqual && rightAngle;
 }
 

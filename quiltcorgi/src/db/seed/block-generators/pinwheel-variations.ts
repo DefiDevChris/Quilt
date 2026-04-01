@@ -7,15 +7,7 @@
  */
 
 import type { BlockDefinition } from '../blockDefinitions';
-import {
-  svgWrap,
-  rect,
-  polygon,
-  block,
-  hst,
-  PALETTES,
-  type PaletteName,
-} from './utils';
+import { svgWrap, rect, polygon, block, hst, PALETTES, type PaletteName } from './utils';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -72,21 +64,21 @@ function generateClassicPinwheels(): BlockDefinition[] {
     const p = PALETTES[name];
 
     blocks.push(
-      block(
-        `Classic Pinwheel (${name})`,
-        'Pinwheels',
-        classicPinwheel(p.primary, p.bg),
-        ['pinwheel', 'classic', 'traditional', name],
-      ),
+      block(`Classic Pinwheel (${name})`, 'Pinwheels', classicPinwheel(p.primary, p.bg), [
+        'pinwheel',
+        'classic',
+        'traditional',
+        name,
+      ])
     );
 
     blocks.push(
-      block(
-        `Classic Pinwheel CCW (${name})`,
-        'Pinwheels',
-        classicPinwheelCCW(p.primary, p.bg),
-        ['pinwheel', 'classic', 'counter-clockwise', name],
-      ),
+      block(`Classic Pinwheel CCW (${name})`, 'Pinwheels', classicPinwheelCCW(p.primary, p.bg), [
+        'pinwheel',
+        'classic',
+        'counter-clockwise',
+        name,
+      ])
     );
   }
 
@@ -99,11 +91,7 @@ function generateClassicPinwheels(): BlockDefinition[] {
 //    of HSTs that also spin, creating a nested pinwheel effect.
 // ---------------------------------------------------------------------------
 
-function doublePinwheelSvg(
-  inner: string,
-  outer: string,
-  bg: string,
-): string {
+function doublePinwheelSvg(inner: string, outer: string, bg: string): string {
   // Outer ring: four corner HSTs filling the border area
   const outerParts =
     hst(0, 0, 50, 50, outer, bg) +
@@ -128,7 +116,7 @@ function generateDoublePinwheels(): BlockDefinition[] {
       `Double Pinwheel (${name})`,
       'Pinwheels',
       doublePinwheelSvg(p.accent, p.primary, p.bg),
-      ['pinwheel', 'double', 'nested', name],
+      ['pinwheel', 'double', 'nested', name]
     );
   });
 }
@@ -138,11 +126,7 @@ function generateDoublePinwheels(): BlockDefinition[] {
 //    Three quadrants match; the fourth uses the accent colour.
 // ---------------------------------------------------------------------------
 
-function brokenPinwheelSvg(
-  primary: string,
-  accent: string,
-  bg: string,
-): string {
+function brokenPinwheelSvg(primary: string, accent: string, bg: string): string {
   const tl = hst(0, 0, 50, 50, primary, bg);
   const tr = hst(50, 0, 50, 50, bg, primary);
   const bl = hst(0, 50, 50, 50, bg, primary);
@@ -159,7 +143,7 @@ function generateBrokenPinwheels(): BlockDefinition[] {
       `Broken Pinwheel (${name})`,
       'Pinwheels',
       brokenPinwheelSvg(p.primary, p.accent, p.bg),
-      ['pinwheel', 'broken', 'asymmetric', name],
+      ['pinwheel', 'broken', 'asymmetric', name]
     );
   });
 }
@@ -173,21 +157,13 @@ function generateBrokenPinwheels(): BlockDefinition[] {
 function whirlwindSvg(primary: string, secondary: string, bg: string): string {
   // Each quadrant is split into a narrow HST (emphasising spin) and a filler
   // Top-left: tall-narrow HST + background fill
-  const tl =
-    hst(0, 0, 35, 50, primary, bg) +
-    rect(35, 0, 15, 50, bg);
+  const tl = hst(0, 0, 35, 50, primary, bg) + rect(35, 0, 15, 50, bg);
   // Top-right: wide-short HST
-  const tr =
-    rect(50, 0, 15, 50, bg) +
-    hst(65, 0, 35, 50, bg, secondary);
+  const tr = rect(50, 0, 15, 50, bg) + hst(65, 0, 35, 50, bg, secondary);
   // Bottom-left
-  const bl =
-    rect(0, 50, 15, 50, bg) +
-    hst(15, 50, 35, 50, bg, secondary);
+  const bl = rect(0, 50, 15, 50, bg) + hst(15, 50, 35, 50, bg, secondary);
   // Bottom-right
-  const br =
-    hst(50, 50, 35, 50, primary, bg) +
-    rect(85, 50, 15, 50, bg);
+  const br = hst(50, 50, 35, 50, primary, bg) + rect(85, 50, 15, 50, bg);
 
   return tl + tr + bl + br;
 }
@@ -199,7 +175,7 @@ function generateWhirlwinds(): BlockDefinition[] {
       `Whirlwind Pinwheel (${name})`,
       'Pinwheels',
       whirlwindSvg(p.primary, p.secondary, p.bg),
-      ['pinwheel', 'whirlwind', 'spinning', 'asymmetric', name],
+      ['pinwheel', 'whirlwind', 'spinning', 'asymmetric', name]
     );
   });
 }
@@ -210,11 +186,7 @@ function generateWhirlwinds(): BlockDefinition[] {
 //    from the midpoints of each side towards the edges.
 // ---------------------------------------------------------------------------
 
-function pinwheelStarSvg(
-  primary: string,
-  accent: string,
-  bg: string,
-): string {
+function pinwheelStarSvg(primary: string, accent: string, bg: string): string {
   // Background fill
   const bgRect = rect(0, 0, 100, 100, bg);
 
@@ -245,7 +217,7 @@ function generatePinwheelStars(): BlockDefinition[] {
       `Pinwheel Star (${name})`,
       'Pinwheels',
       pinwheelStarSvg(p.primary, p.accent, p.bg),
-      ['pinwheel', 'star', 'combination', name],
+      ['pinwheel', 'star', 'combination', name]
     );
   });
 }
@@ -256,13 +228,7 @@ function generatePinwheelStars(): BlockDefinition[] {
 //    pinwheel, so the whole block has four spinning motifs.
 // ---------------------------------------------------------------------------
 
-function miniPinwheel(
-  ox: number,
-  oy: number,
-  size: number,
-  primary: string,
-  bg: string,
-): string {
+function miniPinwheel(ox: number, oy: number, size: number, primary: string, bg: string): string {
   const half = size / 2;
   return (
     hst(ox, oy, half, half, primary, bg) +
@@ -290,7 +256,7 @@ function generateLargeSmallPinwheels(): BlockDefinition[] {
       `Large/Small Pinwheel (${name})`,
       'Pinwheels',
       largeSmallPinwheelSvg(p.primary, p.secondary, p.bg),
-      ['pinwheel', 'grid', 'four-patch', 'mini', name],
+      ['pinwheel', 'grid', 'four-patch', 'mini', name]
     );
   });
 }
@@ -326,7 +292,7 @@ function generateOffsetPinwheels(): BlockDefinition[] {
       `Offset Pinwheel (${name})`,
       'Pinwheels',
       offsetPinwheelSvg(p.primary, p.accent, p.bg),
-      ['pinwheel', 'offset', 'asymmetric', 'modern', name],
+      ['pinwheel', 'offset', 'asymmetric', 'modern', name]
     );
   });
 }
@@ -337,12 +303,12 @@ function generateOffsetPinwheels(): BlockDefinition[] {
 
 export function generatePinwheelVariations(): BlockDefinition[] {
   return [
-    ...generateClassicPinwheels(),       // 16  (8 CW + 8 CCW)
-    ...generateDoublePinwheels(),        //  8
-    ...generateBrokenPinwheels(),        //  8
-    ...generateWhirlwinds(),             //  8
-    ...generatePinwheelStars(),          //  8
-    ...generateLargeSmallPinwheels(),    //  8
-    ...generateOffsetPinwheels(),        //  4
-  ];                                     // Total: 60
+    ...generateClassicPinwheels(), // 16  (8 CW + 8 CCW)
+    ...generateDoublePinwheels(), //  8
+    ...generateBrokenPinwheels(), //  8
+    ...generateWhirlwinds(), //  8
+    ...generatePinwheelStars(), //  8
+    ...generateLargeSmallPinwheels(), //  8
+    ...generateOffsetPinwheels(), //  4
+  ]; // Total: 60
 }

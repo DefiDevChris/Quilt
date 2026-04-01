@@ -11,7 +11,7 @@ import {
   RADIAL_FOLD_MAX,
   type SymmetryConfig,
   type SerializedObject,
-} from '@/lib/symmetry-engine';
+} from '@/lib/symmetry-utils';
 
 function makeConfig(
   type: SymmetryConfig['type'],
@@ -40,7 +40,7 @@ function makeObject(left: number, top: number, size = 20): SerializedObject {
   };
 }
 
-describe('symmetry-engine', () => {
+describe('symmetry-utils', () => {
   describe('computeActiveZone', () => {
     it('returns top half for mirror-x', () => {
       const zone = computeActiveZone(makeConfig('mirror-x'));

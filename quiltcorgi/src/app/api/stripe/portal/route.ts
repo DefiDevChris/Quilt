@@ -23,11 +23,7 @@ export async function POST() {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
     if (!appUrl) {
-      return errorResponse(
-        'Service configuration error',
-        'INTERNAL_ERROR',
-        500
-      );
+      return errorResponse('Service configuration error', 'INTERNAL_ERROR', 500);
     }
 
     const portalSession = await getStripe().billingPortal.sessions.create({

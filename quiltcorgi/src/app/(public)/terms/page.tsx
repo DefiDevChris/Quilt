@@ -20,16 +20,14 @@ export default function TermsPage() {
           >
             Terms of Service
           </h1>
-          <p className="text-warm-text-secondary text-sm">
-            Effective date: March 30, 2026
-          </p>
+          <p className="text-warm-text-secondary text-sm">Effective date: March 30, 2026</p>
         </div>
 
         <div className="text-left text-warm-text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
-            Welcome to QuiltCorgi! These Terms of Service (&ldquo;Terms&rdquo;) govern your
-            access to and use of the QuiltCorgi website, design studio, community features, and
-            related services (collectively, the &ldquo;Service&rdquo;). The Service is operated by
+            Welcome to QuiltCorgi! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
+            to and use of the QuiltCorgi website, design studio, community features, and related
+            services (collectively, the &ldquo;Service&rdquo;). The Service is operated by
             QuiltCorgi LLC (&ldquo;QuiltCorgi,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or
             &ldquo;our&rdquo;), a Wyoming limited liability company.
           </p>
@@ -40,9 +38,7 @@ export default function TermsPage() {
 
           {/* 1. Eligibility */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
-              1. Eligibility
-            </h2>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">1. Eligibility</h2>
             <p>
               You must be at least 13 years old to create an account or use the Service. If you are
               under 18, you represent that you have your parent or legal guardian&rsquo;s permission
@@ -67,9 +63,7 @@ export default function TermsPage() {
                 You are responsible for safeguarding your password and for all activity that occurs
                 under your account.
               </li>
-              <li>
-                You agree not to share your login credentials with any third party.
-              </li>
+              <li>You agree not to share your login credentials with any third party.</li>
               <li>
                 You must notify us immediately at{' '}
                 <a
@@ -155,11 +149,11 @@ export default function TermsPage() {
             </p>
             <p className="mb-3">
               By posting or sharing User Content in the community features (such as Social Threads),
-              you grant QuiltCorgi a non-exclusive, worldwide, royalty-free license to host, display,
-              and distribute that content within the Service for the purpose of operating and
-              improving the platform. This license ends when you delete your content or your account,
-              except where the content has been shared with others and they have not deleted it, or
-              where we are required to retain it by law.
+              you grant QuiltCorgi a non-exclusive, worldwide, royalty-free license to host,
+              display, and distribute that content within the Service for the purpose of operating
+              and improving the platform. This license ends when you delete your content or your
+              account, except where the content has been shared with others and they have not
+              deleted it, or where we are required to retain it by law.
             </p>
             <p className="mb-3">
               You may set your projects as private or public. Private projects are visible only to
@@ -185,9 +179,7 @@ export default function TermsPage() {
             <ul className="list-disc pl-6 space-y-2">
               <li>Treat other quilters with kindness and respect.</li>
               <li>Only post content you have the right to share.</li>
-              <li>
-                Keep your posts relevant to quilting, sewing, and related creative topics.
-              </li>
+              <li>Keep your posts relevant to quilting, sewing, and related creative topics.</li>
               <li>Respect rate limits and community posting guidelines.</li>
             </ul>
             <p className="mt-3">You agree not to:</p>
@@ -234,18 +226,12 @@ export default function TermsPage() {
               <li>
                 A physical or electronic signature of the copyright owner or authorized agent.
               </li>
-              <li>
-                Identification of the copyrighted work claimed to have been infringed.
-              </li>
-              <li>
-                Identification of the infringing material and its location on the Service.
-              </li>
+              <li>Identification of the copyrighted work claimed to have been infringed.</li>
+              <li>Identification of the infringing material and its location on the Service.</li>
               <li>
                 Your contact information (name, address, telephone number, and email address).
               </li>
-              <li>
-                A statement that you have a good-faith belief that the use is not authorized.
-              </li>
+              <li>A statement that you have a good-faith belief that the use is not authorized.</li>
               <li>
                 A statement, under penalty of perjury, that the information in your notice is
                 accurate and that you are authorized to act on behalf of the copyright owner.
@@ -313,7 +299,9 @@ export default function TermsPage() {
               9. Binding Arbitration &amp; Class Action Waiver
             </h2>
             <p className="mb-3">
-              <strong>Please read this section carefully&mdash;it affects your legal rights.</strong>
+              <strong>
+                Please read this section carefully&mdash;it affects your legal rights.
+              </strong>
             </p>
             <p className="mb-3">
               <strong>Agreement to arbitrate.</strong> You and QuiltCorgi agree that any dispute,
@@ -330,11 +318,11 @@ export default function TermsPage() {
               PROCEEDING.
             </p>
             <p className="mb-3">
-              <strong>Exceptions.</strong> Either party may seek injunctive or other equitable relief
-              in court to prevent the actual or threatened infringement, misappropriation, or
+              <strong>Exceptions.</strong> Either party may seek injunctive or other equitable
+              relief in court to prevent the actual or threatened infringement, misappropriation, or
               violation of intellectual property rights, data security obligations, or confidential
-              information. Either party may also bring an individual action in small claims court for
-              disputes within that court&rsquo;s jurisdiction.
+              information. Either party may also bring an individual action in small claims court
+              for disputes within that court&rsquo;s jurisdiction.
             </p>
             <p>
               <strong>Opt-out.</strong> You may opt out of this arbitration provision within 30 days
@@ -413,9 +401,7 @@ export default function TermsPage() {
 
           {/* 14. Contact */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
-              14. Contact Us
-            </h2>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">14. Contact Us</h2>
             <p>
               If you have questions about these Terms, please reach out:{' '}
               <a

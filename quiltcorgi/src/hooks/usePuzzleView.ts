@@ -106,28 +106,25 @@ export function usePuzzleView() {
 
   // ── Click handler ─────────────────────────────────────────────
 
-  const handleMouseDown = useCallback(
-    (e: FabricMouseEvent) => {
-      const target = e.target as FabricTarget | null | undefined;
-      if (!target) return;
+  const handleMouseDown = useCallback((e: FabricMouseEvent) => {
+    const target = e.target as FabricTarget | null | undefined;
+    if (!target) return;
 
-      const svgData = fabricObjectToSvgData(target);
-      if (!svgData) return;
+    const svgData = fabricObjectToSvgData(target);
+    if (!svgData) return;
 
-      const unitSystem = useCanvasStore.getState().unitSystem;
-      const pxPerUnit = getPixelsPerUnit(unitSystem);
+    const unitSystem = useCanvasStore.getState().unitSystem;
+    const pxPerUnit = getPixelsPerUnit(unitSystem);
 
-      const geometry = extractPieceGeometry(svgData, pxPerUnit);
-      if (!geometry) return;
+    const geometry = extractPieceGeometry(svgData, pxPerUnit);
+    if (!geometry) return;
 
-      const { seamAllowance } = usePieceInspectorStore.getState();
-      const dimensions = computePieceDimensions(geometry, seamAllowance);
-      const objectId = extractObjectId(target);
+    const { seamAllowance } = usePieceInspectorStore.getState();
+    const dimensions = computePieceDimensions(geometry, seamAllowance);
+    const objectId = extractObjectId(target);
 
-      usePieceInspectorStore.getState().selectPiece(objectId, geometry, dimensions);
-    },
-    []
-  );
+    usePieceInspectorStore.getState().selectPiece(objectId, geometry, dimensions);
+  }, []);
 
   // ── Main effect: wire / unwire canvas events ──────────────────
 

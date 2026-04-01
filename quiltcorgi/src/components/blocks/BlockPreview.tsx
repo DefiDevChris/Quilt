@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { BlockListItem } from '@/types/block';
 import type { Block } from '@/types/block';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
+import { useToast } from '@/components/ui/ToastProvider';
 
 interface BlockPreviewProps {
   block: BlockListItem;
@@ -14,6 +15,33 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
   const [fullBlock, setFullBlock] = useState<Block | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isUpgrading, setIsUpgrading] = useState(false);
+  const { toast } = useToast();
+
+  async function handleUpgrade() {
+    setIsUpgrading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.success && data.data.checkoutUrl) {
+        window.location.href = data.data.checkoutUrl;
+      } else {
+        toast({
+          type: 'error',
+          title: 'Checkout failed',
+          description: data.error ?? 'Unable to start checkout. Please try again.',
+        });
+      }
+    } catch {
+      toast({
+        type: 'error',
+        title: 'Connection error',
+        description: 'Unable to connect. Please check your connection and try again.',
+      });
+    } finally {
+      setIsUpgrading(false);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -75,12 +103,14 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <span className="mb-2 text-3xl">🔒</span>
               <p className="text-sm text-secondary">Upgrade to Pro to use this block</p>
-              <a
-                href="/profile#billing"
-                className="mt-3 inline-block rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+              <button
+                type="button"
+                onClick={handleUpgrade}
+                disabled={isUpgrading}
+                className="mt-3 inline-block rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
-                Upgrade to Pro
-              </a>
+                {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
+              </button>
             </div>
           ) : fullBlock?.svgData ? (
             <div

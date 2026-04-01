@@ -1,0 +1,12 @@
+- generic [active]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic "Notifications"
+  - button "Open Next.js Dev Tools" [ref=e115] [cursor=pointer]:
+    - generic [ref=e118]:
+      - text: Rendering
+      - generic [ref=e119]:
+        - generic [ref=e120]: .
+        - generic [ref=e121]: .
+        - generic [ref=e122]: .
+  - alert [ref=e114]: Studio | QuiltCorgi | QuiltCorgi

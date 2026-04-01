@@ -20,29 +20,25 @@ export default function PrivacyPage() {
           >
             Privacy Policy
           </h1>
-          <p className="text-warm-text-secondary text-sm">
-            Effective date: March 30, 2026
-          </p>
+          <p className="text-warm-text-secondary text-sm">Effective date: March 30, 2026</p>
         </div>
 
         <div className="text-left text-warm-text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
             Your privacy matters to us. This Privacy Policy explains how QuiltCorgi LLC
             (&ldquo;QuiltCorgi,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;)
-            collects, uses, shares, and protects your personal information when you use our
-            website, design studio, community features, and related services (collectively, the
+            collects, uses, shares, and protects your personal information when you use our website,
+            design studio, community features, and related services (collectively, the
             &ldquo;Service&rdquo;).
           </p>
           <p>
-            By using the Service, you agree to the practices described in this policy. If you do
-            not agree, please do not use the Service.
+            By using the Service, you agree to the practices described in this policy. If you do not
+            agree, please do not use the Service.
           </p>
 
           {/* 1. Information We Collect */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
-              1. Information We Collect
-            </h2>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">1. Information We Collect</h2>
 
             <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
               Information You Provide to Us
@@ -82,8 +78,8 @@ export default function PrivacyPage() {
                 or like content, we collect and store that content along with your user identifier.
               </li>
               <li>
-                <strong>Communications.</strong> If you contact us for support, we collect your email
-                address and the content of your message.
+                <strong>Communications.</strong> If you contact us for support, we collect your
+                email address and the content of your message.
               </li>
             </ul>
 
@@ -127,8 +123,10 @@ export default function PrivacyPage() {
               <li>Process subscriptions and payments through Stripe.</li>
               <li>Store and sync your quilt designs, fabric libraries, and project data.</li>
               <li>Enable community features such as Social Threads, comments, and profiles.</li>
-              <li>Send you transactional emails (account verification, password resets, billing
-                notifications).</li>
+              <li>
+                Send you transactional emails (account verification, password resets, billing
+                notifications).
+              </li>
               <li>Respond to your questions and provide customer support.</li>
               <li>Detect, prevent, and address fraud, abuse, and security incidents.</li>
               <li>Enforce rate limits and ensure fair use of the Service.</li>
@@ -158,15 +156,16 @@ export default function PrivacyPage() {
                     <strong>Stripe</strong> &mdash; payment processing and subscription management.
                   </li>
                   <li>
-                    <strong>Amazon Web Services (AWS)</strong> &mdash; cloud infrastructure, database
-                    hosting, file storage (S3), and content delivery (CloudFront).
+                    <strong>Amazon Web Services (AWS)</strong> &mdash; cloud infrastructure,
+                    database hosting, file storage (S3), and content delivery (CloudFront).
                   </li>
                   <li>
                     <strong>AWS Cognito</strong> &mdash; user authentication and identity
                     management.
                   </li>
                   <li>
-                    <strong>Upstash</strong> &mdash; rate limiting to protect the Service from abuse.
+                    <strong>Upstash</strong> &mdash; rate limiting to protect the Service from
+                    abuse.
                   </li>
                 </ul>
                 These providers are contractually obligated to use your data only for the services
@@ -187,7 +186,6 @@ export default function PrivacyPage() {
                 <strong>Business transfers.</strong> In the event of a merger, acquisition, or sale
                 of all or a portion of our assets, your information may be transferred as part of
                 that transaction. We will notify you before your information is transferred and
-
               </li>
               <li>
                 <strong>With your consent.</strong> We may share your information with third parties
@@ -233,9 +231,7 @@ export default function PrivacyPage() {
 
           {/* 5. Security */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
-              5. Data Security
-            </h2>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">5. Data Security</h2>
             <p className="mb-3">
               We take the security of your data seriously. Our security measures include:
             </p>
@@ -250,8 +246,8 @@ export default function PrivacyPage() {
                 attacks.
               </li>
               <li>
-                <strong>Security headers.</strong> We enforce Content-Security-Policy,
-                HSTS, X-Frame-Options, and other security headers to protect against common web
+                <strong>Security headers.</strong> We enforce Content-Security-Policy, HSTS,
+                X-Frame-Options, and other security headers to protect against common web
                 vulnerabilities.
               </li>
               <li>
@@ -263,13 +259,13 @@ export default function PrivacyPage() {
                 authorized personnel who need it to operate the Service.
               </li>
               <li>
-                <strong>AWS infrastructure.</strong> Your data is stored on Amazon Web Services, which
-                provides industry-standard physical and network security.
+                <strong>AWS infrastructure.</strong> Your data is stored on Amazon Web Services,
+                which provides industry-standard physical and network security.
               </li>
             </ul>
             <p className="mt-3">
-              No method of transmission over the Internet or electronic storage is 100% secure. While
-              we strive to protect your personal information, we cannot guarantee its absolute
+              No method of transmission over the Internet or electronic storage is 100% secure.
+              While we strive to protect your personal information, we cannot guarantee its absolute
               security.
             </p>
           </section>
@@ -301,16 +297,16 @@ export default function PrivacyPage() {
                 formats (PDF, PNG, SVG).
               </li>
               <li>
-                <strong>Restriction.</strong> You can request that we restrict the processing of your
-                information in certain circumstances.
+                <strong>Restriction.</strong> You can request that we restrict the processing of
+                your information in certain circumstances.
               </li>
               <li>
                 <strong>Objection.</strong> You can object to the processing of your personal
                 information where we rely on legitimate interests.
               </li>
               <li>
-                <strong>Withdraw consent.</strong> Where we rely on your consent to process data, you
-                may withdraw that consent at any time.
+                <strong>Withdraw consent.</strong> Where we rely on your consent to process data,
+                you may withdraw that consent at any time.
               </li>
             </ul>
             <p className="mt-3">
@@ -337,9 +333,7 @@ export default function PrivacyPage() {
             <p className="mb-3">The cookies we use are:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">
-                  qc_id_token
-                </code>{' '}
+                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">qc_id_token</code>{' '}
                 &mdash; Your authentication token (expires with your session, typically 1 hour).
               </li>
               <li>
@@ -362,10 +356,12 @@ export default function PrivacyPage() {
               </li>
             </ul>
             <p className="mt-3">
-              All cookies are set as <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">HttpOnly</code>,{' '}
-              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">Secure</code> (in production), and{' '}
-              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">SameSite=Lax</code>. They
-              cannot be accessed by client-side JavaScript.
+              All cookies are set as{' '}
+              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">HttpOnly</code>,{' '}
+              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">Secure</code> (in
+              production), and{' '}
+              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">SameSite=Lax</code>.
+              They cannot be accessed by client-side JavaScript.
             </p>
             <p className="mt-3">
               Because we only use essential cookies, there is no cookie consent banner&mdash;these
@@ -405,7 +401,9 @@ export default function PrivacyPage() {
             <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
               Legal Bases for Processing
             </h3>
-            <p className="mb-3">We process your personal data based on the following legal grounds:</p>
+            <p className="mb-3">
+              We process your personal data based on the following legal grounds:
+            </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
                 <strong>Performance of a contract.</strong> Processing necessary to provide the
@@ -475,9 +473,7 @@ export default function PrivacyPage() {
 
           {/* 12. Contact */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
-              12. Contact Us
-            </h2>
+            <h2 className="text-xl font-semibold text-warm-text mb-3">12. Contact Us</h2>
             <p>
               If you have questions, concerns, or requests regarding this Privacy Policy or our data
               practices, please reach out:{' '}
@@ -489,7 +485,8 @@ export default function PrivacyPage() {
               </a>
             </p>
             <p className="mt-3">
-              QuiltCorgi LLC<br />
+              QuiltCorgi LLC
+              <br />
               Wyoming, United States
             </p>
           </section>

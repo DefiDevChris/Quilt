@@ -37,11 +37,7 @@ export function ResultsStep() {
     const imgHeight = imageSource ? imageSource.height : originalImage!.naturalHeight;
 
     const containerRect = container.getBoundingClientRect();
-    const fitScale = Math.min(
-      containerRect.width / imgWidth,
-      containerRect.height / imgHeight,
-      1
-    );
+    const fitScale = Math.min(containerRect.width / imgWidth, containerRect.height / imgHeight, 1);
 
     canvas.width = containerRect.width;
     canvas.height = containerRect.height;
@@ -62,22 +58,10 @@ export function ResultsStep() {
       const tempCtx = tempCanvas.getContext('2d');
       if (tempCtx) {
         tempCtx.putImageData(imageSource, 0, 0);
-        ctx.drawImage(
-          tempCanvas,
-          drawX,
-          drawY,
-          imgWidth * fitScale,
-          imgHeight * fitScale
-        );
+        ctx.drawImage(tempCanvas, drawX, drawY, imgWidth * fitScale, imgHeight * fitScale);
       }
     } else if (originalImage) {
-      ctx.drawImage(
-        originalImage,
-        drawX,
-        drawY,
-        imgWidth * fitScale,
-        imgHeight * fitScale
-      );
+      ctx.drawImage(originalImage, drawX, drawY, imgWidth * fitScale, imgHeight * fitScale);
     }
 
     // Draw piece contours
@@ -156,12 +140,17 @@ export function ResultsStep() {
       <div className="flex items-center gap-4 flex-shrink-0 flex-wrap">
         {/* Piece count */}
         <span className="text-body-sm text-secondary whitespace-nowrap">
-          {pieceCount === 0 ? 'No pieces detected' : `${pieceCount} piece${pieceCount === 1 ? '' : 's'} found`}
+          {pieceCount === 0
+            ? 'No pieces detected'
+            : `${pieceCount} piece${pieceCount === 1 ? '' : 's'} found`}
         </span>
 
         {/* Sensitivity slider */}
         <div className="flex items-center gap-2 flex-1 min-w-[180px]">
-          <label htmlFor="sensitivity-slider" className="text-label-sm text-secondary whitespace-nowrap">
+          <label
+            htmlFor="sensitivity-slider"
+            className="text-label-sm text-secondary whitespace-nowrap"
+          >
             Sensitivity
           </label>
           <input
@@ -203,7 +192,8 @@ export function ResultsStep() {
       {/* Zero pieces error */}
       {pieceCount === 0 && (
         <p className="text-body-sm text-error">
-          No pieces were detected. Try adjusting the sensitivity slider or go back to correct the perspective.
+          No pieces were detected. Try adjusting the sensitivity slider or go back to correct the
+          perspective.
         </p>
       )}
     </div>

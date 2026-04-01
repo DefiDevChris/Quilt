@@ -10,7 +10,10 @@ interface ResponsivePublicShellProps {
   maxWidth?: string;
 }
 
-export function ResponsivePublicShell({ children, maxWidth = 'max-w-3xl' }: ResponsivePublicShellProps) {
+export function ResponsivePublicShell({
+  children,
+  maxWidth = 'max-w-3xl',
+}: ResponsivePublicShellProps) {
   const isMobile = useIsMobile();
 
   if (isMobile) {

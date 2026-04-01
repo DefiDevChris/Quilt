@@ -683,9 +683,7 @@ function ProfileContentPanel() {
           href="/dashboard"
           className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">
-            {stats?.projectCount ?? '\u2014'}
-          </p>
+          <p className="text-2xl font-bold text-slate-800">{stats?.projectCount ?? '\u2014'}</p>
           <p className="text-sm text-slate-600">
             {(stats?.projectCount ?? 0) === 1 ? 'Project' : 'Projects'}
           </p>
@@ -694,9 +692,7 @@ function ProfileContentPanel() {
           href="/socialthreads"
           className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">
-            {stats?.postCount ?? '\u2014'}
-          </p>
+          <p className="text-2xl font-bold text-slate-800">{stats?.postCount ?? '\u2014'}</p>
           <p className="text-sm text-slate-600">
             {(stats?.postCount ?? 0) === 1 ? 'Post' : 'Posts'}
           </p>
@@ -706,7 +702,7 @@ function ProfileContentPanel() {
       {/* Link to full profile & settings */}
       <div className="rounded-[1.5rem] glass-elevated divide-y divide-white/30">
         <Link
-          href="/profile"
+          href="/settings"
           className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem] last:rounded-b-[1.5rem]"
         >
           <div>

@@ -16,7 +16,7 @@ const TOGGLE_OPTIONS: readonly ToggleOption[] = [
     id: 'hasCurvedPiecing',
     label: 'Does this quilt have curved seams?',
     helpText: 'Tells our engine not to force straight lines.',
-    examples: 'Drunkard\'s Path, Orange Peel, Wedding Ring, Clamshell',
+    examples: "Drunkard's Path, Orange Peel, Wedding Ring, Clamshell",
   },
   {
     id: 'hasApplique',
@@ -85,7 +85,7 @@ const QUILT_SHAPE_OPTIONS: readonly QuiltShapeOption[] = [
   {
     value: 'hexagonal',
     label: 'Hexagonal',
-    description: 'Honeycomb or Grandmother\'s Flower Garden',
+    description: "Honeycomb or Grandmother's Flower Garden",
     icon: '⬡',
   },
   {
@@ -137,9 +137,7 @@ function ToggleSwitch({
           </p>
           <p className="text-body-sm text-secondary mt-1">{helpText}</p>
           {examples && (
-            <p className="text-label-sm text-secondary/70 mt-1.5">
-              Examples: {examples}
-            </p>
+            <p className="text-label-sm text-secondary/70 mt-1.5">Examples: {examples}</p>
           )}
         </div>
       </div>
@@ -161,7 +159,8 @@ function PieceScaleSelector({
           How big are the pieces generally?
         </p>
         <p className="text-body-sm text-secondary mt-1">
-          This helps us tune the noise filter so we don&apos;t miss small pieces or get fooled by lint.
+          This helps us tune the noise filter so we don&apos;t miss small pieces or get fooled by
+          lint.
         </p>
       </div>
 
@@ -180,14 +179,10 @@ function PieceScaleSelector({
             <div className="flex items-center gap-2 mb-2">
               <div
                 className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                  value === option.value
-                    ? 'border-primary'
-                    : 'border-outline-variant'
+                  value === option.value ? 'border-primary' : 'border-outline-variant'
                 }`}
               >
-                {value === option.value && (
-                  <div className="w-2 h-2 rounded-full bg-primary" />
-                )}
+                {value === option.value && <div className="w-2 h-2 rounded-full bg-primary" />}
               </div>
               <span
                 className={`font-medium text-body-sm ${
@@ -197,9 +192,7 @@ function PieceScaleSelector({
                 {option.label}
               </span>
             </div>
-            <p className="text-label-sm text-secondary leading-relaxed">
-              {option.description}
-            </p>
+            <p className="text-label-sm text-secondary leading-relaxed">{option.description}</p>
           </button>
         ))}
       </div>
@@ -217,9 +210,7 @@ function QuiltShapeSelector({
   return (
     <div className="space-y-3">
       <div>
-        <p className="text-body-lg font-medium text-on-surface">
-          What shape is your quilt?
-        </p>
+        <p className="text-body-lg font-medium text-on-surface">What shape is your quilt?</p>
         <p className="text-body-sm text-secondary mt-1">
           We&apos;ll handle edge pieces and empty space correctly for non-rectangular quilts.
         </p>
@@ -273,9 +264,12 @@ export function ScanSettingsStep() {
     quiltShape: existingConfig?.quiltShape ?? 'rectangular',
   });
 
-  const handleToggle = useCallback((id: keyof Omit<QuiltDetectionConfig, 'pieceScale' | 'quiltShape'>) => {
-    setConfig((prev) => ({ ...prev, [id]: !prev[id] }));
-  }, []);
+  const handleToggle = useCallback(
+    (id: keyof Omit<QuiltDetectionConfig, 'pieceScale' | 'quiltShape'>) => {
+      setConfig((prev) => ({ ...prev, [id]: !prev[id] }));
+    },
+    []
+  );
 
   const handlePieceScaleChange = useCallback((value: QuiltDetectionConfig['pieceScale']) => {
     setConfig((prev) => ({ ...prev, pieceScale: value }));
@@ -304,7 +298,8 @@ export function ScanSettingsStep() {
             Tell us about your quilt
           </h3>
           <p className="text-body-md text-secondary mt-1">
-            These details help our scanner make smarter decisions. Don&apos;t worry — you can always adjust the results later.
+            These details help our scanner make smarter decisions. Don&apos;t worry — you can always
+            adjust the results later.
           </p>
         </div>
 
@@ -323,21 +318,17 @@ export function ScanSettingsStep() {
         </div>
 
         {/* Piece Scale Selector */}
-        <PieceScaleSelector
-          value={config.pieceScale}
-          onChange={handlePieceScaleChange}
-        />
+        <PieceScaleSelector value={config.pieceScale} onChange={handlePieceScaleChange} />
 
         {/* Quilt Shape Selector */}
-        <QuiltShapeSelector
-          value={config.quiltShape}
-          onChange={handleQuiltShapeChange}
-        />
+        <QuiltShapeSelector value={config.quiltShape} onChange={handleQuiltShapeChange} />
 
         {/* Help box */}
         <div className="p-4 rounded-lg bg-surface-container-high/50 border border-outline-variant/30">
           <p className="text-body-sm text-secondary">
-            <span className="font-medium text-on-surface">Not sure?</span> That&apos;s okay! The default settings work well for most quilts. You can always go with &quot;Standard&quot; and see how it looks.
+            <span className="font-medium text-on-surface">Not sure?</span> That&apos;s okay! The
+            default settings work well for most quilts. You can always go with &quot;Standard&quot;
+            and see how it looks.
           </p>
         </div>
       </div>

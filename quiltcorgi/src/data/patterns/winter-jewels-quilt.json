@@ -274,51 +274,37 @@
       "scope": "per-block",
       "blockName": "Rose Block",
       "fabricLabel": "Fabric 17",
-      "instructions": [
-        "Cut (4) squares 2 inches"
-      ]
+      "instructions": ["Cut (4) squares 2 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Rose Block",
       "fabricLabel": "Fabric 25",
-      "instructions": [
-        "Cut (6) squares 2 inches",
-        "Cut (2) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (6) squares 2 inches", "Cut (2) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Rose Block",
       "fabricLabel": "Green",
-      "instructions": [
-        "Cut (2) rectangles 3.5 inches x 5 inches"
-      ]
+      "instructions": ["Cut (2) rectangles 3.5 inches x 5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Rose Block",
       "fabricLabel": "Red",
-      "instructions": [
-        "Cut (4) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (4) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Trellis Block",
       "fabricLabel": "Fabric 25",
-      "instructions": [
-        "Cut (2) strips 2 inches x 8 inches",
-        "Cut (2) strips 2 inches x 6.5 inches"
-      ]
+      "instructions": ["Cut (2) strips 2 inches x 8 inches", "Cut (2) strips 2 inches x 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Trellis Block",
       "fabricLabel": "Light",
-      "instructions": [
-        "Cut (1) rectangle 3.5 inches x 8 inches"
-      ]
+      "instructions": ["Cut (1) rectangle 3.5 inches x 8 inches"]
     },
     {
       "scope": "whole-quilt",
@@ -331,9 +317,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 17",
-      "instructions": [
-        "Cut (128) squares 2 inches for Rose Block centers"
-      ]
+      "instructions": ["Cut (128) squares 2 inches for Rose Block centers"]
     },
     {
       "scope": "whole-quilt",
@@ -372,9 +356,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "Binding",
-      "instructions": [
-        "Cut (8) strips 2.5 inches x WOF for binding"
-      ]
+      "instructions": ["Cut (8) strips 2.5 inches x WOF for binding"]
     },
     {
       "scope": "whole-quilt",

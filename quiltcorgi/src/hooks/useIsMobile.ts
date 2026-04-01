@@ -10,9 +10,9 @@ export function useIsMobile(): boolean {
     return window.matchMedia(MOBILE_BREAKPOINT).matches;
   });
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useLayoutEffect(() => {
     const mql = window.matchMedia(MOBILE_BREAKPOINT);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mql.matches);
 
     function onChange(e: MediaQueryListEvent | { matches: boolean }) {

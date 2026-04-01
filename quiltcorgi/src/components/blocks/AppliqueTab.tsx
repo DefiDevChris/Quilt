@@ -116,16 +116,11 @@ function LayerRow({
       <span className="w-5 text-center text-xs">{layerIcon(shapeType)}</span>
 
       {/* Name */}
-      <span className="flex-1 truncate text-on-surface">
-        {layerLabel(shapeType, isBackground)}
-      </span>
+      <span className="flex-1 truncate text-on-surface">{layerLabel(shapeType, isBackground)}</span>
 
       {/* Color swatch / picker */}
       <label className="relative flex h-5 w-5 cursor-pointer items-center justify-center overflow-hidden rounded-sm border border-outline-variant">
-        <span
-          className="absolute inset-0"
-          style={{ backgroundColor: fill }}
-        />
+        <span className="absolute inset-0" style={{ backgroundColor: fill }} />
         <input
           type="color"
           value={fill}
@@ -228,26 +223,15 @@ function LayerPanel({
 // Main component
 // ---------------------------------------------------------------------------
 
-export function AppliqueTab({
-  draftCanvasRef,
-  fillColor,
-  strokeColor,
-  isOpen,
-}: DraftTabProps) {
-  const {
-    layers,
-    addShape,
-    moveForward,
-    moveBackward,
-    removeLayer,
-    setLayerFill,
-  } = useAppliqueDraw({
-    draftCanvasRef,
-    isOpen,
-    fillColor,
-    strokeColor,
-    canvasSize: CANVAS_SIZE,
-  });
+export function AppliqueTab({ draftCanvasRef, fillColor, strokeColor, isOpen }: DraftTabProps) {
+  const { layers, addShape, moveForward, moveBackward, removeLayer, setLayerFill } =
+    useAppliqueDraw({
+      draftCanvasRef,
+      isOpen,
+      fillColor,
+      strokeColor,
+      canvasSize: CANVAS_SIZE,
+    });
 
   return (
     <div>

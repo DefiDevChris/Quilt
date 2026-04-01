@@ -15,7 +15,7 @@ import {
   type ShapeType,
   type AppliqueLayer,
   type AppliqueBlock,
-} from '@/lib/applique-engine';
+} from '@/lib/applique-utils';
 
 // ---------------------------------------------------------------------------
 // Helpers

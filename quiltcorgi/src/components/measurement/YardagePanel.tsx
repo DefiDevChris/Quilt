@@ -112,7 +112,9 @@ export function YardagePanel() {
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                       <div className="text-secondary">Pieces</div>
-                      <div className="text-on-surface font-mono text-right">{result.shapeCount}</div>
+                      <div className="text-on-surface font-mono text-right">
+                        {result.shapeCount}
+                      </div>
 
                       <div className="text-secondary">Total Area</div>
                       <div className="text-on-surface font-mono text-right">

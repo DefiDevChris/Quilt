@@ -1,4 +1,4 @@
-import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -29,6 +29,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const togglePrintlistPanel = usePrintlistStore((s) => s.togglePanel);
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
+  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -47,6 +48,64 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             stroke="currentColor"
             strokeWidth="1.4"
             strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'pan',
+      label: 'Pan',
+      shortcut: 'H',
+      description: 'Click and drag to move around your canvas',
+      toolType: 'pan',
+      group: 'tools',
+      tier: 'primary',
+      onClick: () => {
+        if (isViewportLocked) {
+          useCanvasStore.getState().setViewportLocked(false);
+        }
+        useCanvasStore.getState().setActiveTool('pan');
+      },
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M10 2V5M10 15V18M2 10H5M15 10H18M10 5L7 8H13L10 5ZM10 15L13 12H7L10 15ZM5 10L8 7V13L5 10ZM15 10L12 13V7L15 10Z"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'viewport-lock',
+      label: isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport',
+      description: isViewportLocked
+        ? 'Unlock to pan and zoom freely'
+        : 'Lock viewport to centered fit',
+      group: 'tools',
+      tier: 'primary',
+      onClick: () => useCanvasStore.getState().setViewportLocked(!isViewportLocked),
+      isActive: () => isViewportLocked,
+      icon: isViewportLocked ? (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      ) : (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M13 9V6C13 4.34 14.34 3 16 3"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
           />
         </svg>
       ),
@@ -124,15 +183,15 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
-    // ── ADVANCED: Drawing shapes (for quilters who want to draw from scratch) ──
+    // ── PRIMARY: Drawing shapes ──
     {
       id: 'rectangle',
       label: 'Rectangle',
       shortcut: 'R',
       description: 'Draw a rectangle — hold Shift for a perfect square',
       toolType: 'rectangle',
-      group: 'shapes-adv',
-      tier: 'advanced',
+      group: 'shapes',
+      tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
@@ -145,8 +204,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'T',
       description: 'Draw a triangle patch',
       toolType: 'triangle',
-      group: 'shapes-adv',
-      tier: 'advanced',
+      group: 'shapes',
+      tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
@@ -164,8 +223,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'L',
       description: 'Draw a straight line — hold Shift for 45-degree angles',
       toolType: 'line',
-      group: 'shapes-adv',
-      tier: 'advanced',
+      group: 'shapes',
+      tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
@@ -178,8 +237,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'C',
       description: 'Draw smooth curves with control points',
       toolType: 'curve',
-      group: 'shapes-adv',
-      tier: 'advanced',
+      group: 'shapes',
+      tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
@@ -191,13 +250,13 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
-    // ── ADVANCED: Layout & sizing ──
+    // ── PRIMARY: Layout & sizing ──
     {
       id: 'grid-dimensions',
       label: 'Grid & Dimensions',
       description: 'Set your quilt dimensions and grid spacing',
-      group: 'layout-adv',
-      tier: 'advanced',
+      group: 'layout',
+      tier: 'primary',
       onClick: callbacks.onOpenGridDimensions,
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -519,60 +578,3 @@ export function useBlockTools(): ToolDef[] {
   ];
 }
 
-export function useImageTools(): ToolDef[] {
-  return [
-    {
-      id: 'select',
-      label: 'Select',
-      shortcut: 'V',
-      description: 'Select and move the reference image',
-      toolType: 'select',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M5 3L5 15L8.5 11.5L12 17L14 16L10.5 10L15 10L5 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'crop',
-      label: 'Crop',
-      description: 'Crop the reference image to a region of interest',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M5 2V14H18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          <path d="M15 18V6H2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      id: 'rotate',
-      label: 'Rotate',
-      description: 'Rotate the reference image',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M15 10C15 12.7614 12.7614 15 10 15C7.23858 15 5 12.7614 5 10C5 7.23858 7.23858 5 10 5C11.8 5 13.4 6 14.2 7.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M12 7.5H15V4.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-  ];
-}

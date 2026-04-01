@@ -9,12 +9,7 @@
 
 // ── Manufacturer Names ────────────────────────────────────────────
 
-const MANUFACTURER_NAMES = [
-  /andover\s*fabrics?/i,
-  /makower\s*uk/i,
-  /\bmakower\b/i,
-  /\bandover\b/i,
-];
+const MANUFACTURER_NAMES = [/andover\s*fabrics?/i, /makower\s*uk/i, /\bmakower\b/i, /\bandover\b/i];
 
 // ── Line-Level Removal Patterns ───────────────────────────────────
 // Each pattern matches an entire line that should be removed.

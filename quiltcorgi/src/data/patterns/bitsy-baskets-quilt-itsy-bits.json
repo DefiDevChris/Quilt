@@ -315,12 +315,7 @@
   "layout": {
     "type": "on-point",
     "sashingWidth": 0,
-    "borderWidths": [
-      1.5,
-      1.5,
-      1.5,
-      1.5
-    ]
+    "borderWidths": [1.5, 1.5, 1.5, 1.5]
   },
   "cuttingDirections": [
     {
@@ -364,37 +359,27 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "11",
-      "instructions": [
-        "Cut background patches for 10 blocks"
-      ]
+      "instructions": ["Cut background patches for 10 blocks"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "19",
-      "instructions": [
-        "Cut background patches for 9 blocks"
-      ]
+      "instructions": ["Cut background patches for 9 blocks"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "22",
-      "instructions": [
-        "Cut background patches for 7 blocks"
-      ]
+      "instructions": ["Cut background patches for 7 blocks"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "16",
-      "instructions": [
-        "Cut background patches for 19 blocks"
-      ]
+      "instructions": ["Cut background patches for 19 blocks"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "27",
-      "instructions": [
-        "Cut background patches for 19 blocks"
-      ]
+      "instructions": ["Cut background patches for 19 blocks"]
     },
     {
       "scope": "whole-quilt",
@@ -407,9 +392,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "28",
-      "instructions": [
-        "Cut (5) strips 2 1/2 inches x WOF for binding"
-      ]
+      "instructions": ["Cut (5) strips 2 1/2 inches x WOF for binding"]
     },
     {
       "scope": "whole-quilt",

@@ -6,6 +6,12 @@ import { usePatternStore } from '@/stores/patternStore';
 import { formatDimensionDisplay } from '@/components/patterns/PatternCard';
 import type { ParsedPiece } from '@/lib/pattern-parser-types';
 
+interface PatternDetailDialogProps {
+  readonly patternId: string | null;
+  readonly onClose: () => void;
+  readonly onImportSuccess?: (projectId: string) => void;
+}
+
 const COLOR_FAMILY_MAP: Record<string, string> = {
   red: '#D4726A',
   orange: '#E89B6C',
@@ -77,9 +83,9 @@ export function PatternDetailDialog({
   const [importedProjectId, setImportedProjectId] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useLayoutEffect(() => {
     if (patternId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setImportedProjectId(null);
       clearError();
       fetchPatternDetail(patternId);
@@ -142,7 +148,7 @@ export function PatternDetailDialog({
     const result = await importPattern(patternId);
     if (result) {
       setImportedProjectId(result.projectId);
-      onImportSuccess(result.projectId);
+      onImportSuccess?.(result.projectId);
     }
   }, [patternId, isImporting, importPattern, onImportSuccess]);
 

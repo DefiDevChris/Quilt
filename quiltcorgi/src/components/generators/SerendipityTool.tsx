@@ -30,8 +30,10 @@ export function SerendipityTool({ isOpen, onClose }: SerendipityToolProps) {
   const { toast } = useToast();
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
-  const allBlocks = useMemo(() => [...blocks, ...userBlocks].filter(
-    (b, i, arr) => arr.findIndex((x) => x.id === b.id) === i), [blocks, userBlocks]
+  const allBlocks = useMemo(
+    () =>
+      [...blocks, ...userBlocks].filter((b, i, arr) => arr.findIndex((x) => x.id === b.id) === i),
+    [blocks, userBlocks]
   );
 
   // Fetch block data when both blocks are selected

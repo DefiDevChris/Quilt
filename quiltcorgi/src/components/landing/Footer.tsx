@@ -55,14 +55,14 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-warm-text-secondary text-sm">
               <li>
-              <Link href="/socialthreads" className="hover:text-warm-peach transition-colors">
-                Gallery
-              </Link>
+                <Link href="/socialthreads" className="hover:text-warm-peach transition-colors">
+                  Gallery
+                </Link>
               </li>
               <li>
-              <Link href="/socialthreads" className="hover:text-warm-peach transition-colors">
-                Discussions
-              </Link>
+                <Link href="/socialthreads" className="hover:text-warm-peach transition-colors">
+                  Discussions
+                </Link>
               </li>
             </ul>
           </div>

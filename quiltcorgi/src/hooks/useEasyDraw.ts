@@ -207,16 +207,7 @@ export function useEasyDraw({
       isMounted = false;
       cleanup?.();
     };
-  }, [
-    isOpen,
-    draftCanvasRef,
-    patches,
-    activeMode,
-    gridSize,
-    gridCols,
-    gridRows,
-    snapToGridPoint,
-  ]);
+  }, [isOpen, draftCanvasRef, patches, activeMode, gridSize, gridCols, gridRows, snapToGridPoint]);
 
   const clearSegments = useCallback(() => {
     setSegments([]);

@@ -54,7 +54,11 @@ export async function GET(
     const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10) || 1);
     const limit = Math.min(
       48,
-      Math.max(1, parseInt(url.searchParams.get('limit') ?? String(COMMUNITY_PAGINATION_DEFAULT_LIMIT), 10) || COMMUNITY_PAGINATION_DEFAULT_LIMIT)
+      Math.max(
+        1,
+        parseInt(url.searchParams.get('limit') ?? String(COMMUNITY_PAGINATION_DEFAULT_LIMIT), 10) ||
+          COMMUNITY_PAGINATION_DEFAULT_LIMIT
+      )
     );
     const offset = (page - 1) * limit;
 
@@ -72,10 +76,7 @@ export async function GET(
         })
         .from(communityPosts)
         .where(
-          and(
-            eq(communityPosts.userId, profile.userId),
-            eq(communityPosts.status, 'approved')
-          )
+          and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
         )
         .orderBy(desc(communityPosts.createdAt))
         .limit(limit)
@@ -84,10 +85,7 @@ export async function GET(
         .select({ count: count() })
         .from(communityPosts)
         .where(
-          and(
-            eq(communityPosts.userId, profile.userId),
-            eq(communityPosts.status, 'approved')
-          )
+          and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
         ),
     ]);
 
@@ -99,7 +97,9 @@ export async function GET(
       const likedRows = await db
         .select({ postId: likes.communityPostId })
         .from(likes)
-        .where(and(eq(likes.userId, currentUserId), sql`${likes.communityPostId} = ANY(${postIds})`));
+        .where(
+          and(eq(likes.userId, currentUserId), sql`${likes.communityPostId} = ANY(${postIds})`)
+        );
       likedPostIds = new Set(likedRows.map((r) => r.postId as string));
     }
 

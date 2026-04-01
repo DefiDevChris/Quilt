@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeResize, type ResizeInput, type CanvasObjectData } from '@/lib/resize-engine';
+import { computeResize, type ResizeInput, type CanvasObjectData } from '@/lib/resize-utils';
 
 function makeObject(overrides: Partial<CanvasObjectData> = {}): CanvasObjectData {
   return {
@@ -31,7 +31,7 @@ function makeInput(overrides: Partial<ResizeInput> = {}): ResizeInput {
   };
 }
 
-describe('resize-engine', () => {
+describe('resize-utils', () => {
   describe('scale mode', () => {
     it('returns updated canvas dimensions', () => {
       const result = computeResize(makeInput());

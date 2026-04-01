@@ -31,13 +31,13 @@ import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
 import { saveProject } from '@/lib/save-project';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
-import { HelpButton } from '@/components/studio/HelpButton';
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
+
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
@@ -47,6 +47,7 @@ import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
+import { useToast } from '@/components/ui/ToastProvider';
 
 function PrintOptionsPanel({
   onOpenPdfExport,
@@ -147,6 +148,33 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
+  const { toast } = useToast();
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
+  async function handleUpgrade() {
+    setIsUpgrading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.success && data.data.checkoutUrl) {
+        window.location.href = data.data.checkoutUrl;
+      } else {
+        toast({
+          type: 'error',
+          title: 'Checkout failed',
+          description: data.error ?? 'Unable to start checkout. Please try again.',
+        });
+      }
+    } catch {
+      toast({
+        type: 'error',
+        title: 'Connection error',
+        description: 'Unable to connect. Please check your connection and try again.',
+      });
+    } finally {
+      setIsUpgrading(false);
+    }
+  }
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -407,12 +435,14 @@ export function StudioClient({ projectId }: StudioClientProps) {
               >
                 Maybe Later
               </button>
-              <a
-                href="/profile#billing"
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
+              <button
+                type="button"
+                onClick={handleUpgrade}
+                disabled={isUpgrading}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                Upgrade to Pro
-              </a>
+                {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
+              </button>
             </div>
           </div>
         </div>
@@ -421,8 +451,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
       {/* Resize quilt dialog */}
       <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />
 
-      {/* Help button + panel */}
-      <HelpButton onClick={() => setIsHelpOpen(true)} />
+      {/* Help panel (opened from top bar) */}
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
 
       {/* Onboarding tour */}

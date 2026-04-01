@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
     const parsed = verifySchema.safeParse(body);
 
     if (!parsed.success) {
-      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid verification code');
+      return validationErrorResponse(
+        parsed.error.issues[0]?.message ?? 'Invalid verification code'
+      );
     }
 
     const { email, code } = parsed.data;

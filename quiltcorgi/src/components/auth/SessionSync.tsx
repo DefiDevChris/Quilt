@@ -47,7 +47,9 @@ export function SessionSync({ children }: { children: React.ReactNode }) {
     }
 
     fetchSession();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [setUser]);
 
   return <>{children}</>;

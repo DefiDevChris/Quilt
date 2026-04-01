@@ -6,7 +6,7 @@ import {
   computeTooltipPosition,
   getStorageFlag,
   setStorageFlag,
-} from '@/lib/onboarding-engine';
+} from '@/lib/onboarding-utils';
 
 // Mock localStorage for node test environment
 const localStorageMock = (() => {
@@ -32,7 +32,7 @@ const localStorageMock = (() => {
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 Object.defineProperty(globalThis, 'window', { value: globalThis, writable: true, configurable: true });
 
-describe('onboarding-engine', () => {
+describe('onboarding-utils', () => {
   describe('TOUR_STEPS', () => {
     it('has 9 steps', () => {
       expect(TOUR_STEPS).toHaveLength(9);

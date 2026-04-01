@@ -156,16 +156,11 @@ export function teardropPath(cx: number, cy: number, size: number): string {
  * Invalid sizes (NaN, negative, or zero) are clamped to a minimum value
 to prevent degenerate shapes.
  */
-export function generateShapePath(
-  type: ShapeType,
-  cx: number,
-  cy: number,
-  size: number
-): string {
+export function generateShapePath(type: ShapeType, cx: number, cy: number, size: number): string {
   // Validate and clamp size to prevent degenerate shapes
   const MIN_SIZE = 1;
   const validSize = !Number.isFinite(size) || size < MIN_SIZE ? MIN_SIZE : size;
-  
+
   switch (type) {
     case 'circle':
       return circlePath(cx, cy, validSize / 2);
@@ -254,10 +249,7 @@ export function reorderLayers(
  * If the layer is already at the top, the order is unchanged.
  * If the layerId is not found, returns the original order unchanged.
  */
-export function bringForward(
-  layers: readonly AppliqueLayer[],
-  layerId: string
-): AppliqueLayer[] {
+export function bringForward(layers: readonly AppliqueLayer[], layerId: string): AppliqueLayer[] {
   const index = layers.findIndex((l) => l.id === layerId);
   if (index === -1 || index === layers.length - 1) {
     return assignZIndices(layers);
@@ -271,10 +263,7 @@ export function bringForward(
  * If the layer is already at the bottom, the order is unchanged.
  * If the layerId is not found, returns the original order unchanged.
  */
-export function sendBackward(
-  layers: readonly AppliqueLayer[],
-  layerId: string
-): AppliqueLayer[] {
+export function sendBackward(layers: readonly AppliqueLayer[], layerId: string): AppliqueLayer[] {
   const index = layers.findIndex((l) => l.id === layerId);
   if (index === -1 || index === 0) {
     return assignZIndices(layers);
@@ -324,11 +313,7 @@ export function exportWithLayerMetadata(block: AppliqueBlock): {
  * Create the non-deletable background layer that covers the full block.
  * Always has id "background" and zIndex 0.
  */
-export function createBackgroundLayer(
-  width: number,
-  height: number,
-  fill: string
-): AppliqueLayer {
+export function createBackgroundLayer(width: number, height: number, fill: string): AppliqueLayer {
   const pathData = `M 0 0 L ${width} 0 L ${width} ${height} L 0 ${height} Z`;
 
   return {

@@ -16,7 +16,11 @@ import { stripBranding, stripPatternName } from './pattern-branding-strip';
 import { calculateGridFromLayout } from './pattern-import-layouts';
 import { buildCanvasObjects } from './pattern-import-canvas';
 import { buildPrintlistFromPattern, assignFabricGroups } from './pattern-import-printlist';
-import { collectCustomBlocks, CANVAS_DATA_VERSION, CANVAS_BACKGROUND } from './pattern-import-helpers';
+import {
+  collectCustomBlocks,
+  CANVAS_DATA_VERSION,
+  CANVAS_BACKGROUND,
+} from './pattern-import-helpers';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 
 /**

@@ -146,7 +146,10 @@ export function findBlockMatch(
  * Resolve the primary fill color for a block. Uses the first fabric
  * match's colorHex, falling back to a neutral grey.
  */
-export function resolveBlockColor(block: ParsedBlock, fabricMatches: readonly FabricMatch[]): string {
+export function resolveBlockColor(
+  block: ParsedBlock,
+  fabricMatches: readonly FabricMatch[]
+): string {
   if (block.pieces.length === 0) {
     return FALLBACK_BLOCK_COLOR;
   }

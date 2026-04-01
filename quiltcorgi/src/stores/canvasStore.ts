@@ -17,9 +17,11 @@ import {
   DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
+import { fitToScreenZoom, getPixelsPerUnit } from '@/lib/canvas-utils';
 
 export type ToolType =
   | 'select'
+  | 'pan'
   | 'rectangle'
   | 'triangle'
   | 'polygon'
@@ -69,6 +71,7 @@ interface CanvasStoreState {
   referenceImageOpacity: number;
   activeColorwayTool: ColorwayTool | null;
   fussyCutTarget: FussyCutTarget | null;
+  isViewportLocked: boolean;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -92,6 +95,8 @@ interface CanvasStoreState {
   setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorwayTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
+  setViewportLocked: (locked: boolean) => void;
+  centerAndFitViewport: () => void;
   reset: () => void;
 }
 
@@ -122,6 +127,7 @@ const INITIAL_STATE = {
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null as ColorwayTool | null,
   fussyCutTarget: null as FussyCutTarget | null,
+  isViewportLocked: true,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -149,7 +155,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   pushUndoState: (json) => {
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
-       
       console.warn(
         `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
           `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
@@ -197,6 +202,36 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
   setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
+
+  setViewportLocked: (locked) => {
+    set({ isViewportLocked: locked });
+    if (locked) {
+      get().centerAndFitViewport();
+    }
+  },
+
+  centerAndFitViewport: () => {
+    const { fabricCanvas, unitSystem } = get();
+    if (!fabricCanvas) return;
+    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    if (!el) return;
+    // Lazy import to avoid circular dependency with projectStore
+    const { useProjectStore } = require('@/stores/projectStore') as {
+      useProjectStore: { getState: () => { canvasWidth: number; canvasHeight: number } };
+    };
+    const { canvasWidth, canvasHeight } = useProjectStore.getState();
+    const pxPerUnit = getPixelsPerUnit(unitSystem);
+    const containerW = el.clientWidth;
+    const containerH = el.clientHeight;
+    const zoom = fitToScreenZoom(containerW, containerH, canvasWidth, canvasHeight, unitSystem);
+    const quiltWPx = canvasWidth * pxPerUnit;
+    const quiltHPx = canvasHeight * pxPerUnit;
+    const panX = (containerW - quiltWPx * zoom) / 2;
+    const panY = (containerH - quiltHPx * zoom) / 2;
+    fabricCanvas.setViewportTransform([zoom, 0, 0, zoom, panX, panY]);
+    set({ zoom });
+    fabricCanvas.renderAll();
+  },
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

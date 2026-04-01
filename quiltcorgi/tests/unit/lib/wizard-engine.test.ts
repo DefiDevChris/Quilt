@@ -7,7 +7,7 @@ import {
   computeProgress,
   getStepLabel,
   isStepOptional,
-} from '@/lib/wizard-engine';
+} from '@/lib/wizard-utils';
 import type { WizardStep } from '@/types/wizard';
 
 function makeStep(
@@ -28,7 +28,7 @@ const threeSteps: readonly WizardStep<{ value: string }>[] = [
   makeStep('3'),
 ];
 
-describe('wizard-engine', () => {
+describe('wizard-utils', () => {
   describe('computeNavigation', () => {
     it('returns correct state for first step', () => {
       const nav = computeNavigation(threeSteps, 0);

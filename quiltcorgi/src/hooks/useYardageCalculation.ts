@@ -5,10 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import {
-  computeYardageEstimates,
-  type CanvasShapeData,
-} from '@/lib/yardage-utils';
+import { computeYardageEstimates, type CanvasShapeData } from '@/lib/yardage-utils';
 
 function extractShapesFromCanvas(canvas: unknown): CanvasShapeData[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,7 +52,11 @@ function extractShapesFromCanvas(canvas: unknown): CanvasShapeData[] {
   return shapes;
 }
 
-function extractBorderShapes(borders: { width: number; color: string; fabricId: string | null }[], canvasWidthPx: number, canvasHeightPx: number): CanvasShapeData[] {
+function extractBorderShapes(
+  borders: { width: number; color: string; fabricId: string | null }[],
+  canvasWidthPx: number,
+  canvasHeightPx: number
+): CanvasShapeData[] {
   const shapes: CanvasShapeData[] = [];
   let currentWidth = canvasWidthPx;
   let currentHeight = canvasHeightPx;

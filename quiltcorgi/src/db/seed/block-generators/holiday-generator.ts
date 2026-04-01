@@ -131,7 +131,10 @@ function generateChristmas(): BlockDefinition[] {
       'Holiday',
       rect(0, 0, 100, 100, '#EFEBE9') +
         // Stocking body
-        path('M 35 10 L 35 65 Q 35 85 55 85 L 80 85 Q 85 85 85 75 L 85 65 L 60 65 L 60 10 Z', '#E53935') +
+        path(
+          'M 35 10 L 35 65 Q 35 85 55 85 L 80 85 Q 85 85 85 75 L 85 65 L 60 65 L 60 10 Z',
+          '#E53935'
+        ) +
         // Cuff
         rect(33, 8, 30, 12, '#FAFAFA') +
         // Trim on cuff
@@ -265,10 +268,22 @@ function generateChristmas(): BlockDefinition[] {
       'Holiday',
       rect(0, 0, 100, 100, '#EFEBE9') +
         // Leaves
-        path('M 50 50 Q 25 30 15 20 Q 20 25 18 35 Q 15 40 25 38 Q 30 42 28 50 Q 32 48 40 50 Q 45 48 50 50', '#2E7D32') +
-        path('M 50 50 Q 75 30 85 20 Q 80 25 82 35 Q 85 40 75 38 Q 70 42 72 50 Q 68 48 60 50 Q 55 48 50 50', '#388E3C') +
-        path('M 50 50 Q 35 70 25 80 Q 30 75 35 78 Q 40 82 42 72 Q 46 68 50 70 Q 48 62 50 50', '#2E7D32') +
-        path('M 50 50 Q 65 70 75 80 Q 70 75 65 78 Q 60 82 58 72 Q 54 68 52 70 Q 52 62 50 50', '#388E3C') +
+        path(
+          'M 50 50 Q 25 30 15 20 Q 20 25 18 35 Q 15 40 25 38 Q 30 42 28 50 Q 32 48 40 50 Q 45 48 50 50',
+          '#2E7D32'
+        ) +
+        path(
+          'M 50 50 Q 75 30 85 20 Q 80 25 82 35 Q 85 40 75 38 Q 70 42 72 50 Q 68 48 60 50 Q 55 48 50 50',
+          '#388E3C'
+        ) +
+        path(
+          'M 50 50 Q 35 70 25 80 Q 30 75 35 78 Q 40 82 42 72 Q 46 68 50 70 Q 48 62 50 50',
+          '#2E7D32'
+        ) +
+        path(
+          'M 50 50 Q 65 70 75 80 Q 70 75 65 78 Q 60 82 58 72 Q 54 68 52 70 Q 52 62 50 50',
+          '#388E3C'
+        ) +
         // Berries
         circle(50, 48, 5, '#E53935') +
         circle(44, 52, 4, '#E53935') +
@@ -500,9 +515,15 @@ function generateHalloween(): BlockDefinition[] {
         polygon('44,30 40,20 46,28', '#333') +
         polygon('56,30 60,20 54,28', '#333') +
         // Left wing
-        path('M 45 42 Q 20 30 5 50 Q 10 48 15 52 Q 12 55 8 60 Q 15 55 20 58 Q 18 62 15 68 Q 30 55 45 55', '#333') +
+        path(
+          'M 45 42 Q 20 30 5 50 Q 10 48 15 52 Q 12 55 8 60 Q 15 55 20 58 Q 18 62 15 68 Q 30 55 45 55',
+          '#333'
+        ) +
         // Right wing
-        path('M 55 42 Q 80 30 95 50 Q 90 48 85 52 Q 88 55 92 60 Q 85 55 80 58 Q 82 62 85 68 Q 70 55 55 55', '#333') +
+        path(
+          'M 55 42 Q 80 30 95 50 Q 90 48 85 52 Q 88 55 92 60 Q 85 55 80 58 Q 82 62 85 68 Q 70 55 55 55',
+          '#333'
+        ) +
         // Eyes
         circle(47, 34, 2, '#FFC107') +
         circle(53, 34, 2, '#FFC107') +
@@ -520,7 +541,10 @@ function generateHalloween(): BlockDefinition[] {
       'Holiday',
       rect(0, 0, 100, 100, '#1A237E') +
         // Ghost body
-        path('M 30 85 Q 30 20 50 15 Q 70 20 70 85 Q 65 78 60 85 Q 55 78 50 85 Q 45 78 40 85 Q 35 78 30 85', '#FAFAFA') +
+        path(
+          'M 30 85 Q 30 20 50 15 Q 70 20 70 85 Q 65 78 60 85 Q 55 78 50 85 Q 45 78 40 85 Q 35 78 30 85',
+          '#FAFAFA'
+        ) +
         // Eyes
         circle(40, 42, 5, '#333') +
         circle(58, 42, 5, '#333') +
@@ -753,14 +777,17 @@ function generateThanksgiving(): BlockDefinition[] {
       'Holiday',
       rect(0, 0, 100, 100, PALETTES.autumn.bg) +
         // Horn shape
-        path('M 85 75 Q 70 70 40 60 Q 15 50 10 40 Q 12 35 18 38 Q 25 42 50 50 Q 75 58 85 65 Z', '#D4883C') +
+        path(
+          'M 85 75 Q 70 70 40 60 Q 15 50 10 40 Q 12 35 18 38 Q 25 42 50 50 Q 75 58 85 65 Z',
+          '#D4883C'
+        ) +
         path('M 85 75 Q 85 80 80 80 Q 70 78 85 75', '#A0522D') +
         // Fruits spilling out
-        circle(82, 60, 8, '#E53935') +   // Apple
-        circle(72, 52, 7, '#FF9800') +   // Orange
-        circle(78, 48, 6, '#9C27B0') +   // Grape
-        circle(88, 52, 6, '#FFC107') +   // Lemon
-        circle(85, 42, 5, '#4CAF50') +   // Grape
+        circle(82, 60, 8, '#E53935') + // Apple
+        circle(72, 52, 7, '#FF9800') + // Orange
+        circle(78, 48, 6, '#9C27B0') + // Grape
+        circle(88, 52, 6, '#FFC107') + // Lemon
+        circle(85, 42, 5, '#4CAF50') + // Grape
         // Corn
         path('M 68 44 Q 72 38 78 42', '#FFC107') +
         // Leaf
@@ -776,7 +803,10 @@ function generateThanksgiving(): BlockDefinition[] {
       'Autumn Maple Leaf',
       'Holiday',
       rect(0, 0, 100, 100, PALETTES.autumn.bg) +
-        polygon('50,8 60,30 88,28 68,45 80,70 55,58 50,85 45,58 20,70 32,45 12,28 40,30', PALETTES.autumn.primary) +
+        polygon(
+          '50,8 60,30 88,28 68,45 80,70 55,58 50,85 45,58 20,70 32,45 12,28 40,30',
+          PALETTES.autumn.primary
+        ) +
         // Veins
         path('M 50 85 L 50 8', PALETTES.autumn.secondary) +
         path('M 50 35 L 30 20', PALETTES.autumn.secondary) +
@@ -924,14 +954,14 @@ function generateValentines(): BlockDefinition[] {
         // Heart 2 (front, offset)
         path('M 50 75 Q 78 45 62 28 Q 52 22 46 33 Q 40 22 30 28 Q 14 45 50 75', '#E91E63'),
       ['valentine', 'heart', 'love', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
   // 2. Cupid's Arrow
   blocks.push(
     block(
-      'Cupid\'s Arrow',
+      "Cupid's Arrow",
       'Holiday',
       rect(0, 0, 100, 100, '#FCE4EC') +
         // Heart
@@ -944,7 +974,7 @@ function generateValentines(): BlockDefinition[] {
         polygon('15,85 20,78 12,80', '#E53935') +
         polygon('15,85 22,82 18,88', '#E53935'),
       ['valentine', 'cupid', 'arrow', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -966,7 +996,7 @@ function generateValentines(): BlockDefinition[] {
         rect(65, 32, 12, 12, '#E91E63') +
         circle(71, 38, 4, '#FCE4EC'),
       ['valentine', 'letter', 'love', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -994,7 +1024,7 @@ function generateValentines(): BlockDefinition[] {
         path('M 44 80 Q 50 75 56 80', '#E91E63') +
         rect(47, 78, 6, 8, '#AD1457'),
       ['valentine', 'rose', 'bouquet', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -1016,7 +1046,7 @@ function generateValentines(): BlockDefinition[] {
         // Center heart
         path('M 50 60 Q 68 40 58 30 Q 52 26 50 34 Q 48 26 42 30 Q 32 40 50 60', '#C62828'),
       ['valentine', 'wreath', 'heart', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -1039,7 +1069,7 @@ function generateValentines(): BlockDefinition[] {
         hst(25, 75, 25, 25, '#FFF', '#E91E63') +
         hst(50, 75, 25, 25, '#E91E63', '#FFF'),
       ['valentine', 'heart', 'pieced', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -1065,7 +1095,7 @@ function generateValentines(): BlockDefinition[] {
         path('M 40 57 Q 38 52 42 54', '#4CAF50') +
         path('M 60 57 Q 58 52 62 54', '#4CAF50'),
       ['valentine', 'birds', 'love', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -1086,7 +1116,7 @@ function generateValentines(): BlockDefinition[] {
         // Heart floating above hand
         path('M 50 40 Q 62 22 56 14 Q 52 10 50 16 Q 48 10 44 14 Q 38 22 50 40', '#E53935'),
       ['valentine', 'heart', 'hand', 'holiday'],
-      'Valentine\'s Day'
+      "Valentine's Day"
     )
   );
 
@@ -1449,9 +1479,15 @@ function generateJuly4th(): BlockDefinition[] {
         // Eye
         circle(47, 26, 2, '#333') +
         // Left wing
-        path('M 38 45 Q 15 30 5 45 Q 8 50 15 48 Q 10 55 5 58 Q 15 55 20 52 Q 15 60 12 65 Q 25 55 38 55', '#795548') +
+        path(
+          'M 38 45 Q 15 30 5 45 Q 8 50 15 48 Q 10 55 5 58 Q 15 55 20 52 Q 15 60 12 65 Q 25 55 38 55',
+          '#795548'
+        ) +
         // Right wing
-        path('M 62 45 Q 85 30 95 45 Q 92 50 85 48 Q 90 55 95 58 Q 85 55 80 52 Q 85 60 88 65 Q 75 55 62 55', '#795548') +
+        path(
+          'M 62 45 Q 85 30 95 45 Q 92 50 85 48 Q 90 55 95 58 Q 85 55 80 52 Q 85 60 88 65 Q 75 55 62 55',
+          '#795548'
+        ) +
         // Tail
         polygon('44,65 50,85 56,65', '#5D4037') +
         polygon('40,65 50,82 42,65', '#795548') +
@@ -1554,7 +1590,10 @@ function generateSeasonal(): BlockDefinition[] {
       'Holiday',
       rect(0, 0, 100, 100, PALETTES.autumn.bg) +
         // Leaf shape
-        path('M 50 15 Q 80 25 85 50 Q 82 70 65 80 Q 50 88 35 80 Q 18 70 15 50 Q 20 25 50 15', '#E65100') +
+        path(
+          'M 50 15 Q 80 25 85 50 Q 82 70 65 80 Q 50 88 35 80 Q 18 70 15 50 Q 20 25 50 15',
+          '#E65100'
+        ) +
         // Veins
         path('M 50 15 L 50 82', '#BF360C') +
         path('M 50 35 L 30 28', '#BF360C') +

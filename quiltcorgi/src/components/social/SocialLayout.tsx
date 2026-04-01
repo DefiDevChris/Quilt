@@ -99,8 +99,6 @@ export function SocialLayout({
     }
   };
 
-  const initial = user?.name?.charAt(0)?.toUpperCase() ?? '?';
-
   return (
     <div className="min-h-screen bg-[#FDF9F6] relative overflow-hidden font-sans selection:bg-orange-200 selection:text-orange-900">
       {/* Background Orbs */}
@@ -150,7 +148,13 @@ export function SocialLayout({
                   sizes="48px"
                 />
               ) : (
-                <span className="text-lg font-bold text-orange-500">{initial}</span>
+                <Image
+                  src="/mascots&avatars/corgi1.png"
+                  alt="Default Avatar"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               )}
             </button>
 
@@ -165,18 +169,11 @@ export function SocialLayout({
                 {/* Links */}
                 <div className="py-1">
                   <Link
-                    href="/profile"
+                    href="/socialthreads"
                     onClick={() => setDropdownOpen(false)}
                     className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                   >
                     Profile
-                  </Link>
-                  <Link
-                    href="/profile/billing"
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                  >
-                    Billing
                   </Link>
                 </div>
 

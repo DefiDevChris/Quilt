@@ -1,6 +1,6 @@
 export function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-3">
+    <h3 className="text-[11px] uppercase text-on-surface/70 tracking-[0.06em] font-semibold mb-3">
       {children}
     </h3>
   );

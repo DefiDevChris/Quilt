@@ -182,7 +182,7 @@ function generateHouses(): BlockDefinition[] {
       'Lighthouse',
       'Pictorial',
       polygon('35,95 40,30 60,30 65,95', PALETTES.autumn.primary) +
-        rect(38,30, 24, 8, PALETTES.cool.bg) +
+        rect(38, 30, 24, 8, PALETTES.cool.bg) +
         polygon('35,30 50,12 65,30', PALETTES.neutral.primary) +
         circle(50, 20, 5, PALETTES.warm.accent) +
         rect(42, 50, 16, 5, PALETTES.neutral.bg) +
@@ -278,7 +278,10 @@ function generateTrees(): BlockDefinition[] {
       'Maple Leaf',
       'Pictorial',
       rect(0, 0, 100, 100, PALETTES.autumn.bg) +
-        polygon('50,5 60,30 90,25 70,45 85,75 55,60 50,90 45,60 15,75 30,45 10,25 40,30', PALETTES.autumn.primary) +
+        polygon(
+          '50,5 60,30 90,25 70,45 85,75 55,60 50,90 45,60 15,75 30,45 10,25 40,30',
+          PALETTES.autumn.primary
+        ) +
         rect(47, 75, 6, 20, PALETTES.earth.primary),
       ['maple', 'leaf', 'autumn', 'pictorial'],
       'Trees'
@@ -747,13 +750,7 @@ function generateBaskets(): BlockDefinition[] {
       rect(15, 48, 70, 5, handle);
 
     baskets.push(
-      block(
-        `Basket - ${label}`,
-        'Pictorial',
-        svg,
-        ['basket', 'container', 'pictorial'],
-        'Baskets'
-      )
+      block(`Basket - ${label}`, 'Pictorial', svg, ['basket', 'container', 'pictorial'], 'Baskets')
     );
   });
 

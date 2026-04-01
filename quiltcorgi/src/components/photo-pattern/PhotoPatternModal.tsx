@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { loadOpenCv } from '@/lib/opencv-loader';
 import { UploadStep } from './steps/UploadStep';
+import { ImagePrepStep } from './steps/ImagePrepStep';
 import { ScanSettingsStep } from './steps/ScanSettingsStep';
 import { CorrectionStep } from './steps/CorrectionStep';
 import { ProcessingStep } from './steps/ProcessingStep';
@@ -13,6 +14,7 @@ import type { PhotoPatternStep } from '@/lib/photo-pattern-types';
 
 const VISIBLE_STEPS: readonly PhotoPatternStep[] = [
   'upload',
+  'imagePrep',
   'scanSettings',
   'correction',
   'processing',
@@ -22,6 +24,7 @@ const VISIBLE_STEPS: readonly PhotoPatternStep[] = [
 
 const STEP_SUBTITLES: Record<PhotoPatternStep, string> = {
   upload: 'Upload your quilt photo',
+  imagePrep: 'Straighten & adjust your image',
   scanSettings: 'Tell us about your quilt',
   correction: 'Adjust perspective',
   processing: 'Analyzing...',
@@ -34,6 +37,8 @@ function StepContent({ step }: { readonly step: PhotoPatternStep }) {
   switch (step) {
     case 'upload':
       return <UploadStep />;
+    case 'imagePrep':
+      return <ImagePrepStep />;
     case 'scanSettings':
       return <ScanSettingsStep />;
     case 'correction':
@@ -113,12 +118,8 @@ export function PhotoPatternModal() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20 flex-shrink-0">
           <div>
-            <h2 className="text-headline-md font-semibold text-on-surface">
-              Photo to Pattern
-            </h2>
-            <p className="text-body-sm text-secondary mt-0.5">
-              {STEP_SUBTITLES[step]}
-            </p>
+            <h2 className="text-headline-md font-semibold text-on-surface">Photo to Pattern</h2>
+            <p className="text-body-sm text-secondary mt-0.5">{STEP_SUBTITLES[step]}</p>
           </div>
           <button
             type="button"
@@ -138,7 +139,7 @@ export function PhotoPatternModal() {
         </div>
 
         {/* Step content */}
-        <div className="flex-1 min-h-0 px-6 py-4 overflow-hidden">
+        <div className="flex-1 min-h-0 px-6 py-4 overflow-y-auto">
           <StepContent step={step} />
         </div>
 

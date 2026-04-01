@@ -15,7 +15,9 @@ const useRedis = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_R
 
 // Warn if Redis is not configured in production
 if (!useRedis && process.env.NODE_ENV === 'production') {
-  console.warn('[RATE_LIMIT] Redis not configured - falling back to in-memory rate limiter. This is not recommended for production as rate limits will not be shared across serverless instances.');
+  console.warn(
+    '[RATE_LIMIT] Redis not configured - falling back to in-memory rate limiter. This is not recommended for production as rate limits will not be shared across serverless instances.'
+  );
 }
 
 const redisLimiterCache = new Map<string, Ratelimit>();
@@ -28,15 +30,17 @@ function getRedisRatelimiter(limit: number, windowMs: number): Ratelimit {
     });
     // Convert ms to seconds for Upstash
     const windowSecs = Math.max(1, Math.floor(windowMs / 1000));
-    redisLimiterCache.set(cacheKey, new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(limit, `${windowSecs} s`),
-      analytics: false,
-    }));
+    redisLimiterCache.set(
+      cacheKey,
+      new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(limit, `${windowSecs} s`),
+        analytics: false,
+      })
+    );
   }
   return redisLimiterCache.get(cacheKey)!;
 }
-
 
 // --- In-Memory Fallback Implementation ---
 interface RateLimitEntry {
@@ -86,7 +90,10 @@ interface RateLimitResult {
   retryAfterMs: number;
 }
 
-export async function checkRateLimit(key: string, options: RateLimitOptions): Promise<RateLimitResult> {
+export async function checkRateLimit(
+  key: string,
+  options: RateLimitOptions
+): Promise<RateLimitResult> {
   const { limit, windowMs } = options;
 
   if (useRedis) {
@@ -150,11 +157,14 @@ export const API_RATE_LIMITS = {
 export function getClientIp(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
-    const ips = forwarded.split(',').map(ip => ip.trim()).filter(ip => ip);
+    const ips = forwarded
+      .split(',')
+      .map((ip) => ip.trim())
+      .filter((ip) => ip);
     // Behind a proxy/load balancer, the rightmost IP is the most trusted (closest to server).
     // Take the last untrusted entry (rightmost), not the first which can be spoofed.
     // If there's only one IP, use it (direct connection).
-    return ips.length > 1 ? ips[ips.length - 1] ?? 'unknown' : ips[0] ?? 'unknown';
+    return ips.length > 1 ? (ips[ips.length - 1] ?? 'unknown') : (ips[0] ?? 'unknown');
   }
   // x-real-ip is set by the trusted proxy - use it if available
   return request.headers.get('x-real-ip') ?? 'unknown';

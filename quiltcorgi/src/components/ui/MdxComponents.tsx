@@ -1,48 +1,23 @@
 import type { ComponentPropsWithoutRef } from 'react';
 
 function H1(props: ComponentPropsWithoutRef<'h1'>) {
-  return (
-    <h1
-      className="text-headline-lg font-bold text-on-surface mt-8 mb-4"
-      {...props}
-    />
-  );
+  return <h1 className="text-headline-lg font-bold text-on-surface mt-8 mb-4" {...props} />;
 }
 
 function H2(props: ComponentPropsWithoutRef<'h2'>) {
-  return (
-    <h2
-      className="text-headline-sm font-semibold text-on-surface mt-6 mb-3"
-      {...props}
-    />
-  );
+  return <h2 className="text-headline-sm font-semibold text-on-surface mt-6 mb-3" {...props} />;
 }
 
 function H3(props: ComponentPropsWithoutRef<'h3'>) {
-  return (
-    <h3
-      className="text-title-lg font-medium text-on-surface mt-5 mb-2"
-      {...props}
-    />
-  );
+  return <h3 className="text-title-lg font-medium text-on-surface mt-5 mb-2" {...props} />;
 }
 
 function H4(props: ComponentPropsWithoutRef<'h4'>) {
-  return (
-    <h4
-      className="text-title-md font-medium text-on-surface mt-4 mb-2"
-      {...props}
-    />
-  );
+  return <h4 className="text-title-md font-medium text-on-surface mt-4 mb-2" {...props} />;
 }
 
 function Paragraph(props: ComponentPropsWithoutRef<'p'>) {
-  return (
-    <p
-      className="text-body-md text-on-surface leading-relaxed mb-4"
-      {...props}
-    />
-  );
+  return <p className="text-body-md text-on-surface leading-relaxed mb-4" {...props} />;
 }
 
 function Anchor(props: ComponentPropsWithoutRef<'a'>) {
@@ -86,8 +61,7 @@ function CodeBlock(props: ComponentPropsWithoutRef<'pre'>) {
 }
 
 function InlineCode(props: ComponentPropsWithoutRef<'code'>) {
-  const isInPre =
-    typeof props.className === 'string' && props.className.includes('language-');
+  const isInPre = typeof props.className === 'string' && props.className.includes('language-');
   if (isInPre) {
     return <code {...props} />;
   }
@@ -158,12 +132,7 @@ function TableHeader(props: ComponentPropsWithoutRef<'th'>) {
 }
 
 function TableCell(props: ComponentPropsWithoutRef<'td'>) {
-  return (
-    <td
-      className="px-3 py-2 border-t border-outline-variant/10"
-      {...props}
-    />
-  );
+  return <td className="px-3 py-2 border-t border-outline-variant/10" {...props} />;
 }
 
 export const mdxComponents = {

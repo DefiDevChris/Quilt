@@ -7,10 +7,10 @@ import {
   computeBorderStrips,
   getDefaultLayoutConfig,
   type LayoutConfig,
-} from '@/lib/layout-engine';
+} from '@/lib/layout-utils';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 
-describe('layout-engine', () => {
+describe('layout-utils', () => {
   describe('getDefaultLayoutConfig', () => {
     it('returns free-form layout with sensible defaults', () => {
       const config = getDefaultLayoutConfig();

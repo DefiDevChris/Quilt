@@ -16,7 +16,10 @@ import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-l
 /**
  * Generate a unique username with retry logic for collision handling.
  */
-async function generateUniqueUsername(displayName: string, maxAttempts = 3): Promise<string | null> {
+async function generateUniqueUsername(
+  displayName: string,
+  maxAttempts = 3
+): Promise<string | null> {
   let attempts = 0;
 
   while (attempts < maxAttempts) {
@@ -89,7 +92,18 @@ export async function PUT(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid profile data');
     }
 
-    const { displayName, bio, location, websiteUrl, instagramHandle, youtubeHandle, tiktokHandle, publicEmail, username, privacyMode } = parsed.data;
+    const {
+      displayName,
+      bio,
+      location,
+      websiteUrl,
+      instagramHandle,
+      youtubeHandle,
+      tiktokHandle,
+      publicEmail,
+      username,
+      privacyMode,
+    } = parsed.data;
 
     const [existing] = await db
       .select({ id: userProfiles.id, username: userProfiles.username })

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
-import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
@@ -118,7 +118,7 @@ function usePrecisionControls() {
     handleSnapsVChange,
     handleSnapToGridChange,
     pushUndo,
-    fabricCanvas
+    fabricCanvas,
   };
 }
 
@@ -140,8 +140,18 @@ function PrecisionBar() {
     <div>
       <SectionTitle>Precision</SectionTitle>
       <div className="grid grid-cols-2 gap-2 mb-3">
-        <NumberInput label="Block Width" value={blockWidth} onChange={handleBlockWidthChange} suffix="in" />
-        <NumberInput label="Block Height" value={blockHeight} onChange={handleBlockHeightChange} suffix="in" />
+        <NumberInput
+          label="Block Width"
+          value={blockWidth}
+          onChange={handleBlockWidthChange}
+          suffix="in"
+        />
+        <NumberInput
+          label="Block Height"
+          value={blockHeight}
+          onChange={handleBlockHeightChange}
+          suffix="in"
+        />
       </div>
       <div className="grid grid-cols-2 gap-2 mb-3">
         <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
@@ -164,6 +174,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
     if (!fabricCanvas) return;
     const canvas = fabricCanvas as { backgroundColor?: string };
     if (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCanvasColor(canvas.backgroundColor);
     }
   }, [fabricCanvas]);
@@ -185,11 +196,34 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
     [fabricCanvas]
   );
 
+  const applyRotation = useCallback(() => {
+    applyTransform((active) => active.rotate(parseFloat(rotation) || 0));
+  }, [applyTransform, rotation]);
+
+  const applyShearH = useCallback(() => {
+    applyTransform((active) => active.set({ skewX: parseFloat(shearH) || 0 }));
+  }, [applyTransform, shearH]);
+
+  const applyShearV = useCallback(() => {
+    applyTransform((active) => active.set({ skewY: parseFloat(shearV) || 0 }));
+  }, [applyTransform, shearV]);
+
+  const handleKeyDown = useCallback(
+    (applyFn: () => void) => (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') applyFn();
+    },
+    []
+  );
+
   const handleCanvasColorClick = () => colorInputRef.current?.click();
   const handleCanvasColorChange = (hex: string) => {
     setCanvasColor(hex);
     if (!fabricCanvas) return;
-    const canvas = fabricCanvas as { set: (props: Record<string, unknown>) => void; renderAll: () => void; toJSON: () => Record<string, unknown> };
+    const canvas = fabricCanvas as {
+      set: (props: Record<string, unknown>) => void;
+      renderAll: () => void;
+      toJSON: () => Record<string, unknown>;
+    };
     canvas.set({ backgroundColor: hex });
     canvas.renderAll();
     useCanvasStore.getState().pushUndoState(JSON.stringify(canvas.toJSON()));
@@ -198,43 +232,86 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   return (
     <div>
       <SectionTitle>Rotate &amp; Shear</SectionTitle>
-      <div className="flex gap-2 mb-3">
-        <button type="button" onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Rotate 90&#176;</button>
-        <button type="button" onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Rotate -90&#176;</button>
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <button
+          type="button"
+          onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))}
+          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+        >
+          +90&#176;
+        </button>
+        <button
+          type="button"
+          onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))}
+          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+        >
+          -90&#176;
+        </button>
       </div>
-      <div className="flex gap-2 mb-4">
-        <button type="button" onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Flip Horiz</button>
-        <button type="button" onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Flip Vert</button>
-      </div>
-      
-      <div className="flex items-end gap-2 mb-3">
-        <div className="flex-1">
-          <NumberInput label="Precise Rotation" value={rotation} onChange={setRotation} suffix="deg" />
-        </div>
-        <button type="button" onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation) || 0))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
-      </div>
-      
-      <div className="flex items-end gap-2 mb-3">
-        <div className="flex-1">
-          <NumberInput label="Horizontal Shear" value={shearH} onChange={setShearH} suffix="deg" />
-        </div>
-        <button type="button" onClick={() => applyTransform((active) => active.set({ skewX: parseFloat(shearH) || 0 }))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
+          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+        >
+          Flip H
+        </button>
+        <button
+          type="button"
+          onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
+          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+        >
+          Flip V
+        </button>
       </div>
 
-      <div className="flex items-end gap-2 mb-3">
-        <div className="flex-1">
-          <NumberInput label="Vertical Shear" value={shearV} onChange={setShearV} suffix="deg" />
-        </div>
-        <button type="button" onClick={() => applyTransform((active) => active.set({ skewY: parseFloat(shearV) || 0 }))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
+      <div className="mb-3" onKeyDown={handleKeyDown(applyRotation)}>
+        <NumberInput
+          label="Rotation"
+          value={rotation}
+          onChange={setRotation}
+          suffix="deg"
+        />
       </div>
-      
-      <button type="button" onClick={() => applyTransform((active) => { active.rotate(0); active.set({ skewX: 0, skewY: 0 }); })} className="w-full bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors mb-4">Straighten (Zero All)</button>
+
+      <div className="mb-3" onKeyDown={handleKeyDown(applyShearH)}>
+        <NumberInput label="Skew X" value={shearH} onChange={setShearH} suffix="deg" />
+      </div>
+
+      <div className="mb-4" onKeyDown={handleKeyDown(applyShearV)}>
+        <NumberInput label="Skew Y" value={shearV} onChange={setShearV} suffix="deg" />
+      </div>
+
+      <button
+        type="button"
+        onClick={() =>
+          applyTransform((active) => {
+            active.rotate(0);
+            active.set({ skewX: 0, skewY: 0 });
+          })
+        }
+        className="w-full bg-surface-container text-on-surface/70 rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4"
+      >
+        Reset Transform
+      </button>
 
       {includeCanvasColor && (
-        <div className="flex items-center gap-2">
-          <span className="text-body-sm text-secondary">Canvas Color</span>
-          <div className="w-6 h-6 rounded-sm border border-outline-variant/30 cursor-pointer" style={{ backgroundColor: canvasColor }} onClick={handleCanvasColorClick} />
-          <input ref={colorInputRef} type="color" value={canvasColor} onChange={(e) => handleCanvasColorChange(e.target.value)} className="sr-only" />
+        <div className="flex items-center gap-2.5">
+          <span className="text-[11px] font-medium text-on-surface/60 uppercase tracking-wider">
+            Canvas
+          </span>
+          <div
+            className="w-6 h-6 rounded-md border border-outline-variant/20 cursor-pointer shadow-sm"
+            style={{ backgroundColor: canvasColor }}
+            onClick={handleCanvasColorClick}
+          />
+          <input
+            ref={colorInputRef}
+            type="color"
+            value={canvasColor}
+            onChange={(e) => handleCanvasColorChange(e.target.value)}
+            className="sr-only"
+          />
         </div>
       )}
     </div>
@@ -261,36 +338,21 @@ function BlockPanel() {
   );
 }
 
-function ImagePanel() {
-  const [cropAfterRotation, setCropAfterRotation] = useState(true);
-
-  return (
-    <div className="flex flex-col gap-[2.75rem]">
-      <RotateAndShear includeCanvasColor={false} />
-      <div>
-        <SectionTitle>Background</SectionTitle>
-        <Checkbox label="Crop image after rotation" checked={cropAfterRotation} onChange={setCropAfterRotation} />
-      </div>
-    </div>
-  );
-}
-
-const PANELS: Record<Exclude<WorktableType, 'print'>, React.FC> = {
+const PANELS: Record<'quilt' | 'block', React.FC> = {
   quilt: QuiltPanel,
   block: BlockPanel,
-  image: ImagePanel,
 };
 
 export function ContextPanel() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
 
-  if (activeWorktable === 'print') return null;
+  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
 
   const PanelContent = PANELS[activeWorktable];
 
   return (
-    <div className="w-70 bg-surface flex-shrink-0 overflow-y-auto">
-      <div className="p-4">
+    <div className="w-[260px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/10">
+      <div className="px-4 py-5">
         <PanelContent />
       </div>
     </div>

@@ -104,24 +104,29 @@ export function UploadStep() {
   }, []);
 
   const handleContinue = useCallback(() => {
-    setStep('scanSettings');
+    setStep('imagePrep');
   }, [setStep]);
 
   return (
     <div className="flex flex-col gap-4 h-full">
-      {/* Drop zone */}
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
+      {/* Drop zone — uses native <label> for reliable file dialog trigger */}
+      <label
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full rounded-lg border-2 border-dashed p-10 text-center transition-colors ${
+        className={`w-full rounded-lg border-2 border-dashed p-10 text-center transition-colors cursor-pointer block ${
           isDragOver
             ? 'border-primary bg-primary/5'
             : 'border-outline-variant/30 hover:border-primary/50'
         }`}
       >
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPTED_IMAGE_TYPES.join(',')}
+          onChange={handleFileChange}
+          className="sr-only"
+        />
         {loading ? (
           <p className="text-body-md text-secondary">Processing image...</p>
         ) : (
@@ -148,36 +153,18 @@ export function UploadStep() {
                 strokeLinejoin="round"
               />
             </svg>
-            <p className="text-body-lg font-medium text-on-surface">
-              Drop your quilt photo here
-            </p>
-            <p className="mt-1 text-body-sm text-secondary">
-              or click to browse
-            </p>
-            <p className="mt-2 text-label-sm text-secondary">
-              PNG, JPEG, or WebP up to 20 MB
-            </p>
+            <p className="text-body-lg font-medium text-on-surface">Drop your quilt photo here</p>
+            <p className="mt-1 text-body-sm text-secondary">or click to browse</p>
+            <p className="mt-2 text-label-sm text-secondary">PNG, JPEG, or WebP up to 20 MB</p>
           </>
         )}
-      </button>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept={ACCEPTED_IMAGE_TYPES.join(',')}
-        onChange={handleFileChange}
-        className="hidden"
-      />
+      </label>
 
       {/* Error */}
-      {error && (
-        <p className="text-body-sm text-error">{error}</p>
-      )}
+      {error && <p className="text-body-sm text-error">{error}</p>}
 
       {/* Warning */}
-      {warning && (
-        <p className="text-body-sm text-warning">{warning}</p>
-      )}
+      {warning && <p className="text-body-sm text-warning">{warning}</p>}
 
       {/* Preview */}
       {originalImageUrl && (

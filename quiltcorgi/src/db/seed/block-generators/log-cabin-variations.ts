@@ -92,8 +92,8 @@ function generateCourthouseSteps(): BlockDefinition[] {
           'Log Cabin',
           courthouseStepsSvg(palette, rounds),
           ['log-cabin', 'strips', 'courthouse-steps', 'symmetric', palette],
-          'Courthouse Steps',
-        ),
+          'Courthouse Steps'
+        )
       );
     }
   }
@@ -147,24 +147,15 @@ function pineappleSvg(palette: PaletteName): string {
     // corner triangles
     const triSize = stripWidth;
     // top-left
-    svg += polygon(
-      `${x},${y} ${x + triSize},${y} ${x},${y + triSize}`,
-      triColor,
-    );
+    svg += polygon(`${x},${y} ${x + triSize},${y} ${x},${y + triSize}`, triColor);
     // top-right
-    svg += polygon(
-      `${x + w},${y} ${x + w - triSize},${y} ${x + w},${y + triSize}`,
-      triColor,
-    );
+    svg += polygon(`${x + w},${y} ${x + w - triSize},${y} ${x + w},${y + triSize}`, triColor);
     // bottom-left
-    svg += polygon(
-      `${x},${y + h} ${x + triSize},${y + h} ${x},${y + h - triSize}`,
-      triColor,
-    );
+    svg += polygon(`${x},${y + h} ${x + triSize},${y + h} ${x},${y + h - triSize}`, triColor);
     // bottom-right
     svg += polygon(
       `${x + w},${y + h} ${x + w - triSize},${y + h} ${x + w},${y + h - triSize}`,
-      triColor,
+      triColor
     );
   }
 
@@ -179,7 +170,7 @@ function generatePineapple(): BlockDefinition[] {
       'Log Cabin',
       pineappleSvg(palette),
       ['log-cabin', 'strips', 'pineapple', 'corner-triangles', palette],
-      'Pineapple',
+      'Pineapple'
     );
   });
 }
@@ -226,7 +217,7 @@ function generateOffCenter(): BlockDefinition[] {
       'Log Cabin',
       offCenterSvg(palette),
       ['log-cabin', 'strips', 'off-center', 'asymmetric', palette],
-      'Off-Center',
+      'Off-Center'
     );
   });
 }
@@ -285,7 +276,7 @@ function generateSpiral(): BlockDefinition[] {
       'Log Cabin',
       spiralSvg(palette),
       ['log-cabin', 'strips', 'spiral', 'color-arm', palette],
-      'Spiral',
+      'Spiral'
     );
   });
 }
@@ -337,7 +328,7 @@ function generateHalfLogCabin(): BlockDefinition[] {
       'Log Cabin',
       halfLogCabinSvg(palette),
       ['log-cabin', 'strips', 'half', 'l-shape', palette],
-      'Half Log Cabin',
+      'Half Log Cabin'
     );
   });
 }
@@ -403,8 +394,8 @@ function generateLogCabinRounds(): BlockDefinition[] {
           'Log Cabin',
           standardLogCabinSvg(palette, rounds),
           ['log-cabin', 'strips', 'standard', `${rounds}-round`, palette],
-          'Standard',
-        ),
+          'Standard'
+        )
       );
     }
   }

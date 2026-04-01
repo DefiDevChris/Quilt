@@ -251,7 +251,9 @@ export function ProfileEditForm() {
       </div>
 
       <div>
-        <label className="block text-body-sm font-medium text-on-surface mb-3">Community visibility</label>
+        <label className="block text-body-sm font-medium text-on-surface mb-3">
+          Community visibility
+        </label>
         <div className="flex gap-2">
           <button
             type="button"
@@ -263,7 +265,9 @@ export function ProfileEditForm() {
             }`}
           >
             <div className="font-medium">Public</div>
-            <div className="mt-0.5 text-body-sm text-secondary/80">View, post, comment &amp; heart</div>
+            <div className="mt-0.5 text-body-sm text-secondary/80">
+              View, post, comment &amp; heart
+            </div>
           </button>
           <button
             type="button"

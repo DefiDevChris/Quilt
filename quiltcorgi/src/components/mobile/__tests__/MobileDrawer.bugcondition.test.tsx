@@ -15,8 +15,18 @@ import { MobileDrawer } from '../MobileDrawer';
 
 // Mock next/link to render a plain <a> so we can inspect href
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
-    <a href={href} {...props}>{children}</a>
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));
 

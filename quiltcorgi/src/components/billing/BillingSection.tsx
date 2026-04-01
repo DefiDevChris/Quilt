@@ -47,7 +47,7 @@ export function BillingSection() {
     if (searchParams.get('success') === 'true') {
       setSuccessMessage('Welcome to Pro! Your subscription is now active.');
       if (user) setUser({ ...user, role: 'pro' });
-      window.history.replaceState({}, '', '/profile');
+      window.history.replaceState({}, '', '/settings');
     }
   }, [searchParams, user, setUser]);
 

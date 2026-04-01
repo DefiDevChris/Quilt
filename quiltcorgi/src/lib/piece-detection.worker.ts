@@ -198,7 +198,12 @@ function applyLaplacianSharpening(cv: OpenCV, src: OpenCVMat, intensity: number 
   }
 }
 
-function applyCLAHE(cv: OpenCV, src: OpenCVMat, clipLimit: number = 2.0, tileGridSize: number = 8): OpenCVMat {
+function applyCLAHE(
+  cv: OpenCV,
+  src: OpenCVMat,
+  clipLimit: number = 2.0,
+  tileGridSize: number = 8
+): OpenCVMat {
   const equalized = new cv.Mat();
   const clahe = new cv.CLAHE(clipLimit, new cv.Size(tileGridSize, tileGridSize));
   try {

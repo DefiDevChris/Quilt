@@ -1,13 +1,13 @@
 import React from 'react';
 
-interface GraphicProps extends React.SVGProps<SVGSVGElement> {}
+type GraphicProps = React.SVGProps<SVGSVGElement>;
 
 const baseProps = {
-  viewBox: "0 0 100 100",
-  fill: "none",
+  viewBox: '0 0 100 100',
+  fill: 'none',
   strokeWidth: 3,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
 } as const;
 
 export function NewDesignGraphic(props: GraphicProps) {
@@ -16,24 +16,24 @@ export function NewDesignGraphic(props: GraphicProps) {
       {/* Fabric Block / Canvas */}
       <rect x="15" y="35" width="50" height="50" rx="4" />
       <rect x="23" y="43" width="34" height="34" rx="2" strokeWidth="2" strokeDasharray="4 4" />
-      
+
       {/* Spool Top Cap */}
       <rect x="65" y="15" width="24" height="6" rx="2" />
       {/* Spool Body */}
       <rect x="70" y="21" width="14" height="48" />
       {/* Spool Bottom Cap */}
       <rect x="65" y="69" width="24" height="6" rx="2" />
-      
+
       {/* Thread wraps around the spool body */}
       <line x1="70" y1="30" x2="84" y2="35" strokeWidth="2" />
       <line x1="70" y1="40" x2="84" y2="45" strokeWidth="2" />
       <line x1="70" y1="50" x2="84" y2="55" strokeWidth="2" />
       <line x1="70" y1="60" x2="84" y2="65" strokeWidth="2" />
-      
+
       {/* Needle piercing the fabric */}
       <line x1="55" y1="20" x2="35" y2="60" />
       <ellipse cx="53" cy="24" rx="1.5" ry="4" transform="rotate(-26.5 53 24)" strokeWidth="2" />
-      
+
       {/* Loose thread connecting spool and needle */}
       <path d="M 84 40 C 95 30, 90 5, 75 10 C 60 15, 65 30, 53 24" />
     </svg>
@@ -55,10 +55,10 @@ export function PhotoToPatternGraphic(props: GraphicProps) {
       <line x1="55" y1="35" x2="55" y2="65" />
       <line x1="35" y1="45" x2="65" y2="45" />
       <line x1="35" y1="55" x2="65" y2="55" />
-      
+
       {/* Scanning Laser Line */}
       <line x1="10" y1="50" x2="90" y2="50" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
-      
+
       {/* Small focus nodes */}
       <circle cx="50" cy="50" r="2" fill="currentColor" />
     </svg>
@@ -72,7 +72,7 @@ export function MyQuiltbookGraphic(props: GraphicProps) {
       <path d="M 50 85 C 35 85, 20 80, 15 75 L 15 25 C 25 30, 40 33, 50 35 C 60 33, 75 30, 85 25 L 85 75 C 80 80, 65 85, 50 85 Z" />
       {/* Book Spine Center Line */}
       <line x1="50" y1="35" x2="50" y2="85" />
-      
+
       {/* Page depth markers (left & right) */}
       <path d="M 15 75 L 15 80 C 25 84, 38 87, 50 88 C 62 87, 75 84, 85 80 L 85 75" />
       <line x1="50" y1="85" x2="50" y2="88" />
@@ -128,7 +128,7 @@ export function CommunityGraphic(props: GraphicProps) {
       {/* Heart made of patchwork blocks. Beautiful, symmetrical vector heart. */}
       {/* A standard heart mathematically is represented cleanly via Beziers. */}
       <path d="M 50 85 C 50 85, 15 60, 15 35 C 15 20, 30 10, 45 20 C 50 24, 50 24, 50 24 C 50 24, 50 24, 55 20 C 70 10, 85 20, 85 35 C 85 60, 50 85, 50 85 Z" />
-      
+
       {/* Patchwork seam lines across the heart */}
       <path d="M 15 45 C 35 40, 65 40, 85 45" />
       <path d="M 33 22 L 35 70" />

@@ -23,9 +23,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!parsed.success) {
-    return validationErrorResponse(
-      parsed.error.issues[0]?.message ?? 'Invalid parameters'
-    );
+    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
   }
 
   const { unreadOnly, limit } = parsed.data;
@@ -57,12 +55,7 @@ export async function GET(request: NextRequest) {
       db
         .select({ count: count() })
         .from(notifications)
-        .where(
-          and(
-            eq(notifications.userId, session.user.id),
-            eq(notifications.isRead, false)
-          )
-        ),
+        .where(and(eq(notifications.userId, session.user.id), eq(notifications.isRead, false))),
     ]);
 
     return Response.json({

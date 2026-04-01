@@ -1,10 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import {
-  DEFAULT_CANVAS_WIDTH,
-  DEFAULT_CANVAS_HEIGHT,
-} from '@/lib/constants';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/lib/constants';
 
 export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 

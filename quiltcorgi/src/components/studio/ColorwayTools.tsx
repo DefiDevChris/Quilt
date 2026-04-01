@@ -6,8 +6,14 @@ import { useColorwayTool } from '@/hooks/useColorwayTool';
 import { generateColorScheme, type ColorSchemeType } from '@/lib/colorway-utils';
 
 const DEFAULT_PALETTE = [
-  '#D4883C', '#8B4513', '#F5DEB3', '#2E4057',
-  '#7B3F00', '#A0522D', '#DEB887', '#C9B896',
+  '#D4883C',
+  '#8B4513',
+  '#F5DEB3',
+  '#2E4057',
+  '#7B3F00',
+  '#A0522D',
+  '#DEB887',
+  '#C9B896',
 ];
 
 const COLOR_SCHEMES: Array<{ id: ColorSchemeType; label: string }> = [
@@ -46,16 +52,9 @@ export function ColorwayTools() {
     executeRandomize(palette);
   }, [executeRandomize, palette]);
 
-  const handlePaletteColorChange = useCallback(
-    (index: number, color: string) => {
-      setPalette((prev) => [
-        ...prev.slice(0, index),
-        color,
-        ...prev.slice(index + 1),
-      ]);
-    },
-    []
-  );
+  const handlePaletteColorChange = useCallback((index: number, color: string) => {
+    setPalette((prev) => [...prev.slice(0, index), color, ...prev.slice(index + 1)]);
+  }, []);
 
   const handleGenerateScheme = useCallback(() => {
     const newPalette = generateColorScheme(baseColor, selectedScheme, 8);
@@ -67,20 +66,20 @@ export function ColorwayTools() {
   }, [executeRandomize, palette]);
 
   return (
-    <div className="border-t border-outline-variant/10 pt-1">
+    <div>
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center justify-between px-1 py-1 text-[10px] font-medium uppercase tracking-wider text-secondary"
+        className="flex w-full items-center justify-between py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface/70 hover:text-on-surface transition-colors"
       >
         Colorway
         <svg
-          width="12"
-          height="12"
+          width="14"
+          height="14"
           viewBox="0 0 12 12"
-          className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`transition-transform duration-200 text-on-surface/40 ${isExpanded ? 'rotate-180' : ''}`}
         >
-          <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
         </svg>
       </button>
 
@@ -116,7 +115,7 @@ export function ColorwayTools() {
 
           {/* Swap Colors */}
           <div>
-            <span className="text-[10px] text-secondary block mb-1">Swap Colors</span>
+            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Swap Colors</span>
             <div className="flex items-center gap-1">
               <input
                 type="color"
@@ -126,7 +125,12 @@ export function ColorwayTools() {
                 title="Color A"
               />
               <svg width="14" height="14" viewBox="0 0 14 14" className="text-secondary">
-                <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                <path
+                  d="M3 7H11M8 4L11 7L8 10"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                />
               </svg>
               <input
                 type="color"
@@ -147,7 +151,7 @@ export function ColorwayTools() {
 
           {/* Randomize */}
           <div>
-            <span className="text-[10px] text-secondary block mb-1">Randomize Palette</span>
+            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Randomize Palette</span>
             <div className="flex flex-wrap gap-1 mb-1">
               {palette.map((color, i) => (
                 <input
@@ -170,7 +174,7 @@ export function ColorwayTools() {
 
           {/* Color Scheme Generator */}
           <div>
-            <span className="text-[10px] text-secondary block mb-1">Suggest Palette</span>
+            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Suggest Palette</span>
             <div className="space-y-1">
               <div className="flex items-center gap-1">
                 <input

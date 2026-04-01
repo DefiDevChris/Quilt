@@ -1,0 +1,132 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - navigation "Main navigation" [ref=e4]:
+      - link "QuiltCorgi Logo QuiltCorgi" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+        - img "QuiltCorgi Logo" [ref=e6]
+        - generic [ref=e7]: QuiltCorgi
+      - generic [ref=e8]:
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Social Threads" [ref=e10] [cursor=pointer]:
+          - /url: /socialthreads
+        - link "Profile" [ref=e93] [cursor=pointer]:
+          - /url: /socialthreads
+      - generic [ref=e11]:
+        - generic [ref=e94]: Pro
+        - button "Notifications" [ref=e96]:
+          - img [ref=e97]
+        - button "User menu" [ref=e100]:
+          - img "Default Avatar" [ref=e102]
+    - main [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - paragraph [ref=e18]: Good morning
+          - heading "Hello, Tester123" [level=1] [ref=e103]
+        - generic [ref=e20]:
+          - button "New Design Start a fresh quilt from scratch" [active] [ref=e21] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e22]:
+              - generic [ref=e23]:
+                - paragraph [ref=e24]: New Design
+                - paragraph [ref=e25]: Start a fresh quilt from scratch
+              - img [ref=e27]
+          - button "AI Feature Photo to Pattern Extract blocks from a photo" [ref=e28] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e29]:
+              - generic [ref=e30]: AI Feature
+              - paragraph [ref=e31]: Photo to Pattern
+              - paragraph [ref=e32]: Extract blocks from a photo
+          - link "My Quiltbook 9 saved designs U U U LAST EDITED 32M AGO" [ref=e115] [cursor=pointer]:
+            - /url: /studio
+            - generic:
+              - img
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - paragraph [ref=e36]: My Quiltbook
+                - paragraph [ref=e37]: 9 saved designs
+              - img [ref=e39]
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e107]: U
+                - generic [ref=e110]: U
+                - generic [ref=e113]: U
+              - paragraph [ref=e46]: LAST EDITED 32M AGO
+          - button "Browse Patterns Explore pre-made designs" [ref=e47]:
+            - generic:
+              - img
+            - img [ref=e50]
+            - generic [ref=e55]:
+              - paragraph [ref=e56]: Browse Patterns
+              - paragraph [ref=e57]: Explore pre-made designs
+          - link "Community Threads Share blocks & discover" [ref=e58] [cursor=pointer]:
+            - /url: /socialthreads
+            - generic:
+              - img
+            - img [ref=e61]
+            - generic [ref=e63]:
+              - paragraph [ref=e64]: Community Threads
+              - paragraph [ref=e65]: Share blocks & discover
+          - link "My Profile Manage details and public settings" [ref=e66] [cursor=pointer]:
+            - /url: /profile
+            - generic:
+              - img
+            - img [ref=e68]
+            - generic [ref=e72]:
+              - paragraph [ref=e73]: My Profile
+              - paragraph [ref=e74]: Manage details and public settings
+          - link "System Settings Units, theme, and defaults" [ref=e75] [cursor=pointer]:
+            - /url: /settings
+            - generic:
+              - img
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - paragraph [ref=e78]: System Settings
+                - paragraph [ref=e79]: Units, theme, and defaults
+              - img [ref=e81]
+        - generic [ref=e117]:
+          - heading "New Project" [level=2] [ref=e118]
+          - button "Start from Pattern Choose from our pattern library" [ref=e119]:
+            - img [ref=e120]
+            - generic [ref=e125]:
+              - paragraph [ref=e126]: Start from Pattern
+              - paragraph [ref=e127]: Choose from our pattern library
+            - img [ref=e128]
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: Project Name
+              - textbox "Project Name" [ref=e133]: Untitled Quilt
+            - generic [ref=e134]:
+              - generic [ref=e135]: Unit System
+              - generic [ref=e136]:
+                - button "Imperial (inches)" [ref=e137]
+                - button "Metric (cm)" [ref=e138]
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - generic [ref=e141]: Width (in)
+                - spinbutton "Width (in)" [ref=e142]: "48"
+              - generic [ref=e143]:
+                - generic [ref=e144]: Height (in)
+                - spinbutton "Height (in)" [ref=e145]: "48"
+            - generic [ref=e146]:
+              - heading "Grid Settings" [level=3] [ref=e147]
+              - generic [ref=e148] [cursor=pointer]:
+                - checkbox "Show grid" [checked] [ref=e149]
+                - generic [ref=e150]: Show grid
+              - generic [ref=e151]:
+                - generic [ref=e152]: Grid size (in)
+                - spinbutton "Grid size (in)" [ref=e153]: "1"
+              - generic [ref=e154] [cursor=pointer]:
+                - checkbox "Snap to grid" [checked] [ref=e155]
+                - generic [ref=e156]: Snap to grid
+            - generic [ref=e157]:
+              - button "Cancel" [ref=e158]
+              - button "Create Project" [ref=e159]
+  - generic "Notifications"
+  - button "Open Next.js Dev Tools" [ref=e89] [cursor=pointer]:
+    - img [ref=e90]
+  - alert [ref=e114]

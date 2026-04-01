@@ -385,74 +385,53 @@
     "rows": 11,
     "cols": 9,
     "sashingWidth": 3.5,
-    "borderWidths": [
-      4.75
-    ]
+    "borderWidths": [4.75]
   },
   "cuttingDirections": [
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 1",
-      "instructions": [
-        "Cut (4) squares 9 inches"
-      ]
+      "instructions": ["Cut (4) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 2",
-      "instructions": [
-        "Cut (3) squares 9 inches"
-      ]
+      "instructions": ["Cut (3) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 3",
-      "instructions": [
-        "Cut (3) squares 9 inches"
-      ]
+      "instructions": ["Cut (3) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 4",
-      "instructions": [
-        "Cut (3) squares 9 inches"
-      ]
+      "instructions": ["Cut (3) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 5",
-      "instructions": [
-        "Cut (4) squares 9 inches"
-      ]
+      "instructions": ["Cut (4) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 6",
-      "instructions": [
-        "Cut (3) squares 9 inches"
-      ]
+      "instructions": ["Cut (3) squares 9 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 7",
-      "instructions": [
-        "Cut (18) rectangles 4.75 inches x 9 inches",
-        "Cut (4) squares 4.75 inches"
-      ]
+      "instructions": ["Cut (18) rectangles 4.75 inches x 9 inches", "Cut (4) squares 4.75 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 8",
-      "instructions": [
-        "Cut (120) squares 2 inches"
-      ]
+      "instructions": ["Cut (120) squares 2 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 9",
-      "instructions": [
-        "Cut (120) squares 2 inches"
-      ]
+      "instructions": ["Cut (120) squares 2 inches"]
     },
     {
       "scope": "whole-quilt",

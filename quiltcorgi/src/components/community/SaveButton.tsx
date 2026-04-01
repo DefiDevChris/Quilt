@@ -41,10 +41,7 @@ export function SaveButton({ postId, isSaved, onToggle }: SaveButtonProps) {
           : 'text-secondary hover:text-on-surface hover:bg-surface-container'
       }`}
     >
-      <Bookmark
-        size={16}
-        className={saved ? 'fill-current' : ''}
-      />
+      <Bookmark size={16} className={saved ? 'fill-current' : ''} />
     </button>
   );
 }

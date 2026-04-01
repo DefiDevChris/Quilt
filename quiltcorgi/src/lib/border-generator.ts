@@ -243,11 +243,7 @@ const PATTERN_GENERATORS: Record<BorderPattern, PatternGenerator> = {
   'custom-block': generatePianoKeyUnits, // Fallback; custom blocks handled separately
 };
 
-function offsetUnits(
-  units: BorderPieceUnit[],
-  dx: number,
-  dy: number
-): BorderPieceUnit[] {
+function offsetUnits(units: BorderPieceUnit[], dx: number, dy: number): BorderPieceUnit[] {
   return units.map((u) => ({ ...u, x: u.x + dx, y: u.y + dy }));
 }
 

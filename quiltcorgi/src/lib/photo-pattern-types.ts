@@ -70,6 +70,7 @@ export interface PipelineStep {
 
 export type PhotoPatternStep =
   | 'upload'
+  | 'imagePrep'
   | 'scanSettings'
   | 'correction'
   | 'processing'
@@ -166,8 +167,11 @@ export interface DetectedPieceWithShape extends DetectedPiece {
 // ============================================================================
 
 /** Messages sent TO the detection worker */
-export type WorkerRequestMessage =
-  | { type: 'DETECT_PIECES'; imageData: ImageData; sensitivity: number };
+export type WorkerRequestMessage = {
+  type: 'DETECT_PIECES';
+  imageData: ImageData;
+  sensitivity: number;
+};
 
 /** Messages sent FROM the detection worker */
 export type WorkerResponseMessage =
@@ -303,10 +307,10 @@ export const DEFAULT_QUILT_DETECTION_CONFIG: QuiltDetectionConfig = {
 /**
  * Hierarchy information for nested contours (parent-child relationships).
  * Used for appliqué designs where shapes contain inner shapes.
- * 
+ *
  * OpenCV hierarchy format: [next, previous, first_child, parent]
  * - next: Index of next contour at same level
- * - prev: Index of previous contour at same level  
+ * - prev: Index of previous contour at same level
  * - first_child: Index of first child contour
  * - parent: Index of parent contour (-1 if none)
  */

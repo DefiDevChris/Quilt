@@ -6,7 +6,7 @@ import {
   autoDetectQuiltBoundary,
   computePerspectiveTransform,
   applyPerspectiveCorrection,
-} from '@/lib/perspective-engine';
+} from '@/lib/perspective-utils';
 
 // ── Mock Helpers ────────────────────────────────────────────────
 
@@ -130,7 +130,7 @@ function createMockCv(opts: MockCvOpts = {}): OpenCV {
 
 // ── Tests ───────────────────────────────────────────────────────
 
-describe('perspective-engine', () => {
+describe('perspective-utils', () => {
   describe('sortCornersClockwise', () => {
     it('sorts scrambled square corners into TL, TR, BR, BL order', () => {
       const scrambled: [Point2D, Point2D, Point2D, Point2D] = [

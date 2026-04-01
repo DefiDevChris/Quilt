@@ -126,9 +126,9 @@ export function levenshteinDistance(a: string, b: string): number {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
       const temp = row[j];
       row[j] = Math.min(
-        row[j] + 1,       // deletion
-        row[j - 1] + 1,   // insertion
-        prev + cost        // substitution
+        row[j] + 1, // deletion
+        row[j - 1] + 1, // insertion
+        prev + cost // substitution
       );
       prev = temp;
     }
@@ -152,9 +152,7 @@ export function inferColorHex(fabricName: string, colorFamily?: string): string 
 
   // Try longest color names first to prefer "hot pink" over "pink",
   // "royal blue" over "blue", etc.
-  const sortedNames = Object.keys(COLOR_NAME_TO_HEX).sort(
-    (a, b) => b.length - a.length
-  );
+  const sortedNames = Object.keys(COLOR_NAME_TO_HEX).sort((a, b) => b.length - a.length);
 
   for (const colorName of sortedNames) {
     if (nameLower.includes(colorName)) {
@@ -254,9 +252,7 @@ function inferColorFamily(fabricName: string): string | undefined {
 /**
  * Build a lookup map of normalized SKU -> FabricRecord for O(1) SKU matching.
  */
-function buildSkuIndex(
-  dbFabrics: readonly FabricRecord[]
-): ReadonlyMap<string, FabricRecord> {
+function buildSkuIndex(dbFabrics: readonly FabricRecord[]): ReadonlyMap<string, FabricRecord> {
   const index = new Map<string, FabricRecord>();
   for (const fabric of dbFabrics) {
     if (fabric.sku) {
@@ -291,9 +287,7 @@ function tryNameMatch(
 
     // Try collection + color name if collection exists
     if (dbFabric.collection) {
-      const collectionName = normalizeName(
-        `${dbFabric.collection} ${dbFabric.name}`
-      );
+      const collectionName = normalizeName(`${dbFabric.collection} ${dbFabric.name}`);
       const dist = levenshteinDistance(patternName, collectionName);
       if (dist < bestDistance) {
         bestDistance = dist;
@@ -320,18 +314,14 @@ function tryColorFamilyMatch(
   patternFabric: ParsedFabric,
   dbFabrics: readonly FabricRecord[]
 ): FabricRecord | null {
-  const targetFamily =
-    patternFabric.colorFamily ?? inferColorFamily(patternFabric.name);
+  const targetFamily = patternFabric.colorFamily ?? inferColorFamily(patternFabric.name);
 
   if (!targetFamily) return null;
 
   const targetFamilyLower = targetFamily.toLowerCase();
 
   for (const dbFabric of dbFabrics) {
-    if (
-      dbFabric.colorFamily &&
-      dbFabric.colorFamily.toLowerCase() === targetFamilyLower
-    ) {
+    if (dbFabric.colorFamily && dbFabric.colorFamily.toLowerCase() === targetFamilyLower) {
       return dbFabric;
     }
   }
@@ -383,10 +373,7 @@ export function matchPatternFabrics(
         patternSku: patternFabric.sku ?? null,
         matchedFabricId: nameMatch.fabric.id,
         confidence,
-        colorHex: inferColorHex(
-          nameMatch.fabric.name,
-          nameMatch.fabric.colorFamily ?? undefined
-        ),
+        colorHex: inferColorHex(nameMatch.fabric.name, nameMatch.fabric.colorFamily ?? undefined),
         matchMethod: 'name',
       };
     }
@@ -400,10 +387,7 @@ export function matchPatternFabrics(
         patternSku: patternFabric.sku ?? null,
         matchedFabricId: colorMatch.id,
         confidence: 0.4,
-        colorHex: inferColorHex(
-          colorMatch.name,
-          colorMatch.colorFamily ?? undefined
-        ),
+        colorHex: inferColorHex(colorMatch.name, colorMatch.colorFamily ?? undefined),
         matchMethod: 'color-family',
       };
     }
@@ -415,10 +399,7 @@ export function matchPatternFabrics(
       patternSku: patternFabric.sku ?? null,
       matchedFabricId: null,
       confidence: 0,
-      colorHex: inferColorHex(
-        patternFabric.name,
-        patternFabric.colorFamily ?? undefined
-      ),
+      colorHex: inferColorHex(patternFabric.name, patternFabric.colorFamily ?? undefined),
       matchMethod: 'none',
     };
   });
