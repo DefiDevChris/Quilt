@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useColorwayTool } from '@/hooks/useColorwayTool';
-import { generateColorScheme, type ColorSchemeType } from '@/lib/colorway-engine';
+import { generateColorScheme, type ColorSchemeType } from '@/lib/colorway-utils';
 
 const DEFAULT_PALETTE = [
   '#D4883C', '#8B4513', '#F5DEB3', '#2E4057',

@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { STANDARD_WOFS, type WOF } from '@/lib/yardage-engine';
+import { STANDARD_WOFS, type WOF } from '@/lib/yardage-utils';
 
 export function YardagePanel() {
   const isPanelOpen = useYardageStore((s) => s.isPanelOpen);

@@ -8,7 +8,7 @@ import {
   createBackgroundLayer,
   bringForward,
   sendBackward,
-} from '@/lib/applique-engine';
+} from '@/lib/applique-utils';
 
 // ---------------------------------------------------------------------------
 // Types

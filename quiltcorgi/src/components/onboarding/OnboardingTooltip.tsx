@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TOUR_STEPS } from '@/lib/onboarding-engine';
+import { TOUR_STEPS } from '@/lib/onboarding-utils';
 
 interface OnboardingTooltipProps {
   readonly stepIndex: number;

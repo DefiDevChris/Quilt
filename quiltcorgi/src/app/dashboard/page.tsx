@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, Scissors, ScanLine, BookOpen, LayoutGrid, HeartHandshake, Settings, UserCircle } from 'lucide-react';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
@@ -133,352 +133,187 @@ export default function DashboardPage() {
 
   /* ── Main bento grid ─────────────────────────────────────────────── */
   return (
-    <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden">
-      <div className="h-full p-2 grid grid-cols-12 grid-rows-[3fr_2fr] gap-2">
-        {/* ── 1. New Design — col 1-7, row 1 ──────────────────────── */}
+    <div className="max-w-6xl mx-auto md:py-6 relative z-10 w-full">
+      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[250px_180px_160px] gap-4 pb-20">
+        
+        {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="col-start-1 col-span-12 md:col-span-7 row-start-1 min-h-[160px] md:min-h-0 rounded-xl p-5 text-left relative overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-br from-[#FFE4D0]/95 via-[#FFF4EB]/80 to-white/50 backdrop-blur-xl border border-white/70 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.07)]"
+          className="col-span-12 md:col-span-8 rounded-2xl p-6 md:p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-orange-50/95 via-amber-50/80 to-white/60 backdrop-blur-xl border border-white shadow-sm"
         >
-          {/* Decorative background quilt blocks */}
-          <div className="absolute bottom-0 right-0 w-40 h-40 opacity-[0.08] pointer-events-none translate-x-6 translate-y-6">
-            <svg viewBox="0 0 56 56" fill="none" className="w-full h-full">
-              <rect x="2" y="2" width="24" height="24" rx="4" fill="#C67B5C" />
-              <rect x="30" y="2" width="24" height="24" rx="4" fill="#FFB085" />
-              <rect x="2" y="30" width="24" height="24" rx="4" fill="#FFB085" />
-              <rect x="30" y="30" width="24" height="24" rx="4" fill="#C67B5C" />
-              <path
-                d="M14 2L2 14M26 2L2 26M40 2L30 12M54 2L30 26M14 30L2 42M26 30L2 54M40 30L30 40M54 30L30 54"
-                stroke="#4A3B32"
-                strokeWidth="0.6"
-                strokeLinecap="round"
-                opacity="0.12"
-              />
-            </svg>
+          {/* Custom Bento Graphic Background (Lucide) */}
+          <div className="absolute -bottom-8 -right-8 opacity-10 pointer-events-none group-hover:scale-105 group-hover:rotate-[-5deg] transition-transform duration-500">
+            <Scissors size={280} strokeWidth={1} className="text-orange-900" />
           </div>
 
-          {/* Greeting */}
           <div className="relative z-10">
-            <p className="text-slate-500 text-xs font-medium tracking-wide">{greeting}</p>
-            <h1 className="text-slate-800 text-lg font-extrabold tracking-tight mt-0.5">
+            <p className="text-slate-500 text-sm font-medium tracking-wide uppercase">{greeting}</p>
+            <h1 className="text-slate-900 text-3xl font-extrabold tracking-tight mt-1">
               Hello, {displayName}
             </h1>
           </div>
 
-          {/* CTA */}
-          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10">
+          <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between z-10">
             <div>
-              <p className="text-slate-800 font-extrabold text-base tracking-tight">New Design</p>
-              <p className="text-slate-500 text-xs mt-0.5">Start a fresh quilt from scratch</p>
+              <p className="text-slate-900 font-extrabold text-xl tracking-tight">New Design</p>
+              <p className="text-slate-600 text-sm mt-1">Start a fresh quilt from scratch</p>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center shadow-lg group-hover:bg-orange-600 group-hover:shadow-orange-200/80 group-hover:shadow-xl transition-all flex-shrink-0">
-              <Plus size={18} className="text-white" strokeWidth={2.5} />
+            <div className="w-12 h-12 rounded-full bg-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/30 group-hover:bg-orange-500 group-hover:scale-110 transition-all flex-shrink-0">
+              <Plus size={24} className="text-white" strokeWidth={2.5} />
             </div>
           </div>
         </button>
 
-        {/* ── 2. Photo to Pattern — col 8-12, rows 1+2 (full height) ─ */}
+        {/* ── 2. Photo to Pattern — col 9-12, row 1 ─ */}
         <button
           type="button"
           onClick={() => openPhotoPattern()}
-          className="col-start-1 md:col-start-8 col-span-12 md:col-span-5 row-start-2 md:row-start-1 md:row-span-2 min-h-[200px] md:min-h-0 rounded-xl overflow-hidden relative group cursor-pointer text-left transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5"
+          className="col-span-12 md:col-span-4 rounded-2xl p-6 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-slate-900 border border-slate-800 shadow-lg"
         >
-          <Image
-            src="/images/quilts/quilt_01_closeup_churndash.png"
-            alt="Photo to Pattern"
-            fill
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-          />
-
-          {/* Scan overlay SVG */}
-          <svg
-            className="absolute inset-0 w-full h-full opacity-70 mix-blend-screen"
-            viewBox="0 0 400 600"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            <rect
-              x="28"
-              y="38"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.9"
-            />
-            <rect
-              x="130"
-              y="38"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.9"
-            />
-            <rect
-              x="232"
-              y="38"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.7"
-            />
-            <rect
-              x="334"
-              y="38"
-              width="60"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.6"
-            />
-            <rect
-              x="28"
-              y="140"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.8"
-            />
-            <rect
-              x="130"
-              y="140"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.6"
-            />
-            <rect
-              x="232"
-              y="140"
-              width="92"
-              height="92"
-              rx="3"
-              fill="none"
-              stroke="#00ff88"
-              strokeWidth="2.2"
-              opacity="0.5"
-            />
-            <line
-              x1="28"
-              y1="38"
-              x2="120"
-              y2="130"
-              stroke="#00ccff"
-              strokeWidth="1.4"
-              opacity="0.55"
-            />
-            <line
-              x1="120"
-              y1="38"
-              x2="28"
-              y2="130"
-              stroke="#00ccff"
-              strokeWidth="1.4"
-              opacity="0.55"
-            />
-            <line
-              x1="130"
-              y1="38"
-              x2="222"
-              y2="130"
-              stroke="#00ccff"
-              strokeWidth="1.4"
-              opacity="0.45"
-            />
-            <line
-              x1="222"
-              y1="38"
-              x2="130"
-              y2="130"
-              stroke="#00ccff"
-              strokeWidth="1.4"
-              opacity="0.45"
-            />
-            {(
-              [
-                [28, 38],
-                [120, 38],
-                [28, 130],
-                [120, 130],
-                [130, 38],
-                [222, 38],
-                [130, 130],
-                [222, 130],
-                [232, 38],
-                [324, 38],
-                [232, 130],
-                [324, 130],
-              ] as [number, number][]
-            ).map(([cx, cy], i) => (
-              <circle key={i} cx={cx} cy={cy} r="4" fill="#00ff88" opacity="0.95" />
-            ))}
-          </svg>
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-
-          {/* Label */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-            <span className="text-orange-300 text-[9px] font-bold uppercase tracking-[0.18em]">
+          {/* Custom Bento Graphic Background (Lucide) */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[65%] opacity-20 pointer-events-none group-hover:scale-110 transition-transform duration-500">
+             <ScanLine size={160} strokeWidth={1} className="text-white" />
+          </div>
+          
+          <div className="absolute bottom-6 left-6 right-6 z-10">
+            <span className="inline-block px-2.5 py-1 bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-widest rounded-full mb-3">
               AI Feature
             </span>
-            <p className="text-white text-base md:text-lg font-extrabold tracking-tight mt-1">
+            <p className="text-white text-xl font-extrabold tracking-tight">
               Photo to Pattern
             </p>
-            <p className="text-white/70 text-xs mt-1">
-              Import a quilt photo &amp; extract blocks
+            <p className="text-slate-400 text-sm mt-1">
+              Extract blocks from a photo
             </p>
           </div>
         </button>
 
-        {/* ── 3. Quiltbook — col 1-3, row 2 ───────────────────────── */}
+        {/* ── 3. Quiltbook — col 1-4, row 2 ───────────────────────── */}
         <Link
           href="/studio"
-          className="col-start-1 col-span-12 md:col-span-3 row-start-3 md:row-start-2 rounded-xl p-4 relative overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.06)]"
+          className="col-span-12 md:col-span-4 rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white/70 backdrop-blur-xl border border-white shadow-sm flex flex-col justify-between group"
         >
-          <div className="flex items-start justify-between">
+          <div className="absolute -bottom-4 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
+             <BookOpen size={180} strokeWidth={1} className="text-orange-900" />
+          </div>
+          <div className="flex items-start justify-between relative z-10">
             <div>
-              <p className="text-slate-800 font-extrabold text-sm tracking-tight">My Quiltbook</p>
-              <p className="text-slate-500 text-xs mt-0.5">
+              <p className="text-slate-900 font-extrabold text-lg tracking-tight">My Quiltbook</p>
+              <p className="text-slate-500 text-sm mt-0.5">
                 {projectCount !== null
-                  ? `${projectCount} ${projectCount === 1 ? 'project' : 'projects'}`
+                  ? `${projectCount} saved designs`
                   : 'Your saved designs'}
               </p>
             </div>
-            <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
-              <svg width="14" height="14" viewBox="0 0 40 40" fill="none">
-                <path
-                  d="M5 6h12a3 3 0 013 3v24c0-2-1.5-3.5-3.5-3.5H5V6z"
-                  stroke="#f97316"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-                <path
-                  d="M35 6H23a3 3 0 00-3 3v24c0-2 1.5-3.5 3.5-3.5H35V6z"
-                  stroke="#f97316"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              </svg>
+            <div className="w-10 h-10 rounded-full bg-orange-100/80 flex items-center justify-center flex-shrink-0 border border-orange-200">
+              <BookOpen size={20} className="text-orange-600" />
             </div>
           </div>
 
-          {projects.length > 0 ? (
-            <div className="flex gap-1.5 mt-3">
-              {projects.slice(0, 4).map((p) => (
-                <div
-                  key={p.id}
-                  className="flex-1 aspect-square rounded-md bg-slate-100/80 overflow-hidden border border-white/80"
-                >
-                  {p.thumbnailUrl ? (
-                    <Image
-                      src={p.thumbnailUrl}
-                      alt={p.name}
-                      width={48}
-                      height={48}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-slate-400 text-[10px] font-bold">
-                        {p.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-3 flex gap-1.5">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 aspect-square rounded-md bg-slate-100/60 border border-dashed border-slate-200"
-                />
-              ))}
-            </div>
-          )}
-
-          <p className="text-[10px] text-slate-400 mt-2 font-medium">
-            {projects.length > 0
-              ? `Last edited ${formatRelativeTime(projects[0].updatedAt)}`
-              : 'No projects yet'}
-          </p>
+          <div className="relative z-10">
+            {projects.length > 0 ? (
+              <div className="flex gap-2">
+                {projects.slice(0, 3).map((p) => (
+                  <div key={p.id} className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
+                    {p.thumbnailUrl ? (
+                      <Image src={p.thumbnailUrl} alt={p.name} width={48} height={48} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-50">
+                        <span className="text-slate-400 text-xs font-bold">{p.name.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-12 h-12 rounded-lg border-2 border-dashed border-slate-200 bg-slate-50/50" />
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-slate-400 mt-3 font-medium">
+              {projects.length > 0 ? `Last edited ${formatRelativeTime(projects[0].updatedAt)}` : 'No projects yet'}
+            </p>
+          </div>
         </Link>
 
-        {/* ── 4. Browse Patterns — col 4-5, row 2 ─────────────────── */}
+        {/* ── 4. Browse Patterns — col 5-8, row 2 ─────────────────── */}
         <button
           type="button"
           onClick={() => setActiveTab('patterns')}
-          className="col-start-1 md:col-start-4 col-span-6 md:col-span-2 row-start-4 md:row-start-2 rounded-xl overflow-hidden relative transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 text-left bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_2px_4px_rgba(74,59,50,0.04),0_8px_24px_rgba(74,59,50,0.06)]"
+          className="col-span-12 md:col-span-4 rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-left bg-white/70 backdrop-blur-xl border border-white shadow-sm group flex flex-col justify-between"
         >
-          <div className="h-[55%] relative overflow-hidden">
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 200 120"
-              preserveAspectRatio="xMidYMid slice"
-              className="absolute inset-0"
-            >
-              {([0, 40, 80, 120, 160] as number[]).map((x, xi) =>
-                ([0, 40, 80] as number[]).map((y, yi) => (
-                  <g key={`${xi}-${yi}`}>
-                    <polygon
-                      points={`${x},${y} ${x + 40},${y} ${x},${y + 40}`}
-                      fill="#FFB085"
-                      opacity={(xi + yi) % 3 === 0 ? 0.85 : 0.5}
-                    />
-                    <polygon
-                      points={`${x + 40},${y} ${x + 40},${y + 40} ${x},${y + 40}`}
-                      fill="#C67B5C"
-                      opacity={(xi + yi) % 2 === 0 ? 0.45 : 0.28}
-                    />
-                  </g>
-                ))
-              )}
-            </svg>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-700">
+             <LayoutGrid size={220} strokeWidth={1} className="text-slate-900" />
           </div>
-          <div className="p-3.5">
-            <p className="text-slate-800 font-extrabold text-sm tracking-tight">Browse Patterns</p>
-            <p className="text-slate-500 text-xs mt-0.5">Pre-made designs</p>
+          <div className="relative z-10">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+              <LayoutGrid size={20} className="text-slate-600" />
+            </div>
+          </div>
+          <div className="relative z-10 mt-auto">
+            <p className="text-slate-900 font-extrabold text-lg tracking-tight">Browse Patterns</p>
+            <p className="text-slate-500 text-sm mt-0.5">Explore pre-made designs</p>
           </div>
         </button>
 
-        {/* ── 5. Community — col 6-7, row 2 ───────────────────────── */}
+        {/* ── 5. Community — col 9-12, row 2 ───────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-start-7 md:col-start-6 col-span-6 md:col-span-2 row-start-4 md:row-start-2 min-h-[140px] md:min-h-0 rounded-xl overflow-hidden relative transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 block"
+          className="col-span-12 md:col-span-4 rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-gradient-to-br from-[#FFE4D0]/40 to-white/70 backdrop-blur-xl border border-white shadow-sm group flex flex-col justify-between"
         >
-          <Image
-            src="/images/quilts/quilt_03_closeup_scrappy.png"
-            alt="Community"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-3.5">
-            <p className="text-white font-extrabold text-sm tracking-tight">Community</p>
-            <p className="text-white/70 text-xs mt-0.5">Share &amp; discover</p>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
+             <HeartHandshake size={180} strokeWidth={1} className="text-orange-900" />
+          </div>
+          <div className="relative z-10">
+             <div className="w-10 h-10 rounded-full bg-orange-100/80 flex items-center justify-center border border-orange-200">
+              <HeartHandshake size={20} className="text-orange-600" />
+            </div>
+          </div>
+          <div className="relative z-10 mt-auto">
+            <p className="text-slate-900 font-extrabold text-lg tracking-tight">Community Threads</p>
+            <p className="text-slate-600 text-sm mt-0.5">Share blocks &amp; discover</p>
           </div>
         </Link>
+
+        {/* ── 6. Profile — col 1-6, row 3 ──────────────────────────── */}
+        <Link
+          href="/profile"
+          className="col-span-12 md:col-span-6 rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white/60 backdrop-blur-xl border border-white shadow-sm group flex items-center gap-5"
+        >
+          <div className="absolute top-[-20%] right-[-10%] opacity-[0.02] pointer-events-none">
+             <UserCircle size={280} strokeWidth={1} className="text-slate-900" />
+          </div>
+          <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 relative z-10 shrink-0">
+            <UserCircle size={28} className="text-slate-600" />
+          </div>
+          <div className="relative z-10">
+            <p className="text-slate-900 font-extrabold text-lg tracking-tight">My Profile</p>
+            <p className="text-slate-500 text-sm mt-0.5">Manage details and public settings</p>
+          </div>
+        </Link>
+
+        {/* ── 7. Settings — col 7-12, row 3 ────────────────────────── */}
+        <Link
+          href="/profile#settings"
+          className="col-span-12 md:col-span-6 rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-50/80 backdrop-blur-xl border border-white shadow-sm group flex items-center gap-5"
+        >
+          <div className="absolute top-1/2 left-[-10%] -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-45 transition-transform duration-1000">
+             <Settings size={220} strokeWidth={1} className="text-slate-900" />
+          </div>
+          <div className="relative z-10 ml-auto flex items-center gap-5 w-full justify-end">
+             <div className="text-right">
+               <p className="text-slate-900 font-extrabold text-lg tracking-tight">System Settings</p>
+               <p className="text-slate-500 text-sm mt-0.5">Units, theme, defaults</p>
+             </div>
+             <div className="w-14 h-14 rounded-full bg-slate-200/50 flex items-center justify-center border border-slate-300 shrink-0 group-hover:bg-slate-200 transition-colors">
+               <Settings size={28} className="text-slate-600" />
+             </div>
+          </div>
+        </Link>
+
       </div>
 
       <PhotoPatternModal />

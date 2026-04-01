@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
-import { scalePiecesToDimensions } from '@/lib/piece-detection-engine';
+import { scalePiecesToDimensions } from '@/lib/piece-detection-utils';
 import { QUILT_SIZE_PRESETS } from '@/lib/constants';
 
 export function DimensionsStep() {

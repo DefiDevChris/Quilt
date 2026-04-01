@@ -2,7 +2,7 @@
 
 import { useAppliqueDraw } from '@/hooks/useAppliqueDraw';
 import type { DraftTabProps } from './BlockDraftingShell';
-import type { ShapeType } from '@/lib/applique-engine';
+import type { ShapeType } from '@/lib/applique-utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -172,7 +172,7 @@ function LayerRow({
 // ---------------------------------------------------------------------------
 
 interface LayerPanelProps {
-  layers: readonly import('@/lib/applique-engine').AppliqueLayer[];
+  layers: readonly import('@/lib/applique-utils').AppliqueLayer[];
   onMoveForward: (id: string) => void;
   onMoveBackward: (id: string) => void;
   onRemove: (id: string) => void;

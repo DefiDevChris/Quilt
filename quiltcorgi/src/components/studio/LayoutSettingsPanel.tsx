@@ -3,7 +3,7 @@
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
-import type { LayoutType } from '@/lib/layout-engine';
+import type { LayoutType } from '@/lib/layout-utils';
 
 interface LayoutSettingsPanelProps {
   onClose: () => void;

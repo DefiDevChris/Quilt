@@ -10,7 +10,7 @@ import {
   normalizeColor,
   type PatchColor,
   type ColorChange,
-} from '@/lib/colorway-engine';
+} from '@/lib/colorway-utils';
 
 /**
  * Hook that handles colorway tool interactions on the Fabric.js canvas.

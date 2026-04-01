@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import type { WOF, YardageResult } from '@/lib/yardage-engine';
+import type { WOF, YardageResult } from '@/lib/yardage-utils';
 import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { TOUR_STEPS, ONBOARDING_STORAGE_KEY, setStorageFlag } from '@/lib/onboarding-engine';
+import { TOUR_STEPS, ONBOARDING_STORAGE_KEY, setStorageFlag } from '@/lib/onboarding-utils';
 
 interface OnboardingState {
   currentStepIndex: number;

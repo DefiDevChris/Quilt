@@ -29,8 +29,8 @@ import {
   autoDetectQuiltBoundary,
   computePerspectiveTransform,
   applyPerspectiveCorrection,
-} from '@/lib/perspective-engine';
-import { detectQuiltShape, detectEdgePieces } from '@/lib/piece-detection-engine';
+} from '@/lib/perspective-utils';
+import { detectQuiltShape, detectEdgePieces } from '@/lib/piece-detection-utils';
 import type { OpenCV, OpenCVMat } from '@/lib/opencv-loader';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -523,6 +523,6 @@ export async function detectPiecesMainThread(
   correctedImage: OpenCVMat,
   options: DetectionOptions = {}
 ): Promise<readonly DetectedPiece[]> {
-  const { detectPieces } = await import('@/lib/piece-detection-engine');
+  const { detectPieces } = await import('@/lib/piece-detection-utils');
   return detectPieces(cv, correctedImage, options) as DetectedPiece[];
 }

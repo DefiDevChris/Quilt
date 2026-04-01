@@ -9,7 +9,7 @@ import {
   type CuttingChartEntry,
   type CuttingChartItem,
 } from '@/lib/cutting-chart-generator';
-import type { WOF } from '@/lib/yardage-engine';
+import type { WOF } from '@/lib/yardage-utils';
 
 interface CuttingChartPanelProps {
   isOpen: boolean;

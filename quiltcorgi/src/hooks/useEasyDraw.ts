@@ -8,7 +8,7 @@ import {
   type Segment,
   type DrawSegment,
   type Patch,
-} from '@/lib/easydraw-engine';
+} from '@/lib/easydraw-utils';
 
 interface UseEasyDrawOptions {
   draftCanvasRef: React.MutableRefObject<unknown>;

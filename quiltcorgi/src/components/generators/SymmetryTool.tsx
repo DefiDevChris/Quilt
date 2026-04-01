@@ -13,7 +13,7 @@ import {
   type SymmetryType,
   type SymmetryConfig,
   type SerializedObject,
-} from '@/lib/symmetry-engine';
+} from '@/lib/symmetry-utils';
 
 interface SymmetryToolProps {
   isOpen: boolean;

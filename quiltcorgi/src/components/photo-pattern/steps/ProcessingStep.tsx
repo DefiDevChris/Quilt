@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { loadOpenCv } from '@/lib/opencv-loader';
-import { runDetectionPipeline } from '@/lib/photo-pattern-engine';
+import { runDetectionPipeline } from '@/lib/photo-pattern-utils';
 import type { PipelineStepStatus } from '@/lib/photo-pattern-types';
 
 function StepIcon({ status }: { readonly status: PipelineStepStatus }) {

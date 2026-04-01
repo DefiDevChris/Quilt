@@ -10,7 +10,7 @@ import {
   variationToSvg,
   multiPolygonToFabricData,
   type GeneratedVariation,
-} from '@/lib/serendipity-engine';
+} from '@/lib/serendipity-utils';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import type { BlockListItem } from '@/types/block';
 
