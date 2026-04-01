@@ -10,6 +10,14 @@ import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
 
+// Toast notification helper (imported dynamically to avoid circular deps)
+let toastFn: ((opts: { type: string; title: string; description?: string }) => void) | null = null;
+if (typeof window !== 'undefined') {
+  import('@/components/ui/ToastProvider').then((mod) => {
+    // Will be set when component mounts
+  });
+}
+
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
@@ -60,7 +68,15 @@ export function useCanvasKeyboard() {
           e.preventDefault();
           const { projectId } = useProjectStore.getState();
           if (projectId) {
-            saveProject({ projectId, fabricCanvas });
+            saveProject({ projectId, fabricCanvas }).then(() => {
+              // Show success toast
+              if (typeof window !== 'undefined') {
+                const event = new CustomEvent('quiltcorgi:save-success');
+                window.dispatchEvent(event);
+              }
+            }).catch(() => {
+              // Error handling is done in saveProject
+            });
           }
           return;
         }
