@@ -4,11 +4,12 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { FabricSearch } from '@/components/fabrics/FabricSearch';
 import { FabricCard } from '@/components/fabrics/FabricCard';
 import type { FabricListItem } from '@/types/fabric';
 
-type TabType = 'library' | 'myfabrics';
+type TabType = 'library' | 'myfabrics' | 'presets';
 
 interface FabricLibraryProps {
   onFabricDragStart: (e: React.DragEvent, fabricId: string) => void;
@@ -30,6 +31,8 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const fetchUserFabrics = useFabricStore((s) => s.fetchUserFabrics);
   const deleteUserFabric = useFabricStore((s) => s.deleteUserFabric);
   const isPro = useAuthStore((s) => s.isPro);
+  const fabricPresets = useProjectStore((s) => s.fabricPresets);
+  const removeFabricPreset = useProjectStore((s) => s.removeFabricPreset);
 
   const [activeTab, setActiveTab] = useState<TabType>('library');
 
@@ -86,6 +89,17 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 }`}
               >
                 Library
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('presets')}
+                className={`flex-1 px-3 py-1.5 text-xs font-medium ${
+                  activeTab === 'presets'
+                    ? 'border-b-2 border-primary text-primary'
+                    : 'text-on-surface/60 hover:text-on-surface'
+                }`}
+              >
+                Presets
               </button>
               <button
                 type="button"
@@ -163,6 +177,31 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                     </button>
                   </div>
                 )}
+              </>
+            ) : activeTab === 'presets' ? (
+              <>
+                <div className="px-3 py-2 text-[10px] text-secondary">
+                  {fabricPresets.length} preset{fabricPresets.length !== 1 ? 's' : ''}
+                </div>
+                <div className="flex-1 overflow-y-auto px-3 py-1">
+                  {fabricPresets.length === 0 ? (
+                    <div className="py-8 text-center">
+                      <p className="text-sm text-secondary">No presets yet</p>
+                      <p className="text-xs text-secondary mt-1">Right-click any fabric to add</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {fabricPresets.map((preset) => (
+                        <FabricCard
+                          key={preset.id}
+                          fabric={preset as FabricListItem}
+                          onDragStart={handleDragStart}
+                          onRemove={() => removeFabricPreset(preset.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>

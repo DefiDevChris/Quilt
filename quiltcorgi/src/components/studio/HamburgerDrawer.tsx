@@ -110,11 +110,6 @@ export function HamburgerDrawer({
     useCanvasStore.getState().setZoom(1);
   }, []);
 
-  const handleToggleGrid = useCallback(() => {
-    const { gridSettings, setGridSettings } = useCanvasStore.getState();
-    setGridSettings({ enabled: !gridSettings.enabled });
-  }, []);
-
   const menuGroups: MenuGroup[] = [
     {
       title: 'File',
@@ -141,7 +136,6 @@ export function HamburgerDrawer({
         { label: 'Zoom In', shortcut: 'Ctrl+=', onClick: handleZoomIn },
         { label: 'Zoom Out', shortcut: 'Ctrl+-', onClick: handleZoomOut },
         { label: 'Fit to Screen', onClick: handleFitToScreen },
-        { label: 'Show/Hide Grid', onClick: handleToggleGrid },
       ],
     },
     {

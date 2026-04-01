@@ -169,6 +169,11 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   const [shearV, setShearV] = useState('0');
   const [canvasColor, setCanvasColor] = useState('#ffffff');
   const colorInputRef = useRef<HTMLInputElement>(null);
+  // Refs track the latest typed value so applyFn reads current data even before
+  // React state flushes (NumberInput commits on blur/Enter which is async state).
+  const rotationRef = useRef('0');
+  const shearHRef = useRef('0');
+  const shearVRef = useRef('0');
 
   useEffect(() => {
     if (!fabricCanvas) return;
@@ -197,16 +202,16 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   );
 
   const applyRotation = useCallback(() => {
-    applyTransform((active) => active.rotate(parseFloat(rotation) || 0));
-  }, [applyTransform, rotation]);
+    applyTransform((active) => active.rotate(parseFloat(rotationRef.current) || 0));
+  }, [applyTransform]);
 
   const applyShearH = useCallback(() => {
-    applyTransform((active) => active.set({ skewX: parseFloat(shearH) || 0 }));
-  }, [applyTransform, shearH]);
+    applyTransform((active) => active.set({ skewX: parseFloat(shearHRef.current) || 0 }));
+  }, [applyTransform]);
 
   const applyShearV = useCallback(() => {
-    applyTransform((active) => active.set({ skewY: parseFloat(shearV) || 0 }));
-  }, [applyTransform, shearV]);
+    applyTransform((active) => active.set({ skewY: parseFloat(shearVRef.current) || 0 }));
+  }, [applyTransform]);
 
   const handleKeyDown = useCallback(
     (applyFn: () => void) => (e: React.KeyboardEvent) => {
@@ -269,17 +274,36 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         <NumberInput
           label="Rotation"
           value={rotation}
-          onChange={setRotation}
+          onChange={(val) => {
+            setRotation(val);
+            rotationRef.current = val;
+          }}
           suffix="deg"
         />
       </div>
 
       <div className="mb-3" onKeyDown={handleKeyDown(applyShearH)}>
-        <NumberInput label="Skew X" value={shearH} onChange={setShearH} suffix="deg" />
+        <NumberInput
+          label="Skew X"
+          value={shearH}
+          onChange={(val) => {
+            setShearH(val);
+            shearHRef.current = val;
+          }}
+          suffix="deg"
+        />
       </div>
 
       <div className="mb-4" onKeyDown={handleKeyDown(applyShearV)}>
-        <NumberInput label="Skew Y" value={shearV} onChange={setShearV} suffix="deg" />
+        <NumberInput
+          label="Skew Y"
+          value={shearV}
+          onChange={(val) => {
+            setShearV(val);
+            shearVRef.current = val;
+          }}
+          suffix="deg"
+        />
       </div>
 
       <button
@@ -351,7 +375,7 @@ export function ContextPanel() {
   const PanelContent = PANELS[activeWorktable];
 
   return (
-    <div className="w-[260px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15">
+    <div className="w-[280px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15">
       <div className="px-4 py-5">
         <PanelContent />
       </div>

@@ -76,10 +76,12 @@ export function ContextMenu() {
       canvas.on('mouse:down', onMouseDown);
       registeredListeners.push(() => canvas.off('mouse:down', onMouseDown));
 
-      canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
-      registeredListeners.push(() =>
-        canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu)
-      );
+      if (canvas.wrapperEl) {
+        canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
+        registeredListeners.push(() =>
+          canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu)
+        );
+      }
 
       canvas.on('mouse:down:before', onMouseDownBefore);
       registeredListeners.push(() => canvas.off('mouse:down:before', onMouseDownBefore));
@@ -95,6 +97,8 @@ export function ContextMenu() {
   useEffect(() => {
     if (!position) return;
 
+    let isMounted = true;
+
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') closeMenu();
     }
@@ -105,10 +109,13 @@ export function ContextMenu() {
       }
     }
 
+    if (!isMounted) return;
+
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('mousedown', onClickOutside, { capture: true });
 
     return () => {
+      isMounted = false;
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('mousedown', onClickOutside, { capture: true });
     };
@@ -158,6 +165,28 @@ export function ContextMenu() {
           }
           case 'bringToFront': {
             canvas.bringObjectToFront(active);
+            break;
+          }
+          case 'group': {
+            const selection = canvas.getActiveObjects();
+            if (selection.length > 1) {
+              const group = new fabric.Group(selection, { canvas });
+              canvas.remove(...selection);
+              canvas.add(group);
+              canvas.setActiveObject(group);
+            }
+            break;
+          }
+          case 'ungroup': {
+            if (active.type === 'group') {
+              const items = (active as InstanceType<typeof fabric.Group>).getObjects();
+              (active as InstanceType<typeof fabric.Group>).destroy();
+              canvas.remove(active);
+              for (const item of items) {
+                canvas.add(item);
+              }
+              canvas.discardActiveObject();
+            }
             break;
           }
           case 'fussyCut': {
@@ -251,19 +280,99 @@ export function ContextMenu() {
     closeMenu();
   }, [fabricCanvas, closeMenu]);
 
+  const handleAlign = useCallback(
+    async (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active || active.type !== 'activeSelection') return;
+
+      const selection = active as InstanceType<typeof fabric.ActiveSelection>;
+      const objects = selection.getObjects();
+      if (objects.length < 2) return;
+
+      const bounds = selection.getBoundingRect();
+
+      for (const obj of objects) {
+        const objBounds = obj.getBoundingRect();
+        switch (direction) {
+          case 'left':
+            obj.set({ left: (obj.left ?? 0) + (bounds.left - objBounds.left) });
+            break;
+          case 'center':
+            obj.set({
+              left:
+                (obj.left ?? 0) +
+                (bounds.left + bounds.width / 2 - (objBounds.left + objBounds.width / 2)),
+            });
+            break;
+          case 'right':
+            obj.set({
+              left:
+                (obj.left ?? 0) + (bounds.left + bounds.width - (objBounds.left + objBounds.width)),
+            });
+            break;
+          case 'top':
+            obj.set({ top: (obj.top ?? 0) + (bounds.top - objBounds.top) });
+            break;
+          case 'middle':
+            obj.set({
+              top:
+                (obj.top ?? 0) +
+                (bounds.top + bounds.height / 2 - (objBounds.top + objBounds.height / 2)),
+            });
+            break;
+          case 'bottom':
+            obj.set({
+              top:
+                (obj.top ?? 0) + (bounds.top + bounds.height - (objBounds.top + objBounds.height)),
+            });
+            break;
+        }
+        obj.setCoords();
+      }
+
+      canvas.renderAll();
+      const json = JSON.stringify(canvas.toJSON());
+      useCanvasStore.getState().pushUndoState(json);
+      useProjectStore.getState().setDirty(true);
+      closeMenu();
+    },
+    [fabricCanvas, closeMenu]
+  );
+
   if (!position) return null;
+
+  const isMultiSelect = fabricCanvas?.getActiveObjects().length > 1;
+  const isGroup = fabricCanvas?.getActiveObject()?.type === 'group';
 
   const menuItems = position.hasTarget
     ? [
         { label: 'Duplicate', icon: '⧉', action: 'duplicate' },
         { label: 'Delete', icon: '🗑', action: 'delete' },
+        { label: 'divider', icon: '', action: 'divider' },
         { label: 'Flip Horizontal', icon: '↔', action: 'flipH' },
         { label: 'Flip Vertical', icon: '↕', action: 'flipV' },
         { label: 'Rotate 90°', icon: '↻', action: 'rotate90' },
+        { label: 'divider', icon: '', action: 'divider' },
+        ...(isMultiSelect
+          ? [
+              { label: 'Group', icon: '⊡', action: 'group' },
+              { label: 'Align Left', icon: '⊣', action: 'align-left' },
+              { label: 'Align Center', icon: '⊟', action: 'align-center' },
+              { label: 'Align Right', icon: '⊢', action: 'align-right' },
+              { label: 'Align Top', icon: '⊤', action: 'align-top' },
+              { label: 'Align Middle', icon: '⊞', action: 'align-middle' },
+              { label: 'Align Bottom', icon: '⊥', action: 'align-bottom' },
+              { label: 'divider', icon: '', action: 'divider' },
+            ]
+          : []),
+        ...(isGroup ? [{ label: 'Ungroup', icon: '⊟', action: 'ungroup' }] : []),
         { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
         { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
-        { label: 'Fussy Cut...', icon: '✂', action: 'fussyCut' },
         { label: 'divider', icon: '', action: 'divider' },
+        { label: 'Fussy Cut...', icon: '✂', action: 'fussyCut' },
         { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
       ]
     : [{ label: 'Select All', icon: '⊞', action: 'selectAll' }];
@@ -321,9 +430,22 @@ export function ContextMenu() {
             key={item.action}
             type="button"
             disabled={isExecuting}
-            onClick={() =>
-              item.action === 'selectAll' ? handleSelectAll() : executeAction(item.action)
-            }
+            onClick={() => {
+              if (item.action === 'selectAll') {
+                handleSelectAll();
+              } else if (item.action.startsWith('align-')) {
+                const direction = item.action.replace('align-', '') as
+                  | 'left'
+                  | 'center'
+                  | 'right'
+                  | 'top'
+                  | 'middle'
+                  | 'bottom';
+                handleAlign(direction);
+              } else {
+                executeAction(item.action);
+              }
+            }}
             className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="w-5 text-center">{item.icon}</span>

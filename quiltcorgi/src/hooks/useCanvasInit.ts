@@ -64,13 +64,31 @@ export function useCanvasInit(
       const panY = (rect.height - quiltHeightPx * initZoom) / 2;
       canvas.setViewportTransform([initZoom, 0, 0, initZoom, panX, panY]);
 
+      // Seed stores before any renderAll so onAfterRender reads the correct
+      // project dimensions from the first paint, not the store's 48×48 defaults.
+      useCanvasStore.getState().setUnitSystem(project.unitSystem);
+      useCanvasStore.getState().setGridSettings(project.gridSettings);
+      useProjectStore.getState().setProject({
+        id: project.id,
+        name: project.name,
+        width: project.canvasWidth,
+        height: project.canvasHeight,
+      });
+      if (project.fabricPresets) {
+        useProjectStore.getState().setFabricPresets(project.fabricPresets);
+      }
+
       let lastGridKey = '';
       const onAfterRender = () => {
         const state = useCanvasStore.getState();
         const proj = useProjectStore.getState();
         const vt = canvas.viewportTransform;
-        const key = `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.gridSettings.enabled},${state.gridSettings.snapToGrid},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight}`;
-        if (key === lastGridKey) return;
+        // When viewport is unlocked, always redraw grid (no caching)
+        // When locked, cache based on key to avoid unnecessary redraws
+        const key = state.isViewportLocked
+          ? `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight},${gridEl.width},${gridEl.height}`
+          : '';
+        if (key && key === lastGridKey) return;
         lastGridKey = key;
         renderGrid(
           gridEl,
@@ -177,14 +195,6 @@ export function useCanvasInit(
 
       useCanvasStore.getState().setFabricCanvas(canvas);
       useCanvasStore.getState().setZoom(initZoom);
-      useCanvasStore.getState().setUnitSystem(project.unitSystem);
-      useCanvasStore.getState().setGridSettings(project.gridSettings);
-      useProjectStore.getState().setProject({
-        id: project.id,
-        name: project.name,
-        width: project.canvasWidth,
-        height: project.canvasHeight,
-      });
     })();
 
     return () => {

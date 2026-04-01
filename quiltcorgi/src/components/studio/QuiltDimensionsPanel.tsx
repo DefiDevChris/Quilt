@@ -101,14 +101,6 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
     [setGridSettings, triggerRender]
   );
 
-  const handleGridEnabledChange = useCallback(
-    (enabled: boolean) => {
-      setGridSettings({ enabled });
-      triggerRender();
-    },
-    [setGridSettings, triggerRender]
-  );
-
   const handleSnapChange = useCallback(
     (snapToGrid: boolean) => {
       setGridSettings({ snapToGrid });
@@ -184,54 +176,40 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
             Cell Grid
           </p>
 
-          <label className="flex items-center gap-2 cursor-pointer mb-3">
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="grid-cell-size-slider" className="text-xs text-secondary">
+                Cell size
+              </label>
+              <span className="text-xs text-on-surface font-medium">
+                {formatGridSize(gridSettings.size)}
+              </span>
+            </div>
+            <input
+              id="grid-cell-size-slider"
+              type="range"
+              min={GRID_CELL_SIZE_MIN}
+              max={GRID_CELL_SIZE_MAX}
+              step={GRID_CELL_SIZE_STEP}
+              value={gridSettings.size}
+              onChange={(e) => handleGridSizeChange(parseFloat(e.target.value))}
+              className="w-full accent-primary"
+            />
+            <div className="flex justify-between text-[10px] text-secondary mt-0.5">
+              <span>{formatGridSize(GRID_CELL_SIZE_MIN)}</span>
+              <span>{formatGridSize(GRID_CELL_SIZE_MAX)}</span>
+            </div>
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={gridSettings.enabled}
-              onChange={(e) => handleGridEnabledChange(e.target.checked)}
+              checked={gridSettings.snapToGrid}
+              onChange={(e) => handleSnapChange(e.target.checked)}
               className="rounded accent-primary"
             />
-            <span className="text-sm text-secondary">Show grid</span>
+            <span className="text-sm text-secondary">Snap to grid</span>
           </label>
-
-          {gridSettings.enabled && (
-            <>
-              <div className="mb-3">
-                <div className="flex items-center justify-between mb-1">
-                  <label htmlFor="grid-cell-size-slider" className="text-xs text-secondary">
-                    Cell size
-                  </label>
-                  <span className="text-xs text-on-surface font-medium">
-                    {formatGridSize(gridSettings.size)}
-                  </span>
-                </div>
-                <input
-                  id="grid-cell-size-slider"
-                  type="range"
-                  min={GRID_CELL_SIZE_MIN}
-                  max={GRID_CELL_SIZE_MAX}
-                  step={GRID_CELL_SIZE_STEP}
-                  value={gridSettings.size}
-                  onChange={(e) => handleGridSizeChange(parseFloat(e.target.value))}
-                  className="w-full accent-primary"
-                />
-                <div className="flex justify-between text-[10px] text-secondary mt-0.5">
-                  <span>{formatGridSize(GRID_CELL_SIZE_MIN)}</span>
-                  <span>{formatGridSize(GRID_CELL_SIZE_MAX)}</span>
-                </div>
-              </div>
-
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={gridSettings.snapToGrid}
-                  onChange={(e) => handleSnapChange(e.target.checked)}
-                  className="rounded accent-primary"
-                />
-                <span className="text-sm text-secondary">Snap to grid</span>
-              </label>
-            </>
-          )}
         </div>
 
         <div className="flex justify-end">

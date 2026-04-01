@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
+import { TooltipHint } from '@/components/ui/TooltipHint';
 
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
@@ -20,6 +22,7 @@ export function StudioTopBar({
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
 
   return (
     <>
@@ -51,8 +54,81 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        {/* Right: Project info + Export */}
+        {/* Right: Viewport controls + Project info + Export */}
         <div className="flex items-center gap-4">
+          {/* Viewport lock/unlock + recenter */}
+          <div className="flex items-center gap-1">
+            <TooltipHint
+              name={isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport'}
+              description={
+                isViewportLocked ? 'Unlock to pan and zoom freely' : 'Lock viewport to centered fit'
+              }
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  useCanvasStore.getState().setViewportLocked(!isViewportLocked)
+                }
+                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
+                aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
+              >
+                {isViewportLocked ? (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <rect
+                      x="4"
+                      y="9"
+                      width="12"
+                      height="8"
+                      rx="2"
+                    />
+                    <path
+                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <rect
+                      x="4"
+                      y="9"
+                      width="12"
+                      height="8"
+                      rx="2"
+                    />
+                    <path
+                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </TooltipHint>
+
+            {/* Quick recenter — only visible when unlocked */}
+            {!isViewportLocked && (
+              <TooltipHint name="Recenter Viewport" description="Snap grid back to center of canvas">
+                <button
+                  type="button"
+                  onClick={() => useCanvasStore.getState().centerAndFitViewport()}
+                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
+                  aria-label="Recenter viewport"
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="3"
+                    />
+                    <path
+                      d="M10 3V7M10 13V17M3 10H7M13 10H17"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </TooltipHint>
+            )}
+          </div>
+
           <div className="text-right">
             <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
               {projectName}

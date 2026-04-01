@@ -250,20 +250,15 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
             <p className="text-sm text-secondary mb-4">
               Select a fabric image (JPEG, PNG, or WebP, max 10MB)
             </p>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-            >
+            <label className="inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 cursor-pointer">
               Choose File
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+            </label>
           </div>
         )}
 

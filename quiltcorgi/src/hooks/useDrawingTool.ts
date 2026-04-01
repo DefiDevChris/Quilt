@@ -238,8 +238,8 @@ export function useDrawingTool() {
             stroke: strokeColor,
             strokeWidth,
             strokeDashArray: undefined,
-            selectable: false,
-            evented: false,
+            selectable: true,
+            evented: true,
           });
           const json = JSON.stringify(canvas.toJSON());
           useCanvasStore.getState().pushUndoState(json);
@@ -270,8 +270,8 @@ export function useDrawingTool() {
           fill: fillColor,
           stroke: strokeColor,
           strokeWidth,
-          selectable: false,
-          evented: false,
+          selectable: true,
+          evented: true,
         });
         canvas.add(polygon);
 

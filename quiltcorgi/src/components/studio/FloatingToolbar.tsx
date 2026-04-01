@@ -222,6 +222,7 @@ export function FloatingToolbar() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
+  const undoDepth = useCanvasStore((s) => s.undoStack.length);
 
   const quiltTools = useQuiltFloatingTools();
 
@@ -263,8 +264,8 @@ export function FloatingToolbar() {
               }}
               className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
                 isActive
-                  ? 'bg-primary/12 text-primary'
-                  : 'text-on-surface/55 hover:text-on-surface hover:bg-surface-container'
+                  ? 'bg-primary/20 text-primary ring-1 ring-primary/35'
+                  : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
               }`}
             >
               {tool.icon}
@@ -278,21 +279,27 @@ export function FloatingToolbar() {
             <div className="w-px h-5 bg-outline-variant/25 mx-1" />
             {historyTools.map((tool) => {
               const disabled = tool.isDisabled ?? false;
+              const showDepth = tool.id === 'undo' && undoDepth > 0;
               return (
                 <button
                   key={tool.id}
                   type="button"
-                  title={`${tool.label}${tool.shortcut ? ` (${tool.shortcut})` : ''}`}
+                  title={`${tool.label}${tool.shortcut ? ` (${tool.shortcut})` : ''}${tool.id === 'undo' && undoDepth > 0 ? ` · ${undoDepth} steps` : ''}`}
                   aria-label={tool.label}
                   aria-disabled={disabled}
                   onClick={disabled ? undefined : tool.onClick}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
+                  className={`relative w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
                     disabled
-                      ? 'text-outline-variant/30 cursor-default'
-                      : 'text-on-surface/55 hover:text-on-surface hover:bg-surface-container'
+                      ? 'text-outline-variant/45 cursor-default'
+                      : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
                   }`}
                 >
                   {tool.icon}
+                  {showDepth && (
+                    <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-primary text-white text-[9px] font-semibold rounded-full flex items-center justify-center px-[3px] leading-none">
+                      {undoDepth > 9 ? '9+' : undoDepth}
+                    </span>
+                  )}
                 </button>
               );
             })}
