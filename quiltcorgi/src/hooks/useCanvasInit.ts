@@ -137,12 +137,36 @@ export function useCanvasInit(
 
       const onObjectMoving = (e: { target?: import('fabric').FabricObject }) => {
         const { gridSettings, unitSystem: us } = useCanvasStore.getState();
-        if (!gridSettings.snapToGrid || !e.target) return;
-        const gridSizePx = gridSettings.size * getPixelsPerUnit(us);
-        e.target.set({
-          left: snapToGrid(e.target.left ?? 0, gridSizePx),
-          top: snapToGrid(e.target.top ?? 0, gridSizePx),
-        });
+        const { canvasWidth, canvasHeight } = useProjectStore.getState();
+        const ppu = getPixelsPerUnit(us);
+        const maxX = canvasWidth * ppu;
+        const maxY = canvasHeight * ppu;
+
+        if (!e.target) return;
+
+        // Constrain to canvas bounds
+        const obj = e.target;
+        const left = obj.left ?? 0;
+        const top = obj.top ?? 0;
+        const width = (obj.width ?? 0) * (obj.scaleX ?? 1);
+        const height = (obj.height ?? 0) * (obj.scaleY ?? 1);
+
+        let newLeft = left;
+        let newTop = top;
+
+        if (left < 0) newLeft = 0;
+        if (top < 0) newTop = 0;
+        if (left + width > maxX) newLeft = maxX - width;
+        if (top + height > maxY) newTop = maxY - height;
+
+        // Apply snap to grid if enabled
+        if (gridSettings.snapToGrid) {
+          const gridSizePx = gridSettings.size * ppu;
+          newLeft = snapToGrid(newLeft, gridSizePx);
+          newTop = snapToGrid(newTop, gridSizePx);
+        }
+
+        obj.set({ left: newLeft, top: newTop });
       };
 
       const onObjectModified = () => {
