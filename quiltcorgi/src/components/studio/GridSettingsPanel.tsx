@@ -27,45 +27,31 @@ export function GridSettingsPanel({ onClose }: GridSettingsPanelProps) {
         <h2 className="text-lg font-semibold text-on-surface mb-4">Grid Settings</h2>
 
         <div className="space-y-4">
+          <div>
+            <label htmlFor="grid-size-input" className="block text-xs text-secondary mb-1">
+              Grid size ({unit})
+            </label>
+            <input
+              id="grid-size-input"
+              type="number"
+              min={0.125}
+              max={12}
+              step={0.125}
+              value={gridSettings.size}
+              onChange={(e) => update({ size: parseFloat(e.target.value) || 1 })}
+              className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
+
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={gridSettings.enabled}
-              onChange={(e) => update({ enabled: e.target.checked })}
+              checked={gridSettings.snapToGrid}
+              onChange={(e) => update({ snapToGrid: e.target.checked })}
               className="rounded accent-primary"
             />
-            <span className="text-sm text-secondary">Show grid</span>
+            <span className="text-sm text-secondary">Snap to grid</span>
           </label>
-
-          {gridSettings.enabled && (
-            <>
-              <div>
-                <label htmlFor="grid-size-input" className="block text-xs text-secondary mb-1">
-                  Grid size ({unit})
-                </label>
-                <input
-                  id="grid-size-input"
-                  type="number"
-                  min={0.125}
-                  max={12}
-                  step={0.125}
-                  value={gridSettings.size}
-                  onChange={(e) => update({ size: parseFloat(e.target.value) || 1 })}
-                  className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={gridSettings.snapToGrid}
-                  onChange={(e) => update({ snapToGrid: e.target.checked })}
-                  className="rounded accent-primary"
-                />
-                <span className="text-sm text-secondary">Snap to grid</span>
-              </label>
-            </>
-          )}
         </div>
 
         <div className="flex justify-end mt-6">

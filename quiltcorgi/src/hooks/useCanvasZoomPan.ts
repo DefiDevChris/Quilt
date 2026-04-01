@@ -32,16 +32,14 @@ export function useCanvasZoomPan() {
       }
 
       function onWheel(e: { e: WheelEvent }) {
-        if (isViewportLocked()) {
-          useCanvasStore.getState().setViewportLocked(false);
-        }
+        if (isViewportLocked()) return;
         e.e.preventDefault();
         e.e.stopPropagation();
 
         const delta = e.e.deltaY;
         const pointer = canvas.getScenePoint(e.e);
         let zoom = canvas.getZoom();
-        zoom *= 0.999 ** delta;
+        zoom *= 0.995 ** delta;
         zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom));
 
         canvas.zoomToPoint(new fabric.Point(pointer.x, pointer.y), zoom);
@@ -51,9 +49,7 @@ export function useCanvasZoomPan() {
 
       function onMouseDown(e: { e: MouseEvent }) {
         if (!isPanActive()) return;
-        if (isViewportLocked()) {
-          useCanvasStore.getState().setViewportLocked(false);
-        }
+        if (isViewportLocked()) return;
         isPanning = true;
         lastPanX = e.e.clientX;
         lastPanY = e.e.clientY;
@@ -89,10 +85,8 @@ export function useCanvasZoomPan() {
       function onKeyDown(e: KeyboardEvent) {
         if (isInputElement(e.target)) return;
         if (e.code === 'Space' && !e.repeat) {
+          if (isViewportLocked()) return;
           e.preventDefault();
-          if (isViewportLocked()) {
-            useCanvasStore.getState().setViewportLocked(false);
-          }
           useCanvasStore.getState().setIsSpacePressed(true);
           canvas.defaultCursor = 'grab';
           canvas.selection = false;

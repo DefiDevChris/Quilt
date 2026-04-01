@@ -26,6 +26,7 @@ export const projects = pgTable(
     gridSettings: jsonb('gridSettings')
       .notNull()
       .default({ enabled: true, size: 1, snapToGrid: true }),
+    fabricPresets: jsonb('fabricPresets').notNull().default([]),
     canvasWidth: doublePrecision('canvasWidth').notNull().default(48.0),
     canvasHeight: doublePrecision('canvasHeight').notNull().default(48.0),
     thumbnailUrl: text('thumbnailUrl'),

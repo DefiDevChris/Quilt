@@ -23,10 +23,12 @@ export type ToolType =
   | 'select'
   | 'pan'
   | 'rectangle'
+  | 'circle'
   | 'triangle'
   | 'polygon'
   | 'line'
   | 'curve'
+  | 'ruler'
   | 'easydraw'
   | 'text'
   | 'eyedropper'
@@ -50,6 +52,7 @@ interface GridSettings {
   size: number;
   snapToGrid: boolean;
   snapToNodes?: boolean;
+  showBlockGrid?: boolean;
 }
 
 interface CanvasStoreState {
@@ -72,6 +75,8 @@ interface CanvasStoreState {
   activeColorwayTool: ColorwayTool | null;
   fussyCutTarget: FussyCutTarget | null;
   isViewportLocked: boolean;
+  showSeamAllowance: boolean;
+  printScale: number;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -96,6 +101,8 @@ interface CanvasStoreState {
   setActiveColorwayTool: (tool: ColorwayTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
   setViewportLocked: (locked: boolean) => void;
+  toggleSeamAllowance: () => void;
+  setPrintScale: (scale: number) => void;
   centerAndFitViewport: () => void;
   reset: () => void;
 }
@@ -128,6 +135,8 @@ const INITIAL_STATE = {
   activeColorwayTool: null as ColorwayTool | null,
   fussyCutTarget: null as FussyCutTarget | null,
   isViewportLocked: true,
+  showSeamAllowance: true,
+  printScale: 1.0,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -209,6 +218,10 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
       get().centerAndFitViewport();
     }
   },
+
+  toggleSeamAllowance: () => set((state) => ({ showSeamAllowance: !state.showSeamAllowance })),
+
+  setPrintScale: (scale) => set({ printScale: clamp(scale, 0.1, 2.0) }),
 
   centerAndFitViewport: () => {
     const { fabricCanvas, unitSystem } = get();

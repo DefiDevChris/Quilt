@@ -12,9 +12,11 @@ export interface ToolbarCallbacks {
   onOpenLayoutSettings?: () => void;
   onOpenGridDimensions?: () => void;
   onOpenSymmetry?: () => void;
+  onOpenSerendipity?: () => void;
   onOpenImageExport?: () => void;
   onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
+  onOpenReferenceImage?: () => void;
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
@@ -30,6 +32,10 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const gridSettings = useCanvasStore((s) => s.gridSettings);
+  const setGridSettings = useCanvasStore((s) => s.setGridSettings);
+  const activeTool = useCanvasStore((s) => s.activeTool);
+  const setActiveTool = useCanvasStore((s) => s.setActiveTool);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -61,51 +67,18 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       group: 'tools',
       tier: 'primary',
       onClick: () => {
-        if (isViewportLocked) {
-          useCanvasStore.getState().setViewportLocked(false);
-        }
+        if (isViewportLocked) return;
         useCanvasStore.getState().setActiveTool('pan');
       },
+      isDisabled: isViewportLocked,
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M10 2V5M10 15V18M2 10H5M15 10H18M10 5L7 8H13L10 5ZM10 15L13 12H7L10 15ZM5 10L8 7V13L5 10ZM15 10L12 13V7L15 10Z"
+            d="M12.5 3C12.5 2.17 11.83 1.5 11 1.5C10.17 1.5 9.5 2.17 9.5 3V10L7.5 8.5C7 8.1 6.3 8.1 5.8 8.5C5.3 8.9 5.2 9.6 5.6 10.1L8.5 14.5L10 17C10.3 17.5 10.8 17.7 11.3 17.6C11.8 17.5 12.1 17.1 12.1 16.6V11H14.5C15.3 11 16 10.3 16 9.5C16 8.7 15.3 8 14.5 8H12.5V3Z"
             stroke="currentColor"
             strokeWidth="1.3"
             strokeLinecap="round"
             strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'viewport-lock',
-      label: isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport',
-      description: isViewportLocked
-        ? 'Unlock to pan and zoom freely'
-        : 'Lock viewport to centered fit',
-      group: 'tools',
-      tier: 'primary',
-      onClick: () => useCanvasStore.getState().setViewportLocked(!isViewportLocked),
-      isActive: () => isViewportLocked,
-      icon: isViewportLocked ? (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <path
-            d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      ) : (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <path
-            d="M13 9V6C13 4.34 14.34 3 16 3"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
           />
         </svg>
       ),
@@ -199,6 +172,20 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
+      id: 'circle',
+      label: 'Circle',
+      shortcut: 'O',
+      description: 'Draw a circle — hold Shift for a perfect circle',
+      toolType: 'circle',
+      group: 'shapes',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    {
       id: 'triangle',
       label: 'Triangle',
       shortcut: 'T',
@@ -210,6 +197,25 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
             d="M10 4L17 16H3L10 4Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'polygon',
+      label: 'Polygon',
+      shortcut: 'P',
+      description: 'Draw a polygon — adjust sides after placing',
+      toolType: 'polygon',
+      group: 'shapes',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M10 3L16.5 7.5L14.5 15H5.5L3.5 7.5L10 3Z"
             stroke="currentColor"
             strokeWidth="1.4"
             strokeLinejoin="round"
@@ -355,6 +361,151 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
+        </svg>
+      ),
+    },
+    {
+      id: 'serendipity',
+      label: 'Serendipity',
+      description: 'Shuffle colors randomly for happy accidents',
+      group: 'inspect-adv',
+      tier: 'advanced',
+      onClick: callbacks.onOpenSerendipity,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M4 10C4 10 6 4 10 4C14 4 16 10 16 10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M16 10C16 10 14 16 10 16C6 16 4 10 4 10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <circle cx="7" cy="8" r="1" fill="currentColor" />
+          <circle cx="13" cy="12" r="1" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      id: 'grid-toggle',
+      label: 'Toggle Grid',
+      shortcut: 'G',
+      description: 'Show or hide the grid overlay',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: () => setGridSettings({ enabled: !gridSettings.enabled }),
+      isActive: () => gridSettings.enabled,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="9" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="15" y="3" width="2" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="3" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="9" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="15" y="9" width="2" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="3" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="9" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+    },
+    {
+      id: 'reference-image',
+      label: 'Reference Image',
+      description: 'Import a photo to trace over — adjust opacity and lock in place',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: callbacks.onOpenReferenceImage,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <circle cx="7" cy="7" r="1.5" fill="currentColor" opacity="0.5" />
+          <path
+            d="M3 14L7 10L10 13L14 9L17 12V15C17 15.5 16.5 16 16 16H4C3.5 16 3 15.5 3 15V14Z"
+            fill="currentColor"
+            opacity="0.3"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'snap-toggle',
+      label: 'Toggle Snap',
+      shortcut: 'Shift+G',
+      description: 'Enable or disable snap-to-grid',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: () => setGridSettings({ snapToGrid: !gridSettings.snapToGrid }),
+      isActive: () => gridSettings.snapToGrid,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="14" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="6" cy="14" r="1.5" fill="currentColor" />
+          <circle cx="14" cy="14" r="1.5" fill="currentColor" />
+          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
+        </svg>
+      ),
+    },
+    {
+      id: 'eyedropper',
+      label: 'Eyedropper',
+      shortcut: 'I',
+      description: 'Sample colors from existing patches',
+      toolType: 'eyedropper',
+      group: 'view-adv',
+      tier: 'advanced',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M14 3L17 6L10 13L7 10L14 3Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M7 10L3 14L6 17L10 13"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+          <circle cx="15.5" cy="4.5" r="1" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      id: 'ruler',
+      label: 'Ruler',
+      shortcut: 'M',
+      description: 'Measure distances between points',
+      toolType: 'ruler',
+      group: 'view-adv',
+      tier: 'advanced',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="8" width="14" height="4" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M6 8V12M9 8V10M12 8V10M15 8V12" stroke="currentColor" strokeWidth="1" />
+        </svg>
+      ),
+    },
+    {
+      id: 'block-grid-toggle',
+      label: 'Block Grid',
+      description: 'Show block boundaries overlay',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: () =>
+        setGridSettings({ showBlockGrid: !gridSettings.showBlockGrid }),
+      isActive: () => gridSettings.showBlockGrid ?? false,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17M10 3V17" stroke="currentColor" strokeWidth="2" />
+          <path d="M3 6.5H17M3 13.5H17" stroke="currentColor" strokeWidth="0.8" opacity="0.5" />
+          <path d="M6.5 3V17M13.5 3V17" stroke="currentColor" strokeWidth="0.8" opacity="0.5" />
         </svg>
       ),
     },

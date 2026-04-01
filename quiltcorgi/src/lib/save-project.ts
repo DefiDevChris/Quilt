@@ -1,5 +1,7 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useAuthStore } from '@/stores/authStore';
+import { saveTempProject } from '@/lib/temp-project-storage';
 
 const MAX_SAVE_RETRIES = 3;
 const RETRY_DELAY_BASE_MS = 2000;
@@ -60,6 +62,30 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
 
   if (!projectId || !fabricCanvas) return;
 
+  const isPro = useAuthStore.getState().isPro;
+  const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
+  const canvasData = canvas.toJSON();
+  const { unitSystem, gridSettings } = useCanvasStore.getState();
+  const { fabricPresets, canvasWidth, canvasHeight } = useProjectStore.getState();
+
+  // Free users: save to localStorage only
+  if (!isPro) {
+    saveTempProject(projectId, {
+      canvasData,
+      unitSystem,
+      gridSettings,
+      fabricPresets,
+      canvasWidth,
+      canvasHeight,
+    });
+    const store = useProjectStore.getState();
+    store.setSaveStatus('saved');
+    store.setDirty(false);
+    store.setLastSavedAt(new Date());
+    return;
+  }
+
+  // Pro users: save to server
   // Auto-save yields to in-flight manual saves
   if (source === 'auto' && manualSaveControllers.has(projectId)) {
     return;
@@ -98,14 +124,17 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   store.setSaveStatus('saving');
 
   try {
-    const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
-    const canvasData = canvas.toJSON();
-    const { unitSystem, gridSettings } = useCanvasStore.getState();
-
     const res = await fetch(`/api/projects/${projectId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ canvasData, unitSystem, gridSettings }),
+      body: JSON.stringify({
+        canvasData,
+        unitSystem,
+        gridSettings,
+        fabricPresets,
+        canvasWidth,
+        canvasHeight,
+      }),
       signal: controller.signal,
     });
 

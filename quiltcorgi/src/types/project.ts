@@ -6,6 +6,7 @@ export interface Project {
   canvasData: Record<string, unknown>;
   unitSystem: 'imperial' | 'metric';
   gridSettings: GridSettings;
+  fabricPresets?: Array<{ id: string; name: string; imageUrl: string }>;
   canvasWidth: number;
   canvasHeight: number;
   thumbnailUrl: string | null;

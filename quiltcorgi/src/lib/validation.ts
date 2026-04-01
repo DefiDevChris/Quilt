@@ -69,6 +69,15 @@ export const updateProjectSchema = z.object({
   canvasWidth: z.number().min(1).max(200).optional(),
   canvasHeight: z.number().min(1).max(200).optional(),
   gridSettings: gridSettingsSchema.optional(),
+  fabricPresets: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        imageUrl: z.string(),
+      })
+    )
+    .optional(),
   thumbnailUrl: assetUrlSchema.optional(),
   isPublic: z.boolean().optional(),
 });
