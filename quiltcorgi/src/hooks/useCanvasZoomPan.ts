@@ -54,6 +54,7 @@ export function useCanvasZoomPan() {
         lastPanX = e.e.clientX;
         lastPanY = e.e.clientY;
         canvas.defaultCursor = 'grabbing';
+        canvas.wrapperEl?.classList.add('cursor-pan-grabbing');
         canvas.selection = false;
       }
 
@@ -70,12 +71,15 @@ export function useCanvasZoomPan() {
       function onMouseUp() {
         if (!isPanning) return;
         isPanning = false;
+        canvas.wrapperEl?.classList.remove('cursor-pan-grabbing');
         const tool = useCanvasStore.getState().activeTool;
         if (tool === 'pan') {
           canvas.defaultCursor = 'grab';
+          canvas.wrapperEl?.classList.add('cursor-pan-grab');
           canvas.selection = false;
         } else {
           canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+          canvas.wrapperEl?.classList.remove('cursor-pan-grab');
           if (tool === 'select') {
             canvas.selection = true;
           }
@@ -89,6 +93,7 @@ export function useCanvasZoomPan() {
           e.preventDefault();
           useCanvasStore.getState().setIsSpacePressed(true);
           canvas.defaultCursor = 'grab';
+          canvas.wrapperEl?.classList.add('cursor-pan-grab');
           canvas.selection = false;
         }
       }
@@ -98,9 +103,11 @@ export function useCanvasZoomPan() {
         if (e.code === 'Space') {
           useCanvasStore.getState().setIsSpacePressed(false);
           isPanning = false;
+          canvas.wrapperEl?.classList.remove('cursor-pan-grab', 'cursor-pan-grabbing');
           const tool = useCanvasStore.getState().activeTool;
           if (tool === 'pan') {
             canvas.defaultCursor = 'grab';
+            canvas.wrapperEl?.classList.add('cursor-pan-grab');
             canvas.selection = false;
           } else {
             canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
@@ -116,9 +123,11 @@ export function useCanvasZoomPan() {
         if (state.activeTool !== prev.activeTool) {
           if (state.activeTool === 'pan') {
             canvas.defaultCursor = 'grab';
+            canvas.wrapperEl?.classList.add('cursor-pan-grab');
             canvas.selection = false;
           } else if (prev.activeTool === 'pan') {
             canvas.defaultCursor = state.activeTool === 'select' ? 'default' : 'crosshair';
+            canvas.wrapperEl?.classList.remove('cursor-pan-grab', 'cursor-pan-grabbing');
             if (state.activeTool === 'select') {
               canvas.selection = true;
             }

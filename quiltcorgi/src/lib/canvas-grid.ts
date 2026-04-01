@@ -114,7 +114,7 @@ export function renderGrid(
   ctx.lineWidth = 1.5 / zoom;
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 
-  if (gridSettings.size > 0) {
+  if (gridSettings.enabled && gridSettings.size > 0) {
     const gridSizePx = gridSettings.size * pxPerUnit;
     ctx.strokeStyle = 'rgba(229, 226, 221, 0.7)';
     ctx.lineWidth = 1 / zoom;

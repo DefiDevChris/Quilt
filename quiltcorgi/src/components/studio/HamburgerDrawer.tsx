@@ -41,6 +41,10 @@ export function HamburgerDrawer({
 }: HamburgerDrawerProps) {
   const router = useRouter();
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const canUndo = useCanvasStore((s) => s.canUndo());
+  const canRedo = useCanvasStore((s) => s.canRedo());
+  const undoCount = useCanvasStore((s) => s.undoStack.length);
+  const redoCount = useCanvasStore((s) => s.redoStack.length);
 
   const handleUndo = useCallback(() => performUndo(), []);
 
@@ -123,8 +127,8 @@ export function HamburgerDrawer({
     {
       title: 'Edit',
       items: [
-        { label: 'Undo', shortcut: 'Ctrl+Z', onClick: handleUndo },
-        { label: 'Redo', shortcut: 'Ctrl+Shift+Z', onClick: handleRedo },
+        { label: `Undo${canUndo ? ` (${undoCount})` : ''}`, shortcut: 'Ctrl+Z', onClick: handleUndo },
+        { label: `Redo${canRedo ? ` (${redoCount})` : ''}`, shortcut: 'Ctrl+Shift+Z', onClick: handleRedo },
         { label: 'Duplicate', shortcut: 'Ctrl+D', onClick: handleDuplicate },
         { label: 'Delete', shortcut: 'Del', onClick: handleDelete },
         { label: 'Select All', shortcut: 'Ctrl+A', onClick: handleSelectAll },
