@@ -22,6 +22,8 @@ quiltcorgi/src/
     mobile/               # MobileShell, MobileBottomNav (3-item: Home, Upload FAB, Profile/SignIn)
     blog/                 # BlogPostView (read-only)
     editor/               # TiptapRenderer only
+    canvas/               # SmartGuides, Minimap
+    studio/               # QuickColorPalette, HistoryPanel, ReferenceImageDialog
   hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
   stores/                 # Zustand stores (17 total)
   lib/                    # Pure utility modules and engines
@@ -75,3 +77,6 @@ Removed tables (do not recreate): `follows`, `reports`, `commentLikes`, `designV
 **Generators:** Only Serendipity and Symmetry. Kaleidoscope and Frame have been removed.
 
 **Confirmation dialogs:** Use the design system modal pattern (fixed overlay + glass surface). Never use native `confirm()`.
+
+**Multi-Worktable System:** Projects support up to 10 worktables (independent canvases). Each worktable has id, name, canvasData, order. Stored in `projects.worktables` JSONB field. Active worktable tracked in `projectStore.activeWorktableId`. Canvas auto-saves on switch. Ctrl+C/V works across worktables. Ctrl+D offers duplicate to current or new worktable.
+

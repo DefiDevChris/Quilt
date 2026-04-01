@@ -81,6 +81,43 @@ export function useCanvasKeyboard() {
           return;
         }
 
+        if (isCtrl && e.key === 'c') {
+          e.preventDefault();
+          const active = canvas.getActiveObjects();
+          if (active.length > 0) {
+            useCanvasStore.getState().setClipboard(active);
+          }
+          return;
+        }
+
+        if (isCtrl && e.key === 'v') {
+          e.preventDefault();
+          const clipboard = useCanvasStore.getState().clipboard;
+          if (clipboard.length > 0) {
+            const clonePromises = clipboard.map((obj) =>
+              (obj as { clone: () => Promise<unknown> }).clone()
+            );
+            Promise.all(clonePromises).then((clones) => {
+              canvas.discardActiveObject();
+              const OFFSET = 20;
+              clones.forEach((clone) => {
+                const clonedObj = clone as {
+                  left: number;
+                  top: number;
+                  set: (props: Record<string, number>) => void;
+                };
+                clonedObj.set({ left: clonedObj.left + OFFSET, top: clonedObj.top + OFFSET });
+                canvas.add(clone);
+              });
+              canvas.requestRenderAll();
+              const json = JSON.stringify(canvas.toJSON());
+              useCanvasStore.getState().pushUndoState(json);
+              useProjectStore.getState().setDirty(true);
+            });
+          }
+          return;
+        }
+
         if (e.key === 'Delete' || e.key === 'Backspace') {
           const active = canvas.getActiveObjects();
           if (active.length > 0) {
@@ -113,24 +150,11 @@ export function useCanvasKeyboard() {
           e.preventDefault();
           const active = canvas.getActiveObjects();
           if (active.length > 0) {
-            const json = JSON.stringify(canvas.toJSON());
-            useCanvasStore.getState().pushUndoState(json);
-            const clonePromises = active.map((obj) => obj.clone());
-            Promise.all(clonePromises).then((clones) => {
-              canvas.discardActiveObject();
-              const OFFSET = 20;
-              clones.forEach((clone) => {
-                const clonedObj = clone as {
-                  left: number;
-                  top: number;
-                  set: (props: Record<string, number>) => void;
-                };
-                clonedObj.set({ left: clonedObj.left + OFFSET, top: clonedObj.top + OFFSET });
-                canvas.add(clone);
-              });
-              canvas.requestRenderAll();
-              useProjectStore.getState().setDirty(true);
+            // Show duplicate options popup
+            const event = new CustomEvent('quiltcorgi:show-duplicate-options', {
+              detail: { objects: active },
             });
+            window.dispatchEvent(event);
           }
           return;
         }

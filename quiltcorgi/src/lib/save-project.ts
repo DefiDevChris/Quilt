@@ -66,7 +66,13 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
   const { unitSystem, gridSettings } = useCanvasStore.getState();
-  const { fabricPresets, canvasWidth, canvasHeight } = useProjectStore.getState();
+  const { fabricPresets, canvasWidth, canvasHeight, worktables, activeWorktableId } =
+    useProjectStore.getState();
+
+  // Update active worktable with current canvas
+  const updatedWorktables = worktables.map((w) =>
+    w.id === activeWorktableId ? { ...w, canvasData } : w
+  );
 
   // Free users: save to localStorage only
   if (!isPro) {
@@ -77,6 +83,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       fabricPresets,
       canvasWidth,
       canvasHeight,
+      worktables: updatedWorktables,
     });
     const store = useProjectStore.getState();
     store.setSaveStatus('saved');
@@ -129,6 +136,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         canvasData,
+        worktables: updatedWorktables,
         unitSystem,
         gridSettings,
         fabricPresets,

@@ -78,6 +78,7 @@ interface CanvasStoreState {
   showSeamAllowance: boolean;
   printScale: number;
   toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
+  clipboard: unknown[];
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -107,6 +108,7 @@ interface CanvasStoreState {
   centerAndFitViewport: () => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
+  setClipboard: (objects: unknown[]) => void;
   reset: () => void;
 }
 
@@ -141,6 +143,7 @@ const INITIAL_STATE = {
   showSeamAllowance: true,
   printScale: 1.0,
   toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
+  clipboard: [] as unknown[],
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -276,6 +279,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
       });
     }
   },
+
+  setClipboard: (clipboard) => set({ clipboard }),
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state
