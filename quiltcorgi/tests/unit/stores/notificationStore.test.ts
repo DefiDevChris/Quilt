@@ -144,10 +144,27 @@ describe('notificationStore', () => {
 
     useNotificationStore.getState().markAsRead(['n1']);
 
-    // Optimistic update applied
     expect(useNotificationStore.getState().notifications[0].isRead).toBe(true);
 
-    // Wait for revert
+    await vi.waitFor(() => {
+      expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
+      expect(useNotificationStore.getState().unreadCount).toBe(1);
+    });
+  });
+
+  it('markAsRead reverts on network error (catch branch)', async () => {
+    const n1 = makeMockNotification({ id: 'n1', isRead: false });
+    useNotificationStore.setState({
+      notifications: [n1],
+      unreadCount: 1,
+    });
+
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+    useNotificationStore.getState().markAsRead(['n1']);
+
+    expect(useNotificationStore.getState().notifications[0].isRead).toBe(true);
+
     await vi.waitFor(() => {
       expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
       expect(useNotificationStore.getState().unreadCount).toBe(1);
@@ -181,10 +198,28 @@ describe('notificationStore', () => {
 
     useNotificationStore.getState().markAllAsRead();
 
-    // Optimistic update applied
     expect(useNotificationStore.getState().notifications.every((n) => n.isRead)).toBe(true);
 
-    // Wait for revert
+    await vi.waitFor(() => {
+      expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
+      expect(useNotificationStore.getState().unreadCount).toBe(2);
+    });
+  });
+
+  it('markAllAsRead reverts on network error (catch branch)', async () => {
+    const n1 = makeMockNotification({ id: 'n1', isRead: false });
+    const n2 = makeMockNotification({ id: 'n2', isRead: false });
+    useNotificationStore.setState({
+      notifications: [n1, n2],
+      unreadCount: 2,
+    });
+
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+    useNotificationStore.getState().markAllAsRead();
+
+    expect(useNotificationStore.getState().notifications.every((n) => n.isRead)).toBe(true);
+
     await vi.waitFor(() => {
       expect(useNotificationStore.getState().notifications[0].isRead).toBe(false);
       expect(useNotificationStore.getState().unreadCount).toBe(2);
@@ -265,5 +300,24 @@ describe('notificationStore', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notificationIds: 'all' }),
     });
+  });
+
+  it('reset aborts controller and restores initial state', () => {
+    useNotificationStore.setState({
+      notifications: [{ id: 'n1', type: 'test', title: 'Test', message: 'msg', isRead: false, metadata: null, createdAt: '' }],
+      unreadCount: 5,
+      isOpen: true,
+      isLoading: true,
+      error: 'some error',
+    });
+
+    useNotificationStore.getState().reset();
+
+    const state = useNotificationStore.getState();
+    expect(state.notifications).toEqual([]);
+    expect(state.unreadCount).toBe(0);
+    expect(state.isOpen).toBe(false);
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBeNull();
   });
 });

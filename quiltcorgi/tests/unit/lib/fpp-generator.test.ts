@@ -67,7 +67,6 @@ describe('fpp-generator', () => {
       const ordered = computeSewingOrder(patches);
       const orders = ordered.map((p) => p.sewingOrder);
       expect(orders.length).toBe(4);
-      // All orders should be 1-based
       expect(Math.min(...orders)).toBe(1);
       expect(Math.max(...orders)).toBe(4);
     });
@@ -89,9 +88,18 @@ describe('fpp-generator', () => {
     it('detects adjacency between HST triangles', () => {
       const patches = parseSvgToPatches(HST_SVG);
       const ordered = computeSewingOrder(patches);
-      // Both patches share the diagonal edge, so they should be adjacent
       const patch1 = ordered.find((p) => p.sewingOrder === 1)!;
       expect(patch1.adjacentPatches.length).toBeGreaterThan(0);
+    });
+
+    it('handles disconnected patches', () => {
+      const disconnectedSvg = `<svg viewBox="0 0 100 100">
+        <rect x="10" y="10" width="20" height="20" fill="#D4883C"/>
+        <rect x="60" y="60" width="20" height="20" fill="#F5F0E8"/>
+      </svg>`;
+      const patches = parseSvgToPatches(disconnectedSvg);
+      const ordered = computeSewingOrder(patches);
+      expect(ordered.length).toBe(2);
     });
   });
 

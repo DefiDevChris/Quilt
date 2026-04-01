@@ -1,13 +1,11 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 
-function resetStore() {
-  usePrintlistStore.setState({ items: [] });
-}
-
 describe('printlistStore', () => {
-  beforeEach(resetStore);
+  beforeEach(() => {
+    usePrintlistStore.getState().reset();
+  });
 
   it('initializes with empty items', () => {
     expect(usePrintlistStore.getState().items).toEqual([]);
@@ -155,5 +153,195 @@ describe('printlistStore', () => {
     });
     usePrintlistStore.getState().updateQuantity('shape-1', -5);
     expect(usePrintlistStore.getState().items[0].quantity).toBe(1);
+  });
+
+  describe('quantity clamping', () => {
+    it('clamps quantity to max 9999', () => {
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 10000,
+        unitSystem: 'imperial',
+      });
+      expect(usePrintlistStore.getState().items[0].quantity).toBe(9999);
+    });
+
+    it('clamps quantity to min 1', () => {
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 0,
+        unitSystem: 'imperial',
+      });
+      expect(usePrintlistStore.getState().items[0].quantity).toBe(1);
+    });
+
+    it('accumulated quantity clamped to max', () => {
+      const store = usePrintlistStore.getState();
+      store.addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 9000,
+        unitSystem: 'imperial',
+      });
+      store.addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 2000,
+        unitSystem: 'imperial',
+      });
+      expect(usePrintlistStore.getState().items[0].quantity).toBe(9999);
+    });
+  });
+
+  describe('toggleSeamAllowance', () => {
+    it('toggles seam allowance enabled', () => {
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 1,
+        unitSystem: 'imperial',
+      });
+      expect(usePrintlistStore.getState().items[0].seamAllowanceEnabled).toBe(true);
+      usePrintlistStore.getState().toggleSeamAllowance('shape-1');
+      expect(usePrintlistStore.getState().items[0].seamAllowanceEnabled).toBe(false);
+    });
+  });
+
+  describe('syncItemSvg', () => {
+    it('updates SVG data for item', () => {
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 1,
+        unitSystem: 'imperial',
+      });
+      usePrintlistStore.getState().syncItemSvg('shape-1', '<rect/>');
+      expect(usePrintlistStore.getState().items[0].svgData).toBe('<rect/>');
+    });
+  });
+
+  describe('loadFromServer', () => {
+    it('loads items from server', async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: { items: [{ shapeId: 's1', shapeName: 'X', svgData: '', quantity: 1, unitSystem: 'imperial', seamAllowance: 0.25, seamAllowanceEnabled: true }], paperSize: 'letter' } }),
+      });
+      globalThis.fetch = mockFetch;
+
+      await usePrintlistStore.getState().loadFromServer('proj-1');
+      expect(usePrintlistStore.getState().items).toHaveLength(1);
+      expect(usePrintlistStore.getState().projectId).toBe('proj-1');
+      expect(usePrintlistStore.getState().isLoading).toBe(false);
+    });
+
+    it('handles 404 as empty list', async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+      });
+      globalThis.fetch = mockFetch;
+
+      await usePrintlistStore.getState().loadFromServer('proj-1');
+      expect(usePrintlistStore.getState().items).toHaveLength(0);
+      expect(usePrintlistStore.getState().isLoading).toBe(false);
+    });
+
+    it('sets isLoading during fetch', async () => {
+      let fetchPromise: Promise<Response> | null = null;
+      const mockFetch = vi.fn().mockImplementation(() => {
+        if (!fetchPromise) {
+          fetchPromise = Promise.resolve({
+            ok: true,
+            json: async () => ({ data: { items: [], paperSize: 'letter' } }),
+          });
+        }
+        return fetchPromise;
+      });
+      globalThis.fetch = mockFetch;
+
+      const loadPromise = usePrintlistStore.getState().loadFromServer('proj-1');
+      expect(usePrintlistStore.getState().isLoading).toBe(true);
+      await loadPromise;
+      expect(usePrintlistStore.getState().isLoading).toBe(false);
+    });
+  });
+
+  describe('saveToServer', () => {
+    it('sends items and paperSize to server', async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+      });
+      globalThis.fetch = mockFetch;
+
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 2,
+        unitSystem: 'imperial',
+      });
+      usePrintlistStore.getState().setPaperSize('a4');
+
+      await usePrintlistStore.getState().saveToServer('proj-1');
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/projects/proj-1/printlist', expect.objectContaining({
+        method: 'PUT',
+      }));
+      const call = mockFetch.mock.calls[0];
+      const body = JSON.parse(call[1].body);
+      expect(body.items).toHaveLength(1);
+      expect(body.items[0].shapeId).toBe('shape-1');
+      expect(body.paperSize).toBe('a4');
+    });
+
+    it('sets lastSaveError on failure', async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+      });
+      globalThis.fetch = mockFetch;
+
+      await usePrintlistStore.getState().saveToServer('proj-1');
+      expect(usePrintlistStore.getState().lastSaveError).toBeTruthy();
+    });
+
+    it('sets isSaving during save', async () => {
+      const mockFetch = vi.fn().mockResolvedValue({ ok: true });
+      globalThis.fetch = mockFetch;
+
+      const savePromise = usePrintlistStore.getState().saveToServer('proj-1');
+      expect(usePrintlistStore.getState().isSaving).toBe(true);
+      await savePromise;
+      expect(usePrintlistStore.getState().isSaving).toBe(false);
+    });
+  });
+
+  describe('reset', () => {
+    it('clears all state', () => {
+      usePrintlistStore.getState().addItem({
+        shapeId: 'shape-1',
+        shapeName: 'A',
+        svgData: '<path/>',
+        quantity: 5,
+        unitSystem: 'imperial',
+      });
+      usePrintlistStore.getState().setPaperSize('a4');
+      usePrintlistStore.getState().setProjectId('proj-1');
+
+      usePrintlistStore.getState().reset();
+
+      expect(usePrintlistStore.getState().items).toEqual([]);
+      expect(usePrintlistStore.getState().paperSize).toBe('letter');
+      expect(usePrintlistStore.getState().projectId).toBeNull();
+      expect(usePrintlistStore.getState().isPanelOpen).toBe(false);
+      expect(usePrintlistStore.getState().lastSaveError).toBeNull();
+    });
   });
 });

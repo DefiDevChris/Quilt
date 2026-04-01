@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock environment variables before importing
 vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake_key_for_testing');
 vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', 'price_test_pro_monthly');
 vi.stubEnv('STRIPE_PRO_PRICE_YEARLY', 'price_test_pro_yearly');
@@ -41,11 +40,19 @@ describe('stripe lib', () => {
     expect(typeof stripe.subscriptions).toBe('object');
   });
 
-  it('getStripe throws when price ID is missing', async () => {
+  it('getStripePriceId throws when STRIPE_SECRET_KEY set but price ID missing', async () => {
     vi.unstubAllEnvs();
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake_key_for_testing');
     vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', '');
     const { getStripePriceId } = await import('@/lib/stripe');
     expect(() => getStripePriceId('monthly')).toThrow('STRIPE_PRO_PRICE_MONTHLY must be set when STRIPE_SECRET_KEY is configured');
+  });
+
+  it('getStripePriceId throws when price ID not configured', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('STRIPE_SECRET_KEY', '');
+    vi.stubEnv('STRIPE_PRO_PRICE_MONTHLY', '');
+    const { getStripePriceId } = await import('@/lib/stripe');
+    expect(() => getStripePriceId('monthly')).toThrow('STRIPE_PRO_PRICE_MONTHLY is not configured');
   });
 });

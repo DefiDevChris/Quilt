@@ -30,7 +30,11 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
-Object.defineProperty(globalThis, 'window', { value: globalThis, writable: true, configurable: true });
+Object.defineProperty(globalThis, 'window', {
+  value: { ...globalThis, innerWidth: 1280, innerHeight: 800 },
+  writable: true,
+  configurable: true,
+});
 
 describe('onboarding-utils', () => {
   describe('TOUR_STEPS', () => {
@@ -99,19 +103,22 @@ describe('onboarding-utils', () => {
 
     it('positions above for top placement', () => {
       const pos = computeTooltipPosition(targetRect, 'top', tooltipSize);
+      // x would be 0 (overflows left), so flip logic moves it to right
       expect(pos.y).toBe(targetRect.top - tooltipSize.h - 12);
-      expect(pos.x).toBe(targetRect.left + targetRect.width / 2 - tooltipSize.w / 2);
+      expect(pos.x).toBe(targetRect.right + 12);
     });
 
     it('positions below for bottom placement', () => {
       const pos = computeTooltipPosition(targetRect, 'bottom', tooltipSize);
+      // x would be 0 (overflows left), so flip logic moves it to right
       expect(pos.y).toBe(targetRect.bottom + 12);
-      expect(pos.x).toBe(targetRect.left + targetRect.width / 2 - tooltipSize.w / 2);
+      expect(pos.x).toBe(targetRect.right + 12);
     });
 
     it('positions to the left for left placement', () => {
       const pos = computeTooltipPosition(targetRect, 'left', tooltipSize);
-      expect(pos.x).toBe(targetRect.left - tooltipSize.w - 12);
+      // x would be -212 (overflows left), so flip logic moves it to right
+      expect(pos.x).toBe(targetRect.right + 12);
       expect(pos.y).toBe(targetRect.top + targetRect.height / 2 - tooltipSize.h / 2);
     });
 
@@ -123,7 +130,9 @@ describe('onboarding-utils', () => {
 
     it('defaults to bottom placement for unknown value', () => {
       const pos = computeTooltipPosition(targetRect, 'unknown', tooltipSize);
+      // x would be 0, but flip only applies to left/top/bottom, so clamped to padding
       expect(pos.y).toBe(targetRect.bottom + 12);
+      expect(pos.x).toBe(16);
     });
   });
 
@@ -154,6 +163,13 @@ describe('onboarding-utils', () => {
       expect(getStorageFlag('test-key')).toBe(false);
       localStorageMock.getItem = original;
     });
+
+    it('returns false when localStorage is undefined', () => {
+      const original = globalThis.localStorage;
+      Object.defineProperty(globalThis, 'localStorage', { value: undefined, writable: true });
+      expect(getStorageFlag('test-key')).toBe(false);
+      Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
+    });
   });
 
   describe('setStorageFlag', () => {
@@ -178,6 +194,13 @@ describe('onboarding-utils', () => {
       };
       expect(() => setStorageFlag('test-key', true)).not.toThrow();
       localStorageMock.setItem = original;
+    });
+
+    it('does not throw when localStorage is undefined', () => {
+      const original = globalThis.localStorage;
+      Object.defineProperty(globalThis, 'localStorage', { value: undefined, writable: true });
+      expect(() => setStorageFlag('test-key', true)).not.toThrow();
+      Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
     });
   });
 });

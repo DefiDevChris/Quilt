@@ -13,6 +13,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
       'Let us show you around the studio. This quick tour covers the essentials so you can jump right into your first design.',
     targetSelector: '',
     placement: 'bottom',
+    mascot: '/mascots&avatars/corgi1.png',
   },
   {
     id: 'worktable-switcher',
@@ -22,6 +23,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="worktable-switcher"]',
     placement: 'bottom',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi3.png',
   },
   {
     id: 'toolbar',
@@ -31,6 +33,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="toolbar"]',
     placement: 'right',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi5.png',
   },
   {
     id: 'block-library',
@@ -40,6 +43,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="block-library"]',
     placement: 'right',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi7.png',
   },
   {
     id: 'fabric-library',
@@ -49,6 +53,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="fabric-library"]',
     placement: 'right',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi10.png',
   },
   {
     id: 'canvas',
@@ -58,6 +63,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="canvas"]',
     placement: 'left',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi12.png',
   },
   {
     id: 'layout-settings',
@@ -67,6 +73,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="layout-settings"]',
     placement: 'right',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi15.png',
   },
   {
     id: 'export',
@@ -76,6 +83,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     targetSelector: '[data-tour="export"]',
     placement: 'right',
     showPointer: true,
+    mascot: '/mascots&avatars/corgi18.png',
   },
   {
     id: 'ready',
@@ -84,6 +92,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
       'That covers the basics. Press "?" anytime for help, shortcuts, and FAQs. Now go make something beautiful!',
     targetSelector: '',
     placement: 'bottom',
+    mascot: '/mascots&avatars/corgi20.png',
   },
 ] as const;
 

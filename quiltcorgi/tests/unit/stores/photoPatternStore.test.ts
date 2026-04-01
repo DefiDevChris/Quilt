@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import {
   PHOTO_PATTERN_SENSITIVITY_DEFAULT,
@@ -7,8 +7,13 @@ import {
   DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
 
+vi.mock('@/lib/photo-pattern-utils', () => ({
+  terminateDetectionWorker: vi.fn(),
+}));
+
 describe('photoPatternStore', () => {
   beforeEach(() => {
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     usePhotoPatternStore.getState().reset();
   });
 
@@ -79,5 +84,23 @@ describe('photoPatternStore', () => {
     expect(state.detectedPieces).toEqual([]);
     expect(state.pipelineSteps).toEqual([]);
     expect(state.scaledPieces).toEqual([]);
+  });
+
+  it('setPipelineSteps updates pipelineSteps', () => {
+    const steps = [{ name: 'detect', status: 'complete' }] as const;
+    usePhotoPatternStore.getState().setPipelineSteps(steps);
+    expect(usePhotoPatternStore.getState().pipelineSteps).toEqual(steps);
+  });
+
+  it('setScaledPieces updates scaledPieces', () => {
+    const pieces = [{ piece: { id: '1', points: [] }, scale: 1 }] as const;
+    usePhotoPatternStore.getState().setScaledPieces(pieces);
+    expect(usePhotoPatternStore.getState().scaledPieces).toEqual(pieces);
+  });
+
+  it('setScanConfig updates scanConfig', () => {
+    const config = { mode: 'auto' as const, blockSize: 11, c: 0.1 };
+    usePhotoPatternStore.getState().setScanConfig(config);
+    expect(usePhotoPatternStore.getState().scanConfig).toEqual(config);
   });
 });
