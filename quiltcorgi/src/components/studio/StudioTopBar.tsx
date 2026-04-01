@@ -1,11 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
+import { useToast } from '@/components/ui/ToastProvider';
+
+function formatTimestamp(date: Date | null): string {
+  if (!date) return '';
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  
+  if (seconds < 60) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return date.toLocaleDateString();
+}
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
@@ -23,6 +39,11 @@ export function StudioTopBar({
   const projectName = useProjectStore((s) => s.projectName);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const canUndo = useCanvasStore((s) => s.canUndo());
+  const canRedo = useCanvasStore((s) => s.canRedo());
+  const undoCount = useCanvasStore((s) => s.undoStack.length);
+  const redoCount = useCanvasStore((s) => s.redoStack.length);
+  const gridSettings = useCanvasStore((s) => s.gridSettings);
 
   return (
     <>
@@ -54,10 +75,101 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        {/* Right: Viewport controls + Project info + Export */}
+        {/* Right: Undo/Redo + Grid + Viewport controls + Project info + Export */}
         <div className="flex items-center gap-4">
-          {/* Viewport lock/unlock + recenter */}
+          {/* Undo/Redo */}
           <div className="flex items-center gap-1">
+            <TooltipHint
+              name="Undo"
+              shortcut="Ctrl+Z"
+              description={canUndo ? `Undo last action (${undoCount} available)` : 'No actions to undo'}
+            >
+              <button
+                type="button"
+                onClick={() => performUndo()}
+                disabled={!canUndo}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  canUndo
+                    ? 'hover:bg-surface-container'
+                    : 'opacity-30 cursor-not-allowed'
+                }`}
+                aria-label="Undo"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                  <path d="M7 10H17M7 10L11 6M7 10L11 14" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M3 4V10" strokeLinecap="round" />
+                </svg>
+              </button>
+            </TooltipHint>
+            <TooltipHint
+              name="Redo"
+              shortcut="Ctrl+Shift+Z"
+              description={canRedo ? `Redo last action (${redoCount} available)` : 'No actions to redo'}
+            >
+              <button
+                type="button"
+                onClick={() => performRedo()}
+                disabled={!canRedo}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  canRedo
+                    ? 'hover:bg-surface-container'
+                    : 'opacity-30 cursor-not-allowed'
+                }`}
+                aria-label="Redo"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                  <path d="M13 10H3M13 10L9 6M13 10L9 14" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M17 4V10" strokeLinecap="round" />
+                </svg>
+              </button>
+            </TooltipHint>
+          </div>
+
+          {/* Grid toggles */}
+          <div className="flex items-center gap-1 border-l border-outline-variant/15 pl-4">
+            <TooltipHint
+              name="Toggle Grid"
+              description={gridSettings.enabled ? 'Hide grid lines' : 'Show grid lines'}
+            >
+              <button
+                type="button"
+                onClick={() => useCanvasStore.getState().setGridSettings({ enabled: !gridSettings.enabled })}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  gridSettings.enabled ? 'bg-primary/12 text-primary' : 'hover:bg-surface-container'
+                }`}
+                aria-label="Toggle grid"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+                  <rect x="3" y="3" width="14" height="14" rx="1" />
+                  <path d="M3 10H17M10 3V17" />
+                </svg>
+              </button>
+            </TooltipHint>
+            <TooltipHint
+              name="Snap to Grid"
+              description={gridSettings.snapToGrid ? 'Disable snap to grid' : 'Enable snap to grid'}
+            >
+              <button
+                type="button"
+                onClick={() => useCanvasStore.getState().setGridSettings({ snapToGrid: !gridSettings.snapToGrid })}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  gridSettings.snapToGrid ? 'bg-primary/12 text-primary' : 'hover:bg-surface-container'
+                }`}
+                aria-label="Toggle snap to grid"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+                  <circle cx="10" cy="10" r="2" fill="currentColor" />
+                  <circle cx="5" cy="5" r="1" fill="currentColor" />
+                  <circle cx="15" cy="5" r="1" fill="currentColor" />
+                  <circle cx="5" cy="15" r="1" fill="currentColor" />
+                  <circle cx="15" cy="15" r="1" fill="currentColor" />
+                </svg>
+              </button>
+            </TooltipHint>
+          </div>
+
+          {/* Viewport lock/unlock + recenter */}
+          <div className="flex items-center gap-1 border-l border-outline-variant/15 pl-4">
             <TooltipHint
               name={isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport'}
               description={
