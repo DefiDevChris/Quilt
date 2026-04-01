@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createInitialPipeline,
   advancePipelineStep,
-} from '@/lib/photo-pattern-engine';
+} from '@/lib/photo-pattern-utils';
 
 // ── createInitialPipeline ──────────────────────────────────────
 

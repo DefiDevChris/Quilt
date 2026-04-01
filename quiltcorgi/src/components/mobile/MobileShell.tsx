@@ -38,7 +38,15 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
           aria-label="Menu"
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          >
             <line x1="4" y1="7" x2="20" y2="7" />
             <line x1="4" y1="12" x2="20" y2="12" />
             <line x1="4" y1="17" x2="16" y2="17" />
@@ -50,10 +58,7 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
         {isAuthenticated ? (
           <NotificationBell />
         ) : (
-          <Link
-            href="/auth/signin"
-            className="text-sm font-medium text-primary hover:underline"
-          >
+          <Link href="/auth/signin" className="text-sm font-medium text-primary hover:underline">
             Sign In
           </Link>
         )}

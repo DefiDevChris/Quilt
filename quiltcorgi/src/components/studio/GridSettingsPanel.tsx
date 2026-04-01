@@ -24,9 +24,7 @@ export function GridSettingsPanel({ onClose }: GridSettingsPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
       <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6">
-        <h2 className="text-lg font-semibold text-on-surface mb-4">
-          Grid Settings
-        </h2>
+        <h2 className="text-lg font-semibold text-on-surface mb-4">Grid Settings</h2>
 
         <div className="space-y-4">
           <label className="flex items-center gap-2 cursor-pointer">
@@ -42,10 +40,7 @@ export function GridSettingsPanel({ onClose }: GridSettingsPanelProps) {
           {gridSettings.enabled && (
             <>
               <div>
-                <label
-                  htmlFor="grid-size-input"
-                  className="block text-xs text-secondary mb-1"
-                >
+                <label htmlFor="grid-size-input" className="block text-xs text-secondary mb-1">
                   Grid size ({unit})
                 </label>
                 <input
@@ -55,9 +50,7 @@ export function GridSettingsPanel({ onClose }: GridSettingsPanelProps) {
                   max={12}
                   step={0.125}
                   value={gridSettings.size}
-                  onChange={(e) =>
-                    update({ size: parseFloat(e.target.value) || 1 })
-                  }
+                  onChange={(e) => update({ size: parseFloat(e.target.value) || 1 })}
                   className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>

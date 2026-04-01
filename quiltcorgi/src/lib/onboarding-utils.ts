@@ -100,34 +100,46 @@ export function computeTooltipPosition(
   tooltipSize: { w: number; h: number }
 ): TooltipPosition {
   const gap = 12;
+  const padding = 16;
+
+  let x: number;
+  let y: number;
 
   switch (placement) {
     case 'top':
-      return {
-        x: targetRect.left + targetRect.width / 2 - tooltipSize.w / 2,
-        y: targetRect.top - tooltipSize.h - gap,
-      };
+      x = targetRect.left + targetRect.width / 2 - tooltipSize.w / 2;
+      y = targetRect.top - tooltipSize.h - gap;
+      break;
     case 'bottom':
-      return {
-        x: targetRect.left + targetRect.width / 2 - tooltipSize.w / 2,
-        y: targetRect.bottom + gap,
-      };
+      x = targetRect.left + targetRect.width / 2 - tooltipSize.w / 2;
+      y = targetRect.bottom + gap;
+      break;
     case 'left':
-      return {
-        x: targetRect.left - tooltipSize.w - gap,
-        y: targetRect.top + targetRect.height / 2 - tooltipSize.h / 2,
-      };
+      x = targetRect.left - tooltipSize.w - gap;
+      y = targetRect.top + targetRect.height / 2 - tooltipSize.h / 2;
+      break;
     case 'right':
-      return {
-        x: targetRect.right + gap,
-        y: targetRect.top + targetRect.height / 2 - tooltipSize.h / 2,
-      };
+      x = targetRect.right + gap;
+      y = targetRect.top + targetRect.height / 2 - tooltipSize.h / 2;
+      break;
     default:
-      return {
-        x: targetRect.left + targetRect.width / 2 - tooltipSize.w / 2,
-        y: targetRect.bottom + gap,
-      };
+      x = targetRect.left + targetRect.width / 2 - tooltipSize.w / 2;
+      y = targetRect.bottom + gap;
   }
+
+  // If tooltip overflows left, flip to right placement
+  if (x < padding && (placement === 'left' || placement === 'top' || placement === 'bottom')) {
+    x = targetRect.right + gap;
+  }
+
+  // Clamp to viewport bounds
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1280;
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+  x = Math.max(padding, Math.min(x, vw - tooltipSize.w - padding));
+  y = Math.max(padding, Math.min(y, vh - tooltipSize.h - padding));
+
+  return { x, y };
 }
 
 // --- Storage helpers ---

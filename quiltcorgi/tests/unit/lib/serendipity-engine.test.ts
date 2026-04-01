@@ -6,7 +6,7 @@ import {
   multiPolygonToFabricData,
   variationToSvg,
   VARIATION_LABELS,
-} from '@/lib/serendipity-engine';
+} from '@/lib/serendipity-utils';
 
 function makeRectBlock(
   id: string,
@@ -64,7 +64,7 @@ function makePolygonBlock(
   };
 }
 
-describe('serendipity-engine', () => {
+describe('serendipity-utils', () => {
   describe('extractPolygons', () => {
     it('extracts polygon from a Rect object', () => {
       const block = makeRectBlock('b1', 'Block A', 0, 0, 50, 50);

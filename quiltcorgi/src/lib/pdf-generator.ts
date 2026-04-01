@@ -53,7 +53,9 @@ interface ShapeData {
  * Extract polyline points from a printlist item's SVG data.
  * Converts from canvas pixels to inches.
  */
-function extractShapePoints(item: PrintlistItem): { cutLine: Point[]; seamLine: Point[] | null } | null {
+function extractShapePoints(
+  item: PrintlistItem
+): { cutLine: Point[]; seamLine: Point[] | null } | null {
   const pathD = extractPathFromSvg(item.svgData);
   if (!pathD) return null;
 
@@ -63,9 +65,8 @@ function extractShapePoints(item: PrintlistItem): { cutLine: Point[]; seamLine: 
   // Convert from canvas pixels to inches
   const scale = 1 / PIXELS_PER_INCH;
   const cutLine = rawPoints.map((p) => ({ x: p.x * scale, y: p.y * scale }));
-  const seamLine = item.seamAllowanceEnabled !== false
-    ? computeSeamOffset(cutLine, item.seamAllowance)
-    : null;
+  const seamLine =
+    item.seamAllowanceEnabled !== false ? computeSeamOffset(cutLine, item.seamAllowance) : null;
 
   return { cutLine, seamLine };
 }
@@ -194,9 +195,7 @@ export async function generatePatternPdf(
     if (!result) continue;
 
     const bbox = polylineBoundingBox(result.cutLine);
-    const seamBbox = result.seamLine
-      ? polylineBoundingBox(result.seamLine)
-      : bbox;
+    const seamBbox = result.seamLine ? polylineBoundingBox(result.seamLine) : bbox;
 
     shapes.push({
       cutLine: result.cutLine,

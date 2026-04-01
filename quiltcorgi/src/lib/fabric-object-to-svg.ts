@@ -77,9 +77,7 @@ function pointsToPathData(points: readonly PointLike[], close: boolean): string 
  * Each element in the path array is a tuple like ['M', x, y] or ['C', ...].
  */
 function fabricPathToSvgD(path: ReadonlyArray<readonly (string | number)[]>): string {
-  return path
-    .map((segment) => segment.join(' '))
-    .join(' ');
+  return path.map((segment) => segment.join(' ')).join(' ');
 }
 
 /**

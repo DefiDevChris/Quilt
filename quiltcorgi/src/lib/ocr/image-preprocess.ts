@@ -38,18 +38,11 @@ const GAUSSIAN_3X3 = [1, 2, 1, 2, 4, 2, 1, 2, 1] as const;
 const GAUSSIAN_3X3_SUM = 16;
 
 const GAUSSIAN_5X5 = [
-  1, 4, 7, 4, 1,
-  4, 16, 26, 16, 4,
-  7, 26, 41, 26, 7,
-  4, 16, 26, 16, 4,
-  1, 4, 7, 4, 1,
+  1, 4, 7, 4, 1, 4, 16, 26, 16, 4, 7, 26, 41, 26, 7, 4, 16, 26, 16, 4, 1, 4, 7, 4, 1,
 ] as const;
 const GAUSSIAN_5X5_SUM = 273;
 
-export function gaussianBlur(
-  image: GrayscaleBuffer,
-  kernelSize: 3 | 5 = 3
-): GrayscaleBuffer {
+export function gaussianBlur(image: GrayscaleBuffer, kernelSize: 3 | 5 = 3): GrayscaleBuffer {
   const { width, height, data } = image;
   const output = new Uint8ClampedArray(width * height);
   const kernel = kernelSize === 3 ? GAUSSIAN_3X3 : GAUSSIAN_5X5;
@@ -123,10 +116,7 @@ export function enhanceContrast(image: GrayscaleBuffer): GrayscaleBuffer {
 const SOBEL_X = [-1, 0, 1, -2, 0, 2, -1, 0, 1] as const;
 const SOBEL_Y = [-1, -2, -1, 0, 0, 0, 1, 2, 1] as const;
 
-export function sobelEdgeDetect(
-  image: GrayscaleBuffer,
-  threshold: number = 50
-): GrayscaleBuffer {
+export function sobelEdgeDetect(image: GrayscaleBuffer, threshold: number = 50): GrayscaleBuffer {
   const { width, height, data } = image;
   const output = new Uint8ClampedArray(width * height);
 

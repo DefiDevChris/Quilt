@@ -62,12 +62,7 @@ const CONFIDENCE_NONE = 0.0;
  * and collapses internal runs of whitespace.
  */
 export function normalizeBlockName(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(TRAILING_SUFFIXES, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return name.toLowerCase().trim().replace(TRAILING_SUFFIXES, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -99,9 +94,7 @@ function tryNormalizedMatch(
     return null;
   }
 
-  return (
-    library.find((entry) => normalizeBlockName(entry.name) === normalized) ?? null
-  );
+  return library.find((entry) => normalizeBlockName(entry.name) === normalized) ?? null;
 }
 
 function tryTagMatch(
@@ -127,8 +120,7 @@ function tryTagMatch(
   }
 
   const best = scored[0];
-  const isAmbiguous =
-    scored.length > 1 && scored[1].matchCount === best.matchCount;
+  const isAmbiguous = scored.length > 1 && scored[1].matchCount === best.matchCount;
 
   return { entry: best.entry, isAmbiguous };
 }

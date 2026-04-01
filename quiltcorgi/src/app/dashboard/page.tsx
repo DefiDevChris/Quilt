@@ -4,7 +4,17 @@ import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, ArrowLeft, Scissors, ScanLine, BookOpen, LayoutGrid, HeartHandshake, Settings, UserCircle } from 'lucide-react';
+import {
+  Plus,
+  ArrowLeft,
+  Scissors,
+  ScanLine,
+  BookOpen,
+  LayoutGrid,
+  HeartHandshake,
+  Settings,
+  UserCircle,
+} from 'lucide-react';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
@@ -134,8 +144,41 @@ export default function DashboardPage() {
   /* ── Main bento grid ─────────────────────────────────────────────── */
   return (
     <div className="max-w-6xl mx-auto md:pt-16 md:pb-12 px-6 relative z-10 w-full transition-all duration-500">
+      {/* Corgi mascots */}
+      <Image
+        src="/mascots&avatars/corgi2.png"
+        alt=""
+        width={80}
+        height={80}
+        className="hidden md:block absolute right-8 pointer-events-none"
+        style={{ top: '62px' }}
+      />
+      <Image
+        src="/mascots&avatars/corgi3.png"
+        alt=""
+        width={80}
+        height={80}
+        className="hidden md:block absolute bottom-32 -left-16 pointer-events-none"
+      />
+      <Image
+        src="/mascots&avatars/corgi7.png"
+        alt=""
+        width={80}
+        height={80}
+        className="hidden md:block absolute bottom-32 -right-16 pointer-events-none"
+      />
+
+      {/* Greeting */}
+      <div className="mb-8">
+        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+          {greeting}
+        </p>
+        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight">
+          Hello, {displayName}
+        </h1>
+      </div>
+
       <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20">
-        
         {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}
         <button
           type="button"
@@ -147,17 +190,12 @@ export default function DashboardPage() {
             <Scissors size={320} strokeWidth={1} className="text-[#C67B5C]" />
           </div>
 
-          <div className="relative z-10">
-            <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">{greeting}</p>
-            <h1 className="text-on-surface text-4xl font-extrabold tracking-tight">
-              Hello, {displayName}
-            </h1>
-          </div>
-
           <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between z-10">
             <div>
               <p className="text-on-surface font-extrabold text-2xl tracking-tight">New Design</p>
-              <p className="text-secondary text-sm mt-1 font-medium">Start a fresh quilt from scratch</p>
+              <p className="text-secondary text-sm mt-1 font-medium">
+                Start a fresh quilt from scratch
+              </p>
             </div>
             <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
               <Plus size={28} className="text-white" strokeWidth={3} />
@@ -173,9 +211,9 @@ export default function DashboardPage() {
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-15 pointer-events-none group-hover:scale-125 transition-transform duration-700">
-             <ScanLine size={180} strokeWidth={1} className="text-primary-dark" />
+            <ScanLine size={180} strokeWidth={1} className="text-primary-dark" />
           </div>
-          
+
           <div className="absolute bottom-8 left-8 right-8 z-10">
             <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-[10px] font-extrabold uppercase tracking-widest rounded-full mb-4">
               AI Feature
@@ -183,9 +221,7 @@ export default function DashboardPage() {
             <p className="text-on-surface text-2xl font-extrabold tracking-tight leading-none">
               Photo to Pattern
             </p>
-            <p className="text-secondary text-sm mt-2 font-medium">
-              Extract blocks from a photo
-            </p>
+            <p className="text-secondary text-sm mt-2 font-medium">Extract blocks from a photo</p>
           </div>
         </button>
 
@@ -195,15 +231,13 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 flex flex-col justify-between group"
         >
           <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-             <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
+            <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
           </div>
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-on-surface font-extrabold text-xl tracking-tight">My Quiltbook</p>
               <p className="text-secondary text-sm mt-1 font-medium">
-                {projectCount !== null
-                  ? `${projectCount} saved designs`
-                  : 'Your saved designs'}
+                {projectCount !== null ? `${projectCount} saved designs` : 'Your saved designs'}
               </p>
             </div>
             <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center flex-shrink-0">
@@ -215,12 +249,23 @@ export default function DashboardPage() {
             {projects.length > 0 ? (
               <div className="flex gap-2.5">
                 {projects.slice(0, 3).map((p) => (
-                  <div key={p.id} className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-sm">
+                  <div
+                    key={p.id}
+                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-sm"
+                  >
                     {p.thumbnailUrl ? (
-                      <Image src={p.thumbnailUrl} alt={p.name} width={56} height={56} className="w-full h-full object-cover" />
+                      <Image
+                        src={p.thumbnailUrl}
+                        alt={p.name}
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-surface-container-low">
-                        <span className="text-secondary/50 text-sm font-extrabold">{p.name.charAt(0).toUpperCase()}</span>
+                        <span className="text-secondary/50 text-sm font-extrabold">
+                          {p.name.charAt(0).toUpperCase()}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -229,12 +274,17 @@ export default function DashboardPage() {
             ) : (
               <div className="flex gap-2.5">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="w-14 h-14 rounded-lg border-2 border-dashed border-outline-variant/50 bg-white/30" />
+                  <div
+                    key={i}
+                    className="w-14 h-14 rounded-lg border-2 border-dashed border-outline-variant/50 bg-white/30"
+                  />
                 ))}
               </div>
             )}
             <p className="text-xs text-secondary/70 mt-4 font-bold tracking-wide">
-              {projects.length > 0 ? `LAST EDITED ${formatRelativeTime(projects[0].updatedAt).toUpperCase()}` : 'NO PROJECTS YET'}
+              {projects.length > 0
+                ? `LAST EDITED ${formatRelativeTime(projects[0].updatedAt).toUpperCase()}`
+                : 'NO PROJECTS YET'}
             </p>
           </div>
         </Link>
@@ -246,7 +296,7 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 text-left glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
-             <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
+            <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
           </div>
           <div className="relative z-10">
             <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
@@ -265,15 +315,17 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-             <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
+            <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
           </div>
           <div className="relative z-10">
-             <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
               <HeartHandshake size={22} className="text-primary-dark" />
             </div>
           </div>
           <div className="relative z-10 mt-auto">
-            <p className="text-on-surface font-extrabold text-xl tracking-tight">Community Threads</p>
+            <p className="text-on-surface font-extrabold text-xl tracking-tight">
+              Community Threads
+            </p>
             <p className="text-secondary text-sm mt-1 font-medium">Share blocks &amp; discover</p>
           </div>
         </Link>
@@ -284,36 +336,39 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-[-30%] right-[-10%] opacity-[0.02] pointer-events-none transition-transform duration-1000 group-hover:scale-110">
-             <UserCircle size={320} strokeWidth={1} className="text-on-surface" />
+            <UserCircle size={320} strokeWidth={1} className="text-on-surface" />
           </div>
           <div className="w-16 h-16 rounded-full glass-inset flex items-center justify-center relative z-10 shrink-0">
             <UserCircle size={32} className="text-secondary" />
           </div>
           <div className="relative z-10">
             <p className="text-on-surface font-extrabold text-xl tracking-tight">My Profile</p>
-            <p className="text-secondary text-sm mt-1 font-medium">Manage details and public settings</p>
+            <p className="text-secondary text-sm mt-1 font-medium">
+              Manage details and public settings
+            </p>
           </div>
         </Link>
 
         {/* ── 7. Settings — col 7-12, row 3 ────────────────────────── */}
         <Link
-          href="/profile#settings"
+          href="/settings"
           className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-1/2 left-[-15%] -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-90 transition-transform duration-1000">
-             <Settings size={280} strokeWidth={1} className="text-on-surface" />
+            <Settings size={280} strokeWidth={1} className="text-on-surface" />
           </div>
           <div className="relative z-10 flex items-center gap-6 w-full justify-end">
-             <div className="text-right">
-               <p className="text-on-surface font-extrabold text-xl tracking-tight">System Settings</p>
-               <p className="text-secondary text-sm mt-1 font-medium">Units, theme, and defaults</p>
-             </div>
-             <div className="w-16 h-16 rounded-full glass-inset flex items-center justify-center shrink-0">
-               <Settings size={32} className="text-secondary" />
-             </div>
+            <div className="text-right">
+              <p className="text-on-surface font-extrabold text-xl tracking-tight">
+                System Settings
+              </p>
+              <p className="text-secondary text-sm mt-1 font-medium">Units, theme, and defaults</p>
+            </div>
+            <div className="w-16 h-16 rounded-full glass-inset flex items-center justify-center shrink-0">
+              <Settings size={32} className="text-secondary" />
+            </div>
           </div>
         </Link>
-
       </div>
 
       <PhotoPatternModal />

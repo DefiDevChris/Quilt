@@ -74,7 +74,7 @@ export function addBoundarySegments(gridCols: number, gridRows: number): Segment
   if (gridCols <= 0 || gridRows <= 0) {
     return [];
   }
-  
+
   const segments: Segment[] = [];
 
   // Top edge

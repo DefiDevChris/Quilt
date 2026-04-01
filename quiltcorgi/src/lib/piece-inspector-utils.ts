@@ -228,8 +228,7 @@ export function computePieceDimensions(
   seamAllowance: number
 ): PieceDimensions {
   // Use cached SVG data if available to avoid redundant reconstruction
-  const svgData = geometry._originalSvgData ?? 
-    `<path d="${geometry.svgPathData}"/>`;
+  const svgData = geometry._originalSvgData ?? `<path d="${geometry.svgPathData}"/>`;
 
   const classification = classifyPatchShape(svgData, seamAllowance);
 

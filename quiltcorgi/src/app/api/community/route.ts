@@ -2,7 +2,11 @@ import { NextRequest } from 'next/server';
 import { eq, and, ilike, desc, count, inArray } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { communityPosts, users, projects, userProfiles, likes } from '@/db/schema';
-import { communityFeedSchema, createCommunityPostExtendedSchema, createCommunityPostSimpleSchema } from '@/lib/validation';
+import {
+  communityFeedSchema,
+  createCommunityPostExtendedSchema,
+  createCommunityPostSimpleSchema,
+} from '@/lib/validation';
 import { getSession } from '@/lib/cognito-session';
 import {
   getRequiredSession,
@@ -163,13 +167,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    
+
     // Try extended schema first (with projectId), then simple schema
     const extendedParsed = createCommunityPostExtendedSchema.safeParse(body);
     const simpleParsed = createCommunityPostSimpleSchema.safeParse(body);
-    
+
     const parsed = extendedParsed.success ? extendedParsed : simpleParsed;
-    
+
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
     }

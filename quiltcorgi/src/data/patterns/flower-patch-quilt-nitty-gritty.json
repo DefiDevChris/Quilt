@@ -124,41 +124,31 @@
     "rows": 9,
     "cols": 7,
     "sashingWidth": 0,
-    "borderWidths": [
-      4
-    ]
+    "borderWidths": [4]
   },
   "cuttingDirections": [
     {
       "scope": "per-block",
       "blockName": "Flower Block",
       "fabricLabel": "10 inch Squares",
-      "instructions": [
-        "Cut (4) squares 5 inches"
-      ]
+      "instructions": ["Cut (4) squares 5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Flower Block",
       "fabricLabel": "Fabric 29",
-      "instructions": [
-        "Cut (4) squares 2.75 inches"
-      ]
+      "instructions": ["Cut (4) squares 2.75 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Flower Block",
       "fabricLabel": "Fabric 33",
-      "instructions": [
-        "Cut (4) squares 2.75 inches"
-      ]
+      "instructions": ["Cut (4) squares 2.75 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "10 inch Squares",
-      "instructions": [
-        "Cut (4) 5-inch squares from each of 31 prints for Flower Blocks"
-      ]
+      "instructions": ["Cut (4) 5-inch squares from each of 31 prints for Flower Blocks"]
     },
     {
       "scope": "whole-quilt",
@@ -171,9 +161,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 30",
-      "instructions": [
-        "Cut (7) strips 2 inches x 21 inches for Four-Patch Units"
-      ]
+      "instructions": ["Cut (7) strips 2 inches x 21 inches for Four-Patch Units"]
     },
     {
       "scope": "whole-quilt",
@@ -189,9 +177,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "Fabric 32",
-      "instructions": [
-        "Cut (9) strips 2.5 inches x WOF for binding"
-      ]
+      "instructions": ["Cut (9) strips 2.5 inches x WOF for binding"]
     },
     {
       "scope": "whole-quilt",

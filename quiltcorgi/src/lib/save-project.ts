@@ -24,10 +24,7 @@ export interface SaveProjectOptions {
  * Formula: base * 2^retryCount, capped at max delay.
  */
 function getRetryDelayMs(retryCount: number): number {
-  return Math.min(
-    RETRY_DELAY_BASE_MS * Math.pow(2, retryCount),
-    RETRY_DELAY_MAX_MS
-  );
+  return Math.min(RETRY_DELAY_BASE_MS * Math.pow(2, retryCount), RETRY_DELAY_MAX_MS);
 }
 
 /**
@@ -59,13 +56,7 @@ function getControllerMap(source: SaveSource): Map<string, AbortController> {
  * controller.abort();
  */
 export async function saveProject(options: SaveProjectOptions): Promise<void> {
-  const { 
-    projectId, 
-    fabricCanvas, 
-    retryCount = 0, 
-    signal, 
-    source = 'manual' 
-  } = options;
+  const { projectId, fabricCanvas, retryCount = 0, signal, source = 'manual' } = options;
 
   if (!projectId || !fabricCanvas) return;
 
@@ -118,7 +109,21 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       signal: controller.signal,
     });
 
-    if (!res.ok) throw new Error('Save failed');
+    if (!res.ok) {
+      // Don't retry Pro-required errors — free users can design but not save
+      if (res.status === 403) {
+        try {
+          const data = await res.json();
+          if (data.code === 'PRO_REQUIRED') {
+            store.setSaveStatus('error');
+            return; // Don't retry
+          }
+        } catch {
+          // If JSON parsing fails, fall through to normal error handling
+        }
+      }
+      throw new Error('Save failed');
+    }
     store.setSaveStatus('saved');
     store.setDirty(false);
     store.setLastSavedAt(new Date());
@@ -134,15 +139,17 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       const delayMs = getRetryDelayMs(retryCount);
       setTimeout(() => {
         // Only retry if this is still the active controller for this project and source
-        if (controllerMap.get(projectId) === controller &&
-            useProjectStore.getState().saveStatus === 'error' &&
-            !controller.signal.aborted) {
-          saveProject({ 
-            projectId, 
-            fabricCanvas, 
-            retryCount: retryCount + 1, 
+        if (
+          controllerMap.get(projectId) === controller &&
+          useProjectStore.getState().saveStatus === 'error' &&
+          !controller.signal.aborted
+        ) {
+          saveProject({
+            projectId,
+            fabricCanvas,
+            retryCount: retryCount + 1,
             signal: controller.signal,
-            source 
+            source,
           });
         }
       }, delayMs);

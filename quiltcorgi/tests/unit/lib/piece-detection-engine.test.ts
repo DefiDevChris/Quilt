@@ -7,7 +7,7 @@ import {
   filterContoursByArea,
   extractDominantColor,
   scalePiecesToDimensions,
-} from '@/lib/piece-detection-engine';
+} from '@/lib/piece-detection-utils';
 import type { DetectedPiece } from '@/lib/photo-pattern-types';
 
 // ---------------------------------------------------------------------------

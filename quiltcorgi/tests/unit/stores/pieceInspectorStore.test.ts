@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
-import type { PieceGeometry, PieceDimensions } from '@/lib/piece-inspector-engine';
+import type { PieceGeometry, PieceDimensions } from '@/lib/piece-inspector-utils';
 
 // ── Test Fixtures ─────────────────────────────────────────────────
 

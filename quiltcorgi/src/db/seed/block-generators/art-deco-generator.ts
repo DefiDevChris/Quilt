@@ -59,8 +59,9 @@ function generateFanBlocks(): BlockDefinition[] {
   const segmentCounts = [3, 4, 5, 6];
 
   for (const [palName, pal] of palettes) {
-    const segments = segmentCounts[palettes.indexOf([palName, pal]) % segmentCounts.length]
-      || segmentCounts[blocks.length % segmentCounts.length];
+    const segments =
+      segmentCounts[palettes.indexOf([palName, pal]) % segmentCounts.length] ||
+      segmentCounts[blocks.length % segmentCounts.length];
     const segCount = segmentCounts[blocks.length % segmentCounts.length];
     const cx = 0;
     const cy = 100;
@@ -439,7 +440,10 @@ function generateSpiderwebBlocks(): BlockDefinition[] {
     for (let i = 0; i < layers; i++) {
       const r = 48 - i * 9;
       if (r > 0) {
-        svg += polygon(regularPolygonPoints(cx, cy, r, sides, -90 + i * 5), fills[i % fills.length]);
+        svg += polygon(
+          regularPolygonPoints(cx, cy, r, sides, -90 + i * 5),
+          fills[i % fills.length]
+        );
       }
     }
 

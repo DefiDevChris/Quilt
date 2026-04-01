@@ -32,9 +32,7 @@ export function EasyDrawToolbar({
           onClick={() => onModeChange(tool.id)}
           title={tool.label}
           className={`h-8 w-8 rounded text-sm ${
-            activeMode === tool.id
-              ? 'bg-primary text-white'
-              : 'text-secondary hover:bg-background'
+            activeMode === tool.id ? 'bg-primary text-white' : 'text-secondary hover:bg-background'
           }`}
         >
           {tool.icon}

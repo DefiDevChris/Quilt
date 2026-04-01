@@ -96,20 +96,24 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const isPro = session.user.role === 'pro' || session.user.role === 'admin';
-    if (!isPro) {
-      return errorResponse(
-        'Saving projects requires a Pro subscription. Upgrade to Pro for $8/month.',
-        'PRO_REQUIRED',
-        403
-      );
-    }
-
     // --- Duplicate project flow ---
     if (body.sourceProjectId) {
-      const duplicateParsed = duplicateProjectSchema.safeParse({ sourceProjectId: body.sourceProjectId });
+      const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+      if (!isPro) {
+        return errorResponse(
+          'Duplicating projects requires a Pro subscription. Upgrade to Pro for $8/month.',
+          'PRO_REQUIRED',
+          403
+        );
+      }
+
+      const duplicateParsed = duplicateProjectSchema.safeParse({
+        sourceProjectId: body.sourceProjectId,
+      });
       if (!duplicateParsed.success) {
-        return validationErrorResponse(duplicateParsed.error.issues[0]?.message ?? 'Invalid source project ID');
+        return validationErrorResponse(
+          duplicateParsed.error.issues[0]?.message ?? 'Invalid source project ID'
+        );
       }
       const [source] = await db
         .select()
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ success: true, data: duplicated }, { status: 201 });
     }
 
-    // --- Standard create flow ---
+    // --- Standard create flow (no Pro required) ---
     const parsed = createProjectSchema.safeParse(body);
 
     if (!parsed.success) {

@@ -58,8 +58,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }`}
       >
         <Link href="/dashboard" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="QuiltCorgi Logo" width={32} height={32} className="object-contain drop-shadow-sm" />
-          <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">QuiltCorgi</span>
+          <Image
+            src="/logo.png"
+            alt="QuiltCorgi Logo"
+            width={32}
+            height={32}
+            className="object-contain drop-shadow-sm"
+          />
+          <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+            QuiltCorgi
+          </span>
         </Link>
 
         <div className="flex items-center gap-6">
@@ -85,9 +93,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           {isAuthenticated && (
             <Link
-              href="/profile"
+              href="/socialthreads"
               className={`text-label-lg transition-colors ${
-                isActive('/profile')
+                isActive('/socialthreads')
                   ? 'text-on-surface font-semibold'
                   : 'text-secondary hover:text-on-surface'
               }`}
@@ -134,7 +142,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   />
                 ) : (
                   <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-orange-300 transition-all">
-                    <Image src="/mascots&avatars/corgi1.png" alt="Default Avatar" width={32} height={32} className="object-cover scale-110 translate-y-1" />
+                    <Image
+                      src="/mascots&avatars/corgi1.png"
+                      alt="Default Avatar"
+                      width={32}
+                      height={32}
+                      className="object-cover scale-110 translate-y-1"
+                    />
                   </div>
                 )}
               </button>
@@ -146,18 +160,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <p className="text-xs text-secondary truncate">{user?.email}</p>
                   </div>
                   <Link
-                    href="/profile"
+                    href="/socialthreads"
                     className="block px-4 py-2 text-sm text-secondary hover:bg-surface-container transition-colors"
                     onClick={() => setDropdownOpen(false)}
                   >
                     Profile
-                  </Link>
-                  <Link
-                    href="/profile#settings"
-                    className="block px-4 py-2 text-sm text-secondary hover:bg-surface-container transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Settings & Billing
                   </Link>
                   <button
                     type="button"

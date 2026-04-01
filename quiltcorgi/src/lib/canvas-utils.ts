@@ -19,11 +19,7 @@ export function pixelsToUnits(pixels: number, unitSystem: UnitSystem): number {
   return pixels / getPixelsPerUnit(unitSystem);
 }
 
-export function convertUnits(
-  value: number,
-  from: UnitSystem,
-  to: UnitSystem
-): number {
+export function convertUnits(value: number, from: UnitSystem, to: UnitSystem): number {
   if (from === to) return value;
   const px = unitsToPixels(value, from);
   return pixelsToUnits(px, to);
@@ -79,11 +75,7 @@ export function fitToScreenZoom(
  * Conditionally snap a value to grid based on current grid settings.
  * Used by drawing tools for snap-to-grid functionality.
  */
-export function maybeSnap(
-  val: number,
-  gridSettings: GridSettings,
-  unitSystem: UnitSystem
-): number {
+export function maybeSnap(val: number, gridSettings: GridSettings, unitSystem: UnitSystem): number {
   if (!gridSettings.snapToGrid) return val;
   const gridPx = gridSettings.size * getPixelsPerUnit(unitSystem);
   return snapToGrid(val, gridPx);

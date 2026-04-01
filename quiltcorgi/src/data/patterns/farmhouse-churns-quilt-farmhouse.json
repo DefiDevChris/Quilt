@@ -314,39 +314,29 @@
       "scope": "per-block",
       "blockName": "Churn Dash Block",
       "fabricLabel": "Center",
-      "instructions": [
-        "Cut (1) square 2 inches"
-      ]
+      "instructions": ["Cut (1) square 2 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Big Block",
       "fabricLabel": "A",
-      "instructions": [
-        "Cut (1) center square 9.5 inches"
-      ]
+      "instructions": ["Cut (1) center square 9.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Big Block",
       "fabricLabel": "Corner",
-      "instructions": [
-        "Cut (4) squares 5 inches"
-      ]
+      "instructions": ["Cut (4) squares 5 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "I",
-      "instructions": [
-        "Cut (31) sashes 2.5 inches x 18.5 inches, cut crosswise"
-      ]
+      "instructions": ["Cut (31) sashes 2.5 inches x 18.5 inches, cut crosswise"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "A",
-      "instructions": [
-        "Cut (12) squares 9.5 inches for Big Block centers"
-      ]
+      "instructions": ["Cut (12) squares 9.5 inches for Big Block centers"]
     },
     {
       "scope": "whole-quilt",
@@ -367,30 +357,22 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "C",
-      "instructions": [
-        "Cut (16) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (16) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "D",
-      "instructions": [
-        "Cut (8) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (8) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "E",
-      "instructions": [
-        "Cut (8) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (8) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "G",
-      "instructions": [
-        "Cut (8) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (8) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
@@ -435,23 +417,17 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "F",
-      "instructions": [
-        "Cut (4) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (4) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "B",
-      "instructions": [
-        "Cut (4) squares 5 inches for Big Block corners"
-      ]
+      "instructions": ["Cut (4) squares 5 inches for Big Block corners"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "H",
-      "instructions": [
-        "Cut (12) squares 2 inches for Churn Dash centers"
-      ]
+      "instructions": ["Cut (12) squares 2 inches for Churn Dash centers"]
     },
     {
       "scope": "whole-quilt",
@@ -481,9 +457,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "S",
-      "instructions": [
-        "Cut (20) squares 2.5 inches for setting squares"
-      ]
+      "instructions": ["Cut (20) squares 2.5 inches for setting squares"]
     },
     {
       "scope": "whole-quilt",
@@ -538,9 +512,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "YY",
-      "instructions": [
-        "Cut (62) squares 2 inches for Churn Dash centers"
-      ]
+      "instructions": ["Cut (62) squares 2 inches for Churn Dash centers"]
     },
     {
       "scope": "whole-quilt",
@@ -554,9 +526,7 @@
     {
       "scope": "whole-quilt",
       "fabricLabel": "Binding",
-      "instructions": [
-        "Cut (8) strips 2.5 inches x WOF for binding"
-      ]
+      "instructions": ["Cut (8) strips 2.5 inches x WOF for binding"]
     },
     {
       "scope": "whole-quilt",

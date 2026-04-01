@@ -181,7 +181,8 @@ export function QuickInfo() {
               />
             ) : key === 'area' ? (
               <span className="font-mono text-on-surface">
-                {info[key]}{suffix}
+                {info[key]}
+                {suffix}
               </span>
             ) : (
               <button
@@ -193,7 +194,8 @@ export function QuickInfo() {
                 className="cursor-text rounded px-0.5 font-mono text-on-surface hover:bg-background"
                 title="Click to edit"
               >
-                {info[key]}{suffix}
+                {info[key]}
+                {suffix}
               </button>
             )}
           </div>

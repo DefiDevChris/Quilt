@@ -33,9 +33,7 @@ const INITIAL_STATE: ReferenceImageState = {
  * Finds the reference image object on the Fabric.js canvas.
  * Returns null if no reference image exists.
  */
-async function findReferenceImage(
-  fabricCanvas: unknown
-): Promise<unknown | null> {
+async function findReferenceImage(fabricCanvas: unknown): Promise<unknown | null> {
   if (!fabricCanvas) return null;
 
   const fabric = await import('fabric');

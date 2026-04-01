@@ -68,10 +68,7 @@ export function computeHogDescriptor(
       for (let py = startY; py < startY + HOG_CELL_SIZE && py < size; py++) {
         for (let px = startX; px < startX + HOG_CELL_SIZE && px < size; px++) {
           const idx = py * size + px;
-          const bin = Math.min(
-            Math.floor(orientation[idx] / binWidth),
-            HOG_BINS - 1
-          );
+          const bin = Math.min(Math.floor(orientation[idx] / binWidth), HOG_BINS - 1);
           descriptor[cellOffset + bin] += magnitude[idx];
         }
       }
@@ -95,10 +92,7 @@ export function computeHogDescriptor(
  * Compute cosine similarity between two descriptors.
  * Returns value in [0, 1] where 1 = identical.
  */
-export function cosineSimilarity(
-  a: Float64Array,
-  b: Float64Array
-): number {
+export function cosineSimilarity(a: Float64Array, b: Float64Array): number {
   if (a.length !== b.length) return 0;
 
   let dotProduct = 0;
@@ -133,9 +127,7 @@ export function matchBlock(
     similarity: cosineSimilarity(descriptor, sig.descriptor),
   }));
 
-  return [...matches]
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, topN);
+  return [...matches].sort((a, b) => b.similarity - a.similarity).slice(0, topN);
 }
 
 /**

@@ -8,7 +8,11 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />}>
+    <Suspense
+      fallback={
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      }
+    >
       <AuthForm mode="signin" />
     </Suspense>
   );

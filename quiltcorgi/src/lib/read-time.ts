@@ -37,7 +37,10 @@ function extractTextFromTiptap(node: TiptapNode | TiptapDoc | unknown): string {
  */
 function countWords(text: string): number {
   // Split by whitespace and filter out empty strings
-  return text.trim().split(/\s+/).filter((w) => w.length > 0).length;
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0).length;
 }
 
 /**

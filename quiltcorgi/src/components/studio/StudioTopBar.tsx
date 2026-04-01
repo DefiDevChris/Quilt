@@ -23,16 +23,16 @@ export function StudioTopBar({
 
   return (
     <>
-      <div className="h-12 bg-surface flex items-center justify-between px-4">
+      <div className="h-12 bg-surface border-b border-outline-variant/8 flex items-center justify-between px-5">
         {/* Left: Hamburger + Wordmark */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setDrawerOpen((prev) => !prev)}
-            className="w-9 h-9 flex items-center justify-center rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
             aria-label="Open menu"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
               <path
                 d="M3 5H17M3 10H17M3 15H17"
                 stroke="currentColor"
@@ -41,7 +41,9 @@ export function StudioTopBar({
               />
             </svg>
           </button>
-          <span className="font-semibold text-[1.125rem] text-on-surface">QuiltCorgi</span>
+          <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
+            QuiltCorgi
+          </span>
         </div>
 
         {/* Center: WorktableSwitcher */}
@@ -50,19 +52,36 @@ export function StudioTopBar({
         </div>
 
         {/* Right: Project info + Export */}
-        <div className="flex items-center gap-3">
-          <div className="text-right mr-2">
-            <div className="text-label-lg font-medium text-secondary truncate max-w-40">
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
               {projectName}
             </div>
-            <div className="text-body-sm text-outline-variant">Quilt Canvas</div>
+            <div className="text-[11px] text-on-surface/35">Quilt Canvas</div>
           </div>
           <button
             type="button"
             onClick={onOpenImageExport}
-            className="bg-on-surface text-white rounded-md px-[1rem] py-[0.5rem] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="bg-on-surface text-white rounded-md px-4 py-[6px] text-[12px] font-semibold tracking-wide hover:opacity-90 transition-opacity"
           >
             EXPORT
+          </button>
+          <button
+            type="button"
+            onClick={onOpenHelp}
+            aria-label="Help"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/35 hover:text-on-surface hover:bg-surface-container transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
+              <path
+                d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="13" r="0.75" fill="currentColor" />
+            </svg>
           </button>
         </div>
       </div>

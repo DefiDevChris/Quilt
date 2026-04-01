@@ -45,6 +45,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return notFoundResponse('Project not found.');
   }
 
+  const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+  if (!isPro) {
+    return errorResponse(
+      'Saving projects requires a Pro subscription. Upgrade to Pro for $8/month.',
+      'PRO_REQUIRED',
+      403
+    );
+  }
+
   try {
     const body = await request.json();
     const parsed = updateProjectSchema.safeParse(body);

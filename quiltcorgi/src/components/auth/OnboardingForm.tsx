@@ -24,7 +24,9 @@ export function OnboardingForm() {
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
   const [usernameInput, setUsernameInput] = useState('');
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
+  const [usernameStatus, setUsernameStatus] = useState<
+    'idle' | 'checking' | 'available' | 'taken' | 'invalid'
+  >('idle');
   const [usernameMessage, setUsernameMessage] = useState('');
   const [bio, setBio] = useState('');
   const [privacyMode, setPrivacyMode] = useState<'public' | 'private'>('public');
@@ -45,7 +47,9 @@ export function OnboardingForm() {
 
     setUsernameStatus('checking');
     try {
-      const res = await fetch(`/api/profile/check-username?username=${encodeURIComponent(normalized)}`);
+      const res = await fetch(
+        `/api/profile/check-username?username=${encodeURIComponent(normalized)}`
+      );
       const data = await res.json();
       if (data.available) {
         setUsernameStatus('available');
@@ -311,9 +315,7 @@ export function OnboardingForm() {
           {usernameMessage && (
             <p
               className={`mt-1 text-[length:var(--font-size-body-sm)] ${
-                usernameStatus === 'available'
-                  ? 'text-success'
-                  : 'text-error'
+                usernameStatus === 'available' ? 'text-success' : 'text-error'
               }`}
             >
               {usernameMessage}
@@ -405,13 +407,7 @@ export function OnboardingForm() {
                 }`}
                 aria-label={corgi.alt}
               >
-                <Image
-                  src={corgi.src}
-                  alt={corgi.alt}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+                <Image src={corgi.src} alt={corgi.alt} fill sizes="64px" className="object-cover" />
               </button>
             ))}
           </div>

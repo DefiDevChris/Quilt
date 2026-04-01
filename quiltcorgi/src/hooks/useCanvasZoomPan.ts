@@ -22,7 +22,19 @@ export function useCanvasZoomPan() {
       let lastPanX = 0;
       let lastPanY = 0;
 
+      function isViewportLocked() {
+        return useCanvasStore.getState().isViewportLocked;
+      }
+
+      function isPanActive() {
+        const state = useCanvasStore.getState();
+        return state.isSpacePressed || state.activeTool === 'pan';
+      }
+
       function onWheel(e: { e: WheelEvent }) {
+        if (isViewportLocked()) {
+          useCanvasStore.getState().setViewportLocked(false);
+        }
         e.e.preventDefault();
         e.e.stopPropagation();
 
@@ -38,7 +50,10 @@ export function useCanvasZoomPan() {
       }
 
       function onMouseDown(e: { e: MouseEvent }) {
-        if (!useCanvasStore.getState().isSpacePressed) return;
+        if (!isPanActive()) return;
+        if (isViewportLocked()) {
+          useCanvasStore.getState().setViewportLocked(false);
+        }
         isPanning = true;
         lastPanX = e.e.clientX;
         lastPanY = e.e.clientY;
@@ -60,17 +75,24 @@ export function useCanvasZoomPan() {
         if (!isPanning) return;
         isPanning = false;
         const tool = useCanvasStore.getState().activeTool;
-        canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
-        if (tool === 'select') {
-          canvas.selection = true;
+        if (tool === 'pan') {
+          canvas.defaultCursor = 'grab';
+          canvas.selection = false;
+        } else {
+          canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+          if (tool === 'select') {
+            canvas.selection = true;
+          }
         }
       }
 
       function onKeyDown(e: KeyboardEvent) {
-        // Guard: don't activate pan mode when typing in input fields
         if (isInputElement(e.target)) return;
         if (e.code === 'Space' && !e.repeat) {
           e.preventDefault();
+          if (isViewportLocked()) {
+            useCanvasStore.getState().setViewportLocked(false);
+          }
           useCanvasStore.getState().setIsSpacePressed(true);
           canvas.defaultCursor = 'grab';
           canvas.selection = false;
@@ -78,18 +100,37 @@ export function useCanvasZoomPan() {
       }
 
       function onKeyUp(e: KeyboardEvent) {
-        // Guard: don't process when typing in input fields
         if (isInputElement(e.target)) return;
         if (e.code === 'Space') {
           useCanvasStore.getState().setIsSpacePressed(false);
           isPanning = false;
           const tool = useCanvasStore.getState().activeTool;
-          canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
-          if (tool === 'select') {
-            canvas.selection = true;
+          if (tool === 'pan') {
+            canvas.defaultCursor = 'grab';
+            canvas.selection = false;
+          } else {
+            canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+            if (tool === 'select') {
+              canvas.selection = true;
+            }
           }
         }
       }
+
+      // Set cursor when pan tool is activated via toolbar
+      const unsubscribe = useCanvasStore.subscribe((state, prev) => {
+        if (state.activeTool !== prev.activeTool) {
+          if (state.activeTool === 'pan') {
+            canvas.defaultCursor = 'grab';
+            canvas.selection = false;
+          } else if (prev.activeTool === 'pan') {
+            canvas.defaultCursor = state.activeTool === 'select' ? 'default' : 'crosshair';
+            if (state.activeTool === 'select') {
+              canvas.selection = true;
+            }
+          }
+        }
+      });
 
       canvas.on('mouse:wheel', onWheel as never);
       canvas.on('mouse:down', onMouseDown as never);
@@ -99,6 +140,7 @@ export function useCanvasZoomPan() {
       window.addEventListener('keyup', onKeyUp);
 
       cleanup = () => {
+        unsubscribe();
         canvas.off('mouse:wheel', onWheel as never);
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);

@@ -41,14 +41,23 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
         }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        setError(data.error ?? 'Failed to create project');
+        if (res.status === 401) {
+          window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent('/dashboard')}`;
+          return;
+        }
+
+        try {
+          const data = await res.json();
+          setError(data.error ?? 'Failed to create project');
+        } catch {
+          setError('Failed to create project');
+        }
         setIsCreating(false);
         return;
       }
 
+      const data = await res.json();
       onClose();
       router.push(`/studio/${data.data.id}`);
     } catch {

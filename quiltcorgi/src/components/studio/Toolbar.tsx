@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useCanvasStore, type ToolType, type WorktableType } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
-import { useQuiltTools, useBlockTools, useImageTools, type ToolbarCallbacks } from './ToolbarConfig';
+import { useQuiltTools, useBlockTools, type ToolbarCallbacks } from './ToolbarConfig';
 
 type ToolbarProps = ToolbarCallbacks;
 
@@ -20,12 +20,12 @@ function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
         aria-label={isOpen ? 'Collapse advanced tools' : 'Expand advanced tools'}
         aria-expanded={isOpen}
         onClick={onClick}
-        className="w-10 h-10 flex items-center justify-center rounded-full transition-colors text-secondary hover:text-on-surface"
+        className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-on-surface/40 hover:text-on-surface hover:bg-surface-container"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           {isOpen ? (
             <path
-              d="M6 12L10 8L14 12"
+              d="M12 6L8 10L12 14"
               stroke="currentColor"
               strokeWidth="1.4"
               strokeLinecap="round"
@@ -102,15 +102,13 @@ export function Toolbar({
 
   const quiltTools = useQuiltTools(callbacks);
   const blockTools = useBlockTools();
-  const imageTools = useImageTools();
 
-  const TOOLS_MAP: Record<Exclude<WorktableType, 'print'>, ToolDef[]> = {
+  const TOOLS_MAP: Record<'quilt' | 'block', ToolDef[]> = {
     quilt: quiltTools,
     block: blockTools,
-    image: imageTools,
   };
 
-  if (activeWorktable === 'print') return null;
+  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
 
   const tools = TOOLS_MAP[activeWorktable];
 
@@ -118,7 +116,7 @@ export function Toolbar({
   const hasTiers = tools.some((t) => t.tier);
 
   if (!hasTiers) {
-    // Block/Image worktables: simple flat list
+    // Block worktable: simple flat list
     const groups: { name: string; items: ToolDef[] }[] = [];
     let currentGroup = '';
     for (const tool of tools) {
@@ -135,11 +133,13 @@ export function Toolbar({
       <nav
         aria-label="Design tools"
         data-tour="toolbar"
-        className="w-12 bg-transparent flex flex-col items-center py-2 gap-0.5"
+        className="bg-transparent flex items-start py-2"
       >
-        {groups.map((group, groupIdx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, groupIdx > 0)
-        )}
+        <div className="flex flex-col items-center gap-0.5">
+          {groups.map((group, groupIdx) =>
+            renderToolGroup(group.items, activeTool, setActiveTool, groupIdx > 0)
+          )}
+        </div>
       </nav>
     );
   }
@@ -173,38 +173,40 @@ export function Toolbar({
     <nav
       aria-label="Design tools"
       data-tour="toolbar"
-      className="w-12 bg-transparent flex flex-col items-center py-2 gap-0.5 h-full"
+      className="bg-transparent flex items-start py-2 h-full"
     >
-      {/* Primary tools - always visible */}
-      <div className="flex flex-col items-center gap-0.5">
-        {primaryGroups.map((group, idx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0)
-        )}
+      {/* Primary column */}
+      <div className="flex flex-col items-center gap-0.5 h-full">
+        <div className="flex flex-col items-center gap-0.5">
+          {primaryGroups.map((group, idx) =>
+            renderToolGroup(group.items, activeTool, setActiveTool, idx > 0)
+          )}
+        </div>
+
+        {/* More tools toggle */}
+        <Separator />
+        <MoreToolsToggle isOpen={advancedOpen} onClick={() => setAdvancedOpen((o) => !o)} />
+
+        {/* Spacer to push pinned to bottom */}
+        <div className="flex-1" />
+
+        {/* Pinned tools - always at bottom */}
+        <Separator />
+        <div className="flex flex-col items-center gap-0.5">
+          {pinnedGroups.map((group, idx) =>
+            renderToolGroup(group.items, activeTool, setActiveTool, idx > 0)
+          )}
+        </div>
       </div>
 
-      {/* More tools toggle */}
-      <Separator />
-      <MoreToolsToggle isOpen={advancedOpen} onClick={() => setAdvancedOpen((o) => !o)} />
-
-      {/* Advanced tools - expandable */}
+      {/* Advanced column - appears beside primary when expanded */}
       {advancedOpen && (
-        <div className="flex flex-col items-center gap-0.5 overflow-y-auto max-h-[45vh] scrollbar-none">
+        <div className="flex flex-col items-center gap-0.5 border-l border-outline-variant/20 ml-0.5 pl-0.5 py-0">
           {advancedGroups.map((group, idx) =>
             renderToolGroup(group.items, activeTool, setActiveTool, idx > 0)
           )}
         </div>
       )}
-
-      {/* Spacer to push pinned to bottom */}
-      <div className="flex-1" />
-
-      {/* Pinned tools - always at bottom */}
-      <Separator />
-      <div className="flex flex-col items-center gap-0.5">
-        {pinnedGroups.map((group, idx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0)
-        )}
-      </div>
     </nav>
   );
 }

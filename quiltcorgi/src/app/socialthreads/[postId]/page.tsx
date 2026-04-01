@@ -58,7 +58,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${meta.title} — QuiltCorgi Community`,
-    description: meta.description ?? `A quilt design shared by ${meta.creatorName ?? 'a community member'}.`,
+    description:
+      meta.description ?? `A quilt design shared by ${meta.creatorName ?? 'a community member'}.`,
     openGraph: {
       title: meta.title,
       description: meta.description ?? undefined,

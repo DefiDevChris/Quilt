@@ -7,7 +7,7 @@ import {
   generateSinglePiecePdf,
   type PieceGeometry,
   type PieceDimensions,
-} from '@/lib/piece-inspector-engine';
+} from '@/lib/piece-inspector-utils';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ function rectPathData(w: number, h: number): string {
 
 // ── extractPieceGeometry ──────────────────────────────────────────
 
-describe('piece-inspector-engine', () => {
+describe('piece-inspector-utils', () => {
   describe('extractPieceGeometry', () => {
     it('extracts geometry from a simple rectangle polygon at 96 pxPerUnit', () => {
       const svg = rectPolygonSvg(96, 96);

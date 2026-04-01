@@ -218,35 +218,6 @@ const BLOCK_TOOLS: FloatingTool[] = [
   },
 ];
 
-const IMAGE_TOOLS: FloatingTool[] = [
-  { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
-  {
-    id: 'line',
-    label: 'Line',
-    toolType: 'line',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M4 18L18 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    id: 'curve',
-    label: 'Curve',
-    toolType: 'curve',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path
-          d="M4 16C4 16 6 4 11 4C16 4 18 16 18 16"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
-];
-
 export function FloatingToolbar() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const activeTool = useCanvasStore((s) => s.activeTool);
@@ -257,7 +228,7 @@ export function FloatingToolbar() {
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
     block: BLOCK_TOOLS,
-    image: IMAGE_TOOLS,
+    image: [],
     print: [],
   };
 
@@ -271,7 +242,7 @@ export function FloatingToolbar() {
 
   return (
     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-      <div className="bg-surface/95 backdrop-blur-[20px] shadow-elevation-3 rounded-xl h-12 px-[1.75rem] py-[0.7rem] flex items-center gap-[1.25rem]">
+      <div className="bg-surface/90 backdrop-blur-[24px] shadow-elevation-3 rounded-xl h-11 px-3 flex items-center gap-1">
         {drawingTools.map((tool) => {
           const isActive = tool.toolType
             ? activeTool === tool.toolType
@@ -290,8 +261,10 @@ export function FloatingToolbar() {
                   setActiveTool(tool.toolType);
                 }
               }}
-              className={`flex items-center justify-center transition-colors ${
-                isActive ? 'text-primary' : 'text-secondary hover:text-on-surface'
+              className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
+                isActive
+                  ? 'bg-primary/12 text-primary'
+                  : 'text-on-surface/45 hover:text-on-surface hover:bg-surface-container'
               }`}
             >
               {tool.icon}
@@ -302,7 +275,7 @@ export function FloatingToolbar() {
         {/* Undo/Redo separator + buttons */}
         {historyTools.length > 0 && (
           <>
-            <div className="w-px h-5 bg-outline-variant/15" />
+            <div className="w-px h-5 bg-outline-variant/20 mx-1" />
             {historyTools.map((tool) => {
               const disabled = tool.isDisabled ?? false;
               return (
@@ -313,10 +286,10 @@ export function FloatingToolbar() {
                   aria-label={tool.label}
                   aria-disabled={disabled}
                   onClick={disabled ? undefined : tool.onClick}
-                  className={`flex items-center justify-center transition-colors ${
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
                     disabled
-                      ? 'text-outline-variant/25 cursor-default'
-                      : 'text-secondary hover:text-on-surface'
+                      ? 'text-outline-variant/20 cursor-default'
+                      : 'text-on-surface/45 hover:text-on-surface hover:bg-surface-container'
                   }`}
                 >
                   {tool.icon}

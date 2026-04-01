@@ -108,17 +108,6 @@ export async function clearAuthCookies(): Promise<void> {
   cookieStore.delete('qc_dev_user_id');
 }
 
-const DEV_SESSION: CognitoSession = {
-  user: {
-    id: 'a6610fb1-dcb1-437f-8635-f1ed7c8e863d',
-    email: 'team@quiltcorgi.com',
-    name: 'QuiltCorgi Team',
-    role: 'admin',
-    emailVerified: true,
-  },
-  accessToken: 'dev-access-token',
-};
-
 /**
  * Get the current session from cookies. Verifies JWT, attempts refresh if expired.
  * Requires a DB lookup to get the user's role (stored in our DB, not Cognito).
@@ -128,27 +117,31 @@ export async function getSession(): Promise<CognitoSession | null> {
     const cookieStore = await cookies();
     const devUserId = cookieStore.get('qc_dev_user_id')?.value;
 
-    if (devUserId) {
-      const { db } = await import('./db');
-      const { users } = await import('@/db/schema');
-      const { eq } = await import('drizzle-orm');
-      const [user] = await db.select().from(users).where(eq(users.id, devUserId)).limit(1);
+    const { db } = await import('./db');
+    const { users } = await import('@/db/schema');
+    const { eq } = await import('drizzle-orm');
+    const { desc } = await import('drizzle-orm');
 
-      if (user) {
-        return {
-          user: {
-            id: user.id,
-            email: user.email,
-            name: user.name ?? user.email.split('@')[0],
-            role: user.role as 'free' | 'pro' | 'admin',
-            emailVerified: !!user.emailVerified,
-          },
-          accessToken: 'dev-access-token',
-        };
-      }
+    // Use cookie-specified user, or fall back to most recently created DB user
+    const [user] = devUserId
+      ? await db.select().from(users).where(eq(users.id, devUserId)).limit(1)
+      : await db.select().from(users).orderBy(desc(users.createdAt)).limit(1);
+
+    if (user) {
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name ?? user.email.split('@')[0],
+          role: user.role as 'free' | 'pro' | 'admin',
+          emailVerified: !!user.emailVerified,
+        },
+        accessToken: 'dev-access-token',
+      };
     }
 
-    return DEV_SESSION;
+    // No users in DB — sign up first
+    return null;
   }
   const cookieStore = await cookies();
   const idToken = cookieStore.get(COOKIE_ID_TOKEN)?.value;

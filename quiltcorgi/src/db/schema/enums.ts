@@ -38,4 +38,3 @@ export const blogPostCategoryEnum = pgEnum('blog_post_category', [
   'History',
   'Organization',
 ]);
-

@@ -3,7 +3,12 @@
  * No React, Fabric.js, or DOM dependencies.
  */
 
-import { TEXT_FONTS, TEXT_DEFAULT_FONT_SIZE, TEXT_DEFAULT_FONT_FAMILY, DEFAULT_STROKE_COLOR } from '@/lib/constants';
+import {
+  TEXT_FONTS,
+  TEXT_DEFAULT_FONT_SIZE,
+  TEXT_DEFAULT_FONT_FAMILY,
+  DEFAULT_STROKE_COLOR,
+} from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
 
 export const TEXT_FONT_OPTIONS: readonly string[] = TEXT_FONTS;
@@ -44,20 +49,14 @@ export function validateTextConfig(input: Record<string, unknown>): TextConfig {
       : TEXT_DEFAULT_FONT_FAMILY;
 
   const fill =
-    typeof input.fill === 'string' && input.fill.length > 0
-      ? input.fill
-      : DEFAULT_STROKE_COLOR;
+    typeof input.fill === 'string' && input.fill.length > 0 ? input.fill : DEFAULT_STROKE_COLOR;
 
-  const fontWeight =
-    input.fontWeight === 'bold' ? 'bold' : 'normal';
+  const fontWeight = input.fontWeight === 'bold' ? 'bold' : 'normal';
 
-  const fontStyle =
-    input.fontStyle === 'italic' ? 'italic' : 'normal';
+  const fontStyle = input.fontStyle === 'italic' ? 'italic' : 'normal';
 
   const textAlign =
-    input.textAlign === 'center' || input.textAlign === 'right'
-      ? input.textAlign
-      : 'left';
+    input.textAlign === 'center' || input.textAlign === 'right' ? input.textAlign : 'left';
 
   return { text, fontFamily, fontSize, fill, fontWeight, fontStyle, textAlign };
 }

@@ -42,7 +42,10 @@ function EmptyGallery() {
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-center p-8 bg-surface border border-outline-variant/50 rounded-2xl text-center">
       <Mascot pose="sleeping" size="md" />
-      <h4 className="mt-4 text-lg font-semibold text-on-surface" style={{ fontFamily: 'var(--font-display)' }}>
+      <h4
+        className="mt-4 text-lg font-semibold text-on-surface"
+        style={{ fontFamily: 'var(--font-display)' }}
+      >
         It&apos;s quiet in here...
       </h4>
       <p className="mt-2 text-sm text-secondary max-w-[250px]">

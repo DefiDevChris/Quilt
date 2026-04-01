@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useOnboardingStore } from '@/stores/onboardingStore';
-import { TOUR_STEPS, ONBOARDING_STORAGE_KEY } from '@/lib/onboarding-engine';
+import { TOUR_STEPS, ONBOARDING_STORAGE_KEY } from '@/lib/onboarding-utils';
 
 // Mock localStorage for node test environment
 const localStorageMock = (() => {

@@ -5,11 +5,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
-import {
-  GRID_CELL_SIZE_MIN,
-  GRID_CELL_SIZE_MAX,
-  GRID_CELL_SIZE_STEP,
-} from '@/lib/constants';
+import { GRID_CELL_SIZE_MIN, GRID_CELL_SIZE_MAX, GRID_CELL_SIZE_STEP } from '@/lib/constants';
 
 interface QuiltDimensionsPanelProps {
   isOpen: boolean;
@@ -43,13 +39,7 @@ function formatGridSize(value: number): string {
   // Common quilting fractions
   const eighths = Math.round(remainder * 8);
   const fractionStr =
-    eighths === 4
-      ? '1/2'
-      : eighths === 2
-        ? '1/4'
-        : eighths === 6
-          ? '3/4'
-          : `${eighths}/8`;
+    eighths === 4 ? '1/2' : eighths === 2 ? '1/4' : eighths === 6 ? '3/4' : `${eighths}/8`;
 
   if (wholeInches === 0) {
     return `${fractionStr}"`;
@@ -140,10 +130,7 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
           </p>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label
-                htmlFor="quilt-width-input"
-                className="block text-xs text-secondary mb-1"
-              >
+              <label htmlFor="quilt-width-input" className="block text-xs text-secondary mb-1">
                 Width
               </label>
               <input
@@ -163,15 +150,10 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
                   widthError ? 'ring-2 ring-error/50' : ''
                 }`}
               />
-              {widthError && (
-                <p className="text-xs text-error mt-1">{widthError}</p>
-              )}
+              {widthError && <p className="text-xs text-error mt-1">{widthError}</p>}
             </div>
             <div className="flex-1">
-              <label
-                htmlFor="quilt-height-input"
-                className="block text-xs text-secondary mb-1"
-              >
+              <label htmlFor="quilt-height-input" className="block text-xs text-secondary mb-1">
                 Height
               </label>
               <input
@@ -191,9 +173,7 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
                   heightError ? 'ring-2 ring-error/50' : ''
                 }`}
               />
-              {heightError && (
-                <p className="text-xs text-error mt-1">{heightError}</p>
-              )}
+              {heightError && <p className="text-xs text-error mt-1">{heightError}</p>}
             </div>
           </div>
         </div>
@@ -218,10 +198,7 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
             <>
               <div className="mb-3">
                 <div className="flex items-center justify-between mb-1">
-                  <label
-                    htmlFor="grid-cell-size-slider"
-                    className="text-xs text-secondary"
-                  >
+                  <label htmlFor="grid-cell-size-slider" className="text-xs text-secondary">
                     Cell size
                   </label>
                   <span className="text-xs text-on-surface font-medium">

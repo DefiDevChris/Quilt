@@ -83,7 +83,7 @@ function getNavigationPath(notification: Notification): string | null {
     notification.type === 'subscription_activated' ||
     notification.type === 'subscription_canceled'
   ) {
-    return '/profile#billing';
+    return '/settings#billing';
   }
 
   if (metadata && metadata.postId && typeof metadata.postId === 'string') {

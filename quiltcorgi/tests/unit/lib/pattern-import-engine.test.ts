@@ -4,7 +4,7 @@ import {
   calculateGridFromLayout,
   buildCanvasObjects,
   buildPrintlistFromPattern,
-} from '@/lib/pattern-import-engine';
+} from '@/lib/pattern-import-utils';
 import type { ParsedPattern, ParsedBlock, ParsedLayout } from '@/lib/pattern-parser-types';
 import type { FabricMatch } from '@/lib/pattern-fabric-matcher';
 import type { BlockMatchResult } from '@/lib/pattern-block-matcher';
@@ -133,7 +133,7 @@ function createTestBlockMatches(): BlockMatchResult[] {
 
 // ── buildProjectFromPattern ──────────────────────────────────────
 
-describe('pattern-import-engine', () => {
+describe('pattern-import-utils', () => {
   describe('buildProjectFromPattern', () => {
     it('returns correct project name with branding stripped', () => {
       const parsed = createTestPattern();

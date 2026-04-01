@@ -6,6 +6,7 @@ import { usePatternStore } from '@/stores/patternStore';
 import { SKILL_LEVELS, SKILL_LEVEL_LABELS } from '@/lib/constants';
 import { PatternCard } from '@/components/patterns/PatternCard';
 import { PatternDetailDialog } from '@/components/patterns/PatternDetailDialog';
+import { useToast } from '@/components/ui/ToastProvider';
 
 const SORT_OPTIONS = [
   { value: 'popular', label: 'Popular' },
@@ -106,6 +107,34 @@ export function PatternLibrary() {
     },
     [setFilter]
   );
+
+  const { toast } = useToast();
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
+  async function handleUpgrade() {
+    setIsUpgrading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.success && data.data.checkoutUrl) {
+        window.location.href = data.data.checkoutUrl;
+      } else {
+        toast({
+          type: 'error',
+          title: 'Checkout failed',
+          description: data.error ?? 'Unable to start checkout. Please try again.',
+        });
+      }
+    } catch {
+      toast({
+        type: 'error',
+        title: 'Connection error',
+        description: 'Unable to connect. Please check your connection and try again.',
+      });
+    } finally {
+      setIsUpgrading(false);
+    }
+  }
 
   const handleResetFilters = useCallback(() => {
     setSearchInput('');
@@ -331,16 +360,18 @@ export function PatternLibrary() {
                 <p className="text-xs mb-4" style={{ color: 'var(--color-secondary)' }}>
                   Unlock the full pattern library with a Pro subscription.
                 </p>
-                <a
-                  href="/profile#billing"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 rounded-[var(--radius-md)] transition-opacity hover:opacity-90"
+                <button
+                  type="button"
+                  onClick={handleUpgrade}
+                  disabled={isUpgrading}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 rounded-[var(--radius-md)] transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{
                     backgroundColor: 'var(--color-primary)',
                     color: 'var(--color-primary-on)',
                   }}
                 >
-                  View Plans
-                </a>
+                  {isUpgrading ? 'Loading...' : 'View Plans'}
+                </button>
               </div>
             </div>
           )}

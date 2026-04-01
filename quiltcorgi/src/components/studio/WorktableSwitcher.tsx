@@ -6,7 +6,6 @@ import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
 const TABS: { id: WorktableType; label: string }[] = [
   { id: 'quilt', label: 'QUILT' },
   { id: 'block', label: 'BLOCK' },
-  { id: 'image', label: 'IMAGE' },
   { id: 'print', label: 'PRINT' },
 ];
 
@@ -15,7 +14,7 @@ export function WorktableSwitcher() {
   const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
 
   return (
-    <div className="bg-surface-container rounded-lg px-1 py-1 flex gap-1">
+    <div className="bg-surface-container/60 rounded-lg px-1 py-0.5 flex gap-0.5">
       {TABS.map((tab) => {
         const isActive = activeWorktable === tab.id;
         const isPrintActive = isActive && tab.id === 'print';
@@ -25,12 +24,12 @@ export function WorktableSwitcher() {
             key={tab.id}
             type="button"
             onClick={() => setActiveWorktable(tab.id)}
-            className={`relative px-4 py-1.5 font-medium text-[0.875rem] tracking-[0.01em] rounded-md transition-colors ${
+            className={`relative px-3.5 py-1.5 font-medium text-[12px] tracking-[0.04em] rounded-md transition-colors ${
               isActive
                 ? isPrintActive
                   ? 'text-primary'
                   : 'text-on-surface'
-                : 'text-secondary hover:text-on-surface'
+                : 'text-on-surface/40 hover:text-on-surface/70'
             }`}
           >
             {isActive && (

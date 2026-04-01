@@ -23,10 +23,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-export function processImage(
-  img: HTMLImageElement,
-  params: ProcessingParams
-): HTMLCanvasElement {
+export function processImage(img: HTMLImageElement, params: ProcessingParams): HTMLCanvasElement {
   const { crop, scale, rotation } = params;
 
   const srcX = crop?.x ?? 0;
@@ -85,7 +82,11 @@ export function generateThumbnail(img: HTMLImageElement | HTMLCanvasElement): HT
   return canvas;
 }
 
-export function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/jpeg', quality = 0.85): Promise<Blob> {
+export function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type = 'image/jpeg',
+  quality = 0.85
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
@@ -98,7 +99,11 @@ export function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/jpeg', qua
   });
 }
 
-export async function uploadToS3(uploadUrl: string, blob: Blob, contentType: string): Promise<void> {
+export async function uploadToS3(
+  uploadUrl: string,
+  blob: Blob,
+  contentType: string
+): Promise<void> {
   const res = await fetch(uploadUrl, {
     method: 'PUT',
     body: blob,

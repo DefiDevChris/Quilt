@@ -23,14 +23,18 @@ export function CommentThread({ postId, currentUserId, isAdmin }: CommentThreadP
   const addComment = useCommentStore((s) => s.addComment);
   const reset = useCommentStore((s) => s.reset);
 
-  const [replyTarget, setReplyTarget] = useState<{ commentId: string; username: string } | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{ commentId: string; username: string } | null>(
+    null
+  );
   const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
 
   const canComment = Boolean(currentUserId);
 
   useEffect(() => {
     fetchComments(postId);
-    return () => { reset(); };
+    return () => {
+      reset();
+    };
   }, [postId, fetchComments, reset]);
 
   const handleTopLevelSubmit = useCallback(
@@ -74,9 +78,7 @@ export function CommentThread({ postId, currentUserId, isAdmin }: CommentThreadP
     await fetchComments(postId, true);
   }
 
-  const disabledMessage = !currentUserId
-    ? 'Sign in to join the conversation.'
-    : undefined;
+  const disabledMessage = !currentUserId ? 'Sign in to join the conversation.' : undefined;
 
   return (
     <div className="space-y-4">
@@ -109,7 +111,9 @@ export function CommentThread({ postId, currentUserId, isAdmin }: CommentThreadP
       {/* Empty state */}
       {!isLoading && comments.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-sm text-secondary">No comments yet. Be the first to share your thoughts!</p>
+          <p className="text-sm text-secondary">
+            No comments yet. Be the first to share your thoughts!
+          </p>
         </div>
       )}
 

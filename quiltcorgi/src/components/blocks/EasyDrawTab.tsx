@@ -8,19 +8,8 @@ const GRID_COLS = 12;
 const GRID_ROWS = 12;
 const CANVAS_SIZE = 400;
 
-export function EasyDrawTab({
-  draftCanvasRef,
-  fillColor,
-  strokeColor,
-  isOpen,
-}: DraftTabProps) {
-  const {
-    activeMode,
-    setActiveMode,
-    segments,
-    clearSegments,
-    undoSegment,
-  } = useEasyDraw({
+export function EasyDrawTab({ draftCanvasRef, fillColor, strokeColor, isOpen }: DraftTabProps) {
+  const { activeMode, setActiveMode, segments, clearSegments, undoSegment } = useEasyDraw({
     draftCanvasRef,
     isOpen,
     fillColor,

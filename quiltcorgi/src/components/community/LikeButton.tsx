@@ -67,7 +67,9 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
           />
         </svg>
       )}
-      <span className={`${textSize} ${isLikedByUser ? 'text-error font-medium' : 'text-secondary'}`}>
+      <span
+        className={`${textSize} ${isLikedByUser ? 'text-error font-medium' : 'text-secondary'}`}
+      >
         {likeCount}
       </span>
     </button>

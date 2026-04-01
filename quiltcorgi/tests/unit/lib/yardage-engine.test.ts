@@ -8,7 +8,7 @@ import {
   calculateYardage,
   calculateFatQuarters,
   computeYardageEstimates,
-} from '@/lib/yardage-engine';
+} from '@/lib/yardage-utils';
 
 function makeShape(overrides: Partial<CanvasShapeData> = {}): CanvasShapeData {
   return {
@@ -25,7 +25,7 @@ function makeShape(overrides: Partial<CanvasShapeData> = {}): CanvasShapeData {
   };
 }
 
-describe('yardage-engine', () => {
+describe('yardage-utils', () => {
   describe('STANDARD_WOFS', () => {
     it('contains standard quilting WOF values', () => {
       expect(STANDARD_WOFS).toContain(42);

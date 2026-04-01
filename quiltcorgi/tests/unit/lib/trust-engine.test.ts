@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getRolePermissions, getRateLimit } from '@/lib/trust-engine';
+import { getRolePermissions, getRateLimit } from '@/lib/trust-utils';
 
 describe('getRolePermissions', () => {
   it('returns all false when role is null', () => {

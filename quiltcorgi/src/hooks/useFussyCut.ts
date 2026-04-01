@@ -29,10 +29,13 @@ export function useFussyCut(): UseFussyCutReturn {
 
   const isOpen = target !== null;
 
-  const openDialog = useCallback((newTarget: FussyCutTarget) => {
-    setFussyCutTarget(newTarget);
-    setConfig(defaultFussyCutConfig(newTarget.fabricId));
-  }, [setFussyCutTarget]);
+  const openDialog = useCallback(
+    (newTarget: FussyCutTarget) => {
+      setFussyCutTarget(newTarget);
+      setConfig(defaultFussyCutConfig(newTarget.fabricId));
+    },
+    [setFussyCutTarget]
+  );
 
   const closeDialog = useCallback(() => {
     setFussyCutTarget(null);

@@ -10,7 +10,7 @@ import {
   getAllBlogTags,
   paginateBlogPosts,
   generateRssFeed,
-} from '@/lib/mdx-engine';
+} from '@/lib/mdx-utils';
 
 const SAMPLE_BLOG_POST = `---
 title: "Introducing QuiltCorgi"
@@ -57,7 +57,7 @@ function setupMocks(blogFiles: Record<string, string>) {
   });
 }
 
-describe('mdx-engine', () => {
+describe('mdx-utils', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

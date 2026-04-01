@@ -3,14 +3,7 @@
 import { useFussyCut } from '@/hooks/useFussyCut';
 
 export function FussyCutDialog() {
-  const {
-    isOpen,
-    target,
-    config,
-    closeDialog,
-    updateConfig,
-    applyFussyCut,
-  } = useFussyCut();
+  const { isOpen, target, config, closeDialog, updateConfig, applyFussyCut } = useFussyCut();
 
   if (!isOpen || !target) return null;
 
@@ -30,8 +23,8 @@ export function FussyCutDialog() {
         </div>
 
         <p className="mb-4 text-xs text-secondary">
-          Position the fabric pattern precisely within this patch. Drag to offset,
-          rotate, or scale the fabric motif.
+          Position the fabric pattern precisely within this patch. Drag to offset, rotate, or scale
+          the fabric motif.
         </p>
 
         {/* Preview area */}
@@ -55,9 +48,7 @@ export function FussyCutDialog() {
             >
               {target.patchVertices.length > 2 && (
                 <polygon
-                  points={target.patchVertices
-                    .map((v) => `${v.x},${v.y}`)
-                    .join(' ')}
+                  points={target.patchVertices.map((v) => `${v.x},${v.y}`).join(' ')}
                   fill="none"
                   stroke="#8d4f00"
                   strokeWidth="2"
@@ -135,9 +126,7 @@ export function FussyCutDialog() {
         <div className="mt-4 flex justify-end gap-2">
           <button
             type="button"
-            onClick={() =>
-              updateConfig({ offsetX: 0, offsetY: 0, rotation: 0, scale: 1 })
-            }
+            onClick={() => updateConfig({ offsetX: 0, offsetY: 0, rotation: 0, scale: 1 })}
             className="rounded-md px-3 py-2 text-sm text-secondary hover:bg-background"
           >
             Reset

@@ -110,7 +110,8 @@ function EmailIcon() {
 type ProfileTab = 'posts' | 'about';
 
 export function UserProfilePage({ username }: UserProfilePageProps) {
-  const { profile, posts, pagination, isLoading, error, fetchProfile, loadMore } = useProfileStore();
+  const { profile, posts, pagination, isLoading, error, fetchProfile, loadMore } =
+    useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
 
@@ -174,9 +175,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
 
             <p className="text-body-md text-secondary mb-3">@{profile.username}</p>
 
-            {profile.bio && (
-              <p className="text-body-md text-secondary mb-3">{profile.bio}</p>
-            )}
+            {profile.bio && <p className="text-body-md text-secondary mb-3">{profile.bio}</p>}
 
             {profile.location && (
               <div className="flex items-center gap-1.5 text-body-sm text-secondary mb-3">
@@ -190,7 +189,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
             {isOwner && (
               <div className="mt-4">
                 <Link
-                  href="/profile/edit"
+                  href="/settings"
                   className="inline-flex items-center gap-2 rounded-lg border border-outline-variant px-4 py-2 text-body-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,9 +213,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         <button
           onClick={() => setActiveTab('posts')}
           className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === 'posts'
-              ? 'text-primary'
-              : 'text-secondary hover:text-on-surface'
+            activeTab === 'posts' ? 'text-primary' : 'text-secondary hover:text-on-surface'
           }`}
         >
           Posts ({pagination?.total ?? 0})
@@ -227,9 +224,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         <button
           onClick={() => setActiveTab('about')}
           className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === 'about'
-              ? 'text-primary'
-              : 'text-secondary hover:text-on-surface'
+            activeTab === 'about' ? 'text-primary' : 'text-secondary hover:text-on-surface'
           }`}
         >
           About

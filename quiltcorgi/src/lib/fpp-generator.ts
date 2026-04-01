@@ -138,7 +138,7 @@ export function parseSvgToPatches(svgData: string): FppPatch[] {
     const y = parseFloat(attrs.y ?? '0');
     const w = parseFloat(attrs.width ?? '0');
     const h = parseFloat(attrs.height ?? '0');
-    
+
     // A background rect must:
     // 1. Start at (0,0)
     // 2. Be large (>= 100px)
@@ -149,7 +149,7 @@ export function parseSvgToPatches(svgData: string): FppPatch[] {
       const isCornerAtOrigin = vertices.some((v) => v.x === 0 && v.y === 0);
       const spansFullWidth = vertices.some((v) => v.x === w);
       const spansFullHeight = vertices.some((v) => v.y === h);
-      
+
       if (isFullBoundary && isCornerAtOrigin && spansFullWidth && spansFullHeight) {
         continue;
       }

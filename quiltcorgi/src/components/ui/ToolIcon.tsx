@@ -36,15 +36,17 @@ export function ToolIcon({
       aria-pressed={isActive}
       aria-disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
+      className={`w-11 h-11 flex items-center justify-center rounded-lg transition-all duration-150 ${
         disabled
           ? 'text-outline-variant/30 cursor-default'
           : isActive
-            ? 'bg-primary-container/30 text-primary'
-            : 'text-secondary hover:text-on-surface'
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+            : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
       }`}
     >
-      <span aria-hidden="true">{tool.icon}</span>
+      <span aria-hidden="true" className="[&>svg]:w-6 [&>svg]:h-6">
+        {tool.icon}
+      </span>
     </button>
   );
 

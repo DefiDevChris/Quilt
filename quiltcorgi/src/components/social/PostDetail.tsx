@@ -217,9 +217,7 @@ export function PostDetail({ postId }: PostDetailProps) {
 
       {/* Comments Section */}
       <div className="glass-panel rounded-[1.5rem] p-6">
-        <h2 className="text-lg font-bold text-on-surface mb-4">
-          Comments ({post.commentCount})
-        </h2>
+        <h2 className="text-lg font-bold text-on-surface mb-4">Comments ({post.commentCount})</h2>
         <RedditStyleComments
           postId={post.id}
           currentUserId={user?.id}

@@ -94,8 +94,8 @@ export function OnboardingTour() {
     }, AUTO_START_DELAY_MS);
 
     return () => clearTimeout(timer);
-  // Auto-start timer only - no dependencies needed
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Auto-start timer only - no dependencies needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle Escape key to skip tour
@@ -127,11 +127,7 @@ export function OnboardingTour() {
       {isActive && (
         <>
           {/* Click-blocking overlay */}
-          <div
-            className="fixed inset-0 z-[59]"
-            onClick={skipTour}
-            aria-hidden="true"
-          />
+          <div className="fixed inset-0 z-[59]" onClick={skipTour} aria-hidden="true" />
 
           <OnboardingSpotlight targetRect={targetRect} />
 

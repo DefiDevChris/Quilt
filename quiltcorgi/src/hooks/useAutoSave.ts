@@ -20,12 +20,12 @@ export function useAutoSave() {
       const { isDirty } = useProjectStore.getState();
       const { projectId } = useProjectStore.getState();
       if (!isDirty || !projectId) return;
-      
-      saveProject({ 
-        projectId, 
-        fabricCanvas, 
+
+      saveProject({
+        projectId,
+        fabricCanvas,
         signal: abortControllerRef.current?.signal,
-        source: 'auto'
+        source: 'auto',
       });
     }, AUTO_SAVE_INTERVAL_MS);
 

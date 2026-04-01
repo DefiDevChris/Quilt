@@ -3,7 +3,12 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
 import { getStripe, getStripePriceId } from '@/lib/stripe';
-import { getRequiredSession, unauthorizedResponse, errorResponse, validationErrorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  errorResponse,
+  validationErrorResponse,
+} from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';

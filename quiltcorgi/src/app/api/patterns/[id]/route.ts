@@ -11,10 +11,7 @@ import {
 import type { PatternTemplateDetail } from '@/types/pattern-template';
 import type { ParsedPattern } from '@/lib/pattern-parser-types';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 

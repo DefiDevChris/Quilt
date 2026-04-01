@@ -10,7 +10,6 @@ import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
-
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
@@ -35,9 +34,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const whereClause =
-      statusFilter && statusFilter !== 'all'
-        ? eq(blogPosts.status, statusFilter)
-        : undefined;
+      statusFilter && statusFilter !== 'all' ? eq(blogPosts.status, statusFilter) : undefined;
 
     const [postRows, [totalRow]] = await Promise.all([
       db

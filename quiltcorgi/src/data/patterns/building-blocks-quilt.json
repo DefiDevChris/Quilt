@@ -407,73 +407,55 @@
       "scope": "per-block",
       "blockName": "Four-Patch",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (2) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (2) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Four-Patch",
       "fabricLabel": "Fabric B",
-      "instructions": [
-        "Cut (2) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (2) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Rail Fence",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (1) strip 2.75 inches x 6.5 inches"
-      ]
+      "instructions": ["Cut (1) strip 2.75 inches x 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Rail Fence",
       "fabricLabel": "Fabric C",
-      "instructions": [
-        "Cut (2) strips 2.375 inches x 6.5 inches"
-      ]
+      "instructions": ["Cut (2) strips 2.375 inches x 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Half-Square Triangle",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (1) square 6.875 inches (pairs with Fabric D to yield 2 HST blocks)"
-      ]
+      "instructions": ["Cut (1) square 6.875 inches (pairs with Fabric D to yield 2 HST blocks)"]
     },
     {
       "scope": "per-block",
       "blockName": "Half-Square Triangle",
       "fabricLabel": "Fabric D",
-      "instructions": [
-        "Cut (1) square 6.875 inches (pairs with Fabric A to yield 2 HST blocks)"
-      ]
+      "instructions": ["Cut (1) square 6.875 inches (pairs with Fabric A to yield 2 HST blocks)"]
     },
     {
       "scope": "per-block",
       "blockName": "Quarter-Square Triangle",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (1) square 7.25 inches, cut across both diagonals"
-      ]
+      "instructions": ["Cut (1) square 7.25 inches, cut across both diagonals"]
     },
     {
       "scope": "per-block",
       "blockName": "Quarter-Square Triangle",
       "fabricLabel": "Fabric E",
-      "instructions": [
-        "Cut (1) square 6.875 inches, cut across one diagonal"
-      ]
+      "instructions": ["Cut (1) square 6.875 inches, cut across one diagonal"]
     },
     {
       "scope": "per-block",
       "blockName": "Quarter-Square Triangle",
       "fabricLabel": "Fabric F",
-      "instructions": [
-        "Cut (1) square 7.25 inches, cut across both diagonals"
-      ]
+      "instructions": ["Cut (1) square 7.25 inches, cut across both diagonals"]
     },
     {
       "scope": "per-block",
@@ -495,88 +477,66 @@
       "scope": "per-block",
       "blockName": "Birds in the Air",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (2) squares 3.875 inches (cut 1 across one diagonal for small HSTs)"
-      ]
+      "instructions": ["Cut (2) squares 3.875 inches (cut 1 across one diagonal for small HSTs)"]
     },
     {
       "scope": "per-block",
       "blockName": "Birds in the Air",
       "fabricLabel": "Fabric H",
-      "instructions": [
-        "Cut (1) square 6.875 inches, cut across one diagonal"
-      ]
+      "instructions": ["Cut (1) square 6.875 inches, cut across one diagonal"]
     },
     {
       "scope": "per-block",
       "blockName": "Birds in the Air",
       "fabricLabel": "Fabric I",
-      "instructions": [
-        "Cut (1) square 3.875 inches"
-      ]
+      "instructions": ["Cut (1) square 3.875 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Square in a Square",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (1) square 6.5 inches"
-      ]
+      "instructions": ["Cut (1) square 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Square in a Square",
       "fabricLabel": "Fabric J",
-      "instructions": [
-        "Cut (4) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (4) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Flying Geese",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (4) squares 3.5 inches"
-      ]
+      "instructions": ["Cut (4) squares 3.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Flying Geese",
       "fabricLabel": "Fabric K",
-      "instructions": [
-        "Cut (1) strip 3.5 inches x 6.5 inches"
-      ]
+      "instructions": ["Cut (1) strip 3.5 inches x 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Flying Geese",
       "fabricLabel": "Fabric L",
-      "instructions": [
-        "Cut (1) strip 3.5 inches x 6.5 inches"
-      ]
+      "instructions": ["Cut (1) strip 3.5 inches x 6.5 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Pinwheel",
       "fabricLabel": "Fabric A",
-      "instructions": [
-        "Cut (2) squares 3.875 inches"
-      ]
+      "instructions": ["Cut (2) squares 3.875 inches"]
     },
     {
       "scope": "per-block",
       "blockName": "Pinwheel",
       "fabricLabel": "Fabric M",
-      "instructions": [
-        "Cut (2) squares 3.875 inches"
-      ]
+      "instructions": ["Cut (2) squares 3.875 inches"]
     },
     {
       "scope": "whole-quilt",
       "fabricLabel": "Binding",
-      "instructions": [
-        "Cut (7) strips 2.5 inches x WOF for binding"
-      ]
+      "instructions": ["Cut (7) strips 2.5 inches x WOF for binding"]
     },
     {
       "scope": "whole-quilt",

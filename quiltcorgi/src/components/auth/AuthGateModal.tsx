@@ -53,13 +53,7 @@ export function AuthGateModal({
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 relative">
-              <Image
-                src="/logo.png"
-                alt="QuiltCorgi"
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src="/logo.png" alt="QuiltCorgi" fill className="object-contain" priority />
             </div>
           </div>
 

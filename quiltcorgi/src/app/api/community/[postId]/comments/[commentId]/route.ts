@@ -104,7 +104,11 @@ export async function PATCH(
     const body = await request.json();
     const parsed = commentModerationSchema.safeParse(body);
     if (!parsed.success) {
-      return errorResponse('Invalid status. Must be "visible" or "hidden".', 'VALIDATION_ERROR', 400);
+      return errorResponse(
+        'Invalid status. Must be "visible" or "hidden".',
+        'VALIDATION_ERROR',
+        400
+      );
     }
 
     const { status } = parsed.data;

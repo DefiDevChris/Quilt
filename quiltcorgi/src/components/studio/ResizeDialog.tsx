@@ -32,9 +32,9 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
   const aspectRatio = canvasWidth / canvasHeight;
   const isSameDimensions = width === canvasWidth && height === canvasHeight;
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useLayoutEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setWidth(canvasWidth);
       setHeight(canvasHeight);
       setLockAspectRatio(true);
