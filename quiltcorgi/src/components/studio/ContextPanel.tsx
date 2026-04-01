@@ -8,135 +8,11 @@ import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-3">
-      {children}
-    </h3>
-  );
-}
+import { SectionTitle } from '@/components/ui/SectionTitle';
+import { NumberInput } from '@/components/ui/NumberInput';
+import { Checkbox } from '@/components/ui/Checkbox';
 
-function NumberInput({
-  label,
-  value,
-  onChange,
-  suffix,
-  step = 1,
-}: {
-  label: string;
-  value: string;
-  onChange?: (val: string) => void;
-  suffix?: string;
-  step?: number;
-}) {
-  const increment = () => {
-    const num = parseFloat(value);
-    if (!isNaN(num)) {
-      onChange?.(String(parseFloat((num + step).toFixed(6))));
-    }
-  };
-
-  const decrement = () => {
-    const num = parseFloat(value);
-    if (!isNaN(num)) {
-      onChange?.(String(parseFloat((num - step).toFixed(6))));
-    }
-  };
-
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-body-sm text-secondary">{label}</label>
-      <div className="flex items-center bg-surface-container rounded-sm h-9">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          className="flex-1 bg-transparent font-mono text-body-sm text-on-surface px-2 outline-none min-w-0"
-        />
-        {suffix && <span className="text-body-sm text-secondary pr-2">{suffix}</span>}
-        <div className="flex flex-col border-l border-outline-variant/20">
-          <button
-            type="button"
-            onClick={increment}
-            className="px-1.5 h-[18px] flex items-center justify-center text-secondary hover:text-on-surface"
-            aria-label={`Increase ${label}`}
-          >
-            <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
-              <path
-                d="M1 4L4 1L7 4"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={decrement}
-            className="px-1.5 h-[18px] flex items-center justify-center text-secondary hover:text-on-surface"
-            aria-label={`Decrease ${label}`}
-          >
-            <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
-              <path
-                d="M1 1L4 4L7 1"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Checkbox({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange?: (val: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center gap-2 cursor-pointer group">
-      <div
-        className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${
-          checked ? 'bg-primary' : 'bg-surface-container'
-        }`}
-        onClick={() => onChange?.(!checked)}
-        role="checkbox"
-        aria-checked={checked}
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            onChange?.(!checked);
-          }
-        }}
-      >
-        {checked && (
-          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-            <path
-              d="M1 4L3.5 6.5L9 1"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </div>
-      <span className="text-body-sm text-on-surface group-hover:text-on-surface">{label}</span>
-    </label>
-  );
-}
-
-function QuiltPanel() {
+function usePrecisionControls() {
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
@@ -151,12 +27,7 @@ function QuiltPanel() {
     String(Math.max(1, Math.round(canvasHeight / Math.max(gridSettings.size, 0.01))))
   );
   const [snapToGrid, setSnapToGrid] = useState(() => gridSettings.snapToGrid);
-  const [rotation, setRotation] = useState('0');
-  const [shear, setShear] = useState('0');
-  const [canvasColor, setCanvasColor] = useState('#ffffff');
-  const colorInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync local state when store values change externally
   useEffect(() => {
     setBlockWidth(canvasWidth.toFixed(3));
   }, [canvasWidth]);
@@ -179,7 +50,6 @@ function QuiltPanel() {
       if (!isNaN(num) && num > 0) {
         pushUndo();
         useProjectStore.getState().setCanvasWidth(num);
-        // Recompute snaps from new width
         const gridSize = useCanvasStore.getState().gridSettings.size;
         setSnapsH(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
       }
@@ -236,26 +106,60 @@ function QuiltPanel() {
     [pushUndo]
   );
 
-  const handleCanvasColorClick = useCallback(() => {
-    colorInputRef.current?.click();
-  }, []);
+  return {
+    blockWidth,
+    blockHeight,
+    snapsH,
+    snapsV,
+    snapToGrid,
+    handleBlockWidthChange,
+    handleBlockHeightChange,
+    handleSnapsHChange,
+    handleSnapsVChange,
+    handleSnapToGridChange,
+    pushUndo,
+    fabricCanvas
+  };
+}
 
-  const handleCanvasColorChange = useCallback(
-    async (hex: string) => {
-      setCanvasColor(hex);
-      if (!fabricCanvas) return;
-      pushUndo();
-      const canvas = fabricCanvas as {
-        set: (props: Record<string, unknown>) => void;
-        renderAll: () => void;
-      };
-      canvas.set({ backgroundColor: hex });
-      canvas.renderAll();
-    },
-    [fabricCanvas, pushUndo]
+function PrecisionBar() {
+  const {
+    blockWidth,
+    blockHeight,
+    snapsH,
+    snapsV,
+    snapToGrid,
+    handleBlockWidthChange,
+    handleBlockHeightChange,
+    handleSnapsHChange,
+    handleSnapsVChange,
+    handleSnapToGridChange,
+  } = usePrecisionControls();
+
+  return (
+    <div>
+      <SectionTitle>Precision</SectionTitle>
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <NumberInput label="Block Width" value={blockWidth} onChange={handleBlockWidthChange} suffix="in" />
+        <NumberInput label="Block Height" value={blockHeight} onChange={handleBlockHeightChange} suffix="in" />
+      </div>
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
+        <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
+      </div>
+      <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
+    </div>
   );
+}
 
-  // Read initial canvas background color
+function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: boolean }) {
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const [rotation, setRotation] = useState('0');
+  const [shearH, setShearH] = useState('0');
+  const [shearV, setShearV] = useState('0');
+  const [canvasColor, setCanvasColor] = useState('#ffffff');
+  const colorInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!fabricCanvas) return;
     const canvas = fabricCanvas as { backgroundColor?: string };
@@ -281,372 +185,91 @@ function QuiltPanel() {
     [fabricCanvas]
   );
 
-  return (
-    <div className="flex flex-col gap-[2.75rem]">
-      {/* Selection details: shape preview, dimensions, color/fabric picker */}
-      <SelectionPanel />
+  const handleCanvasColorClick = () => colorInputRef.current?.click();
+  const handleCanvasColorChange = (hex: string) => {
+    setCanvasColor(hex);
+    if (!fabricCanvas) return;
+    const canvas = fabricCanvas as { set: (props: Record<string, unknown>) => void; renderAll: () => void; toJSON: () => Record<string, unknown> };
+    canvas.set({ backgroundColor: hex });
+    canvas.renderAll();
+    useCanvasStore.getState().pushUndoState(JSON.stringify(canvas.toJSON()));
+  };
 
-      {/* Precision Bar */}
-      <div>
-        <SectionTitle>Precision Bar</SectionTitle>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput
-            label="Block Width"
-            value={blockWidth}
-            onChange={handleBlockWidthChange}
-            suffix="in"
-          />
-          <NumberInput
-            label="Block Height"
-            value={blockHeight}
-            onChange={handleBlockHeightChange}
-            suffix="in"
-          />
+  return (
+    <div>
+      <SectionTitle>Rotate &amp; Shear</SectionTitle>
+      <div className="flex gap-2 mb-3">
+        <button type="button" onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Rotate 90&#176;</button>
+        <button type="button" onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Rotate -90&#176;</button>
+      </div>
+      <div className="flex gap-2 mb-4">
+        <button type="button" onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Flip Horiz</button>
+        <button type="button" onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))} className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors">Flip Vert</button>
+      </div>
+      
+      <div className="flex items-end gap-2 mb-3">
+        <div className="flex-1">
+          <NumberInput label="Precise Rotation" value={rotation} onChange={setRotation} suffix="deg" />
         </div>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
-          <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
+        <button type="button" onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation) || 0))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
+      </div>
+      
+      <div className="flex items-end gap-2 mb-3">
+        <div className="flex-1">
+          <NumberInput label="Horizontal Shear" value={shearH} onChange={setShearH} suffix="deg" />
         </div>
-        <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
+        <button type="button" onClick={() => applyTransform((active) => active.set({ skewX: parseFloat(shearH) || 0 }))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
       </div>
 
-      {/* Rotate & Shear */}
-      <div>
-        <SectionTitle>Rotate &amp; Shear</SectionTitle>
-        <div className="flex gap-2 mb-3">
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.rotate(0))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Straighten
-          </button>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation)))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Apply
-          </button>
+      <div className="flex items-end gap-2 mb-3">
+        <div className="flex-1">
+          <NumberInput label="Vertical Shear" value={shearV} onChange={setShearV} suffix="deg" />
         </div>
-        <div className="flex gap-2 mb-3">
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Flip Horiz
-          </button>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Flip Vert
-          </button>
-        </div>
-        <div className="flex items-end gap-2 mb-3">
-          <div className="flex-1">
-            <NumberInput label="Rotation" value={rotation} onChange={setRotation} suffix="deg" />
-          </div>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.rotate(parseFloat(rotation)))}
-            className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            APPLY
-          </button>
-        </div>
-        <div className="flex items-end gap-2 mb-3">
-          <div className="flex-1">
-            <NumberInput label="Shear" value={shear} onChange={setShear} suffix="deg" />
-          </div>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.set({ skewX: parseFloat(shear) }))}
-            className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            APPLY
-          </button>
-        </div>
+        <button type="button" onClick={() => applyTransform((active) => active.set({ skewY: parseFloat(shearV) || 0 }))} className="bg-primary text-on-primary rounded-md px-3 h-9 text-body-sm font-medium hover:bg-primary/90 transition-colors">APPLY</button>
+      </div>
+      
+      <button type="button" onClick={() => applyTransform((active) => { active.rotate(0); active.set({ skewX: 0, skewY: 0 }); })} className="w-full bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors mb-4">Straighten (Zero All)</button>
+
+      {includeCanvasColor && (
         <div className="flex items-center gap-2">
           <span className="text-body-sm text-secondary">Canvas Color</span>
-          <div
-            className="w-6 h-6 rounded-sm border border-outline-variant/30 cursor-pointer"
-            style={{ backgroundColor: canvasColor }}
-            onClick={handleCanvasColorClick}
-          />
-          <input
-            ref={colorInputRef}
-            type="color"
-            value={canvasColor}
-            onChange={(e) => handleCanvasColorChange(e.target.value)}
-            className="sr-only"
-          />
+          <div className="w-6 h-6 rounded-sm border border-outline-variant/30 cursor-pointer" style={{ backgroundColor: canvasColor }} onClick={handleCanvasColorClick} />
+          <input ref={colorInputRef} type="color" value={canvasColor} onChange={(e) => handleCanvasColorChange(e.target.value)} className="sr-only" />
         </div>
-      </div>
+      )}
+    </div>
+  );
+}
 
-      {/* Colorway Tools */}
+function QuiltPanel() {
+  return (
+    <div className="flex flex-col gap-[2.75rem]">
+      <SelectionPanel />
+      <PrecisionBar />
+      <RotateAndShear includeCanvasColor={true} />
       <ColorwayTools />
-
-      {/* Text Tool Properties (shown when text object selected) */}
       <TextToolOptions />
     </div>
   );
 }
 
 function BlockPanel() {
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-
-  const [blockWidth, setBlockWidth] = useState(() => canvasWidth.toFixed(3));
-  const [blockHeight, setBlockHeight] = useState(() => canvasHeight.toFixed(3));
-  const [snapsH, setSnapsH] = useState(() =>
-    String(Math.max(1, Math.round(canvasWidth / Math.max(gridSettings.size, 0.01))))
-  );
-  const [snapsV, setSnapsV] = useState(() =>
-    String(Math.max(1, Math.round(canvasHeight / Math.max(gridSettings.size, 0.01))))
-  );
-  const [snapToGrid, setSnapToGrid] = useState(() => gridSettings.snapToGrid);
-
-  useEffect(() => {
-    setBlockWidth(canvasWidth.toFixed(3));
-  }, [canvasWidth]);
-  useEffect(() => {
-    setBlockHeight(canvasHeight.toFixed(3));
-  }, [canvasHeight]);
-
-  const pushUndo = useCallback(() => {
-    if (!fabricCanvas) return;
-    const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
-    const json = JSON.stringify(canvas.toJSON());
-    useCanvasStore.getState().pushUndoState(json);
-    useProjectStore.getState().setDirty(true);
-  }, [fabricCanvas]);
-
-  const handleBlockWidthChange = useCallback(
-    (val: string) => {
-      setBlockWidth(val);
-      const num = parseFloat(val);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        useProjectStore.getState().setCanvasWidth(num);
-        const gridSize = useCanvasStore.getState().gridSettings.size;
-        setSnapsH(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleBlockHeightChange = useCallback(
-    (val: string) => {
-      setBlockHeight(val);
-      const num = parseFloat(val);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        useProjectStore.getState().setCanvasHeight(num);
-        const gridSize = useCanvasStore.getState().gridSettings.size;
-        setSnapsV(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleSnapsHChange = useCallback(
-    (val: string) => {
-      setSnapsH(val);
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num > 0) {
-        const newSize = canvasWidth / num;
-        useCanvasStore.getState().setGridSettings({ size: newSize });
-      }
-    },
-    [canvasWidth]
-  );
-
-  const handleSnapsVChange = useCallback(
-    (val: string) => {
-      setSnapsV(val);
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num > 0) {
-        const newSize = canvasHeight / num;
-        useCanvasStore.getState().setGridSettings({ size: newSize });
-      }
-    },
-    [canvasHeight]
-  );
-
-  const handleSnapToGridChange = useCallback((val: boolean) => {
-    setSnapToGrid(val);
-    useCanvasStore.getState().setGridSettings({ snapToGrid: val });
-  }, []);
-
   return (
     <div className="flex flex-col gap-[2.75rem]">
-      <div>
-        <h3 className="text-headline-sm font-semibold text-on-surface mb-4">Block Properties</h3>
-      </div>
-
-      <div>
-        <SectionTitle>Precision</SectionTitle>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Block Width" value={blockWidth} onChange={handleBlockWidthChange} />
-          <NumberInput
-            label="Block Height"
-            value={blockHeight}
-            onChange={handleBlockHeightChange}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
-          <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
-        </div>
-      </div>
+      <PrecisionBar />
     </div>
   );
 }
 
 function ImagePanel() {
-  const [rotation, setRotation] = useState('0');
-  const [shearH, setShearH] = useState(0);
-  const [shearV, setShearV] = useState(0);
   const [cropAfterRotation, setCropAfterRotation] = useState(true);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-
-  const applyTransform = useCallback(
-    async (transformFn: (active: FabricObject, canvas: FabricCanvas) => void) => {
-      if (!fabricCanvas) return;
-      const canvas = fabricCanvas as FabricCanvas;
-      const active = canvas.getActiveObject();
-      if (!active) return;
-
-      transformFn(active, canvas);
-      active.setCoords();
-      canvas.renderAll();
-      const json = JSON.stringify(canvas.toJSON());
-      useCanvasStore.getState().pushUndoState(json);
-      useProjectStore.getState().setDirty(true);
-    },
-    [fabricCanvas]
-  );
 
   return (
     <div className="flex flex-col gap-[2.75rem]">
-      <div>
-        <h3 className="text-headline-sm font-semibold text-on-surface mb-4">
-          Rotation &amp; Shear
-        </h3>
-
-        {/* Rotate buttons */}
-        <div className="flex gap-2 mb-3">
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Rotate 90&#176;
-          </button>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Rotate -90&#176;
-          </button>
-        </div>
-
-        {/* Flip buttons */}
-        <div className="flex gap-2 mb-4">
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Flip Horiz
-          </button>
-          <button
-            type="button"
-            onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
-            className="flex-1 bg-surface-container text-on-surface rounded-md py-2.5 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Flip Vert
-          </button>
-        </div>
-
-        {/* Precise Rotation */}
-        <div className="mb-4">
-          <NumberInput
-            label="Precise Rotation"
-            value={rotation}
-            onChange={setRotation}
-            suffix="deg"
-          />
-        </div>
-
-        {/* Shear Horizontally */}
-        <div className="mb-3">
-          <label className="text-body-sm text-secondary mb-1 block">Shear Horizontally</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="range"
-              min={-45}
-              max={45}
-              value={shearH}
-              onChange={(e) => setShearH(Number(e.target.value))}
-              className="flex-1 h-1 appearance-none rounded-full bg-surface-container-highest accent-primary"
-            />
-            <span className="font-mono text-body-sm text-secondary w-8 text-right">
-              {shearH}&#176;
-            </span>
-          </div>
-        </div>
-
-        {/* Shear Vertically */}
-        <div className="mb-4">
-          <label className="text-body-sm text-secondary mb-1 block">Shear Vertically</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="range"
-              min={-45}
-              max={45}
-              value={shearV}
-              onChange={(e) => setShearV(Number(e.target.value))}
-              className="flex-1 h-1 appearance-none rounded-full bg-surface-container-highest accent-primary"
-            />
-            <span className="font-mono text-body-sm text-secondary w-8 text-right">
-              {shearV}&#176;
-            </span>
-          </div>
-        </div>
-
-        {/* Straighten button */}
-        <button
-          type="button"
-          onClick={() =>
-            applyTransform((active) => {
-              active.rotate(parseFloat(rotation) || 0);
-              active.set({ skewX: shearH, skewY: shearV });
-            })
-          }
-          className="w-full bg-primary text-on-primary rounded-md py-2.5 text-body-sm font-medium hover:bg-primary/90 transition-colors mb-4"
-        >
-          Straighten (Apply)
-        </button>
-      </div>
-
-      {/* Background */}
+      <RotateAndShear includeCanvasColor={false} />
       <div>
         <SectionTitle>Background</SectionTitle>
-        <Checkbox
-          label="Crop image after rotation"
-          checked={cropAfterRotation}
-          onChange={setCropAfterRotation}
-        />
+        <Checkbox label="Crop image after rotation" checked={cropAfterRotation} onChange={setCropAfterRotation} />
       </div>
     </div>
   );

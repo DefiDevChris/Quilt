@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-engine';
+import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-utils';
 import { DEFAULT_SASHING_COLOR, DEFAULT_BORDER_COLOR } from '@/lib/constants';
 
 interface LayoutStoreState {

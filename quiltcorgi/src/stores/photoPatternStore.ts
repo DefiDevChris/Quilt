@@ -16,7 +16,7 @@ import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
-import { terminateDetectionWorker } from '@/lib/photo-pattern-engine';
+import { terminateDetectionWorker } from '@/lib/photo-pattern-utils';
 
 interface PhotoPatternState {
   step: PhotoPatternStep;

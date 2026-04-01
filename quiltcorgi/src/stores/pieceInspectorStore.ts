@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import type { PieceGeometry, PieceDimensions } from '@/lib/piece-inspector-engine';
+import type { PieceGeometry, PieceDimensions } from '@/lib/piece-inspector-utils';
 
 interface PieceInspectorState {
   readonly isOpen: boolean;

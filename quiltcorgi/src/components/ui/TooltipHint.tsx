@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, type ReactNode } from 'react';
-import { TOOLTIP_DELAY_MS } from '@/lib/onboarding-engine';
+import { TOOLTIP_DELAY_MS } from '@/lib/onboarding-utils';
 
 interface TooltipHintProps {
   readonly name: string;

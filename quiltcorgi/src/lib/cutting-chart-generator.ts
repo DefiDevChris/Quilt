@@ -9,7 +9,7 @@
 
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { formatFraction } from '@/lib/piece-detection-engine';
+import { formatFraction } from '@/lib/piece-detection-utils';
 export { formatFraction };
 
 // ── Types ──────────────────────────────────────────────────────────

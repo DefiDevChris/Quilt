@@ -10,7 +10,7 @@ import {
   type LayoutConfig,
   type LayoutResult,
   type LayoutCell,
-} from '@/lib/layout-engine';
+} from '@/lib/layout-utils';
 
 /**
  * Marks all layout-generated Fabric.js objects with this property

@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { computePatternTransform, type FussyCutConfig } from '@/lib/fussy-cut-engine';
+import { computePatternTransform, type FussyCutConfig } from '@/lib/fussy-cut-utils';
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 
 /**

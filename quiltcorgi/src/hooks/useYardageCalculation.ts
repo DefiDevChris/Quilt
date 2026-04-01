@@ -8,7 +8,7 @@ import { PIXELS_PER_INCH } from '@/lib/constants';
 import {
   computeYardageEstimates,
   type CanvasShapeData,
-} from '@/lib/yardage-engine';
+} from '@/lib/yardage-utils';
 
 function extractShapesFromCanvas(canvas: unknown): CanvasShapeData[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

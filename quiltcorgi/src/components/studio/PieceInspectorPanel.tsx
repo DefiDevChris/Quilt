@@ -10,7 +10,7 @@ import {
   computePieceDimensions,
   type PieceGeometry,
   type FormattedDimensions,
-} from '@/lib/piece-inspector-engine';
+} from '@/lib/piece-inspector-utils';
 
 // ── Constants ────────────────────────────────────────────────────
 

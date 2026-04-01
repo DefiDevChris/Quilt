@@ -7,7 +7,7 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import type { BorderConfig } from '@/lib/layout-engine';
+import type { BorderConfig } from '@/lib/layout-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 

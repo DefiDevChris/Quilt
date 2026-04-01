@@ -4,7 +4,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { fabricObjectToSvgData } from '@/lib/fabric-object-to-svg';
-import { extractPieceGeometry, computePieceDimensions } from '@/lib/piece-inspector-engine';
+import { extractPieceGeometry, computePieceDimensions } from '@/lib/piece-inspector-utils';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 // ── Types ─────────────────────────────────────────────────────────

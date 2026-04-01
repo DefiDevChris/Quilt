@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { loadOpenCv } from '@/lib/opencv-loader';
-import { autoDetectQuiltBoundary, sortCornersClockwise } from '@/lib/perspective-engine';
+import { autoDetectQuiltBoundary, sortCornersClockwise } from '@/lib/perspective-utils';
 import type { Point2D } from '@/lib/photo-pattern-types';
 import { PHOTO_PATTERN_OVERLAY_COLOR } from '@/lib/constants';
 

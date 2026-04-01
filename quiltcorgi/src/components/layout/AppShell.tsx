@@ -58,7 +58,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }`}
       >
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="text-lg font-bold text-on-surface">QuiltCorgi</span>
+          <Image src="/logo.png" alt="QuiltCorgi Logo" width={32} height={32} className="object-contain drop-shadow-sm" />
+          <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">QuiltCorgi</span>
         </Link>
 
         <div className="flex items-center gap-6">
@@ -129,11 +130,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     alt={user.name}
                     width={32}
                     height={32}
-                    className="h-8 w-8 rounded-full object-cover"
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-orange-300 transition-all"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-sm font-medium text-primary">
-                    {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
+                  <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-orange-300 transition-all">
+                    <Image src="/mascots&avatars/corgi1.png" alt="Default Avatar" width={32} height={32} className="object-cover scale-110 translate-y-1" />
                   </div>
                 )}
               </button>

@@ -8,7 +8,7 @@ import {
   defaultFussyCutConfig,
   clampConfig,
   type FussyCutConfig,
-} from '@/lib/fussy-cut-engine';
+} from '@/lib/fussy-cut-utils';
 import { fussyCutConfigSchema } from '@/lib/validation';
 
 interface UseFussyCutReturn {

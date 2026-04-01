@@ -11,7 +11,7 @@ import {
 import { ParsedPatternSchema } from '@/lib/pattern-parser-types';
 import { matchPatternFabrics, type FabricRecord } from '@/lib/pattern-fabric-matcher';
 import { matchAllBlocks, type BlockLibraryEntry } from '@/lib/pattern-block-matcher';
-import { buildProjectFromPattern } from '@/lib/pattern-import-engine';
+import { buildProjectFromPattern } from '@/lib/pattern-import-utils';
 
 export async function POST(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();

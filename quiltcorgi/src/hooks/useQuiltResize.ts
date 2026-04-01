@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
-import { computeResize, type ResizeInput, type CanvasObjectData } from '@/lib/resize-engine';
+import { computeResize, type ResizeInput, type CanvasObjectData } from '@/lib/resize-utils';
 import { getPixelsPerUnit, fitToScreenZoom } from '@/lib/canvas-utils';
 import { saveProject } from '@/lib/save-project';
 

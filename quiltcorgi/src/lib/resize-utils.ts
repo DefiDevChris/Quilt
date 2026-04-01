@@ -6,7 +6,7 @@
  * Zero React/Fabric.js/DOM dependencies.
  */
 
-import type { LayoutType } from '@/lib/layout-engine';
+import type { LayoutType } from '@/lib/layout-utils';
 
 const MIN_DIMENSION = 1;
 const MAX_DIMENSION = 200;

@@ -8,7 +8,7 @@ import {
   ONBOARDING_STORAGE_KEY,
   getStorageFlag,
   computeTooltipPosition,
-} from '@/lib/onboarding-engine';
+} from '@/lib/onboarding-utils';
 import { OnboardingSpotlight } from './OnboardingSpotlight';
 import { OnboardingTooltip } from './OnboardingTooltip';
 
