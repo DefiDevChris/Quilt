@@ -77,6 +77,7 @@ interface CanvasStoreState {
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
   printScale: number;
+  toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -104,6 +105,8 @@ interface CanvasStoreState {
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
   centerAndFitViewport: () => void;
+  saveToolSettings: (tool: ToolType) => void;
+  loadToolSettings: (tool: ToolType) => void;
   reset: () => void;
 }
 
@@ -137,6 +140,7 @@ const INITIAL_STATE = {
   isViewportLocked: true,
   showSeamAllowance: true,
   printScale: 1.0,
+  toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -154,7 +158,12 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     })),
 
   setSelectedObjectIds: (ids) => set({ selectedObjectIds: ids }),
-  setActiveTool: (tool) => set({ activeTool: tool }),
+  setActiveTool: (tool) => {
+    const { saveToolSettings, loadToolSettings } = get();
+    saveToolSettings(get().activeTool);
+    set({ activeTool: tool });
+    loadToolSettings(tool);
+  },
   setActiveWorktable: (worktable) => set({ activeWorktable: worktable }),
   setCursorPosition: (pos) => set({ cursorPosition: pos }),
   setIsSpacePressed: (pressed) => set({ isSpacePressed: pressed }),
@@ -244,6 +253,28 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     fabricCanvas.setViewportTransform([zoom, 0, 0, zoom, panX, panY]);
     set({ zoom });
     fabricCanvas.renderAll();
+  },
+
+  saveToolSettings: (tool) => {
+    const { fillColor, strokeColor, strokeWidth, toolSettings } = get();
+    set({
+      toolSettings: {
+        ...toolSettings,
+        [tool]: { fillColor, strokeColor, strokeWidth },
+      },
+    });
+  },
+
+  loadToolSettings: (tool) => {
+    const { toolSettings } = get();
+    const saved = toolSettings[tool];
+    if (saved) {
+      set({
+        fillColor: saved.fillColor ?? DEFAULT_FILL_COLOR,
+        strokeColor: saved.strokeColor ?? DEFAULT_STROKE_COLOR,
+        strokeWidth: saved.strokeWidth ?? 1,
+      });
+    }
   },
 
   reset: () => {

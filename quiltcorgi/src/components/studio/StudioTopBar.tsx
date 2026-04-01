@@ -21,13 +21,13 @@ function formatTimestamp(date: Date | null): string {
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();
 }
-import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
   readonly onOpenPdfExport?: () => void;
   readonly onOpenHelp?: () => void;
   readonly onSave?: () => void;
+  readonly onOpenHistory?: () => void;
 }
 
 export function StudioTopBar({
@@ -35,15 +35,27 @@ export function StudioTopBar({
   onOpenPdfExport,
   onOpenHelp,
   onSave,
+  onOpenHistory,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
+  const isDirty = useProjectStore((s) => s.isDirty);
+  const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
-  const canUndo = useCanvasStore((s) => s.canUndo());
-  const canRedo = useCanvasStore((s) => s.canRedo());
-  const undoCount = useCanvasStore((s) => s.undoStack.length);
-  const redoCount = useCanvasStore((s) => s.redoStack.length);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
+  const { toast } = useToast();
+
+  // Listen for save success events
+  useEffect(() => {
+    function handleSaveSuccess() {
+      toast({
+        type: 'success',
+        title: 'Saved',
+        description: 'Your project has been saved',
+      });
+    }
+    window.addEventListener('quiltcorgi:save-success', handleSaveSuccess);
+    return () => window.removeEventListener('quiltcorgi:save-success', handleSaveSuccess);
+  }, [toast]);
 
   return (
     <>
@@ -75,105 +87,16 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        {/* Right: Undo/Redo + Grid + Viewport controls + Project info + Export */}
+        {/* Right: Viewport controls + Project info + Export */}
         <div className="flex items-center gap-4">
-          {/* Undo/Redo */}
+          {/* Viewport lock/unlock + recenter */}
           <div className="flex items-center gap-1">
             <TooltipHint
-              name="Undo"
-              shortcut="Ctrl+Z"
-              description={canUndo ? `Undo last action (${undoCount} available)` : 'No actions to undo'}
-            >
-              <button
-                type="button"
-                onClick={() => performUndo()}
-                disabled={!canUndo}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  canUndo
-                    ? 'hover:bg-surface-container'
-                    : 'opacity-30 cursor-not-allowed'
-                }`}
-                aria-label="Undo"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                  <path d="M7 10H17M7 10L11 6M7 10L11 14" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M3 4V10" strokeLinecap="round" />
-                </svg>
-              </button>
-            </TooltipHint>
-            <TooltipHint
-              name="Redo"
-              shortcut="Ctrl+Shift+Z"
-              description={canRedo ? `Redo last action (${redoCount} available)` : 'No actions to redo'}
-            >
-              <button
-                type="button"
-                onClick={() => performRedo()}
-                disabled={!canRedo}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  canRedo
-                    ? 'hover:bg-surface-container'
-                    : 'opacity-30 cursor-not-allowed'
-                }`}
-                aria-label="Redo"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                  <path d="M13 10H3M13 10L9 6M13 10L9 14" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M17 4V10" strokeLinecap="round" />
-                </svg>
-              </button>
-            </TooltipHint>
-          </div>
-
-          {/* Grid toggles */}
-          <div className="flex items-center gap-1 border-l border-outline-variant/15 pl-4">
-            <TooltipHint
-              name="Toggle Grid"
-              description={gridSettings.enabled ? 'Hide grid lines' : 'Show grid lines'}
-            >
-              <button
-                type="button"
-                onClick={() => useCanvasStore.getState().setGridSettings({ enabled: !gridSettings.enabled })}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  gridSettings.enabled ? 'bg-primary/12 text-primary' : 'hover:bg-surface-container'
-                }`}
-                aria-label="Toggle grid"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
-                  <rect x="3" y="3" width="14" height="14" rx="1" />
-                  <path d="M3 10H17M10 3V17" />
-                </svg>
-              </button>
-            </TooltipHint>
-            <TooltipHint
-              name="Snap to Grid"
-              description={gridSettings.snapToGrid ? 'Disable snap to grid' : 'Enable snap to grid'}
-            >
-              <button
-                type="button"
-                onClick={() => useCanvasStore.getState().setGridSettings({ snapToGrid: !gridSettings.snapToGrid })}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  gridSettings.snapToGrid ? 'bg-primary/12 text-primary' : 'hover:bg-surface-container'
-                }`}
-                aria-label="Toggle snap to grid"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
-                  <circle cx="10" cy="10" r="2" fill="currentColor" />
-                  <circle cx="5" cy="5" r="1" fill="currentColor" />
-                  <circle cx="15" cy="5" r="1" fill="currentColor" />
-                  <circle cx="5" cy="15" r="1" fill="currentColor" />
-                  <circle cx="15" cy="15" r="1" fill="currentColor" />
-                </svg>
-              </button>
-            </TooltipHint>
-          </div>
-
-          {/* Viewport lock/unlock + recenter */}
-          <div className="flex items-center gap-1 border-l border-outline-variant/15 pl-4">
-            <TooltipHint
-              name={isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport'}
+              name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
               description={
-                isViewportLocked ? 'Unlock to pan and zoom freely' : 'Lock viewport to centered fit'
+                isViewportLocked 
+                  ? 'Click to unlock and pan/zoom freely' 
+                  : 'Click to lock viewport to centered fit'
               }
             >
               <button
@@ -181,7 +104,11 @@ export function StudioTopBar({
                 onClick={() =>
                   useCanvasStore.getState().setViewportLocked(!isViewportLocked)
                 }
-                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  isViewportLocked 
+                    ? 'hover:bg-surface-container' 
+                    : 'bg-primary/10 hover:bg-primary/20'
+                }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
                 {isViewportLocked ? (
@@ -242,10 +169,17 @@ export function StudioTopBar({
           </div>
 
           <div className="text-right">
-            <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
-              {projectName}
+            <div className="flex items-center gap-2">
+              <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
+                {projectName}
+              </div>
+              {isDirty && (
+                <div className="w-1.5 h-1.5 rounded-full bg-warning" title="Unsaved changes" />
+              )}
             </div>
-            <div className="text-[11px] text-on-surface/45">Quilt Canvas</div>
+            <div className="text-[11px] text-on-surface/45">
+              {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
+            </div>
           </div>
           <button
             type="button"
@@ -254,6 +188,36 @@ export function StudioTopBar({
           >
             EXPORT
           </button>
+          <TooltipHint name="History" description="View and restore previous states">
+            <button
+              type="button"
+              onClick={onOpenHistory}
+              aria-label="History"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M10 7V10L12 12"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M5 13L3 11L5 9"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </TooltipHint>
           <button
             type="button"
             onClick={onOpenHelp}
