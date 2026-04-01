@@ -394,14 +394,9 @@ export default function ProfilePage() {
         >
           <div>
             <p className="text-sm font-bold text-slate-800">My Projects</p>
-            <p className="text-xs text-slate-600 mt-0.5">View and manage your quilt designs</p>
+            <p className="text-xs text-secondary mt-0.5 font-medium">View and manage your quilt designs</p>
           </div>
-          <svg
-            className="w-4 h-4 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>
@@ -411,22 +406,75 @@ export default function ProfilePage() {
         >
           <div>
             <p className="text-sm font-bold text-slate-800">Community</p>
-            <p className="text-xs text-slate-600 mt-0.5">Share and view quilt designs</p>
+            <p className="text-xs text-secondary mt-0.5 font-medium">Share and view quilt designs</p>
           </div>
-          <svg
-            className="w-4 h-4 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Link>
       </div>
 
-      {/* Billing & Plan */}
-      <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
-        <BillingSection />
+      {/* Settings Section (Consolidated) */}
+      <div id="settings" className="scroll-mt-6 mb-4">
+        <div className="rounded-[2rem] glass-elevated p-8 border border-white/60 shadow-elevation-2">
+          <div className="flex items-center gap-3 mb-8">
+            <Settings className="text-secondary" size={24} />
+            <h2 className="text-2xl font-extrabold text-on-surface tracking-tight">System Settings</h2>
+          </div>
+
+          <div className="space-y-10">
+            {/* Preferences */}
+            <div className="space-y-6">
+              <h3 className="text-xs font-bold text-secondary uppercase tracking-[0.2em]">Application Preferences</h3>
+              
+              <div className="flex items-center justify-between p-4 rounded-xl glass-inset border border-white/40">
+                <div>
+                  <p className="text-sm font-bold text-on-surface">Unit System</p>
+                  <p className="text-xs text-secondary font-medium">Choose between inches and centimeters</p>
+                </div>
+                <div className="flex bg-white/40 rounded-lg p-0.5 border border-white/20">
+                   <button 
+                    onClick={() => { /* setUnitSystem from useCanvasStore */ }}
+                    className="px-4 py-1.5 rounded-md text-xs font-bold bg-white text-on-surface shadow-sm"
+                   >
+                    Inches
+                   </button>
+                   <button 
+                    disabled
+                    className="px-4 py-1.5 rounded-md text-xs font-bold text-secondary/50"
+                   >
+                    CM
+                   </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-xl glass-inset border border-white/40">
+                <div>
+                  <p className="text-sm font-bold text-on-surface">Visual Theme</p>
+                  <p className="text-xs text-secondary font-medium">Toggle between light and dark modes</p>
+                </div>
+                <div className="flex bg-white/40 rounded-lg p-0.5 border border-white/20">
+                   <button 
+                    className="px-4 py-1.5 rounded-md text-xs font-bold bg-white text-on-surface shadow-sm"
+                   >
+                    Light
+                   </button>
+                   <button 
+                    disabled
+                    className="px-4 py-1.5 rounded-md text-xs font-bold text-secondary/50"
+                   >
+                    Dark
+                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Billing integrated as a sub-section */}
+            <div className="pt-8 border-t border-white/40">
+              <BillingSection />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Sign Out */}
