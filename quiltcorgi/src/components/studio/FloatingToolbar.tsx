@@ -242,7 +242,7 @@ export function FloatingToolbar() {
 
   return (
     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-      <div className="bg-surface/90 backdrop-blur-[24px] shadow-elevation-3 rounded-xl h-11 px-3 flex items-center gap-1">
+      <div className="bg-surface/90 backdrop-blur-[24px] shadow-elevation-3 rounded-xl h-11 px-3 flex items-center gap-1 border border-outline-variant/10">
         {drawingTools.map((tool) => {
           const isActive = tool.toolType
             ? activeTool === tool.toolType
@@ -264,7 +264,7 @@ export function FloatingToolbar() {
               className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
                 isActive
                   ? 'bg-primary/12 text-primary'
-                  : 'text-on-surface/45 hover:text-on-surface hover:bg-surface-container'
+                  : 'text-on-surface/55 hover:text-on-surface hover:bg-surface-container'
               }`}
             >
               {tool.icon}
@@ -275,7 +275,7 @@ export function FloatingToolbar() {
         {/* Undo/Redo separator + buttons */}
         {historyTools.length > 0 && (
           <>
-            <div className="w-px h-5 bg-outline-variant/20 mx-1" />
+            <div className="w-px h-5 bg-outline-variant/25 mx-1" />
             {historyTools.map((tool) => {
               const disabled = tool.isDisabled ?? false;
               return (
@@ -288,8 +288,8 @@ export function FloatingToolbar() {
                   onClick={disabled ? undefined : tool.onClick}
                   className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
                     disabled
-                      ? 'text-outline-variant/20 cursor-default'
-                      : 'text-on-surface/45 hover:text-on-surface hover:bg-surface-container'
+                      ? 'text-outline-variant/30 cursor-default'
+                      : 'text-on-surface/55 hover:text-on-surface hover:bg-surface-container'
                   }`}
                 >
                   {tool.icon}

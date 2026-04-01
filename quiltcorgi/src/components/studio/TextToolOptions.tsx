@@ -75,19 +75,19 @@ export function TextToolOptions() {
   };
 
   return (
-    <div className="border-t border-outline-variant px-3 py-2">
-      <h3 className="text-[10px] font-medium text-secondary uppercase tracking-wider mb-2">
+    <div className="border-t border-outline-variant/20 px-3 py-2">
+      <h3 className="text-[10px] font-medium text-on-surface/70 uppercase tracking-wider mb-2">
         Text Properties
       </h3>
 
       <div className="space-y-2">
         {/* Font Family */}
         <div>
-          <label className="text-xs text-secondary block mb-0.5">Font</label>
+          <label className="text-xs text-on-surface/70 block mb-0.5">Font</label>
           <select
             value={state.fontFamily}
             onChange={(e) => handleChange('fontFamily', e.target.value)}
-            className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+            className="w-full rounded-sm border border-outline-variant/20 bg-surface-container px-2 py-1 text-xs text-on-surface focus:border-primary focus:outline-none"
           >
             {TEXT_FONTS.map((font) => (
               <option key={font} value={font} style={{ fontFamily: font }}>
@@ -99,20 +99,20 @@ export function TextToolOptions() {
 
         {/* Font Size */}
         <div>
-          <label className="text-xs text-secondary block mb-0.5">Size (pt)</label>
+          <label className="text-xs text-on-surface/70 block mb-0.5">Size (pt)</label>
           <input
             type="number"
             min={6}
             max={200}
             value={state.fontSize}
             onChange={(e) => handleChange('fontSize', clampFontSize(Number(e.target.value)))}
-            className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+            className="w-full rounded-sm border border-outline-variant/20 bg-surface-container px-2 py-1 text-xs text-on-surface focus:border-primary focus:outline-none"
           />
         </div>
 
         {/* Color */}
         <div>
-          <label className="text-xs text-secondary block mb-0.5">Color</label>
+          <label className="text-xs text-on-surface/70 block mb-0.5">Color</label>
           <input
             type="color"
             value={state.fill}
@@ -131,7 +131,7 @@ export function TextToolOptions() {
             className={`h-7 w-7 rounded text-xs font-bold ${
               state.fontWeight === 'bold'
                 ? 'bg-primary text-white'
-                : 'text-secondary hover:bg-background'
+                : 'text-on-surface/70 hover:bg-surface-container'
             }`}
           >
             B
@@ -144,7 +144,7 @@ export function TextToolOptions() {
             className={`h-7 w-7 rounded text-xs italic ${
               state.fontStyle === 'italic'
                 ? 'bg-primary text-white'
-                : 'text-secondary hover:bg-background'
+                : 'text-on-surface/70 hover:bg-surface-container'
             }`}
           >
             I
@@ -161,7 +161,7 @@ export function TextToolOptions() {
               className={`h-7 flex-1 rounded text-[10px] ${
                 state.textAlign === align
                   ? 'bg-primary text-white'
-                  : 'text-secondary hover:bg-background'
+                  : 'text-on-surface/70 hover:bg-surface-container'
               }`}
             >
               {align.charAt(0).toUpperCase() + align.slice(1)}

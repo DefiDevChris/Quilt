@@ -23,13 +23,13 @@ export function StudioTopBar({
 
   return (
     <>
-      <div className="h-12 bg-surface border-b border-outline-variant/8 flex items-center justify-between px-5">
+      <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-5">
         {/* Left: Hamburger + Wordmark */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setDrawerOpen((prev) => !prev)}
-            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/50 hover:text-on-surface hover:bg-surface-container transition-colors"
             aria-label="Open menu"
           >
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -57,7 +57,7 @@ export function StudioTopBar({
             <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
               {projectName}
             </div>
-            <div className="text-[11px] text-on-surface/35">Quilt Canvas</div>
+            <div className="text-[11px] text-on-surface/45">Quilt Canvas</div>
           </div>
           <button
             type="button"
@@ -70,7 +70,7 @@ export function StudioTopBar({
             type="button"
             onClick={onOpenHelp}
             aria-label="Help"
-            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/35 hover:text-on-surface hover:bg-surface-container transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
           >
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
               <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />

@@ -27,10 +27,10 @@ export function NumberInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-[11px] font-medium text-on-surface/60 uppercase tracking-wider">
+      <label className="text-[11px] font-medium text-on-surface/70 uppercase tracking-wider">
         {label}
       </label>
-      <div className="flex items-center bg-surface-container rounded-md h-[34px] border border-outline-variant/15 focus-within:border-primary/40 transition-colors">
+      <div className="flex items-center bg-surface-container rounded-md h-[34px] border border-outline-variant/20 focus-within:border-primary/40 transition-colors">
         <input
           type="text"
           value={value}
@@ -40,11 +40,11 @@ export function NumberInput({
         {suffix && (
           <span className="text-[11px] text-on-surface/40 pr-2 font-mono">{suffix}</span>
         )}
-        <div className="flex flex-col border-l border-outline-variant/15">
+        <div className="flex flex-col border-l border-outline-variant/20">
           <button
             type="button"
             onClick={increment}
-            className="px-1.5 h-[17px] flex items-center justify-center text-on-surface/30 hover:text-on-surface/60 transition-colors"
+            className="px-1.5 h-[17px] flex items-center justify-center text-on-surface/40 hover:text-on-surface/70 transition-colors"
             aria-label={`Increase ${label}`}
           >
             <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
@@ -60,7 +60,7 @@ export function NumberInput({
           <button
             type="button"
             onClick={decrement}
-            className="px-1.5 h-[17px] flex items-center justify-center text-on-surface/30 hover:text-on-surface/60 transition-colors"
+            className="px-1.5 h-[17px] flex items-center justify-center text-on-surface/40 hover:text-on-surface/70 transition-colors"
             aria-label={`Decrease ${label}`}
           >
             <svg width="8" height="5" viewBox="0 0 8 5" fill="none">

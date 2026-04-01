@@ -11,7 +11,7 @@ export function Checkbox({
     <label className="flex items-center gap-2 cursor-pointer group">
       <div
         className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${
-          checked ? 'bg-primary' : 'bg-surface-container'
+          checked ? 'bg-primary' : 'bg-surface-container border border-outline-variant/30'
         }`}
         onClick={(e) => {
           e.preventDefault();
