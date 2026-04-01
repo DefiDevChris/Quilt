@@ -83,7 +83,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   className={`flex-1 px-3 py-1.5 text-xs font-medium ${
                     activeTab === 'library'
                       ? 'border-b-2 border-primary text-primary'
-                      : 'text-secondary hover:text-on-surface'
+                      : 'text-on-surface/60 hover:text-on-surface'
                   }`}
                 >
                   Library
@@ -94,7 +94,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   className={`flex-1 px-3 py-1.5 text-xs font-medium ${
                     activeTab === 'myblocks'
                       ? 'border-b-2 border-primary text-primary'
-                      : 'text-secondary hover:text-on-surface'
+                      : 'text-on-surface/60 hover:text-on-surface'
                   }`}
                 >
                   My Blocks
@@ -153,18 +153,18 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                         type="button"
                         disabled={page <= 1}
                         onClick={() => setPage(page - 1)}
-                        className="rounded px-2 py-1 text-xs text-secondary hover:bg-background disabled:opacity-30"
+                        className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
                       >
                         ← Prev
                       </button>
-                      <span className="text-[10px] text-secondary">
+                      <span className="text-[10px] text-on-surface/50">
                         {page} / {totalPages}
                       </span>
                       <button
                         type="button"
                         disabled={page >= totalPages}
                         onClick={() => setPage(page + 1)}
-                        className="rounded px-2 py-1 text-xs text-secondary hover:bg-background disabled:opacity-30"
+                        className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
                       >
                         Next →
                       </button>

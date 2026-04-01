@@ -229,9 +229,9 @@ export function HamburgerDrawer({
               {menuGroups.map((group, groupIdx) => (
                 <div key={group.title}>
                   {groupIdx > 0 && (
-                    <div className="my-[2.75rem] mx-2 border-t border-outline-variant/[0.08]" />
+                    <div className="my-[2.75rem] mx-2 border-t border-outline-variant/15" />
                   )}
-                  <div className="px-2 py-1.5 text-label-sm uppercase text-secondary tracking-[0.02em] font-medium">
+                  <div className="px-2 py-1.5 text-label-sm uppercase text-on-surface/70 tracking-[0.02em] font-medium">
                     {group.title}
                   </div>
                   {group.items.map((item) => (

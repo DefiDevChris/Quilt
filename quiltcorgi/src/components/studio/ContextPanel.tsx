@@ -290,18 +290,18 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
             active.set({ skewX: 0, skewY: 0 });
           })
         }
-        className="w-full bg-surface-container text-on-surface/70 rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4"
+        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4 border border-outline-variant/10"
       >
         Reset Transform
       </button>
 
       {includeCanvasColor && (
         <div className="flex items-center gap-2.5">
-          <span className="text-[11px] font-medium text-on-surface/60 uppercase tracking-wider">
+          <span className="text-[11px] font-medium text-on-surface/70 uppercase tracking-wider">
             Canvas
           </span>
           <div
-            className="w-6 h-6 rounded-md border border-outline-variant/20 cursor-pointer shadow-sm"
+            className="w-6 h-6 rounded-md border border-outline-variant/30 cursor-pointer shadow-sm"
             style={{ backgroundColor: canvasColor }}
             onClick={handleCanvasColorClick}
           />
@@ -351,7 +351,7 @@ export function ContextPanel() {
   const PanelContent = PANELS[activeWorktable];
 
   return (
-    <div className="w-[260px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/10">
+    <div className="w-[260px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15">
       <div className="px-4 py-5">
         <PanelContent />
       </div>

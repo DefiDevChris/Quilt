@@ -29,7 +29,7 @@ export function WorktableSwitcher() {
                 ? isPrintActive
                   ? 'text-primary'
                   : 'text-on-surface'
-                : 'text-on-surface/40 hover:text-on-surface/70'
+                : 'text-on-surface/50 hover:text-on-surface/70'
             }`}
           >
             {isActive && (

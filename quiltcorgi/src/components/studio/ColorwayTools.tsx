@@ -77,7 +77,7 @@ export function ColorwayTools() {
           width="14"
           height="14"
           viewBox="0 0 12 12"
-          className={`transition-transform duration-200 text-on-surface/40 ${isExpanded ? 'rotate-180' : ''}`}
+          className={`transition-transform duration-200 text-on-surface/50 ${isExpanded ? 'rotate-180' : ''}`}
         >
           <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
         </svg>
@@ -94,7 +94,7 @@ export function ColorwayTools() {
               className={`flex-1 h-8 rounded text-xs font-medium ${
                 activeTool === 'spraycan'
                   ? 'bg-primary text-white'
-                  : 'bg-background text-secondary hover:text-on-surface'
+                  : 'bg-surface-container text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high'
               }`}
             >
               Spray
@@ -106,7 +106,7 @@ export function ColorwayTools() {
               className={`flex-1 h-8 rounded text-xs font-medium ${
                 activeTool === 'eyedropper'
                   ? 'bg-primary text-white'
-                  : 'bg-background text-secondary hover:text-on-surface'
+                  : 'bg-surface-container text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high'
               }`}
             >
               Pick
@@ -115,7 +115,7 @@ export function ColorwayTools() {
 
           {/* Swap Colors */}
           <div>
-            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Swap Colors</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Swap Colors</span>
             <div className="flex items-center gap-1">
               <input
                 type="color"
@@ -142,7 +142,7 @@ export function ColorwayTools() {
               <button
                 type="button"
                 onClick={handleSwap}
-                className="ml-auto rounded bg-background px-2 py-1 text-[10px] text-secondary hover:text-on-surface"
+                className="ml-auto rounded bg-surface-container px-2 py-1 text-[10px] text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
               >
                 Swap
               </button>
@@ -151,7 +151,7 @@ export function ColorwayTools() {
 
           {/* Randomize */}
           <div>
-            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Randomize Palette</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Randomize Palette</span>
             <div className="flex flex-wrap gap-1 mb-1">
               {palette.map((color, i) => (
                 <input
@@ -166,7 +166,7 @@ export function ColorwayTools() {
             <button
               type="button"
               onClick={handleRandomize}
-              className="w-full rounded bg-background px-2 py-1.5 text-[10px] font-medium text-secondary hover:text-on-surface"
+              className="w-full rounded bg-surface-container px-2 py-1.5 text-[10px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high"
             >
               Shuffle
             </button>
@@ -174,7 +174,7 @@ export function ColorwayTools() {
 
           {/* Color Scheme Generator */}
           <div>
-            <span className="text-[11px] text-on-surface/55 font-medium block mb-1">Suggest Palette</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Suggest Palette</span>
             <div className="space-y-1">
               <div className="flex items-center gap-1">
                 <input
@@ -187,7 +187,7 @@ export function ColorwayTools() {
                 <select
                   value={selectedScheme}
                   onChange={(e) => setSelectedScheme(e.target.value as ColorSchemeType)}
-                  className="flex-1 text-[10px] bg-background border border-outline-variant rounded px-1 py-1 text-secondary"
+                  className="flex-1 text-[10px] bg-surface-container border border-outline-variant/20 rounded px-1 py-1 text-on-surface/70"
                 >
                   {COLOR_SCHEMES.map((scheme) => (
                     <option key={scheme.id} value={scheme.id}>
@@ -200,7 +200,7 @@ export function ColorwayTools() {
                 <button
                   type="button"
                   onClick={handleGenerateScheme}
-                  className="flex-1 rounded bg-background px-2 py-1 text-[10px] text-secondary hover:text-on-surface"
+                  className="flex-1 rounded bg-surface-container px-2 py-1 text-[10px] text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
                 >
                   Generate
                 </button>

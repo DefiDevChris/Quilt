@@ -87,9 +87,9 @@ function PrintOptionsPanel({
   ];
 
   return (
-    <div className="w-[220px] bg-surface flex-shrink-0 overflow-y-auto border-r border-outline-variant/10">
+    <div className="w-[220px] bg-surface flex-shrink-0 overflow-y-auto border-r border-outline-variant/15">
       <div className="p-4">
-        <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-4">
+        <h3 className="text-label-sm uppercase text-on-surface/70 tracking-[0.02em] font-medium mb-4">
           Print Options
         </h3>
         <div className="flex flex-col gap-3">
