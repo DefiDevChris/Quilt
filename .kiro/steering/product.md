@@ -18,6 +18,24 @@ Browser-based quilt design app. Quilters design quilts, calculate yardage, and p
 - Blog (admin-only posts, Tiptap JSON rendering)
 - Mobile companion: landing page + image upload only (no studio, no social browsing)
 
+## Canvas Enhancements (Recent)
+
+- Smart Guides — Real-time alignment with 5px snap threshold
+- Quick Color Palette — Last 8 colors, one-click application
+- Minimap/Navigator — Overview map for large quilts
+- History Panel — Visual undo/redo timeline
+- Reference Image Tool — Import, opacity, lock/unlock
+- Seam Allowance Toggle — Show/hide in print preview
+- Print Scale Preview — 0.5x to 2.0x scale adjustment
+
+## Studio Tools
+
+- Circle, Polygon, Eyedropper, Ruler
+- Block Grid, Alignment helpers
+- Group/Ungroup operations
+- Grid/Snap toggles
+- Serendipity and Symmetry generators
+
 ## Roles
 
 `free | pro | admin` — defined in `src/lib/trust-engine.ts`

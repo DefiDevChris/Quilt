@@ -22,6 +22,9 @@ export const projects = pgTable(
     name: varchar('name', { length: 255 }).notNull().default('Untitled Quilt'),
     description: text('description'),
     canvasData: jsonb('canvasData').notNull().default({}),
+    worktables: jsonb('worktables')
+      .notNull()
+      .default([{ id: 'main', name: 'Main', canvasData: {}, order: 0 }]),
     unitSystem: unitSystemEnum('unitSystem').notNull().default('imperial'),
     gridSettings: jsonb('gridSettings')
       .notNull()

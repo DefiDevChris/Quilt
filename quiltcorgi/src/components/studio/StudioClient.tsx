@@ -40,6 +40,7 @@ import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
+import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
 
 import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
@@ -553,6 +554,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* Onboarding tour */}
       <OnboardingTour />
+
+      {/* Duplicate options popup */}
+      <DuplicateOptionsPopup />
     </div>
   );
 }

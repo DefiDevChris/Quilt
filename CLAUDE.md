@@ -26,9 +26,9 @@ npm run dev              # Dev server at localhost:3000
 npm run build            # Production build
 npm run type-check       # tsc --noEmit
 npm test                 # Vitest run (all unit tests)
-npm test -- --run path   # Run a single test file (e.g. npm test -- --run tests/unit/lib/resize-engine.test.ts)
+npm test -- --run path   # Run a single test file
 npm run test:watch       # Vitest watch mode
-npm run test:coverage    # Vitest with coverage (80% threshold for lines/functions/statements)
+npm run test:coverage    # Vitest with coverage (80% threshold)
 npm run test:e2e         # Playwright E2E (Chrome + Firefox)
 npm run lint             # ESLint
 npm run format           # Prettier (format src/**/*.{ts,tsx,css,json})
@@ -74,7 +74,7 @@ Next.js 16.2.1 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Fabric.j
 ### Naming
 
 | Item | Convention | Example |
-|------|-----------|---------|
+|------|-----------|------------|
 | Variables, functions | `camelCase` | `computeResize()` |
 | Interfaces, types | `PascalCase` | `ResizeInput` |
 | Constants | `SCREAMING_SNAKE_CASE` | `FREE_BLOCK_LIMIT` |
@@ -139,7 +139,7 @@ Studio has 4 canvas contexts: QUILT, BLOCK, IMAGE, PRINT — each with its own t
 
 ### Mobile
 
-Companion experience only (5-tab nav: Feed, Library, Discover, Profile, Notifications). Studio is desktop-only — `StudioGate` redirects mobile users.
+Companion experience only (3-tab nav: Home, Upload FAB, Profile/SignIn). Studio is desktop-only — `StudioGate` redirects mobile users.
 
 ## Testing
 
@@ -166,6 +166,17 @@ Warm-cream glassmorphic system in `src/app/globals.css` via Tailwind v4 `@theme`
 
 Use design system modal pattern (fixed overlay + glass surface) instead of native `confirm()`.
 
+### Social Section Design
+
+Social pages (Feed, Blog, Trending, Profile) use `SocialLayout` with a lighter, editorial aesthetic:
+
+- **Background:** `#FDF9F6`
+- **Text:** `text-slate-800/600/500` (not main design system tokens)
+- **Accents:** `orange-400/500/600` and `rose-400`
+- **Glass:** `glass-panel` for cards, `glass-elevated` for profile cards
+- **Radii:** Featured cards `rounded-[2rem]`, grid cards `rounded-[1.5rem]`
+- **DO NOT** use main design system tokens (`text-on-surface`, `bg-surface-container`) in social components
+
 ## Brand Voice
 
 Warm, quilter-friendly, conversational — like a knowledgeable friend in a quilt shop. Address quilters directly ("you"/"your"). Use quilting vocabulary naturally (seam allowance, yardage, WOF, fat quarter). Lead with what the quilter gets, not what the software does. Headlines: 2–6 words, punchy, wordplay welcome. **Avoid**: "professional-grade", "comprehensive suite", "cutting-edge", "leverage", "utilize", "enterprise", "robust" — any generic SaaS language.
@@ -186,6 +197,43 @@ Warm, quilter-friendly, conversational — like a knowledgeable friend in a quil
 - New community posts from non-admins enter "pending" status for moderation
 - Rate limiting: Redis-based (per-minute) for likes/saves/profile, DB-based (per-24h) for comments/posts
 - The trust system is **role-based**, not activity-based. Users do not earn elevated privileges through participation.
+
+## Recent Features & Changes
+
+### Canvas Enhancements (March 2026)
+- **Smart Guides** (`SmartGuides.tsx`) — Real-time alignment with 5px snap threshold
+- **Quick Color Palette** (`QuickColorPalette.tsx`) — Last 8 colors, one-click application
+- **Minimap** (`Minimap.tsx`) — Canvas navigator for large quilts
+- **History Panel** (`HistoryPanel.tsx`) — Visual undo/redo timeline
+- **Reference Image Tool** (`ReferenceImageDialog.tsx`) — Import, opacity, lock/unlock
+- **Seam Allowance Toggle** — Show/hide in print preview
+- **Print Scale Preview** — 0.5x to 2.0x scale adjustment
+
+### UX Improvements
+- Selection count display
+- Save feedback indicators
+- Viewport lock clarity
+- Tool persistence across sessions
+- Canvas bounds visualization
+- Reduced zoom sensitivity
+- Grid toggle controls
+- Enhanced pan cursor
+- Undo/redo state indicators
+
+### Studio Tools Added
+- Circle, Polygon, Eyedropper, Ruler
+- Block Grid, Alignment helpers
+- Group/Ungroup operations
+- Grid/Snap toggles
+- Serendipity integration
+
+### Removed Features
+- Kaleidoscope generator (kept Serendipity and Symmetry only)
+- Frame generator
+- Follows system
+- Comment likes
+- Content reporting
+- Design variations
 
 ## Key Gotchas
 
@@ -209,3 +257,9 @@ Warm, quilter-friendly, conversational — like a knowledgeable friend in a quil
 - `color-math.ts` uses D65 illuminant for sRGB→XYZ→LAB, shared across photo-patchwork, photo-pattern, and OCR modules
 - Blog `[slug]/page.tsx` uses React `cache()` to deduplicate between `generateMetadata` and the page component
 - Zustand stores use immutable updates (spread/map), module-level abort controllers, and `reset()` methods that clean up private state
+
+## Database Schema (16 tables)
+
+`users`, `userProfiles`, `projects`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
+
+**Removed tables (do not recreate):** `follows`, `reports`, `commentLikes`, `designVariations`

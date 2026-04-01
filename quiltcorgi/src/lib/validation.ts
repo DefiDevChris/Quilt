@@ -65,6 +65,17 @@ export const createProjectSchema = z.object({
 export const updateProjectSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   canvasData: z.record(z.string(), z.unknown()).optional(),
+  worktables: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1).max(100),
+        canvasData: z.record(z.string(), z.unknown()),
+        order: z.number().int().min(0),
+      })
+    )
+    .max(10)
+    .optional(),
   unitSystem: z.enum(['imperial', 'metric']).optional(),
   canvasWidth: z.number().min(1).max(200).optional(),
   canvasHeight: z.number().min(1).max(200).optional(),

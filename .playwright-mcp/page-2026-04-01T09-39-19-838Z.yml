@@ -1,0 +1,24 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - navigation "Main navigation" [ref=e4]:
+      - link "QuiltCorgi Logo QuiltCorgi" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+        - img "QuiltCorgi Logo" [ref=e6]
+        - generic [ref=e7]: QuiltCorgi
+      - generic [ref=e8]:
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Social Threads" [ref=e10] [cursor=pointer]:
+          - /url: /socialthreads
+      - generic [ref=e12]:
+        - link "Sign In" [ref=e13] [cursor=pointer]:
+          - /url: /auth/signin
+        - link "Sign Up" [ref=e14] [cursor=pointer]:
+          - /url: /auth/signup
+    - main [ref=e15]
+  - generic "Notifications"
+  - button "Open Next.js Dev Tools" [ref=e30] [cursor=pointer]:
+    - img [ref=e31]
+  - alert [ref=e34]

@@ -1,0 +1,224 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - button "Open menu" [ref=e20]:
+          - img [ref=e21]
+        - generic [ref=e23]: QuiltCorgi
+      - generic [ref=e25]:
+        - button "QUILT" [ref=e26]: QUILT
+        - button "BLOCK" [ref=e28]
+        - button "PRINT" [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: Untitled Quilt
+          - generic [ref=e33]: Quilt Canvas
+        - button "EXPORT" [ref=e34]
+        - button "Help" [ref=e35]:
+          - img [ref=e36]
+    - generic [ref=e40]:
+      - navigation "Design tools" [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - button "Select" [pressed] [ref=e47]:
+                - img [ref=e49]
+              - button "Pan" [ref=e53]:
+                - img [ref=e55]
+              - button "Unlock Viewport" [pressed] [ref=e59]:
+                - img [ref=e61]
+            - generic [ref=e64]:
+              - button "Block Library" [ref=e68]:
+                - img [ref=e70]
+              - button "Fabric Library" [ref=e74]:
+                - img [ref=e76]
+            - button "Photo to Pattern" [ref=e83]:
+              - img [ref=e85]
+            - button "Layout Settings" [ref=e92]:
+              - img [ref=e94]
+            - generic [ref=e99]:
+              - button "Rectangle" [ref=e103]:
+                - img [ref=e105]
+              - button "Triangle" [ref=e109]:
+                - img [ref=e111]
+              - button "Line" [ref=e115]:
+                - img [ref=e117]
+              - button "Bezier Curve" [ref=e121]:
+                - img [ref=e123]
+            - button "Grid & Dimensions" [ref=e129]:
+              - img [ref=e131]
+          - button "Expand advanced tools" [ref=e137]:
+            - img [ref=e138]
+          - generic [ref=e144]:
+            - button "Undo" [ref=e147]:
+              - img [ref=e149]
+            - button "Redo" [disabled] [ref=e154]:
+              - img [ref=e156]
+      - generic [ref=e171]:
+        - button "Select" [ref=e172]:
+          - img [ref=e173]
+        - button "Rectangle" [ref=e175]:
+          - img [ref=e176]
+        - button "Triangle" [ref=e178]:
+          - img [ref=e179]
+        - button "Line" [ref=e181]:
+          - img [ref=e182]
+        - button "Curve" [ref=e184]:
+          - img [ref=e185]
+        - button "Text" [ref=e187]:
+          - img [ref=e188]
+        - button "Undo" [ref=e191]:
+          - img [ref=e192]
+        - button "Redo" [disabled] [ref=e195]:
+          - img [ref=e196]
+      - generic [ref=e202]:
+        - generic [ref=e203]:
+          - heading "Precision" [level=3] [ref=e204]
+          - generic [ref=e205]:
+            - generic [ref=e206]:
+              - generic [ref=e207]: Block Width
+              - generic [ref=e208]:
+                - textbox [ref=e209]: "48.000"
+                - generic [ref=e210]: in
+                - generic [ref=e211]:
+                  - button "Increase Block Width" [ref=e212]:
+                    - img [ref=e213]
+                  - button "Decrease Block Width" [ref=e215]:
+                    - img [ref=e216]
+            - generic [ref=e218]:
+              - generic [ref=e219]: Block Height
+              - generic [ref=e220]:
+                - textbox [ref=e221]: "48.000"
+                - generic [ref=e222]: in
+                - generic [ref=e223]:
+                  - button "Increase Block Height" [ref=e224]:
+                    - img [ref=e225]
+                  - button "Decrease Block Height" [ref=e227]:
+                    - img [ref=e228]
+          - generic [ref=e230]:
+            - generic [ref=e231]:
+              - generic [ref=e232]: Snaps Horiz
+              - generic [ref=e233]:
+                - textbox [ref=e234]: "48"
+                - generic [ref=e235]:
+                  - button "Increase Snaps Horiz" [ref=e236]:
+                    - img [ref=e237]
+                  - button "Decrease Snaps Horiz" [ref=e239]:
+                    - img [ref=e240]
+            - generic [ref=e242]:
+              - generic [ref=e243]: Snaps Vert
+              - generic [ref=e244]:
+                - textbox [ref=e245]: "48"
+                - generic [ref=e246]:
+                  - button "Increase Snaps Vert" [ref=e247]:
+                    - img [ref=e248]
+                  - button "Decrease Snaps Vert" [ref=e250]:
+                    - img [ref=e251]
+          - generic [ref=e253] [cursor=pointer]:
+            - checkbox [checked] [ref=e254]:
+              - img [ref=e255]
+            - generic [ref=e257]: Snap to Grid
+        - generic [ref=e258]:
+          - heading "Rotate & Shear" [level=3] [ref=e259]
+          - generic [ref=e260]:
+            - button "+90°" [ref=e261]
+            - button "-90°" [ref=e262]
+          - generic [ref=e263]:
+            - button "Flip H" [ref=e264]
+            - button "Flip V" [ref=e265]
+          - generic [ref=e267]:
+            - generic [ref=e268]: Rotation
+            - generic [ref=e269]:
+              - textbox [ref=e270]: "0"
+              - generic [ref=e271]: deg
+              - generic [ref=e272]:
+                - button "Increase Rotation" [ref=e273]:
+                  - img [ref=e274]
+                - button "Decrease Rotation" [ref=e276]:
+                  - img [ref=e277]
+          - generic [ref=e280]:
+            - generic [ref=e281]: Skew X
+            - generic [ref=e282]:
+              - textbox [ref=e283]: "0"
+              - generic [ref=e284]: deg
+              - generic [ref=e285]:
+                - button "Increase Skew X" [ref=e286]:
+                  - img [ref=e287]
+                - button "Decrease Skew X" [ref=e289]:
+                  - img [ref=e290]
+          - generic [ref=e293]:
+            - generic [ref=e294]: Skew Y
+            - generic [ref=e295]:
+              - textbox [ref=e296]: "0"
+              - generic [ref=e297]: deg
+              - generic [ref=e298]:
+                - button "Increase Skew Y" [ref=e299]:
+                  - img [ref=e300]
+                - button "Decrease Skew Y" [ref=e302]:
+                  - img [ref=e303]
+          - button "Reset Transform" [ref=e305]
+          - generic [ref=e306]:
+            - generic [ref=e307]: Canvas
+            - textbox [ref=e309]: "#000000"
+        - generic [ref=e310]:
+          - button "Colorway" [active] [ref=e311]:
+            - text: Colorway
+            - img [ref=e312]
+          - generic [ref=e329]:
+            - generic [ref=e330]:
+              - button "Spray" [ref=e331]
+              - button "Pick" [ref=e332]
+            - generic [ref=e333]:
+              - generic [ref=e334]: Swap Colors
+              - generic [ref=e335]:
+                - textbox "Color A" [ref=e336] [cursor=pointer]: "#d4883c"
+                - img [ref=e337]
+                - textbox "Color B" [ref=e339] [cursor=pointer]: "#2e4057"
+                - button "Swap" [ref=e340]
+            - generic [ref=e341]:
+              - generic [ref=e342]: Randomize Palette
+              - generic [ref=e343]:
+                - textbox [ref=e344] [cursor=pointer]: "#d4883c"
+                - textbox [ref=e345] [cursor=pointer]: "#8b4513"
+                - textbox [ref=e346] [cursor=pointer]: "#f5deb3"
+                - textbox [ref=e347] [cursor=pointer]: "#2e4057"
+                - textbox [ref=e348] [cursor=pointer]: "#7b3f00"
+                - textbox [ref=e349] [cursor=pointer]: "#a0522d"
+                - textbox [ref=e350] [cursor=pointer]: "#deb887"
+                - textbox [ref=e351] [cursor=pointer]: "#c9b896"
+              - button "Shuffle" [ref=e352]
+            - generic [ref=e353]:
+              - generic [ref=e354]: Suggest Palette
+              - generic [ref=e355]:
+                - generic [ref=e356]:
+                  - textbox "Base Color" [ref=e357] [cursor=pointer]: "#d4883c"
+                  - combobox [ref=e358]:
+                    - option "Monochromatic"
+                    - option "Analogous" [selected]
+                    - option "Complementary"
+                    - option "Triadic"
+                    - option "Split Comp."
+                    - option "Tetradic"
+                - generic [ref=e359]:
+                  - button "Generate" [ref=e360]
+                  - button "Apply" [ref=e361]
+    - generic [ref=e314]:
+      - generic [ref=e316]: "Mouse H: 0.00\" V: 0.00\""
+      - generic [ref=e317]:
+        - generic [ref=e318]: "Snap to Grid: ON"
+        - generic [ref=e319]: "Snap to Nodes: OFF"
+  - generic "Notifications"
+  - generic [ref=e12] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e13]:
+      - img [ref=e14]
+    - generic [ref=e320]:
+      - button "Open issues overlay" [ref=e321]:
+        - generic [ref=e322]:
+          - generic [ref=e323]: "0"
+          - generic [ref=e324]: "1"
+        - generic [ref=e325]: Issue
+      - button "Collapse issues badge" [ref=e326]:
+        - img [ref=e327]
+  - alert [ref=e17]

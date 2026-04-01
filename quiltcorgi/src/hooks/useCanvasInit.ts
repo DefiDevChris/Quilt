@@ -73,6 +73,7 @@ export function useCanvasInit(
         name: project.name,
         width: project.canvasWidth,
         height: project.canvasHeight,
+        worktables: project.worktables,
       });
       if (project.fabricPresets) {
         useProjectStore.getState().setFabricPresets(project.fabricPresets);
@@ -194,8 +195,13 @@ export function useCanvasInit(
       resizeObserver = new ResizeObserver(handleResize);
       resizeObserver.observe(container);
 
-      if (project.canvasData && Object.keys(project.canvasData).length > 0) {
-        await canvas.loadFromJSON(project.canvasData);
+      // Load canvas from active worktable
+      const activeWorktableId = useProjectStore.getState().activeWorktableId;
+      const activeWorktable = project.worktables?.find((w) => w.id === activeWorktableId);
+      const canvasDataToLoad = activeWorktable?.canvasData ?? project.canvasData;
+
+      if (canvasDataToLoad && Object.keys(canvasDataToLoad).length > 0) {
+        await canvas.loadFromJSON(canvasDataToLoad);
         canvas.renderAll();
       }
 
