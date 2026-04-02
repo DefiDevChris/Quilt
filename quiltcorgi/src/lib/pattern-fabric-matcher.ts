@@ -8,6 +8,7 @@
  */
 
 import type { ParsedFabric } from './pattern-parser-types';
+import { normalizeString } from './string-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -184,7 +185,7 @@ function normalizeSku(sku: string): string {
  * Normalize a name for fuzzy comparison: lowercase, trim, collapse whitespace.
  */
 function normalizeName(name: string): string {
-  return name.toLowerCase().trim().replace(/\s+/g, ' ');
+  return normalizeString(name);
 }
 
 /**

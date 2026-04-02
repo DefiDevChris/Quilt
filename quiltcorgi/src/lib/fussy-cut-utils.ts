@@ -11,6 +11,7 @@
 
 import { boundingBoxFromPoints } from '@/lib/geometry-extraction';
 import { clamp, floatEquals } from '@/lib/math-utils';
+import type { Point } from '@/types/geometry';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -24,10 +25,7 @@ export interface FussyCutConfig {
   scale: number;
 }
 
-export interface Point {
-  x: number;
-  y: number;
-}
+export type { Point };
 
 /**
  * A 2D affine transform in the form used by Fabric.js patternTransform:

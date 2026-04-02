@@ -184,32 +184,13 @@ export function packItems(
   };
 }
 
+import { boundingBoxWithMinMax, type BBoxWithMinMax } from '@/lib/geometry-utils';
+
 /**
  * Compute the bounding box of a polyline (in inches).
  */
 export function polylineBoundingBox(
   points: Array<{ x: number; y: number }>
-): BoundingBox & { minX: number; minY: number } {
-  if (points.length === 0) {
-    return { width: 0, height: 0, minX: 0, minY: 0 };
-  }
-
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-
-  for (const p of points) {
-    if (p.x < minX) minX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y > maxY) maxY = p.y;
-  }
-
-  return {
-    width: maxX - minX,
-    height: maxY - minY,
-    minX,
-    minY,
-  };
+): BBoxWithMinMax {
+  return boundingBoxWithMinMax(points);
 }

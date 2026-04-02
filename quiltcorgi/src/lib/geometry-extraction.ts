@@ -1,41 +1,7 @@
-export interface Point2D {
-  x: number;
-  y: number;
-}
+import { boundingBoxFromPoints, type Point, type BBox } from './geometry-utils';
+import type { Point2D } from '@/types/geometry';
 
-export interface BBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-const EMPTY_BBOX: BBox = { x: 0, y: 0, width: 0, height: 0 };
-
-/**
- * Compute the axis-aligned bounding box of a flat array of points.
- * Returns `{x:0, y:0, width:0, height:0}` for an empty array.
- */
-export function boundingBoxFromPoints(
-  points: ReadonlyArray<{ readonly x: number; readonly y: number }>
-): BBox {
-  if (points.length === 0) return EMPTY_BBOX;
-
-  let minX = points[0].x;
-  let maxX = points[0].x;
-  let minY = points[0].y;
-  let maxY = points[0].y;
-
-  for (let i = 1; i < points.length; i++) {
-    const { x, y } = points[i];
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (y < minY) minY = y;
-    if (y > maxY) maxY = y;
-  }
-
-  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
-}
+export type { Point2D };
 
 /**
  * Compute the axis-aligned bounding box spanning all points across
