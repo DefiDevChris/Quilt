@@ -5,10 +5,10 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { maybeSnap } from '@/lib/canvas-utils';
 
-export function useEasyDrawCanvas() {
+export function useBlockBuilderCanvas() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
-  const easyDrawMode = useCanvasStore((s) => s.easyDrawMode);
+  const blockBuilderMode = useCanvasStore((s) => s.blockBuilderMode);
 
   const stateRef = useRef({
     fillColor: '#D4883C',
@@ -17,7 +17,7 @@ export function useEasyDrawCanvas() {
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
     isSpacePressed: false,
-    easyDrawMode: 'straight' as 'straight' | 'smooth',
+    blockBuilderMode: 'straight' as 'straight' | 'smooth',
   });
 
   useEffect(() => {
@@ -29,13 +29,13 @@ export function useEasyDrawCanvas() {
         gridSettings: state.gridSettings,
         unitSystem: state.unitSystem,
         isSpacePressed: state.isSpacePressed,
-        easyDrawMode: state.easyDrawMode,
+        blockBuilderMode: state.blockBuilderMode,
       };
     });
   }, []);
 
   useEffect(() => {
-    if (!fabricCanvas || activeTool !== 'easydraw') return;
+    if (!fabricCanvas || activeTool !== 'blockbuilder') return;
 
     let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
@@ -205,7 +205,7 @@ export function useEasyDrawCanvas() {
 
         const simplified = simplifyPath(rawPoints, 6);
         const snapped = snapToGrid(simplified);
-        const smooth = stateRef.current.easyDrawMode === 'smooth';
+        const smooth = stateRef.current.blockBuilderMode === 'smooth';
 
         // Build open path for preview (not closed yet)
         let pathData = '';
@@ -258,7 +258,7 @@ export function useEasyDrawCanvas() {
         // Simplify, snap, and close the path
         const simplified = simplifyPath(rawPoints, 4);
         const snapped = snapToGrid(simplified);
-        const smooth = stateRef.current.easyDrawMode === 'smooth';
+        const smooth = stateRef.current.blockBuilderMode === 'smooth';
         const { strokeColor, strokeWidth, fillColor } = stateRef.current;
 
         const pathData = pointsToClosedPathData(snapped, smooth);
@@ -298,5 +298,5 @@ export function useEasyDrawCanvas() {
       isMounted = false;
       cleanup?.();
     };
-  }, [fabricCanvas, activeTool, easyDrawMode]);
+  }, [fabricCanvas, activeTool, blockBuilderMode]);
 }

@@ -8,7 +8,7 @@ import {
   eyedropperPick,
   type PatchColor,
   type ColorChange,
-} from '@/lib/colorway-utils';
+} from '@/lib/colortheme-utils';
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -51,7 +51,7 @@ export function useBezierCurveTool() {
   }, []);
 
   useEffect(() => {
-    if (!fabricCanvas || activeTool !== 'curve') return;
+    if (!fabricCanvas || activeTool !== 'bend') return;
 
     let isMounted = true;
     let fabric: typeof import('fabric') | null = null;

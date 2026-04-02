@@ -28,15 +28,15 @@ export type ToolType =
   | 'polygon'
   | 'line'
   | 'ruler'
-  | 'easydraw'
+  | 'blockbuilder'
   | 'text'
   | 'eyedropper'
   | 'spraycan'
   | 'bend';
 
-export type BlockDraftingMode = 'freeform' | 'easydraw' | 'applique';
+export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
-export type ColorwayTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
+export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
 
 export interface FussyCutTarget {
   readonly objectId: string;

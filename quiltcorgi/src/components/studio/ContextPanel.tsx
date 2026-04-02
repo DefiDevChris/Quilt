@@ -5,8 +5,8 @@ import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
-import { EasyDrawOptions } from '@/components/studio/EasyDrawOptions';
-import { ColorwayTools } from '@/components/studio/ColorwayTools';
+import { BlockBuilderOptions } from '@/components/studio/BlockBuilderOptions';
+import { ColorThemeTools } from '@/components/studio/ColorThemeTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
 
 import { SectionTitle } from '@/components/ui/SectionTitle';
@@ -405,14 +405,14 @@ function QuiltPanel() {
       <CollapsibleSection title="Rotate & Shear">
         <RotateAndShear includeCanvasColor={true} />
       </CollapsibleSection>
-      <CollapsibleSection title="Colorway">
-        <ColorwayTools />
+      <CollapsibleSection title="Color Theme">
+        <ColorThemeTools />
       </CollapsibleSection>
       <CollapsibleSection title="Text">
         <TextToolOptions />
       </CollapsibleSection>
-      <CollapsibleSection title="Easy Draw">
-        <EasyDrawOptions />
+      <CollapsibleSection title="Block Builder">
+        <BlockBuilderOptions />
       </CollapsibleSection>
     </div>
   );
@@ -424,8 +424,8 @@ function BlockPanel() {
       <CollapsibleSection title="Precision" defaultOpen={true}>
         <PrecisionBar />
       </CollapsibleSection>
-      <CollapsibleSection title="Easy Draw">
-        <EasyDrawOptions />
+      <CollapsibleSection title="Block Builder" defaultOpen={true}>
+        <BlockBuilderOptions />
       </CollapsibleSection>
     </div>
   );
