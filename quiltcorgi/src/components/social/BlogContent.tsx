@@ -14,7 +14,7 @@ function formatDate(date: Date | string | null): string {
 type BentoStyle = 'hero' | 'side' | 'compact' | 'wide' | 'tall';
 
 function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: boolean }) {
-  const textClass = dark ? 'text-white/75' : 'text-slate-500';
+  const textClass = dark ? 'text-white/75' : 'text-secondary/80';
   const nameClass = dark ? 'font-bold text-white' : 'font-bold text-slate-700';
   return (
     <div className={`flex items-center gap-2 text-xs ${textClass}`}>
@@ -83,11 +83,11 @@ function BentoCard({
         </div>
         <div className="flex-1 p-5 flex flex-col justify-between">
           <div>
-            <h4 className="text-base font-extrabold text-slate-800 mb-1.5 line-clamp-2 leading-snug">
+            <h4 className="text-base font-extrabold text-on-surface mb-1.5 line-clamp-2 leading-snug">
               {post.title}
             </h4>
             {post.excerpt && (
-              <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{post.excerpt}</p>
+              <p className="text-xs text-secondary/80 line-clamp-2 leading-relaxed">{post.excerpt}</p>
             )}
           </div>
           <AuthorRow post={post} />
@@ -106,7 +106,7 @@ function BentoCard({
           <img src={image} alt={post.title} className="w-full h-full object-cover" />
         </div>
         <div className="shrink-0 p-5">
-          <h4 className="text-base font-extrabold text-slate-800 mb-3 line-clamp-3 leading-snug">
+          <h4 className="text-base font-extrabold text-on-surface mb-3 line-clamp-3 leading-snug">
             {post.title}
           </h4>
           <AuthorRow post={post} />
@@ -125,7 +125,7 @@ function BentoCard({
           <img src={image} alt={post.title} className="w-full h-full object-cover" />
         </div>
         <div className="shrink-0 p-4">
-          <h4 className="text-sm font-extrabold text-slate-800 line-clamp-2 leading-snug">
+          <h4 className="text-sm font-extrabold text-on-surface line-clamp-2 leading-snug">
             {post.title}
           </h4>
         </div>
@@ -144,11 +144,11 @@ function BentoCard({
       </div>
       <div className="flex-1 p-4 flex flex-col justify-between">
         <div>
-          <h4 className="text-sm font-extrabold text-slate-800 line-clamp-2 leading-snug">
+          <h4 className="text-sm font-extrabold text-on-surface line-clamp-2 leading-snug">
             {post.title}
           </h4>
         </div>
-        <p className="text-[10px] text-slate-500 font-medium mt-1">
+        <p className="text-[10px] text-secondary/80 font-medium mt-1">
           {formatDate(post.publishedAt)}
         </p>
       </div>
@@ -240,7 +240,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
   if (!loading && posts.length === 0) {
     return (
       <div className="glass-panel-social rounded-[2rem] p-12 text-center">
-        <p className="text-slate-600 font-medium">No posts yet</p>
+        <p className="text-secondary font-medium">No posts yet</p>
         <p className="text-sm text-slate-400 mt-1">
           Check back soon for quilt design tips and tutorials.
         </p>
@@ -251,7 +251,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
   return (
     <div className="space-y-10">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">From the Blog</h2>
+        <h2 className="text-2xl font-extrabold text-on-surface tracking-tight">From the Blog</h2>
         <span className="text-xs font-medium text-slate-400 hidden sm:block">
           Tap any post to preview
         </span>

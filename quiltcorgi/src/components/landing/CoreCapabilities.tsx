@@ -144,7 +144,7 @@ function StudioPreviewMockup() {
             <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[8px] font-mono text-warm-text-muted/60">
               54&quot; × 54&quot;
             </div>
-            <div className="grid grid-cols-6 gap-[2px] p-[2px] bg-warm-text/10 rounded-sm shadow-md w-full max-w-[220px] aspect-square">
+            <div className="grid grid-cols-6 gap-[2px] p-[2px] bg-warm-text/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
               {QUILT_GRID.flat().map((color, i) => (
                 <motion.div
                   key={i}
@@ -245,7 +245,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-lg hover:bg-warm-peach-dark transition-all duration-300 transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform
             >
               See What You Can Create
             </Link>

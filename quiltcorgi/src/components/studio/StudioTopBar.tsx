@@ -3,10 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAuthStore } from '@/stores/authStore';
 import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { Sparkles } from 'lucide-react';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -270,6 +273,10 @@ export function StudioTopBar({
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showProUpgrade, setShowProUpgrade] = useState(false);
+  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const user = useAuthStore((s) => s.user);
+  const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
 
   useEffect(() => {
@@ -317,7 +324,98 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Right: Viewport controls + Project info + Export + Upgrade */}
+        <div className="flex items-center gap-4">
+          {!isPro && (
+            <button
+              onClick={() => setShowProUpgrade(true)}
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+            >
+              <Sparkles size={14} className="text-white" />
+              Upgrade to Pro
+            </button>
+          )}
+
+          {/* Viewport lock/unlock + recenter */}
+          <div className="flex items-center gap-1">
+            <TooltipHint
+              name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
+              description={
+                isViewportLocked 
+                  ? 'Click to unlock and pan/zoom freely' 
+                  : 'Click to lock viewport to centered fit'
+              }
+              mascot="/mascots&avatars/corgi29.png"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  useCanvasStore.getState().setViewportLocked(!isViewportLocked)
+                }
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  isViewportLocked 
+                    ? 'hover:bg-surface-container' 
+                    : 'bg-primary/10 hover:bg-primary/20'
+                }`}
+                aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
+              >
+                {isViewportLocked ? (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <rect
+                      x="4"
+                      y="9"
+                      width="12"
+                      height="8"
+                      rx="2"
+                    />
+                    <path
+                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <rect
+                      x="4"
+                      y="9"
+                      width="12"
+                      height="8"
+                      rx="2"
+                    />
+                    <path
+                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </TooltipHint>
+
+            {/* Quick recenter — only visible when unlocked */}
+            {!isViewportLocked && (
+              <TooltipHint name="Recenter Viewport" description="Snap grid back to center of canvas" mascot="/mascots&avatars/corgi1.png">
+                <button
+                  type="button"
+                  onClick={() => useCanvasStore.getState().centerAndFitViewport()}
+                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
+                  aria-label="Recenter viewport"
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="3"
+                    />
+                    <path
+                      d="M10 3V7M10 13V17M3 10H7M13 10H17"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </TooltipHint>
+            )}
+          </div>
+
           <div className="text-right">
             <div className="flex items-center justify-end gap-2">
               <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
@@ -359,6 +457,10 @@ export function StudioTopBar({
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}
       />
+
+      {showProUpgrade && (
+        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
+      )}
     </>
   );
 }

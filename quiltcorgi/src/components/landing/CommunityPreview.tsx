@@ -23,7 +23,7 @@ interface CommunityResponse {
 
 function PostCard({ post }: { post: CommunityPost }) {
   return (
-    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
+    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-elevation-1 hover:shadow-elevation-2 transition-shadow relative">
       {post.thumbnailUrl ? (
         <div
           className="w-full h-full bg-center bg-cover"
@@ -224,7 +224,7 @@ export default function CommunityPreview() {
 
             <Link
               href="/socialthreads"
-              className="inline-block bg-[var(--color-primary)] text-[var(--color-primary-on)] font-bold px-8 py-4 rounded-full shadow-lg hover:bg-[var(--color-primary-dark)] transition-all"
+              className="inline-block bg-[var(--color-primary)] text-[var(--color-primary-on)] font-bold px-8 py-4 rounded-full shadow-elevation-3 hover:bg-[var(--color-primary-dark)] transition-all"
             >
               See the Gallery
             </Link>

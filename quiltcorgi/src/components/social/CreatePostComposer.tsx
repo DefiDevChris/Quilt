@@ -190,10 +190,10 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
         />
         <button
           onClick={handleOpen}
-          className="w-full glass-panel rounded-[1.5rem] p-4 shadow-sm hover:shadow-md transition-shadow text-left"
+          className="w-full glass-panel rounded-[1.5rem] p-4 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow text-left"
         >
           <div className="flex gap-4 items-center">
-            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1 shrink-0">
               <span className="text-lg font-bold text-orange-500">
                 {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
               </span>
@@ -208,9 +208,9 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
   }
 
   return (
-    <div className="glass-panel rounded-[1.5rem] p-4 shadow-sm">
+    <div className="glass-panel rounded-[1.5rem] p-4 shadow-elevation-1">
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm shrink-0">
+        <div className="w-10 h-10 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1 shrink-0">
           <span className="text-sm font-bold text-orange-500">
             {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
           </span>

@@ -91,7 +91,7 @@ export function PatternCard({ pattern, onPreview }: PatternCardProps) {
     <button
       type="button"
       onClick={() => onPreview(pattern.id)}
-      className="text-left rounded-[var(--radius-lg)] overflow-hidden transition-all duration-200 hover:shadow-elevation-3 hover:-translate-y-0.5 cursor-pointer w-full"
+      className="text-left rounded-[var(--radius-lg)] overflow-hidden transition-all duration-200 hover:shadow-elevation-3 cursor-pointer w-full"
       style={{
         backgroundColor: 'var(--color-surface-container-low)',
         boxShadow: 'var(--shadow-elevation-1)',
