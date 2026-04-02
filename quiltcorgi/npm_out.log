@@ -6,43 +6,11 @@
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
 - Environments: .env.local
-✓ Ready in 540ms
+✓ Ready in 553ms
 
-○ Compiling / ...
- GET / 200 in 5.8s (next.js: 5.0s, application-code: 853ms)
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi12.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi13.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi18.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi26.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "http://localhost:3000/mascots&avatars/corgi29.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[browser] Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-○ Compiling /api/community ...
- GET /api/auth/cognito/session 200 in 5.7s (next.js: 5.6s, application-code: 33ms)
-[Community API Error] Error: Failed query: select "community_posts"."id", "community_posts"."title", "community_posts"."description", "community_posts"."thumbnailUrl", "community_posts"."likeCount", "community_posts"."commentCount", "community_posts"."category", "community_posts"."createdAt", "community_posts"."userId", "users"."name", "user_profiles"."username", "user_profiles"."avatarUrl", "users"."role", "community_posts"."projectId", "projects"."name", "projects"."thumbnailUrl" from "community_posts" left join "users" on "community_posts"."userId" = "users"."id" left join "user_profiles" on "community_posts"."userId" = "user_profiles"."userId" left join "projects" on "community_posts"."projectId" = "projects"."id" where "community_posts"."status" = $1 order by "community_posts"."createdAt" desc limit $2
-params: approved,6
-    at async GET (src/app/api/community/route.ts:66:36)
-  64 |         : [desc(communityPosts.createdAt)];
-  65 |
-> 66 |     const [postRows, [totalRow]] = await Promise.all([
-     |                                    ^
-  67 |       db
-  68 |         .select({
-  69 |           id: communityPosts.id, {
-  query: 'select "community_posts"."id", "community_posts"."title", "community_posts"."description", "community_posts"."thumbnailUrl", "community_posts"."likeCount", "community_posts"."commentCount", "community_posts"."category", "community_posts"."createdAt", "community_posts"."userId", "users"."name", "user_profiles"."username", "user_profiles"."avatarUrl", "users"."role", "community_posts"."projectId", "projects"."name", "projects"."thumbnailUrl" from "community_posts" left join "users" on "community_posts"."userId" = "users"."id" left join "user_profiles" on "community_posts"."userId" = "user_profiles"."userId" left join "projects" on "community_posts"."projectId" = "projects"."id" where "community_posts"."status" = $1 order by "community_posts"."createdAt" desc limit $2',
-  params: [ 'approved', 6 ],
-  [cause]: AggregateError:
-      at async GET (src/app/api/community/route.ts:66:36)
-    64 |         : [desc(communityPosts.createdAt)];
-    65 |
-  > 66 |     const [postRows, [totalRow]] = await Promise.all([
-       |                                    ^
-    67 |       db
-    68 |         .select({
-    69 |           id: communityPosts.id, {
-    code: 'ECONNREFUSED',
-    [errors]: [ [Error], [Error] ]
-  }
-}
- GET /auth/signin?callbackUrl=%2Fstudio%2Fnew 200 in 2.8s (next.js: 2.1s, proxy.ts: 13ms, application-code: 641ms)
- GET /api/auth/cognito/session 200 in 41ms (next.js: 16ms, application-code: 25ms)
+○ Compiling /auth/signin ...
+ GET /auth/signin?callbackUrl=%2Fstudio 200 in 8.5s (next.js: 7.1s, proxy.ts: 18ms, application-code: 1338ms)
+○ Compiling /api/auth/cognito/session ...
+ GET /api/auth/cognito/session 200 in 6.0s (next.js: 5.9s, application-code: 95ms)
+ GET /auth/signin?callbackUrl=%2Fstudio 200 in 141ms (next.js: 6ms, proxy.ts: 7ms, application-code: 128ms)
+ GET /api/auth/cognito/session 200 in 13ms (next.js: 4ms, application-code: 10ms)

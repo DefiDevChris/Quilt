@@ -60,6 +60,21 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
+      id: 'bend',
+      label: 'Bend Edge',
+      shortcut: 'B',
+      description: 'Bend edges of shapes',
+      mascot: '/mascots&avatars/corgi24.png',
+      toolType: 'bend',
+      group: 'tools',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 16 Q 10 4 16 16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
       id: 'pan',
       label: 'Pan',
       shortcut: 'H',
@@ -82,6 +97,19 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
+        </svg>
+      ),
+    },
+    {
+      id: 'bend',
+      label: 'Bend Edge',
+      shortcut: 'B',
+      description: 'Bend edges of shapes',
+      toolType: 'bend',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 16 Q 10 4 16 16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
         </svg>
       ),
     },
