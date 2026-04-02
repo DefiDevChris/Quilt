@@ -202,8 +202,8 @@ export function useCanvasInit(
 
       if (canvasDataToLoad && Object.keys(canvasDataToLoad).length > 0) {
         await canvas.loadFromJSON(canvasDataToLoad);
-        canvas.renderAll();
       }
+      canvas.renderAll();
 
       const initialJson = JSON.stringify(canvas.toJSON());
       useCanvasStore.getState().pushUndoState(initialJson);

@@ -175,8 +175,8 @@ export const SOCIAL_FALLBACK_IMAGES = {
   small: '/images/quilts/quilt_22_porch_railing.png',
 } as const;
 
-// Default canvas colors (RULER_COLORS.primary-dark and surface color)
-export const DEFAULT_FILL_COLOR = '#8d4f00';
+// Default canvas colors
+export const DEFAULT_FILL_COLOR = '#FFCBA4';
 export const DEFAULT_STROKE_COLOR = '#383831';
 
 // Default layout colors

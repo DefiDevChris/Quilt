@@ -103,7 +103,7 @@ export function HorizontalRuler() {
   }, [zoom, unitSystem, fabricCanvas, cursorPosition]);
 
   return (
-    <div ref={containerRef} className="h-6 bg-surface border-b border-outline-variant ml-6">
+    <div ref={containerRef} className="h-6 bg-surface border-b border-outline-variant ml-6 z-10">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );

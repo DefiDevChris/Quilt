@@ -5,6 +5,7 @@ import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
+import { FreeDrawOptions } from '@/components/studio/FreeDrawOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
 
@@ -360,6 +361,7 @@ function QuiltPanel() {
       <RotateAndShear includeCanvasColor={true} />
       <ColorwayTools />
       <TextToolOptions />
+      <FreeDrawOptions />
     </div>
   );
 }

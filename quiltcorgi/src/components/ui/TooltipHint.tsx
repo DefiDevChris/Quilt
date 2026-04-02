@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { TOOLTIP_DELAY_MS } from '@/lib/onboarding-utils';
 
 interface TooltipHintProps {
@@ -21,6 +22,8 @@ export function TooltipHint({
   children,
 }: TooltipHintProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -30,44 +33,65 @@ export function TooltipHint({
   }, []);
 
   function handleMouseEnter() {
-    timeoutRef.current = setTimeout(() => setShowTooltip(true), TOOLTIP_DELAY_MS);
+    timeoutRef.current = setTimeout(() => {
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        setTooltipPos({
+          top: rect.top + rect.height / 2,
+          left: rect.right + 8,
+        });
+      }
+      setShowTooltip(true);
+    }, TOOLTIP_DELAY_MS);
   }
 
   function handleMouseLeave() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setShowTooltip(false);
+    setTooltipPos(null);
   }
 
   return (
     <div
+      ref={triggerRef}
       className="relative flex items-center justify-center"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {children}
-      {showTooltip && (
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-surface-container-highest text-on-surface rounded-lg shadow-elevation-4 p-4 z-50 pointer-events-none min-w-[280px] max-w-[320px]">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-body-md font-semibold">{name}</span>
-            {shortcut && (
-              <span className="font-mono text-body-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded-sm">
-                {shortcut}
-              </span>
-            )}
-            {isProFeature && (
-              <span className="text-body-sm font-medium text-primary bg-primary-container/40 px-1.5 py-0.5 rounded-sm">
-                Pro
-              </span>
-            )}
-          </div>
-          <p className="text-body-md text-secondary leading-relaxed mb-3">{description}</p>
-          {mascot && (
-            <div className="flex justify-center">
-              <img src={mascot} alt="" className="w-16 h-16 object-contain" />
-            </div>
-          )}
-        </div>
-      )}
+      {showTooltip && tooltipPos
+        ? createPortal(
+            <div
+              className="fixed bg-surface-container-highest text-on-surface rounded-lg shadow-elevation-4 p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
+              style={{
+                top: `${tooltipPos.top}px`,
+                left: `${tooltipPos.left}px`,
+                transform: 'translateY(-50%)',
+              }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-body-md font-semibold">{name}</span>
+                {shortcut && (
+                  <span className="font-mono text-body-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded-sm">
+                    {shortcut}
+                  </span>
+                )}
+                {isProFeature && (
+                  <span className="text-body-sm font-medium text-primary bg-primary-container/40 px-1.5 py-0.5 rounded-sm">
+                    Pro
+                  </span>
+                )}
+              </div>
+              <p className="text-body-md text-secondary leading-relaxed mb-3">{description}</p>
+              {mascot && (
+                <div className="flex justify-center">
+                  <img src={mascot} alt="" className="w-16 h-16 object-contain" />
+                </div>
+              )}
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

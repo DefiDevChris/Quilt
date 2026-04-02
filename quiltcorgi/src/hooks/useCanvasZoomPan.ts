@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { ZOOM_MIN, ZOOM_MAX } from '@/lib/constants';
 import { isInputElement } from '@/lib/dom-utils';
 
 export function useCanvasZoomPan() {
@@ -29,22 +28,6 @@ export function useCanvasZoomPan() {
       function isPanActive() {
         const state = useCanvasStore.getState();
         return state.isSpacePressed || state.activeTool === 'pan';
-      }
-
-      function onWheel(e: { e: WheelEvent }) {
-        if (isViewportLocked()) return;
-        e.e.preventDefault();
-        e.e.stopPropagation();
-
-        const delta = e.e.deltaY;
-        const pointer = canvas.getScenePoint(e.e);
-        let zoom = canvas.getZoom();
-        zoom *= 0.995 ** delta;
-        zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom));
-
-        canvas.zoomToPoint(new fabric.Point(pointer.x, pointer.y), zoom);
-        useCanvasStore.getState().setZoom(zoom);
-        canvas.renderAll();
       }
 
       function onMouseDown(e: { e: MouseEvent }) {
@@ -135,7 +118,6 @@ export function useCanvasZoomPan() {
         }
       });
 
-      canvas.on('mouse:wheel', onWheel as never);
       canvas.on('mouse:down', onMouseDown as never);
       canvas.on('mouse:move', onMouseMove as never);
       canvas.on('mouse:up', onMouseUp as never);
@@ -144,7 +126,6 @@ export function useCanvasZoomPan() {
 
       cleanup = () => {
         unsubscribe();
-        canvas.off('mouse:wheel', onWheel as never);
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);

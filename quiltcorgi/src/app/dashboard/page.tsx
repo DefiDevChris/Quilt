@@ -50,11 +50,13 @@ interface ProjectListItem {
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
+  const isPro = useAuthStore((s) => s.isPro);
   const isLoadingAuth = useAuthStore((s) => s.isLoading);
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [projectCount, setProjectCount] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
+  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const { toast } = useToast();
 
   const openPhotoPattern = usePhotoPatternStore((s) => s.openModal);
@@ -206,7 +208,7 @@ export default function DashboardPage() {
         {/* ── 2. Photo to Pattern — col 9-12, row 1 ─ */}
         <button
           type="button"
-          onClick={() => openPhotoPattern()}
+          onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
           className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 hover:-translate-y-1 glass-card border-white/50"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
@@ -380,6 +382,78 @@ export default function DashboardPage() {
         }}
         onBrowsePatterns={() => setActiveTab('patterns')}
       />
+
+      {/* Pro upgrade modal */}
+      {showProUpgrade && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
+          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6 text-center">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="text-secondary mx-auto mb-3"
+              aria-hidden="true"
+            >
+              <rect
+                x="5"
+                y="11"
+                width="14"
+                height="10"
+                rx="2"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M8 11V7a4 4 0 0 1 8 0v4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+            <p className="text-lg font-semibold text-on-surface mb-1">Photo to Pattern</p>
+            <p className="text-sm text-secondary mb-4">
+              This feature requires a Pro subscription. Start at $8/month.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                type="button"
+                onClick={() => setShowProUpgrade(false)}
+                className="rounded-md px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+              >
+                Maybe Later
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+                    const data = await res.json();
+                    if (data.success && data.data.checkoutUrl) {
+                      window.location.href = data.data.checkoutUrl;
+                    } else {
+                      toast({
+                        type: 'error',
+                        title: 'Checkout failed',
+                        description: data.error ?? 'Unable to start checkout. Please try again.',
+                      });
+                    }
+                  } catch {
+                    toast({
+                      type: 'error',
+                      title: 'Connection error',
+                      description: 'Unable to connect. Please check your connection and try again.',
+                    });
+                  }
+                }}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
+              >
+                Upgrade to Pro
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
