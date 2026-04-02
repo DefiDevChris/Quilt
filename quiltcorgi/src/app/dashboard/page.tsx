@@ -23,6 +23,7 @@ import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
+import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -203,6 +204,14 @@ export default function DashboardPage() {
           </button>
         )}
       </div>
+
+      {/* Quick Start Workflows */}
+      <QuickStartWorkflows
+        onPhotoToPattern={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
+        onStartFromTemplate={() => setActiveTab('patterns')}
+        onBlankProject={() => setDialogOpen(true)}
+        isPro={isPro}
+      />
 
       <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20 relative z-10">
         {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}

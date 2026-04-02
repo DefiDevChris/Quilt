@@ -7,12 +7,23 @@ import { getPixelsPerUnit } from '@/lib/canvas-utils';
 const RULER_HEIGHT = 24;
 
 // Design system colors for canvas rendering
-const RULER_COLORS = {
-  background: '#fffcf7', // surface
-  tick: '#babab0', // outline-variant
-  text: '#6b5a4d', // secondary
-  cursor: '#8d4f00', // primary-dark
-} as const;
+function getRulerColors() {
+  if (typeof window === 'undefined') {
+    return {
+      background: '#fffcf7',
+      tick: '#babab0',
+      text: '#6b5a4d',
+      cursor: '#8d4f00',
+    };
+  }
+  const style = getComputedStyle(document.documentElement);
+  return {
+    background: style.getPropertyValue('--color-surface-container-lowest').trim() || '#fffcf7',
+    tick: style.getPropertyValue('--color-outline-variant').trim() || '#babab0',
+    text: style.getPropertyValue('--color-secondary').trim() || '#6b5a4d',
+    cursor: style.getPropertyValue('--color-primary-dark').trim() || '#8d4f00',
+  };
+}
 
 function getTickConfig(zoomPxPerUnit: number) {
   const target = 80;
@@ -55,8 +66,9 @@ export function HorizontalRuler() {
     const panX = vpt[4];
     const zoomPxPerUnit = pxPerUnit * currentZoom;
 
+    const colors = getRulerColors();
     ctx.clearRect(0, 0, el.width, RULER_HEIGHT);
-    ctx.fillStyle = RULER_COLORS.background;
+    ctx.fillStyle = colors.background;
     ctx.fillRect(0, 0, el.width, RULER_HEIGHT);
 
     const { major, minor } = getTickConfig(zoomPxPerUnit);
@@ -64,8 +76,8 @@ export function HorizontalRuler() {
     const startUnit = Math.floor(-panX / zoomPxPerUnit / major) * major;
     const endUnit = Math.ceil((el.width - panX) / zoomPxPerUnit / major) * major;
 
-    ctx.strokeStyle = RULER_COLORS.tick;
-    ctx.fillStyle = RULER_COLORS.text;
+    ctx.strokeStyle = colors.tick;
+    ctx.fillStyle = colors.text;
     ctx.font = '10px Manrope, system-ui, sans-serif';
     ctx.textAlign = 'center';
 
@@ -91,11 +103,11 @@ export function HorizontalRuler() {
 
     const cursorScreenX = cursorPosition.x * pxPerUnit * currentZoom + panX;
     if (cursorScreenX >= 0 && cursorScreenX <= el.width) {
-      ctx.fillStyle = RULER_COLORS.cursor;
+      ctx.fillStyle = colors.cursor;
       ctx.fillRect(cursorScreenX - 0.5, 0, 1, RULER_HEIGHT);
     }
 
-    ctx.strokeStyle = RULER_COLORS.tick;
+    ctx.strokeStyle = colors.tick;
     ctx.beginPath();
     ctx.moveTo(0, RULER_HEIGHT - 0.5);
     ctx.lineTo(el.width, RULER_HEIGHT - 0.5);

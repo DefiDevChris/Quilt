@@ -100,14 +100,14 @@ export function SocialLayout({
   };
 
   return (
-    <div className="min-h-screen bg-[#FDF9F6] relative overflow-hidden font-sans selection:bg-orange-200 selection:text-orange-900">
+    <div className="min-h-screen bg-surface relative overflow-hidden font-sans selection:bg-primary-container selection:text-primary-dark">
       {/* Background Orbs */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-rose-200/50 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-orange-200/50 rounded-full blur-[140px] pointer-events-none" />
       <div className="fixed top-[20%] left-[30%] w-[40vw] h-[40vw] bg-white/60 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-panel h-20 grid grid-cols-3 items-center px-6 shadow-elevation-1 border-b border-white/40">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-panel h-20 grid grid-cols-3 items-center px-6 border-b border-white/40">
         {/* Left: Logo + Section Info */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center">
@@ -136,7 +136,7 @@ export function SocialLayout({
           <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             <button
               onClick={handleAvatarClick}
-              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-elevation-2 hover:shadow-elevation-3 transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative bg-orange-100 flex items-center justify-center"
+              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden transition-all focus:outline-none focus:ring-4 focus:ring-primary/30 relative bg-primary-container flex items-center justify-center"
               aria-label={user ? 'Account menu' : 'Sign in'}
             >
               {user?.image ? (

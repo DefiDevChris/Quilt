@@ -1,52 +1,25 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useBlockStore } from '@/stores/blockStore';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 
-/**
- * Hook for handling block drops onto the Fabric.js canvas.
- * Fetches the full block data, deserializes the Fabric.js JSON,
- * places it at drop coordinates, and applies grid snapping.
- */
-export function useBlockDrop() {
+export function useTapToPlaceBlock() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const pushUndoState = useCanvasStore((s) => s.pushUndoState);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
-  const dragBlockIdRef = useRef<string | null>(null);
+  const selectedBlockId = useBlockStore((s) => s.selectedBlockId);
+  const setSelectedBlockId = useBlockStore((s) => s.setSelectedBlockId);
 
-  const handleDragStart = useCallback((_e: React.DragEvent, blockId: string) => {
-    dragBlockIdRef.current = blockId;
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    const target = e.currentTarget as HTMLElement;
-    target.style.cursor = 'copy';
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    const target = e.currentTarget as HTMLElement;
-    target.style.cursor = '';
-  }, []);
-
-  const handleDrop = useCallback(
-    async (e: React.DragEvent) => {
-      e.preventDefault();
-      const target = e.currentTarget as HTMLElement;
-      target.style.cursor = '';
-      
+  const placeBlockAtPosition = useCallback(
+    async (x: number, y: number) => {
       const canvas = fabricCanvas as import('fabric').Canvas | null;
-      if (!canvas) return;
-
-      const blockId =
-        e.dataTransfer.getData('application/quiltcorgi-block-id') || dragBlockIdRef.current;
-      if (!blockId) return;
+      if (!canvas || !selectedBlockId) return;
 
       try {
-        const res = await fetch(`/api/blocks/${blockId}`);
+        const res = await fetch(`/api/blocks/${selectedBlockId}`);
         const json = await res.json();
         if (!res.ok || !json.data) return;
 
@@ -56,27 +29,18 @@ export function useBlockDrop() {
 
         const fabric = await import('fabric');
 
-        // Get drop position relative to canvas
-        const canvasEl = canvas.getElement();
-        const rect = canvasEl.getBoundingClientRect();
-        const vpt = canvas.viewportTransform;
-        const zoom = canvas.getZoom();
+        let dropX = x;
+        let dropY = y;
 
-        let dropX = (e.clientX - rect.left - (vpt?.[4] ?? 0)) / zoom;
-        let dropY = (e.clientY - rect.top - (vpt?.[5] ?? 0)) / zoom;
-
-        // Snap to grid if enabled
         if (gridSettings.snapToGrid && gridSettings.enabled) {
           const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
           dropX = Math.round(dropX / gridSizePx) * gridSizePx;
           dropY = Math.round(dropY / gridSizePx) * gridSizePx;
         }
 
-        // Save undo state before adding
         const currentJson = JSON.stringify(canvas.toJSON());
         pushUndoState(currentJson);
 
-        // Build the group from fabricJsData
         const objects: import('fabric').FabricObject[] = [];
         const groupData = fabricJsData as {
           objects?: Array<Record<string, unknown>>;
@@ -93,7 +57,6 @@ export function useBlockDrop() {
 
         if (objects.length === 0) return;
 
-        // Scale the block to a reasonable size (96px = 1 inch at 100% zoom)
         const blockSize = PIXELS_PER_INCH;
         const group = new fabric.Group(objects, {
           left: dropX,
@@ -107,15 +70,47 @@ export function useBlockDrop() {
         canvas.requestRenderAll();
         setActiveTool('select');
       } catch {
-        // Block drop failed silently — canvas state unchanged
+        // silent
       }
-
-      dragBlockIdRef.current = null;
     },
-    [fabricCanvas, gridSettings, pushUndoState, setActiveTool]
+    [fabricCanvas, gridSettings, pushUndoState, setActiveTool, selectedBlockId]
   );
 
-  return { handleDragStart, handleDragOver, handleDrop };
+  const handleCanvasClick = useCallback(
+    (e: MouseEvent) => {
+      const canvas = fabricCanvas as import('fabric').Canvas | null;
+      if (!canvas || !selectedBlockId) return;
+
+      const canvasEl = canvas.getElement();
+      const rect = canvasEl.getBoundingClientRect();
+      const vpt = canvas.viewportTransform;
+      const zoom = canvas.getZoom();
+
+      const x = (e.clientX - rect.left - (vpt?.[4] ?? 0)) / zoom;
+      const y = (e.clientY - rect.top - (vpt?.[5] ?? 0)) / zoom;
+
+      placeBlockAtPosition(x, y);
+    },
+    [fabricCanvas, selectedBlockId, placeBlockAtPosition]
+  );
+
+  useEffect(() => {
+    const canvas = fabricCanvas as import('fabric').Canvas | null;
+    if (!canvas || !selectedBlockId) return;
+
+    const canvasEl = canvas.getElement();
+    canvasEl.addEventListener('click', handleCanvasClick);
+
+    return () => {
+      canvasEl.removeEventListener('click', handleCanvasClick);
+    };
+  }, [fabricCanvas, selectedBlockId, handleCanvasClick]);
+
+  return {
+    selectedBlockId,
+    setSelectedBlockId,
+    cancelSelection: () => setSelectedBlockId(null),
+  };
 }
 
 async function createFabricObject(
@@ -128,7 +123,7 @@ async function createFabricObject(
   const strokeWidth = (obj.strokeWidth as number) ?? 0.5;
 
   switch (type) {
-    case 'Rect': {
+    case 'Rect':
       return new fabric.Rect({
         left: obj.left as number,
         top: obj.top as number,
@@ -139,17 +134,12 @@ async function createFabricObject(
         strokeWidth,
         opacity: (obj.opacity as number) ?? 1,
       });
-    }
     case 'Polygon': {
       const points = obj.points as Array<{ x: number; y: number }>;
       if (!points || points.length === 0) return null;
-      return new fabric.Polygon(points, {
-        fill,
-        stroke,
-        strokeWidth,
-      });
+      return new fabric.Polygon(points, { fill, stroke, strokeWidth });
     }
-    case 'Circle': {
+    case 'Circle':
       return new fabric.Circle({
         left: obj.left as number,
         top: obj.top as number,
@@ -158,15 +148,10 @@ async function createFabricObject(
         stroke,
         strokeWidth,
       });
-    }
     case 'Path': {
       const pathData = obj.path as string;
       if (!pathData) return null;
-      return new fabric.Path(pathData, {
-        fill: fill || undefined,
-        stroke,
-        strokeWidth,
-      });
+      return new fabric.Path(pathData, { fill: fill || undefined, stroke, strokeWidth });
     }
     case 'Line': {
       const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [
@@ -175,10 +160,7 @@ async function createFabricObject(
         number,
         number,
       ];
-      return new fabric.Line(coords, {
-        stroke: (obj.stroke as string) ?? '#333',
-        strokeWidth,
-      });
+      return new fabric.Line(coords, { stroke: (obj.stroke as string) ?? '#333', strokeWidth });
     }
     default:
       return null;

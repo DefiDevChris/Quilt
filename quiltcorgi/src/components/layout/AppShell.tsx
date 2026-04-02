@@ -49,15 +49,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient background orbs for glassmorphism depth */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
-        <div className="absolute top-[-15%] right-[-10%] w-[45vw] h-[45vw] bg-[#FFE4D0]/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[35vw] h-[35vw] bg-[#FFD166]/20 rounded-full blur-[100px]" />
+        <div className="absolute top-[-15%] right-[-10%] w-[45vw] h-[45vw] bg-primary-container/40 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[35vw] h-[35vw] bg-primary/20 rounded-full blur-[100px]" />
         <div className="absolute top-[40%] left-[20%] w-[25vw] h-[25vw] bg-white/50 rounded-full blur-[80px]" />
       </div>
       <nav
         aria-label="Main navigation"
         className={`sticky top-0 z-40 h-14 backdrop-blur-[28px] px-4 flex items-center justify-between transition-all duration-300 border-b ${
           scrolled
-            ? 'bg-white/70 border-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_4px_rgba(74,59,50,0.03),0_8px_24px_rgba(74,59,50,0.06)]'
+            ? 'glass-card'
             : 'bg-surface/80 border-transparent'
         }`}
       >

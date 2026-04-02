@@ -104,15 +104,15 @@ export function BillingSection() {
       <h2 className="text-lg font-bold text-on-surface mb-4">Billing & Plan</h2>
 
       {successMessage && (
-        <div className="mb-4 rounded-xl border border-[#4a7c59]/30 bg-[#4a7c59]/5 p-3.5">
-          <p className="text-sm font-medium text-[#4a7c59]">{successMessage}</p>
+        <div className="mb-4 rounded-xl border border-success/30 bg-success/5 p-3.5">
+          <p className="text-sm font-medium text-success">{successMessage}</p>
         </div>
       )}
 
       {isPastDue && (
-        <div className="mb-4 rounded-xl border border-[#C6942E]/30 bg-[#C6942E]/5 p-3.5">
-          <h3 className="text-sm font-semibold text-[#C6942E] mb-1">Payment Past Due</h3>
-          <p className="text-xs text-secondary">
+        <div className="mb-4 rounded-xl border border-warning/30 bg-warning/5 p-3.5">
+          <h3 className="text-sm font-semibold text-warning mb-1">Payment Past Due</h3>
+          <p className="text-xs text-slate-600">
             Your last payment failed. Please update your payment method within 7 days to keep your
             Pro access.
           </p>
@@ -120,7 +120,7 @@ export function BillingSection() {
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="mt-2.5 rounded-lg bg-[#C6942E] px-3.5 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="mt-2.5 rounded-lg bg-warning px-3.5 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isPortalLoading ? 'Loading...' : 'Update Payment Method'}
           </button>
@@ -134,8 +134,8 @@ export function BillingSection() {
             <span
               className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 ${
                 isPro
-                  ? 'text-[#C67B5C] bg-[#FFE4D0] border-[#FFB085]/30'
-                  : 'text-secondary/80 border-slate-200'
+                  ? 'text-primary-dark bg-primary-container border-primary/30'
+                  : 'text-slate-500 border-slate-200'
               }`}
             >
               {isPro ? 'Pro' : 'Free'}
@@ -179,8 +179,8 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-xl bg-[#FFE4D0]/60 backdrop-blur-sm p-5 border border-[#FFB085]/15 mb-3">
-          <h3 className="text-sm font-semibold text-on-surface mb-2.5">Upgrade to Pro</h3>
+        <div className="rounded-xl bg-primary-container/60 backdrop-blur-sm p-5 border border-primary/15 mb-3">
+          <h3 className="text-sm font-semibold text-slate-800 mb-2.5">Upgrade to Pro</h3>
 
           {/* Billing toggle */}
           <div className="flex items-center gap-1.5 mb-3 bg-white/60 rounded-full p-0.5 w-fit">
@@ -189,8 +189,8 @@ export function BillingSection() {
               onClick={() => setBillingInterval('monthly')}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'monthly'
-                  ? 'bg-white text-on-surface shadow-elevation-1'
-                  : 'text-secondary/80 hover:text-on-surface'
+                  ? 'bg-surface-canvas text-on-surface'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Monthly
@@ -200,12 +200,12 @@ export function BillingSection() {
               onClick={() => setBillingInterval('yearly')}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'yearly'
-                  ? 'bg-white text-on-surface shadow-elevation-1'
-                  : 'text-secondary/80 hover:text-on-surface'
+                  ? 'bg-surface-canvas text-on-surface'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Yearly
-              <span className="ml-1 text-[10px] text-[#C67B5C] font-semibold">
+              <span className="ml-1 text-[10px] text-primary-dark font-semibold">
                 Save {PRO_YEARLY_SAVINGS_PERCENT}%
               </span>
             </button>
@@ -230,7 +230,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="rounded-lg bg-[#FFB085] px-4 py-2 text-xs font-medium text-[#4A3B32] hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isCheckoutLoading ? 'Loading...' : 'Start Pro'}
           </button>
@@ -255,8 +255,8 @@ export function BillingSection() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-semibold text-[#C67B5C] mb-2">Pro</h4>
-            <ul className="space-y-1.5 text-[11px] text-secondary/80">
+            <h4 className="text-xs font-semibold text-primary-dark mb-2">Pro</h4>
+            <ul className="space-y-1.5 text-[11px] text-slate-500">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
               <li>Full 659+ block library</li>

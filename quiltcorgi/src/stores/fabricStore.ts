@@ -16,6 +16,8 @@ interface FabricStoreState {
   isLoadingUserFabrics: boolean;
   error: string | null;
   isPanelOpen: boolean;
+  selectedFabricId: string | null;
+  selectedFabricUrl: string | null;
 
   setSearch: (search: string) => void;
   setManufacturer: (manufacturer: string) => void;
@@ -26,6 +28,7 @@ interface FabricStoreState {
   fetchFabrics: () => Promise<void>;
   fetchUserFabrics: () => Promise<void>;
   deleteUserFabric: (fabricId: string) => Promise<boolean>;
+  setSelectedFabric: (fabricId: string | null, fabricUrl: string | null) => void;
   reset: () => void;
 }
 
@@ -45,6 +48,8 @@ const INITIAL_STATE = {
   isLoadingUserFabrics: false,
   error: null as string | null,
   isPanelOpen: false,
+  selectedFabricId: null as string | null,
+  selectedFabricUrl: null as string | null,
 };
 
 export const useFabricStore = create<FabricStoreState>((set, get) => ({
@@ -163,6 +168,10 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
     } catch {
       return false;
     }
+  },
+
+  setSelectedFabric: (selectedFabricId, selectedFabricUrl) => {
+    set({ selectedFabricId, selectedFabricUrl });
   },
 
   reset: () => {
