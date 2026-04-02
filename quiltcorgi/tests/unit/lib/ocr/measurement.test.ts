@@ -17,32 +17,32 @@ describe('computeScaleFactor', () => {
 
 describe('computeMeasurements', () => {
   it('returns zeroed when scale is 0', () => {
-    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 100, cellHeight: 100 };
+    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 100, cellHeight: 100 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computeMeasurements(grid, 60, 0);
     expect(result.totalWidthInches).toBe(0);
   });
 
   it('returns zeroed when rows <= 0', () => {
-    const grid: DetectedGrid = { rows: 0, cols: 3, cellWidth: 100, cellHeight: 100 };
+    const grid: DetectedGrid = { rows: 0, cols: 3, cellWidth: 100, cellHeight: 100 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computeMeasurements(grid, 60, 600);
     expect(result.totalWidthInches).toBe(0);
   });
 
   it('returns zeroed when cellWidth <= 0', () => {
-    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 0, cellHeight: 100 };
+    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 0, cellHeight: 100 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computeMeasurements(grid, 60, 600);
     expect(result.totalWidthInches).toBe(0);
   });
 
   it('computes measurements for valid grid', () => {
-    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 100, cellHeight: 100 };
+    const grid: DetectedGrid = { rows: 3, cols: 3, cellWidth: 100, cellHeight: 100 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computeMeasurements(grid, 60, 600, 0.25);
     expect(result.totalWidthInches).toBe(60);
     expect(result.seamAllowanceInches).toBe(0.25);
   });
 
   it('handles single column grid (no sashing)', () => {
-    const grid: DetectedGrid = { rows: 1, cols: 1, cellWidth: 100, cellHeight: 100 };
+    const grid: DetectedGrid = { rows: 1, cols: 1, cellWidth: 100, cellHeight: 100 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computeMeasurements(grid, 60, 600);
     expect(result.sashingWidthInches).toBe(0);
   });
@@ -56,7 +56,7 @@ describe('computeCutDimension', () => {
 
 describe('computePixelMeasurements', () => {
   it('computes pixel dimensions', () => {
-    const grid: DetectedGrid = { rows: 3, cols: 4, cellWidth: 100.5, cellHeight: 50.3 };
+    const grid: DetectedGrid = { rows: 3, cols: 4, cellWidth: 100.5, cellHeight: 50.3 , horizontalLines: [], verticalLines: [], intersections: [], layoutType: 'grid', confidence: 1 };
     const result = computePixelMeasurements(grid);
     expect(result.blockWidthPx).toBe(101);
     expect(result.blockHeightPx).toBe(50);

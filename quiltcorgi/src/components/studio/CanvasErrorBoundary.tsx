@@ -34,8 +34,11 @@ export class CanvasErrorBoundary extends Component<
     // Attempt to save canvas state before crash
     try {
       if (typeof window !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { useProjectStore } = require('@/stores/projectStore');
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { useCanvasStore } = require('@/stores/canvasStore');
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { saveProject } = require('@/lib/save-project');
 
         const projectId = useProjectStore.getState().projectId;

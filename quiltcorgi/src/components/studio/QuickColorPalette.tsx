@@ -21,6 +21,7 @@ export function QuickColorPalette() {
   useEffect(() => {
     if (!fillColor) return;
 
+    // eslint-disable-next-line react-compiler/react-compiler
     setRecentColors((prev) => {
       const filtered = prev.filter((c) => c.color !== fillColor);
       const updated = [{ color: fillColor, timestamp: Date.now() }, ...filtered];

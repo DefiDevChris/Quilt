@@ -19,8 +19,8 @@ describe('extractDominantColors', () => {
 describe('extractBlockColors', () => {
   it('extracts colors for multiple regions', () => {
     const regions = [
-      { row: 0, col: 0, pixelData: new Uint8ClampedArray([255, 0, 0, 255]) },
-      { row: 0, col: 1, pixelData: new Uint8ClampedArray([0, 255, 0, 255]) },
+      { row: 0, col: 0, x: 0, y: 0, width: 1, height: 1, pixelData: new Uint8ClampedArray([255, 0, 0, 255]) },
+      { row: 0, col: 1, x: 1, y: 0, width: 1, height: 1, pixelData: new Uint8ClampedArray([0, 255, 0, 255]) },
     ];
     const result = extractBlockColors(regions, 3);
     expect(result.length).toBe(2);

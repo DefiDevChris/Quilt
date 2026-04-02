@@ -24,6 +24,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
       timestamp: Date.now() - (undoStack.length - i) * 1000,
     }));
 
+    // eslint-disable-next-line react-compiler/react-compiler
     setEntries(newEntries);
   }, [fabricCanvas, undoStack, isOpen]);
 

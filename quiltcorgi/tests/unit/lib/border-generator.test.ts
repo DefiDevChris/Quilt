@@ -17,19 +17,19 @@ describe('generateCornerUnit', () => {
 
 describe('generatePiecedBorder', () => {
   it('returns empty for solid border', () => {
-    const border: BorderConfig = { type: 'solid', width: 2, color: '#ff0000' };
+    const border: BorderConfig = { type: 'solid', width: 2, color: '#ff0000', fabricId: null };
     const result = generatePiecedBorder(100, 100, border, 10, 0);
     expect(result.topUnits).toEqual([]);
   });
 
   it('returns empty for border without pattern', () => {
-    const border: BorderConfig = { type: 'pieced', width: 2, color: '#ff0000' };
+    const border: BorderConfig = { type: 'pieced', width: 2, color: '#ff0000', fabricId: null };
     const result = generatePiecedBorder(100, 100, border, 10, 0);
     expect(result.topUnits).toEqual([]);
   });
 
   it('returns empty for unknown pattern', () => {
-    const border: BorderConfig = { type: 'pieced', pattern: 'unknown' as any, width: 2, color: '#ff0000' };
+    const border: BorderConfig = { type: 'pieced', pattern: 'unknown' as any, width: 2, color: '#ff0000', fabricId: null };
     const result = generatePiecedBorder(100, 100, border, 10, 0);
     expect(result.topUnits).toEqual([]);
   });

@@ -93,13 +93,23 @@ describe('photoPatternStore', () => {
   });
 
   it('setScaledPieces updates scaledPieces', () => {
-    const pieces = [{ piece: { id: '1', points: [] }, scale: 1 }] as const;
+    const pieces: readonly import('@/lib/photo-pattern-types').ScaledPiece[] = [{
+      id: '1',
+      contourInches: [],
+      finishedWidth: '10',
+      finishedHeight: '10',
+      cutWidth: '10.5',
+      cutHeight: '10.5',
+      finishedWidthNum: 10,
+      finishedHeightNum: 10,
+      dominantColor: '#ffffff',
+    }];
     usePhotoPatternStore.getState().setScaledPieces(pieces);
     expect(usePhotoPatternStore.getState().scaledPieces).toEqual(pieces);
   });
 
   it('setScanConfig updates scanConfig', () => {
-    const config = { mode: 'auto' as const, blockSize: 11, c: 0.1 };
+    const config = { hasCurvedPiecing: false, hasApplique: false, hasLowContrastSeams: false, hasHeavyTopstitching: false, pieceScale: 'standard' as const, quiltShape: 'rectangular' as const };
     usePhotoPatternStore.getState().setScanConfig(config);
     expect(usePhotoPatternStore.getState().scanConfig).toEqual(config);
   });

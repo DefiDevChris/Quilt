@@ -254,7 +254,7 @@ describe('printlistStore', () => {
     });
 
     it('sets isLoading during fetch', async () => {
-      let fetchPromise: Promise<Response> | null = null;
+      let fetchPromise: Promise<{ ok: boolean; json: () => Promise<{ data: { items: never[]; paperSize: string } }> }> | null = null;
       const mockFetch = vi.fn().mockImplementation(() => {
         if (!fetchPromise) {
           fetchPromise = Promise.resolve({
