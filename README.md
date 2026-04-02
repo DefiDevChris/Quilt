@@ -160,29 +160,10 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 - **Social Threads** — Discover (all posts), Saved (bookmarked)
 - **Trending** — "Most Saved" with month/all-time toggle
 - **Blog** — Admin-only posts via API, Tiptap JSON rendering
-- No follows, no comment likes, no content reporting
 
 ## Database Schema
 
 16 tables: `users`, `userProfiles`, `projects`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
-
-Removed tables (do not recreate): `follows`, `reports`, `commentLikes`, `designVariations`
-
-## Mobile Accessibility Features
-
-### Tap-to-Place System
-- **Blocks**: Click block in library → tap canvas to place. Blue border shows selection.
-- **Fabrics**: Click fabric swatch → tap patch to fill. Floating indicator shows active selection.
-- **Undo/Redo Overlay**: 48×48px touch-friendly buttons at canvas top-center. Always visible.
-
-### Implementation
-- `useTapToPlaceBlock` + `useTapToPlaceFabric` hooks manage state
-- `UndoRedoOverlay` + `TapToPlaceIndicator` components provide UI
-- `blockStore.selectedBlockId` + `fabricStore.selectedFabricId` track selections
-- Integrated in `StudioClient.tsx` and `BlockLibrary.tsx`
-
-### Testing
-Run `./verify-integration.sh` to verify all components are wired correctly.
 
 ## Mobile
 

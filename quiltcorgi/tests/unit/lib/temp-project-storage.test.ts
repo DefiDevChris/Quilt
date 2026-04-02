@@ -40,6 +40,7 @@ describe('temp-project-storage', () => {
         fabricPresets: [],
         canvasWidth: 100,
         canvasHeight: 100,
+        worktables: [],
       };
       saveTempProject('project-1', data);
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
@@ -50,14 +51,14 @@ describe('temp-project-storage', () => {
 
     it('does nothing when window undefined', () => {
       Object.defineProperty(globalThis, 'window', { value: undefined });
-      saveTempProject('p1', { canvasData: {}, unitSystem: 'imperial', gridSettings: {}, fabricPresets: [], canvasWidth: 100, canvasHeight: 100 });
+      saveTempProject('p1', { canvasData: {}, unitSystem: 'imperial', gridSettings: {}, fabricPresets: [], canvasWidth: 100, canvasHeight: 100, worktables: [] });
       expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
       Object.defineProperty(globalThis, 'window', { value: {} });
     });
 
     it('fails silently on localStorage error', () => {
       mockLocalStorage.setItem.mockImplementationOnce(() => { throw new Error('Storage full'); });
-      const data = { canvasData: {}, unitSystem: 'imperial', gridSettings: {}, fabricPresets: [], canvasWidth: 100, canvasHeight: 100 };
+      const data = { canvasData: {}, unitSystem: 'imperial', gridSettings: {}, fabricPresets: [], canvasWidth: 100, canvasHeight: 100, worktables: [] };
       expect(() => saveTempProject('p1', data)).not.toThrow();
     });
   });

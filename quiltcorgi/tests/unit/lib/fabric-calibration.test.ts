@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computeCalibration } from '@/lib/fabric-calibration';
 
 describe('computeCalibration', () => {

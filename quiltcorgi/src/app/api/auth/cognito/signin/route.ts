@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
           name: cognitoUser.name || email.split('@')[0],
           role: 'free',
           emailVerified: cognitoUser.emailVerified ? new Date() : null,
+          cognitoSub: cognitoUser.sub,
         })
         .onConflictDoNothing({ target: users.email });
 

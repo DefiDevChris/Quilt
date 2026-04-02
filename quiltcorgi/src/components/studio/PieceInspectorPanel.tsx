@@ -11,6 +11,7 @@ import {
   type PieceGeometry,
   type FormattedDimensions,
 } from '@/lib/piece-inspector-utils';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 // ── Constants ────────────────────────────────────────────────────
 
@@ -88,10 +89,12 @@ function SvgPreviewSection({
 }) {
   const svgHtml = useMemo(
     () =>
-      generatePieceSvgPreview(geometry, seamAllowance, {
-        showSeamLine: true,
-        showDimensions: true,
-      }),
+      sanitizeSvg(
+        generatePieceSvgPreview(geometry, seamAllowance, {
+          showSeamLine: true,
+          showDimensions: true,
+        })
+      ),
     [geometry, seamAllowance]
   );
 

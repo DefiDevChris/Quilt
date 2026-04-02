@@ -440,10 +440,17 @@ export function StudioTopBar({
           <TooltipHint name="Export" description="Export your quilt as PNG, SVG, or PDF" mascot="/mascots&avatars/corgi23.png">
             <button
               type="button"
-              onClick={onOpenImageExport}
+              onClick={() => {
+                if (!isPro) {
+                  setShowProUpgrade(true);
+                  return;
+                }
+                onOpenImageExport?.();
+              }}
               className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
               Export
+              {!isPro && <Sparkles size={12} className="text-primary" />}
             </button>
           </TooltipHint>
         </div>

@@ -10,14 +10,6 @@ import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
 
-// Toast notification helper (imported dynamically to avoid circular deps)
-const toastFn: ((opts: { type: string; title: string; description?: string }) => void) | null = null;
-if (typeof window !== 'undefined') {
-  import('@/components/ui/ToastProvider').then((mod) => {
-    // Will be set when component mounts
-  });
-}
-
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
@@ -167,8 +159,12 @@ export function useCanvasKeyboard() {
             t: 'triangle',
             p: 'polygon',
             l: 'line',
-            c: 'curve',
-            x: 'text',
+            h: 'pan',
+            o: 'circle',
+            e: 'easydraw',
+            i: 'eyedropper',
+            m: 'ruler',
+            u: 'bend',
           };
           const tool = TOOL_SHORTCUTS[e.key.toLowerCase()];
           if (tool) {
@@ -189,10 +185,22 @@ export function useCanvasKeyboard() {
             return;
           }
 
-          // Puzzle view toggle
-          if (e.key === 'i' || e.key === 'I') {
+          // Grid/Snap toggles
+          if (e.key === 'g' || e.key === 'G') {
             e.preventDefault();
-            usePieceInspectorStore.getState().togglePuzzleView();
+            const state = useCanvasStore.getState();
+            if (e.shiftKey) {
+              state.setGridSettings({ snapToGrid: !state.gridSettings.snapToGrid });
+            } else {
+              state.setGridSettings({ enabled: !state.gridSettings.enabled });
+            }
+            return;
+          }
+
+          // Help panel
+          if (e.key === '?') {
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('quiltcorgi:toggle-help'));
             return;
           }
         }

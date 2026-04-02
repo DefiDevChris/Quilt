@@ -36,6 +36,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
 
   const [previewBlock, setPreviewBlock] = useState<BlockListItem | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('library');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isPanelOpen && activeTab === 'myblocks' && isPro) {
@@ -220,11 +221,21 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                             />
                             <button
                               type="button"
-                              onClick={() => deleteUserBlock(block.id)}
-                              title="Delete block"
-                              className="absolute -right-1 -top-1 hidden h-5 w-5 items-center justify-center rounded-full bg-error text-[10px] text-white group-hover:flex"
+                              onClick={() => {
+                                if (confirmDeleteId === block.id) {
+                                  deleteUserBlock(block.id);
+                                  setConfirmDeleteId(null);
+                                } else {
+                                  setConfirmDeleteId(block.id);
+                                }
+                              }}
+                              onBlur={() => setConfirmDeleteId(null)}
+                              title={confirmDeleteId === block.id ? 'Click again to confirm delete' : 'Delete block'}
+                              className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                                confirmDeleteId === block.id ? 'bg-error ring-2 ring-error/50 !opacity-100' : 'bg-error'
+                              }`}
                             >
-                              ✕
+                              {confirmDeleteId === block.id ? '✓' : '✕'}
                             </button>
                           </div>
                         ))}

@@ -160,9 +160,10 @@ export function OnboardingForm() {
       return;
     }
 
+    // Auto-assign a random corgi if no avatar selected
     if (!selectedCorgi && !uploadedImage) {
-      setError('Pick a corgi or upload your own avatar.');
-      return;
+      const randomId = Math.floor(Math.random() * CORGI_COUNT) + 1;
+      setSelectedCorgi(randomId);
     }
 
     setIsSaving(true);
@@ -172,6 +173,10 @@ export function OnboardingForm() {
 
       if (selectedCorgi) {
         avatarUrl = `/mascots&avatars/corgi${selectedCorgi}.png`;
+      } else if (!uploadedImage) {
+        // Fallback: random corgi
+        const fallbackId = Math.floor(Math.random() * CORGI_COUNT) + 1;
+        avatarUrl = `/mascots&avatars/corgi${fallbackId}.png`;
       }
 
       // Step 1: Create profile with name, username, bio, privacy, and corgi avatar
@@ -234,8 +239,7 @@ export function OnboardingForm() {
 
   const isComplete =
     displayName.trim().length > 0 &&
-    usernameStatus === 'available' &&
-    (selectedCorgi !== null || uploadedImage !== null);
+    usernameStatus === 'available';
 
   const usernameBorderColor =
     usernameStatus === 'available'
@@ -351,7 +355,7 @@ export function OnboardingForm() {
         {/* Privacy Toggle */}
         <div>
           <label className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-3">
-            Community visibility
+            Social visibility
           </label>
           <div className="flex gap-2">
             <button
@@ -388,7 +392,7 @@ export function OnboardingForm() {
         {/* Avatar Selection */}
         <div>
           <label className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-3">
-            Choose your corgi
+            Choose your corgi <span className="text-secondary/60">(optional — we&apos;ll pick one for you if you skip)</span>
           </label>
           <div className="grid grid-cols-6 sm:grid-cols-7 gap-2 max-h-[280px] overflow-y-auto pr-1 pb-2">
             {CORGI_IMAGES.map((corgi) => (

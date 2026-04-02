@@ -121,7 +121,16 @@ export function HamburgerDrawer({
         { label: 'Save', shortcut: 'Ctrl+S', onClick: onSave },
         { label: 'Import/Export Image', onClick: onOpenImageExport },
         { label: 'Export PDF', onClick: onOpenPdfExport },
-        { label: 'Close', onClick: () => router.push('/dashboard') },
+        {
+          label: 'Close',
+          onClick: () => {
+            const isDirty = useProjectStore.getState().isDirty;
+            if (isDirty && onSave) {
+              onSave();
+            }
+            router.push('/dashboard');
+          },
+        },
       ],
     },
     {

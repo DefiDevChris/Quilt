@@ -61,8 +61,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'bend',
-      label: 'Bend Edge',
-      shortcut: 'B',
+      label: 'Curved Edge',
+      shortcut: 'U',
       description: 'Bend edges of shapes',
       mascot: '/mascots&avatars/corgi24.png',
       toolType: 'bend',
@@ -97,19 +97,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </svg>
-      ),
-    },
-    {
-      id: 'bend',
-      label: 'Bend Edge',
-      shortcut: 'B',
-      description: 'Bend edges of shapes',
-      toolType: 'bend',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M4 16 Q 10 4 16 16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
         </svg>
       ),
     },
@@ -278,73 +265,10 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'curve',
-      label: 'Bezier Curve',
-      shortcut: 'C',
-      description: 'Draw smooth curves with control points',
-      mascot: '/mascots&avatars/corgi24.png',
-      toolType: 'curve',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 14C4 14 6 4 10 4C14 4 16 14 16 14"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'freedraw',
-      label: 'Easy Draw',
-      shortcut: 'D',
-      description: 'Click and hold to draw freehand shapes that snap to grid points',
-      mascot: '/mascots&avatars/corgi25.png',
-      toolType: 'freedraw',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M13.5 3.5L16.5 6.5L6 17L3 17L3 14L13.5 3.5Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-          <path d="M11.5 5.5L14.5 8.5" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    {
       id: 'easydraw',
       label: 'Easy Draw',
       shortcut: 'E',
-      description: 'Draw freehand paths that snap to grid — auto-close into shapes',
-      mascot: '/mascots&avatars/corgi2.png',
-      toolType: 'easydraw',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M12.5 3.5L16.5 7.5L7 17H3V13L12.5 3.5Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      ),
-    },
-    {
-      id: 'easydraw',
-      label: 'Easy Draw',
-      shortcut: 'E',
-      description: 'Draw freehand paths that snap to grid — auto-close into shapes',
+      description: 'Draw freehand shapes that snap to grid and auto-close into patches',
       mascot: '/mascots&avatars/corgi2.png',
       toolType: 'easydraw',
       group: 'shapes',
@@ -425,27 +349,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     // ── ADVANCED: Inspect & refine ──
-    {
-      id: 'puzzle-view',
-      label: 'Puzzle View',
-      shortcut: 'I',
-      description: 'Tap any piece to see its dimensions and print a cutting template',
-      mascot: '/mascots&avatars/corgi1.png',
-      group: 'inspect-adv',
-      tier: 'advanced',
-      onClick: () => usePieceInspectorStore.getState().togglePuzzleView(),
-      isActive: () => usePieceInspectorStore.getState().isPuzzleViewActive,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 8C4 6 6 4 8 4H9V8H4ZM11 4H12C14 4 16 6 16 8V9H11V4ZM16 11V12C16 14 14 16 12 16H11V11H16ZM9 16H8C6 16 4 14 4 12V11H9V16Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
     {
       id: 'symmetry',
       label: 'Symmetry Tool',
@@ -796,24 +699,6 @@ export function useBlockTools(): ToolDef[] {
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      id: 'curve',
-      label: 'Bezier Curve',
-      shortcut: 'C',
-      description: 'Draw smooth curves with control points',
-      toolType: 'curve',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 14C4 14 6 4 10 4C14 4 16 14 16 14"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
         </svg>
       ),
     },

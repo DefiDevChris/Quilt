@@ -77,7 +77,10 @@ export function ResultsStep() {
       img.onload = () => draw(img, correctedImageRef.width, correctedImageRef.height);
       img.src = correctedImageRef.url;
     } else if (originalImage) {
-      draw(originalImage, originalImage.naturalWidth, originalImage.naturalHeight);
+      // Create a new Image to avoid modifying hook value
+      const img = new Image();
+      img.onload = () => draw(img, img.naturalWidth, img.naturalHeight);
+      img.src = originalImage.src;
     }
   }, [originalImage, correctedImageRef, detectedPieces]);
 

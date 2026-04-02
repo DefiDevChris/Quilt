@@ -62,9 +62,9 @@ function extractShapePoints(
   const rawPoints = svgPathToPolyline(pathD);
   if (rawPoints.length < 3) return null;
 
-  // Convert from canvas pixels to inches
-  const scale = 1 / PIXELS_PER_INCH;
-  const cutLine = rawPoints.map((p) => ({ x: p.x * scale, y: p.y * scale }));
+  // Convert from canvas pixels to inches, then apply print scale
+  const pixelToInch = 1 / PIXELS_PER_INCH;
+  const cutLine = rawPoints.map((p) => ({ x: p.x * pixelToInch, y: p.y * pixelToInch }));
   const seamLine =
     item.seamAllowanceEnabled !== false ? computeSeamOffset(cutLine, item.seamAllowance) : null;
 
@@ -81,6 +81,7 @@ function drawPolyline(
   offsetY: number,
   originX: number,
   originY: number,
+  scale: number,
   options: {
     color: { r: number; g: number; b: number };
     lineWidth: number;
@@ -95,8 +96,8 @@ function drawPolyline(
   // PDF y-axis is bottom-up, so we flip
   const pageHeight = page.getHeight();
 
-  const toX = (x: number) => (offsetX + (x - originX)) * pts;
-  const toY = (y: number) => pageHeight - (offsetY + (y - originY)) * pts;
+  const toX = (x: number) => (offsetX + (x - originX) * scale) * pts;
+  const toY = (y: number) => pageHeight - (offsetY + (y - originY) * scale) * pts;
 
   page.drawLine({
     start: { x: toX(points[0].x), y: toY(points[0].y) },
@@ -170,15 +171,17 @@ function drawValidationSquare(
 }
 
 /**
- * Generate a 1:1 scale PDF with pattern pieces from the printlist.
+ * Generate a scaled PDF with pattern pieces from the printlist.
  *
  * @param items - Printlist items with SVG data and quantities
  * @param paperSize - Paper size ('letter' or 'a4')
+ * @param scale - Scale factor (0.5 to 2.0, where 1.0 = 1:1)
  * @returns PDF as Uint8Array
  */
 export async function generatePatternPdf(
   items: PrintlistItem[],
-  paperSize: PaperSize
+  paperSize: PaperSize,
+  scale: number = 1.0
 ): Promise<Uint8Array> {
   const pageDims = PAGE_SIZES[paperSize];
   const paper: PaperConfig = paperSize === 'letter' ? PAPER_LETTER : PAPER_A4;
@@ -249,7 +252,7 @@ export async function generatePatternPdf(
 
     // Draw seam line (dashed, gray) — only if enabled
     if (shape.seamLine) {
-      drawPolyline(page, shape.seamLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, {
+      drawPolyline(page, shape.seamLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, scale, {
         color: { r: 0.5, g: 0.5, b: 0.5 },
         lineWidth: 0.5,
         dashArray: [3, 3],
@@ -258,7 +261,7 @@ export async function generatePatternPdf(
     }
 
     // Draw cut line (solid, black) — same origin as seam line
-    drawPolyline(page, shape.cutLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, {
+    drawPolyline(page, shape.cutLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, scale, {
       color: { r: 0, g: 0, b: 0 },
       lineWidth: 1,
     });

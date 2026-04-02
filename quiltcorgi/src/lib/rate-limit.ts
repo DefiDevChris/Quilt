@@ -161,10 +161,9 @@ export function getClientIp(request: Request): string {
       .split(',')
       .map((ip) => ip.trim())
       .filter((ip) => ip);
-    // Behind a proxy/load balancer, the rightmost IP is the most trusted (closest to server).
-    // Take the last untrusted entry (rightmost), not the first which can be spoofed.
-    // If there's only one IP, use it (direct connection).
-    return ips.length > 1 ? (ips[ips.length - 1] ?? 'unknown') : (ips[0] ?? 'unknown');
+    // Leftmost IP is the original client (after trusted proxies are stripped).
+    // The rightmost IP is the load balancer — using it would rate-limit all users together.
+    return ips[0] ?? 'unknown';
   }
   // x-real-ip is set by the trusted proxy - use it if available
   return request.headers.get('x-real-ip') ?? 'unknown';

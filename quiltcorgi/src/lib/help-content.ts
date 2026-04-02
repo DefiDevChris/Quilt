@@ -31,7 +31,6 @@ export const KEYBOARD_SHORTCUTS: readonly KeyboardShortcut[] = [
   { key: 'T', label: 'T', description: 'Triangle tool' },
   { key: 'P', label: 'P', description: 'Polygon tool' },
   { key: 'L', label: 'L', description: 'Line tool' },
-  { key: 'C', label: 'C', description: 'Bezier Curve tool' },
   { key: 'X', label: 'X', description: 'Text tool' },
   { key: 'B', label: 'B', description: 'Toggle Block Library' },
   { key: 'F', label: 'F', description: 'Toggle Fabric Library' },
@@ -170,7 +169,6 @@ const CONTEXTUAL_HELP: Readonly<Record<string, string>> = {
   polygon:
     'Click and drag to draw a polygon. Adjust the number of sides in the panel on the right.',
   line: 'Click and drag for a straight line. Hold Shift to snap to 45-degree angles.',
-  curve: 'Click to start, drag to shape the curve, then click again to finish.',
   text: 'Click anywhere on your canvas to place a text label. Adjust font, size, and color in the panel on the right.',
   easydraw: 'Place grid points, then draw seam lines between them to draft your own block designs.',
   eyedropper: 'Click any patch to pick up its color, then apply that color to other patches.',

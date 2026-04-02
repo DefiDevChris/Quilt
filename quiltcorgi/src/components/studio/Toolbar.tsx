@@ -20,7 +20,7 @@ function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
         aria-label={isOpen ? 'Collapse advanced tools' : 'Expand advanced tools'}
         aria-expanded={isOpen}
         onClick={onClick}
-        className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-on-surface/50 hover:text-on-surface hover:bg-surface-container"
+        className="w-10 h-10 flex items-center justify-center rounded-lg transition-shadow text-on-surface/50 shadow-elevation-1 hover:shadow-elevation-2"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           {isOpen ? (

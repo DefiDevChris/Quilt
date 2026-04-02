@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { generateHstUnits, generateCornerUnit, generatePiecedBorder } from '@/lib/border-generator';
 import type { BorderConfig } from '@/lib/layout-utils';
 

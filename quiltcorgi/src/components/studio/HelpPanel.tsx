@@ -143,7 +143,7 @@ function LinksSection() {
       </h3>
       <div className="flex flex-col gap-1">
         <Link href="/socialthreads" className="text-body-sm text-primary hover:underline px-1 py-1">
-          Community
+          Social
         </Link>
         <Link href="/socialthreads" className="text-body-sm text-primary hover:underline px-1 py-1">
           Gallery

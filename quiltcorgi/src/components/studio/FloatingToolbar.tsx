@@ -126,39 +126,6 @@ function useQuiltFloatingTools(): FloatingTool[] {
       ),
     },
     {
-      id: 'curve',
-      label: 'Curve',
-      shortcut: 'C',
-      toolType: 'curve',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path
-            d="M4 16C4 16 6 4 11 4C16 4 18 16 18 16"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'text',
-      label: 'Text',
-      shortcut: 'X',
-      toolType: 'text',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path
-            d="M5 5H17M11 5V18M8 5V4M14 5V4"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
       id: 'undo',
       label: 'Undo',
       shortcut: 'Ctrl+Z',
@@ -190,21 +157,6 @@ const BLOCK_TOOLS: FloatingTool[] = [
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <path d="M4 18L18 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    id: 'arc',
-    label: 'Arc',
-    toolType: 'curve',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path
-          d="M4 17C4 9 9 4 17 4"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
       </svg>
     ),
   },

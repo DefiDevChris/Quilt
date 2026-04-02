@@ -252,7 +252,7 @@ export function ProfileEditForm() {
 
       <div>
         <label className="block text-body-sm font-medium text-on-surface mb-3">
-          Community visibility
+          Social visibility
         </label>
         <div className="flex gap-2">
           <button

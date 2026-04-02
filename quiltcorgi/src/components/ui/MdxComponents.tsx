@@ -100,6 +100,7 @@ function Image(props: ComponentPropsWithoutRef<'img'>) {
     <img
       className="rounded-lg shadow-elevation-1 max-w-full h-auto my-4"
       loading="lazy"
+      alt={props.alt || ''}
       {...props}
       src={safeSrc}
     />

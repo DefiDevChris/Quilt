@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Heart, MessageCircle, Share2, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
-import { useSocialQuickView } from '@/stores/socialQuickViewStore';
+
 import { formatRelativeTime } from '@/lib/format-time';
 import { RedditStyleComments } from '@/components/community/comments/RedditStyleComments';
 

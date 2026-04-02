@@ -26,7 +26,7 @@ function logAudit(event: string, details: Record<string, string>) {
   console.log(JSON.stringify(logEntry));
 }
 
-const protectedRoutes = ['/dashboard', '/studio', '/profile', '/settings', '/admin', '/onboarding'];
+const protectedRoutes = ['/dashboard', '/studio', '/profile', '/settings', '/admin'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
 // Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading

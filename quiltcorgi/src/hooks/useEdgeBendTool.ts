@@ -19,13 +19,16 @@ export function useEdgeBendTool() {
       if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
-      let draggingInfo: {
+      type EdgeInfo = {
         target: InstanceType<typeof fabric.Polygon | typeof fabric.Path>;
         pointIndex: number;
         p1: { x: number; y: number };
         p2: { x: number; y: number };
         isPolygon: boolean;
-      } | null = null;
+        adjacentEdges?: EdgeInfo[];
+      };
+
+      let draggingInfo: EdgeInfo | null = null;
 
       function getDistanceToSegment(p: {x: number, y: number}, v: {x: number, y: number}, w: {x: number, y: number}) {
         const l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
@@ -199,13 +202,13 @@ export function useEdgeBendTool() {
             }
           }
 
-          draggingInfo = { ...bestMatch, adjacentEdges } as any;
+          draggingInfo = { ...bestMatch, adjacentEdges: adjacentEdges.filter((e): e is EdgeInfo => e !== null) };
         }
       }
 
       function convertPolygonToPath(polygon: InstanceType<typeof fabric.Polygon>): InstanceType<typeof fabric.Path> {
         const points = polygon.points || [];
-        if (points.length === 0) return new fabric.Path('M 0 0', { ...polygon.toObject() });
+        if (points.length === 0) return new fabric.Path('M 0 0');
         let pathData = `M ${points[0].x} ${points[0].y}`;
         for (let i = 1; i < points.length; i++) {
           pathData += ` L ${points[i].x} ${points[i].y}`;
@@ -255,7 +258,8 @@ export function useEdgeBendTool() {
         if (!draggingInfo) return;
         const pointer = canvas.getScenePoint(e.e);
 
-        const applyBend = (info: any, isPrimary: boolean) => {
+        const applyBend = (info: EdgeInfo, isPrimary: boolean) => {
+            if (!info) return;
             let target = info.target;
 
             // Convert polygon to path if needed
@@ -286,31 +290,32 @@ export function useEdgeBendTool() {
             // 0.5 * cp = localPointer - 0.25 * P0 - 0.25 * P2
             // cp = 2 * localPointer - 0.5 * P0 - 0.5 * P2
 
-            const pathData = target.path;
-            const p0x = pathData[info.pointIndex][1] || pathData[info.pointIndex][3] || pathData[info.pointIndex][5];
-            const p0y = pathData[info.pointIndex][2] || pathData[info.pointIndex][4] || pathData[info.pointIndex][6];
+            const pathTarget = target as InstanceType<typeof fabric.Path>;
+            const pathData = pathTarget.path;
+            const p0x = (pathData[info.pointIndex][1] || pathData[info.pointIndex][3] || pathData[info.pointIndex][5]) as number;
+            const p0y = (pathData[info.pointIndex][2] || pathData[info.pointIndex][4] || pathData[info.pointIndex][6]) as number;
 
             const nextIdx = (info.pointIndex + 1) % pathData.length;
             const cmd = pathData[nextIdx][0];
-            let p2x, p2y;
+            let p2x: number, p2y: number;
             if (cmd === 'Z' || nextIdx === 0) {
-               p2x = pathData[0][1];
-               p2y = pathData[0][2];
+               p2x = (pathData[0][1] || 0) as number;
+               p2y = (pathData[0][2] || 0) as number;
             } else {
-               p2x = pathData[nextIdx][1] || pathData[nextIdx][3] || pathData[nextIdx][5];
-               p2y = pathData[nextIdx][2] || pathData[nextIdx][4] || pathData[nextIdx][6];
+               p2x = (pathData[nextIdx][1] || pathData[nextIdx][3] || pathData[nextIdx][5]) as number;
+               p2y = (pathData[nextIdx][2] || pathData[nextIdx][4] || pathData[nextIdx][6]) as number;
             }
 
             const cpX = 2 * localPointer.x - 0.5 * p0x - 0.5 * p2x;
             const cpY = 2 * localPointer.y - 0.5 * p0y - 0.5 * p2y;
 
-            updatePathSegment(target, info.pointIndex, cpX, cpY, p2x, p2y);
+            updatePathSegment(pathTarget, info.pointIndex, cpX, cpY, p2x, p2y);
         };
 
         applyBend(draggingInfo, true);
 
-        if ((draggingInfo as any).adjacentEdges) {
-            for (const adj of (draggingInfo as any).adjacentEdges) {
+        if (draggingInfo.adjacentEdges) {
+            for (const adj of draggingInfo.adjacentEdges) {
                 applyBend(adj, false);
             }
         }

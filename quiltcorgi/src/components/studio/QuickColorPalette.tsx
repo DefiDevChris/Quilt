@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 
@@ -16,16 +16,19 @@ export function QuickColorPalette() {
   const fillColor = useCanvasStore((s) => s.fillColor);
   const setFillColor = useCanvasStore((s) => s.setFillColor);
   const [recentColors, setRecentColors] = useState<ColorEntry[]>([]);
+  const lastColorRef = useRef<string | null>(null);
 
-  // Track color usage
+  // Track color usage - defer setState to avoid sync update in effect
   useEffect(() => {
-    if (!fillColor) return;
+    if (!fillColor || fillColor === lastColorRef.current) return;
+    lastColorRef.current = fillColor;
 
-    // eslint-disable-next-line react-compiler/react-compiler
-    setRecentColors((prev) => {
-      const filtered = prev.filter((c) => c.color !== fillColor);
-      const updated = [{ color: fillColor, timestamp: Date.now() }, ...filtered];
-      return updated.slice(0, MAX_COLORS);
+    queueMicrotask(() => {
+      setRecentColors((prev) => {
+        const filtered = prev.filter((c) => c.color !== fillColor);
+        const updated = [{ color: fillColor, timestamp: Date.now() }, ...filtered];
+        return updated.slice(0, MAX_COLORS);
+      });
     });
   }, [fillColor]);
 

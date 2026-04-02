@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
