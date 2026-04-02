@@ -6,7 +6,7 @@ import Mascot from './Mascot';
 
 function StudioMockup() {
   return (
-    <div className="bg-white rounded-2xl shadow-2xl border border-warm-border overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
       {/* Window chrome */}
       <div className="bg-warm-surface px-4 py-3 border-b border-warm-border flex items-center gap-3">
         <div className="flex gap-1.5">
@@ -165,7 +165,7 @@ export default function HeroSection() {
             >
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-lg text-center"
+                className="px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-elevation-3 text-center"
               >
                 Start Designing Free
               </Link>
@@ -181,10 +181,10 @@ export default function HeroSection() {
           >
             {/* Mascots around the preview — hide on small screens to avoid overflow */}
             <div className="absolute -top-8 -left-8 z-10 hidden lg:block">
-              <Mascot pose="jumping" size="md" className="drop-shadow-lg" />
+              <Mascot pose="jumping" size="md" className="drop-shadow-elevation-3" />
             </div>
             <div className="absolute -bottom-6 -right-6 z-10 hidden lg:block">
-              <Mascot pose="fetching" size="lg" className="drop-shadow-lg" />
+              <Mascot pose="fetching" size="lg" className="drop-shadow-elevation-3" />
             </div>
 
             <StudioMockup />

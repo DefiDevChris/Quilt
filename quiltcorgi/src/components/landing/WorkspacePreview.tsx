@@ -72,7 +72,7 @@ function QuiltWorktableMockup() {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="relative bg-white shadow-xl border border-warm-border p-2 flex"
+            className="relative bg-white shadow-elevation-4 border border-warm-border p-2 flex"
           >
             <div className="grid grid-cols-3 gap-2 bg-warm-peach-light p-2 border-[4px] border-warm-terracotta/60">
               {[...Array(9)].map((_, i) => (
@@ -132,7 +132,7 @@ function QuiltWorktableMockup() {
             </div>
           </div>
           <div className="mt-auto">
-            <button className="w-full bg-warm-peach text-warm-text font-bold py-2 rounded-md hover:bg-warm-peach-dark transition-colors shadow-sm">
+            <button className="w-full bg-warm-peach text-warm-text font-bold py-2 rounded-md hover:bg-warm-peach-dark transition-colors shadow-elevation-1">
               Calculate Yardage
             </button>
           </div>
@@ -207,7 +207,7 @@ function BlockWorktableMockup() {
           <motion.div
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
-            className="relative w-64 h-64 bg-white shadow-md border border-warm-border/30 flex items-center justify-center"
+            className="relative w-64 h-64 bg-white shadow-elevation-2 border border-warm-border/30 flex items-center justify-center"
           >
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path
@@ -226,7 +226,7 @@ function BlockWorktableMockup() {
               <circle cx="50" cy="0" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
               <circle cx="50" cy="50" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
             </svg>
-            <div className="absolute top-2 left-2 bg-gray-900 text-white text-[8px] px-1.5 py-0.5 rounded shadow-xl">
+            <div className="absolute top-2 left-2 bg-gray-900 text-white text-[8px] px-1.5 py-0.5 rounded shadow-elevation-4">
               Snap to Grid (Intersect)
             </div>
           </motion.div>
@@ -243,7 +243,7 @@ function ImageWorktableMockup() {
         <div className="text-[10px] font-bold text-warm-text-secondary bg-warm-surface px-2 py-1 rounded">
           Fabric: Vintage_Floral.jpg
         </div>
-        <div className="px-2 py-1 bg-warm-peach text-warm-text text-[10px] font-bold rounded cursor-pointer shadow-sm">
+        <div className="px-2 py-1 bg-warm-peach text-warm-text text-[10px] font-bold rounded cursor-pointer shadow-elevation-1">
           Save Fabric
         </div>
       </div>
@@ -253,7 +253,7 @@ function ImageWorktableMockup() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="relative w-72 h-48 bg-white shadow-xl overflow-hidden"
+            className="relative w-72 h-48 bg-white shadow-elevation-4 overflow-hidden"
           >
             <div
               className="absolute inset-0 opacity-80"
@@ -333,7 +333,7 @@ function PrintWorktableMockup() {
         <div className="text-[10px] font-bold text-warm-text-secondary bg-warm-surface px-2 py-1 rounded">
           Print: Star_Pattern_Export.pdf
         </div>
-        <div className="px-2 py-1 bg-warm-peach text-warm-text text-[10px] font-bold rounded cursor-pointer shadow-sm">
+        <div className="px-2 py-1 bg-warm-peach text-warm-text text-[10px] font-bold rounded cursor-pointer shadow-elevation-1">
           Export PDF
         </div>
       </div>
@@ -341,7 +341,7 @@ function PrintWorktableMockup() {
       <div className="flex flex-1 overflow-hidden relative">
         <div className="flex-1 bg-[#f0f0f0] relative flex items-center justify-center overflow-hidden p-6">
           {/* PDF page mockup */}
-          <div className="bg-white shadow-2xl aspect-[8.5/11] h-full max-h-[300px] border border-gray-200 p-4 flex flex-col">
+          <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-gray-200 p-4 flex flex-col">
             <div
               className="text-[8px] font-bold text-warm-text mb-2"
               style={{ fontFamily: 'var(--font-display)' }}
@@ -528,7 +528,7 @@ export default function WorkspacePreview() {
           </p>
         </motion.div>
 
-        <div className="glass-panel rounded-[2rem] p-4 md:p-6 shadow-xl mx-auto max-w-5xl">
+        <div className="glass-panel rounded-[2rem] p-4 md:p-6 shadow-elevation-4 mx-auto max-w-5xl">
           {/* Tab Controls */}
           <div className="flex flex-wrap items-center justify-center gap-2 pb-6">
             {tabs.map((tab, idx) => (
@@ -544,7 +544,7 @@ export default function WorkspacePreview() {
                 {activeTab === idx && (
                   <motion.div
                     layoutId="activeTabPill"
-                    className="absolute inset-0 bg-warm-peach rounded-full shadow-sm"
+                    className="absolute inset-0 bg-warm-peach rounded-full shadow-elevation-1"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -556,7 +556,7 @@ export default function WorkspacePreview() {
 
           {/* Mockup Container */}
           <div className="relative">
-            <motion.div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] rounded-xl overflow-hidden border border-warm-border shadow-2xl bg-white">
+            <motion.div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] rounded-xl overflow-hidden border border-warm-border shadow-elevation-4 bg-white">
               {/* Browser Chrome */}
               <div className="absolute top-0 left-0 right-0 h-8 bg-warm-surface border-b border-warm-border flex items-center px-3 gap-2 z-50">
                 <div className="flex gap-1.5">

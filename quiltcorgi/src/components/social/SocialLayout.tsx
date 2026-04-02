@@ -107,7 +107,7 @@ export function SocialLayout({
       <div className="fixed top-[20%] left-[30%] w-[40vw] h-[40vw] bg-white/60 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-panel h-20 grid grid-cols-3 items-center px-6 shadow-sm border-b border-white/40">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-panel h-20 grid grid-cols-3 items-center px-6 shadow-elevation-1 border-b border-white/40">
         {/* Left: Logo + Section Info */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center">
@@ -115,10 +115,10 @@ export function SocialLayout({
           </Link>
           <div className="hidden sm:block w-px h-8 bg-slate-300/50 mx-2" />
           <div className="text-left hidden sm:block">
-            <h1 className="text-xl font-extrabold text-slate-800 tracking-tight leading-tight">
+            <h1 className="text-xl font-extrabold text-on-surface tracking-tight leading-tight">
               {splitMode ? SPLIT_HEADERS[splitPanel].label : activeSectionData.label}
             </h1>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-secondary/80 font-medium">
               {splitMode ? SPLIT_HEADERS[splitPanel].subtitle : activeSectionData.subtitle}
             </p>
           </div>
@@ -136,7 +136,7 @@ export function SocialLayout({
           <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             <button
               onClick={handleAvatarClick}
-              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative bg-orange-100 flex items-center justify-center"
+              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-elevation-2 hover:shadow-elevation-3 transition-all focus:outline-none focus:ring-4 focus:ring-orange-300/50 relative bg-orange-100 flex items-center justify-center"
               aria-label={user ? 'Account menu' : 'Sign in'}
             >
               {user?.image ? (
@@ -159,11 +159,11 @@ export function SocialLayout({
             </button>
 
             {dropdownOpen && user && (
-              <div className="absolute top-16 right-0 w-56 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl z-50 border border-white/80 overflow-hidden">
+              <div className="absolute top-16 right-0 w-56 bg-white/90 backdrop-blur-xl rounded-2xl shadow-elevation-4 z-50 border border-white/80 overflow-hidden">
                 {/* User info */}
                 <div className="px-4 py-3 border-b border-slate-100">
-                  <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
-                  <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                  <p className="text-sm font-bold text-on-surface truncate">{user.name}</p>
+                  <p className="text-xs text-secondary/80 truncate">{user.email}</p>
                 </div>
 
                 {/* Links */}

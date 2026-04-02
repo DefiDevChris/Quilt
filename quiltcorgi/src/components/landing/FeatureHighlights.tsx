@@ -108,7 +108,7 @@ export default function FeatureHighlights() {
             <motion.div
               key={feature.title}
               variants={itemVariants}
-              className="glass-panel rounded-2xl p-8 hover:shadow-xl transition-all"
+              className="glass-panel rounded-2xl p-8 hover:shadow-elevation-4 transition-all"
             >
               <div className="w-16 h-16 mb-6">
                 <Image

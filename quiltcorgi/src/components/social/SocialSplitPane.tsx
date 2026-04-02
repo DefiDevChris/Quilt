@@ -34,7 +34,7 @@ const MOCK_SAVED = [
 
 function BlogStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
       {/* Base glass */}
       <div className="absolute inset-0 glass-panel" />
 
@@ -79,7 +79,7 @@ function BlogStripVertical() {
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
           Blog
         </span>
 
@@ -93,7 +93,7 @@ function BlogStripVertical() {
               <img
                 src="/icons/quilt-13-dashed-squares-Photoroom.png"
                 alt="Blog"
-                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
               />
             </div>
           </div>
@@ -104,7 +104,7 @@ function BlogStripVertical() {
           <img
             src="/mascots&avatars/corgi29.png"
             alt=""
-            className="w-20 h-20 object-contain drop-shadow-md"
+            className="w-20 h-20 object-contain drop-shadow-elevation-2"
           />
         </div>
       </div>
@@ -114,7 +114,7 @@ function BlogStripVertical() {
 
 function BlogStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
@@ -140,7 +140,7 @@ function BlogStripHorizontal() {
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-slate-800 tracking-wide">Blog</span>
+      <span className="text-base font-extrabold text-on-surface tracking-wide">Blog</span>
 
       {/* Mascot */}
       <img
@@ -156,7 +156,7 @@ function BlogStripHorizontal() {
 
 function SavedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
       {/* Base glass */}
       <div className="absolute inset-0 glass-panel" />
 
@@ -203,7 +203,7 @@ function SavedStripVertical() {
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
           Saved
         </span>
 
@@ -217,7 +217,7 @@ function SavedStripVertical() {
               <img
                 src="/icons/quilt-10-pincushion-Photoroom.png"
                 alt="Saved"
-                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
               />
             </div>
           </div>
@@ -228,7 +228,7 @@ function SavedStripVertical() {
           <img
             src="/mascots&avatars/corgi20.png"
             alt=""
-            className="w-20 h-20 object-contain drop-shadow-md"
+            className="w-20 h-20 object-contain drop-shadow-elevation-2"
           />
         </div>
       </div>
@@ -238,7 +238,7 @@ function SavedStripVertical() {
 
 function SavedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
@@ -255,7 +255,7 @@ function SavedStripHorizontal() {
         }}
       />
       {/* Pincushion icon - NO ring */}
-      <div className="w-10 h-10 rounded-xl bg-transparent shadow-md flex items-center justify-center relative shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-transparent shadow-elevation-2 flex items-center justify-center relative shrink-0">
         <img
           src="/icons/quilt-10-pincushion-Photoroom.png"
           alt="Saved"
@@ -264,7 +264,7 @@ function SavedStripHorizontal() {
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-slate-800 tracking-wide">Saved</span>
+      <span className="text-base font-extrabold text-on-surface tracking-wide">Saved</span>
 
       {/* Mascot */}
       <img
@@ -280,7 +280,7 @@ function SavedStripHorizontal() {
 
 function FeedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
       {/* Base glass */}
       <div className="absolute inset-0 glass-panel" />
 
@@ -325,7 +325,7 @@ function FeedStripVertical() {
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
           Feed
         </span>
 
@@ -339,7 +339,7 @@ function FeedStripVertical() {
               <img
                 src="/icons/quilt-01-spool-Photoroom.png"
                 alt="Feed"
-                className="w-24 h-24 object-contain drop-shadow-lg relative z-10"
+                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
               />
             </div>
           </div>
@@ -350,7 +350,7 @@ function FeedStripVertical() {
           <img
             src="/mascots&avatars/corgi12.png"
             alt=""
-            className="w-20 h-20 object-contain drop-shadow-md"
+            className="w-20 h-20 object-contain drop-shadow-elevation-2"
           />
         </div>
       </div>
@@ -360,7 +360,7 @@ function FeedStripVertical() {
 
 function FeedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
@@ -386,7 +386,7 @@ function FeedStripHorizontal() {
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-slate-800 tracking-wide">Feed</span>
+      <span className="text-base font-extrabold text-on-surface tracking-wide">Feed</span>
 
       {/* Mascot */}
       <img
@@ -405,7 +405,7 @@ function ProfileStripVertical() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-xl">
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
       {/* Base glass */}
       <div className="absolute inset-0 glass-panel" />
 
@@ -470,7 +470,7 @@ function ProfileStripVertical() {
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-slate-800 font-extrabold text-xl tracking-tight text-center drop-shadow-sm">
+        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
           Profile
         </span>
 
@@ -484,17 +484,17 @@ function ProfileStripVertical() {
               <img
                 src={user.image}
                 alt={user.name}
-                className="relative w-24 h-24 rounded-full object-cover shadow-xl"
+                className="relative w-24 h-24 rounded-full object-cover shadow-elevation-4"
               />
             ) : (
-              <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-xl">
+              <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-elevation-4">
                 <span className="text-4xl font-bold text-orange-600">{initial}</span>
               </div>
             )}
           </div>
           {/* Name and username */}
           <div className="text-center">
-            <p className="text-slate-800 font-extrabold text-base leading-tight">
+            <p className="text-on-surface font-extrabold text-base leading-tight">
               {user?.name ?? 'Your Name'}
             </p>
             <p className="text-orange-500 font-semibold text-xs leading-tight">
@@ -508,7 +508,7 @@ function ProfileStripVertical() {
           <img
             src="/mascots&avatars/corgi28.png"
             alt=""
-            className="w-20 h-20 object-contain drop-shadow-md"
+            className="w-20 h-20 object-contain drop-shadow-elevation-2"
           />
         </div>
       </div>
@@ -521,7 +521,7 @@ function ProfileStripHorizontal() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-[#FFF9F2]/80 backdrop-blur-md shadow-sm group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
@@ -543,17 +543,17 @@ function ProfileStripHorizontal() {
           <img
             src={user.image}
             alt={user.name}
-            className="w-9 h-9 rounded-full object-cover shadow-md relative"
+            className="w-9 h-9 rounded-full object-cover shadow-elevation-2 relative"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-md relative">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-elevation-2 relative">
             <span className="text-sm font-bold text-orange-600">{initial}</span>
           </div>
         )}
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-slate-800 tracking-wide truncate">
+      <span className="text-base font-extrabold text-on-surface tracking-wide truncate">
         {user?.name ?? 'Profile'}
       </span>
 
@@ -574,8 +574,8 @@ function SavedContent() {
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Bookmark size={20} className="text-orange-500" />
-        <h2 className="font-extrabold text-xl text-slate-800">Saved</h2>
-        <span className="text-xs text-slate-500 font-medium">{MOCK_SAVED.length} posts</span>
+        <h2 className="font-extrabold text-xl text-on-surface">Saved</h2>
+        <span className="text-xs text-secondary/80 font-medium">{MOCK_SAVED.length} posts</span>
       </div>
 
       <div className="space-y-5">
@@ -588,17 +588,17 @@ function SavedContent() {
               <img src={post.image} alt="" className="w-full h-full object-cover" />
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-slate-800 text-base mb-2">{post.title}</h3>
+              <h3 className="font-semibold text-on-surface text-base mb-2">{post.title}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center border border-white shadow-sm">
+                  <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center border border-white shadow-elevation-1">
                     <span className="text-[10px] font-bold text-orange-500">
                       {post.author.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500 font-medium">{post.author}</span>
+                  <span className="text-xs text-secondary/80 font-medium">{post.author}</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-500">
+                <div className="flex items-center gap-3 text-secondary/80">
                   <span className="flex items-center gap-1 text-xs">
                     <Heart size={14} /> {post.likes}
                   </span>
@@ -654,7 +654,7 @@ function ProfileContentPanel() {
 
   return (
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
-      <h2 className="font-extrabold text-xl text-slate-800 mb-6">Profile</h2>
+      <h2 className="font-extrabold text-xl text-on-surface mb-6">Profile</h2>
 
       {/* Profile Summary Card */}
       <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
@@ -663,16 +663,16 @@ function ProfileContentPanel() {
             <img
               src={avatarSrc}
               alt={displayName}
-              className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-sm"
+              className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-elevation-1"
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-sm flex items-center justify-center text-2xl font-bold text-orange-500">
+            <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-elevation-1 flex items-center justify-center text-2xl font-bold text-orange-500">
               {initial}
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-slate-800 truncate">{displayName}</h3>
-            <p className="text-sm text-slate-600 truncate">{user.email}</p>
+            <h3 className="text-lg font-bold text-on-surface truncate">{displayName}</h3>
+            <p className="text-sm text-secondary truncate">{user.email}</p>
           </div>
         </div>
       </div>
@@ -681,19 +681,19 @@ function ProfileContentPanel() {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <Link
           href="/dashboard"
-          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
+          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-elevation-3 transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">{stats?.projectCount ?? '\u2014'}</p>
-          <p className="text-sm text-slate-600">
+          <p className="text-2xl font-bold text-on-surface">{stats?.projectCount ?? '\u2014'}</p>
+          <p className="text-sm text-secondary">
             {(stats?.projectCount ?? 0) === 1 ? 'Project' : 'Projects'}
           </p>
         </Link>
         <Link
           href="/socialthreads"
-          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-lg transition-all"
+          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-elevation-3 transition-all"
         >
-          <p className="text-2xl font-bold text-slate-800">{stats?.postCount ?? '\u2014'}</p>
-          <p className="text-sm text-slate-600">
+          <p className="text-2xl font-bold text-on-surface">{stats?.postCount ?? '\u2014'}</p>
+          <p className="text-sm text-secondary">
             {(stats?.postCount ?? 0) === 1 ? 'Post' : 'Posts'}
           </p>
         </Link>
@@ -706,8 +706,8 @@ function ProfileContentPanel() {
           className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem] last:rounded-b-[1.5rem]"
         >
           <div>
-            <p className="text-sm font-bold text-slate-800">All Settings</p>
-            <p className="text-xs text-slate-600 mt-0.5">Edit profile, billing, and account</p>
+            <p className="text-sm font-bold text-on-surface">All Settings</p>
+            <p className="text-xs text-secondary mt-0.5">Edit profile, billing, and account</p>
           </div>
           <svg
             className="w-4 h-4 text-slate-400"
@@ -772,18 +772,18 @@ function StudioDivider() {
         {/* Icon container with glow - BIGGER */}
         <div className="relative">
           <div className="absolute inset-0 bg-white/40 rounded-3xl blur-xl" />
-          <div className="relative w-20 h-20 rounded-2xl bg-white/25 backdrop-blur-sm border-3 border-white/50 flex items-center justify-center shadow-2xl">
+          <div className="relative w-20 h-20 rounded-2xl bg-white/25 backdrop-blur-sm border-3 border-white/50 flex items-center justify-center shadow-elevation-4">
             <img
               src="/icons/quilt-04-scissors-Photoroom.png"
               alt="Design Studio"
-              className="w-12 h-12 object-contain drop-shadow-lg brightness-0 invert"
+              className="w-12 h-12 object-contain drop-shadow-elevation-3 brightness-0 invert"
             />
           </div>
         </div>
 
         {/* Text label - BIGGER */}
         <div className="text-center">
-          <span className="text-white text-lg font-extrabold tracking-wider uppercase drop-shadow-lg leading-none block">
+          <span className="text-white text-lg font-extrabold tracking-wider uppercase drop-shadow-elevation-3 leading-none block">
             Design
           </span>
           <span className="text-white/90 text-base font-bold tracking-widest uppercase leading-none block mt-1">
@@ -948,7 +948,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
               onClick={() => activate(panel)}
               className={[
                 'relative flex-1 py-3 text-sm font-semibold transition-colors capitalize',
-                activePanel === panel ? 'text-primary' : 'text-slate-500 hover:text-slate-800',
+                activePanel === panel ? 'text-primary' : 'text-secondary/80 hover:text-on-surface',
               ].join(' ')}
             >
               {panel}

@@ -67,25 +67,25 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
               <img
                 src={item.creatorAvatarUrl}
                 alt={item.creatorName}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-elevation-1"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-orange-100 ring-2 ring-white shadow-sm flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-orange-100 ring-2 ring-white shadow-elevation-1 flex items-center justify-center">
                 <span className="text-sm font-bold text-orange-500">
                   {item.creatorName.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
             <div>
-              <p className="font-bold text-slate-800 text-sm">{item.creatorName}</p>
+              <p className="font-bold text-on-surface text-sm">{item.creatorName}</p>
               {item.creatorUsername && (
-                <p className="text-xs text-slate-500">@{item.creatorUsername}</p>
+                <p className="text-xs text-secondary/80">@{item.creatorUsername}</p>
               )}
             </div>
           </div>
-          <h2 className="font-extrabold text-slate-800 text-lg leading-snug mb-1">{item.title}</h2>
+          <h2 className="font-extrabold text-on-surface text-lg leading-snug mb-1">{item.title}</h2>
           {item.description && (
-            <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
+            <p className="text-sm text-secondary leading-relaxed line-clamp-3">
               {item.description}
             </p>
           )}
@@ -96,7 +96,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
           <button
             onClick={handleLike}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
-              liked ? 'text-rose-500 bg-rose-50' : 'text-slate-600 bg-white/50 hover:bg-white/80'
+              liked ? 'text-rose-500 bg-rose-50' : 'text-secondary bg-white/50 hover:bg-white/80'
             }`}
           >
             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
@@ -104,7 +104,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
           </button>
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-slate-600 bg-white/50 hover:bg-white/80 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-secondary bg-white/50 hover:bg-white/80 transition-all"
           >
             <Share2 size={15} />
             {copied ? 'Copied!' : 'Share'}
@@ -148,7 +148,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
       </div>
 
       {/* Right: info */}
-      <div className="w-full md:w-[380px] shrink-0 flex flex-col border-l border-white/20 overflow-y-auto bg-[#FFF9F2]">
+      <div className="w-full md:w-[380px] shrink-0 flex flex-col border-l border-white/20 overflow-y-auto bg-surface">
         {/* Header */}
         <div className="p-6 pb-4 border-b border-warm-border/40">
           <p className="text-xs font-semibold text-warm-peach uppercase tracking-widest mb-2">
@@ -166,10 +166,10 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
             <img
               src={item.authorAvatarUrl}
               alt={item.authorName}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-warm-border shadow-sm"
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-warm-border shadow-elevation-1"
             />
           ) : (
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-warm-border shadow-sm shrink-0">
+            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-warm-border shadow-elevation-1 shrink-0">
               <img src="/logo.png" alt={item.authorName} className="w-full h-full object-cover" />
             </div>
           )}
@@ -208,7 +208,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
         <div className="p-6 pt-0">
           <Link
             href="/socialthreads"
-            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-warm-peach text-warm-text font-bold text-sm shadow-sm hover:bg-warm-peach-dark transition-all"
+            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-warm-peach text-warm-text font-bold text-sm shadow-elevation-1 hover:bg-warm-peach-dark transition-all"
           >
             View Community
             <ExternalLink size={14} />
@@ -231,14 +231,14 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
         </p>
         <h2 className="text-2xl font-extrabold text-warm-text mb-3">{item.name}</h2>
         {item.manufacturer && (
-          <p className="text-sm text-slate-500 font-medium mb-1">By {item.manufacturer}</p>
+          <p className="text-sm text-secondary/80 font-medium mb-1">By {item.manufacturer}</p>
         )}
         {item.colorFamily && (
-          <p className="text-sm text-slate-500 font-medium mb-8">Color: {item.colorFamily}</p>
+          <p className="text-sm text-secondary/80 font-medium mb-8">Color: {item.colorFamily}</p>
         )}
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm shadow-sm hover:from-orange-500 hover:to-rose-500 transition-all mt-auto"
+          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm shadow-elevation-1 hover:from-orange-500 hover:to-rose-500 transition-all mt-auto"
         >
           View in Fabric Library
           <ExternalLink size={14} />
@@ -275,16 +275,16 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
         )}
       </div>
       <div className="w-full md:w-[340px] shrink-0 flex flex-col p-8 border-l border-white/30">
-        <h2 className="text-2xl font-extrabold text-slate-800 mb-3">{item.name}</h2>
+        <h2 className="text-2xl font-extrabold text-on-surface mb-3">{item.name}</h2>
         {item.skillLevel && (
-          <p className="text-sm text-slate-500 font-medium mb-1">Level: {item.skillLevel}</p>
+          <p className="text-sm text-secondary/80 font-medium mb-1">Level: {item.skillLevel}</p>
         )}
         {item.category && (
-          <p className="text-sm text-slate-500 font-medium mb-8">Category: {item.category}</p>
+          <p className="text-sm text-secondary/80 font-medium mb-8">Category: {item.category}</p>
         )}
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm shadow-sm hover:from-orange-500 hover:to-rose-500 transition-all mt-auto"
+          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm shadow-elevation-1 hover:from-orange-500 hover:to-rose-500 transition-all mt-auto"
         >
           Open in Studio
           <ExternalLink size={14} />
@@ -322,13 +322,13 @@ export function SocialQuickViewModal() {
       onClick={(e) => e.target === e.currentTarget && close()}
     >
       <div
-        className="relative w-full sm:max-w-5xl glass-panel-social rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col shadow-2xl"
+        className="relative w-full sm:max-w-5xl glass-panel-social rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col shadow-elevation-4"
         style={{ height: '92vh', maxHeight: '900px' }}
       >
         {/* Close button */}
         <button
           onClick={close}
-          className="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-700 shadow-sm transition-all"
+          className="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-700 shadow-elevation-1 transition-all"
           aria-label="Close"
         >
           <X size={18} />

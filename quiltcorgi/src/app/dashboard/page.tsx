@@ -21,6 +21,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { PhotoPatternModal } from '@/components/photo-pattern/PhotoPatternModal';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useToast } from '@/components/ui/ToastProvider';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { Sparkles } from 'lucide-react';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -128,13 +130,13 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-2 text-secondary hover:text-slate-900 transition-colors"
           >
             <ArrowLeft size={16} strokeWidth={2} />
             <span className="text-sm font-semibold">Dashboard</span>
           </button>
           <div className="w-px h-4 bg-slate-300/60" />
-          <h1 className="text-slate-800 font-bold text-sm">Pattern Library</h1>
+          <h1 className="text-on-surface font-bold text-sm">Pattern Library</h1>
         </div>
         <div className="flex-1 overflow-auto p-6">
           <PatternLibrary />
@@ -170,22 +172,44 @@ export default function DashboardPage() {
         className="hidden md:block absolute bottom-32 -right-16 pointer-events-none"
       />
 
-      {/* Greeting */}
-      <div className="mb-8">
-        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
-          {greeting}
-        </p>
-        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight">
-          Hello, {displayName}
-        </h1>
+      {/* Greeting and Pro Upgrade Button */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-20">
+        <div>
+          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+            {greeting}
+          </p>
+          <h1 className="text-on-surface text-4xl font-extrabold tracking-tight flex items-center gap-3">
+            Hello, {displayName}
+            {isPro && (
+              <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-xs font-extrabold uppercase tracking-widest rounded-full align-middle">
+                PRO
+              </span>
+            )}
+          </h1>
+        </div>
+
+        {!isPro && !isLoadingAuth && user && (
+          <button
+            onClick={() => setShowProUpgrade(true)}
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
+          >
+            <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
+              <Sparkles size={20} className="text-primary-dark" />
+              <div className="text-left">
+                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">Upgrade to Pro</p>
+                <p className="text-xs font-medium text-secondary leading-none">Unlock AI & Exports</p>
+              </div>
+            </div>
+          </button>
+        )}
       </div>
 
-      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20">
+      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20 relative z-10">
         {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="col-span-12 md:col-span-8 rounded-xl p-8 md:p-10 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 hover:-translate-y-1 glass-elevated border-white/60"
+          className="col-span-12 md:col-span-8 rounded-xl p-8 md:p-10 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute -bottom-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-700">
@@ -199,7 +223,7 @@ export default function DashboardPage() {
                 Start a fresh quilt from scratch
               </p>
             </div>
-            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
+            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
               <Plus size={28} className="text-white" strokeWidth={3} />
             </div>
           </div>
@@ -209,7 +233,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 hover:-translate-y-1 glass-card border-white/50"
+          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-15 pointer-events-none group-hover:scale-125 transition-transform duration-700">
@@ -230,7 +254,7 @@ export default function DashboardPage() {
         {/* ── 3. Quiltbook — col 1-4, row 2 ───────────────────────── */}
         <Link
           href="/studio"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 flex flex-col justify-between group"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
         >
           <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
@@ -253,7 +277,7 @@ export default function DashboardPage() {
                 {projects.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-sm"
+                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-elevation-1"
                   >
                     {p.thumbnailUrl ? (
                       <Image
@@ -295,7 +319,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => setActiveTab('patterns')}
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 text-left glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 text-left glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
             <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
@@ -314,7 +338,7 @@ export default function DashboardPage() {
         {/* ── 5. Community — col 9-12, row 2 ───────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
@@ -335,7 +359,7 @@ export default function DashboardPage() {
         {/* ── 6. Profile — col 1-6, row 3 ──────────────────────────── */}
         <Link
           href="/profile"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-[-30%] right-[-10%] opacity-[0.02] pointer-events-none transition-transform duration-1000 group-hover:scale-110">
             <UserCircle size={320} strokeWidth={1} className="text-on-surface" />
@@ -354,7 +378,7 @@ export default function DashboardPage() {
         {/* ── 7. Settings — col 7-12, row 3 ────────────────────────── */}
         <Link
           href="/settings"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-1/2 left-[-15%] -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-90 transition-transform duration-1000">
             <Settings size={280} strokeWidth={1} className="text-on-surface" />
@@ -385,74 +409,7 @@ export default function DashboardPage() {
 
       {/* Pro upgrade modal */}
       {showProUpgrade && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
-          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6 text-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-secondary mx-auto mb-3"
-              aria-hidden="true"
-            >
-              <rect
-                x="5"
-                y="11"
-                width="14"
-                height="10"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M8 11V7a4 4 0 0 1 8 0v4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-            <p className="text-lg font-semibold text-on-surface mb-1">Photo to Pattern</p>
-            <p className="text-sm text-secondary mb-4">
-              This feature requires a Pro subscription. Start at $8/month.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                type="button"
-                onClick={() => setShowProUpgrade(false)}
-                className="rounded-md px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
-              >
-                Maybe Later
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-                    const data = await res.json();
-                    if (data.success && data.data.checkoutUrl) {
-                      window.location.href = data.data.checkoutUrl;
-                    } else {
-                      toast({
-                        type: 'error',
-                        title: 'Checkout failed',
-                        description: data.error ?? 'Unable to start checkout. Please try again.',
-                      });
-                    }
-                  } catch {
-                    toast({
-                      type: 'error',
-                      title: 'Connection error',
-                      description: 'Unable to connect. Please check your connection and try again.',
-                    });
-                  }
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
-              >
-                Upgrade to Pro
-              </button>
-            </div>
-          </div>
-        </div>
+        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
       )}
     </div>
   );

@@ -82,7 +82,7 @@ export function FabricCard({ fabric, onDragStart, onRemove }: FabricCardProps) {
       {showMenu && (
         <div
           ref={menuRef}
-          className="fixed z-50 min-w-[160px] rounded-lg border border-outline-variant bg-surface shadow-lg py-1"
+          className="fixed z-50 min-w-[160px] rounded-lg border border-outline-variant bg-surface shadow-elevation-3 py-1"
           style={{ left: menuPos.x, top: menuPos.y }}
         >
           <button

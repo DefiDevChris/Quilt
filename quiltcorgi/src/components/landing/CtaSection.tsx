@@ -30,7 +30,7 @@ export default function CtaSection() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-lg"
+              className="inline-flex px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-elevation-3"
             >
               Start Designing Free
             </Link>
