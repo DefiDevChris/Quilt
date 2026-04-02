@@ -155,6 +155,14 @@ Projects support up to 10 worktables (independent canvases). Each worktable has 
 ### Mobile
 Companion experience only (3-tab nav: Home, Upload FAB, Profile/SignIn). Studio is desktop-only — `StudioGate` redirects mobile users.
 
+**Accessibility Features:**
+- **Tap-to-Place Blocks** — Click block in library, tap canvas to place. Blue border shows selection.
+- **Tap-to-Place Fabrics** — Click fabric swatch, tap patch to fill. Floating indicator shows active fabric.
+- **Undo/Redo Overlay** — 48×48px touch-friendly buttons at canvas top-center, always visible.
+- Components: `UndoRedoOverlay`, `TapToPlaceIndicator` in `src/components/canvas/`
+- Hooks: `useTapToPlaceBlock`, `useTapToPlaceFabric` in `src/hooks/`
+- Stores: `blockStore.selectedBlockId`, `fabricStore.selectedFabricId`
+
 ## Testing
 
 - Unit tests in `tests/unit/` — mirror source structure (`tests/unit/lib/`, `tests/unit/stores/`)
