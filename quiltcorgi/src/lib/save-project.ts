@@ -66,7 +66,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
   const { unitSystem, gridSettings } = useCanvasStore.getState();
-  const { fabricPresets, canvasWidth, canvasHeight, worktables, activeWorktableId } =
+  const { fabricPresets, canvasWidth, canvasHeight, worktables, activeWorktableId, version } =
     useProjectStore.getState();
 
   // Update active worktable with current canvas
@@ -142,11 +142,26 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
         fabricPresets,
         canvasWidth,
         canvasHeight,
+        version,
       }),
       signal: controller.signal,
     });
 
     if (!res.ok) {
+      // Handle version conflicts — project was modified elsewhere
+      if (res.status === 409) {
+        try {
+          const data = await res.json();
+          if (data.code === 'VERSION_CONFLICT') {
+            store.setSaveStatus('error');
+            // TODO: Show conflict resolution UI
+            return; // Don't retry
+          }
+        } catch {
+          // Fall through to normal error handling
+        }
+      }
+
       // Don't retry Pro-required errors — free users can design but not save
       if (res.status === 403) {
         try {
