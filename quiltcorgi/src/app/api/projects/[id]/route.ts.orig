@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (project.version !== parsed.data.version) {
         return errorResponse(
           'This project was modified on another device. Please refresh and try again.',
-          'BAD_REQUEST',
+          'VERSION_CONFLICT',
           409
         );
       }
@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Upload worktables to S3 if provided
     if (parsed.data.worktables) {
-      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.worktables as unknown as Record<string, unknown>);
+      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.worktables as Record<string, unknown>);
       updates.worktablesS3Key = s3Key;
       updates.worktables = []; // Clear JSONB to save space
     }

@@ -182,7 +182,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
     if (!fabricCanvas) return;
     const canvas = fabricCanvas as { backgroundColor?: string };
     if (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setCanvasColor(canvas.backgroundColor);
     }
   }, [fabricCanvas]);
