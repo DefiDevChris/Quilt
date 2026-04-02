@@ -79,11 +79,11 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
     saveTempProject(projectId, {
       canvasData,
       unitSystem,
-      gridSettings,
+      gridSettings: gridSettings as unknown as Record<string, unknown>,
       fabricPresets,
       canvasWidth,
       canvasHeight,
-      worktables: updatedWorktables,
+      worktables: updatedWorktables as unknown as Array<Record<string, unknown>>,
     });
     const store = useProjectStore.getState();
     store.setSaveStatus('saved');
@@ -138,7 +138,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
         canvasData,
         worktables: updatedWorktables,
         unitSystem,
-        gridSettings,
+        gridSettings: gridSettings as unknown as Record<string, unknown>,
         fabricPresets,
         canvasWidth,
         canvasHeight,
