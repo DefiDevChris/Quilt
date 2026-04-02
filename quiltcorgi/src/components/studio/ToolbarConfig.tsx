@@ -312,6 +312,28 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
+    {
+      id: 'easydraw',
+      label: 'Easy Draw',
+      shortcut: 'E',
+      description: 'Draw freehand paths that snap to grid — auto-close into shapes',
+      mascot: '/mascots&avatars/corgi2.png',
+      toolType: 'easydraw',
+      group: 'shapes',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M12.5 3.5L16.5 7.5L7 17H3V13L12.5 3.5Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+    },
     // ── PRIMARY: Layout & sizing ──
     {
       id: 'grid-dimensions',
