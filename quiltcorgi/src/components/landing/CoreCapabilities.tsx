@@ -245,7 +245,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform
+              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform"
             >
               See What You Can Create
             </Link>
@@ -256,7 +256,7 @@ export default function CoreCapabilities() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
+            className={'relative'}
           >
             <StudioPreviewMockup />
           </motion.div>
