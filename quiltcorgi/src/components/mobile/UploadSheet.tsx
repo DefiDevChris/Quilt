@@ -1,6 +1,9 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { compressImageForUpload } from '@/lib/image-compression';
+import { uploadToS3 } from '@/lib/image-processing';
 
 interface UploadSheetProps {
   isOpen: boolean;
@@ -9,12 +12,62 @@ interface UploadSheetProps {
 
 export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   function handleUploadFabric() {
     onClose();
     router.push('/dashboard?tab=fabrics&upload=true');
+  }
+
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      // Step 1: Compress / convert the image client-side
+      const { blob, contentType, originalSize, compressedSize } =
+        await compressImageForUpload(file);
+
+      // Step 2: Request a presigned upload URL from the API
+      const presignedRes = await fetch('/api/upload/presigned-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: file.name.replace(/\.[^.]+$/, '') + '.webp',
+          contentType,
+          purpose: 'fabric',
+        }),
+      });
+
+      if (!presignedRes.ok) {
+        const errBody = await presignedRes.json().catch(() => ({}));
+        throw new Error(errBody?.error || `Server returned ${presignedRes.status}`);
+      }
+
+      const presignedData = await presignedRes.json();
+      const { uploadUrl, publicUrl } = presignedData.data;
+
+      // Step 3: Upload the compressed blob to S3
+      await uploadToS3(uploadUrl, blob, contentType);
+
+      // Step 4: Navigate to the fabrics tab with the uploaded URL
+      onClose();
+      router.push(`/dashboard?tab=fabrics&uploaded=${encodeURIComponent(publicUrl)}`);
+    } catch (err) {
+      console.error('Fabric upload failed:', err);
+      setUploadError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      // Reset file input so the same file can be selected again
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   }
 
   function handleShareToCommunity() {
@@ -36,8 +89,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
         <div className="px-6 space-y-3">
           <button
             type="button"
-            onClick={handleUploadFabric}
-            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left disabled:opacity-50"
           >
             <div
               className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
@@ -59,7 +113,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-on-surface">Upload Fabric</p>
+              <p className="text-sm font-semibold text-on-surface">
+                {uploading ? 'Uploading…' : 'Upload Fabric'}
+              </p>
               <p className="text-xs text-secondary mt-0.5">Add a fabric photo to your library</p>
             </div>
           </button>
@@ -91,6 +147,24 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
             </div>
           </button>
         </div>
+
+        {/* Upload error */}
+        {uploadError && (
+          <div className="px-6 mt-3">
+            <p className="text-xs text-error">{uploadError}</p>
+          </div>
+        )}
+
+        {/* Hidden file input for fabric photos */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+          capture="environment"
+          className="hidden"
+          onChange={handleFileSelect}
+          aria-label="Upload fabric photo"
+        />
       </div>
     </>
   );
