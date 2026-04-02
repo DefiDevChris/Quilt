@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAuthStore } from '@/stores/authStore';
 import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { Sparkles } from 'lucide-react';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -41,7 +44,10 @@ export function StudioTopBar({
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const user = useAuthStore((s) => s.user);
+  const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
 
   // Listen for save success events
@@ -89,8 +95,18 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        {/* Right: Viewport controls + Project info + Export */}
+        {/* Right: Viewport controls + Project info + Export + Upgrade */}
         <div className="flex items-center gap-4">
+          {!isPro && (
+            <button
+              onClick={() => setShowProUpgrade(true)}
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+            >
+              <Sparkles size={14} className="text-white" />
+              Upgrade to Pro
+            </button>
+          )}
+
           {/* Viewport lock/unlock + recenter */}
           <div className="flex items-center gap-1">
             <TooltipHint
@@ -253,6 +269,10 @@ export function StudioTopBar({
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}
       />
+
+      {showProUpgrade && (
+        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
+      )}
     </>
   );
 }
