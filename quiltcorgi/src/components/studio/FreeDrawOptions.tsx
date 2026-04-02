@@ -13,7 +13,7 @@ export function FreeDrawOptions() {
 
   return (
     <div>
-      <SectionTitle>Free Draw</SectionTitle>
+      <SectionTitle>Easy Draw</SectionTitle>
       <Checkbox
         label="Smooth Curves"
         checked={freeDrawSmooth}

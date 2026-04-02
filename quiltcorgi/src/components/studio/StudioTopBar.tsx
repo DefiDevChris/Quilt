@@ -79,9 +79,12 @@ export function StudioTopBar({
               </svg>
             </button>
           </TooltipHint>
-          <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
-            QuiltCorgi
-          </span>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="QuiltCorgi Logo" className="h-6 w-auto" />
+            <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
+              QuiltCorgi
+            </span>
+          </div>
         </div>
 
         {/* Center: WorktableSwitcher */}
@@ -89,90 +92,10 @@ export function StudioTopBar({
           <WorktableSwitcher />
         </div>
 
-        {/* Right: Viewport controls + Project info + Export */}
+        {/* Right: Project info + Tools + Export */}
         <div className="flex items-center gap-4">
-          {/* Viewport lock/unlock + recenter */}
-          <div className="flex items-center gap-1">
-            <TooltipHint
-              name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
-              description={
-                isViewportLocked 
-                  ? 'Click to unlock and pan/zoom freely' 
-                  : 'Click to lock viewport to centered fit'
-              }
-              mascot="/mascots&avatars/corgi29.png"
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  useCanvasStore.getState().setViewportLocked(!isViewportLocked)
-                }
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  isViewportLocked 
-                    ? 'hover:bg-surface-container' 
-                    : 'bg-primary/10 hover:bg-primary/20'
-                }`}
-                aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
-              >
-                {isViewportLocked ? (
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <rect
-                      x="4"
-                      y="9"
-                      width="12"
-                      height="8"
-                      rx="2"
-                    />
-                    <path
-                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <rect
-                      x="4"
-                      y="9"
-                      width="12"
-                      height="8"
-                      rx="2"
-                    />
-                    <path
-                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                )}
-              </button>
-            </TooltipHint>
-
-            {/* Quick recenter — only visible when unlocked */}
-            {!isViewportLocked && (
-              <TooltipHint name="Recenter Viewport" description="Snap grid back to center of canvas" mascot="/mascots&avatars/corgi1.png">
-                <button
-                  type="button"
-                  onClick={() => useCanvasStore.getState().centerAndFitViewport()}
-                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
-                  aria-label="Recenter viewport"
-                >
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <circle
-                      cx="10"
-                      cy="10"
-                      r="3"
-                    />
-                    <path
-                      d="M10 3V7M10 13V17M3 10H7M13 10H17"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
-              </TooltipHint>
-            )}
-          </div>
-
           <div className="text-right">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
                 {projectName}
               </div>
@@ -184,62 +107,101 @@ export function StudioTopBar({
               {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
             </div>
           </div>
+
+          <div className="h-6 w-px bg-outline-variant/30" />
+
+          <div className="flex items-center gap-1.5 bg-surface-container/50 p-1 rounded-lg">
+            {/* Viewport lock/unlock */}
+            <TooltipHint
+              name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
+              description={
+                isViewportLocked 
+                  ? 'Click to unlock and pan/zoom freely' 
+                  : 'Click to lock viewport to centered fit'
+              }
+              mascot="/mascots&avatars/corgi29.png"
+            >
+              <button
+                type="button"
+                onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+                  isViewportLocked 
+                    ? 'hover:bg-surface-container-high'
+                    : 'bg-primary/10 hover:bg-primary/20 text-primary'
+                }`}
+                aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
+              >
+                {isViewportLocked ? (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <rect x="4" y="9" width="12" height="8" rx="2" />
+                    <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <rect x="4" y="9" width="12" height="8" rx="2" />
+                    <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7" strokeLinecap="round" />
+                  </svg>
+                )}
+              </button>
+            </TooltipHint>
+
+            {/* Quick recenter */}
+            {!isViewportLocked && (
+              <TooltipHint name="Recenter Viewport" description="Snap grid back to center of canvas" mascot="/mascots&avatars/corgi1.png">
+                <button
+                  type="button"
+                  onClick={() => useCanvasStore.getState().centerAndFitViewport()}
+                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container-high transition-colors text-on-surface/70 hover:text-on-surface"
+                  aria-label="Recenter viewport"
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <circle cx="10" cy="10" r="3" />
+                    <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </TooltipHint>
+            )}
+
+            <div className="h-4 w-px bg-outline-variant/30 mx-0.5" />
+
+            <TooltipHint name="History" description="View and restore previous states" mascot="/mascots&avatars/corgi25.png">
+              <button
+                type="button"
+                onClick={onOpenHistory}
+                aria-label="History"
+                className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M10 7V10L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M5 13L3 11L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </TooltipHint>
+
+            <TooltipHint name="Help" description="View keyboard shortcuts and tutorials" mascot="/mascots&avatars/corgi3.png">
+              <button
+                type="button"
+                onClick={onOpenHelp}
+                aria-label="Help"
+                className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <circle cx="10" cy="13" r="0.75" fill="currentColor" />
+                </svg>
+              </button>
+            </TooltipHint>
+          </div>
+
           <TooltipHint name="Export" description="Export your quilt as PNG, SVG, or PDF" mascot="/mascots&avatars/corgi23.png">
             <button
               type="button"
               onClick={onOpenImageExport}
-              className="bg-on-surface text-white rounded-md px-4 py-[6px] text-[12px] font-semibold tracking-wide hover:opacity-90 transition-opacity"
+              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
-              EXPORT
-            </button>
-          </TooltipHint>
-          <TooltipHint name="History" description="View and restore previous states" mascot="/mascots&avatars/corgi25.png">
-            <button
-              type="button"
-              onClick={onOpenHistory}
-              aria-label="History"
-              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M10 7V10L12 12"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M5 13L3 11L5 9"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </TooltipHint>
-          <TooltipHint name="Help" description="View keyboard shortcuts and tutorials" mascot="/mascots&avatars/corgi3.png">
-            <button
-              type="button"
-              onClick={onOpenHelp}
-              aria-label="Help"
-              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-                <path
-                  d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <circle cx="10" cy="13" r="0.75" fill="currentColor" />
-              </svg>
+              Export
             </button>
           </TooltipHint>
         </div>

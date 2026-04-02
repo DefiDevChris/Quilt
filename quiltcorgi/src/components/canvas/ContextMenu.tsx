@@ -179,9 +179,9 @@ export function ContextMenu() {
           }
           case 'ungroup': {
             if (active.type === 'group') {
-              const items = (active as InstanceType<typeof fabric.Group>).getObjects();
-              (active as InstanceType<typeof fabric.Group>).destroy();
-              canvas.remove(active);
+              const group = active as InstanceType<typeof fabric.Group>;
+              const items = group.removeAll();
+              canvas.remove(group);
               for (const item of items) {
                 canvas.add(item);
               }
@@ -344,7 +344,7 @@ export function ContextMenu() {
 
   if (!position) return null;
 
-  const isMultiSelect = fabricCanvas?.getActiveObjects().length > 1;
+  const isMultiSelect = (fabricCanvas?.getActiveObjects()?.length || 0) > 1;
   const isGroup = fabricCanvas?.getActiveObject()?.type === 'group';
 
   const menuItems = position.hasTarget

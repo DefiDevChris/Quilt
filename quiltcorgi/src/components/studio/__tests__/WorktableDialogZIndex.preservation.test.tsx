@@ -87,16 +87,7 @@ vi.mock('@/hooks/useReferenceImage', () => ({
   })),
 }));
 
-vi.mock('@/hooks/useFussyCut', () => ({
-  useFussyCut: vi.fn(() => ({
-    isOpen: false,
-    target: null,
-    config: { offsetX: 0, offsetY: 0, rotation: 0, scale: 1 },
-    closeDialog: vi.fn(),
-    updateConfig: vi.fn(),
-    applyFussyCut: vi.fn(),
-  })),
-}));
+// vi.mock('@/hooks/useFussyCut') removed due to deleted hook
 
 vi.mock('@/lib/canvas-utils', () => ({
   getPixelsPerUnit: vi.fn(() => 96),
@@ -150,44 +141,6 @@ describe('Property 2: Preservation - Ruler Display and Other Dialogs', () => {
     expect(className).toContain('z-50');
   });
 
-  /**
-   * Test Case 3: FussyCutDialog z-index preservation
-   * 
-   * Validates Requirement 3.1: Other modal dialogs continue to display correctly above all UI
-   * 
-   * Note: FussyCutDialog is closed by default, so we need to mock it as open
-   */
-  it('FussyCutDialog should have z-50 overlay when open (preservation)', () => {
-    // Mock FussyCutDialog as open with a target
-    vi.mocked(require('@/hooks/useFussyCut').useFussyCut).mockReturnValue({
-      isOpen: true,
-      target: {
-        fabricImageUrl: 'test.jpg',
-        patchVertices: [
-          { x: 0, y: 0 },
-          { x: 100, y: 0 },
-          { x: 100, y: 100 },
-          { x: 0, y: 100 },
-        ],
-      },
-      config: { offsetX: 0, offsetY: 0, rotation: 0, scale: 1 },
-      closeDialog: vi.fn(),
-      updateConfig: vi.fn(),
-      applyFussyCut: vi.fn(),
-    });
-    
-    const { container } = render(<FussyCutDialog />);
-    
-    // Find the dialog overlay
-    const dialogOverlay = container.querySelector('.fixed.inset-0');
-    expect(dialogOverlay).toBeTruthy();
-    
-    // Get the className
-    const className = dialogOverlay?.className || '';
-    
-    // Verify dialog has z-50 (this should pass on both unfixed and fixed code)
-    expect(className).toContain('z-50');
-  });
 
   /**
    * Test Case 4: HorizontalRuler rendering preservation
