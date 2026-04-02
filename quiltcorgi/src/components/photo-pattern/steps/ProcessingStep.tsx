@@ -90,7 +90,7 @@ export function ProcessingStep() {
   const pipelineSteps = usePhotoPatternStore((s) => s.pipelineSteps);
   const setPipelineSteps = usePhotoPatternStore((s) => s.setPipelineSteps);
   const setDetectedPieces = usePhotoPatternStore((s) => s.setDetectedPieces);
-  const setCorrectedImage = usePhotoPatternStore((s) => s.setCorrectedImage);
+  const setCorrectedImageRef = usePhotoPatternStore((s) => s.setCorrectedImageRef);
   const setStep = usePhotoPatternStore((s) => s.setStep);
 
   const hasStartedRef = useRef(false);
@@ -113,8 +113,8 @@ export function ProcessingStep() {
         );
 
         setDetectedPieces(result.pieces);
-        if (result.correctedImageData) {
-          setCorrectedImage(result.correctedImageData);
+        if (result.correctedImageRef) {
+          setCorrectedImageRef(result.correctedImageRef);
         }
 
         // Auto-advance after a short delay
@@ -133,7 +133,7 @@ export function ProcessingStep() {
     scanConfig,
     setPipelineSteps,
     setDetectedPieces,
-    setCorrectedImage,
+    setCorrectedImageRef,
     setStep,
   ]);
 

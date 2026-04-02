@@ -7,7 +7,7 @@ import { QUILT_SIZE_PRESETS } from '@/lib/constants';
 
 export function DimensionsStep() {
   const originalImage = usePhotoPatternStore((s) => s.originalImage);
-  const correctedImageData = usePhotoPatternStore((s) => s.correctedImageData);
+  const correctedImageRef = usePhotoPatternStore((s) => s.correctedImageRef);
   const detectedPieces = usePhotoPatternStore((s) => s.detectedPieces);
   const targetWidth = usePhotoPatternStore((s) => s.targetWidth);
   const targetHeight = usePhotoPatternStore((s) => s.targetHeight);
@@ -21,11 +21,11 @@ export function DimensionsStep() {
 
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
-  const imageWidth = correctedImageData
-    ? correctedImageData.width
+  const imageWidth = correctedImageRef
+    ? correctedImageRef.width
     : (originalImage?.naturalWidth ?? 1);
-  const imageHeight = correctedImageData
-    ? correctedImageData.height
+  const imageHeight = correctedImageRef
+    ? correctedImageRef.height
     : (originalImage?.naturalHeight ?? 1);
   const aspectRatio = imageWidth / imageHeight;
 
