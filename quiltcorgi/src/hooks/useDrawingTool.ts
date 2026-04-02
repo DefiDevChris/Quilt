@@ -55,7 +55,7 @@ export function useDrawingTool() {
       if (activeTool === 'select') {
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.getObjects().forEach((obj) => {
+        canvas.getObjects().forEach((obj: any) => {
           // Skip objects that are explicitly marked as non-selectable (like guides)
           if (obj.data?.isGuide || obj.data?.isHelper) return;
           obj.selectable = true;
