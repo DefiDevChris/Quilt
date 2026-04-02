@@ -15,6 +15,7 @@ interface BlockStoreState {
   isLoadingUserBlocks: boolean;
   error: string | null;
   isPanelOpen: boolean;
+  selectedBlockId: string | null;
 
   setSearch: (search: string) => void;
   setCategory: (category: string) => void;
@@ -24,6 +25,7 @@ interface BlockStoreState {
   fetchBlocks: () => Promise<void>;
   fetchUserBlocks: () => Promise<void>;
   deleteUserBlock: (blockId: string) => Promise<boolean>;
+  setSelectedBlockId: (blockId: string | null) => void;
   reset: () => void;
 }
 
@@ -42,6 +44,7 @@ const INITIAL_STATE = {
   isLoadingUserBlocks: false,
   error: null as string | null,
   isPanelOpen: false,
+  selectedBlockId: null as string | null,
 };
 
 export const useBlockStore = create<BlockStoreState>((set, get) => ({
@@ -154,6 +157,10 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
     } catch {
       return false;
     }
+  },
+
+  setSelectedBlockId: (selectedBlockId) => {
+    set({ selectedBlockId });
   },
 
   reset: () => {

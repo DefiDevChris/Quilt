@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
 import type { BlockListItem } from '@/types/block';
 
@@ -7,13 +8,23 @@ interface BlockCardProps {
   block: BlockListItem;
   onPreview: (block: BlockListItem) => void;
   onDragStart: (e: React.DragEvent, block: BlockListItem) => void;
+  isSelected?: boolean;
+  onSelect?: (blockId: string) => void;
 }
 
-export function BlockCard({ block, onPreview, onDragStart }: BlockCardProps) {
+export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect }: BlockCardProps) {
+  const [isDragging, setIsDragging] = React.useState(false);
+
   return (
     <div
-      className={`group relative flex flex-col items-center rounded-lg border border-outline-variant bg-surface p-2 transition-shadow hover:shadow-elevation-1 ${
-        block.isLocked ? 'opacity-70' : 'cursor-grab active:cursor-grabbing'
+      className={`group relative flex flex-col items-center rounded-lg border p-2 transition-all ${
+        block.isLocked
+          ? 'opacity-70 border-outline-variant bg-surface'
+          : isSelected
+            ? 'border-primary bg-primary/10 ring-2 ring-primary/30 cursor-pointer'
+            : isDragging
+              ? 'opacity-50 scale-95 border-primary bg-primary/5'
+              : 'border-outline-variant bg-surface cursor-grab active:cursor-grabbing hover:shadow-elevation-1'
       }`}
       draggable={!block.isLocked}
       onDragStart={(e) => {
@@ -21,9 +32,18 @@ export function BlockCard({ block, onPreview, onDragStart }: BlockCardProps) {
           e.preventDefault();
           return;
         }
+        setIsDragging(true);
         onDragStart(e, block);
       }}
-      onClick={() => onPreview(block)}
+      onDragEnd={() => setIsDragging(false)}
+      onClick={(e) => {
+        if (onSelect && !block.isLocked) {
+          e.stopPropagation();
+          onSelect(block.id);
+        } else {
+          onPreview(block);
+        }
+      }}
     >
       {/* SVG Thumbnail - we use the block ID to fetch SVG on demand */}
       <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded bg-background">
