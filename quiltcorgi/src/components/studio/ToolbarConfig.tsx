@@ -60,26 +60,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'freedraw',
-      label: 'Easy Draw',
-      shortcut: 'D',
-      description: 'Click and hold to draw freehand shapes that snap to grid points',
-      mascot: '/mascots&avatars/corgi25.png',
-      toolType: 'freedraw',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M13.5 3.5L16.5 6.5L6 17L3 17L3 14L13.5 3.5Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-          <path d="M11.5 5.5L14.5 8.5" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    {
       id: 'pan',
       label: 'Pan',
       shortcut: 'H',
