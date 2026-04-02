@@ -7,6 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { Sparkles } from 'lucide-react';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
@@ -14,10 +16,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isAuthenticated = !!user;
+  const isPro = user?.role === 'pro' || user?.role === 'admin';
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -109,12 +113,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isAuthenticated ? (
             <>
               {user?.role === 'free' && (
-                <span className="text-xs font-medium text-primary border border-primary/30 rounded-full px-2.5 py-0.5">
-                  Free
-                </span>
+                <div className="flex items-center gap-2 mr-2">
+                  <span className="text-xs font-medium text-primary border border-primary/30 rounded-full px-2.5 py-0.5 hidden sm:inline-block">
+                    Free
+                  </span>
+                  <button
+                    onClick={() => setShowProUpgrade(true)}
+                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+                  >
+                    <Sparkles size={14} className="text-white" />
+                    Upgrade
+                  </button>
+                </div>
               )}
-              {user?.role === 'pro' && (
-                <span className="text-xs font-medium text-primary bg-primary-container rounded-full px-2.5 py-0.5">
+              {(user?.role === 'pro' || user?.role === 'admin') && (
+                <span className="text-xs font-medium text-primary bg-primary-container rounded-full px-2.5 py-0.5 hidden sm:inline-block">
                   Pro
                 </span>
               )}
@@ -203,6 +216,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main id="main-content" className="relative z-10 p-6">
         {children}
       </main>
+
+      {showProUpgrade && (
+        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
+      )}
     </div>
   );
 }
