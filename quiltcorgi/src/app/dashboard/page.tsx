@@ -21,6 +21,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { PhotoPatternModal } from '@/components/photo-pattern/PhotoPatternModal';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useToast } from '@/components/ui/ToastProvider';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { Sparkles } from 'lucide-react';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -170,17 +172,39 @@ export default function DashboardPage() {
         className="hidden md:block absolute bottom-32 -right-16 pointer-events-none"
       />
 
-      {/* Greeting */}
-      <div className="mb-8">
-        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
-          {greeting}
-        </p>
-        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight">
-          Hello, {displayName}
-        </h1>
+      {/* Greeting and Pro Upgrade Button */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-20">
+        <div>
+          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+            {greeting}
+          </p>
+          <h1 className="text-on-surface text-4xl font-extrabold tracking-tight flex items-center gap-3">
+            Hello, {displayName}
+            {isPro && (
+              <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-xs font-extrabold uppercase tracking-widest rounded-full align-middle">
+                PRO
+              </span>
+            )}
+          </h1>
+        </div>
+
+        {!isPro && !isLoadingAuth && user && (
+          <button
+            onClick={() => setShowProUpgrade(true)}
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
+          >
+            <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
+              <Sparkles size={20} className="text-primary-dark" />
+              <div className="text-left">
+                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">Upgrade to Pro</p>
+                <p className="text-xs font-medium text-secondary leading-none">Unlock AI & Exports</p>
+              </div>
+            </div>
+          </button>
+        )}
       </div>
 
-      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20">
+      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20 relative z-10">
         {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}
         <button
           type="button"
@@ -385,74 +409,7 @@ export default function DashboardPage() {
 
       {/* Pro upgrade modal */}
       {showProUpgrade && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
-          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6 text-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-secondary mx-auto mb-3"
-              aria-hidden="true"
-            >
-              <rect
-                x="5"
-                y="11"
-                width="14"
-                height="10"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M8 11V7a4 4 0 0 1 8 0v4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-            <p className="text-lg font-semibold text-on-surface mb-1">Photo to Pattern</p>
-            <p className="text-sm text-secondary mb-4">
-              This feature requires a Pro subscription. Start at $8/month.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                type="button"
-                onClick={() => setShowProUpgrade(false)}
-                className="rounded-md px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
-              >
-                Maybe Later
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-                    const data = await res.json();
-                    if (data.success && data.data.checkoutUrl) {
-                      window.location.href = data.data.checkoutUrl;
-                    } else {
-                      toast({
-                        type: 'error',
-                        title: 'Checkout failed',
-                        description: data.error ?? 'Unable to start checkout. Please try again.',
-                      });
-                    }
-                  } catch {
-                    toast({
-                      type: 'error',
-                      title: 'Connection error',
-                      description: 'Unable to connect. Please check your connection and try again.',
-                    });
-                  }
-                }}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity"
-              >
-                Upgrade to Pro
-              </button>
-            </div>
-          </div>
-        </div>
+        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
       )}
     </div>
   );
