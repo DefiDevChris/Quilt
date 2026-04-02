@@ -56,6 +56,8 @@ export function useDrawingTool() {
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.getObjects().forEach((obj) => {
+          // Skip objects that are explicitly marked as non-selectable (like guides)
+          if (obj.data?.isGuide || obj.data?.isHelper) return;
           obj.selectable = true;
           obj.evented = true;
         });
@@ -63,13 +65,10 @@ export function useDrawingTool() {
         return;
       }
 
+      // For drawing tools, disable selection but keep objects selectable after creation
       canvas.selection = false;
       canvas.defaultCursor = 'crosshair';
       canvas.discardActiveObject();
-      canvas.getObjects().forEach((obj) => {
-        obj.selectable = false;
-        obj.evented = false;
-      });
       canvas.renderAll();
 
       let isDrawing = false;
@@ -131,11 +130,13 @@ export function useDrawingTool() {
             width: 0,
             height: 0,
             fill: 'transparent',
-            stroke: strokeColor,
-            strokeWidth,
+            stroke: '#00FF00',
+            strokeWidth: 4,
             strokeDashArray: [5, 5],
             selectable: false,
             evented: false,
+            originX: 'left',
+            originY: 'top',
           });
         } else if (activeTool === 'triangle') {
           previewShape = new fabric.Polygon(
@@ -146,8 +147,8 @@ export function useDrawingTool() {
             ],
             {
               fill: 'transparent',
-              stroke: strokeColor,
-              strokeWidth,
+              stroke: '#00FF00',
+              strokeWidth: 4,
               strokeDashArray: [5, 5],
               selectable: false,
               evented: false,
@@ -155,8 +156,8 @@ export function useDrawingTool() {
           );
         } else if (activeTool === 'line') {
           previewShape = new fabric.Line([sx, sy, sx, sy], {
-            stroke: strokeColor,
-            strokeWidth,
+            stroke: '#00FF00',
+            strokeWidth: 4,
             strokeDashArray: [5, 5],
             selectable: false,
             evented: false,
@@ -185,13 +186,13 @@ export function useDrawingTool() {
         if (!isDrawing || !previewShape) return;
 
         if (activeTool === 'rectangle') {
-          const left = Math.min(startX, cx);
-          const top = Math.min(startY, cy);
+          const width = cx - startX;
+          const height = cy - startY;
           previewShape.set({
-            left,
-            top,
-            width: Math.abs(cx - startX),
-            height: Math.abs(cy - startY),
+            left: width >= 0 ? startX : cx,
+            top: height >= 0 ? startY : cy,
+            width: Math.abs(width),
+            height: Math.abs(height),
           });
         } else if (activeTool === 'triangle') {
           const poly = previewShape as InstanceType<typeof fabric.Polygon>;

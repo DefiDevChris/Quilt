@@ -30,6 +30,7 @@ export type ToolType =
   | 'curve'
   | 'ruler'
   | 'easydraw'
+  | 'freedraw'
   | 'text'
   | 'eyedropper'
   | 'spraycan';
@@ -77,6 +78,7 @@ interface CanvasStoreState {
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
   printScale: number;
+  freeDrawSmooth: boolean;
   toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
   clipboard: unknown[];
 
@@ -105,6 +107,7 @@ interface CanvasStoreState {
   setViewportLocked: (locked: boolean) => void;
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
+  setFreeDrawSmooth: (smooth: boolean) => void;
   centerAndFitViewport: () => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
@@ -142,6 +145,7 @@ const INITIAL_STATE = {
   isViewportLocked: true,
   showSeamAllowance: true,
   printScale: 1.0,
+  freeDrawSmooth: false,
   toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
   clipboard: [] as unknown[],
 };
@@ -234,6 +238,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   toggleSeamAllowance: () => set((state) => ({ showSeamAllowance: !state.showSeamAllowance })),
 
   setPrintScale: (scale) => set({ printScale: clamp(scale, 0.1, 2.0) }),
+
+  setFreeDrawSmooth: (smooth) => set({ freeDrawSmooth: smooth }),
 
   centerAndFitViewport: () => {
     const { fabricCanvas, unitSystem } = get();

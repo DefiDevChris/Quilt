@@ -132,6 +132,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       mascot: '/mascots&avatars/corgi10.png',
       group: 'create',
       tier: 'primary',
+      isProFeature: true,
       onClick: callbacks.onOpenPhotoToPattern,
       dataTour: 'photo-to-pattern',
       icon: (
@@ -264,6 +265,27 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             stroke="currentColor"
             strokeWidth="1.4"
             strokeLinecap="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'freedraw',
+      label: 'Free Draw',
+      shortcut: 'D',
+      description: 'Draw freehand shapes that snap to grid points',
+      mascot: '/mascots&avatars/corgi25.png',
+      toolType: 'freedraw',
+      group: 'shapes',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M3 17C3 17 5 12 8 10C11 8 13 9 15 7C17 5 17 3 17 3"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       ),

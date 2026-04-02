@@ -2,6 +2,7 @@
 
 import { useCanvasStore, type WorktableType, type ToolType } from '@/stores/canvasStore';
 import { performUndo, performRedo } from '@/lib/canvas-history';
+import { ZOOM_STEP } from '@/lib/constants';
 
 interface FloatingTool {
   id: string;
@@ -61,6 +62,22 @@ const REDO_ICON = (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
+  </svg>
+);
+
+const ZOOM_IN_ICON = (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+    <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M14.5 14.5L19 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M7 10H13M10 7V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+const ZOOM_OUT_ICON = (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+    <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M14.5 14.5L19 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M7 10H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -223,8 +240,22 @@ export function FloatingToolbar() {
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const undoDepth = useCanvasStore((s) => s.undoStack.length);
+  const zoom = useCanvasStore((s) => s.zoom);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
   const quiltTools = useQuiltFloatingTools();
+
+  const applyZoom = (newZoom: number) => {
+    useCanvasStore.getState().setZoom(newZoom);
+    if (!fabricCanvas) return;
+    const centerX = fabricCanvas.width! / 2;
+    const centerY = fabricCanvas.height! / 2;
+    fabricCanvas.zoomToPoint({ x: centerX, y: centerY } as never, newZoom);
+    fabricCanvas.renderAll();
+  };
+
+  const handleZoomIn = () => applyZoom(zoom + ZOOM_STEP);
+  const handleZoomOut = () => applyZoom(zoom - ZOOM_STEP);
 
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
@@ -305,6 +336,30 @@ export function FloatingToolbar() {
             })}
           </>
         )}
+
+        {/* Zoom controls */}
+        <div className="w-px h-5 bg-outline-variant/25 mx-1" />
+        <button
+          type="button"
+          title="Zoom Out"
+          aria-label="Zoom Out"
+          onClick={handleZoomOut}
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
+        >
+          {ZOOM_OUT_ICON}
+        </button>
+        <span className="text-xs font-mono text-on-surface/50 min-w-[2.5rem] text-center select-none">
+          {Math.round(zoom * 100)}%
+        </span>
+        <button
+          type="button"
+          title="Zoom In"
+          aria-label="Zoom In"
+          onClick={handleZoomIn}
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
+        >
+          {ZOOM_IN_ICON}
+        </button>
       </div>
     </div>
   );

@@ -111,25 +111,29 @@ export function computeLayout(config: LayoutConfig, pxPerUnit: number): LayoutRe
     return { ...EMPTY_RESULT };
   }
 
-  const blockSizePx = config.blockSize * pxPerUnit;
+  // Validate inputs
+  const rows = Math.max(1, Math.min(20, config.rows));
+  const cols = Math.max(1, Math.min(20, config.cols));
+  const blockSize = Math.max(1, Math.min(24, config.blockSize));
+  const blockSizePx = blockSize * pxPerUnit;
 
   let result: LayoutResult;
 
   switch (config.type) {
     case 'grid':
-      result = computeGridLayout(config.rows, config.cols, blockSizePx);
+      result = computeGridLayout(rows, cols, blockSizePx);
       break;
     case 'sashing':
       result = computeSashingLayout(
-        config.rows,
-        config.cols,
+        rows,
+        cols,
         blockSizePx,
-        config.sashing.width * pxPerUnit,
+        Math.max(0.25, config.sashing.width) * pxPerUnit,
         config.sashing
       );
       break;
     case 'on-point':
-      result = computeOnPointLayout(config.rows, config.cols, blockSizePx);
+      result = computeOnPointLayout(rows, cols, blockSizePx);
       break;
     default:
       return { ...EMPTY_RESULT };
@@ -272,115 +276,109 @@ export function computeOnPointLayout(
   const cells: LayoutCell[] = [];
   const settingTriangles: LayoutSettingTriangle[] = [];
 
-  // When a block of side s is rotated 45 degrees, its bounding box is s*sqrt(2).
-  // Blocks are placed so their vertices touch (point-to-point tiling).
-  const cellSize = blockSizePx * Math.SQRT2;
-  const halfCell = cellSize / 2;
+  // Rotated block diagonal = blockSizePx * sqrt(2)
+  const diagonal = blockSizePx * Math.SQRT2;
+  const halfDiagonal = diagonal / 2;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       cells.push({
         row: r,
         col: c,
-        centerX: c * cellSize + halfCell,
-        centerY: r * cellSize + halfCell,
+        centerX: c * diagonal + halfDiagonal,
+        centerY: r * diagonal + halfDiagonal,
         size: blockSizePx,
         rotation: 45,
       });
     }
   }
 
-  const innerWidth = cols * cellSize;
-  const innerHeight = rows * cellSize;
+  const innerWidth = cols * diagonal;
+  const innerHeight = rows * diagonal;
 
-  // Setting triangles along edges — fill the triangular gaps between
-  // the outermost rotated blocks and the rectangular boundary.
-
-  // Top edge triangles (between adjacent top-row blocks)
+  // Top edge setting triangles
   for (let c = 0; c < cols - 1; c++) {
     settingTriangles.push({
       type: 'side',
       points: [
-        { x: c * cellSize + halfCell, y: 0 },
-        { x: (c + 1) * cellSize, y: halfCell },
-        { x: (c + 1) * cellSize + halfCell, y: 0 },
+        { x: (c + 0.5) * diagonal, y: 0 },
+        { x: (c + 1) * diagonal, y: halfDiagonal },
+        { x: (c + 1.5) * diagonal, y: 0 },
       ],
     });
   }
 
-  // Bottom edge triangles
+  // Bottom edge setting triangles
   for (let c = 0; c < cols - 1; c++) {
     settingTriangles.push({
       type: 'side',
       points: [
-        { x: c * cellSize + halfCell, y: innerHeight },
-        { x: (c + 1) * cellSize, y: innerHeight - halfCell },
-        { x: (c + 1) * cellSize + halfCell, y: innerHeight },
+        { x: (c + 0.5) * diagonal, y: innerHeight },
+        { x: (c + 1) * diagonal, y: innerHeight - halfDiagonal },
+        { x: (c + 1.5) * diagonal, y: innerHeight },
       ],
     });
   }
 
-  // Left edge triangles (between adjacent left-column blocks)
+  // Left edge setting triangles
   for (let r = 0; r < rows - 1; r++) {
     settingTriangles.push({
       type: 'side',
       points: [
-        { x: 0, y: r * cellSize + halfCell },
-        { x: halfCell, y: (r + 1) * cellSize },
-        { x: 0, y: (r + 1) * cellSize + halfCell },
+        { x: 0, y: (r + 0.5) * diagonal },
+        { x: halfDiagonal, y: (r + 1) * diagonal },
+        { x: 0, y: (r + 1.5) * diagonal },
       ],
     });
   }
 
-  // Right edge triangles
+  // Right edge setting triangles
   for (let r = 0; r < rows - 1; r++) {
     settingTriangles.push({
       type: 'side',
       points: [
-        { x: innerWidth, y: r * cellSize + halfCell },
-        { x: innerWidth - halfCell, y: (r + 1) * cellSize },
-        { x: innerWidth, y: (r + 1) * cellSize + halfCell },
+        { x: innerWidth, y: (r + 0.5) * diagonal },
+        { x: innerWidth - halfDiagonal, y: (r + 1) * diagonal },
+        { x: innerWidth, y: (r + 1.5) * diagonal },
       ],
     });
   }
 
-  // Corner triangles (4 corners of the quilt)
-  // Top-left
-  settingTriangles.push({
-    type: 'corner',
-    points: [
-      { x: 0, y: 0 },
-      { x: halfCell, y: 0 },
-      { x: 0, y: halfCell },
-    ],
-  });
-  // Top-right
-  settingTriangles.push({
-    type: 'corner',
-    points: [
-      { x: innerWidth, y: 0 },
-      { x: innerWidth - halfCell, y: 0 },
-      { x: innerWidth, y: halfCell },
-    ],
-  });
-  // Bottom-left
-  settingTriangles.push({
-    type: 'corner',
-    points: [
-      { x: 0, y: innerHeight },
-      { x: halfCell, y: innerHeight },
-      { x: 0, y: innerHeight - halfCell },
-    ],
-  });
-  // Bottom-right
-  settingTriangles.push({
-    type: 'corner',
-    points: [
-      { x: innerWidth, y: innerHeight },
-      { x: innerWidth - halfCell, y: innerHeight },
-      { x: innerWidth, y: innerHeight - halfCell },
-    ],
-  });
+  // Corner triangles
+  settingTriangles.push(
+    {
+      type: 'corner',
+      points: [
+        { x: 0, y: 0 },
+        { x: halfDiagonal, y: 0 },
+        { x: 0, y: halfDiagonal },
+      ],
+    },
+    {
+      type: 'corner',
+      points: [
+        { x: innerWidth, y: 0 },
+        { x: innerWidth - halfDiagonal, y: 0 },
+        { x: innerWidth, y: halfDiagonal },
+      ],
+    },
+    {
+      type: 'corner',
+      points: [
+        { x: 0, y: innerHeight },
+        { x: halfDiagonal, y: innerHeight },
+        { x: 0, y: innerHeight - halfDiagonal },
+      ],
+    },
+    {
+      type: 'corner',
+      points: [
+        { x: innerWidth, y: innerHeight },
+        { x: innerWidth - halfDiagonal, y: innerHeight },
+        { x: innerWidth, y: innerHeight - halfDiagonal },
+      ],
+    }
+  );
 
   return {
     cells,
@@ -402,22 +400,17 @@ export function computeBorderStrips(
   pxPerUnit: number
 ): LayoutBorderStrip[] {
   const strips: LayoutBorderStrip[] = [];
-  let offset = 0;
+  let accumulatedOffset = 0;
 
   for (let i = 0; i < borders.length; i++) {
     const border = borders[i];
     const bw = border.width * pxPerUnit;
-    const outerX = -offset - bw;
-    const outerY = -offset - bw;
-    // Strips span the full outer dimension including corners
-    const outerW = innerWidth + 2 * (offset + bw);
-    const outerH = innerHeight + 2 * (offset + bw);
 
-    // Top strip - spans only innerWidth (not corners)
+    // Top strip - spans only innerWidth + accumulated offset (not corners)
     strips.push({
-      x: outerX + bw,
-      y: outerY,
-      width: innerWidth + 2 * offset,
+      x: accumulatedOffset === 0 ? 0 : -accumulatedOffset,
+      y: -accumulatedOffset - bw,
+      width: innerWidth + 2 * accumulatedOffset,
       height: bw,
       color: border.color,
       fabricId: border.fabricId,
@@ -425,11 +418,11 @@ export function computeBorderStrips(
       side: 'top',
     });
 
-    // Bottom strip - spans only innerWidth (not corners)
+    // Bottom strip - spans only innerWidth + accumulated offset (not corners)
     strips.push({
-      x: outerX + bw,
-      y: innerHeight + offset,
-      width: innerWidth + 2 * offset,
+      x: accumulatedOffset === 0 ? 0 : -accumulatedOffset,
+      y: innerHeight + accumulatedOffset,
+      width: innerWidth + 2 * accumulatedOffset,
       height: bw,
       color: border.color,
       fabricId: border.fabricId,
@@ -439,10 +432,10 @@ export function computeBorderStrips(
 
     // Left strip - spans full outer height including corners
     strips.push({
-      x: outerX,
-      y: outerY,
+      x: -accumulatedOffset - bw,
+      y: -accumulatedOffset - bw,
       width: bw,
-      height: outerH,
+      height: innerHeight + 2 * accumulatedOffset + 2 * bw,
       color: border.color,
       fabricId: border.fabricId,
       borderIndex: i,
@@ -451,17 +444,17 @@ export function computeBorderStrips(
 
     // Right strip - spans full outer height including corners
     strips.push({
-      x: innerWidth + offset,
-      y: outerY,
+      x: innerWidth + accumulatedOffset,
+      y: -accumulatedOffset - bw,
       width: bw,
-      height: outerH,
+      height: innerHeight + 2 * accumulatedOffset + 2 * bw,
       color: border.color,
       fabricId: border.fabricId,
       borderIndex: i,
       side: 'right',
     });
 
-    offset += bw;
+    accumulatedOffset += bw;
   }
 
   return strips;

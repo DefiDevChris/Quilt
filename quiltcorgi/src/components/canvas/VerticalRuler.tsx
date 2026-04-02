@@ -109,7 +109,7 @@ export function VerticalRuler() {
   }, [zoom, unitSystem, fabricCanvas, cursorPosition]);
 
   return (
-    <div ref={containerRef} className="w-6 bg-surface border-r border-outline-variant">
+    <div ref={containerRef} className="w-6 bg-surface border-r border-outline-variant z-10">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );

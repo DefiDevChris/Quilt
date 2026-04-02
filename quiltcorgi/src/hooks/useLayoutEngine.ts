@@ -256,14 +256,12 @@ function rearrangeBlocks(_canvas: FabricCanvas, userObjects: FabricObject[], cel
     const obj = sorted[i];
     const cell = cells[i];
 
-    // Position block center at cell center
-    const objW = (obj.width ?? 0) * (obj.scaleX ?? 1);
-    const objH = (obj.height ?? 0) * (obj.scaleY ?? 1);
-
     obj.set({
-      left: cell.centerX - objW / 2,
-      top: cell.centerY - objH / 2,
+      left: cell.centerX,
+      top: cell.centerY,
       angle: cell.rotation,
+      originX: 'center',
+      originY: 'center',
     });
     obj.setCoords();
   }
