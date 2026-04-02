@@ -8,7 +8,7 @@ import { maybeSnap } from '@/lib/canvas-utils';
 export function useFreeDrawTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
-  const freeDrawSmooth = useCanvasStore((s) => s.freeDrawSmooth);
+  const easyDrawMode = useCanvasStore((s) => s.easyDrawMode);
   
   const stateRef = useRef({
     fillColor: '#D4883C',
@@ -17,7 +17,7 @@ export function useFreeDrawTool() {
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
     isSpacePressed: false,
-    freeDrawSmooth: false,
+    easyDrawMode: 'straight' as 'straight' | 'smooth',
   });
 
   useEffect(() => {
@@ -29,13 +29,13 @@ export function useFreeDrawTool() {
         gridSettings: state.gridSettings,
         unitSystem: state.unitSystem,
         isSpacePressed: state.isSpacePressed,
-        freeDrawSmooth: state.freeDrawSmooth,
+        easyDrawMode: state.easyDrawMode,
       };
     });
   }, []);
 
   useEffect(() => {
-    if (!fabricCanvas || activeTool !== 'freedraw') return;
+    if (!fabricCanvas || activeTool !== 'blockbuilder') return;
 
     let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
@@ -202,8 +202,8 @@ export function useFreeDrawTool() {
         const snapped = snapPointsToGrid(simplified);
         
         // Create final path
-        const { strokeColor, strokeWidth, fillColor, freeDrawSmooth } = stateRef.current;
-        const pathData = pointsToPathData(snapped, freeDrawSmooth);
+        const { strokeColor, strokeWidth, fillColor, easyDrawMode } = stateRef.current;
+        const pathData = pointsToPathData(snapped, easyDrawMode === 'smooth');
         
         if (previewPath) canvas.remove(previewPath);
         
@@ -242,5 +242,5 @@ export function useFreeDrawTool() {
       isMounted = false;
       cleanup?.();
     };
-  }, [fabricCanvas, activeTool, freeDrawSmooth]);
+  }, [fabricCanvas, activeTool, easyDrawMode]);
 }

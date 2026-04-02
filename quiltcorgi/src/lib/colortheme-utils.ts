@@ -1,5 +1,5 @@
 /**
- * Colorway Engine — Pure logic for bulk color operations on quilt patches.
+ * ColorTheme Engine — Pure logic for bulk color operations on quilt patches.
  *
  * All functions are pure and immutable: they accept inputs, return new arrays,
  * and never mutate their arguments. No React, no Fabric.js, no DOM dependencies.

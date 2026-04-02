@@ -10,9 +10,9 @@ import {
   suggestPalette,
   type PatchColor,
   type ColorChange,
-} from '@/lib/colorway-utils';
+} from '@/lib/colortheme-utils';
 
-describe('colorway-utils', () => {
+describe('colortheme-utils', () => {
   describe('normalizeColor', () => {
     it('normalizes 3-digit hex', () => {
       expect(normalizeColor('#fff')).toBe('#ffffff');

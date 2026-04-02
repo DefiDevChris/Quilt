@@ -3,7 +3,7 @@ import {
   generateColorScheme,
   suggestPalette,
   type ColorSchemeType,
-} from '@/lib/colorway-utils';
+} from '@/lib/colortheme-utils';
 
 describe('Color Scheme Generation', () => {
   describe('generateColorScheme', () => {

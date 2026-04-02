@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { addBoundarySegments, detectPatches } from '@/lib/easydraw-utils';
+import { addBoundarySegments, detectPatches } from '@/lib/blockbuilder-utils';
 
-describe('easydraw-utils', () => {
+describe('blockbuilder-utils', () => {
   describe('addBoundarySegments', () => {
     it('throws for non-finite grid dimensions', () => {
       expect(() => addBoundarySegments(Infinity, 5)).toThrow('must be finite numbers');

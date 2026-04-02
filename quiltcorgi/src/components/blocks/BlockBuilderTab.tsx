@@ -1,15 +1,15 @@
 'use client';
 
-import { EasyDrawToolbar } from './EasyDrawToolbar';
-import { useEasyDraw } from '@/hooks/useEasyDraw';
+import { BlockBuilderToolbar } from './BlockBuilderToolbar';
+import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import type { DraftTabProps } from './BlockDraftingShell';
 
 const GRID_COLS = 12;
 const GRID_ROWS = 12;
 const CANVAS_SIZE = 400;
 
-export function EasyDrawTab({ draftCanvasRef, fillColor, strokeColor, isOpen }: DraftTabProps) {
-  const { activeMode, setActiveMode, segments, clearSegments, undoSegment } = useEasyDraw({
+export function BlockBuilderTab({ draftCanvasRef, fillColor, strokeColor, isOpen }: DraftTabProps) {
+  const { activeMode, setActiveMode, segments, clearSegments, undoSegment } = useBlockBuilder({
     draftCanvasRef,
     isOpen,
     fillColor,
@@ -20,7 +20,7 @@ export function EasyDrawTab({ draftCanvasRef, fillColor, strokeColor, isOpen }: 
   });
 
   return (
-    <EasyDrawToolbar
+    <BlockBuilderToolbar
       activeMode={activeMode}
       onModeChange={setActiveMode}
       segmentCount={segments.length}

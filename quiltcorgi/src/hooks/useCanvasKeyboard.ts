@@ -161,7 +161,7 @@ export function useCanvasKeyboard() {
             l: 'line',
             h: 'pan',
             o: 'circle',
-            e: 'easydraw',
+            e: 'blockbuilder',
             i: 'eyedropper',
             m: 'ruler',
             u: 'bend',

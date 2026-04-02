@@ -1,28 +1,28 @@
 'use client';
 
-export type EasyDrawMode = 'line' | 'arc' | 'select';
+export type BlockBuilderMode = 'line' | 'arc' | 'select';
 
-interface EasyDrawToolbarProps {
-  activeMode: EasyDrawMode;
-  onModeChange: (mode: EasyDrawMode) => void;
+interface BlockBuilderToolbarProps {
+  activeMode: BlockBuilderMode;
+  onModeChange: (mode: BlockBuilderMode) => void;
   segmentCount: number;
   onClear: () => void;
   onUndoSegment: () => void;
 }
 
-const TOOLS: { id: EasyDrawMode; label: string; icon: string }[] = [
+const TOOLS: { id: BlockBuilderMode; label: string; icon: string }[] = [
   { id: 'select', label: 'Select', icon: '↖' },
   { id: 'line', label: 'Line', icon: '╱' },
   { id: 'arc', label: 'Arc', icon: '◠' },
 ];
 
-export function EasyDrawToolbar({
+export function BlockBuilderToolbar({
   activeMode,
   onModeChange,
   segmentCount,
   onClear,
   onUndoSegment,
-}: EasyDrawToolbarProps) {
+}: BlockBuilderToolbarProps) {
   return (
     <div className="mb-2 flex items-center gap-1">
       {TOOLS.map((tool) => (
