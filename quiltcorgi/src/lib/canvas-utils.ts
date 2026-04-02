@@ -1,11 +1,6 @@
 import { PIXELS_PER_INCH, PIXELS_PER_CM } from '@/lib/constants';
 import type { UnitSystem } from '@/types/canvas';
-
-export interface GridSettings {
-  enabled: boolean;
-  size: number;
-  snapToGrid: boolean;
-}
+import type { GridSettings } from '@/types/grid';
 
 export function getPixelsPerUnit(unitSystem: UnitSystem): number {
   return unitSystem === 'imperial' ? PIXELS_PER_INCH : PIXELS_PER_CM;

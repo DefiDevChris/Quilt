@@ -9,6 +9,7 @@
  */
 
 import type { ParsedBlock } from './pattern-parser-types';
+import { normalizeBlockName as normalizeBlockNameUtil } from './string-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -62,7 +63,7 @@ const CONFIDENCE_NONE = 0.0;
  * and collapses internal runs of whitespace.
  */
 export function normalizeBlockName(name: string): string {
-  return name.toLowerCase().trim().replace(TRAILING_SUFFIXES, '').replace(/\s+/g, ' ').trim();
+  return normalizeBlockNameUtil(name);
 }
 
 /**

@@ -108,24 +108,13 @@ function pathToVertices(pathData: string, pxPerUnit: number): Point[] {
   return removeDuplicateClose(scaled);
 }
 
+import { boundingBoxWithMinMax } from '@/lib/geometry-utils';
+
 /**
  * Build the bounding box for a set of vertices (in inches).
  */
 function computeBoundingBox(vertices: readonly Point[]): PieceGeometry['boundingBox'] {
-  if (vertices.length === 0) {
-    return { width: 0, height: 0, minX: 0, minY: 0 };
-  }
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const p of vertices) {
-    if (p.x < minX) minX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y > maxY) maxY = p.y;
-  }
-  return { width: maxX - minX, height: maxY - minY, minX, minY };
+  return boundingBoxWithMinMax(vertices);
 }
 
 /**

@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import type { Canvas as FabricCanvas } from 'fabric';
 import type { UnitSystem } from '@/types/canvas';
+import type { CanvasGridSettings } from '@/types/grid';
 import {
   ZOOM_DEFAULT,
   ZOOM_MIN,
@@ -47,19 +48,11 @@ export interface FussyCutTarget {
 
 export type WorktableType = 'quilt' | 'block' | 'image' | 'print';
 
-interface GridSettings {
-  enabled: boolean;
-  size: number;
-  snapToGrid: boolean;
-  snapToNodes?: boolean;
-  showBlockGrid?: boolean;
-}
-
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
   zoom: number;
   unitSystem: UnitSystem;
-  gridSettings: GridSettings;
+  gridSettings: CanvasGridSettings;
   selectedObjectIds: string[];
   activeTool: ToolType;
   activeWorktable: WorktableType;
@@ -72,7 +65,7 @@ interface CanvasStoreState {
   redoStack: string[];
   blockDraftingMode: BlockDraftingMode;
   referenceImageOpacity: number;
-  activeColorwayTool: ColorwayTool | null;
+  activeColorwayTool: ColorThemeTool | null;
   fussyCutTarget: FussyCutTarget | null;
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
@@ -84,7 +77,7 @@ interface CanvasStoreState {
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
-  setGridSettings: (settings: Partial<GridSettings>) => void;
+  setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
   setSelectedObjectIds: (ids: string[]) => void;
   setActiveTool: (tool: ToolType) => void;
   setActiveWorktable: (worktable: WorktableType) => void;
@@ -101,7 +94,7 @@ interface CanvasStoreState {
   resetHistory: () => void;
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
-  setActiveColorwayTool: (tool: ColorwayTool | null) => void;
+  setActiveColorwayTool: (tool: ColorThemeTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
   setViewportLocked: (locked: boolean) => void;
   toggleSeamAllowance: () => void;
@@ -139,7 +132,7 @@ const INITIAL_STATE = {
   redoStack: [] as string[],
   blockDraftingMode: 'freeform' as BlockDraftingMode,
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
-  activeColorwayTool: null as ColorwayTool | null,
+  activeColorwayTool: null as ColorThemeTool | null,
   fussyCutTarget: null as FussyCutTarget | null,
   isViewportLocked: true,
   showSeamAllowance: true,

@@ -9,8 +9,32 @@
 
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { formatFraction } from '@/lib/piece-detection-utils';
-export { formatFraction };
+import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
+import { gcd } from '@/lib/math-utils';
+
+/**
+ * Format a decimal inch value as a fractional string rounded to eighths.
+ * e.g. 3.5 -> '3-1/2', 0.25 -> '1/4'
+ */
+export function formatFraction(value: number, separator: string = ' '): string {
+  const rounded = Math.round(value * 8) / 8;
+  const whole = Math.floor(rounded);
+  const eighths = Math.round((rounded - whole) * 8);
+
+  if (eighths === 0) {
+    return `${whole}`;
+  }
+
+  const gcdValue = gcd(eighths, 8);
+  const numerator = eighths / gcdValue;
+  const denominator = 8 / gcdValue;
+
+  if (whole === 0) {
+    return `${numerator}/${denominator}`;
+  }
+
+  return `${whole}${separator}${numerator}/${denominator}`;
+}
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -95,24 +119,15 @@ function extractVertices(svgData: string): Point[] {
   return [];
 }
 
+import { boundingBoxWithMinMax } from '@/lib/geometry-utils';
+
 function boundingBox(points: Point[]): {
   width: number;
   height: number;
   minX: number;
   minY: number;
 } {
-  if (points.length === 0) return { width: 0, height: 0, minX: 0, minY: 0 };
-  let minX = Infinity,
-    minY = Infinity,
-    maxX = -Infinity,
-    maxY = -Infinity;
-  for (const p of points) {
-    if (p.x < minX) minX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y > maxY) maxY = p.y;
-  }
-  return { width: maxX - minX, height: maxY - minY, minX, minY };
+  return boundingBoxWithMinMax(points);
 }
 
 function isApproxEqual(a: number, b: number, tolerance: number = 0.05): boolean {
