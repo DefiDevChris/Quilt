@@ -36,6 +36,7 @@
     "drizzle-orm": "~0.45.2",
     "fabric": "~7.2.0",
     "framer-motion": "^12.38.0",
+    "heic2any": "^0.0.4",
     "isomorphic-dompurify": "^3.7.1",
     "jose": "^6.2.2",
     "js-yaml": "^4.1.1",

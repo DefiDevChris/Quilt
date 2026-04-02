@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -18,11 +18,238 @@ function formatTimestamp(date: Date | null): string {
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
-  
+
   if (seconds < 60) return 'just now';
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();
+}
+
+function ViewMenu({
+  onOpenGridDimensions,
+}: {
+  onOpenGridDimensions?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const gridSettings = useCanvasStore((s) => s.gridSettings);
+  const setGridSettings = useCanvasStore((s) => s.setGridSettings);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const items = [
+    {
+      label: isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport',
+      icon: isViewportLocked ? (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <rect x="4" y="9" width="12" height="8" rx="2" />
+          <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9" strokeLinecap="round" />
+        </svg>
+      ) : (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <rect x="4" y="9" width="12" height="8" rx="2" />
+          <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7" strokeLinecap="round" />
+        </svg>
+      ),
+      action: () => {
+        useCanvasStore.getState().setViewportLocked(!isViewportLocked);
+        setOpen(false);
+      },
+    },
+    {
+      label: 'Recenter Viewport',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <circle cx="10" cy="10" r="3" />
+          <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
+        </svg>
+      ),
+      action: () => {
+        useCanvasStore.getState().centerAndFitViewport();
+        setOpen(false);
+      },
+    },
+    {
+      label: gridSettings.enabled ? 'Hide Grid' : 'Show Grid',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="9" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="3" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="9" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+      action: () => {
+        setGridSettings({ enabled: !gridSettings.enabled });
+        setOpen(false);
+      },
+    },
+    {
+      label: gridSettings.snapToGrid ? 'Disable Snap' : 'Enable Snap',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="14" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="6" cy="14" r="1.5" fill="currentColor" />
+          <circle cx="14" cy="14" r="1.5" fill="currentColor" />
+          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
+        </svg>
+      ),
+      action: () => {
+        setGridSettings({ snapToGrid: !gridSettings.snapToGrid });
+        setOpen(false);
+      },
+    },
+    {
+      label: 'Grid & Dimensions',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+        </svg>
+      ),
+      action: () => {
+        onOpenGridDimensions?.();
+        setOpen(false);
+      },
+    },
+  ];
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        View
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-52 bg-surface border border-outline-variant/20 rounded-xl shadow-elevation-2 py-1.5 z-50">
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={item.action}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
+            >
+              <span className="text-on-surface/50 flex-shrink-0">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ToolsMenu({
+  onOpenHistory,
+  onOpenHelp,
+}: {
+  onOpenHistory?: () => void;
+  onOpenHelp?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const items = [
+    {
+      label: 'History',
+      description: 'View and restore previous states',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M10 7V10L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M5 13L3 11L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      action: () => {
+        onOpenHistory?.();
+        setOpen(false);
+      },
+    },
+    {
+      label: 'Help & Shortcuts',
+      description: 'Keyboard shortcuts and tutorials',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="10" cy="13" r="0.75" fill="currentColor" />
+        </svg>
+      ),
+      action: () => {
+        onOpenHelp?.();
+        setOpen(false);
+      },
+    },
+  ];
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+        Tools
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-56 bg-surface border border-outline-variant/20 rounded-xl shadow-elevation-2 py-1.5 z-50">
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={item.action}
+              className="w-full flex items-start gap-2.5 px-3 py-2.5 hover:bg-surface-container-high transition-colors text-left"
+            >
+              <span className="text-on-surface/50 flex-shrink-0 mt-0.5">{item.icon}</span>
+              <div>
+                <div className="text-[13px] font-medium text-on-surface">{item.label}</div>
+                <div className="text-[11px] text-on-surface/50">{item.description}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface StudioTopBarProps {
@@ -31,6 +258,7 @@ interface StudioTopBarProps {
   readonly onOpenHelp?: () => void;
   readonly onSave?: () => void;
   readonly onOpenHistory?: () => void;
+  readonly onOpenGridDimensions?: () => void;
 }
 
 export function StudioTopBar({
@@ -39,6 +267,7 @@ export function StudioTopBar({
   onOpenHelp,
   onSave,
   onOpenHistory,
+  onOpenGridDimensions,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
@@ -50,7 +279,6 @@ export function StudioTopBar({
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
 
-  // Listen for save success events
   useEffect(() => {
     function handleSaveSuccess() {
       toast({
@@ -65,8 +293,7 @@ export function StudioTopBar({
 
   return (
     <>
-      <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-5">
-        {/* Left: Hamburger + Wordmark */}
+      <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <TooltipHint name="Menu" description="Access project settings and options" mascot="/mascots&avatars/corgi5.png">
             <button
@@ -85,12 +312,14 @@ export function StudioTopBar({
               </svg>
             </button>
           </TooltipHint>
-          <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
-            QuiltCorgi
-          </span>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="QuiltCorgi Logo" className="h-6 w-auto" />
+            <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
+              QuiltCorgi
+            </span>
+          </div>
         </div>
 
-        {/* Center: WorktableSwitcher */}
         <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
           <WorktableSwitcher />
         </div>
@@ -188,7 +417,7 @@ export function StudioTopBar({
           </div>
 
           <div className="text-right">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
                 {projectName}
               </div>
@@ -200,62 +429,21 @@ export function StudioTopBar({
               {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
             </div>
           </div>
+
+          <div className="h-6 w-px bg-outline-variant/30" />
+
+          <div className="flex items-center gap-1">
+            <ViewMenu onOpenGridDimensions={onOpenGridDimensions} />
+            <ToolsMenu onOpenHistory={onOpenHistory} onOpenHelp={onOpenHelp} />
+          </div>
+
           <TooltipHint name="Export" description="Export your quilt as PNG, SVG, or PDF" mascot="/mascots&avatars/corgi23.png">
             <button
               type="button"
               onClick={onOpenImageExport}
-              className="bg-on-surface text-white rounded-md px-4 py-[6px] text-[12px] font-semibold tracking-wide hover:opacity-90 transition-opacity"
+              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
-              EXPORT
-            </button>
-          </TooltipHint>
-          <TooltipHint name="History" description="View and restore previous states" mascot="/mascots&avatars/corgi25.png">
-            <button
-              type="button"
-              onClick={onOpenHistory}
-              aria-label="History"
-              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M10 7V10L12 12"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M5 13L3 11L5 9"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </TooltipHint>
-          <TooltipHint name="Help" description="View keyboard shortcuts and tutorials" mascot="/mascots&avatars/corgi3.png">
-            <button
-              type="button"
-              onClick={onOpenHelp}
-              aria-label="Help"
-              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/45 hover:text-on-surface hover:bg-surface-container transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-                <path
-                  d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <circle cx="10" cy="13" r="0.75" fill="currentColor" />
-              </svg>
+              Export
             </button>
           </TooltipHint>
         </div>

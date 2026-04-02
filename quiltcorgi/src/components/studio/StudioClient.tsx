@@ -362,6 +362,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
         onOpenPdfExport={() => setIsPdfExportOpen(true)}
         onOpenHelp={() => setIsHelpOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
+        onOpenGridDimensions={() => setIsGridDimensionsOpen(true)}
         onSave={handleSave}
       />
 

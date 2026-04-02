@@ -37,7 +37,7 @@ export function ToolIcon({
       aria-pressed={isActive}
       aria-disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      className={`w-11 h-11 flex items-center justify-center rounded-lg transition-all duration-150 ${
+      className={`w-11 flex flex-col items-center justify-center gap-0.5 rounded-lg transition-all duration-150 py-1 ${
         disabled
           ? 'text-outline-variant/30 cursor-default'
           : isActive
@@ -45,15 +45,18 @@ export function ToolIcon({
             : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
       }`}
     >
-      <span aria-hidden="true" className="[&>svg]:w-6 [&>svg]:h-6">
+      <span aria-hidden="true" className="[&>svg]:w-5 [&>svg]:h-5">
         {tool.icon}
+      </span>
+      <span className="text-[9px] leading-tight text-center truncate w-full px-0.5">
+        {tool.label}
       </span>
     </button>
   );
 
   if (tool.description) {
     return (
-      <div {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}>
+      <div className="my-1" {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}>
         <TooltipHint
           name={tool.label}
           shortcut={tool.shortcut}
@@ -69,7 +72,7 @@ export function ToolIcon({
 
   return (
     <div
-      className="relative flex items-center justify-center"
+      className="relative flex items-center justify-center my-1"
       {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}
     >
       {button}

@@ -36,6 +36,34 @@ import {
 
 import type { OpenCV, OpenCVMat } from '../types/opencv-js';
 
+// ============================================================================
+// MatPool — Lightweight WASM memory manager
+// ============================================================================
+
+/**
+ * Registers cv.Mat instances and releases them all in one call.
+ * Prevents WASM memory leaks from missed .delete() calls or early returns.
+ */
+class MatPool {
+  private _mats: OpenCVMat[] = [];
+
+  add(mat: OpenCVMat): OpenCVMat {
+    this._mats.push(mat);
+    return mat;
+  }
+
+  releaseAll(): void {
+    for (const mat of this._mats) {
+      try {
+        mat.delete();
+      } catch {
+        // Mat may already be deleted — skip silently
+      }
+    }
+    this._mats = [];
+  }
+}
+
 let cvInstance: OpenCV | null = null;
 let isLoading = false;
 let loadPromise: Promise<OpenCV> | null = null;
@@ -402,165 +430,142 @@ function runDetection(
     ...mergedOptions,
   };
 
-  const src = new cv.Mat(imageData.height, imageData.width, cv.CV_8UC4);
+  const pool = new MatPool();
+
+  const src = pool.add(new cv.Mat(imageData.height, imageData.width, cv.CV_8UC4));
   src.data.set(imageData.data);
 
-  let gray: OpenCVMat | null = null;
-  let sharpened: OpenCVMat | null = null;
-  let equalized: OpenCVMat | null = null;
-  let topstitchRemoved: OpenCVMat | null = null;
-  let filtered: OpenCVMat | null = null;
-  let thresh: OpenCVMat | null = null;
-  let morphed: OpenCVMat | null = null;
-  let edges: OpenCVMat | null = null;
-  let sobelEdges: OpenCVMat | null = null;
-  let watershedEdges: OpenCVMat | null = null;
-  let hierarchy: OpenCVMat | null = null;
-  let kernel: OpenCVMat | null = null;
-  const contours = new cv.MatVector();
+  const gray = pool.add(new cv.Mat());
+  cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
 
-  try {
-    gray = new cv.Mat();
-    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-
-    let processed = gray;
-    if (opts.enableSharpening) {
-      sharpened = applyLaplacianSharpening(cv, gray, opts.sharpeningIntensity);
-      processed = sharpened;
-    }
-
-    if (opts.enableCLAHE) {
-      equalized = applyCLAHE(cv, processed, opts.claheClipLimit);
-      processed = equalized;
-    }
-
-    if (opts.removeTopstitching) {
-      topstitchRemoved = removeTopstitching(
-        cv,
-        processed,
-        imageData.width,
-        opts.topstitchingKernelFactor
-      );
-      processed = topstitchRemoved;
-    }
-
-    filtered = applyBilateralFilter(cv, processed, opts.sensitivity);
-
-    thresh = new cv.Mat();
-    const blockSize = Math.max(3, Math.round(11 * opts.sensitivity) | 1);
-    cv.adaptiveThreshold(
-      filtered,
-      thresh,
-      255,
-      cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-      cv.THRESH_BINARY_INV,
-      blockSize,
-      2
-    );
-
-    morphed = new cv.Mat();
-    kernel = cv.getStructuringElement(
-      cv.MORPH_RECT,
-      new cv.Size(dynamicKernelSize(imageData.width), dynamicKernelSize(imageData.width))
-    );
-    cv.morphologyEx(thresh, morphed, cv.MORPH_CLOSE, kernel);
-
-    edges = new cv.Mat();
-    if (opts.useSobelGradient) {
-      const { edges: sobelResult } = applySobelGradient(
-        cv,
-        filtered,
-        opts.sobelThresholdMultiplier
-      );
-      sobelEdges = sobelResult;
-      cv.bitwise_or(morphed, sobelEdges, edges);
-    } else {
-      const cannyLow = Math.round(50 / opts.sensitivity);
-      const cannyHigh = Math.round(150 / opts.sensitivity);
-      cv.Canny(morphed, edges, cannyLow, cannyHigh);
-    }
-
-    if (opts.enableWatershed) {
-      const watershedResult = applyWatershed(cv, filtered, edges, opts.watershedDistanceThreshold);
-      watershedEdges = watershedResult;
-      const combined = new cv.Mat();
-      cv.bitwise_or(edges, watershedEdges, combined);
-      edges.delete();
-      edges = combined;
-    }
-
-    hierarchy = new cv.Mat();
-    const retrievalMode = opts.detectNestedShapes ? cv.RETR_CCOMP : cv.RETR_EXTERNAL;
-    cv.findContours(edges, contours, hierarchy, retrievalMode, cv.CHAIN_APPROX_SIMPLE);
-
-    const imageArea = imageData.width * imageData.height;
-    // Apply pieceScale-based area filtering
-    const minAreaRatio = getMinAreaRatioForPieceScale(effectiveConfig.pieceScale);
-    const minArea = minAreaRatio * imageArea;
-    const maxArea = PHOTO_PATTERN_PIECE_MAX_AREA_RATIO * imageArea;
-
-    const rawPieces: DetectedPiece[] = [];
-
-    for (let i = 0; i < contours.size(); i++) {
-      const contour = contours.get(i);
-      const area = cv.contourArea(contour);
-
-      if (area < minArea || area > maxArea) continue;
-
-      const cvRect = cv.boundingRect(contour);
-      const aspectRatio =
-        Math.max(cvRect.width, cvRect.height) / Math.min(cvRect.width, cvRect.height);
-      if (aspectRatio > opts.maxAspectRatio) continue;
-
-      const solidity = calculateSolidity(cv, contour);
-      if (solidity < opts.minSolidity) continue;
-
-      // Pass hasCurvedPiecing to preserve more points for curved edges
-      const vertices = approximatePolygon(cv, contour, undefined, effectiveConfig.hasCurvedPiecing);
-      if (vertices.length < 3) continue;
-
-      const moments = cv.moments(contour);
-      const centroid = {
-        x: moments.m00 !== 0 ? moments.m10 / moments.m00 : 0,
-        y: moments.m00 !== 0 ? moments.m01 / moments.m00 : 0,
-      };
-
-      const { color, value, luminance } = extractColorWithValue(cv, src, contour);
-
-      rawPieces.push({
-        id: `piece-${i}`,
-        contour: Object.freeze(vertices),
-        boundingRect: Object.freeze({
-          x: cvRect.x,
-          y: cvRect.y,
-          width: cvRect.width,
-          height: cvRect.height,
-        }),
-        centroid: Object.freeze({ x: Math.round(centroid.x), y: Math.round(centroid.y) }),
-        areaPx: area,
-        dominantColor: color,
-        colorValue: value,
-        luminance,
-      });
-    }
-
-    return rawPieces;
-  } finally {
-    src.delete();
-    if (gray) gray.delete();
-    if (sharpened) sharpened.delete();
-    if (equalized) equalized.delete();
-    if (topstitchRemoved) topstitchRemoved.delete();
-    if (filtered) filtered.delete();
-    if (thresh) thresh.delete();
-    if (morphed) morphed.delete();
-    if (edges) edges.delete();
-    if (sobelEdges) sobelEdges.delete();
-    if (watershedEdges) watershedEdges.delete();
-    if (hierarchy) hierarchy.delete();
-    contours.delete();
-    if (kernel) kernel.delete();
+  let processed: OpenCVMat = gray;
+  if (opts.enableSharpening) {
+    const sharpened = applyLaplacianSharpening(cv, gray, opts.sharpeningIntensity);
+    pool.add(sharpened);
+    processed = sharpened;
   }
+
+  if (opts.enableCLAHE) {
+    const equalized = applyCLAHE(cv, processed, opts.claheClipLimit);
+    pool.add(equalized);
+    processed = equalized;
+  }
+
+  if (opts.removeTopstitching) {
+    const topstitchRemoved = removeTopstitching(
+      cv,
+      processed,
+      imageData.width,
+      opts.topstitchingKernelFactor
+    );
+    pool.add(topstitchRemoved);
+    processed = topstitchRemoved;
+  }
+
+  const filtered = pool.add(applyBilateralFilter(cv, processed, opts.sensitivity));
+
+  const thresh = pool.add(new cv.Mat());
+  const blockSize = Math.max(3, Math.round(11 * opts.sensitivity) | 1);
+  cv.adaptiveThreshold(
+    filtered,
+    thresh,
+    255,
+    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    cv.THRESH_BINARY_INV,
+    blockSize,
+    2
+  );
+
+  const morphed = pool.add(new cv.Mat());
+  const kernel = cv.getStructuringElement(
+    cv.MORPH_RECT,
+    new cv.Size(dynamicKernelSize(imageData.width), dynamicKernelSize(imageData.width))
+  );
+  pool.add(kernel);
+  cv.morphologyEx(thresh, morphed, cv.MORPH_CLOSE, kernel);
+
+  let edges = pool.add(new cv.Mat());
+  if (opts.useSobelGradient) {
+    const { edges: sobelResult } = applySobelGradient(cv, filtered, opts.sobelThresholdMultiplier);
+    pool.add(sobelResult);
+    cv.bitwise_or(morphed, sobelResult, edges);
+  } else {
+    const cannyLow = Math.round(50 / opts.sensitivity);
+    const cannyHigh = Math.round(150 / opts.sensitivity);
+    cv.Canny(morphed, edges, cannyLow, cannyHigh);
+  }
+
+  if (opts.enableWatershed) {
+    const watershedResult = applyWatershed(
+      cv,
+      filtered,
+      edges,
+      opts.watershedDistanceThreshold
+    );
+    pool.add(watershedResult);
+    const combined = pool.add(new cv.Mat());
+    cv.bitwise_or(edges, watershedResult, combined);
+    edges = combined;
+  }
+
+  const hierarchy = pool.add(new cv.Mat());
+  const contours = new cv.MatVector();
+  const retrievalMode = opts.detectNestedShapes ? cv.RETR_CCOMP : cv.RETR_EXTERNAL;
+  cv.findContours(edges, contours, hierarchy, retrievalMode, cv.CHAIN_APPROX_SIMPLE);
+
+  const imageArea = imageData.width * imageData.height;
+  const minAreaRatio = getMinAreaRatioForPieceScale(effectiveConfig.pieceScale);
+  const minArea = minAreaRatio * imageArea;
+  const maxArea = PHOTO_PATTERN_PIECE_MAX_AREA_RATIO * imageArea;
+
+  const rawPieces: DetectedPiece[] = [];
+
+  for (let i = 0; i < contours.size(); i++) {
+    const contour = contours.get(i);
+    const area = cv.contourArea(contour);
+
+    if (area < minArea || area > maxArea) continue;
+
+    const cvRect = cv.boundingRect(contour);
+    const aspectRatio =
+      Math.max(cvRect.width, cvRect.height) / Math.min(cvRect.width, cvRect.height);
+    if (aspectRatio > opts.maxAspectRatio) continue;
+
+    const solidity = calculateSolidity(cv, contour);
+    if (solidity < opts.minSolidity) continue;
+
+    const vertices = approximatePolygon(cv, contour, undefined, effectiveConfig.hasCurvedPiecing);
+    if (vertices.length < 3) continue;
+
+    const moments = cv.moments(contour);
+    const centroid = {
+      x: moments.m00 !== 0 ? moments.m10 / moments.m00 : 0,
+      y: moments.m00 !== 0 ? moments.m01 / moments.m00 : 0,
+    };
+
+    const { color, value, luminance } = extractColorWithValue(cv, src, contour);
+
+    rawPieces.push({
+      id: `piece-${i}`,
+      contour: Object.freeze(vertices),
+      boundingRect: Object.freeze({
+        x: cvRect.x,
+        y: cvRect.y,
+        width: cvRect.width,
+        height: cvRect.height,
+      }),
+      centroid: Object.freeze({ x: Math.round(centroid.x), y: Math.round(centroid.y) }),
+      areaPx: area,
+      dominantColor: color,
+      colorValue: value,
+      luminance,
+    });
+  }
+
+  pool.releaseAll();
+  contours.delete();
+
+  return rawPieces;
 }
 
 // ============================================================================

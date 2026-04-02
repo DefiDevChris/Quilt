@@ -79,7 +79,7 @@ describe('photoPatternStore', () => {
     expect(state.lockAspectRatio).toBe(true);
     expect(state.originalImage).toBeNull();
     expect(state.originalImageUrl).toBe('');
-    expect(state.correctedImageData).toBeNull();
+    expect(state.correctedImageRef).toBeNull();
     expect(state.perspectiveCorners).toBeNull();
     expect(state.detectedPieces).toEqual([]);
     expect(state.pipelineSteps).toEqual([]);

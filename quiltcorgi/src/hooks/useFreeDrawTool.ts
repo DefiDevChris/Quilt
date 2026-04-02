@@ -181,7 +181,7 @@ export function useFreeDrawTool() {
         
         // Update preview with raw points
         const pathData = pointsToPathData(rawPoints, false);
-        previewPath.set({ path: fabric.util.makePathSimpler(pathData) as any });
+        previewPath.set({ path: pathData as any });
         canvas.renderAll();
       }
 

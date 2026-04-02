@@ -17,7 +17,7 @@
 
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { WorktableSwitcher } from '../WorktableSwitcher';
 import { HorizontalRuler } from '../../canvas/HorizontalRuler';
 import { VerticalRuler } from '../../canvas/VerticalRuler';
@@ -128,7 +128,9 @@ describe('Property 1: Bug Condition - Worktable Dialogs Appear Above Rulers', ()
     // Click the "+" button to open NewWorktableDialog
     const addButton = container.querySelector('button[aria-label="Add worktable"]') as HTMLButtonElement;
     expect(addButton).toBeTruthy();
-    addButton?.click();
+    act(() => {
+      addButton?.click();
+    });
     
     // Find the dialog overlay
     const dialogOverlay = container.querySelector('.fixed.inset-0');

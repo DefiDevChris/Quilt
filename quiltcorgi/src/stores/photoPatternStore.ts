@@ -18,23 +18,29 @@ import {
 } from '@/lib/constants';
 import { terminateDetectionWorker } from '@/lib/photo-pattern-utils';
 
+/**
+ * Stores a lightweight reference to the corrected image instead of raw ImageData.
+ * The corrected image is converted to a Blob URL to avoid Zustand state bloat.
+ */
+interface CorrectedImageRef {
+  /** Object URL pointing to the corrected image blob */
+  url: string;
+  /** Original width in pixels */
+  width: number;
+  /** Original height in pixels */
+  height: number;
+}
+
 interface PhotoPatternState {
   step: PhotoPatternStep;
   isModalOpen: boolean;
-  /**
-   * WARNING: Storing HTMLImageElement in Zustand state is an anti-pattern
-   * as DOM objects break serialization and time-travel debugging.
-   * Kept for pragmatic image processing workflow; consider using React
-   * context or refs for future refactoring.
-   */
   originalImage: HTMLImageElement | null;
   originalImageUrl: string;
   /**
-   * WARNING: Storing ImageData in Zustand state is an anti-pattern
-   * as it can be very large (width×height×4 bytes) and breaks serialization.
-   * Consider processing in a Web Worker or using refs instead.
+   * Lightweight reference to the corrected image (Blob URL + dimensions).
+   * Previously stored raw ImageData which caused severe React reconciliation lag.
    */
-  correctedImageData: ImageData | null;
+  correctedImageRef: CorrectedImageRef | null;
   perspectiveCorners: [Point2D, Point2D, Point2D, Point2D] | null;
   detectedPieces: readonly DetectedPiece[];
   pipelineSteps: readonly PipelineStep[];
@@ -44,17 +50,13 @@ interface PhotoPatternState {
   seamAllowance: 0.25 | 0.375;
   lockAspectRatio: boolean;
   scaledPieces: readonly ScaledPiece[];
-  /**
-   * Scan configuration / Quilt Profile settings.
-   * These "priors" help the CV engine make better decisions.
-   */
   scanConfig: QuiltDetectionConfig;
 
   openModal: () => void;
   closeModal: () => void;
   setStep: (step: PhotoPatternStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
-  setCorrectedImage: (data: ImageData) => void;
+  setCorrectedImageRef: (ref: CorrectedImageRef) => void;
   setPerspectiveCorners: (corners: [Point2D, Point2D, Point2D, Point2D]) => void;
   setDetectedPieces: (pieces: readonly DetectedPiece[]) => void;
   setPipelineSteps: (steps: readonly PipelineStep[]) => void;
@@ -72,7 +74,7 @@ const initialState = {
   isModalOpen: false,
   originalImage: null as HTMLImageElement | null,
   originalImageUrl: '',
-  correctedImageData: null as ImageData | null,
+  correctedImageRef: null as CorrectedImageRef | null,
   perspectiveCorners: null as [Point2D, Point2D, Point2D, Point2D] | null,
   detectedPieces: [] as readonly DetectedPiece[],
   pipelineSteps: [] as readonly PipelineStep[],
@@ -85,24 +87,40 @@ const initialState = {
   scanConfig: DEFAULT_QUILT_DETECTION_CONFIG,
 };
 
+/**
+ * Revokes a Blob URL if it exists.
+ */
+function revokeUrl(url: string | undefined | null): void {
+  if (url && url.startsWith('blob:')) {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
   ...initialState,
 
   openModal: () => set({ isModalOpen: true }),
 
   closeModal: () => {
-    const { originalImageUrl } = get();
-    if (originalImageUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(originalImageUrl);
-    }
+    const { originalImageUrl, correctedImageRef } = get();
+    revokeUrl(originalImageUrl);
+    revokeUrl(correctedImageRef?.url);
     set({ ...initialState, isModalOpen: false });
   },
 
   setStep: (step) => set({ step }),
 
-  setOriginalImage: (img, url) => set({ originalImage: img, originalImageUrl: url }),
+  setOriginalImage: (img, url) => {
+    // Revoke previous URL to prevent memory leaks
+    revokeUrl(get().originalImageUrl);
+    set({ originalImage: img, originalImageUrl: url });
+  },
 
-  setCorrectedImage: (data) => set({ correctedImageData: data }),
+  setCorrectedImageRef: (ref) => {
+    // Revoke previous corrected image URL to prevent memory leaks
+    revokeUrl(get().correctedImageRef?.url);
+    set({ correctedImageRef: ref });
+  },
 
   setPerspectiveCorners: (corners) => set({ perspectiveCorners: corners }),
 
@@ -123,10 +141,9 @@ export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
   setScanConfig: (config) => set({ scanConfig: config }),
 
   reset: () => {
-    const { originalImageUrl } = get();
-    if (originalImageUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(originalImageUrl);
-    }
+    const { originalImageUrl, correctedImageRef } = get();
+    revokeUrl(originalImageUrl);
+    revokeUrl(correctedImageRef?.url);
     terminateDetectionWorker();
     set({ ...initialState });
   },

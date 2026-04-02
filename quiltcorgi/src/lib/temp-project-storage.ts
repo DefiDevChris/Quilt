@@ -16,6 +16,7 @@ export interface TempProjectData {
   fabricPresets: Array<{ id: string; name: string; imageUrl: string }>;
   canvasWidth: number;
   canvasHeight: number;
+  worktables: Array<Record<string, unknown>>;
   savedAt: number;
   expiresAt: number;
 }

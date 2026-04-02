@@ -12,7 +12,7 @@ import {
 
 export function ResultsStep() {
   const originalImage = usePhotoPatternStore((s) => s.originalImage);
-  const correctedImageData = usePhotoPatternStore((s) => s.correctedImageData);
+  const correctedImageRef = usePhotoPatternStore((s) => s.correctedImageRef);
   const detectedPieces = usePhotoPatternStore((s) => s.detectedPieces);
   const sensitivity = usePhotoPatternStore((s) => s.sensitivity);
   const setSensitivity = usePhotoPatternStore((s) => s.setSensitivity);
@@ -30,63 +30,56 @@ export function ResultsStep() {
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const imageSource = correctedImageData ?? null;
-    if (!imageSource && !originalImage) return;
+    // Use Blob URL via an Image element, or fall back to originalImage
+    const draw = (imgSource: HTMLImageElement, w: number, h: number) => {
+      const containerRect = container.getBoundingClientRect();
+      const fitScale = Math.min(containerRect.width / w, containerRect.height / h, 1);
 
-    const imgWidth = imageSource ? imageSource.width : originalImage!.naturalWidth;
-    const imgHeight = imageSource ? imageSource.height : originalImage!.naturalHeight;
+      canvas.width = containerRect.width;
+      canvas.height = containerRect.height;
 
-    const containerRect = container.getBoundingClientRect();
-    const fitScale = Math.min(containerRect.width / imgWidth, containerRect.height / imgHeight, 1);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    canvas.width = containerRect.width;
-    canvas.height = containerRect.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+      const drawX = (containerRect.width - w * fitScale) / 2;
+      const drawY = (containerRect.height - h * fitScale) / 2;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(imgSource, drawX, drawY, w * fitScale, h * fitScale);
 
-    const drawX = (containerRect.width - imgWidth * fitScale) / 2;
-    const drawY = (containerRect.height - imgHeight * fitScale) / 2;
+      // Draw piece contours
+      ctx.save();
+      ctx.strokeStyle = PHOTO_PATTERN_OVERLAY_COLOR;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = PHOTO_PATTERN_OVERLAY_OPACITY;
 
-    // Draw the image
-    if (imageSource) {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = imageSource.width;
-      tempCanvas.height = imageSource.height;
-      const tempCtx = tempCanvas.getContext('2d');
-      if (tempCtx) {
-        tempCtx.putImageData(imageSource, 0, 0);
-        ctx.drawImage(tempCanvas, drawX, drawY, imgWidth * fitScale, imgHeight * fitScale);
+      for (const piece of detectedPieces) {
+        if (piece.contour.length < 2) continue;
+
+        ctx.beginPath();
+        const first = piece.contour[0];
+        ctx.moveTo(first.x * fitScale + drawX, first.y * fitScale + drawY);
+
+        for (let i = 1; i < piece.contour.length; i++) {
+          const pt = piece.contour[i];
+          ctx.lineTo(pt.x * fitScale + drawX, pt.y * fitScale + drawY);
+        }
+        ctx.closePath();
+        ctx.stroke();
       }
+
+      ctx.restore();
+    };
+
+    if (correctedImageRef) {
+      const img = new Image();
+      img.onload = () => draw(img, correctedImageRef.width, correctedImageRef.height);
+      img.src = correctedImageRef.url;
     } else if (originalImage) {
-      ctx.drawImage(originalImage, drawX, drawY, imgWidth * fitScale, imgHeight * fitScale);
+      draw(originalImage, originalImage.naturalWidth, originalImage.naturalHeight);
     }
-
-    // Draw piece contours
-    ctx.save();
-    ctx.strokeStyle = PHOTO_PATTERN_OVERLAY_COLOR;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = PHOTO_PATTERN_OVERLAY_OPACITY;
-
-    for (const piece of detectedPieces) {
-      if (piece.contour.length < 2) continue;
-
-      ctx.beginPath();
-      const first = piece.contour[0];
-      ctx.moveTo(first.x * fitScale + drawX, first.y * fitScale + drawY);
-
-      for (let i = 1; i < piece.contour.length; i++) {
-        const pt = piece.contour[i];
-        ctx.lineTo(pt.x * fitScale + drawX, pt.y * fitScale + drawY);
-      }
-      ctx.closePath();
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  }, [originalImage, correctedImageData, detectedPieces]);
+  }, [originalImage, correctedImageRef, detectedPieces]);
 
   // Debounced sensitivity change triggers re-scan
   const handleSensitivityChange = useCallback(

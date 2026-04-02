@@ -79,6 +79,7 @@ interface CanvasStoreState {
   showSeamAllowance: boolean;
   printScale: number;
   freeDrawSmooth: boolean;
+  easyDrawMode: 'straight' | 'smooth';
   toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
   clipboard: unknown[];
 
@@ -108,6 +109,7 @@ interface CanvasStoreState {
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
   setFreeDrawSmooth: (smooth: boolean) => void;
+  setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: () => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
@@ -146,6 +148,7 @@ const INITIAL_STATE = {
   showSeamAllowance: true,
   printScale: 1.0,
   freeDrawSmooth: false,
+  easyDrawMode: 'straight' as const,
   toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
   clipboard: [] as unknown[],
 };
@@ -240,6 +243,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setPrintScale: (scale) => set({ printScale: clamp(scale, 0.1, 2.0) }),
 
   setFreeDrawSmooth: (smooth) => set({ freeDrawSmooth: smooth }),
+
+  setEasyDrawMode: (mode) => set({ easyDrawMode: mode }),
 
   centerAndFitViewport: () => {
     const { fabricCanvas, unitSystem } = get();
