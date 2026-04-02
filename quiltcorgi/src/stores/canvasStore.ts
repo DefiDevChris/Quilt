@@ -33,7 +33,8 @@ export type ToolType =
   | 'freedraw'
   | 'text'
   | 'eyedropper'
-  | 'spraycan';
+  | 'spraycan'
+  | 'bend';
 
 export type BlockDraftingMode = 'freeform' | 'easydraw' | 'applique';
 

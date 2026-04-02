@@ -8,6 +8,7 @@ import { useBezierCurveTool } from '@/hooks/useBezierCurveTool';
 import { useFreeDrawTool } from '@/hooks/useFreeDrawTool';
 import { useEasyDrawCanvas } from '@/hooks/useEasyDrawCanvas';
 import { useCurveEdit } from '@/hooks/useCurveEdit';
+import { useEdgeBendTool } from '@/hooks/useEdgeBendTool';
 import { useCanvasZoomPan } from '@/hooks/useCanvasZoomPan';
 import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -32,6 +33,7 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useFreeDrawTool();
   useEasyDrawCanvas();
   useCurveEdit();
+  useEdgeBendTool();
   useCanvasZoomPan();
   useCanvasKeyboard();
   useLayoutEngine();
