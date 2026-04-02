@@ -45,7 +45,7 @@ export function useDrawingTool() {
       // Tools handled by their own hooks — exit early
       if (
         activeTool === 'text' ||
-        activeTool === 'easydraw' ||
+        activeTool === 'blockbuilder' ||
         activeTool === 'eyedropper' ||
         activeTool === 'spraycan'
       ) {

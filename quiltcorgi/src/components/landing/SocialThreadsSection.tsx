@@ -332,7 +332,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:brightness-95 transition-all"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

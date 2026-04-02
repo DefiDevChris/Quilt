@@ -11,9 +11,9 @@ import {
   type Segment,
   type ArcSegment,
   type Patch,
-} from '@/lib/easydraw-utils';
+} from '@/lib/blockbuilder-utils';
 
-describe('easydraw-utils', () => {
+describe('blockbuilder-utils', () => {
   describe('normalizeSegment', () => {
     it('orders points by row first, then col', () => {
       const seg: Segment = { from: { row: 2, col: 0 }, to: { row: 0, col: 0 } };

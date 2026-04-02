@@ -400,7 +400,7 @@ export function OnboardingForm() {
                   setUploadedImage(null);
                   setUploadedFile(null);
                 }}
-                className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${
+                className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-150 hover:shadow-elevation-4 hover:brightness-95 ${
                   selectedCorgi === corgi.id
                     ? 'border-primary shadow-[var(--shadow-elevation-2)] ring-2 ring-primary/30'
                     : 'border-outline-variant/20 hover:border-outline-variant/40'

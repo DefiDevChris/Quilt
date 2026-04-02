@@ -3,24 +3,24 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 
-export type EasyDrawMode = 'straight' | 'smooth';
+export type BlockBuilderMode = 'straight' | 'smooth';
 
-export function EasyDrawOptions() {
+export function BlockBuilderOptions() {
   const activeTool = useCanvasStore((s) => s.activeTool);
-  const easyDrawMode = useCanvasStore((s) => s.easyDrawMode);
-  const setEasyDrawMode = useCanvasStore((s) => s.setEasyDrawMode);
+  const blockBuilderMode = useCanvasStore((s) => s.blockBuilderMode);
+  const setBlockBuilderMode = useCanvasStore((s) => s.setBlockBuilderMode);
 
-  if (activeTool !== 'easydraw') return null;
+  if (activeTool !== 'blockbuilder') return null;
 
   return (
     <div>
-      <SectionTitle>Easy Draw</SectionTitle>
+      <SectionTitle>Block Builder</SectionTitle>
       <div className="flex gap-1 mb-3">
         <button
           type="button"
-          onClick={() => setEasyDrawMode('straight')}
+          onClick={() => setBlockBuilderMode('straight')}
           className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            easyDrawMode === 'straight'
+            blockBuilderMode === 'straight'
               ? 'bg-primary text-white'
               : 'bg-surface-container text-on-surface/60 hover:text-on-surface'
           }`}
@@ -29,9 +29,9 @@ export function EasyDrawOptions() {
         </button>
         <button
           type="button"
-          onClick={() => setEasyDrawMode('smooth')}
+          onClick={() => setBlockBuilderMode('smooth')}
           className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            easyDrawMode === 'smooth'
+            blockBuilderMode === 'smooth'
               ? 'bg-primary text-white'
               : 'bg-surface-container text-on-surface/60 hover:text-on-surface'
           }`}
@@ -40,7 +40,7 @@ export function EasyDrawOptions() {
         </button>
       </div>
       <p className="text-[11px] text-on-surface/60">
-        {easyDrawMode === 'straight'
+        {blockBuilderMode === 'straight'
           ? 'Click and drag to draw. Path snaps to grid points with straight segments and auto-closes into a shape.'
           : 'Click and drag to draw. Path snaps to grid with smooth curves and auto-closes into a shape.'}
       </p>

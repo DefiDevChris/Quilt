@@ -2,8 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useColorwayTool } from '@/hooks/useColorwayTool';
-import { generateColorScheme, type ColorSchemeType } from '@/lib/colorway-utils';
+import { useColorThemeTool } from '@/hooks/useColorThemeTool';
+import { generateColorScheme, type ColorSchemeType } from '@/lib/colortheme-utils';
 
 const DEFAULT_PALETTE = [
   '#D4883C',
@@ -25,7 +25,7 @@ const COLOR_SCHEMES: Array<{ id: ColorSchemeType; label: string }> = [
   { id: 'tetradic', label: 'Tetradic' },
 ];
 
-export function ColorwayTools() {
+export function ColorThemeTools() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [swapColorA, setSwapColorA] = useState('#D4883C');
   const [swapColorB, setSwapColorB] = useState('#2E4057');
@@ -34,7 +34,7 @@ export function ColorwayTools() {
   const [baseColor, setBaseColor] = useState('#D4883C');
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
-  const { executeSwap, executeRandomize } = useColorwayTool();
+  const { executeSwap, executeRandomize } = useColorThemeTool();
 
   const handleSpraycan = useCallback(() => {
     setActiveTool(activeTool === 'spraycan' ? 'select' : 'spraycan');

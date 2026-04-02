@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { EasyDrawMode } from '@/components/blocks/EasyDrawToolbar';
+import type { BlockBuilderMode } from '@/components/blocks/BlockBuilderToolbar';
 import {
   detectPatches,
   gridPointToPixel,
   type Segment,
   type DrawSegment,
   type Patch,
-} from '@/lib/easydraw-utils';
+} from '@/lib/blockbuilder-utils';
 
-interface UseEasyDrawOptions {
+interface UseBlockBuilderOptions {
   draftCanvasRef: React.MutableRefObject<unknown>;
   isOpen: boolean;
   fillColor: string;
@@ -20,9 +20,9 @@ interface UseEasyDrawOptions {
   canvasSize: number;
 }
 
-interface UseEasyDrawReturn {
-  activeMode: EasyDrawMode;
-  setActiveMode: (mode: EasyDrawMode) => void;
+interface UseBlockBuilderReturn {
+  activeMode: BlockBuilderMode;
+  setActiveMode: (mode: BlockBuilderMode) => void;
   segments: readonly DrawSegment[];
   patches: readonly Patch[];
   clearSegments: () => void;
@@ -49,7 +49,7 @@ const PATCH_COLORS = [
   '#cd853f',
 ];
 
-export function useEasyDraw({
+export function useBlockBuilder({
   draftCanvasRef,
   isOpen,
   fillColor,
@@ -57,8 +57,8 @@ export function useEasyDraw({
   gridCols,
   gridRows,
   canvasSize,
-}: UseEasyDrawOptions): UseEasyDrawReturn {
-  const [activeMode, setActiveMode] = useState<EasyDrawMode>('line');
+}: UseBlockBuilderOptions): UseBlockBuilderReturn {
+  const [activeMode, setActiveMode] = useState<BlockBuilderMode>('line');
   const [segments, setSegments] = useState<readonly DrawSegment[]>([]);
   const [patches, setPatches] = useState<readonly Patch[]>([]);
   const segmentsRef = useRef(segments);

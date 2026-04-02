@@ -198,7 +198,7 @@ describe('canvasStore', () => {
   });
 
   describe('extended ToolType', () => {
-    const newToolTypes: ToolType[] = ['easydraw', 'text', 'eyedropper', 'spraycan'];
+    const newToolTypes: ToolType[] = ['blockbuilder', 'text', 'eyedropper', 'spraycan'];
 
     it.each(newToolTypes)('accepts new tool type: %s', (toolType) => {
       useCanvasStore.getState().setActiveTool(toolType);
@@ -226,9 +226,9 @@ describe('canvasStore', () => {
       expect(useCanvasStore.getState().blockDraftingMode).toBe('freeform');
     });
 
-    it('can be set to easydraw', () => {
-      useCanvasStore.getState().setBlockDraftingMode('easydraw');
-      expect(useCanvasStore.getState().blockDraftingMode).toBe('easydraw');
+    it('can be set to blockbuilder', () => {
+      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
+      expect(useCanvasStore.getState().blockDraftingMode).toBe('blockbuilder');
     });
 
     it('can be set to applique', () => {
@@ -238,10 +238,10 @@ describe('canvasStore', () => {
 
     it('updates immutably (does not mutate previous state snapshot)', () => {
       const before = useCanvasStore.getState();
-      useCanvasStore.getState().setBlockDraftingMode('easydraw');
+      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
       const after = useCanvasStore.getState();
       expect(before.blockDraftingMode).toBe('freeform');
-      expect(after.blockDraftingMode).toBe('easydraw');
+      expect(after.blockDraftingMode).toBe('blockbuilder');
     });
   });
 
@@ -266,35 +266,35 @@ describe('canvasStore', () => {
     });
   });
 
-  describe('activeColorwayTool', () => {
+  describe('activeColorThemeTool', () => {
     it('defaults to null', () => {
-      expect(useCanvasStore.getState().activeColorwayTool).toBeNull();
+      expect(useCanvasStore.getState().activeColorThemeTool).toBeNull();
     });
 
     it('can be set to spraycan', () => {
-      useCanvasStore.getState().setActiveColorwayTool('spraycan');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('spraycan');
+      useCanvasStore.getState().setActiveColorThemeTool('spraycan');
+      expect(useCanvasStore.getState().activeColorThemeTool).toBe('spraycan');
     });
 
     it('can be set to swap', () => {
-      useCanvasStore.getState().setActiveColorwayTool('swap');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('swap');
+      useCanvasStore.getState().setActiveColorThemeTool('swap');
+      expect(useCanvasStore.getState().activeColorThemeTool).toBe('swap');
     });
 
     it('can be set to randomize', () => {
-      useCanvasStore.getState().setActiveColorwayTool('randomize');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('randomize');
+      useCanvasStore.getState().setActiveColorThemeTool('randomize');
+      expect(useCanvasStore.getState().activeColorThemeTool).toBe('randomize');
     });
 
     it('can be set to eyedropper', () => {
-      useCanvasStore.getState().setActiveColorwayTool('eyedropper');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('eyedropper');
+      useCanvasStore.getState().setActiveColorThemeTool('eyedropper');
+      expect(useCanvasStore.getState().activeColorThemeTool).toBe('eyedropper');
     });
 
     it('can be cleared to null', () => {
-      useCanvasStore.getState().setActiveColorwayTool('spraycan');
-      useCanvasStore.getState().setActiveColorwayTool(null);
-      expect(useCanvasStore.getState().activeColorwayTool).toBeNull();
+      useCanvasStore.getState().setActiveColorThemeTool('spraycan');
+      useCanvasStore.getState().setActiveColorThemeTool(null);
+      expect(useCanvasStore.getState().activeColorThemeTool).toBeNull();
     });
   });
 

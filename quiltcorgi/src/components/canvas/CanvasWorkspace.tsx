@@ -6,7 +6,7 @@ import { useCanvasInit } from '@/hooks/useCanvasInit';
 import { useDrawingTool } from '@/hooks/useDrawingTool';
 import { useBezierCurveTool } from '@/hooks/useBezierCurveTool';
 import { useFreeDrawTool } from '@/hooks/useFreeDrawTool';
-import { useEasyDrawCanvas } from '@/hooks/useEasyDrawCanvas';
+import { useBlockBuilderCanvas } from '@/hooks/useBlockBuilderCanvas';
 import { useCurveEdit } from '@/hooks/useCurveEdit';
 import { useCanvasZoomPan } from '@/hooks/useCanvasZoomPan';
 import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
@@ -14,7 +14,7 @@ import { useAutoSave } from '@/hooks/useAutoSave';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useLayoutEngine } from '@/hooks/useLayoutEngine';
 import { useTextTool } from '@/hooks/useTextTool';
-import { useColorwayTool } from '@/hooks/useColorwayTool';
+import { useColorThemeTool } from '@/hooks/useColorThemeTool';
 import { usePuzzleView } from '@/hooks/usePuzzleView';
 
 interface CanvasWorkspaceProps {
@@ -30,13 +30,13 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useDrawingTool();
   useBezierCurveTool();
   useFreeDrawTool();
-  useEasyDrawCanvas();
+  useBlockBuilderCanvas();
   useCurveEdit();
   useCanvasZoomPan();
   useCanvasKeyboard();
   useLayoutEngine();
   useTextTool();
-  useColorwayTool();
+  useColorThemeTool();
   usePuzzleView();
   useAutoSave();
   useBeforeUnload();

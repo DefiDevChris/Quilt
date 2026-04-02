@@ -29,15 +29,15 @@ export type ToolType =
   | 'line'
   | 'curve'
   | 'ruler'
-  | 'easydraw'
+  | 'blockbuilder'
   | 'freedraw'
   | 'text'
   | 'eyedropper'
   | 'spraycan';
 
-export type BlockDraftingMode = 'freeform' | 'easydraw' | 'applique';
+export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
-export type ColorwayTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
+export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
 
 export interface FussyCutTarget {
   readonly objectId: string;
@@ -73,13 +73,13 @@ interface CanvasStoreState {
   redoStack: string[];
   blockDraftingMode: BlockDraftingMode;
   referenceImageOpacity: number;
-  activeColorwayTool: ColorwayTool | null;
+  activeColorThemeTool: ColorThemeTool | null;
   fussyCutTarget: FussyCutTarget | null;
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
   printScale: number;
   freeDrawSmooth: boolean;
-  easyDrawMode: 'straight' | 'smooth';
+  blockBuilderMode: 'straight' | 'smooth';
   toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
   clipboard: unknown[];
 
@@ -103,13 +103,13 @@ interface CanvasStoreState {
   resetHistory: () => void;
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
-  setActiveColorwayTool: (tool: ColorwayTool | null) => void;
+  setActiveColorThemeTool: (tool: ColorThemeTool | null) => void;
   setFussyCutTarget: (target: FussyCutTarget | null) => void;
   setViewportLocked: (locked: boolean) => void;
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
   setFreeDrawSmooth: (smooth: boolean) => void;
-  setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
+  setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: () => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
@@ -142,13 +142,13 @@ const INITIAL_STATE = {
   redoStack: [] as string[],
   blockDraftingMode: 'freeform' as BlockDraftingMode,
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
-  activeColorwayTool: null as ColorwayTool | null,
+  activeColorThemeTool: null as ColorThemeTool | null,
   fussyCutTarget: null as FussyCutTarget | null,
   isViewportLocked: true,
   showSeamAllowance: true,
   printScale: 1.0,
   freeDrawSmooth: false,
-  easyDrawMode: 'straight' as const,
+  blockBuilderMode: 'straight' as const,
   toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
   clipboard: [] as unknown[],
 };
@@ -227,7 +227,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
-  setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
+  setActiveColorThemeTool: (tool) => set({ activeColorThemeTool: tool }),
 
   setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
 
@@ -244,7 +244,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setFreeDrawSmooth: (smooth) => set({ freeDrawSmooth: smooth }),
 
-  setEasyDrawMode: (mode) => set({ easyDrawMode: mode }),
+  setBlockBuilderMode: (mode) => set({ blockBuilderMode: mode }),
 
   centerAndFitViewport: () => {
     const { fabricCanvas, unitSystem } = get();

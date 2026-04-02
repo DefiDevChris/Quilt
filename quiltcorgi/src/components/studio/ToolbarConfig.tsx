@@ -291,12 +291,12 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'easydraw',
+      id: 'blockbuilder',
       label: 'Easy Draw',
       shortcut: 'E',
       description: 'Draw freehand paths that snap to grid — auto-close into shapes',
       mascot: '/mascots&avatars/corgi2.png',
-      toolType: 'easydraw',
+      toolType: 'blockbuilder',
       group: 'shapes',
       tier: 'primary',
       icon: (
@@ -313,12 +313,12 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'easydraw',
+      id: 'blockbuilder',
       label: 'Easy Draw',
       shortcut: 'E',
       description: 'Draw freehand paths that snap to grid — auto-close into shapes',
       mascot: '/mascots&avatars/corgi2.png',
-      toolType: 'easydraw',
+      toolType: 'blockbuilder',
       group: 'shapes',
       tier: 'primary',
       icon: (
@@ -821,11 +821,11 @@ export function useBlockTools(): ToolDef[] {
       ),
     },
     {
-      id: 'easydraw',
+      id: 'blockbuilder',
       label: 'Easy Draw',
       shortcut: 'E',
       description: 'Draw freehand paths that snap to grid — auto-close into shapes',
-      toolType: 'easydraw',
+      toolType: 'blockbuilder',
       group: 'tools',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">

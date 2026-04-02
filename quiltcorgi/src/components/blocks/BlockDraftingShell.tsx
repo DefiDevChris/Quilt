@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCanvasStore, type BlockDraftingMode } from '@/stores/canvasStore';
 import { FreeformDraftingTab } from './FreeformDraftingTab';
-import { EasyDrawTab } from './EasyDrawTab';
+import { BlockBuilderTab } from './BlockBuilderTab';
 import { AppliqueTab } from './AppliqueTab';
 import { ImageTracingPanel } from '@/components/studio/ImageTracingPanel';
 
@@ -25,7 +25,7 @@ const BLOCK_SIZE_UNITS = 12;
 
 const TAB_LABELS: Record<BlockDraftingMode, string> = {
   freeform: 'Freeform',
-  easydraw: 'EasyDraw',
+  blockbuilder: 'BlockBuilder',
   applique: 'Applique',
 };
 
@@ -211,7 +211,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
 
         {/* Active tab toolbar */}
         {activeMode === 'freeform' && <FreeformDraftingTab {...tabProps} />}
-        {activeMode === 'easydraw' && <EasyDrawTab {...tabProps} />}
+        {activeMode === 'blockbuilder' && <BlockBuilderTab {...tabProps} />}
         {activeMode === 'applique' && <AppliqueTab {...tabProps} />}
 
         {/* Reference Image Tracing */}

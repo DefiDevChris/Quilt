@@ -58,7 +58,7 @@ export function QuickColorPalette() {
             key={entry.color}
             type="button"
             onClick={() => applyColor(entry.color)}
-            className="w-8 h-8 rounded-md border border-outline-variant/30 cursor-pointer hover:scale-110 transition-transform shadow-elevation-1"
+            className="w-8 h-8 rounded-md border border-outline-variant/30 cursor-pointer hover:shadow-elevation-2 hover:brightness-95 transition-transform shadow-elevation-1"
             style={{ backgroundColor: entry.color }}
             title={entry.color}
           />

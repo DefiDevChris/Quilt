@@ -10,13 +10,13 @@ import {
   normalizeColor,
   type PatchColor,
   type ColorChange,
-} from '@/lib/colorway-utils';
+} from '@/lib/colortheme-utils';
 
 /**
- * Hook that handles colorway tool interactions on the Fabric.js canvas.
+ * Hook that handles colortheme tool interactions on the Fabric.js canvas.
  * Spraycan and eyedropper tools override canvas click behavior.
  */
-export function useColorwayTool() {
+export function useColorThemeTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const fillColor = useCanvasStore((s) => s.fillColor);

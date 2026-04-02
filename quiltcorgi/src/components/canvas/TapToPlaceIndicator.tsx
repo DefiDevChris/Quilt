@@ -11,8 +11,8 @@ interface TapToPlaceIndicatorProps {
 export function TapToPlaceIndicator({ itemName, onCancel, type }: TapToPlaceIndicatorProps) {
   const message =
     type === 'block'
-      ? `Tap canvas to place ${itemName}`
-      : `Tap a patch to fill with ${itemName}`;
+      ? `Tap-to-Place ${itemName}`
+      : `Tap-to-Fill with ${itemName}`;
 
   return (
     <div

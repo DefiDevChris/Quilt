@@ -1,5 +1,5 @@
 /**
- * EasyDraw Engine — Planar graph face traversal for quilt block seam-line drawing.
+ * BlockBuilder Engine — Planar graph face traversal for quilt block seam-line drawing.
  *
  * Given a set of seam-line segments within a rectangular grid, computes all closed
  * regions (patches) using a half-edge data structure and face traversal algorithm.
