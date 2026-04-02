@@ -101,7 +101,7 @@ export function BillingSection() {
 
   return (
     <div id="billing">
-      <h2 className="text-lg font-bold text-slate-800 mb-4">Billing & Plan</h2>
+      <h2 className="text-lg font-bold text-on-surface mb-4">Billing & Plan</h2>
 
       {successMessage && (
         <div className="mb-4 rounded-xl border border-[#4a7c59]/30 bg-[#4a7c59]/5 p-3.5">
@@ -112,7 +112,7 @@ export function BillingSection() {
       {isPastDue && (
         <div className="mb-4 rounded-xl border border-[#C6942E]/30 bg-[#C6942E]/5 p-3.5">
           <h3 className="text-sm font-semibold text-[#C6942E] mb-1">Payment Past Due</h3>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-secondary">
             Your last payment failed. Please update your payment method within 7 days to keep your
             Pro access.
           </p>
@@ -135,7 +135,7 @@ export function BillingSection() {
               className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 ${
                 isPro
                   ? 'text-[#C67B5C] bg-[#FFE4D0] border-[#FFB085]/30'
-                  : 'text-slate-500 border-slate-200'
+                  : 'text-secondary/80 border-slate-200'
               }`}
             >
               {isPro ? 'Pro' : 'Free'}
@@ -143,7 +143,7 @@ export function BillingSection() {
             {isLoading ? (
               <span className="text-[10px] text-slate-400 animate-pulse">Checking...</span>
             ) : isPro && subscription && subscription.plan === 'pro' ? (
-              <span className="text-[10px] text-slate-500">
+              <span className="text-[10px] text-secondary/80">
                 {isCanceling
                   ? `Cancels ${new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString()}`
                   : subscription.status === 'active'
@@ -151,7 +151,7 @@ export function BillingSection() {
                     : subscription.status.replace('_', ' ')}
               </span>
             ) : isPro ? (
-              <span className="text-[10px] text-slate-500">Active</span>
+              <span className="text-[10px] text-secondary/80">Active</span>
             ) : null}
           </div>
 
@@ -168,7 +168,7 @@ export function BillingSection() {
         </div>
 
         {isPro && subscription?.currentPeriodEnd && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-secondary/80">
             {isCanceling ? 'Access until' : 'Next billing date'}:{' '}
             <span className="font-medium text-slate-700">
               {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
@@ -180,7 +180,7 @@ export function BillingSection() {
       {/* Upgrade section (free only) */}
       {!isPro && (
         <div className="rounded-xl bg-[#FFE4D0]/60 backdrop-blur-sm p-5 border border-[#FFB085]/15 mb-3">
-          <h3 className="text-sm font-semibold text-slate-800 mb-2.5">Upgrade to Pro</h3>
+          <h3 className="text-sm font-semibold text-on-surface mb-2.5">Upgrade to Pro</h3>
 
           {/* Billing toggle */}
           <div className="flex items-center gap-1.5 mb-3 bg-white/60 rounded-full p-0.5 w-fit">
@@ -189,8 +189,8 @@ export function BillingSection() {
               onClick={() => setBillingInterval('monthly')}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'monthly'
-                  ? 'bg-white text-slate-800 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-on-surface shadow-elevation-1'
+                  : 'text-secondary/80 hover:text-on-surface'
               }`}
             >
               Monthly
@@ -200,8 +200,8 @@ export function BillingSection() {
               onClick={() => setBillingInterval('yearly')}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'yearly'
-                  ? 'bg-white text-slate-800 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-on-surface shadow-elevation-1'
+                  : 'text-secondary/80 hover:text-on-surface'
               }`}
             >
               Yearly
@@ -213,14 +213,14 @@ export function BillingSection() {
 
           {/* Price */}
           <div className="mb-3">
-            <span className="text-2xl font-bold text-slate-800">
+            <span className="text-2xl font-bold text-on-surface">
               ${billingInterval === 'monthly' ? PRO_PRICE_MONTHLY : PRO_PRICE_YEARLY}
             </span>
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-secondary/80">
               /{billingInterval === 'monthly' ? 'month' : 'year'}
             </span>
             {billingInterval === 'yearly' && (
-              <span className="block text-[10px] text-slate-500 mt-0.5">
+              <span className="block text-[10px] text-secondary/80 mt-0.5">
                 ${(PRO_PRICE_YEARLY / 12).toFixed(0)}/month, billed annually
               </span>
             )}
@@ -239,11 +239,11 @@ export function BillingSection() {
 
       {/* Plan comparison */}
       <div className="rounded-xl glass-elevated p-5">
-        <h3 className="text-sm font-semibold text-slate-800 mb-3">Plan Comparison</h3>
+        <h3 className="text-sm font-semibold text-on-surface mb-3">Plan Comparison</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h4 className="text-xs font-semibold text-slate-800 mb-2">Free</h4>
-            <ul className="space-y-1.5 text-[11px] text-slate-500">
+            <h4 className="text-xs font-semibold text-on-surface mb-2">Free</h4>
+            <ul className="space-y-1.5 text-[11px] text-secondary/80">
               <li>All design tools</li>
               <li>20 starter blocks</li>
               <li>10 basic fabrics</li>
@@ -256,7 +256,7 @@ export function BillingSection() {
           </div>
           <div>
             <h4 className="text-xs font-semibold text-[#C67B5C] mb-2">Pro</h4>
-            <ul className="space-y-1.5 text-[11px] text-slate-500">
+            <ul className="space-y-1.5 text-[11px] text-secondary/80">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
               <li>Full 659+ block library</li>

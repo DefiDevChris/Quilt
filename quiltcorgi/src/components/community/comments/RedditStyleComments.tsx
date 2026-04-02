@@ -137,7 +137,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
       {sort === 'recent' && !showAll && hiddenCount > 0 && (
         <button
           onClick={() => setShowAll(true)}
-          className="text-sm font-semibold text-slate-500 hover:text-slate-800 mt-2 transition-colors"
+          className="text-sm font-semibold text-secondary/80 hover:text-on-surface mt-2 transition-colors"
         >
           View all {sorted.length} comments
         </button>
@@ -159,7 +159,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
             </p>
           </div>
         ) : (
-          <p className="text-xs text-slate-500">Sign in to comment</p>
+          <p className="text-xs text-secondary/80">Sign in to comment</p>
         )}
       </div>
     </div>
@@ -207,20 +207,20 @@ function CommentRow({
       {/* Body */}
       <div className="flex-1 min-w-0">
         <p className="text-sm">
-          <Link href={profileHref} className="font-semibold text-slate-800 hover:underline">
+          <Link href={profileHref} className="font-semibold text-on-surface hover:underline">
             {comment.authorName}
           </Link>{' '}
-          <span className="text-slate-800">{comment.content}</span>
+          <span className="text-on-surface">{comment.content}</span>
         </p>
 
         {/* Meta row */}
         <div className="flex items-center gap-4 mt-1">
-          <span className="text-xs text-slate-500">{formatRelativeTime(comment.createdAt)}</span>
+          <span className="text-xs text-secondary/80">{formatRelativeTime(comment.createdAt)}</span>
 
           {currentUserId && (
             <button
               onClick={onReply}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+              className="text-xs font-semibold text-secondary/80 hover:text-on-surface transition-colors"
             >
               Reply
             </button>
@@ -229,7 +229,7 @@ function CommentRow({
           {(isOwn || isAdmin) && (
             <button
               onClick={onDelete}
-              className="text-xs text-slate-500 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+              className="text-xs text-secondary/80 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
             >
               Delete
             </button>
@@ -268,7 +268,7 @@ function CommentInput({
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         disabled={isSubmitting}
-        className="flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 border-b border-white/40 py-2 focus:outline-none focus:border-orange-400 transition-colors"
+        className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-slate-400 border-b border-white/40 py-2 focus:outline-none focus:border-orange-400 transition-colors"
       />
       {content.trim() && (
         <button
@@ -283,7 +283,7 @@ function CommentInput({
         <button
           type="button"
           onClick={onCancel}
-          className="text-xs text-slate-500 hover:text-slate-800 transition-colors"
+          className="text-xs text-secondary/80 hover:text-on-surface transition-colors"
         >
           Cancel
         </button>

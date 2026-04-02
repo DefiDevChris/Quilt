@@ -130,13 +130,13 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-2 text-secondary hover:text-slate-900 transition-colors"
           >
             <ArrowLeft size={16} strokeWidth={2} />
             <span className="text-sm font-semibold">Dashboard</span>
           </button>
           <div className="w-px h-4 bg-slate-300/60" />
-          <h1 className="text-slate-800 font-bold text-sm">Pattern Library</h1>
+          <h1 className="text-on-surface font-bold text-sm">Pattern Library</h1>
         </div>
         <div className="flex-1 overflow-auto p-6">
           <PatternLibrary />
@@ -209,7 +209,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="col-span-12 md:col-span-8 rounded-xl p-8 md:p-10 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 hover:-translate-y-1 glass-elevated border-white/60"
+          className="col-span-12 md:col-span-8 rounded-xl p-8 md:p-10 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute -bottom-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-700">
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                 Start a fresh quilt from scratch
               </p>
             </div>
-            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
+            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
               <Plus size={28} className="text-white" strokeWidth={3} />
             </div>
           </div>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 hover:-translate-y-1 glass-card border-white/50"
+          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-15 pointer-events-none group-hover:scale-125 transition-transform duration-700">
@@ -254,7 +254,7 @@ export default function DashboardPage() {
         {/* ── 3. Quiltbook — col 1-4, row 2 ───────────────────────── */}
         <Link
           href="/studio"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 flex flex-col justify-between group"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
         >
           <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
@@ -277,7 +277,7 @@ export default function DashboardPage() {
                 {projects.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-sm"
+                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-elevation-1"
                   >
                     {p.thumbnailUrl ? (
                       <Image
@@ -319,7 +319,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => setActiveTab('patterns')}
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 text-left glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 text-left glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
             <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
@@ -338,7 +338,7 @@ export default function DashboardPage() {
         {/* ── 5. Community — col 9-12, row 2 ───────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
@@ -359,7 +359,7 @@ export default function DashboardPage() {
         {/* ── 6. Profile — col 1-6, row 3 ──────────────────────────── */}
         <Link
           href="/profile"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-[-30%] right-[-10%] opacity-[0.02] pointer-events-none transition-transform duration-1000 group-hover:scale-110">
             <UserCircle size={320} strokeWidth={1} className="text-on-surface" />
@@ -378,7 +378,7 @@ export default function DashboardPage() {
         {/* ── 7. Settings — col 7-12, row 3 ────────────────────────── */}
         <Link
           href="/settings"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 hover:-translate-y-1 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
         >
           <div className="absolute top-1/2 left-[-15%] -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-90 transition-transform duration-1000">
             <Settings size={280} strokeWidth={1} className="text-on-surface" />

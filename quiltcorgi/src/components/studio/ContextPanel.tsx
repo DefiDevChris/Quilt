@@ -331,7 +331,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
             Canvas
           </span>
           <div
-            className="w-6 h-6 rounded-md border border-outline-variant/30 cursor-pointer shadow-sm"
+            className="w-6 h-6 rounded-md border border-outline-variant/30 cursor-pointer shadow-elevation-1"
             style={{ backgroundColor: canvasColor }}
             onClick={handleCanvasColorClick}
           />
