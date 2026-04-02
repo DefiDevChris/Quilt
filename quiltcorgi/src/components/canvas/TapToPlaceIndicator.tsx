@@ -24,7 +24,7 @@ export function TapToPlaceIndicator({ itemName, onCancel, type }: TapToPlaceIndi
       <button
         type="button"
         onClick={onCancel}
-        className="w-8 h-8 rounded-full hover:bg-surface-container transition-colors flex items-center justify-center"
+        className="min-w-[44px] min-h-[44px] rounded-full hover:bg-surface-container transition-colors flex items-center justify-center"
         aria-label="Cancel selection"
       >
         <X size={16} className="text-secondary" />

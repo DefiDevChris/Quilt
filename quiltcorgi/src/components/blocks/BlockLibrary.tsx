@@ -30,6 +30,8 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
   const setPanelOpen = useBlockStore((s) => s.setPanelOpen);
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
   const deleteUserBlock = useBlockStore((s) => s.deleteUserBlock);
+  const selectedBlockId = useBlockStore((s) => s.selectedBlockId);
+  const setSelectedBlockId = useBlockStore((s) => s.setSelectedBlockId);
   const isPro = useAuthStore((s) => s.isPro);
 
   const [previewBlock, setPreviewBlock] = useState<BlockListItem | null>(null);
@@ -140,6 +142,8 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                             block={block}
                             onPreview={setPreviewBlock}
                             onDragStart={handleDragStart}
+                            isSelected={selectedBlockId === block.id}
+                            onSelect={setSelectedBlockId}
                           />
                         ))}
                       </div>
@@ -211,6 +215,8 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                               block={block}
                               onPreview={setPreviewBlock}
                               onDragStart={handleDragStart}
+                              isSelected={selectedBlockId === block.id}
+                              onSelect={setSelectedBlockId}
                             />
                             <button
                               type="button"
