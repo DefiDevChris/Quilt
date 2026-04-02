@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
-import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { db } from '@/lib/db';
 import { subscriptions, users } from '@/db/schema';
@@ -20,36 +19,30 @@ async function sendSafeNotification(params: Parameters<typeof createNotification
   }
 }
 
-// Redis-based deduplication for webhook event IDs.
-// Uses Upstash Redis (same as rate limiter) for proper deduplication
-// across serverless instances.
+// Redis-based deduplication for webhook event IDs using SETNX.
+// Ensures each Stripe event.id is processed exactly once across all instances.
 const useRedis = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
-let dedupRatelimit: Ratelimit | null = null;
+let redisClient: Redis | null = null;
 
-function getDedupRatelimit(): Ratelimit {
-  if (!dedupRatelimit) {
-    const redis = new Redis({
+function getRedisClient(): Redis {
+  if (!redisClient) {
+    redisClient = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL!,
       token: process.env.UPSTASH_REDIS_REST_TOKEN!,
     });
-    // Allow 100 events per minute globally - covers Stripe retry patterns
-    dedupRatelimit = new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(100, '1 m'),
-      analytics: false,
-    });
   }
-  return dedupRatelimit;
+  return redisClient;
 }
 
 async function isDuplicate(eventId: string): Promise<boolean> {
-  // Use Redis-based deduplication when available, which properly handles
-  // serverless restarts. When Redis is unavailable, relies on DB idempotency
-  // (upsertSubscription and syncUserRole are idempotent operations).
+  // Use Redis SETNX for atomic deduplication with 24-hour expiration.
+  // Returns true if event was already processed, false if this is first time.
   if (useRedis) {
-    const limit = getDedupRatelimit();
-    const result = await limit.limit(`webhook:${eventId}`);
-    return !result.success;
+    const redis = getRedisClient();
+    const key = `webhook:${eventId}`;
+    const result = await redis.set(key, '1', { ex: 86400, nx: true });
+    // SETNX returns 'OK' if key was set (first time), null if key exists (duplicate)
+    return result === null;
   }
 
   // No Redis: pass through - DB operations are idempotent so duplicates are safe

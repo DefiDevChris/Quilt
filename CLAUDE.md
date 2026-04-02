@@ -43,7 +43,7 @@ Local dev requires `.env.local` with `AWS_SECRET_NAME=skip` and `DATABASE_URL=po
 
 ## Stack
 
-Next.js 16.2.1 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Fabric.js 7.2 + Zustand + Drizzle ORM + PostgreSQL + AWS Cognito + Stripe
+Next.js 15.1.6 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Fabric.js 7.2 + Zustand + Drizzle ORM + PostgreSQL + AWS Cognito + Stripe
 
 ## Code Style
 

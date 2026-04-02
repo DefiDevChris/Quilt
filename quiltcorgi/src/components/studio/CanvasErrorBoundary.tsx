@@ -30,6 +30,26 @@ export class CanvasErrorBoundary extends Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     console.error('[CanvasErrorBoundary] Canvas error caught:', error);
     console.error('[CanvasErrorBoundary] Component stack:', errorInfo.componentStack);
+
+    // Attempt to save canvas state before crash
+    try {
+      if (typeof window !== 'undefined') {
+        const { useProjectStore } = require('@/stores/projectStore');
+        const { useCanvasStore } = require('@/stores/canvasStore');
+        const { saveProject } = require('@/lib/save-project');
+
+        const projectId = useProjectStore.getState().projectId;
+        const fabricCanvas = useCanvasStore.getState().fabricCanvas;
+
+        if (projectId && fabricCanvas) {
+          saveProject({ projectId, fabricCanvas, source: 'manual' }).catch(() => {
+            // Silent fail — error boundary already triggered
+          });
+        }
+      }
+    } catch {
+      // Silent fail — don't throw in error boundary
+    }
   }
 
   private handleReload = (): void => {

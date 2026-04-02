@@ -17,7 +17,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16.2 (App Router) + TypeScript + React 19 |
+| Framework | Next.js 16.2.1 (App Router) + TypeScript + React 19 |
 | Styling | Tailwind CSS v4 (Material 3-inspired design system) |
 | Canvas | Fabric.js 7.2 |
 | State | Zustand (17 stores) |

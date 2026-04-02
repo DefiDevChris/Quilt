@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects } from '@/db/schema';
 import { updateProjectSchema } from '@/lib/validation';
+import { uploadCanvasDataToS3, downloadCanvasDataFromS3 } from '@/lib/s3';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -31,7 +32,21 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     return notFoundResponse('Project not found.');
   }
 
-  return Response.json({ success: true, data: project });
+  // Hydrate from S3 if keys exist
+  let canvasData = project.canvasData;
+  let worktables = project.worktables;
+
+  if (project.canvasDataS3Key) {
+    const s3Data = await downloadCanvasDataFromS3(project.canvasDataS3Key);
+    if (s3Data) canvasData = s3Data;
+  }
+
+  if (project.worktablesS3Key) {
+    const s3Data = await downloadCanvasDataFromS3(project.worktablesS3Key);
+    if (s3Data && Array.isArray(s3Data)) worktables = s3Data;
+  }
+
+  return Response.json({ success: true, data: { ...project, canvasData, worktables } });
 }
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -62,11 +77,43 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    const updates = {
-      ...parsed.data,
+    // Optimistic concurrency control: check version if provided
+    if (parsed.data.version !== undefined) {
+      if (project.version !== parsed.data.version) {
+        return errorResponse(
+          'This project was modified on another device. Please refresh and try again.',
+          'VERSION_CONFLICT',
+          409
+        );
+      }
+    }
+
+    const updates: Record<string, unknown> = {
       updatedAt: new Date(),
       lastSavedAt: new Date(),
+      version: project.version + 1,
     };
+
+    // Upload canvasData to S3 if provided
+    if (parsed.data.canvasData) {
+      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.canvasData);
+      updates.canvasDataS3Key = s3Key;
+      updates.canvasData = {}; // Clear JSONB to save space
+    }
+
+    // Upload worktables to S3 if provided
+    if (parsed.data.worktables) {
+      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.worktables as Record<string, unknown>);
+      updates.worktablesS3Key = s3Key;
+      updates.worktables = []; // Clear JSONB to save space
+    }
+
+    // Copy other fields
+    Object.entries(parsed.data).forEach(([key, value]) => {
+      if (key !== 'canvasData' && key !== 'worktables' && key !== 'version') {
+        updates[key] = value;
+      }
+    });
 
     const [updated] = await db.update(projects).set(updates).where(eq(projects.id, id)).returning();
 

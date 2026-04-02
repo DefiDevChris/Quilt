@@ -29,6 +29,7 @@ interface ProjectStoreState {
   fabricPresets: FabricPreset[];
   worktables: Worktable[];
   activeWorktableId: string;
+  version: number;
 
   setProject: (data: {
     id: string;
@@ -36,6 +37,7 @@ interface ProjectStoreState {
     width: number;
     height: number;
     worktables?: Worktable[];
+    version?: number;
   }) => void;
   setProjectName: (name: string) => void;
   setSaveStatus: (status: SaveStatus) => void;
@@ -68,8 +70,9 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   fabricPresets: [],
   worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
   activeWorktableId: 'main',
+  version: 1,
 
-  setProject: ({ id, name, width, height, worktables }) =>
+  setProject: ({ id, name, width, height, worktables, version }) =>
     set({
       projectId: id,
       projectName: name,
@@ -77,6 +80,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       canvasHeight: height,
       worktables: worktables ?? [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
       activeWorktableId: worktables?.[0]?.id ?? 'main',
+      version: version ?? 1,
       isDirty: false,
       saveStatus: 'saved',
     }),

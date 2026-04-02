@@ -5,6 +5,7 @@ import {
   text,
   jsonb,
   boolean,
+  integer,
   timestamp,
   doublePrecision,
   index,
@@ -22,9 +23,11 @@ export const projects = pgTable(
     name: varchar('name', { length: 255 }).notNull().default('Untitled Quilt'),
     description: text('description'),
     canvasData: jsonb('canvasData').notNull().default({}),
+    canvasDataS3Key: text('canvasDataS3Key'),
     worktables: jsonb('worktables')
       .notNull()
       .default([{ id: 'main', name: 'Main', canvasData: {}, order: 0 }]),
+    worktablesS3Key: text('worktablesS3Key'),
     unitSystem: unitSystemEnum('unitSystem').notNull().default('imperial'),
     gridSettings: jsonb('gridSettings')
       .notNull()
@@ -34,6 +37,7 @@ export const projects = pgTable(
     canvasHeight: doublePrecision('canvasHeight').notNull().default(48.0),
     thumbnailUrl: text('thumbnailUrl'),
     isPublic: boolean('isPublic').notNull().default(false),
+    version: integer('version').notNull().default(1),
     lastSavedAt: timestamp('lastSavedAt', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),

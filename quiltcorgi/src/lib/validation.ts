@@ -65,6 +65,7 @@ export const createProjectSchema = z.object({
 export const updateProjectSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   canvasData: z.record(z.string(), z.unknown()).optional(),
+  canvasDataS3Key: z.string().optional(),
   worktables: z
     .array(
       z.object({
@@ -76,6 +77,7 @@ export const updateProjectSchema = z.object({
     )
     .max(10)
     .optional(),
+  worktablesS3Key: z.string().optional(),
   unitSystem: z.enum(['imperial', 'metric']).optional(),
   canvasWidth: z.number().min(1).max(200).optional(),
   canvasHeight: z.number().min(1).max(200).optional(),
@@ -91,6 +93,7 @@ export const updateProjectSchema = z.object({
     .optional(),
   thumbnailUrl: assetUrlSchema.optional(),
   isPublic: z.boolean().optional(),
+  version: z.number().int().min(1).optional(),
 });
 
 export const paginationSchema = z.object({
