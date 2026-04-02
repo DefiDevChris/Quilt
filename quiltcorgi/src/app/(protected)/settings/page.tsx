@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ProfileEditForm } from '@/components/community/profiles/ProfileEditForm';
 import { BillingSection } from '@/components/billing/BillingSection';
 
@@ -13,7 +14,9 @@ export default async function SettingsPage() {
     <div className="max-w-xl mx-auto space-y-10">
       <ProfileEditForm />
       <hr className="border-outline-variant" />
-      <BillingSection />
+      <Suspense fallback={<div className="text-center py-8">Loading...</div>}>
+        <BillingSection />
+      </Suspense>
     </div>
   );
 }

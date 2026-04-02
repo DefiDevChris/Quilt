@@ -1,6 +1,6 @@
 import { db } from '../src/lib/db';
 import { users } from '../src/db/schema';
-import { desc } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 async function setProRole() {
   const [user] = await db.select().from(users).orderBy(desc(users.createdAt)).limit(1);
@@ -13,7 +13,7 @@ async function setProRole() {
   console.log(`Found user: ${user.email} (${user.id})`);
   console.log(`Current role: ${user.role}`);
 
-  await db.update(users).set({ role: 'pro' }).where(users.id.eq(user.id));
+  await db.update(users).set({ role: 'pro' }).where(eq(users.id, user.id));
 
   console.log('✅ Updated role to: pro');
   process.exit(0);

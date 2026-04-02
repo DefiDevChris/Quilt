@@ -2,10 +2,9 @@
 
 import { Undo2, Redo2 } from 'lucide-react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 
 export function UndoRedoOverlay() {
-  const performUndo = useCanvasStore((s) => s.performUndo);
-  const performRedo = useCanvasStore((s) => s.performRedo);
   const undoStack = useCanvasStore((s) => s.undoStack);
   const redoStack = useCanvasStore((s) => s.redoStack);
 
@@ -20,7 +19,7 @@ export function UndoRedoOverlay() {
     >
       <button
         type="button"
-        onClick={performUndo}
+        onClick={() => performUndo()}
         disabled={!canUndo}
         className="min-w-[48px] min-h-[48px] rounded-full flex flex-col items-center justify-center gap-0.5 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-surface-container active:scale-95"
         aria-label="Undo (Ctrl+Z)"
@@ -32,7 +31,7 @@ export function UndoRedoOverlay() {
       <div className="w-px h-8 bg-outline-variant/30" />
       <button
         type="button"
-        onClick={performRedo}
+        onClick={() => performRedo()}
         disabled={!canRedo}
         className="min-w-[48px] min-h-[48px] rounded-full flex flex-col items-center justify-center gap-0.5 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-surface-container active:scale-95"
         aria-label="Redo (Ctrl+Shift+Z)"

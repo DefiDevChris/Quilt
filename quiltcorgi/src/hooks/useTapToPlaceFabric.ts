@@ -49,9 +49,10 @@ export function useTapToPlaceFabric() {
       const canvas = fabricCanvas as import('fabric').Canvas | null;
       if (!canvas || !selectedFabricId) return;
 
-      const target = canvas.findTarget(e as unknown as Event);
-      if (target && target.type !== 'activeSelection') {
-        applyFabricToObject(target);
+      const result = canvas.findTarget(e as unknown as import('fabric').TPointerEvent);
+      const target = result && 'target' in result ? result.target : result;
+      if (target && typeof target === 'object' && 'type' in target && target.type !== 'activeSelection') {
+        applyFabricToObject(target as import('fabric').FabricObject);
       }
     },
     [fabricCanvas, selectedFabricId, applyFabricToObject]
