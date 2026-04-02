@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             alt="QuiltCorgi Logo"
             width={32}
             height={32}
-            className="object-contain drop-shadow-sm"
+            className="object-contain drop-shadow-elevation-1"
           />
           <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
             QuiltCorgi

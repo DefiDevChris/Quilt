@@ -103,7 +103,7 @@ export function FeedContent() {
           <p className="text-secondary mb-4 font-medium">{error}</p>
           <button
             onClick={fetchPosts}
-            className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition-all"
+            className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
           >
             Retry
           </button>
@@ -121,7 +121,7 @@ export function FeedContent() {
           {user && (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition-all"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -196,7 +196,7 @@ function PostCard({ post }: { post: CommunityPost }) {
     <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
       <div className="flex items-center justify-between mb-3">
         <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-sm">
+          <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1">
             <span className="text-sm font-bold text-orange-500">
               {post.creatorName.charAt(0).toUpperCase()}
             </span>
@@ -220,7 +220,7 @@ function PostCard({ post }: { post: CommunityPost }) {
       {post.thumbnailUrl && (
         <button
           onClick={openModal}
-          className="w-full rounded-2xl overflow-hidden shadow-sm border border-white/50 mb-3 block cursor-zoom-in"
+          className="w-full rounded-2xl overflow-hidden shadow-elevation-1 border border-white/50 mb-3 block cursor-zoom-in"
         >
           <img
             src={post.thumbnailUrl}

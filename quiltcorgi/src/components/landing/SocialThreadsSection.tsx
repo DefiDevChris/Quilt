@@ -9,7 +9,7 @@ function SocialThreadsScreenshot() {
   return (
     <div className="relative">
       {/* Browser chrome */}
-      <div className="bg-white rounded-2xl shadow-2xl border border-warm-border overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
         {/* Window header */}
         <div className="h-12 bg-gradient-to-r from-orange-50 to-rose-50 border-b border-warm-border flex items-center px-4 justify-between">
           <div className="flex items-center gap-2">
@@ -33,9 +33,9 @@ function SocialThreadsScreenshot() {
 
           <div className="relative z-10 p-4 space-y-4 max-w-lg mx-auto">
             {/* Create post card */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-4 border border-white/60 shadow-sm">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-4 border border-white/60 shadow-elevation-1">
               <div className="flex gap-3 items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm shrink-0 overflow-hidden">
+                <div className="w-10 h-10 rounded-full border-2 border-white shadow-elevation-1 shrink-0 overflow-hidden">
                   <Image
                     src="/logo.png"
                     alt="QuiltCorgi"
@@ -44,21 +44,21 @@ function SocialThreadsScreenshot() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex-1 bg-white/60 border border-white/50 rounded-2xl px-4 py-2.5 text-sm text-slate-500">
+                <div className="flex-1 bg-white/60 border border-white/50 rounded-2xl px-4 py-2.5 text-sm text-secondary/80">
                   Share your latest quilt design...
                 </div>
               </div>
             </div>
 
             {/* Post 1 - Using actual quilt image */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-sm">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center shadow-sm text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   S
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Sarah Mitchell</h4>
-                  <p className="text-xs text-slate-500">@sarah_quilts • 2h ago</p>
+                  <h4 className="font-bold text-on-surface text-sm">Sarah Mitchell</h4>
+                  <p className="text-xs text-secondary/80">@sarah_quilts • 2h ago</p>
                 </div>
               </div>
               <p className="text-slate-700 mb-3 text-sm leading-relaxed">
@@ -81,7 +81,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   24
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
                   <svg
                     width="18"
                     height="18"
@@ -94,7 +94,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   8
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
                   <svg
                     width="18"
                     height="18"
@@ -115,14 +115,14 @@ function SocialThreadsScreenshot() {
             </div>
 
             {/* Post 2 */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-sm">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-sm text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   M
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Modern Quilter</h4>
-                  <p className="text-xs text-slate-500">@modern_q • 5h ago</p>
+                  <h4 className="font-bold text-on-surface text-sm">Modern Quilter</h4>
+                  <p className="text-xs text-secondary/80">@modern_q • 5h ago</p>
                 </div>
               </div>
               <p className="text-slate-700 mb-3 text-sm leading-relaxed">
@@ -139,7 +139,7 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
                   <svg
                     width="18"
                     height="18"
@@ -152,7 +152,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   42
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
                   <svg
                     width="18"
                     height="18"
@@ -165,7 +165,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   15
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
                   <svg
                     width="18"
                     height="18"
@@ -201,7 +201,7 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="glass-panel rounded-xl p-4 flex items-start gap-3 hover:shadow-lg transition-all">
+    <div className="glass-panel rounded-xl p-4 flex items-start gap-3 hover:shadow-elevation-3 transition-all">
       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-warm-peach flex-shrink-0">
         {icon}
       </div>
@@ -332,7 +332,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
