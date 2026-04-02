@@ -42,7 +42,7 @@ export function ToolIcon({
           ? 'text-outline-variant/30 cursor-default'
           : isActive
             ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-            : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
+            : 'text-on-surface/60 shadow-elevation-1 hover:shadow-elevation-2'
       }`}
     >
       <span aria-hidden="true" className="[&>svg]:w-5 [&>svg]:h-5">

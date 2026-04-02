@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { generatePatternPdf, downloadPdf, type PaperSize } from '@/lib/pdf-generator';
 
 interface PdfExportDialogProps {
@@ -15,6 +16,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
   const paperSize = usePrintlistStore((s) => s.paperSize);
   const setPaperSize = usePrintlistStore((s) => s.setPaperSize);
   const projectName = useProjectStore((s) => s.projectName);
+  const printScale = useCanvasStore((s) => s.printScale);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,7 +27,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     setError('');
 
     try {
-      const pdfBytes = await generatePatternPdf(items, paperSize);
+      const pdfBytes = await generatePatternPdf(items, paperSize, printScale);
       const safeName = (projectName ?? 'quilt')
         .replace(/[^a-zA-Z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
@@ -37,7 +39,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     } finally {
       setIsGenerating(false);
     }
-  }, [items, paperSize, projectName, onClose]);
+  }, [items, paperSize, projectName, printScale, onClose]);
 
   if (!isOpen) return null;
 
@@ -72,7 +74,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
         {/* Info */}
         <div className="rounded-lg bg-background p-3 mb-4">
           <p className="text-[11px] text-secondary leading-relaxed">
-            Shapes are printed at exact 1:1 scale. A 1&quot; validation square is included on page
+            Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is included on page
             1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use &quot;Fit to
             Page&quot;.
           </p>

@@ -622,7 +622,7 @@ function ProfileContentPanel() {
     async function loadStats() {
       try {
         const [projectsRes, postsRes] = await Promise.all([
-          fetch('/api/projects?limit=1'),
+          fetch('/api/projects?limit=100'),
           fetch('/api/community?limit=1'),
         ]);
         const projectsData = projectsRes.ok ? await projectsRes.json() : null;

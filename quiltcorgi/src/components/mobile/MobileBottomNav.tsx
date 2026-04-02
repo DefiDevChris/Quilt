@@ -97,12 +97,40 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
       >
         <HomeIcon active={homeActive} />
         <span
-          className="text-[9px] font-semibold uppercase tracking-wide"
+          className="text-[11px] font-semibold uppercase tracking-wide"
           style={{
             color: homeActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
           }}
         >
           Home
+        </span>
+      </Link>
+
+      {/* Social */}
+      <Link
+        href="/socialthreads"
+        aria-current={pathname.startsWith('/socialthreads') ? 'page' : undefined}
+        className="flex flex-col items-center gap-1 min-w-[48px] py-1"
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={pathname.startsWith('/socialthreads') ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)'}
+          strokeWidth={pathname.startsWith('/socialthreads') ? 1.8 : 1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span
+          className="text-[11px] font-semibold uppercase tracking-wide"
+          style={{
+            color: pathname.startsWith('/socialthreads') ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
+          }}
+        >
+          Social
         </span>
       </Link>
 
@@ -148,7 +176,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
           <SignInIcon active={profileActive} />
         )}
         <span
-          className="text-[9px] font-semibold uppercase tracking-wide"
+          className="text-[11px] font-semibold uppercase tracking-wide"
           style={{
             color: profileActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
           }}

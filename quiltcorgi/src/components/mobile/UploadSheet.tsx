@@ -70,9 +70,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
     }
   }
 
-  function handleShareToCommunity() {
+  function handleShareToSocial() {
     onClose();
-    router.push('/dashboard');
+    router.push('/socialthreads?compose=true');
   }
 
   return (
@@ -121,7 +121,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
           </button>
           <button
             type="button"
-            onClick={handleShareToCommunity}
+            onClick={handleShareToSocial}
             className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
           >
             <div
@@ -142,7 +142,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-on-surface">Share to Community</p>
+              <p className="text-sm font-semibold text-on-surface">Share to Social</p>
               <p className="text-xs text-secondary mt-0.5">Post a quilt photo with your story</p>
             </div>
           </button>

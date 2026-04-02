@@ -4,8 +4,6 @@ import { useRef } from 'react';
 import type { Project } from '@/types/project';
 import { useCanvasInit } from '@/hooks/useCanvasInit';
 import { useDrawingTool } from '@/hooks/useDrawingTool';
-import { useBezierCurveTool } from '@/hooks/useBezierCurveTool';
-import { useFreeDrawTool } from '@/hooks/useFreeDrawTool';
 import { useEasyDrawCanvas } from '@/hooks/useEasyDrawCanvas';
 import { useCurveEdit } from '@/hooks/useCurveEdit';
 import { useEdgeBendTool } from '@/hooks/useEdgeBendTool';
@@ -16,7 +14,6 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useLayoutEngine } from '@/hooks/useLayoutEngine';
 import { useTextTool } from '@/hooks/useTextTool';
 import { useColorwayTool } from '@/hooks/useColorwayTool';
-import { usePuzzleView } from '@/hooks/usePuzzleView';
 
 interface CanvasWorkspaceProps {
   project: Project;
@@ -29,8 +26,6 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
 
   useCanvasInit(fabricCanvasRef, gridCanvasRef, containerRef, project);
   useDrawingTool();
-  useBezierCurveTool();
-  useFreeDrawTool();
   useEasyDrawCanvas();
   useCurveEdit();
   useEdgeBendTool();
@@ -39,7 +34,6 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useLayoutEngine();
   useTextTool();
   useColorwayTool();
-  usePuzzleView();
   useAutoSave();
   useBeforeUnload();
 

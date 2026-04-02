@@ -62,7 +62,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
-  const session = await getRequiredSession();
+  await getRequiredSession();
   const { postId } = await params;
 
   const url = request.nextUrl;

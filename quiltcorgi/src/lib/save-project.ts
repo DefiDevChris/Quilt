@@ -152,9 +152,16 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       if (res.status === 409) {
         try {
           const data = await res.json();
-          if (data.code === 'VERSION_CONFLICT') {
+          if (data.code === 'CONFLICT') {
             store.setSaveStatus('error');
-            // TODO: Show conflict resolution UI
+            // Show conflict notification
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(
+                new CustomEvent('quiltcorgi:save-error', {
+                  detail: { message: 'This project was modified on another device. Please refresh and try again.' },
+                })
+              );
+            }
             return; // Don't retry
           }
         } catch {

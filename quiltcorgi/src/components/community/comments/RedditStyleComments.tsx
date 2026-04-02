@@ -229,7 +229,7 @@ function CommentRow({
           {(isOwn || isAdmin) && (
             <button
               onClick={onDelete}
-              className="text-xs text-secondary/80 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+              className="text-xs text-secondary/80 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
             >
               Delete
             </button>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { sortCornersClockwise } from '@/lib/perspective-utils';
 
 describe('sortCornersClockwise', () => {

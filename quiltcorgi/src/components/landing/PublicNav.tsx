@@ -51,6 +51,12 @@ export default function PublicNav() {
           >
             Start Designing
           </Link>
+          <Link
+            href="/auth/signin"
+            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+          >
+            Sign In
+          </Link>
         </div>
 
         <button
@@ -100,6 +106,13 @@ export default function PublicNav() {
             onClick={() => setMenuOpen(false)}
           >
             Start Designing
+          </Link>
+          <Link
+            href="/auth/signin"
+            className="block text-center text-warm-text-secondary font-medium py-2 hover:text-warm-peach transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Sign In
           </Link>
         </div>
       )}

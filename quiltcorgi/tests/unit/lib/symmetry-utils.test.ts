@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computeTransforms, applyTransform } from '@/lib/symmetry-utils';
 import type { SymmetryConfig, SerializedObject } from '@/lib/symmetry-utils';
 

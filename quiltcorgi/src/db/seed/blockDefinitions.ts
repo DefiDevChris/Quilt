@@ -1167,22 +1167,6 @@ function generateVariations(): BlockDefinition[] {
 
   variations.push(...fppBlocks);
 
-  // Kaleidoscope blocks
-  for (const color of colors.slice(0, 8)) {
-    variations.push({
-      name: `${color.name} Kaleidoscope`,
-      category: 'Kaleidoscope',
-      subcategory: null,
-      svgData: svgWrap(
-        `<rect x="0" y="0" width="100" height="100" fill="${color.bg}" stroke="#333" stroke-width="0.5"/>` +
-          `<polygon points="50,0 100,50 50,100 0,50" fill="${color.fill}" stroke="#333" stroke-width="0.5"/>` +
-          `<polygon points="50,20 80,50 50,80 20,50" fill="${color.bg}" stroke="#333" stroke-width="0.5"/>` +
-          `<polygon points="50,35 65,50 50,65 35,50" fill="${color.fill}" stroke="#333" stroke-width="0.5"/>`
-      ),
-      tags: ['advanced', 'kaleidoscope', color.name.toLowerCase()],
-    });
-  }
-
   // Hourglass color variations
   for (const color of colors.slice(0, 8)) {
     variations.push({

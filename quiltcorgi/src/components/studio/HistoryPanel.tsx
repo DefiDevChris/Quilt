@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 
@@ -11,24 +11,20 @@ interface HistoryEntry {
 }
 
 export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const undoStack = useCanvasStore((s) => s.undoStack);
-  const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const [baseTimestamp] = useState(() => Date.now());
 
-  useEffect(() => {
-    if (!fabricCanvas || !isOpen) return;
-
-    const canvas = fabricCanvas as FabricCanvas;
-    const newEntries = undoStack.map((json, i) => ({
-      json,
-      timestamp: Date.now() - (undoStack.length - i) * 1000,
-    }));
-
-    // eslint-disable-next-line react-compiler/react-compiler
-    setEntries(newEntries);
-  }, [fabricCanvas, undoStack, isOpen]);
+  const entries: HistoryEntry[] = useMemo(
+    () =>
+      undoStack.map((json, i) => ({
+        json,
+        timestamp: baseTimestamp - (undoStack.length - i) * 1000,
+      })),
+    [undoStack, baseTimestamp]
+  );
 
   const jumpToState = (index: number) => {
+    const fabricCanvas = useCanvasStore.getState().fabricCanvas;
     if (!fabricCanvas) return;
 
     const canvas = fabricCanvas as FabricCanvas;

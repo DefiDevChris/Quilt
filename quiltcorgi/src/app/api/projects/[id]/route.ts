@@ -11,6 +11,7 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 async function getOwnedProject(projectId: string, userId: string) {
   const [project] = await db
@@ -50,6 +51,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 }
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`save:${ip}`, API_RATE_LIMITS.save);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
@@ -82,7 +87,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (project.version !== parsed.data.version) {
         return errorResponse(
           'This project was modified on another device. Please refresh and try again.',
-          'BAD_REQUEST',
+          'CONFLICT',
           409
         );
       }
@@ -108,12 +113,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       updates.worktables = []; // Clear JSONB to save space
     }
 
-    // Copy other fields
-    Object.entries(parsed.data).forEach(([key, value]) => {
-      if (key !== 'canvasData' && key !== 'worktables' && key !== 'version') {
-        updates[key] = value;
+    // Copy allowed fields only (whitelist approach)
+    const ALLOWED_FIELDS = [
+      'name', 'unitSystem', 'canvasWidth', 'canvasHeight',
+      'gridSettings', 'fabricPresets', 'thumbnailUrl', 'isPublic',
+    ];
+    for (const key of ALLOWED_FIELDS) {
+      if (key in parsed.data) {
+        updates[key] = (parsed.data as Record<string, unknown>)[key];
       }
-    });
+    }
 
     const [updated] = await db.update(projects).set(updates).where(eq(projects.id, id)).returning();
 

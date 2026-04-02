@@ -5,7 +5,6 @@ import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
-import { FreeDrawOptions } from '@/components/studio/FreeDrawOptions';
 import { EasyDrawOptions } from '@/components/studio/EasyDrawOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
@@ -13,8 +12,42 @@ import { SelectionPanel } from '@/components/studio/SelectionPanel';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Checkbox } from '@/components/ui/Checkbox';
-import { Minimap } from '@/components/canvas/Minimap';
 import { QuickColorPalette } from '@/components/studio/QuickColorPalette';
+
+function CollapsibleSection({
+  title,
+  defaultOpen = false,
+  children,
+}: {
+  readonly title: string;
+  readonly defaultOpen?: boolean;
+  readonly children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-outline-variant/10 last:border-b-0">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between py-2.5 px-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface/70 transition-shadow shadow-elevation-1 hover:shadow-elevation-2 rounded-md"
+      >
+        {title}
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        >
+          <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && <div className="pb-3">{children}</div>}
+    </div>
+  );
+}
 
 function usePrecisionControls() {
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
@@ -171,22 +204,19 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   const [rotation, setRotation] = useState('0');
   const [shearH, setShearH] = useState('0');
   const [shearV, setShearV] = useState('0');
-  const [canvasColor, setCanvasColor] = useState('#ffffff');
+  const [canvasColor, setCanvasColor] = useState(() => {
+    if (!fabricCanvas) return '#ffffff';
+    const canvas = fabricCanvas as { backgroundColor?: string };
+    return (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') 
+      ? canvas.backgroundColor 
+      : '#ffffff';
+  });
   const colorInputRef = useRef<HTMLInputElement>(null);
   // Refs track the latest typed value so applyFn reads current data even before
   // React state flushes (NumberInput commits on blur/Enter which is async state).
   const rotationRef = useRef('0');
   const shearHRef = useRef('0');
   const shearVRef = useRef('0');
-
-  useEffect(() => {
-    if (!fabricCanvas) return;
-    const canvas = fabricCanvas as { backgroundColor?: string };
-    if (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') {
-
-      setCanvasColor(canvas.backgroundColor);
-    }
-  }, [fabricCanvas]);
 
   const applyTransform = useCallback(
     async (transformFn: (active: FabricObject, canvas: FabricCanvas) => void) => {
@@ -206,25 +236,36 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   );
 
   const applyRotation = useCallback(() => {
-    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.rotate(parseFloat(rotationRef.current) || 0));
   }, [applyTransform]);
 
   const applyShearH = useCallback(() => {
-    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.set({ skewX: parseFloat(shearHRef.current) || 0 }));
   }, [applyTransform]);
 
   const applyShearV = useCallback(() => {
-    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.set({ skewY: parseFloat(shearVRef.current) || 0 }));
   }, [applyTransform]);
 
-  const handleKeyDown = useCallback(
-    (applyFn: () => void) => (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') applyFn();
+  const handleRotationKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') applyRotation();
     },
-    []
+    [applyRotation]
+  );
+
+  const handleShearHKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') applyShearH();
+    },
+    [applyShearH]
+  );
+
+  const handleShearVKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') applyShearV();
+    },
+    [applyShearV]
   );
 
   const handleCanvasColorClick = () => colorInputRef.current?.click();
@@ -277,7 +318,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         </button>
       </div>
 
-      <div className="mb-3" onKeyDown={handleKeyDown(applyRotation)}>
+      <div className="mb-3" onKeyDown={handleRotationKeyDown}>
         <NumberInput
           label="Rotation"
           value={rotation}
@@ -289,7 +330,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         />
       </div>
 
-      <div className="mb-3" onKeyDown={handleKeyDown(applyShearH)}>
+      <div className="mb-3" onKeyDown={handleShearHKeyDown}>
         <NumberInput
           label="Skew X"
           value={shearH}
@@ -301,7 +342,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         />
       </div>
 
-      <div className="mb-4" onKeyDown={handleKeyDown(applyShearV)}>
+      <div className="mb-4" onKeyDown={handleShearVKeyDown}>
         <NumberInput
           label="Skew Y"
           value={shearV}
@@ -350,29 +391,42 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
 }
 
 function QuiltPanel() {
-  const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
-  const hasSelection = selectedObjectIds.length > 0;
-
   return (
-    <div className="flex flex-col gap-[2.75rem]">
-      {!hasSelection && <Minimap />}
-      <SelectionPanel />
-      <QuickColorPalette />
-      <PrecisionBar />
-      <RotateAndShear includeCanvasColor={true} />
-      <ColorwayTools />
-      <TextToolOptions />
-      <FreeDrawOptions />
-      <EasyDrawOptions />
+    <div className="flex flex-col">
+      <CollapsibleSection title="Selection" defaultOpen={true}>
+        <SelectionPanel />
+      </CollapsibleSection>
+      <CollapsibleSection title="Colors" defaultOpen={true}>
+        <QuickColorPalette />
+      </CollapsibleSection>
+      <CollapsibleSection title="Precision">
+        <PrecisionBar />
+      </CollapsibleSection>
+      <CollapsibleSection title="Rotate & Shear">
+        <RotateAndShear includeCanvasColor={true} />
+      </CollapsibleSection>
+      <CollapsibleSection title="Colorway">
+        <ColorwayTools />
+      </CollapsibleSection>
+      <CollapsibleSection title="Text">
+        <TextToolOptions />
+      </CollapsibleSection>
+      <CollapsibleSection title="Easy Draw">
+        <EasyDrawOptions />
+      </CollapsibleSection>
     </div>
   );
 }
 
 function BlockPanel() {
   return (
-    <div className="flex flex-col gap-[2.75rem]">
-      <PrecisionBar />
-      <EasyDrawOptions />
+    <div className="flex flex-col">
+      <CollapsibleSection title="Precision" defaultOpen={true}>
+        <PrecisionBar />
+      </CollapsibleSection>
+      <CollapsibleSection title="Easy Draw">
+        <EasyDrawOptions />
+      </CollapsibleSection>
     </div>
   );
 }

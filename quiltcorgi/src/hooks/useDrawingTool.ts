@@ -55,9 +55,10 @@ export function useDrawingTool() {
       if (activeTool === 'select') {
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.getObjects().forEach((obj: any) => {
+        canvas.getObjects().forEach((obj) => {
           // Skip objects that are explicitly marked as non-selectable (like guides)
-          if (obj.data?.isGuide || obj.data?.isHelper) return;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((obj as any).data?.isGuide || (obj as any).data?.isHelper) return;
           obj.selectable = true;
           obj.evented = true;
         });

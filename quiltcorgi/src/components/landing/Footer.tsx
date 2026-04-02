@@ -45,13 +45,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Community */}
+          {/* Social */}
           <div>
             <h4
               className="font-bold text-warm-text mb-4 text-sm uppercase tracking-wider"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Community
+              Social
             </h4>
             <ul className="space-y-3 text-warm-text-secondary text-sm">
               <li>

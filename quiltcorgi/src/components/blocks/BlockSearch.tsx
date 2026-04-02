@@ -19,7 +19,6 @@ const CATEGORIES = [
   'Dresden',
   'Appliqué',
   'Foundation Paper Piecing',
-  'Kaleidoscope',
   "Mariner's Compass",
 ];
 

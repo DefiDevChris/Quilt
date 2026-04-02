@@ -40,20 +40,12 @@ describe('pieceInspectorStore', () => {
       expect(usePieceInspectorStore.getState().isOpen).toBe(false);
     });
 
-    it('has isPuzzleViewActive set to false', () => {
-      expect(usePieceInspectorStore.getState().isPuzzleViewActive).toBe(false);
-    });
-
     it('has seamAllowance set to 0.25', () => {
       expect(usePieceInspectorStore.getState().seamAllowance).toBe(0.25);
     });
 
     it('has selectedPieceId set to null', () => {
       expect(usePieceInspectorStore.getState().selectedPieceId).toBeNull();
-    });
-
-    it('has hoveredPieceId set to null', () => {
-      expect(usePieceInspectorStore.getState().hoveredPieceId).toBeNull();
     });
 
     it('has pieceGeometry set to null', () => {
@@ -77,88 +69,6 @@ describe('pieceInspectorStore', () => {
       usePieceInspectorStore.getState().setOpen(true);
       usePieceInspectorStore.getState().setOpen(false);
       expect(usePieceInspectorStore.getState().isOpen).toBe(false);
-    });
-  });
-
-  // ── togglePuzzleView ────────────────────────────────────────────
-
-  describe('togglePuzzleView', () => {
-    it('flips isPuzzleViewActive from false to true', () => {
-      usePieceInspectorStore.getState().togglePuzzleView();
-      expect(usePieceInspectorStore.getState().isPuzzleViewActive).toBe(true);
-    });
-
-    it('flips isPuzzleViewActive from true to false', () => {
-      usePieceInspectorStore.getState().togglePuzzleView();
-      usePieceInspectorStore.getState().togglePuzzleView();
-      expect(usePieceInspectorStore.getState().isPuzzleViewActive).toBe(false);
-    });
-
-    it('clears selection when deactivating', () => {
-      // Activate puzzle view and select a piece
-      usePieceInspectorStore.getState().togglePuzzleView();
-      usePieceInspectorStore.getState().selectPiece('piece-1', MOCK_GEOMETRY, MOCK_DIMENSIONS);
-
-      // Deactivate puzzle view
-      usePieceInspectorStore.getState().togglePuzzleView();
-
-      const state = usePieceInspectorStore.getState();
-      expect(state.isPuzzleViewActive).toBe(false);
-      expect(state.selectedPieceId).toBeNull();
-      expect(state.pieceGeometry).toBeNull();
-      expect(state.pieceDimensions).toBeNull();
-    });
-
-    it('closes panel when deactivating', () => {
-      usePieceInspectorStore.getState().togglePuzzleView();
-      usePieceInspectorStore.getState().setOpen(true);
-      usePieceInspectorStore.getState().togglePuzzleView();
-
-      expect(usePieceInspectorStore.getState().isOpen).toBe(false);
-    });
-
-    it('clears hoveredPieceId when deactivating', () => {
-      usePieceInspectorStore.getState().togglePuzzleView();
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-      usePieceInspectorStore.getState().togglePuzzleView();
-
-      expect(usePieceInspectorStore.getState().hoveredPieceId).toBeNull();
-    });
-
-    it('preserves selection state when activating', () => {
-      // Set up some state first
-      usePieceInspectorStore.getState().setOpen(true);
-      usePieceInspectorStore.getState().togglePuzzleView();
-
-      // isOpen should remain as it was
-      expect(usePieceInspectorStore.getState().isOpen).toBe(true);
-    });
-  });
-
-  // ── setPuzzleViewActive ─────────────────────────────────────────
-
-  describe('setPuzzleViewActive', () => {
-    it('sets isPuzzleViewActive to true', () => {
-      usePieceInspectorStore.getState().setPuzzleViewActive(true);
-      expect(usePieceInspectorStore.getState().isPuzzleViewActive).toBe(true);
-    });
-
-    it('clears all state when setting to false', () => {
-      // Set up state
-      usePieceInspectorStore.getState().setPuzzleViewActive(true);
-      usePieceInspectorStore.getState().selectPiece('piece-1', MOCK_GEOMETRY, MOCK_DIMENSIONS);
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-
-      // Deactivate
-      usePieceInspectorStore.getState().setPuzzleViewActive(false);
-
-      const state = usePieceInspectorStore.getState();
-      expect(state.isPuzzleViewActive).toBe(false);
-      expect(state.isOpen).toBe(false);
-      expect(state.selectedPieceId).toBeNull();
-      expect(state.hoveredPieceId).toBeNull();
-      expect(state.pieceGeometry).toBeNull();
-      expect(state.pieceDimensions).toBeNull();
     });
   });
 
@@ -223,32 +133,6 @@ describe('pieceInspectorStore', () => {
     });
   });
 
-  // ── setHoveredPiece ─────────────────────────────────────────────
-
-  describe('setHoveredPiece', () => {
-    it('sets hoveredPieceId', () => {
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-      expect(usePieceInspectorStore.getState().hoveredPieceId).toBe('hover-1');
-    });
-
-    it('clears hoveredPieceId with null', () => {
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-      usePieceInspectorStore.getState().setHoveredPiece(null);
-      expect(usePieceInspectorStore.getState().hoveredPieceId).toBeNull();
-    });
-
-    it('does not affect other state', () => {
-      usePieceInspectorStore
-        .getState()
-        .selectPiece('piece-1', MOCK_GEOMETRY, MOCK_DIMENSIONS);
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-
-      const state = usePieceInspectorStore.getState();
-      expect(state.selectedPieceId).toBe('piece-1');
-      expect(state.isOpen).toBe(true);
-    });
-  });
-
   // ── setSeamAllowance ────────────────────────────────────────────
 
   describe('setSeamAllowance', () => {
@@ -288,8 +172,7 @@ describe('pieceInspectorStore', () => {
       expect(state.isOpen).toBe(false);
     });
 
-    it('does not affect puzzle view or seam allowance', () => {
-      usePieceInspectorStore.getState().setPuzzleViewActive(true);
+    it('does not affect seam allowance', () => {
       usePieceInspectorStore.getState().setSeamAllowance(0.5);
       usePieceInspectorStore
         .getState()
@@ -297,15 +180,7 @@ describe('pieceInspectorStore', () => {
       usePieceInspectorStore.getState().clearSelection();
 
       const state = usePieceInspectorStore.getState();
-      expect(state.isPuzzleViewActive).toBe(true);
       expect(state.seamAllowance).toBe(0.5);
-    });
-
-    it('does not affect hoveredPieceId', () => {
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
-      usePieceInspectorStore.getState().clearSelection();
-
-      expect(usePieceInspectorStore.getState().hoveredPieceId).toBe('hover-1');
     });
   });
 
@@ -314,11 +189,9 @@ describe('pieceInspectorStore', () => {
   describe('reset', () => {
     it('returns to initial state', () => {
       // Modify every field
-      usePieceInspectorStore.getState().setPuzzleViewActive(true);
       usePieceInspectorStore
         .getState()
         .selectPiece('piece-1', MOCK_GEOMETRY, MOCK_DIMENSIONS);
-      usePieceInspectorStore.getState().setHoveredPiece('hover-1');
       usePieceInspectorStore.getState().setSeamAllowance(0.5);
 
       // Reset
@@ -326,9 +199,7 @@ describe('pieceInspectorStore', () => {
 
       const state = usePieceInspectorStore.getState();
       expect(state.isOpen).toBe(false);
-      expect(state.isPuzzleViewActive).toBe(false);
       expect(state.selectedPieceId).toBeNull();
-      expect(state.hoveredPieceId).toBeNull();
       expect(state.seamAllowance).toBe(0.25);
       expect(state.pieceGeometry).toBeNull();
       expect(state.pieceDimensions).toBeNull();

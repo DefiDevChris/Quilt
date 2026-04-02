@@ -21,7 +21,10 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
   function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      window.dispatchEvent(new CustomEvent('quiltcorgi:show-auth-gate'));
+      return;
+    }
 
     if (isLikedByUser) {
       unlikePost(postId);

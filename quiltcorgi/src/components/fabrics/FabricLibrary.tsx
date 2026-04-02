@@ -35,6 +35,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const removeFabricPreset = useProjectStore((s) => s.removeFabricPreset);
 
   const [activeTab, setActiveTab] = useState<TabType>('library');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isPanelOpen && activeTab === 'myfabrics' && isPro) {
@@ -248,11 +249,21 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                           <FabricCard fabric={fabric} onDragStart={handleDragStart} />
                           <button
                             type="button"
-                            onClick={() => deleteUserFabric(fabric.id)}
-                            title="Delete fabric"
-                            className="absolute -right-1 -top-1 hidden h-5 w-5 items-center justify-center rounded-full bg-error text-[10px] text-white group-hover:flex"
+                            onClick={() => {
+                              if (confirmDeleteId === fabric.id) {
+                                deleteUserFabric(fabric.id);
+                                setConfirmDeleteId(null);
+                              } else {
+                                setConfirmDeleteId(fabric.id);
+                              }
+                            }}
+                            onBlur={() => setConfirmDeleteId(null)}
+                            title={confirmDeleteId === fabric.id ? 'Click again to confirm delete' : 'Delete fabric'}
+                            className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                              confirmDeleteId === fabric.id ? 'bg-error ring-2 ring-error/50 !opacity-100' : 'bg-error'
+                            }`}
                           >
-                            ✕
+                            {confirmDeleteId === fabric.id ? '✓' : '✕'}
                           </button>
                         </div>
                       ))}

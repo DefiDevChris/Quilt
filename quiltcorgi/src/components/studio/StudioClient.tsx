@@ -32,8 +32,6 @@ import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
-import { useTapToPlaceBlock } from '@/hooks/useTapToPlaceBlock';
-import { useTapToPlaceFabric } from '@/hooks/useTapToPlaceFabric';
 import { saveProject } from '@/lib/save-project';
 import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
 import { HelpPanel } from '@/components/studio/HelpPanel';
@@ -48,7 +46,6 @@ import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
 import { SmartGuides } from '@/components/canvas/SmartGuides';
 import { UndoRedoOverlay } from '@/components/canvas/UndoRedoOverlay';
-import { TapToPlaceIndicator } from '@/components/canvas/TapToPlaceIndicator';
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
@@ -80,9 +77,9 @@ function PrintOptionsPanel({
     },
     {
       label: 'Piece Templates',
-      description: 'Inspect pieces & generate 1:1 PDF templates',
+      description: 'Select pieces to inspect & generate 1:1 PDF templates',
       onClick: () => {
-        usePieceInspectorStore.getState().togglePuzzleView();
+        usePieceInspectorStore.getState().setOpen(true);
       },
     },
     {
@@ -212,14 +209,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
   const { toast } = useToast();
   const [isUpgrading, setIsUpgrading] = useState(false);
-
-  // Tap-to-place accessibility hooks
-  const { selectedBlockId, cancelSelection } = useTapToPlaceBlock();
-  const { selectedFabricId, cancelSelection: cancelFabricSelection } = useTapToPlaceFabric();
-  const blocks = useBlockStore((s) => s.blocks);
-  const fabrics = useFabricStore((s) => s.fabrics);
-  const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
-  const selectedFabric = fabrics.find((f) => f.id === selectedFabricId);
 
   // Cleanup expired temp projects on mount
   useEffect(() => {
@@ -431,21 +420,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
               <CanvasWorkspace project={project} />
               <SmartGuides />
               <FloatingToolbar />
-              <UndoRedoOverlay />
-              {selectedBlockId && selectedBlock && (
-                <TapToPlaceIndicator
-                  itemName={selectedBlock.name}
-                  onCancel={cancelSelection}
-                  type="block"
-                />
-              )}
-              {selectedFabricId && selectedFabric && (
-                <TapToPlaceIndicator
-                  itemName={selectedFabric.name}
-                  onCancel={cancelFabricSelection}
-                  type="fabric"
-                />
-              )}
             </div>
           </CanvasErrorBoundary>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useLayoutEffect } from 'react';
+import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { X, Heart, Share2, ExternalLink, Clock } from 'lucide-react';
@@ -13,6 +13,13 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
   const [liked, setLiked] = useState(item.isLikedByUser ?? false);
   const [likeCount, setLikeCount] = useState(item.likeCount);
   const [copied, setCopied] = useState(false);
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    };
+  }, []);
 
   const handleLike = async () => {
     if (!user) return;
@@ -31,7 +38,8 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
     try {
       await navigator.clipboard.writeText(`${window.location.origin}/socialthreads/${item.id}`);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       /* clipboard unavailable */
     }
@@ -182,26 +190,14 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
           </div>
         </div>
 
-        {/* Article preview lines */}
+        {/* Article preview */}
         <div className="px-6 py-5 flex-1">
-          <div className="space-y-2.5">
-            {[100, 88, 95, 72, 90, 60].map((w, i) => (
-              <div
-                key={i}
-                className="h-2.5 rounded-full bg-warm-border/60"
-                style={{ width: `${w}%` }}
-              />
-            ))}
-          </div>
-          <div className="mt-5 space-y-2.5">
-            {[85, 92, 68, 80].map((w, i) => (
-              <div
-                key={i}
-                className="h-2.5 rounded-full bg-warm-border/50"
-                style={{ width: `${w}%` }}
-              />
-            ))}
-          </div>
+          <p className="text-sm text-warm-text-secondary leading-relaxed">
+            {item.title}
+          </p>
+          <p className="mt-3 text-xs text-warm-text-muted">
+            Tap &quot;View Social&quot; to read the full post, see photos, and join the conversation.
+          </p>
         </div>
 
         {/* CTA */}
@@ -210,7 +206,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
             href="/socialthreads"
             className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-warm-peach text-warm-text font-bold text-sm shadow-elevation-1 hover:bg-warm-peach-dark transition-all"
           >
-            View Community
+            View Social
             <ExternalLink size={14} />
           </Link>
         </div>
