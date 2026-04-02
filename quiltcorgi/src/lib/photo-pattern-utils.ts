@@ -35,9 +35,24 @@ import type { OpenCV, OpenCVMat } from '@/lib/opencv-loader';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+/**
+ * Lightweight reference to the corrected image for cross-component sharing.
+ * Stores a Blob URL instead of raw ImageData to avoid Zustand state bloat
+ * and React reconciliation lag.
+ */
+export interface CorrectedImageRef {
+  url: string;
+  width: number;
+  height: number;
+}
+
 export interface PipelineResult {
   readonly pieces: readonly DetectedPiece[];
-  readonly correctedImageData: ImageData | null;
+  /**
+   * Blob URL pointing to the corrected image data.
+   * Use URL.revokeObjectURL() when no longer needed to prevent memory leaks.
+   */
+  readonly correctedImageRef: CorrectedImageRef | null;
   readonly perspectiveApplied: boolean;
   /** Information about any image downscaling that occurred */
   readonly downscaleInfo: import('@/lib/photo-pattern-types').DownscaleInfo;
@@ -410,11 +425,27 @@ export async function runDetectionPipeline(
     }
 
     const imageData = outCtx.getImageData(0, 0, outCanvas.width, outCanvas.height);
-    // Capture corrected image data before transferring the buffer to the worker
-    const correctedImageData = new ImageData(
-      new Uint8ClampedArray(imageData.data),
-      imageData.width,
-      imageData.height
+
+    // Convert corrected image to a Blob URL for lightweight Zustand storage
+    // instead of storing massive ImageData arrays in React state
+    const correctedImageRef: CorrectedImageRef | null = await new Promise<CorrectedImageRef | null>(
+      (resolve) => {
+        outCanvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve({
+                url: URL.createObjectURL(blob),
+                width: outCanvas.width,
+                height: outCanvas.height,
+              });
+            } else {
+              resolve(null);
+            }
+          },
+          'image/jpeg',
+          0.92
+        );
+      }
     );
 
     // Free the outCanvas pixel buffer now that we've extracted the data
@@ -477,7 +508,7 @@ export async function runDetectionPipeline(
 
     return {
       pieces: piecesWithEdgeInfo,
-      correctedImageData,
+      correctedImageRef,
       perspectiveApplied,
       downscaleInfo,
     };
@@ -490,7 +521,7 @@ export async function runDetectionPipeline(
 
     return {
       pieces: [],
-      correctedImageData: null,
+      correctedImageRef: null,
       perspectiveApplied: false,
       downscaleInfo: {
         scaled: false,

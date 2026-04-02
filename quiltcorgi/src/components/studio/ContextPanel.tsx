@@ -6,6 +6,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { FreeDrawOptions } from '@/components/studio/FreeDrawOptions';
+import { EasyDrawOptions } from '@/components/studio/EasyDrawOptions';
 import { ColorwayTools } from '@/components/studio/ColorwayTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
 
@@ -182,7 +183,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
     if (!fabricCanvas) return;
     const canvas = fabricCanvas as { backgroundColor?: string };
     if (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setCanvasColor(canvas.backgroundColor);
     }
   }, [fabricCanvas]);
@@ -362,6 +363,7 @@ function QuiltPanel() {
       <ColorwayTools />
       <TextToolOptions />
       <FreeDrawOptions />
+      <EasyDrawOptions />
     </div>
   );
 }
@@ -370,6 +372,7 @@ function BlockPanel() {
   return (
     <div className="flex flex-col gap-[2.75rem]">
       <PrecisionBar />
+      <EasyDrawOptions />
     </div>
   );
 }

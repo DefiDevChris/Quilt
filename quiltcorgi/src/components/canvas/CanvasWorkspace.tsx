@@ -6,6 +6,7 @@ import { useCanvasInit } from '@/hooks/useCanvasInit';
 import { useDrawingTool } from '@/hooks/useDrawingTool';
 import { useBezierCurveTool } from '@/hooks/useBezierCurveTool';
 import { useFreeDrawTool } from '@/hooks/useFreeDrawTool';
+import { useEasyDrawCanvas } from '@/hooks/useEasyDrawCanvas';
 import { useCurveEdit } from '@/hooks/useCurveEdit';
 import { useCanvasZoomPan } from '@/hooks/useCanvasZoomPan';
 import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
@@ -29,6 +30,7 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useDrawingTool();
   useBezierCurveTool();
   useFreeDrawTool();
+  useEasyDrawCanvas();
   useCurveEdit();
   useCanvasZoomPan();
   useCanvasKeyboard();
