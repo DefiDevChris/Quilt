@@ -30,30 +30,28 @@ export function ToolIcon({
   const disabled = tool.isDisabled ?? false;
 
   const button = (
-    <div className="flex flex-col items-center gap-1 group w-[52px]">
-      <button
-        type="button"
-        title={tool.label}
-        aria-label={tool.label}
-        aria-pressed={isActive}
-        aria-disabled={disabled}
-        onClick={disabled ? undefined : onClick}
-        className={`w-11 h-11 flex items-center justify-center rounded-lg transition-all duration-150 ${
-          disabled
-            ? 'text-outline-variant/30 cursor-default'
-            : isActive
-              ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-              : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container group-hover:bg-surface-container group-hover:text-on-surface'
-        }`}
-      >
-        <span aria-hidden="true" className="[&>svg]:w-6 [&>svg]:h-6">
-          {tool.icon}
-        </span>
-      </button>
-      <span className="text-[10px] leading-tight text-center text-on-surface/70 w-full truncate px-0.5">
+    <button
+      type="button"
+      title={tool.label}
+      aria-label={tool.label}
+      aria-pressed={isActive}
+      aria-disabled={disabled}
+      onClick={disabled ? undefined : onClick}
+      className={`w-11 flex flex-col items-center justify-center gap-0.5 rounded-lg transition-all duration-150 py-1 ${
+        disabled
+          ? 'text-outline-variant/30 cursor-default'
+          : isActive
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+            : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
+      }`}
+    >
+      <span aria-hidden="true" className="[&>svg]:w-5 [&>svg]:h-5">
+        {tool.icon}
+      </span>
+      <span className="text-[9px] leading-tight text-center truncate w-full px-0.5">
         {tool.label}
       </span>
-    </div>
+    </button>
   );
 
   if (tool.description) {

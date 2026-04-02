@@ -77,6 +77,8 @@ export function useDrawingTool() {
       let previewShape: InstanceType<typeof fabric.FabricObject> | null = null;
       let polygonPoints: { x: number; y: number }[] = [];
       let polygonPreviewLine: InstanceType<typeof fabric.Line> | null = null;
+      let lineChain: { x: number; y: number }[] = [];
+      let lineObjects: InstanceType<typeof fabric.Line>[] = [];
 
       function onMouseDown(e: { e: MouseEvent }) {
         if (stateRef.current.isSpacePressed) return;
@@ -115,6 +117,20 @@ export function useDrawingTool() {
           polygonPreviewLine = preview;
           canvas.renderAll();
           return;
+        }
+
+        // Line tool: check if starting a new chain or continuing
+        if (activeTool === 'line' && lineChain.length > 0) {
+          const last = lineChain[lineChain.length - 1];
+          const SNAP_THRESHOLD = 5;
+          const continuesChain =
+            Math.abs(sx - last.x) < SNAP_THRESHOLD && Math.abs(sy - last.y) < SNAP_THRESHOLD;
+
+          if (!continuesChain) {
+            // Starting new chain - reset
+            lineChain = [];
+            lineObjects = [];
+          }
         }
 
         isDrawing = true;
@@ -242,6 +258,50 @@ export function useDrawingTool() {
             selectable: true,
             evented: true,
           });
+
+          // Line tool: track chain and check for closed shape
+          if (activeTool === 'line') {
+            const line = previewShape as InstanceType<typeof fabric.Line>;
+            const x1 = line.x1!;
+            const y1 = line.y1!;
+            const x2 = line.x2!;
+            const y2 = line.y2!;
+
+            if (lineChain.length === 0) {
+              lineChain.push({ x: x1, y: y1 }, { x: x2, y: y2 });
+            } else {
+              lineChain.push({ x: x2, y: y2 });
+            }
+            lineObjects.push(line);
+
+            // Check if shape is closed (endpoint connects to start)
+            const SNAP_THRESHOLD = 5;
+            const first = lineChain[0];
+            const last = lineChain[lineChain.length - 1];
+            const isClosed =
+              Math.abs(last.x - first.x) < SNAP_THRESHOLD &&
+              Math.abs(last.y - first.y) < SNAP_THRESHOLD;
+
+            if (isClosed && lineChain.length >= 4) {
+              // Remove all line segments
+              lineObjects.forEach((l) => canvas.remove(l));
+
+              // Create polygon from chain
+              const polygon = new fabric.Polygon([...lineChain.slice(0, -1)], {
+                fill: fillColor,
+                stroke: strokeColor,
+                strokeWidth,
+                selectable: true,
+                evented: true,
+              });
+              canvas.add(polygon);
+
+              // Reset chain
+              lineChain = [];
+              lineObjects = [];
+            }
+          }
+
           const json = JSON.stringify(canvas.toJSON());
           useCanvasStore.getState().pushUndoState(json);
           useProjectStore.getState().setDirty(true);
