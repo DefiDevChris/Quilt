@@ -1,6 +1,6 @@
 {
-  "id": "825029cf-4565-4b14-8fb2-b210f06dff59",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "504b36aa-5c98-44f8-8832-1e1894eeb33a",
+  "prevId": "825029cf-4565-4b14-8fb2-b210f06dff59",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1464,6 +1464,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
         },
         "lastSavedAt": {
           "name": "lastSavedAt",

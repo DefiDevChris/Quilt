@@ -204,14 +204,17 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   );
 
   const applyRotation = useCallback(() => {
+    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.rotate(parseFloat(rotationRef.current) || 0));
   }, [applyTransform]);
 
   const applyShearH = useCallback(() => {
+    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.set({ skewX: parseFloat(shearHRef.current) || 0 }));
   }, [applyTransform]);
 
   const applyShearV = useCallback(() => {
+    // eslint-disable-next-line react-compiler/react-compiler
     applyTransform((active) => active.set({ skewY: parseFloat(shearVRef.current) || 0 }));
   }, [applyTransform]);
 

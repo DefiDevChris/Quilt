@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { multiPolygonToFabricData, variationToSvg } from '@/lib/serendipity-utils';
+import type { GeneratedVariation } from '@/lib/serendipity-utils';
+import type { MultiPolygon } from 'polygon-clipping';
 
 describe('serendipity-utils', () => {
   describe('multiPolygonToFabricData', () => {
     it('handles invalid bounds', () => {
-      const mp = [[[[NaN, NaN], [Infinity, -Infinity]]]];
+      const mp: MultiPolygon = [[[[NaN, NaN], [Infinity, -Infinity]]]];
       const result = multiPolygonToFabricData(mp, 'test', ['a', 'b']);
       expect(result.left).toBe(0);
       expect(result.top).toBe(0);
@@ -15,8 +17,8 @@ describe('serendipity-utils', () => {
 
   describe('variationToSvg', () => {
     it('handles empty polygons', () => {
-      const variation = {
-        type: 'intersection' as const,
+      const variation: GeneratedVariation = {
+        type: 'intersection',
         label: 'test',
         svgPath: '',
         polygons: [],
@@ -28,8 +30,8 @@ describe('serendipity-utils', () => {
     });
 
     it('handles invalid bounds', () => {
-      const variation = {
-        type: 'intersection' as const,
+      const variation: GeneratedVariation = {
+        type: 'intersection',
         label: 'test',
         svgPath: 'M 0 0 L 10 0 L 10 10 L 0 10 Z',
         polygons: [[[[NaN, Infinity], [-Infinity, NaN]]]],

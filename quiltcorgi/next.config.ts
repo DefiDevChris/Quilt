@@ -8,7 +8,9 @@ const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}
 
 const csp = [
   "default-src 'self'",
-  // Scripts: self + Next.js inline runtime + Stripe.js (unsafe-eval needed for React dev mode)
+  // Scripts: self + Next.js inline runtime + Stripe.js
+  // Note: 'unsafe-inline' required for Next.js App Router runtime chunks
+  // TODO: Migrate to nonce-based CSP when Next.js supports it in App Router
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
   // Styles: self + inline styles (required by Fabric.js and Tailwind)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

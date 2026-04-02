@@ -8,9 +8,21 @@ describe('assignFabricGroups', () => {
       { shapeId: '1', shapeName: 'Square', svgData: '', quantity: 1, seamAllowance: 0.25, seamAllowanceEnabled: true, unitSystem: 'imperial', fabricLabel: 'A', colorHex: '#ff0000', cutWidth: 2, cutHeight: 2, shape: 'square' },
     ];
     const parsed: ParsedPattern = {
-      name: 'Test', finishedWidth: 60, finishedHeight: 80,
-      layout: { type: 'straight', borderWidths: [], sashingWidth: 0 },
-      blocks: [], fabrics: [{ label: 'A', name: 'A', sku: null, colorFamily: null, quantity: 1 }],
+      id: 'test-id',
+      name: 'Test',
+      description: '',
+      skillLevel: 'beginner',
+      finishedWidth: 60,
+      finishedHeight: 80,
+      layout: { type: 'grid', borderWidths: [], sashingWidth: 0 },
+      blocks: [],
+      fabrics: [{ label: 'A', name: 'A', role: 'blocks', yardage: 1, sku: undefined, colorFamily: undefined }],
+      cuttingDirections: [],
+      assemblySteps: [],
+      sourceFilename: 'test.pdf',
+      pageCount: 1,
+      isQuilt: true,
+      parseConfidence: 1,
     };
     const result = assignFabricGroups(items, parsed);
     expect(result).toEqual(items);
@@ -21,12 +33,24 @@ describe('assignFabricGroups', () => {
       { shapeId: '1', shapeName: 'Square', svgData: '', quantity: 1, seamAllowance: 0.25, seamAllowanceEnabled: true, unitSystem: 'imperial', fabricLabel: 'Red Fabric', colorHex: '#ff0000', cutWidth: 2, cutHeight: 2, shape: 'square' },
     ];
     const fabrics = Array.from({ length: 25 }, (_, i) => ({
-      label: `Fabric ${i}`, name: `Fabric ${i}`, sku: null, colorFamily: i < 5 ? 'Red' : undefined, quantity: 1,
+      label: `Fabric ${i}`, name: `Fabric ${i}`, role: 'blocks' as const, yardage: 1, sku: undefined, colorFamily: i < 5 ? 'Red' : undefined,
     }));
     const parsed: ParsedPattern = {
-      name: 'Test', finishedWidth: 60, finishedHeight: 80,
-      layout: { type: 'straight', borderWidths: [], sashingWidth: 0 },
-      blocks: [], fabrics,
+      id: 'test-id',
+      name: 'Test',
+      description: '',
+      skillLevel: 'beginner',
+      finishedWidth: 60,
+      finishedHeight: 80,
+      layout: { type: 'grid', borderWidths: [], sashingWidth: 0 },
+      blocks: [],
+      fabrics,
+      cuttingDirections: [],
+      assemblySteps: [],
+      sourceFilename: 'test.pdf',
+      pageCount: 1,
+      isQuilt: true,
+      parseConfidence: 1,
     };
     const result = assignFabricGroups(items, parsed);
     expect(result[0]).toHaveProperty('fabricGroup');

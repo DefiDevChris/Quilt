@@ -241,6 +241,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
     if (!el) return;
     // Lazy import to avoid circular dependency with projectStore
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { useProjectStore } = require('@/stores/projectStore') as {
       useProjectStore: { getState: () => { canvasWidth: number; canvasHeight: number } };
     };

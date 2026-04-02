@@ -11,7 +11,7 @@ import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
 
 // Toast notification helper (imported dynamically to avoid circular deps)
-let toastFn: ((opts: { type: string; title: string; description?: string }) => void) | null = null;
+const toastFn: ((opts: { type: string; title: string; description?: string }) => void) | null = null;
 if (typeof window !== 'undefined') {
   import('@/components/ui/ToastProvider').then((mod) => {
     // Will be set when component mounts

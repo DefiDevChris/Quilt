@@ -57,9 +57,12 @@ describe('save-project', () => {
       isPro: true,
       user: { id: 'test-user', email: 'test@test.com' },
       isLoading: false,
-      isAuthenticated: true,
-      cognitoSub: 'test-sub',
-    } as ReturnType<typeof useAuthStore.getState>);
+      isAdmin: false,
+      isPrivate: false,
+      setUser: vi.fn(),
+      setLoading: vi.fn(),
+      reset: vi.fn(),
+    } as unknown as ReturnType<typeof useAuthStore.getState>);
     
     // Reset fetch mock
     mockFetch.mockReset();
@@ -266,8 +269,11 @@ describe('save-project', () => {
         isPro: false,
         user: null,
         isLoading: false,
-        isAuthenticated: false,
-        cognitoSub: null,
+        isAdmin: false,
+        isPrivate: false,
+        setUser: vi.fn(),
+        setLoading: vi.fn(),
+        reset: vi.fn(),
       });
       await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
       expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith('test-project', expect.objectContaining({

@@ -38,7 +38,6 @@ export function useTempProjectMigration() {
         if (res.ok) {
           // Migration successful, delete temp data
           deleteTempProject(projectId);
-          console.log('Temp project migrated to server');
         }
       } catch (error) {
         console.error('Failed to migrate temp project:', error);

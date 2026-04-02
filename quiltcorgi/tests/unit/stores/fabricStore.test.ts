@@ -204,7 +204,7 @@ describe('fabricStore', () => {
 
     it('does not remove fabric when delete fails', async () => {
       useFabricStore.setState({
-        userFabrics: [{ id: 'fab-1', name: 'F1', imageUrl: '/f1.jpg', isDefault: false }],
+        userFabrics: [{ id: 'fab-1', name: 'F1', imageUrl: '/f1.jpg', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
       });
       const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
       globalThis.fetch = mockFetch;
@@ -227,7 +227,7 @@ describe('fabricStore', () => {
     });
 
     it('opens panel without fetching if fabrics exist', () => {
-      useFabricStore.setState({ fabrics: [{ id: 'f1', name: 'F1', imageUrl: '' }] });
+      useFabricStore.setState({ fabrics: [{ id: 'f1', name: 'F1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }] });
       useFabricStore.getState().setPanelOpen(true);
       expect(useFabricStore.getState().isPanelOpen).toBe(true);
     });
@@ -236,8 +236,8 @@ describe('fabricStore', () => {
   describe('reset', () => {
     it('clears all state', async () => {
       useFabricStore.setState({
-        fabrics: [{ id: 'f1', name: 'F1', imageUrl: '' }],
-        userFabrics: [{ id: 'u1', name: 'U1', imageUrl: '', isDefault: false }],
+        fabrics: [{ id: 'f1', name: 'F1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
+        userFabrics: [{ id: 'u1', name: 'U1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
         search: 'test',
         manufacturer: 'M1',
         colorFamily: 'Blue',

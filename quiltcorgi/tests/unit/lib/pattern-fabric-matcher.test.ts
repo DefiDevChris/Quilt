@@ -10,7 +10,7 @@ describe('matchPatternFabrics', () => {
 
   it('returns null for color family match when no family found', () => {
     const patternFabrics: ParsedFabric[] = [
-      { label: 'Fabric A', name: 'Unknown Color', sku: null, colorFamily: 'NonExistent' },
+      { label: 'Fabric A', name: 'Unknown Color', role: 'blocks', yardage: 1, sku: undefined, colorFamily: 'NonExistent' },
     ];
     const results = matchPatternFabrics(patternFabrics, dbFabrics);
     expect(results[0].matchMethod).toBe('none');
@@ -18,7 +18,7 @@ describe('matchPatternFabrics', () => {
 
   it('matches by collection name', () => {
     const patternFabrics: ParsedFabric[] = [
-      { label: 'Fabric A', name: 'Nature Blue Sky', sku: null, colorFamily: null },
+      { label: 'Fabric A', name: 'Nature Blue Sky', role: 'blocks', yardage: 1, sku: undefined, colorFamily: undefined },
     ];
     const results = matchPatternFabrics(patternFabrics, dbFabrics);
     expect(results[0].matchMethod).toBe('name');
@@ -26,7 +26,7 @@ describe('matchPatternFabrics', () => {
 
   it('returns null for name match when distance > 3', () => {
     const patternFabrics: ParsedFabric[] = [
-      { label: 'Fabric A', name: 'Xylophone Zebra Quantum', sku: null, colorFamily: null },
+      { label: 'Fabric A', name: 'Xylophone Zebra Quantum', role: 'blocks', yardage: 1, sku: undefined, colorFamily: undefined },
     ];
     const results = matchPatternFabrics(patternFabrics, dbFabrics);
     expect(results[0].matchMethod).toBe('none');

@@ -10,26 +10,26 @@ describe('matchPatternBlock', () => {
   ];
 
   it('returns null for normalized match with empty normalized name', () => {
-    const block: ParsedBlock = { name: '  quilt  ', quantity: 1, pieces: [] };
+    const block: ParsedBlock = { name: '  quilt  ', quantity: 1, finishedWidth: 12, finishedHeight: 12, pieces: [] };
     const result = matchPatternBlock(block, library);
     expect(result.matchMethod).toBe('none');
   });
 
   it('returns null for tag match with no keywords', () => {
-    const block: ParsedBlock = { name: 'the of and', quantity: 1, pieces: [] };
+    const block: ParsedBlock = { name: 'the of and', quantity: 1, finishedWidth: 12, finishedHeight: 12, pieces: [] };
     const result = matchPatternBlock(block, library);
     expect(result.matchMethod).toBe('none');
   });
 
   it('returns tag match with single match', () => {
-    const block: ParsedBlock = { name: 'Star Point', quantity: 1, pieces: [] };
+    const block: ParsedBlock = { name: 'Star Point', quantity: 1, finishedWidth: 12, finishedHeight: 12, pieces: [] };
     const result = matchPatternBlock(block, library);
     expect(result.matchMethod).toBe('tag');
     expect(result.confidence).toBe(0.6);
   });
 
   it('returns tag match with ambiguous match', () => {
-    const block: ParsedBlock = { name: 'Grid Log', quantity: 1, pieces: [] };
+    const block: ParsedBlock = { name: 'Grid Log', quantity: 1, finishedWidth: 12, finishedHeight: 12, pieces: [] };
     const result = matchPatternBlock(block, library);
     expect(result.matchMethod).toBe('tag');
     expect(result.confidence).toBe(0.4);
