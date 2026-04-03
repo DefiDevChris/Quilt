@@ -6,7 +6,6 @@ import {
   PATTERN_OVERLAYS,
   type BlockOverlay,
   type PatternOverlay,
-  calculateBlockCount,
 } from '@/lib/quilt-overlay-registry';
 
 interface RecommendedDimensionsModalProps {
@@ -65,10 +64,7 @@ function findEvenBlockSizes(
 /**
  * Calculate recommended dimensions that produce even block pieces
  */
-function calculateRecommendations(
-  pattern: PatternOverlay,
-  block?: BlockOverlay
-): Array<{
+function calculateRecommendations(pattern: PatternOverlay): Array<{
   label: string;
   width: number;
   height: number;
@@ -96,9 +92,7 @@ function calculateRecommendations(
   for (const bs of blockSizes) {
     const cols = Math.ceil(pattern.dimensions.width / bs);
     const rows = Math.ceil(pattern.dimensions.height / bs);
-    const total = cols * rows;
     const width = cols * bs;
-    const height = rows * bs;
 
     // Maintain aspect ratio - adjust height to match width's aspect
     const adjustedHeight = Math.round(width / aspectRatio);
@@ -127,7 +121,6 @@ export function RecommendedDimensionsModal({
   onSelect,
   onClose,
   selectedOverlay,
-  selectedType,
 }: RecommendedDimensionsModalProps) {
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
@@ -144,7 +137,7 @@ export function RecommendedDimensionsModal({
 
   const recommendations = useMemo(() => {
     if (selectedPattern) {
-      return calculateRecommendations(selectedPattern, selectedBlock);
+      return calculateRecommendations(selectedPattern);
     }
     if (selectedBlock) {
       return findEvenBlockSizes(100, 100, 'block').map((r) => ({

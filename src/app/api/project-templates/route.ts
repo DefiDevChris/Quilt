@@ -37,7 +37,7 @@ export async function GET() {
     return Response.json({ data: templates });
   } catch (error) {
     console.error('Failed to fetch templates:', error);
-    return errorResponse('Failed to fetch templates');
+    return errorResponse('Failed to fetch templates', 'INTERNAL_ERROR', 500);
   }
 }
 
@@ -64,6 +64,6 @@ export async function POST(request: NextRequest) {
     return Response.json({ data: template[0] });
   } catch (error) {
     console.error('Failed to create template:', error);
-    return errorResponse('Failed to create template');
+    return errorResponse('Failed to create template', 'INTERNAL_ERROR', 500);
   }
 }

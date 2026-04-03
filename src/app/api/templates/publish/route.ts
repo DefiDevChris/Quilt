@@ -1,25 +1,34 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { publishedTemplates } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { publishTemplateSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`templates:${ip}`, API_RATE_LIMITS.templates);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
   try {
     const body = await request.json();
-    const { projectId, title, description, thumbnailUrl, snapshotData, isPublic } = body;
+    const parsed = publishTemplateSchema.safeParse(body);
 
-    if (!title?.trim()) {
-      return errorResponse('Title is required', 'VALIDATION_ERROR', 400);
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    if (!snapshotData) {
-      return errorResponse('Snapshot data is required', 'VALIDATION_ERROR', 400);
-    }
+    const { projectId, title, description, thumbnailUrl, snapshotData, isPublic } = parsed.data;
 
     const [created] = await db
       .insert(publishedTemplates)
@@ -30,7 +39,7 @@ export async function POST(request: NextRequest) {
         description: description?.trim() || null,
         thumbnailUrl: thumbnailUrl || null,
         snapshotData,
-        isPublic: isPublic ?? true,
+        isPublic,
       })
       .returning();
 

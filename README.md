@@ -10,7 +10,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 - **Project Management** — All Projects view with search, project templates for reusable settings
 - **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
 - **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
-- **Creative Tools** — Serendipity color shuffling, Photo Patchwork, Fussy Cut previewing, Smart Guides, Quick Color Palette
+- **Creative Tools** — Photo Patchwork, fabric calibration
 - **Community** — Share designs, discover inspiration, threaded comments, and a blog
 - **Pro Features** — Snap a photo of a quilt and recreate it digitally, fabric calibration, unlimited projects
 
@@ -21,7 +21,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2.1 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand (17 stores)                                  |
+| State     | Zustand (12 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
 | Database  | PostgreSQL + Drizzle ORM 0.45 (17 tables)            |
 | Storage   | AWS S3 + CloudFront CDN                              |
@@ -176,11 +176,11 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Canvas Enhancements
 
-- **History Panel** — Visual undo/redo timeline with state jumping
 - **Reference Image Tool** — Import, adjust opacity, lock/unlock
 - **Seam Allowance Toggle** — Show/hide seam allowances in print preview
 - **Print Scale Preview** — 0.5x to 2.0x scale adjustment
 - **Pattern Overlay** — Show layout cell boundaries with auto-align to cells (Grid, Sashing, On-Point)
+- **Piece Inspector** — View piece dimensions and fabric usage
 
 ### Multi-Worktable System
 
@@ -196,6 +196,7 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 - Block Grid, Alignment helpers
 - Group/Ungroup operations
 - Grid/Snap toggles
+- **Undo/Redo** — Standard Ctrl+Z/Ctrl+Shift+Z with 20-state history
 
 ### Community & Social
 

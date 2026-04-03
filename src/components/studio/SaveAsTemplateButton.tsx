@@ -70,10 +70,13 @@ export function SaveAsTemplateButton({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
           <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6">
             <h3 className="text-lg font-semibold text-on-surface mb-4">Save as Template</h3>
-            
+
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label htmlFor="template-name" className="block text-sm font-medium text-secondary mb-1">
+                <label
+                  htmlFor="template-name"
+                  className="block text-sm font-medium text-secondary mb-1"
+                >
                   Template Name
                 </label>
                 <input
@@ -87,7 +90,9 @@ export function SaveAsTemplateButton({
               </div>
 
               <div className="text-xs text-secondary space-y-1">
-                <p>Canvas: {canvasWidth}" × {canvasHeight}"</p>
+                <p>
+                  Canvas: {canvasWidth}&quot; × {canvasHeight}&quot;
+                </p>
                 <p>Units: {unitSystem}</p>
                 <p>Grid: {gridSettings.enabled ? `${gridSettings.size}" grid` : 'disabled'}</p>
               </div>

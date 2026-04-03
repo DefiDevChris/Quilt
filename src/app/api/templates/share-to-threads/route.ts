@@ -2,8 +2,14 @@ import { NextRequest } from 'next/server';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { publishedTemplates, communityPosts } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
 import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
+import { shareToThreadsSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,11 +28,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { templateId, comment } = body;
+    const parsed = shareToThreadsSchema.safeParse(body);
 
-    if (!templateId) {
-      return errorResponse('Template ID is required', 'VALIDATION_ERROR', 400);
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
+
+    const { templateId, comment } = parsed.data;
 
     const [template] = await db
       .select()
@@ -40,24 +48,28 @@ export async function POST(request: NextRequest) {
 
     const isAdmin = session.user.role === 'admin';
 
-    const [post] = await db
-      .insert(communityPosts)
-      .values({
-        userId: session.user.id,
-        projectId: null,
-        templateId,
-        title: template.title,
-        description: comment?.trim() || template.description,
-        thumbnailUrl: template.thumbnailUrl || '',
-        category: 'general',
-        status: isAdmin ? 'approved' : 'pending',
-      })
-      .returning();
+    const post = await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(communityPosts)
+        .values({
+          userId: session.user.id,
+          projectId: null,
+          templateId,
+          title: template.title,
+          description: comment?.trim() || template.description,
+          thumbnailUrl: template.thumbnailUrl || '',
+          category: 'general',
+          status: isAdmin ? 'approved' : 'pending',
+        })
+        .returning();
 
-    await db
-      .update(publishedTemplates)
-      .set({ rethreadCount: sql`${publishedTemplates.rethreadCount} + 1` })
-      .where(eq(publishedTemplates.id, templateId));
+      await tx
+        .update(publishedTemplates)
+        .set({ rethreadCount: sql`${publishedTemplates.rethreadCount} + 1` })
+        .where(eq(publishedTemplates.id, templateId));
+
+      return created;
+    });
 
     return Response.json({ success: true, data: post }, { status: 201 });
   } catch (error) {

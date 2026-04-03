@@ -86,25 +86,11 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
       'Select a patch on the canvas and use the color picker in the panel on the right. You can also drag fabrics straight from the Fabric Library onto any patch.',
   },
   {
-    id: 'dt-2',
-    category: 'design-tools',
-    title: 'How does the Symmetry tool work?',
-    content:
-      'Click the Symmetry icon in the toolbar and choose vertical, horizontal, or radial symmetry. Draw in one section and watch your design mirror automatically.',
-  },
-  {
-    id: 'dt-3',
-    category: 'design-tools',
-    title: 'What is the Serendipity Generator?',
-    content:
-      'It randomly shuffles your fabric assignments to discover unexpected color combinations you might never have tried. Click the sparkle icon and see what happens!',
-  },
-  {
     id: 'dt-4',
     category: 'design-tools',
     title: 'Can I draw my own custom blocks?',
     content:
-      'Switch to the Block worktable and use EasyDraw for seam-line block drafting, Freeform for total creative freedom, or Applique for layered shapes.',
+      'Switch to the Block worktable and use BlockBuilder for seam-line block drafting, Freeform for total creative freedom, or Applique for layered shapes.',
   },
   {
     id: 'dt-5',
@@ -141,7 +127,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'account',
     title: 'What do I get with Pro?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, Symmetry and Serendipity tools, FPP template generation, and PDF export.',
+      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Pattern, FPP template generation, and PDF export.',
   },
   {
     id: 'ac-2',

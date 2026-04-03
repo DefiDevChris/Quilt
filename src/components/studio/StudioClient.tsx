@@ -35,7 +35,6 @@ import { saveProject } from '@/lib/save-project';
 
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
-import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
@@ -44,7 +43,6 @@ import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup
 import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
 
-import { UndoRedoOverlay } from '@/components/canvas/UndoRedoOverlay';
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
@@ -407,14 +405,11 @@ export function StudioClient({ projectId }: StudioClientProps) {
         {/* Canvas area */}
         <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
           <CanvasErrorBoundary>
-
-
             <div
               className="flex-1 flex overflow-hidden relative"
               onDragOver={combinedDragOver}
               onDrop={combinedDrop}
             >
-
               <CanvasWorkspace project={project} />
 
               <FloatingToolbar />
@@ -482,7 +477,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
             isOpen={isImageExportOpen}
             onClose={() => setIsImageExportOpen(false)}
           />
-
         </>
       )}
 
@@ -553,9 +547,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* History panel (opened from top bar) */}
       <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
-
-      {/* Onboarding tour */}
-      <OnboardingTour />
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />

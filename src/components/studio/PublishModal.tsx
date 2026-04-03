@@ -18,7 +18,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canvas = useCanvasStore((s) => s.canvas);
+  const canvas = useCanvasStore((s) => s.fabricCanvas);
   const projectId = useProjectStore((s) => s.projectId);
   const projectName = useProjectStore((s) => s.projectName);
   const user = useAuthStore((s) => s.user);
@@ -34,7 +34,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
     setError(null);
 
     try {
-      const snapshotData = canvas.toJSON(['id', 'selectable', 'evented']);
+      const snapshotData = canvas.toJSON();
       const thumbnail = canvas.toDataURL({ format: 'png', quality: 0.8, multiplier: 0.3 });
 
       const res = await fetch('/api/templates/publish', {
@@ -93,9 +93,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-on-surface mb-1.5">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-on-surface mb-1.5">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

@@ -4,7 +4,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
-import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
+
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
 
@@ -33,8 +33,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
-  const activeTool = useCanvasStore((s) => s.activeTool);
-  const setActiveTool = useCanvasStore((s) => s.setActiveTool);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -69,7 +67,12 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M4 16 Q 10 4 16 16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <path
+            d="M4 16 Q 10 4 16 16"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
         </svg>
       ),
     },
@@ -422,14 +425,78 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isActive: () => useCanvasStore.getState().showPatternOverlay,
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="9" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="15" y="3" width="2" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="3" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="9" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="15" y="9" width="2" height="5" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="3" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-          <rect x="9" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
+          <rect
+            x="3"
+            y="3"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="3"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="15"
+            y="3"
+            width="2"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="3"
+            y="9"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="9"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="15"
+            y="9"
+            width="2"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="3"
+            y="15"
+            width="5"
+            height="2"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="15"
+            width="5"
+            height="2"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
         </svg>
       ),
     },
@@ -440,8 +507,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       mascot: '/mascots&avatars/corgi17.png',
       group: 'view-adv',
       tier: 'advanced',
-      onClick: () =>
-        setGridSettings({ showBlockGrid: !gridSettings.showBlockGrid }),
+      onClick: () => setGridSettings({ showBlockGrid: !gridSettings.showBlockGrid }),
       isActive: () => gridSettings.showBlockGrid ?? false,
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -678,4 +744,3 @@ export function useBlockTools(): ToolDef[] {
     },
   ];
 }
-

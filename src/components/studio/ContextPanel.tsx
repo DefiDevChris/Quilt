@@ -13,7 +13,6 @@ import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Checkbox } from '@/components/ui/Checkbox';
 
-
 function CollapsibleSection({
   title,
   defaultOpen = false,
@@ -207,8 +206,8 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   const [canvasColor, setCanvasColor] = useState(() => {
     if (!fabricCanvas) return '#ffffff';
     const canvas = fabricCanvas as { backgroundColor?: string };
-    return (canvas.backgroundColor && typeof canvas.backgroundColor === 'string') 
-      ? canvas.backgroundColor 
+    return canvas.backgroundColor && typeof canvas.backgroundColor === 'string'
+      ? canvas.backgroundColor
       : '#ffffff';
   });
   const colorInputRef = useRef<HTMLInputElement>(null);
@@ -395,9 +394,6 @@ function QuiltPanel() {
     <div className="flex flex-col">
       <CollapsibleSection title="Selection" defaultOpen={true}>
         <SelectionPanel />
-      </CollapsibleSection>
-      <CollapsibleSection title="Colors" defaultOpen={true}>
-
       </CollapsibleSection>
       <CollapsibleSection title="Precision">
         <PrecisionBar />

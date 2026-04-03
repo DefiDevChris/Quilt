@@ -11,13 +11,15 @@ export const MIN_PPI = 72;
 export const MAX_PPI = 1200;
 export const SCANNER_PRESETS = ['150', '200', '300', '600'] as const;
 
-export type CalibrationMethod = 'manual-dpi' | 'scanner-preset';
+export type CalibrationMethod = 'manual-dpi' | 'scanner-preset' | 'ruler-reference';
 export type ScannerPreset = (typeof SCANNER_PRESETS)[number];
 
 export interface CalibrationInput {
   readonly method: CalibrationMethod;
   readonly manualDpi?: number;
   readonly scannerPreset?: ScannerPreset;
+  readonly rulerLengthPixels?: number;
+  readonly rulerLengthInches?: number;
 }
 
 export interface CalibrationResult {

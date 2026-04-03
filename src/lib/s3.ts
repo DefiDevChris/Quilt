@@ -67,6 +67,7 @@ export async function generatePresignedUrl({
     Bucket: bucket,
     Key: fileKey,
     ContentType: contentType,
+    ContentLength: MAX_FILE_SIZE_BYTES,
   });
 
   const uploadUrl = await getSignedUrl(s3Client, command, {

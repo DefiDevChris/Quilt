@@ -87,13 +87,39 @@ export const updateProjectSchema = z.object({
       z.object({
         id: z.string(),
         name: z.string(),
-        imageUrl: z.string(),
+        imageUrl: assetUrlSchema,
       })
     )
     .optional(),
   thumbnailUrl: assetUrlSchema.optional(),
   isPublic: z.boolean().optional(),
   version: z.number().int().min(1).optional(),
+});
+
+// --- Published Template Schemas ---
+
+const MAX_SNAPSHOT_SIZE = 5 * 1024 * 1024; // 5 MB JSON limit
+
+export const publishTemplateSchema = z.object({
+  projectId: z.string().uuid().optional(),
+  title: z.string().min(1).max(255),
+  description: z.string().max(2000).optional(),
+  thumbnailUrl: assetUrlSchema.optional(),
+  snapshotData: z
+    .record(z.string(), z.unknown())
+    .refine((data) => JSON.stringify(data).length <= MAX_SNAPSHOT_SIZE, {
+      message: 'Snapshot data exceeds 5 MB limit',
+    }),
+  isPublic: z.boolean().default(true),
+});
+
+export const templateIdSchema = z.object({
+  templateId: z.string().uuid(),
+});
+
+export const shareToThreadsSchema = z.object({
+  templateId: z.string().uuid(),
+  comment: z.string().max(2000).optional(),
 });
 
 export const paginationSchema = z.object({

@@ -2,11 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projectTemplates } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
+import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
 
 export async function DELETE(
   request: NextRequest,
@@ -20,16 +16,11 @@ export async function DELETE(
   try {
     await db
       .delete(projectTemplates)
-      .where(
-        and(
-          eq(projectTemplates.id, id),
-          eq(projectTemplates.userId, session.user.id)
-        )
-      );
+      .where(and(eq(projectTemplates.id, id), eq(projectTemplates.userId, session.user.id)));
 
     return Response.json({ success: true });
   } catch (error) {
     console.error('Failed to delete template:', error);
-    return errorResponse('Failed to delete template');
+    return errorResponse('Failed to delete template', 'INTERNAL_ERROR', 500);
   }
 }

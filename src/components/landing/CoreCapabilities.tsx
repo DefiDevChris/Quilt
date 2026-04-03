@@ -227,17 +227,17 @@ export default function CoreCapabilities() {
 
             <p className="text-lg text-warm-text-secondary mb-8">
               Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
-              positioning fabric motifs with Fussy Cut, or letting the Serendipity Generator
-              surprise you with unexpected color combinations — every tool is made to help you
-              create something you&apos;ll be proud of.
+              positioning fabric motifs with precision, or exploring unexpected color combinations
+              with ColorTheme — every tool is made to help you create something you&apos;ll be proud
+              of.
             </p>
 
             <ul className="space-y-4 mb-10">
               <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
               <CheckItem>Fussy Cut previewing and precision fabric positioning</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
-              <CheckItem>EasyDraw for drafting custom blocks by seam line</CheckItem>
-              <CheckItem>Applique layering and one-click Colorway recoloring</CheckItem>
+              <CheckItem>BlockBuilder for drafting custom blocks by seam line</CheckItem>
+              <CheckItem>Applique layering and one-click ColorTheme recoloring</CheckItem>
               <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
               <CheckItem>Snap a photo of a quilt and recreate it digitally (Pro)</CheckItem>
               <CheckItem>Six layout modes on an infinite canvas</CheckItem>

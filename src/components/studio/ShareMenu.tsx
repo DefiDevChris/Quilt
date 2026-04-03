@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Share2, MessageSquare, Link2, Twitter, Facebook } from 'lucide-react';
+import { Share2, MessageSquare, Link2 } from 'lucide-react';
 import { PublishModal } from './PublishModal';
 import { ShareToThreadsModal } from './ShareToThreadsModal';
 
@@ -57,32 +57,6 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
       icon: <Link2 size={16} />,
       action: handleCopyLink,
     },
-    {
-      label: 'Share to Twitter',
-      icon: <Twitter size={16} />,
-      action: () => {
-        if (!publishedTemplateId) {
-          setShowPublishModal(true);
-          return;
-        }
-        const url = `${window.location.origin}/templates/${publishedTemplateId}`;
-        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
-        setOpen(false);
-      },
-    },
-    {
-      label: 'Share to Facebook',
-      icon: <Facebook size={16} />,
-      action: () => {
-        if (!publishedTemplateId) {
-          setShowPublishModal(true);
-          return;
-        }
-        const url = `${window.location.origin}/templates/${publishedTemplateId}`;
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-        setOpen(false);
-      },
-    },
   ];
 
   return (
@@ -96,7 +70,13 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
           <Share2 size={16} />
           Share
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M3 4.5L6 7.5L9 4.5"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         {open && (
@@ -128,10 +108,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
       </div>
 
       {showPublishModal && (
-        <PublishModal
-          onClose={() => setShowPublishModal(false)}
-          onPublished={handlePublished}
-        />
+        <PublishModal onClose={() => setShowPublishModal(false)} onPublished={handlePublished} />
       )}
 
       {showThreadsModal && (

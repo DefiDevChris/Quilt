@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Settings } from 'lucide-react';
-import { useAuthStore } from '@/stores/auth-store';
+import { useAuthStore } from '@/stores/authStore';
 
 interface ProjectTemplate {
   id: string;
@@ -24,7 +24,10 @@ interface ProjectTemplatesProps {
   showCreateButton?: boolean;
 }
 
-export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: ProjectTemplatesProps) {
+export function ProjectTemplates({
+  onSelectTemplate,
+  showCreateButton = true,
+}: ProjectTemplatesProps) {
   const user = useAuthStore((s) => s.user);
   const [templates, setTemplates] = useState<ProjectTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +51,7 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
 
   const fetchTemplates = async () => {
     if (!user) return;
-    
+
     try {
       const res = await fetch('/api/project-templates');
       if (!res.ok) throw new Error('Failed to fetch');
@@ -63,16 +66,16 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
 
   const handleCreateTemplate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const res = await fetch('/api/project-templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      
+
       if (!res.ok) throw new Error('Failed to create template');
-      
+
       setShowCreateForm(false);
       setFormData({
         name: '',
@@ -90,12 +93,12 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
 
   const handleDeleteTemplate = async (id: string) => {
     if (!confirm('Delete this template?')) return;
-    
+
     try {
       const res = await fetch(`/api/project-templates/${id}`, {
         method: 'DELETE',
       });
-      
+
       if (!res.ok) throw new Error('Failed to delete');
       fetchTemplates();
     } catch (error) {
@@ -126,9 +129,12 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
       )}
 
       {showCreateForm && (
-        <form onSubmit={handleCreateTemplate} className="glass-card border border-white/40 rounded-xl p-6 space-y-4">
+        <form
+          onSubmit={handleCreateTemplate}
+          className="glass-card border border-white/40 rounded-xl p-6 space-y-4"
+        >
           <h3 className="font-bold text-on-surface">New Template</h3>
-          
+
           <input
             type="text"
             placeholder="Template name"
@@ -137,7 +143,7 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
             className="w-full px-4 py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20"
             required
           />
-          
+
           <div className="grid grid-cols-2 gap-4">
             <input
               type="number"
@@ -158,7 +164,7 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
               required
             />
           </div>
-          
+
           <div className="flex gap-3">
             <button
               type="submit"
@@ -182,18 +188,15 @@ export function ProjectTemplates({ onSelectTemplate, showCreateButton = true }: 
           key={template.id}
           className="glass-card border border-white/40 rounded-xl p-4 flex items-center justify-between group hover:shadow-elevation-2 transition-all"
         >
-          <div 
-            className="flex-1 cursor-pointer"
-            onClick={() => onSelectTemplate?.(template)}
-          >
+          <div className="flex-1 cursor-pointer" onClick={() => onSelectTemplate?.(template)}>
             <h4 className="font-bold text-on-surface group-hover:text-primary transition-colors">
               {template.name}
             </h4>
             <p className="text-sm text-secondary">
-              {template.canvasWidth}" × {template.canvasHeight}" • {template.unitSystem}
+              {template.canvasWidth}&quot; × {template.canvasHeight}&quot; • {template.unitSystem}
             </p>
           </div>
-          
+
           <button
             onClick={() => handleDeleteTemplate(template.id)}
             className="p-2 text-secondary hover:text-red-500 transition-colors"

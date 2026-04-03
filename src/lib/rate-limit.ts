@@ -152,6 +152,8 @@ export const API_RATE_LIMITS = {
   upload: { limit: 20, windowMs: 60 * 1000 },
   profile: { limit: 10, windowMs: 60 * 1000 },
   admin: { limit: 30, windowMs: 60 * 1000 },
+  templates: { limit: 10, windowMs: 60 * 1000 },
+  blog: { limit: 10, windowMs: 60 * 1000 },
 } as const;
 
 export function getClientIp(request: Request): string {

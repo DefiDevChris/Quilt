@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { test as base, Page, Locator, expect } from '@playwright/test';
 
 export const authenticatedTest = base.extend<{
@@ -25,14 +26,17 @@ export const authenticatedTest = base.extend<{
 export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro') {
   await page.addInitScript((role) => {
     localStorage.setItem('qc_access_token', 'mock-jwt-token');
-    localStorage.setItem('user', JSON.stringify({
-      id: 'test-user-123',
-      email: 'test@example.com',
-      name: 'Test User',
-      role: role,
-      isPro: role === 'pro' || role === 'admin',
-      isAdmin: role === 'admin'
-    }));
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        id: 'test-user-123',
+        email: 'test@example.com',
+        name: 'Test User',
+        role: role,
+        isPro: role === 'pro' || role === 'admin',
+        isAdmin: role === 'admin',
+      })
+    );
     document.cookie = 'qc_id_token=mock-token; path=/';
     document.cookie = 'qc_access_token=mock-token; path=/';
   }, role);
@@ -47,9 +51,9 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
           email: 'test@example.com',
           role: role,
           isPro: role === 'pro' || role === 'admin',
-          isAdmin: role === 'admin'
-        }
-      })
+          isAdmin: role === 'admin',
+        },
+      }),
     });
   });
 
@@ -59,8 +63,8 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify([
-          { id: 'test-project-1', name: 'Test Project 1', createdAt: new Date().toISOString() }
-        ])
+          { id: 'test-project-1', name: 'Test Project 1', createdAt: new Date().toISOString() },
+        ]),
       });
     } else {
       await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
@@ -70,17 +74,21 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
 
 export async function mockCanvas(page: Page) {
   await page.addInitScript(() => {
-    (window as any).fabric = {
+    (window as unknown as Window & { fabric: unknown }).fabric = {
       Canvas: class {
         constructor() {}
         add() {}
         remove() {}
         renderAll() {}
-        getObjects() { return []; }
+        getObjects() {
+          return [];
+        }
         setWidth() {}
         setHeight() {}
         dispose() {}
-        toJSON() { return {}; }
+        toJSON() {
+          return {};
+        }
         loadFromJSON() {}
       },
       Rect: class {},
@@ -88,12 +96,16 @@ export async function mockCanvas(page: Page) {
       Polygon: class {},
       Line: class {},
       Text: class {},
-      Group: class {}
+      Group: class {},
     };
   });
 }
 
-export async function waitForElement(page: Page, selector: string, timeout = 5000): Promise<Locator> {
+export async function waitForElement(
+  page: Page,
+  selector: string,
+  timeout = 5000
+): Promise<Locator> {
   const element = page.locator(selector);
   await element.waitFor({ state: 'visible', timeout });
   return element;
@@ -103,7 +115,10 @@ export async function waitForNetworkIdle(page: Page, timeout = 3000): Promise<vo
   await page.waitForLoadState('networkidle', { timeout });
 }
 
-export async function fillAndSubmit(page: Page, fields: { selector: string; value: string }[]): Promise<void> {
+export async function fillAndSubmit(
+  page: Page,
+  fields: { selector: string; value: string }[]
+): Promise<void> {
   for (const field of fields) {
     await page.fill(field.selector, field.value);
   }
@@ -116,7 +131,9 @@ export async function fillAndSubmit(page: Page, fields: { selector: string; valu
 export async function clearSession(page: Page): Promise<void> {
   await page.evaluate(() => {
     document.cookie.split(';').forEach((c) => {
-      document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+      document.cookie = c
+        .replace(/^ +/, '')
+        .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
     });
     localStorage.clear();
   });
