@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect x="0" y="0" width="600" height="800" fill="#F8F8F8" stroke="#333" stroke-width="2"/>
+  <polygon points="300.0,96.25 543.0,400.0 300.0,703.75 57.0,400.0" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,130.0 516.0,400.0 300.0,670.0 84.0,400.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,163.75 489.0,400.0 300.0,636.25 111.0,400.0" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,197.5 462.0,400.0 300.0,602.5 138.0,400.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,231.25 435.0,400.0 300.0,568.75 165.0,400.0" fill="#A0A0A0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,265.0 408.0,400.0 300.0,535.0 192.0,400.0" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,298.75 381.0,400.0 300.0,501.25 219.0,400.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,332.5 354.0,400.0 300.0,467.5 246.0,400.0" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="300.0,366.25 327.0,400.0 300.0,433.75 273.0,400.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>
