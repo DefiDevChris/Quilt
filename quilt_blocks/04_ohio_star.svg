@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <rect x="0" y="0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="200.0" y="0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="200.0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="200.0" y="200.0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100.0" y="100.0" width="100.0" height="100.0" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="100.0" y="0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="100.0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="200.0" y="100.0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100.0" y="200.0" width="100.0" height="100.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100.0,30.0 114.99999999999999,70.0 85.0,70.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="200.0,30.0 215.0,70.0 185.0,70.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="100.0,270.0 114.99999999999999,229.99999999999997 85.0,229.99999999999997" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="200.0,270.0 215.0,229.99999999999997 185.0,229.99999999999997" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="30.0,100.0 70.0,114.99999999999999 70.0,85.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="30.0,200.0 70.0,215.0 70.0,185.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="270.0,100.0 229.99999999999997,114.99999999999999 229.99999999999997,85.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="270.0,200.0 229.99999999999997,215.0 229.99999999999997,185.0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

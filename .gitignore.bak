@@ -45,18 +45,3 @@ Thumbs.db
 
 # Fabric images
 fabrics/
-
-# Playwright
-/playwright-report/
-/test-results/
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# PnP
-/.pnp
-.pnp.*
