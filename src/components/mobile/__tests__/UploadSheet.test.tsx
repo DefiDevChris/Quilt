@@ -16,7 +16,7 @@ describe('UploadSheet', () => {
   it('renders two options when open', () => {
     render(<UploadSheet isOpen={true} onClose={() => {}} />);
     expect(screen.getByText('Upload Fabric')).toBeDefined();
-    expect(screen.getByText('Share to Community')).toBeDefined();
+    expect(screen.getByText('Share to Social')).toBeDefined();
   });
 
   it('calls onClose when backdrop is clicked', () => {
