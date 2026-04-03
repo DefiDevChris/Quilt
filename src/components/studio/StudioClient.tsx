@@ -4,8 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import type { Project } from '@/types/project';
 import { CanvasWorkspace } from '@/components/canvas/CanvasWorkspace';
-import { HorizontalRuler } from '@/components/canvas/HorizontalRuler';
-import { VerticalRuler } from '@/components/canvas/VerticalRuler';
+
 import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
 import { StudioTopBar } from '@/components/studio/StudioTopBar';
@@ -23,8 +22,7 @@ import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
 import { PatternOverlayPanel } from '@/components/studio/PatternOverlayPanel';
-import { SymmetryTool } from '@/components/generators/SymmetryTool';
-import { SerendipityTool } from '@/components/generators/SerendipityTool';
+
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
@@ -34,7 +32,7 @@ import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
 import { saveProject } from '@/lib/save-project';
-import { FussyCutDialog } from '@/components/studio/FussyCutDialog';
+
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
@@ -45,7 +43,7 @@ import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup
 
 import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
-import { SmartGuides } from '@/components/canvas/SmartGuides';
+
 import { UndoRedoOverlay } from '@/components/canvas/UndoRedoOverlay';
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
@@ -196,8 +194,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
   const [isPatternOverlayOpen, setIsPatternOverlayOpen] = useState(false);
-  const [isSymmetryOpen, setIsSymmetryOpen] = useState(false);
-  const [isSerendipityOpen, setIsSerendipityOpen] = useState(false);
+
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -380,8 +377,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
           <Toolbar
             onOpenLayoutSettings={() => setIsLayoutSettingsOpen(true)}
             onOpenGridDimensions={() => setIsGridDimensionsOpen(true)}
-            onOpenSymmetry={() => setIsSymmetryOpen(true)}
-            onOpenSerendipity={() => setIsSerendipityOpen(true)}
             onOpenImageExport={() =>
               isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
             }
@@ -412,16 +407,16 @@ export function StudioClient({ projectId }: StudioClientProps) {
         {/* Canvas area */}
         <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
           <CanvasErrorBoundary>
-            <HorizontalRuler />
+
 
             <div
               className="flex-1 flex overflow-hidden relative"
               onDragOver={combinedDragOver}
               onDrop={combinedDrop}
             >
-              <VerticalRuler />
+
               <CanvasWorkspace project={project} />
-              <SmartGuides />
+
               <FloatingToolbar />
             </div>
           </CanvasErrorBoundary>
@@ -481,14 +476,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
           {isPatternOverlayOpen && (
             <PatternOverlayPanel onClose={() => setIsPatternOverlayOpen(false)} />
           )}
-          <SymmetryTool isOpen={isSymmetryOpen} onClose={() => setIsSymmetryOpen(false)} />
-          <SerendipityTool isOpen={isSerendipityOpen} onClose={() => setIsSerendipityOpen(false)} />
+
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
             isOpen={isImageExportOpen}
             onClose={() => setIsImageExportOpen(false)}
           />
-          <FussyCutDialog />
+
         </>
       )}
 

@@ -7,6 +7,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 - **Design Studio** — Multiple worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
 - **659+ Block Library** — Browse by category or draft your own with EasyDraw, Applique, and Freeform tools
 - **Block Overlay Templates** — 20 traditional quilt block SVGs + 10 full-pattern overlays with recommended dimensions, aspect-ratio-locked scaling, and opacity controls for tracing
+- **Project Management** — All Projects view with search, project templates for reusable settings
 - **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
 - **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
 - **Creative Tools** — Serendipity color shuffling, Photo Patchwork, Fussy Cut previewing, Smart Guides, Quick Color Palette
@@ -22,7 +23,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Canvas    | Fabric.js 7.2                                        |
 | State     | Zustand (17 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (16 tables)            |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (17 tables)            |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
@@ -111,24 +112,29 @@ npm run db:seed:blog     # Seed blog posts only
 src/
   app/                    # Next.js App Router — pages and API routes
     (protected)/          # Auth-gated routes (layout redirects guests)
+      projects/           # All Projects view with search
+      templates/          # Project template management
+      settings/           # Profile settings with delete account
     (public)/             # Public marketing pages
     admin/                # Admin moderation tools
     api/                  # API route handlers
+      blog/               # Blog CRUD and admin endpoints
+      project-templates/  # Template CRUD operations
     auth/                 # Sign in/up/verify/forgot-password pages
+    blog/                 # Blog list and individual post pages
+      [slug]/             # Individual blog post page
     dashboard/            # Bento grid dashboard
     socialthreads/        # Community feed (Discover + Saved tabs)
     studio/[projectId]/   # Design canvas (desktop only, server-side auth guard)
     profile/              # User profile and billing
     globals.css           # Tailwind v4 @theme — design tokens, glass classes
   components/             # React components, organized by domain
-    generators/           # SerendipityTool, SymmetryTool
     social/               # FeedContent, SavedContent, TrendingContent, SocialLayout, BlogContent
     mobile/               # MobileShell, MobileBottomNav (3-item: Home, Upload FAB, Profile/SignIn)
-    blog/                 # BlogPostView (read-only)
-    editor/               # TiptapRenderer only
-    canvas/               # SmartGuides, Minimap
-    studio/               # QuickColorPalette, HistoryPanel, ReferenceImageDialog
+    editor/               # TiptapRenderer for blog content
+    studio/               # HistoryPanel, ReferenceImageDialog, ProjectTemplates, SaveAsTemplateButton
     blocks/               # BlockDraftingShell, BlockBuilderTab, BlockOverlaySelector, RecommendedDimensionsModal
+    settings/             # DeleteAccountSection
   hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
   stores/                 # Zustand stores (17 total)
   lib/                    # Pure utility modules and engines
@@ -139,7 +145,7 @@ src/
   types/                  # Shared TypeScript type definitions
   data/                   # Static data files (pattern definitions, etc.)
   db/
-    schema/               # Drizzle table definitions (16 tables)
+    schema/               # Drizzle table definitions (17 tables)
     migrations/           # Generated SQL migrations
     seed/                 # Seed scripts
   content/
@@ -170,9 +176,6 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Canvas Enhancements
 
-- **Smart Guides** — Real-time alignment helpers with 5px snap threshold
-- **Quick Color Palette** — Last 8 colors used, one-click application
-- **Minimap/Navigator** — Overview map for large quilts
 - **History Panel** — Visual undo/redo timeline with state jumping
 - **Reference Image Tool** — Import, adjust opacity, lock/unlock
 - **Seam Allowance Toggle** — Show/hide seam allowances in print preview
@@ -189,21 +192,20 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Studio Tools
 
-- Circle, Polygon, Eyedropper, Ruler
+- Circle, Polygon
 - Block Grid, Alignment helpers
 - Group/Ungroup operations
 - Grid/Snap toggles
-- Serendipity and Symmetry generators
 
 ### Community & Social
 
 - **Social Threads** — Discover (all posts), Saved (bookmarked)
 - **Trending** — "Most Saved" with month/all-time toggle
-- **Blog** — Admin-only posts via API, Tiptap JSON rendering
+- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API, Tiptap JSON rendering
 
 ## Database Schema
 
-16 tables: `users`, `userProfiles`, `projects`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
+17 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
 
 ## Mobile
 

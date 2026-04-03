@@ -158,11 +158,6 @@ export const calibrationInputSchema = z.discriminatedUnion('method', [
     manualDpi: z.number().min(72).max(1200),
   }),
   z.object({
-    method: z.literal('ruler-reference'),
-    rulerLengthInches: z.number().gt(0),
-    rulerLengthPixels: z.number().int().gt(0),
-  }),
-  z.object({
     method: z.literal('scanner-preset'),
     scannerPreset: z.enum(['150', '200', '300', '600']),
   }),

@@ -10,7 +10,6 @@ import { SocialQuickViewModal } from '@/components/social/SocialQuickViewModal';
 import { SocialSplitPane, type SplitPanelId } from '@/components/social/SocialSplitPane';
 
 const SPLIT_HEADERS: Record<SplitPanelId, { label: string; subtitle: string }> = {
-  blog: { label: 'Blog', subtitle: 'Insights and tutorials' },
   saved: { label: 'Saved', subtitle: 'Your favorite posts' },
   feed: { label: 'Feed', subtitle: 'Explore the latest updates' },
   profile: { label: 'Profile', subtitle: 'Manage your account' },

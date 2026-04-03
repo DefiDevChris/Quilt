@@ -81,7 +81,6 @@ function renderToolGroup(
 export function Toolbar({
   onOpenLayoutSettings,
   onOpenGridDimensions,
-  onOpenSymmetry,
   onOpenImageExport,
   onOpenPhotoToPattern,
   onOpenResize,
@@ -94,7 +93,6 @@ export function Toolbar({
   const callbacks: ToolbarCallbacks = {
     onOpenLayoutSettings,
     onOpenGridDimensions,
-    onOpenSymmetry,
     onOpenImageExport,
     onOpenPhotoToPattern,
     onOpenResize,

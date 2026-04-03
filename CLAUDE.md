@@ -4,6 +4,29 @@
 
 Next.js 16.2.1 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments.
 
+## Current Features (April 2026)
+
+### Canvas & Design Tools
+- **Multi-Worktable System** — Up to 10 worktables per project with independent canvas state
+- **Pattern Overlay** — Layout cell boundaries with auto-align (Grid, Sashing, On-Point)
+- **History Panel** — Visual undo/redo timeline with state jumping
+- **Reference Image Tool** — Import, adjust opacity, lock/unlock
+- **Studio Tools** — Circle, Polygon, Block Grid, Alignment helpers, Group/Ungroup, Grid/Snap toggles
+
+### Project Management
+- **All Projects View** — `/projects` page with search and grid/list toggle
+- **Project Templates** — Save project settings as reusable templates
+- **Template Management** — Template selection in New Project Dialog, management at `/templates`
+
+### User Management
+- **Delete Account** — Settings page section with email-to-support flow
+- **Safe Deletion** — Admin-handled process via `support@quiltcorgi.com`
+
+### Community & Content
+- **Social Threads** — `/socialthreads` with Discover (all posts) and Saved (bookmarked) tabs
+- **Trending** — "Most Saved" with month/all-time toggle
+- **Blog** — Standalone `/blog` route with SEO-optimized pages at `/blog/[slug]`, admin-only posts via API, Tiptap JSON rendering
+
 ## Critical Conventions
 
 ### Architecture

@@ -1,4 +1,5 @@
 import type { UserRole } from './role-utils';
+export type { UserRole };
 
 export interface RolePermissions {
   canLike: boolean;

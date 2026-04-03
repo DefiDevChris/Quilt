@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, integer, boolean, timestamp, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { projects } from './projects';
+import { publishedTemplates } from './publishedTemplates';
 import { postStatusEnum, communityCategoryEnum } from './enums';
 
 export const communityPosts = pgTable(
@@ -11,6 +12,7 @@ export const communityPosts = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     projectId: uuid('projectId').references(() => projects.id, { onDelete: 'cascade' }),
+    templateId: uuid('templateId').references(() => publishedTemplates.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
     description: text('description'),
     thumbnailUrl: text('thumbnailUrl').notNull(),
@@ -32,5 +34,6 @@ export const communityPosts = pgTable(
     index('idx_community_posts_userId').on(table.userId),
     index('idx_community_posts_category').on(table.category),
     index('idx_community_posts_isFeatured').on(table.isFeatured),
+    index('idx_community_posts_templateId').on(table.templateId),
   ]
 );

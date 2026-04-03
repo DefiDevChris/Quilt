@@ -5,7 +5,7 @@ import { useCanvasStore, type BlockDraftingMode } from '@/stores/canvasStore';
 import { FreeformDraftingTab } from './FreeformDraftingTab';
 import { BlockBuilderTab } from './BlockBuilderTab';
 import { AppliqueTab } from './AppliqueTab';
-import { ImageTracingPanel } from '@/components/studio/ImageTracingPanel';
+
 import { BlockOverlaySelector } from './BlockOverlaySelector';
 
 export interface DraftTabProps {
@@ -336,7 +336,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
               </button>
               {overlayDimensions && (
                 <span className="text-[10px] text-secondary">
-                  {overlayDimensions.width}" × {overlayDimensions.height}"
+                  {overlayDimensions.width}&quot; &times; {overlayDimensions.height}&quot;
                 </span>
               )}
               <div className="flex items-center gap-1">
@@ -359,7 +359,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         </div>
 
         {/* Reference Image Tracing */}
-        <ImageTracingPanel />
+
 
         {/* Drafting canvas */}
         <div className="mb-4 flex justify-center rounded border border-outline-variant bg-white">

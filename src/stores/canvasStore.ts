@@ -28,24 +28,18 @@ export type ToolType =
   | 'triangle'
   | 'polygon'
   | 'line'
-  | 'ruler'
   | 'blockbuilder'
   | 'easydraw'
   | 'text'
-  | 'eyedropper'
   | 'spraycan'
-  | 'bend';
+  | 'bend'
+  | 'curve';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
-export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize' | 'eyedropper';
+export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
 
-export interface FussyCutTarget {
-  readonly objectId: string;
-  readonly fabricId: string;
-  readonly fabricImageUrl: string;
-  readonly patchVertices: readonly { x: number; y: number }[];
-}
+
 
 export type WorktableType = 'quilt' | 'block' | 'image' | 'print';
 
@@ -67,13 +61,16 @@ interface CanvasStoreState {
   blockDraftingMode: BlockDraftingMode;
   referenceImageOpacity: number;
   activeColorwayTool: ColorThemeTool | null;
-  fussyCutTarget: FussyCutTarget | null;
+
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
   printScale: number;
   easyDrawMode: 'straight' | 'smooth';
   blockBuilderMode: 'straight' | 'smooth';
-  toolSettings: Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>;
+  toolSettings: Record<
+    ToolType,
+    { fillColor?: string; strokeColor?: string; strokeWidth?: number }
+  >;
   clipboard: unknown[];
   showPatternOverlay: boolean;
   autoAlignToPattern: boolean;
@@ -99,7 +96,7 @@ interface CanvasStoreState {
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorThemeTool | null) => void;
-  setFussyCutTarget: (target: FussyCutTarget | null) => void;
+
   setViewportLocked: (locked: boolean) => void;
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
@@ -140,13 +137,16 @@ const INITIAL_STATE = {
   blockDraftingMode: 'freeform' as BlockDraftingMode,
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null as ColorThemeTool | null,
-  fussyCutTarget: null as FussyCutTarget | null,
+
   isViewportLocked: true,
   showSeamAllowance: true,
   printScale: 1.0,
   easyDrawMode: 'straight' as const,
   blockBuilderMode: 'straight' as const,
-  toolSettings: {} as Record<ToolType, { fillColor?: string; strokeColor?: string; strokeWidth?: number }>,
+  toolSettings: {} as Record<
+    ToolType,
+    { fillColor?: string; strokeColor?: string; strokeWidth?: number }
+  >,
   clipboard: [] as unknown[],
   showPatternOverlay: true,
   autoAlignToPattern: true,
@@ -228,7 +228,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
-  setFussyCutTarget: (target) => set({ fussyCutTarget: target }),
+
 
   setViewportLocked: (locked) => {
     set({ isViewportLocked: locked });

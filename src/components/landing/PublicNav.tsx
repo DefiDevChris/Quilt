@@ -46,6 +46,12 @@ export default function PublicNav() {
             Social Threads
           </a>
           <Link
+            href="/blog"
+            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+          >
+            Blog
+          </Link>
+          <Link
             href="/auth/signup"
             className="px-5 py-2 bg-warm-peach text-warm-text rounded-full font-semibold hover:bg-warm-peach-dark transition-colors whitespace-nowrap"
           >
@@ -100,6 +106,13 @@ export default function PublicNav() {
           >
             Social Threads
           </a>
+          <Link
+            href="/blog"
+            className="block text-warm-text-secondary font-medium py-2"
+            onClick={() => setMenuOpen(false)}
+          >
+            Blog
+          </Link>
           <Link
             href="/auth/signup"
             className="block text-center px-6 py-3 bg-warm-peach text-warm-text rounded-full font-semibold"

@@ -152,17 +152,6 @@ export function extractUniquePalette(patches: PatchColor[]): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// eyedropperPick
-// ---------------------------------------------------------------------------
-
-/**
- * Return the normalized fill of the patch matching objectId, or null if not found.
- */
-export function eyedropperPick(patches: PatchColor[], objectId: string): string | null {
-  const match = patches.find((p) => p.objectId === objectId);
-  return match !== undefined ? normalizeColor(match.currentFill) : null;
-}
-
 // ---------------------------------------------------------------------------
 // Color Scheme Generation
 // ---------------------------------------------------------------------------
