@@ -1,5 +1,14 @@
-import type { TourStep } from '@/types/onboarding';
 import { ONBOARDING_STORAGE_KEY, TOOLTIP_DELAY_MS } from '@/lib/constants';
+
+export interface TourStep {
+  id: string;
+  title: string;
+  description: string;
+  targetSelector: string;
+  placement: 'top' | 'bottom' | 'left' | 'right';
+  mascot: string;
+  showPointer?: boolean;
+}
 
 export { ONBOARDING_STORAGE_KEY, TOOLTIP_DELAY_MS };
 

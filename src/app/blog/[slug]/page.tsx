@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { db } from '@/db';
+import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { TiptapRenderer } from '@/components/editor/TiptapRenderer';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -72,7 +74,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {post.authorAvatarUrl && (
               <img
                 src={post.authorAvatarUrl}
-                alt={post.authorName}
+                alt={post.authorName ?? 'Author'}
                 className="w-8 h-8 rounded-full"
               />
             )}

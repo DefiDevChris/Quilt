@@ -3,17 +3,21 @@ import { Page } from '@playwright/test';
 export async function mockCanvas(page: Page) {
   await page.addInitScript(() => {
     // Mock Fabric.js canvas
-    (window as any).fabric = {
+    (window as unknown as Window & { fabric: unknown }).fabric = {
       Canvas: class {
         constructor() {}
         add() {}
         remove() {}
         renderAll() {}
-        getObjects() { return []; }
+        getObjects() {
+          return [];
+        }
         setWidth() {}
         setHeight() {}
         dispose() {}
-        toJSON() { return {}; }
+        toJSON() {
+          return {};
+        }
         loadFromJSON() {}
       },
       Rect: class {},
@@ -21,7 +25,7 @@ export async function mockCanvas(page: Page) {
       Polygon: class {},
       Line: class {},
       Text: class {},
-      Group: class {}
+      Group: class {},
     };
   });
 }
@@ -35,12 +39,10 @@ export async function mockProject(page: Page, projectId: string = 'test-project-
         id: projectId,
         name: 'Test Project',
         canvasData: { objects: [] },
-        worktables: [
-          { id: 'wt-1', name: 'Worktable 1', canvasData: { objects: [] } }
-        ],
+        worktables: [{ id: 'wt-1', name: 'Worktable 1', canvasData: { objects: [] } }],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      })
+        updatedAt: new Date().toISOString(),
+      }),
     });
   });
 
@@ -49,7 +51,7 @@ export async function mockProject(page: Page, projectId: string = 'test-project-
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true })
+        body: JSON.stringify({ success: true }),
       });
     } else {
       await route.continue();

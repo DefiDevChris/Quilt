@@ -2,21 +2,34 @@ import { NextRequest } from 'next/server';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { publishedTemplates, projects } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { templateIdSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`templates:${ip}`, API_RATE_LIMITS.templates);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
   try {
     const body = await request.json();
-    const { templateId } = body;
+    const parsed = templateIdSchema.safeParse(body);
 
-    if (!templateId) {
-      return errorResponse('Template ID is required', 'VALIDATION_ERROR', 400);
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
+
+    const { templateId } = parsed.data;
 
     const [template] = await db
       .select()
@@ -28,28 +41,32 @@ export async function POST(request: NextRequest) {
       return errorResponse('Template not found', 'NOT_FOUND', 404);
     }
 
-    const [newProject] = await db
-      .insert(projects)
-      .values({
-        userId: session.user.id,
-        name: `${template.title} (Copy)`,
-        description: template.description,
-        canvasData: template.snapshotData,
-        worktables: [
-          {
-            id: 'main',
-            name: 'Main',
-            canvasData: template.snapshotData,
-            order: 0,
-          },
-        ],
-      })
-      .returning();
+    const newProject = await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(projects)
+        .values({
+          userId: session.user.id,
+          name: `${template.title} (Copy)`,
+          description: template.description,
+          canvasData: template.snapshotData,
+          worktables: [
+            {
+              id: 'main',
+              name: 'Main',
+              canvasData: template.snapshotData,
+              order: 0,
+            },
+          ],
+        })
+        .returning();
 
-    await db
-      .update(publishedTemplates)
-      .set({ addToQuiltbookCount: sql`${publishedTemplates.addToQuiltbookCount} + 1` })
-      .where(eq(publishedTemplates.id, templateId));
+      await tx
+        .update(publishedTemplates)
+        .set({ addToQuiltbookCount: sql`${publishedTemplates.addToQuiltbookCount} + 1` })
+        .where(eq(publishedTemplates.id, templateId));
+
+      return created;
+    });
 
     return Response.json({ success: true, data: { projectId: newProject.id } }, { status: 201 });
   } catch (error) {

@@ -81,17 +81,24 @@ async function upsertSubscription(
     updatedAt: new Date(),
   };
 
-  const [existing] = await db
-    .select({ id: subscriptions.id })
-    .from(subscriptions)
-    .where(eq(subscriptions.userId, userId))
-    .limit(1);
-
-  if (existing) {
-    await db.update(subscriptions).set(values).where(eq(subscriptions.userId, userId));
-  } else {
-    await db.insert(subscriptions).values(values);
-  }
+  // Atomic upsert using ON CONFLICT on the unique userId constraint
+  await db
+    .insert(subscriptions)
+    .values(values)
+    .onConflictDoUpdate({
+      target: subscriptions.userId,
+      set: {
+        stripeCustomerId: values.stripeCustomerId,
+        stripeSubscriptionId: values.stripeSubscriptionId,
+        stripePriceId: values.stripePriceId,
+        plan: values.plan,
+        status: values.status,
+        currentPeriodStart: values.currentPeriodStart,
+        currentPeriodEnd: values.currentPeriodEnd,
+        cancelAtPeriodEnd: values.cancelAtPeriodEnd,
+        updatedAt: values.updatedAt,
+      },
+    });
 
   return values;
 }
@@ -128,10 +135,10 @@ async function getUserIdFromCustomerId(customerId: string): Promise<string | nul
   return sub?.userId ?? null;
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const userId = session.metadata?.userId;
-  const customerId = session.customer as string;
-  const subscriptionId = session.subscription as string;
+async function handleCheckoutCompleted(checkoutSession: Stripe.Checkout.Session) {
+  const userId = checkoutSession.metadata?.userId;
+  const customerId = checkoutSession.customer as string;
+  const subscriptionId = checkoutSession.subscription as string;
 
   if (!userId) {
     console.error('Checkout session missing userId metadata');
@@ -141,8 +148,47 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // Retrieve the full subscription
   const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);
 
-  await upsertSubscription(userId, customerId, stripeSubscription);
-  await syncUserRole(userId, 'pro');
+  // Atomic: upsert subscription + sync role in a single transaction
+  await db.transaction(async (tx) => {
+    const plan =
+      stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing'
+        ? 'pro'
+        : 'free';
+    const firstItem = stripeSubscription.items.data[0];
+    const values = {
+      userId,
+      stripeCustomerId: customerId,
+      stripeSubscriptionId: stripeSubscription.id,
+      stripePriceId: stripeSubscription.items.data[0]?.price.id ?? null,
+      plan: plan as 'free' | 'pro',
+      status: mapStripeStatus(stripeSubscription.status),
+      currentPeriodStart: new Date(firstItem.current_period_start * 1000),
+      currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
+      cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+      updatedAt: new Date(),
+    };
+
+    await tx
+      .insert(subscriptions)
+      .values(values)
+      .onConflictDoUpdate({
+        target: subscriptions.userId,
+        set: {
+          stripeCustomerId: values.stripeCustomerId,
+          stripeSubscriptionId: values.stripeSubscriptionId,
+          stripePriceId: values.stripePriceId,
+          plan: values.plan,
+          status: values.status,
+          currentPeriodStart: values.currentPeriodStart,
+          currentPeriodEnd: values.currentPeriodEnd,
+          cancelAtPeriodEnd: values.cancelAtPeriodEnd,
+          updatedAt: values.updatedAt,
+        },
+      });
+
+    await tx.update(users).set({ role: 'pro', updatedAt: new Date() }).where(eq(users.id, userId));
+  });
+
   await sendSafeNotification({
     userId,
     type: 'subscription_activated',
@@ -180,17 +226,21 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const userId = await getUserIdFromCustomerId(customerId);
   if (!userId) return;
 
-  await db
-    .update(subscriptions)
-    .set({
-      status: 'canceled',
-      plan: 'free',
-      cancelAtPeriodEnd: false,
-      updatedAt: new Date(),
-    })
-    .where(eq(subscriptions.userId, userId));
+  // Atomic: cancel subscription + downgrade role in a single transaction
+  await db.transaction(async (tx) => {
+    await tx
+      .update(subscriptions)
+      .set({
+        status: 'canceled',
+        plan: 'free',
+        cancelAtPeriodEnd: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(subscriptions.userId, userId));
 
-  await syncUserRole(userId, 'free');
+    await tx.update(users).set({ role: 'free', updatedAt: new Date() }).where(eq(users.id, userId));
+  });
+
   await sendSafeNotification({
     userId,
     type: 'subscription_canceled',

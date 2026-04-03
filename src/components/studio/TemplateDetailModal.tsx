@@ -16,7 +16,7 @@ interface TemplateData {
   title: string;
   description: string | null;
   thumbnailUrl: string | null;
-  snapshotData: any;
+  snapshotData: unknown;
   isPublic: boolean;
   addToQuiltbookCount: number;
   rethreadCount: number;
@@ -183,9 +183,7 @@ export function TemplateDetailModal({ templateId, onClose }: TemplateDetailModal
 
             <div>
               <h1 className="text-2xl font-bold text-on-surface mb-2">{template.title}</h1>
-              {template.description && (
-                <p className="text-on-surface/70">{template.description}</p>
-              )}
+              {template.description && <p className="text-on-surface/70">{template.description}</p>}
             </div>
 
             <div className="flex items-center gap-4 text-sm text-on-surface/60">
@@ -240,7 +238,9 @@ export function TemplateDetailModal({ templateId, onClose }: TemplateDetailModal
         </div>
       </div>
 
-      {authGateOpen && <AuthGateModal onClose={() => setAuthGateOpen(false)} />}
+      {authGateOpen && (
+        <AuthGateModal isOpen={authGateOpen} onClose={() => setAuthGateOpen(false)} />
+      )}
     </>
   );
 }

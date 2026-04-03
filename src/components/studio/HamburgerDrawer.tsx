@@ -7,7 +7,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useOnboardingStore } from '@/stores/onboardingStore';
+
 import { ZOOM_STEP } from '@/lib/constants';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 
@@ -170,7 +170,6 @@ export function HamburgerDrawer({
       title: 'Help',
       items: [
         { label: 'Keyboard Shortcuts', shortcut: '?', onClick: onOpenHelp },
-        { label: 'Getting Started', onClick: () => useOnboardingStore.getState().startTour() },
       ],
     },
   ];

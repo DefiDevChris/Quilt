@@ -293,11 +293,6 @@ describe('canvasStore', () => {
       expect(useCanvasStore.getState().activeColorwayTool).toBe('randomize');
     });
 
-    it('can be set to eyedropper', () => {
-      useCanvasStore.getState().setActiveColorwayTool('eyedropper');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('eyedropper');
-    });
-
     it('can be cleared to null', () => {
       useCanvasStore.getState().setActiveColorwayTool('spraycan');
       useCanvasStore.getState().setActiveColorwayTool(null);

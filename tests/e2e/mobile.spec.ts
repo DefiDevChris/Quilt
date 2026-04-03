@@ -172,7 +172,34 @@ test.describe('Mobile Touch Interactions', () => {
       await page.goto('/socialthreads');
       const tabs = page.getByRole('tablist');
       if (await tabs.isVisible()) {
-        await tabs.swipe({ direction: 'left' });
+        const box = await tabs.boundingBox();
+        if (box) {
+          const centerX = box.x + box.width / 2;
+          const centerY = box.y + box.height / 2;
+          const startX = centerX;
+          const endX = centerX - 100; // Swipe left
+
+          // Touch start
+          await page.dispatchEvent('[role="tablist"]', 'touchstart', {
+            touches: [{ identifier: 0, clientX: startX, clientY: centerY }],
+            changedTouches: [{ identifier: 0, clientX: startX, clientY: centerY }],
+            targetTouches: [{ identifier: 0, clientX: startX, clientY: centerY }],
+          });
+
+          // Touch move
+          await page.dispatchEvent('[role="tablist"]', 'touchmove', {
+            touches: [{ identifier: 0, clientX: endX, clientY: centerY }],
+            changedTouches: [{ identifier: 0, clientX: endX, clientY: centerY }],
+            targetTouches: [{ identifier: 0, clientX: endX, clientY: centerY }],
+          });
+
+          // Touch end
+          await page.dispatchEvent('[role="tablist"]', 'touchend', {
+            touches: [],
+            changedTouches: [],
+            targetTouches: [],
+          });
+        }
       }
     }
   });

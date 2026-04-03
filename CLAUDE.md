@@ -1,40 +1,85 @@
-# CLAUDE.md — Quilt (QuiltCorgi)
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Next.js 16.2.1 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments.
+Next.js 16 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments. Consumer hobbyist tool — Photo-to-Pattern (7-step wizard with OpenCV) is the flagship feature.
 
-## Current Features (April 2026)
+## Development Commands
 
-### Canvas & Design Tools
-- **Multi-Worktable System** — Up to 10 worktables per project with independent canvas state
-- **Pattern Overlay** — Layout cell boundaries with auto-align (Grid, Sashing, On-Point)
-- **History Panel** — Visual undo/redo timeline with state jumping
-- **Reference Image Tool** — Import, adjust opacity, lock/unlock
-- **Studio Tools** — Circle, Polygon, Block Grid, Alignment helpers, Group/Ungroup, Grid/Snap toggles
+```bash
+# Local setup
+cp .env.example .env.local          # Configure AWS Cognito, S3, Stripe creds
+npm install
+npm run db:local:up                  # Start PostgreSQL via Docker (port 5432)
+npm run db:push                      # Push schema to local DB
+npm run dev                          # http://localhost:3000
 
-### Project Management
-- **All Projects View** — `/projects` page with search and grid/list toggle
-- **Project Templates** — Save project settings as reusable templates
-- **Template Management** — Template selection in New Project Dialog, management at `/templates`
+# Build & check
+npm run build                        # Production build
+npm run type-check                   # tsc --noEmit
+npm run lint                         # ESLint
+npm run format                       # Prettier
 
-### User Management
-- **Delete Account** — Settings page section with email-to-support flow
-- **Safe Deletion** — Admin-handled process via `support@quiltcorgi.com`
+# Unit tests (Vitest)
+npm test                             # Run all unit tests
+npm test -- tests/unit/lib/trust-engine.test.ts   # Single test file
+npm test -- -t "test name pattern"   # Run by test name
+npm run test:watch                   # Watch mode
+npm run test:coverage                # Coverage (thresholds: 70% lines/functions/statements, 60% branches)
 
-### Community & Content
-- **Social Threads** — `/socialthreads` with Discover (all posts) and Saved (bookmarked) tabs
-- **Trending** — "Most Saved" with month/all-time toggle
-- **Blog** — Standalone `/blog` route with SEO-optimized pages at `/blog/[slug]`, admin-only posts via API, Tiptap JSON rendering
+# E2E tests (Playwright)
+npm run test:e2e                     # All browsers (chromium, firefox, webkit, mobile-chrome, mobile-safari)
+npx playwright test tests/e2e/studio.spec.ts                # Single spec
+npx playwright test --project=chromium tests/e2e/auth.spec.ts  # Single browser
+
+# Database (Drizzle + PostgreSQL)
+npm run db:generate                  # Generate migration from schema changes
+npm run db:migrate                   # Run pending migrations
+npm run db:push                      # Push schema directly (no migration file)
+npm run db:studio                    # Open Drizzle Studio web UI
+npm run db:seed:blog                 # Seed blog posts
+npm run db:local:down                # Stop PostgreSQL container
+```
+
+Set `AWS_SECRET_NAME=skip` in `.env.local` for local development (secrets loaded from `.env.local` instead of Secrets Manager).
+
+## Architecture
+
+```
+src/
+  app/              # Next.js App Router — pages and API routes
+    (protected)/    # Auth-gated routes (layout redirects guests)
+    (public)/       # Public marketing pages
+    api/            # API route handlers
+    studio/[projectId]/  # Design canvas (desktop only)
+  components/       # React components, organized by domain
+  hooks/            # Bridges between engines and Fabric.js canvas
+  stores/           # Zustand stores (17 files)
+  lib/              # Pure utilities and engines
+    *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
+    *-utils.ts      # Domain-specific utilities
+  db/schema/        # Drizzle table definitions (17 tables)
+  types/            # Shared TypeScript type definitions
+```
+
+**Core pattern**: All computational logic goes in `src/lib/*-engine.ts` files with zero DOM dependencies (fully testable in Vitest). Hooks bridge engines to Fabric.js canvas. Components handle UI only — no business logic.
+
+**Path alias**: `@/*` maps to `./src/*` (configured in tsconfig.json and vitest.config.ts).
+
+**Auth flow**: Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role.
+
+**Route protection**:
+- `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
+- `/admin/*` — cookie + role check (`admin` role only)
+- `/dashboard` — public, but protected actions trigger `AuthGateModal`
+
+**Pro gating**: Check `useAuthStore.isPro` client-side. API routes check `session.user.role` and return 403 `PRO_REQUIRED`.
+
+**Roles**: `free | pro | admin` — defined in `src/lib/trust-engine.ts`.
 
 ## Critical Conventions
-
-### Architecture
-
-- **All computational logic** goes in `src/lib/*-engine.ts` — zero React/Fabric/DOM deps, fully testable
-- **Hooks** bridge engines to Fabric.js canvas
-- **Components** handle UI only — no business logic
-- **Stores** are Zustand, 17 total in `src/stores/`
 
 ### Fabric.js Usage
 
@@ -50,40 +95,19 @@ Next.js 16.2.1 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL
 
 - No `any` — use `unknown` with proper casts
 - Type assertions at boundaries only (Fabric.js interop)
-- All new files must have zero LSP errors before committing
 
 ### Styling
 
 - Tailwind CSS v4 with Material 3-inspired design system
 - Use design tokens: `bg-surface`, `text-on-surface`, `bg-primary`, `shadow-elevation-4`
 - Don't use hardcoded colors — use the cream palette system
-- Border: `border-outline-variant`, Background: `bg-background`
+- Social components use separate design system (hardcoded slate+orange Tailwind, NOT main CSS variables)
 
 ### State Management
 
 - Zustand stores in `src/stores/`
 - Selectors use `(s) => s.field` pattern
 - New state fields need setters following existing naming: `setFieldName`
-
-### File Organization
-
-- Components by domain: `components/blocks/`, `components/studio/`, `components/canvas/`
-- Pure utilities in `src/lib/`
-- SVG overlays in `/quilt_blocks/` and `/quilt_patterns/` (root level)
-- Registry in `src/lib/quilt-overlay-registry.ts`
-
-### Testing
-
-- Vitest for unit tests
-- Playwright for E2E
-- Engine files must be testable in isolation (no DOM deps)
-
-### Auth
-
-- Cognito JWT via HTTP-only cookies: `qc_id_token`, `qc_access_token`, `qc_refresh_token`
-- `proxy.ts` verifies via JWKS
-- `getSession()` does DB lookup for role
-- Never expose tokens client-side
 
 ### API Routes
 
@@ -93,5 +117,17 @@ Next.js 16.2.1 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL
 
 ### Git
 
-- Never commit changes unless explicitly asked
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
+
+## Product Context
+
+- **Photo-to-Pattern** is the key differentiator — never scale it back
+- Studio is desktop-only (`StudioGate` redirects mobile users)
+- Mobile shell: Home, Upload FAB, Profile/Sign In — 3 items only
+- SVG overlays live in `/quilt_blocks/` and `/quilt_patterns/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
+- Onboarding uses simple localStorage flags (no complex tour system)
+
+### Removed Features
+
+These were intentionally removed — do not reintroduce:
+- Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour

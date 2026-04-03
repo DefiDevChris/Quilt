@@ -29,7 +29,6 @@ interface RecentColor {
 // ── Constants ──
 
 const MAX_RECENT_COLORS = 12;
-const MAX_RECENT_FABRICS = 6;
 
 const PRESET_COLORS = [
   '#D4883C',

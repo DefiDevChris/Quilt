@@ -16,7 +16,7 @@ interface TemplateData {
   title: string;
   description: string | null;
   thumbnailUrl: string | null;
-  snapshotData: any;
+  snapshotData: unknown;
   isPublic: boolean;
   addToQuiltbookCount: number;
   rethreadCount: number;
@@ -195,7 +195,9 @@ export function TemplateView({ templateId }: TemplateViewProps) {
               <div>
                 <h1 className="text-3xl font-bold text-on-surface mb-3">{template.title}</h1>
                 {template.description && (
-                  <p className="text-lg text-on-surface/70 leading-relaxed">{template.description}</p>
+                  <p className="text-lg text-on-surface/70 leading-relaxed">
+                    {template.description}
+                  </p>
                 )}
               </div>
 
@@ -252,7 +254,9 @@ export function TemplateView({ templateId }: TemplateViewProps) {
         </div>
       </div>
 
-      {authGateOpen && <AuthGateModal onClose={() => setAuthGateOpen(false)} />}
+      {authGateOpen && (
+        <AuthGateModal isOpen={authGateOpen} onClose={() => setAuthGateOpen(false)} />
+      )}
     </>
   );
 }

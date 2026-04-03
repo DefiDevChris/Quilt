@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 
@@ -77,9 +77,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 onClick={() => jumpToState(i)}
                 className="w-full text-left p-2 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors"
               >
-                <div className="text-body-sm text-on-surface">
-                  State {entries.length - i}
-                </div>
+                <div className="text-body-sm text-on-surface">State {entries.length - i}</div>
                 <div className="text-[10px] text-secondary">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </div>

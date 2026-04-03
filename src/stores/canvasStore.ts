@@ -33,13 +33,12 @@ export type ToolType =
   | 'text'
   | 'spraycan'
   | 'bend'
-  | 'curve';
+  | 'curve'
+  | 'eyedropper';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
 export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
-
-
 
 export type WorktableType = 'quilt' | 'block' | 'image' | 'print';
 
@@ -227,8 +226,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
-
-
 
   setViewportLocked: (locked) => {
     set({ isViewportLocked: locked });

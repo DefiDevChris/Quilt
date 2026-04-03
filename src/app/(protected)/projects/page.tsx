@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, Grid, List, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuthStore } from '@/stores/auth-store';
+import { useAuthStore } from '@/stores/authStore';
 
 interface ProjectListItem {
   id: string;
@@ -26,7 +26,7 @@ export default function AllProjectsPage() {
   useEffect(() => {
     async function fetchProjects() {
       if (!user) return;
-      
+
       try {
         const res = await fetch('/api/projects?limit=100&sort=updatedAt&order=desc');
         if (!res.ok) throw new Error('Failed to fetch');
@@ -44,7 +44,7 @@ export default function AllProjectsPage() {
   }, [user]);
 
   useEffect(() => {
-    const filtered = projects.filter(project =>
+    const filtered = projects.filter((project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredProjects(filtered);
@@ -54,7 +54,7 @@ export default function AllProjectsPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -81,13 +81,13 @@ export default function AllProjectsPage() {
           <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">All Projects</h1>
           <p className="text-secondary mt-1">{filteredProjects.length} designs</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'grid' 
-                ? 'bg-primary text-white' 
+              viewMode === 'grid'
+                ? 'bg-primary text-white'
                 : 'bg-surface-container text-secondary hover:text-on-surface'
             }`}
           >
@@ -96,8 +96,8 @@ export default function AllProjectsPage() {
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'list' 
-                ? 'bg-primary text-white' 
+              viewMode === 'list'
+                ? 'bg-primary text-white'
                 : 'bg-surface-container text-secondary hover:text-on-surface'
             }`}
           >
@@ -126,7 +126,9 @@ export default function AllProjectsPage() {
             {searchQuery ? 'No matching projects' : 'No projects yet'}
           </h3>
           <p className="text-secondary mb-6">
-            {searchQuery ? 'Try a different search term' : 'Create your first quilt design to get started'}
+            {searchQuery
+              ? 'Try a different search term'
+              : 'Create your first quilt design to get started'}
           </p>
           <Link
             href="/dashboard"
@@ -136,11 +138,13 @@ export default function AllProjectsPage() {
           </Link>
         </div>
       ) : (
-        <div className={
-          viewMode === 'grid' 
-            ? 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'
-            : 'space-y-4'
-        }>
+        <div
+          className={
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'
+              : 'space-y-4'
+          }
+        >
           {filteredProjects.map((project) => (
             <Link
               key={project.id}
@@ -151,7 +155,9 @@ export default function AllProjectsPage() {
                   : 'glass-card border border-white/40 rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
               }`}
             >
-              <div className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}>
+              <div
+                className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}
+              >
                 {project.thumbnailUrl ? (
                   <Image
                     src={project.thumbnailUrl}
@@ -168,7 +174,7 @@ export default function AllProjectsPage() {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex-1">
                 <h3 className="font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2">
                   {project.name}

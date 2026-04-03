@@ -108,15 +108,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Upload worktables to S3 if provided
     if (parsed.data.worktables) {
-      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.worktables as unknown as Record<string, unknown>);
+      const s3Key = await uploadCanvasDataToS3(
+        session.user.id,
+        id,
+        parsed.data.worktables as unknown as Record<string, unknown>
+      );
       updates.worktablesS3Key = s3Key;
       updates.worktables = []; // Clear JSONB to save space
     }
 
     // Copy allowed fields only (whitelist approach)
     const ALLOWED_FIELDS = [
-      'name', 'unitSystem', 'canvasWidth', 'canvasHeight',
-      'gridSettings', 'fabricPresets', 'thumbnailUrl', 'isPublic',
+      'name',
+      'unitSystem',
+      'canvasWidth',
+      'canvasHeight',
+      'gridSettings',
+      'fabricPresets',
+      'thumbnailUrl',
+      'isPublic',
     ];
     for (const key of ALLOWED_FIELDS) {
       if (key in parsed.data) {
@@ -146,7 +156,7 @@ export async function DELETE(
     return notFoundResponse('Project not found.');
   }
 
-  await db.delete(projects).where(eq(projects.id, id));
+  await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, session.user.id)));
 
   return new Response(null, { status: 204 });
 }
