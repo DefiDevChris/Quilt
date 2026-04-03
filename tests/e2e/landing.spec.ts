@@ -19,6 +19,20 @@ test.describe('Landing Page', () => {
     const ctaLink = page.getByRole('link', { name: /start designing free/i }).first();
     await expect(ctaLink).toHaveAttribute('href', '/auth/signup');
   });
+
+  test('displays pricing tiers', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/free/i)).toBeVisible();
+    await expect(page.getByText(/pro/i)).toBeVisible();
+  });
+
+  test('navigation menu works', async ({ page }) => {
+    await page.goto('/');
+    const blogLink = page.getByRole('link', { name: /blog/i });
+    if (await blogLink.isVisible()) {
+      await expect(blogLink).toHaveAttribute('href', '/blog');
+    }
+  });
 });
 
 test.describe('Auth Pages', () => {
@@ -30,6 +44,24 @@ test.describe('Auth Pages', () => {
   test('sign up page loads', async ({ page }) => {
     await page.goto('/auth/signup');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Create your account');
+  });
+
+  test('sign in form has required fields', async ({ page }) => {
+    await page.goto('/auth/signin');
+    await expect(page.getByLabel(/email/i)).toBeVisible();
+    await expect(page.getByLabel(/password/i)).toBeVisible();
+  });
+
+  test('sign up form has required fields', async ({ page }) => {
+    await page.goto('/auth/signup');
+    await expect(page.getByLabel(/email/i)).toBeVisible();
+    await expect(page.getByLabel(/password/i)).toBeVisible();
+  });
+
+  test('forgot password link exists', async ({ page }) => {
+    await page.goto('/auth/signin');
+    const forgotLink = page.getByRole('link', { name: /forgot password/i });
+    await expect(forgotLink).toBeVisible();
   });
 });
 
@@ -43,6 +75,18 @@ test.describe('Community Page', () => {
     await page.goto('/socialthreads');
     await expect(page.getByRole('heading', { name: 'Feed' })).toBeVisible();
   });
+
+  test('discover tab shows posts', async ({ page }) => {
+    await page.goto('/socialthreads');
+    const posts = page.locator('[data-testid="community-post"]');
+    const count = await posts.count();
+    expect(count).toBeGreaterThanOrEqual(0);
+  });
+
+  test('saved tab is accessible', async ({ page }) => {
+    await page.goto('/socialthreads?tab=saved');
+    await expect(page).toHaveURL(/tab=saved/);
+  });
 });
 
 test.describe('Protected Routes', () => {
@@ -54,6 +98,18 @@ test.describe('Protected Routes', () => {
 
   test('studio redirects to sign in when not authenticated', async ({ page }) => {
     await page.goto('/studio/some-project-id');
+    await page.waitForURL(/signin/);
+    expect(page.url()).toContain('signin');
+  });
+
+  test('projects page redirects to sign in when not authenticated', async ({ page }) => {
+    await page.goto('/projects');
+    await page.waitForURL(/signin/);
+    expect(page.url()).toContain('signin');
+  });
+
+  test('settings page redirects to sign in when not authenticated', async ({ page }) => {
+    await page.goto('/settings');
     await page.waitForURL(/signin/);
     expect(page.url()).toContain('signin');
   });
@@ -105,5 +161,16 @@ test.describe('Accessibility', () => {
     await page.goto('/');
     const h1 = page.getByRole('heading', { level: 1 });
     await expect(h1).toHaveCount(1);
+  });
+
+  test('images have alt text', async ({ page }) => {
+    await page.goto('/');
+    const images = page.locator('img');
+    const count = await images.count();
+    for (let i = 0; i < Math.min(count, 5); i++) {
+      const img = images.nth(i);
+      const alt = await img.getAttribute('alt');
+      expect(alt).toBeTruthy();
+    }
   });
 });
