@@ -8,6 +8,7 @@ import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
+import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
 
 interface CommunityPost {
   id: string;
@@ -22,6 +23,7 @@ interface CommunityPost {
   creatorUsername: string | null;
   creatorAvatarUrl: string | null;
   isLikedByUser: boolean;
+  templateId: string | null;
 }
 
 export function FeedContent() {
@@ -153,6 +155,7 @@ function PostCard({ post }: { post: CommunityPost }) {
   const { open } = useSocialQuickView();
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -171,6 +174,13 @@ function PostCard({ post }: { post: CommunityPost }) {
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // If post has a template, open template modal instead
+    if (post.templateId) {
+      setShowTemplateModal(true);
+      return;
+    }
+    
     open({
       type: 'post',
       id: post.id,
@@ -251,6 +261,13 @@ function PostCard({ post }: { post: CommunityPost }) {
           <Share2 size={20} /> Full Post
         </Link>
       </div>
+      
+      {showTemplateModal && post.templateId && (
+        <TemplateDetailModal
+          templateId={post.templateId}
+          onClose={() => setShowTemplateModal(false)}
+        />
+      )}
     </article>
   );
 }

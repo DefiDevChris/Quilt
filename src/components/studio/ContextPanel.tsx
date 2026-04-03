@@ -12,7 +12,7 @@ import { SelectionPanel } from '@/components/studio/SelectionPanel';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Checkbox } from '@/components/ui/Checkbox';
-import { QuickColorPalette } from '@/components/studio/QuickColorPalette';
+
 
 function CollapsibleSection({
   title,
@@ -397,7 +397,7 @@ function QuiltPanel() {
         <SelectionPanel />
       </CollapsibleSection>
       <CollapsibleSection title="Colors" defaultOpen={true}>
-        <QuickColorPalette />
+
       </CollapsibleSection>
       <CollapsibleSection title="Precision">
         <PrecisionBar />

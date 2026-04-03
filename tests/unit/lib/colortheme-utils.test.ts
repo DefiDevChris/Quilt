@@ -5,7 +5,6 @@ import {
   swapColors,
   randomizeColors,
   extractUniquePalette,
-  eyedropperPick,
   generateColorScheme,
   suggestPalette,
   type PatchColor,
@@ -85,20 +84,6 @@ describe('colortheme-utils', () => {
       ];
       const result = extractUniquePalette(patches);
       expect(result).toHaveLength(2);
-    });
-  });
-
-  describe('eyedropperPick', () => {
-    it('returns color for matching objectId', () => {
-      const patches: PatchColor[] = [
-        { objectId: '1', currentFill: '#ff0000' },
-      ];
-      expect(eyedropperPick(patches, '1')).toBe('#ff0000');
-    });
-
-    it('returns null for unknown objectId', () => {
-      const patches: PatchColor[] = [{ objectId: '1', currentFill: '#ff0000' }];
-      expect(eyedropperPick(patches, 'unknown')).toBeNull();
     });
   });
 

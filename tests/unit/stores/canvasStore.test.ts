@@ -1,7 +1,14 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { ToolType } from '@/stores/canvasStore';
-import { ZOOM_MIN, ZOOM_MAX, UNDO_HISTORY_MAX, UNDO_SNAPSHOT_SIZE_LIMIT, DEFAULT_FILL_COLOR, DEFAULT_STROKE_COLOR } from '@/lib/constants';
+import {
+  ZOOM_MIN,
+  ZOOM_MAX,
+  UNDO_HISTORY_MAX,
+  UNDO_SNAPSHOT_SIZE_LIMIT,
+  DEFAULT_FILL_COLOR,
+  DEFAULT_STROKE_COLOR,
+} from '@/lib/constants';
 
 describe('canvasStore', () => {
   beforeEach(() => {
@@ -227,8 +234,8 @@ describe('canvasStore', () => {
     });
 
     it('can be set to easydraw', () => {
-      useCanvasStore.getState().setBlockDraftingMode('easydraw');
-      expect(useCanvasStore.getState().blockDraftingMode).toBe('easydraw');
+      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
+      expect(useCanvasStore.getState().blockDraftingMode).toBe('blockbuilder');
     });
 
     it('can be set to applique', () => {
@@ -238,10 +245,10 @@ describe('canvasStore', () => {
 
     it('updates immutably (does not mutate previous state snapshot)', () => {
       const before = useCanvasStore.getState();
-      useCanvasStore.getState().setBlockDraftingMode('easydraw');
+      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
       const after = useCanvasStore.getState();
       expect(before.blockDraftingMode).toBe('freeform');
-      expect(after.blockDraftingMode).toBe('easydraw');
+      expect(after.blockDraftingMode).toBe('blockbuilder');
     });
   });
 

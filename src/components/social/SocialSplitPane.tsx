@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import { Bookmark, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
-import { BlogContent } from '@/components/social/BlogContent';
 import { FeedContent } from '@/components/social/FeedContent';
 
-export type SplitPanelId = 'blog' | 'saved' | 'feed' | 'profile';
+export type SplitPanelId = 'saved' | 'feed' | 'profile';
 
 const MOCK_SAVED = [
   {
@@ -29,128 +28,6 @@ const MOCK_SAVED = [
     likes: 312,
   },
 ];
-
-// ── Blog Strip: Pattern book with stitching lines ────────────────────────────
-
-function BlogStripVertical() {
-  return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
-      {/* Base glass */}
-      <div className="absolute inset-0 glass-panel" />
-
-      {/* Quilt block pattern - log cabin style */}
-      <div className="absolute inset-0 opacity-[0.06]">
-        <svg width="100%" height="100%">
-          <defs>
-            <pattern
-              id="blog-block"
-              x="0"
-              y="0"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect x="0" y="0" width="40" height="40" fill="#FFF9F2" />
-              <rect x="0" y="0" width="40" height="12" fill="#FFB085" opacity="0.7" />
-              <rect x="0" y="0" width="12" height="28" fill="#F4A261" opacity="0.6" />
-              <rect x="0" y="0" width="20" height="20" fill="#E76F51" opacity="0.4" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#blog-block)" />
-        </svg>
-      </div>
-
-      {/* Stitching lines */}
-      <div
-        className="absolute left-2 top-0 bottom-0 w-px"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to bottom, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
-        }}
-      />
-      <div
-        className="absolute right-2 top-0 bottom-0 w-px"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to bottom, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
-        {/* Title at top */}
-        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
-          Blog
-        </span>
-
-        {/* Big simple graphic - centered */}
-        <div className="flex-1 flex items-center justify-center w-full">
-          <div className="relative">
-            {/* Warm glow */}
-            <div className="absolute inset-0 bg-orange-300/30 rounded-full blur-2xl scale-[1.8]" />
-            {/* Icon - NO ring */}
-            <div className="relative w-28 h-28 flex items-center justify-center">
-              <img
-                src="/icons/quilt-13-dashed-squares-Photoroom.png"
-                alt="Blog"
-                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Mascot at bottom */}
-        <div className="relative mt-3">
-          <img
-            src="/mascots&avatars/corgi29.png"
-            alt=""
-            className="w-20 h-20 object-contain drop-shadow-elevation-2"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BlogStripHorizontal() {
-  return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
-      {/* Stitching top & bottom */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to right, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
-        }}
-      />
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to right, #FFB085 0px, #FFB085 4px, transparent 4px, transparent 8px)',
-        }}
-      />
-      {/* Pattern book icon */}
-      <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center relative shrink-0">
-        <img
-          src="/icons/quilt-13-dashed-squares-Photoroom.png"
-          alt="Blog"
-          className="w-8 h-8 object-contain drop-shadow"
-        />
-      </div>
-
-      {/* Title */}
-      <span className="text-base font-extrabold text-on-surface tracking-wide">Blog</span>
-
-      {/* Mascot */}
-      <img
-        src="/mascots&avatars/corgi29.png"
-        alt=""
-        className="ml-auto w-14 h-14 object-contain drop-shadow"
-      />
-    </div>
-  );
-}
 
 // ── Saved Strip: Fabric swatch collection with hearts ────────────────────────
 
@@ -867,7 +744,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
     onPanelChange?.(panel);
   };
 
-  const isLeftActive = activePanel === 'blog' || activePanel === 'saved';
+  const isLeftActive = activePanel === 'saved';
   const isRightActive = activePanel === 'feed' || activePanel === 'profile';
 
   return (
@@ -878,25 +755,9 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
           style={{ width: isLeftActive ? '90%' : '10%' }}
         >
           <PanelSlot
-            active={activePanel === 'blog'}
-            groupActive={isLeftActive}
-            position="top"
-            onClick={() => activate('blog')}
-            renderStrip={(o) =>
-              o === 'vertical' ? <BlogStripVertical /> : <BlogStripHorizontal />
-            }
-          >
-            <div className="p-6 lg:p-8 pb-16">
-              <BlogContent />
-            </div>
-          </PanelSlot>
-
-          {!isLeftActive && <StudioDivider />}
-
-          <PanelSlot
             active={activePanel === 'saved'}
             groupActive={isLeftActive}
-            position="bottom"
+            position="top"
             onClick={() => activate('saved')}
             renderStrip={(o) =>
               o === 'vertical' ? <SavedStripVertical /> : <SavedStripHorizontal />
@@ -942,7 +803,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
 
       <div className="lg:hidden flex flex-col h-full">
         <div className="flex shrink-0 border-b border-outline-variant bg-background/80 backdrop-blur-sm">
-          {(['blog', 'saved', 'feed', 'profile'] as SplitPanelId[]).map((panel) => (
+          {(['saved', 'feed', 'profile'] as SplitPanelId[]).map((panel) => (
             <button
               key={panel}
               onClick={() => activate(panel)}
@@ -959,11 +820,6 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
           ))}
         </div>
         <div className="flex-1 overflow-y-auto">
-          {activePanel === 'blog' && (
-            <div className="p-4 pb-12">
-              <BlogContent />
-            </div>
-          )}
           {activePanel === 'saved' && <SavedContent />}
           {activePanel === 'feed' && (
             <div className="p-4 pb-12">

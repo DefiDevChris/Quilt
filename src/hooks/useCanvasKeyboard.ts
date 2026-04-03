@@ -162,8 +162,6 @@ export function useCanvasKeyboard() {
             h: 'pan',
             o: 'circle',
             e: 'blockbuilder',
-            i: 'eyedropper',
-            m: 'ruler',
             u: 'bend',
           };
           const tool = TOOL_SHORTCUTS[e.key.toLowerCase()];

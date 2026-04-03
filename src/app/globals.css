@@ -353,3 +353,18 @@ body {
   cursor: grabbing;
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234a3b32" stroke-width="2"><path d="M9 11V6a2 2 0 0 1 4 0v5M9 11a2 2 0 1 0-4 0v5a4 4 0 0 0 8 0v-1m0-4V9a2 2 0 0 1 4 0v2m0 0a2 2 0 0 1 2 2v1a4 4 0 0 1-4 4"/></svg>') 12 12, grabbing;
 }
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

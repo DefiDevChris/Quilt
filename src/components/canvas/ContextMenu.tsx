@@ -2,14 +2,30 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useFabricStore } from '@/stores/fabricStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
+import { getRecentFabrics, type RecentFabric } from '@/lib/recent-fabrics';
+import { findMatchingBlocks } from '@/lib/block-matching';
+import { loadImage } from '@/lib/image-processing';
+import {
+  calculateHorizontalDistribution,
+  calculateVerticalDistribution,
+  type ObjectBounds,
+} from '@/lib/alignment-engine';
+import {
+  findSimilarObjects,
+  getAvailableSimilarityModes,
+  type SimilarityMode,
+} from '@/lib/select-similar-engine';
 
 interface ContextMenuPosition {
   x: number;
   y: number;
   hasTarget: boolean;
 }
+
+type SubMenuType = 'fabric' | 'block' | 'printlist' | 'selectSimilar' | null;
 
 export function ContextMenu() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -18,12 +34,18 @@ export function ContextMenu() {
   const [showQuantityInput, setShowQuantityInput] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [subMenu, setSubMenu] = useState<SubMenuType>(null);
+  const [recentFabrics, setRecentFabrics] = useState<RecentFabric[]>([]);
+  const [libraryFabrics, setLibraryFabrics] = useState<
+    Array<{ id: string; name: string; imageUrl: string }>
+  >([]);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const closeMenu = useCallback(() => {
     setPosition(null);
     setShowQuantityInput(false);
     setQuantity(1);
+    setSubMenu(null);
   }, []);
 
   useEffect(() => {
@@ -31,8 +53,6 @@ export function ContextMenu() {
 
     let isMounted = true;
     let fabric: typeof import('fabric') | null = null;
-    // Track registered listeners independently of isMounted so cleanup
-    // always runs even when unmount races with the async import.
     const registeredListeners: Array<() => void> = [];
 
     (async () => {
@@ -48,6 +68,7 @@ export function ContextMenu() {
           y: e.e.clientY,
           hasTarget: !!e.target,
         });
+        setSubMenu(null);
       }
 
       function onMouseDown() {
@@ -68,9 +89,6 @@ export function ContextMenu() {
         }
       }) as never;
 
-      // Guard: only register listeners if component is still mounted, then
-      // immediately record each removal so the cleanup closure (below) can
-      // always tear them down regardless of future isMounted state.
       if (!isMounted) return;
 
       canvas.on('mouse:down', onMouseDown);
@@ -93,14 +111,19 @@ export function ContextMenu() {
     };
   }, [fabricCanvas, closeMenu]);
 
-  // Close on Escape or outside click
   useEffect(() => {
     if (!position) return;
 
     let isMounted = true;
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeMenu();
+      if (e.key === 'Escape') {
+        if (subMenu) {
+          setSubMenu(null);
+        } else {
+          closeMenu();
+        }
+      }
     }
 
     function onClickOutside(e: MouseEvent) {
@@ -119,7 +142,30 @@ export function ContextMenu() {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('mousedown', onClickOutside, { capture: true });
     };
-  }, [position, closeMenu]);
+  }, [position, subMenu, closeMenu]);
+
+  useEffect(() => {
+    if (subMenu === 'fabric' && position) {
+      setRecentFabrics(getRecentFabrics());
+      const fabrics = useFabricStore.getState().fabrics;
+      const userFabrics = useFabricStore.getState().userFabrics;
+      const allFabrics = [...userFabrics, ...fabrics].slice(0, 12);
+      setLibraryFabrics(
+        allFabrics.map((f) => ({
+          id: f.id,
+          name: f.name,
+          imageUrl: f.imageUrl,
+        }))
+      );
+    }
+  }, [subMenu, position]);
+
+  const pushUndo = useCallback((canvas: unknown) => {
+    const c = canvas as { toJSON: () => unknown };
+    const json = JSON.stringify(c.toJSON());
+    useCanvasStore.getState().pushUndoState(json);
+    useProjectStore.getState().setDirty(true);
+  }, []);
 
   const executeAction = useCallback(
     async (action: string) => {
@@ -142,6 +188,21 @@ export function ContextMenu() {
             canvas.setActiveObject(cloned);
             break;
           }
+          case 'duplicateBlock': {
+            if (active.type !== 'group') return;
+            const cloned = await active.clone();
+            cloned.set({
+              left:
+                (active.left ?? 0) +
+                ((active as InstanceType<typeof fabric.Group>).width ?? 0) *
+                  ((active as InstanceType<typeof fabric.Group>).scaleX ?? 1) +
+                20,
+              top: active.top ?? 0,
+            });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            break;
+          }
           case 'delete': {
             canvas.remove(active);
             canvas.discardActiveObject();
@@ -156,6 +217,21 @@ export function ContextMenu() {
             break;
           }
           case 'rotate90': {
+            active.rotate((active.angle ?? 0) + 90);
+            break;
+          }
+          case 'flipBlockH': {
+            if (active.type !== 'group') return;
+            active.set({ flipX: !active.flipX });
+            break;
+          }
+          case 'flipBlockV': {
+            if (active.type !== 'group') return;
+            active.set({ flipY: !active.flipY });
+            break;
+          }
+          case 'rotateBlock90': {
+            if (active.type !== 'group') return;
             active.rotate((active.angle ?? 0) + 90);
             break;
           }
@@ -189,70 +265,25 @@ export function ContextMenu() {
             }
             break;
           }
-          case 'fussyCut': {
-            // Extract fabric pattern info from the active object
-            const fill = active.get('fill');
-            if (fill && typeof fill !== 'string') {
-              const patternFill = fill as {
-                source?: { src?: string };
-                patternSourceCanvas?: unknown;
-              };
-              const fabricImageUrl = patternFill.source?.src ?? '';
-              const fabricId = (active as unknown as { fabricId?: string }).fabricId ?? '';
-              const vertices: { x: number; y: number }[] = [];
-
-              // Get patch shape vertices if it's a polygon
-              if (
-                'points' in active &&
-                Array.isArray((active as unknown as { points: unknown[] }).points)
-              ) {
-                const pts = (active as unknown as { points: { x: number; y: number }[] }).points;
-                for (const pt of pts) {
-                  vertices.push({ x: pt.x, y: pt.y });
-                }
-              } else {
-                // Fallback: use bounding box corners
-                const bounds = active.getBoundingRect();
-                vertices.push(
-                  { x: bounds.left, y: bounds.top },
-                  { x: bounds.left + bounds.width, y: bounds.top },
-                  { x: bounds.left + bounds.width, y: bounds.top + bounds.height },
-                  { x: bounds.left, y: bounds.top + bounds.height }
-                );
-              }
-
-              useCanvasStore.getState().setFussyCutTarget({
-                objectId: (active as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
-                fabricId,
-                fabricImageUrl,
-                patchVertices: vertices,
-              });
-            }
-            break;
-          }
         }
 
         active.setCoords();
         canvas.renderAll();
-        const json = JSON.stringify(canvas.toJSON());
-        useCanvasStore.getState().pushUndoState(json);
-        useProjectStore.getState().setDirty(true);
+        pushUndo(canvas);
         closeMenu();
       } finally {
         setIsExecuting(false);
       }
     },
-    [fabricCanvas, isExecuting, closeMenu]
+    [fabricCanvas, isExecuting, pushUndo, closeMenu]
   );
 
   const handleAddToPrintlist = useCallback(async () => {
     if (!fabricCanvas) return;
-    const fabric = await import('fabric');
-    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+    const canvas = fabricCanvas as InstanceType<typeof import('fabric').Canvas>;
     const active = canvas.getActiveObject();
     if (!active) return;
 
-    const bounds = active.getBoundingRect();
     const shapeName =
       (active as unknown as { name?: string }).name ??
       `${active.type ?? 'Shape'} ${Date.now().toString(36)}`;
@@ -283,12 +314,11 @@ export function ContextMenu() {
   const handleAlign = useCallback(
     async (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
       if (!fabricCanvas) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const canvas = fabricCanvas as InstanceType<typeof import('fabric').Canvas>;
       const active = canvas.getActiveObject();
       if (!active || active.type !== 'activeSelection') return;
 
-      const selection = active as InstanceType<typeof fabric.ActiveSelection>;
+      const selection = active as InstanceType<typeof import('fabric').ActiveSelection>;
       const objects = selection.getObjects();
       if (objects.length < 2) return;
 
@@ -334,18 +364,347 @@ export function ContextMenu() {
       }
 
       canvas.renderAll();
-      const json = JSON.stringify(canvas.toJSON());
-      useCanvasStore.getState().pushUndoState(json);
-      useProjectStore.getState().setDirty(true);
+      pushUndo(canvas);
       closeMenu();
     },
-    [fabricCanvas, closeMenu]
+    [fabricCanvas, pushUndo, closeMenu]
+  );
+
+  const handleSelectAllSameBlocks = useCallback(async () => {
+    if (!fabricCanvas) return;
+    const fabric = await import('fabric');
+    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+    const active = canvas.getActiveObject();
+    if (!active || active.type !== 'group') return;
+
+    const matching = findMatchingBlocks(canvas, active);
+    if (matching.length === 0) return;
+
+    const allBlocks = [active, ...matching];
+    const selection = new fabric.ActiveSelection(
+      allBlocks as InstanceType<typeof fabric.FabricObject>[],
+      { canvas }
+    );
+    canvas.setActiveObject(selection);
+    canvas.renderAll();
+    closeMenu();
+  }, [fabricCanvas, closeMenu]);
+
+  const handleDistribute = useCallback(
+    async (direction: 'horizontal' | 'vertical') => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active || active.type !== 'activeSelection') return;
+
+      const selection = active as InstanceType<typeof fabric.ActiveSelection>;
+      const objects = selection.getObjects();
+      if (objects.length < 3) return;
+
+      const bounds: ObjectBounds[] = objects.map((obj) => {
+        const br = obj.getBoundingRect();
+        return {
+          id: (obj as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
+          left: obj.left ?? 0,
+          top: obj.top ?? 0,
+          width: br.width,
+          height: br.height,
+        };
+      });
+
+      const result =
+        direction === 'horizontal'
+          ? calculateHorizontalDistribution(bounds)
+          : calculateVerticalDistribution(bounds);
+      if (!result) return;
+
+      for (const adj of result.adjustments) {
+        const obj = objects.find((o) => (o as unknown as { id?: string }).id === adj.id);
+        if (obj) {
+          obj.set({
+            left: (obj.left ?? 0) + adj.deltaLeft,
+            top: (obj.top ?? 0) + adj.deltaTop,
+          });
+          obj.setCoords();
+        }
+      }
+
+      canvas.renderAll();
+      pushUndo(canvas);
+      closeMenu();
+    },
+    [fabricCanvas, pushUndo, closeMenu]
+  );
+
+  const handleSelectSimilar = useCallback(
+    async (mode: SimilarityMode) => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active) return;
+
+      const allObjects = canvas.getObjects();
+      const matching = findSimilarObjects(allObjects, active, mode);
+      if (matching.length === 0) return;
+
+      const allSelected = [active, ...matching];
+      const selection = new fabric.ActiveSelection(
+        allSelected as InstanceType<typeof fabric.FabricObject>[],
+        { canvas }
+      );
+      canvas.setActiveObject(selection);
+      canvas.renderAll();
+      pushUndo(canvas);
+      closeMenu();
+    },
+    [fabricCanvas, pushUndo, closeMenu]
   );
 
   if (!position) return null;
 
   const isMultiSelect = (fabricCanvas?.getActiveObjects()?.length || 0) > 1;
   const isGroup = fabricCanvas?.getActiveObject()?.type === 'group';
+  const activeObject = fabricCanvas?.getActiveObject();
+  const sameBlockCount =
+    isGroup && activeObject ? findMatchingBlocks(fabricCanvas, activeObject).length : 0;
+
+  if (subMenu === 'fabric') {
+    return (
+      <div
+        ref={menuRef}
+        className="fixed z-50 min-w-[220px] rounded-lg border border-outline-variant bg-surface py-1 shadow-elevation-4"
+        style={{ left: position.x, top: position.y }}
+      >
+        <button
+          type="button"
+          onClick={() => setSubMenu(null)}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+        >
+          <span className="w-5 text-center">←</span>
+          Back
+        </button>
+        <div className="my-1 border-t border-outline-variant" />
+
+        {recentFabrics.length > 0 && (
+          <>
+            <div className="px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-secondary/60">
+              Recent
+            </div>
+            {recentFabrics.map((rf) => (
+              <button
+                key={rf.id}
+                type="button"
+                disabled={isExecuting}
+                onClick={async () => {
+                  if (!fabricCanvas || !activeObject) return;
+                  setIsExecuting(true);
+                  try {
+                    const fabric = await import('fabric');
+                    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+                    const img = await loadImage(rf.imageUrl);
+                    const pattern = new fabric.Pattern({ source: img, repeat: 'repeat' });
+
+                    if (activeObject.type === 'group') {
+                      const g = activeObject as InstanceType<typeof fabric.Group>;
+                      for (const obj of g.getObjects()) {
+                        obj.set('fill', pattern);
+                      }
+                    } else {
+                      activeObject.set('fill', pattern);
+                    }
+
+                    canvas.renderAll();
+                    pushUndo(canvas);
+                    closeMenu();
+                  } finally {
+                    setIsExecuting(false);
+                  }
+                }}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50"
+              >
+                <div
+                  className="h-5 w-5 rounded-sm border border-outline-variant bg-cover bg-center"
+                  style={{ backgroundImage: `url(${rf.imageUrl})` }}
+                />
+                <span className="truncate">{rf.name}</span>
+              </button>
+            ))}
+            <div className="my-1 border-t border-outline-variant" />
+          </>
+        )}
+
+        <div className="px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-secondary/60">
+          Library
+        </div>
+        {libraryFabrics.length === 0 && (
+          <div className="px-3 py-3 text-xs text-secondary/60">
+            No fabrics available. Drag from the Fabric Library to add.
+          </div>
+        )}
+        {libraryFabrics.map((lf) => (
+          <button
+            key={lf.id}
+            type="button"
+            disabled={isExecuting}
+            onClick={async () => {
+              if (!fabricCanvas || !activeObject) return;
+              setIsExecuting(true);
+              try {
+                const fabric = await import('fabric');
+                const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+                const img = await loadImage(lf.imageUrl);
+                const pattern = new fabric.Pattern({ source: img, repeat: 'repeat' });
+
+                if (activeObject.type === 'group') {
+                  const g = activeObject as InstanceType<typeof fabric.Group>;
+                  for (const obj of g.getObjects()) {
+                    obj.set('fill', pattern);
+                  }
+                } else {
+                  activeObject.set('fill', pattern);
+                }
+
+                canvas.renderAll();
+                pushUndo(canvas);
+                closeMenu();
+              } finally {
+                setIsExecuting(false);
+              }
+            }}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50"
+          >
+            <div
+              className="h-5 w-5 rounded-sm border border-outline-variant bg-cover bg-center"
+              style={{ backgroundImage: `url(${lf.imageUrl})` }}
+            />
+            <span className="truncate">{lf.name}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  if (subMenu === 'block' && isGroup) {
+    return (
+      <div
+        ref={menuRef}
+        className="fixed z-50 min-w-[220px] rounded-lg border border-outline-variant bg-surface py-1 shadow-elevation-4"
+        style={{ left: position.x, top: position.y }}
+      >
+        <button
+          type="button"
+          onClick={() => setSubMenu(null)}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+        >
+          <span className="w-5 text-center">←</span>
+          Back
+        </button>
+        <div className="my-1 border-t border-outline-variant" />
+
+        <button
+          type="button"
+          disabled={isExecuting}
+          onClick={() => executeAction('duplicateBlock')}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="w-5 text-center">⧉</span>
+          Duplicate Block
+        </button>
+        <button
+          type="button"
+          disabled={isExecuting}
+          onClick={() => executeAction('flipBlockH')}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="w-5 text-center">↔</span>
+          Flip Block Horizontal
+        </button>
+        <button
+          type="button"
+          disabled={isExecuting}
+          onClick={() => executeAction('flipBlockV')}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="w-5 text-center">↕</span>
+          Flip Block Vertical
+        </button>
+        <button
+          type="button"
+          disabled={isExecuting}
+          onClick={() => executeAction('rotateBlock90')}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="w-5 text-center">↻</span>
+          Rotate Block 90°
+        </button>
+        {sameBlockCount > 0 && (
+          <>
+            <div className="my-1 border-t border-outline-variant" />
+            <button
+              type="button"
+              disabled={isExecuting}
+              onClick={handleSelectAllSameBlocks}
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="w-5 text-center">⊞</span>
+              Select All {sameBlockCount + 1} Matching Blocks
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (subMenu === 'selectSimilar') {
+    const modes = activeObject ? getAvailableSimilarityModes(activeObject) : [];
+    const modeLabels: Record<SimilarityMode, string> = {
+      fabric: 'Same Fabric',
+      fillColor: 'Same Fill Color',
+      strokeColor: 'Same Stroke Color',
+      blockStructure: 'Same Block Structure',
+    };
+    const modeIcons: Record<SimilarityMode, string> = {
+      fabric: '◆',
+      fillColor: '◼',
+      strokeColor: '◻',
+      blockStructure: '⊞',
+    };
+
+    return (
+      <div
+        ref={menuRef}
+        className="fixed z-50 min-w-[220px] rounded-lg border border-outline-variant bg-surface py-1 shadow-elevation-4"
+        style={{ left: position.x, top: position.y }}
+      >
+        <button
+          type="button"
+          onClick={() => setSubMenu(null)}
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+        >
+          <span className="w-5 text-center">←</span>
+          Back
+        </button>
+        <div className="my-1 border-t border-outline-variant" />
+        {modes.map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            disabled={isExecuting}
+            onClick={() => handleSelectSimilar(mode)}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background disabled:opacity-50"
+          >
+            <span className="w-5 text-center">{modeIcons[mode]}</span>
+            {modeLabels[mode]}
+          </button>
+        ))}
+        {modes.length === 0 && (
+          <div className="px-3 py-3 text-xs text-secondary/60">No similarity criteria found</div>
+        )}
+      </div>
+    );
+  }
 
   const menuItems = position.hasTarget
     ? [
@@ -366,13 +725,33 @@ export function ContextMenu() {
               { label: 'Align Middle', icon: '⊞', action: 'align-middle' },
               { label: 'Align Bottom', icon: '⊥', action: 'align-bottom' },
               { label: 'divider', icon: '', action: 'divider' },
+              { label: 'Distribute Horizontally', icon: '⇔', action: 'distribute-h' },
+              { label: 'Distribute Vertically', icon: '⇕', action: 'distribute-v' },
+              { label: 'divider', icon: '', action: 'divider' },
             ]
           : []),
-        ...(isGroup ? [{ label: 'Ungroup', icon: '⊟', action: 'ungroup' }] : []),
+        ...(isGroup
+          ? [
+              { label: 'Block Settings ▸', icon: '⚙', action: 'block-menu' },
+              { label: 'Ungroup', icon: '⊟', action: 'ungroup' },
+            ]
+          : []),
         { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
         { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
         { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Fussy Cut...', icon: '✂', action: 'fussyCut' },
+        { label: 'Select Similar ▸', icon: '◎', action: 'select-similar' },
+        { label: 'divider', icon: '', action: 'divider' },
+        { label: 'Add Fabric ▸', icon: '◆', action: 'fabric-menu' },
+        ...(isGroup && sameBlockCount > 0
+          ? [
+              {
+                label: `Apply Fabric to All ${sameBlockCount + 1} Blocks ▸`,
+                icon: '◆◆',
+                action: 'fabric-all',
+              },
+            ]
+          : []),
+        { label: 'divider', icon: '', action: 'divider' },
         { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
       ]
     : [{ label: 'Select All', icon: '⊞', action: 'selectAll' }];
@@ -425,6 +804,39 @@ export function ContextMenu() {
               </div>
             )}
           </div>
+        ) : item.action === 'fabric-menu' ? (
+          <button
+            key={item.action}
+            type="button"
+            onClick={() => setSubMenu('fabric')}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+          >
+            <span className="w-5 text-center">{item.icon}</span>
+            {item.label}
+          </button>
+        ) : item.action === 'fabric-all' ? (
+          <div key={item.action}>
+            {!subMenu ? (
+              <button
+                type="button"
+                onClick={() => setSubMenu('fabric')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+              >
+                <span className="w-5 text-center">{item.icon}</span>
+                {item.label}
+              </button>
+            ) : null}
+          </div>
+        ) : item.action === 'block-menu' ? (
+          <button
+            key={item.action}
+            type="button"
+            onClick={() => setSubMenu('block')}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-background"
+          >
+            <span className="w-5 text-center">{item.icon}</span>
+            {item.label}
+          </button>
         ) : (
           <button
             key={item.action}
@@ -433,6 +845,12 @@ export function ContextMenu() {
             onClick={() => {
               if (item.action === 'selectAll') {
                 handleSelectAll();
+              } else if (item.action === 'distribute-h') {
+                handleDistribute('horizontal');
+              } else if (item.action === 'distribute-v') {
+                handleDistribute('vertical');
+              } else if (item.action === 'select-similar') {
+                setSubMenu('selectSimilar');
               } else if (item.action.startsWith('align-')) {
                 const direction = item.action.replace('align-', '') as
                   | 'left'

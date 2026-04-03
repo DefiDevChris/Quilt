@@ -177,7 +177,7 @@ export function RecommendedDimensionsModal({
           <div>
             <h2 className="text-lg font-semibold text-on-surface">Recommended Dimensions</h2>
             <p className="text-xs text-secondary mt-0.5">
-              Even block sizes that maintain the pattern's aspect ratio
+              Even block sizes that maintain the pattern&apos;s aspect ratio
             </p>
           </div>
           <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
@@ -200,7 +200,8 @@ export function RecommendedDimensionsModal({
                 {selectedPattern.displayName}
               </span>
               <span className="text-xs text-secondary">
-                Original: {selectedPattern.dimensions.width}" × {selectedPattern.dimensions.height}"
+                Original: {selectedPattern.dimensions.width}&quot; &times;{' '}
+                {selectedPattern.dimensions.height}&quot;
               </span>
             </div>
             {selectedPattern.blockLayout && (
@@ -235,13 +236,13 @@ export function RecommendedDimensionsModal({
                   )}
                 </div>
                 <div className="mt-1 text-xs text-secondary">
-                  {rec.width}" × {rec.height}"
+                  {rec.width}&quot; &times; {rec.height}&quot;
                 </div>
                 <div className="mt-0.5 text-[11px] text-secondary">
                   {rec.cols} × {rec.rows} = {rec.total} blocks
                 </div>
                 <div className="mt-0.5 text-[10px] text-secondary">
-                  Each block: {rec.blockSize}" × {rec.blockSize}"
+                  Each block: {rec.blockSize}&quot; &times; {rec.blockSize}&quot;
                 </div>
               </button>
             ))}

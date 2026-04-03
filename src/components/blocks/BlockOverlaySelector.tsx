@@ -187,7 +187,7 @@ export function BlockOverlaySelector({
                     {pattern.description}
                   </p>
                   <p className="mt-1 text-[10px] text-secondary">
-                    {pattern.dimensions.width}" × {pattern.dimensions.height}"
+                    {pattern.dimensions.width}&quot; &times; {pattern.dimensions.height}&quot;
                   </p>
                 </button>
               ))}

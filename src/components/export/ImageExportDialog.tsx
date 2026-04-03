@@ -11,6 +11,9 @@ import {
   type DpiOption,
   type ImageFormat,
 } from '@/lib/image-exporter';
+import { exportCanvasSvg, generateSvgFilename, downloadSvg } from '@/lib/svg-exporter';
+
+type ExportFormat = ImageFormat | 'svg';
 
 interface ImageExportDialogProps {
   isOpen: boolean;
@@ -21,7 +24,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const projectName = useProjectStore((s) => s.projectName);
   const [dpi, setDpi] = useState<DpiOption>(300);
-  const [format, setFormat] = useState<ImageFormat>('png');
+  const [format, setFormat] = useState<ExportFormat>('png');
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,13 +35,23 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
     setError('');
 
     try {
-      const blob = await exportCanvasImage(fabricCanvas, {
-        dpi,
-        format,
-        projectName: projectName ?? 'quilt',
-      });
-      const filename = generateImageFilename(projectName ?? 'quilt', dpi, format);
-      downloadImage(blob, filename);
+      if (format === 'svg') {
+        const svgString = await exportCanvasSvg(fabricCanvas, {
+          projectName: projectName ?? 'quilt',
+          includeBackground: true,
+          backgroundColor: '#FFFFFF',
+        });
+        const filename = generateSvgFilename(projectName ?? 'quilt');
+        downloadSvg(svgString, filename);
+      } else {
+        const blob = await exportCanvasImage(fabricCanvas, {
+          dpi,
+          format: format as ImageFormat,
+          projectName: projectName ?? 'quilt',
+        });
+        const filename = generateImageFilename(projectName ?? 'quilt', dpi, format as ImageFormat);
+        downloadImage(blob, filename);
+      }
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to export image');
@@ -52,43 +65,16 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[380px] rounded-xl bg-surface p-6 shadow-elevation-3">
-        <h2 className="text-lg font-semibold text-on-surface mb-4">Export Image</h2>
-
-        {/* DPI Selector */}
-        <div className="mb-4">
-          <label className="text-xs font-medium text-on-surface block mb-1">Resolution (DPI)</label>
-          <div className="grid grid-cols-4 gap-2">
-            {DPI_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => setDpi(opt)}
-                className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                  dpi === opt
-                    ? 'border-primary bg-primary text-white'
-                    : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-          <p className="text-[10px] text-secondary mt-1">
-            {dpi === 72 && 'Screen resolution — smallest file'}
-            {dpi === 150 && 'Good for sharing online'}
-            {dpi === 300 && 'Print quality — recommended'}
-            {dpi === 600 && 'High-res print — large file'}
-          </p>
-        </div>
+        <h2 className="text-lg font-semibold text-on-surface mb-4">Export Design</h2>
 
         {/* Format Selector */}
         <div className="mb-4">
           <label className="text-xs font-medium text-on-surface block mb-1">Format</label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => setFormat('png')}
-              className={`rounded-md border px-3 py-2 text-xs font-medium transition-colors ${
+              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                 format === 'png'
                   ? 'border-primary bg-primary text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
@@ -99,7 +85,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
             <button
               type="button"
               onClick={() => setFormat('jpeg')}
-              className={`rounded-md border px-3 py-2 text-xs font-medium transition-colors ${
+              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                 format === 'jpeg'
                   ? 'border-primary bg-primary text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
@@ -107,8 +93,50 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
             >
               JPEG (smaller)
             </button>
+            <button
+              type="button"
+              onClick={() => setFormat('svg')}
+              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
+                format === 'svg'
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+              }`}
+            >
+              SVG (vector)
+            </button>
           </div>
         </div>
+
+        {/* DPI Selector — hidden for SVG */}
+        {format !== 'svg' && (
+          <div className="mb-4">
+            <label className="text-xs font-medium text-on-surface block mb-1">
+              Resolution (DPI)
+            </label>
+            <div className="grid grid-cols-4 gap-2">
+              {DPI_OPTIONS.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setDpi(opt)}
+                  className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
+                    dpi === opt
+                      ? 'border-primary bg-primary text-white'
+                      : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-secondary mt-1">
+              {dpi === 72 && 'Screen resolution — smallest file'}
+              {dpi === 150 && 'Good for sharing online'}
+              {dpi === 300 && 'Print quality — recommended'}
+              {dpi === 600 && 'High-res print — large file'}
+            </p>
+          </div>
+        )}
 
         {/* Error */}
         {error && <p className="text-xs text-error mb-3">{error}</p>}

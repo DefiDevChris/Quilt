@@ -23,3 +23,5 @@ export { patternTemplates } from './patternTemplates';
 export { userProfiles } from './userProfiles';
 export { comments } from './comments';
 export { blogPosts } from './blogPosts';
+export { publishedTemplates } from './publishedTemplates';
+export { projectTemplates } from './projectTemplates';

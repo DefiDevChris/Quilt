@@ -25,11 +25,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    {
-      url: `${BASE_URL}/blog`,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
   ];
 
   const [publishedBlogPosts, profiles, approvedCommunityPosts] = await Promise.all([

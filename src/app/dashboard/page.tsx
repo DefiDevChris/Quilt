@@ -262,7 +262,7 @@ export default function DashboardPage() {
 
         {/* ── 3. Quiltbook — col 1-4, row 2 ───────────────────────── */}
         <Link
-          href="/studio"
+          href="/projects"
           className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
         >
           <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">

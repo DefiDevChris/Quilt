@@ -11,8 +11,6 @@ import { ToolDef } from '@/components/ui/ToolIcon';
 export interface ToolbarCallbacks {
   onOpenLayoutSettings?: () => void;
   onOpenGridDimensions?: () => void;
-  onOpenSymmetry?: () => void;
-  onOpenSerendipity?: () => void;
   onOpenImageExport?: () => void;
   onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
@@ -351,61 +349,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     // ── ADVANCED: Inspect & refine ──
     {
-      id: 'symmetry',
-      label: 'Symmetry Tool',
-      description: 'Mirror your design — vertical, horizontal, or radial',
-      mascot: '/mascots&avatars/corgi3.png',
-      group: 'inspect-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenSymmetry,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1.4" strokeDasharray="2 2" />
-          <path
-            d="M6 7L3 10L6 13"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M14 7L17 10L14 13"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'serendipity',
-      label: 'Serendipity',
-      description: 'Shuffle colors randomly for happy accidents',
-      mascot: '/mascots&avatars/corgi5.png',
-      group: 'inspect-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenSerendipity,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 10C4 10 6 4 10 4C14 4 16 10 16 10"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M16 10C16 10 14 16 10 16C6 16 4 10 4 10"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <circle cx="7" cy="8" r="1" fill="currentColor" />
-          <circle cx="13" cy="12" r="1" fill="currentColor" />
-        </svg>
-      ),
-    },
-    {
       id: 'grid-toggle',
       label: 'Toggle Grid',
       shortcut: 'G',
@@ -465,49 +408,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <circle cx="6" cy="14" r="1.5" fill="currentColor" />
           <circle cx="14" cy="14" r="1.5" fill="currentColor" />
           <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
-        </svg>
-      ),
-    },
-    {
-      id: 'eyedropper',
-      label: 'Eyedropper',
-      shortcut: 'I',
-      description: 'Sample colors from existing patches',
-      mascot: '/mascots&avatars/corgi13.png',
-      toolType: 'eyedropper',
-      group: 'view-adv',
-      tier: 'advanced',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M14 3L17 6L10 13L7 10L14 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M7 10L3 14L6 17L10 13"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-          <circle cx="15.5" cy="4.5" r="1" fill="currentColor" />
-        </svg>
-      ),
-    },
-    {
-      id: 'ruler',
-      label: 'Ruler',
-      shortcut: 'M',
-      description: 'Measure distances between points',
-      mascot: '/mascots&avatars/corgi15.png',
-      toolType: 'ruler',
-      group: 'view-adv',
-      tier: 'advanced',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="8" width="14" height="4" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M6 8V12M9 8V10M12 8V10M15 8V12" stroke="currentColor" strokeWidth="1" />
         </svg>
       ),
     },

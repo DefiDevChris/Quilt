@@ -10,6 +10,7 @@
 
 import type { ParsedBlock } from './pattern-parser-types';
 import { normalizeBlockName } from './string-utils';
+export { normalizeBlockName } from './string-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 

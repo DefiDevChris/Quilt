@@ -11,14 +11,12 @@ export const MIN_PPI = 72;
 export const MAX_PPI = 1200;
 export const SCANNER_PRESETS = ['150', '200', '300', '600'] as const;
 
-export type CalibrationMethod = 'manual-dpi' | 'ruler-reference' | 'scanner-preset';
+export type CalibrationMethod = 'manual-dpi' | 'scanner-preset';
 export type ScannerPreset = (typeof SCANNER_PRESETS)[number];
 
 export interface CalibrationInput {
   readonly method: CalibrationMethod;
   readonly manualDpi?: number;
-  readonly rulerLengthInches?: number;
-  readonly rulerLengthPixels?: number;
   readonly scannerPreset?: ScannerPreset;
 }
 
@@ -50,15 +48,6 @@ function calculatePpi(input: CalibrationInput): number | null {
       // Reject NaN and Infinity
       if (!Number.isFinite(dpi)) return null;
       return dpi;
-    }
-
-    case 'ruler-reference': {
-      const inches = input.rulerLengthInches;
-      const pixels = input.rulerLengthPixels;
-      if (inches == null || pixels == null || inches <= 0 || pixels <= 0) {
-        return null;
-      }
-      return pixels / inches;
     }
 
     case 'scanner-preset':

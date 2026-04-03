@@ -1,4 +1,5 @@
-import { boundingBoxFromPoints, type Point, type BBox } from './geometry-utils';
+import { boundingBoxFromPoints as _bbfp, type Point, type BBox } from './geometry-utils';
+export { boundingBoxFromPoints } from './geometry-utils';
 import type { Point2D } from '@/types/geometry';
 
 export type { Point2D };
@@ -11,7 +12,7 @@ export function boundingBoxFromPaths(
   paths: ReadonlyArray<ReadonlyArray<{ readonly x: number; readonly y: number }>>
 ): BBox {
   const allPoints = paths.flat();
-  return boundingBoxFromPoints(allPoints);
+  return _bbfp(allPoints);
 }
 
 /**

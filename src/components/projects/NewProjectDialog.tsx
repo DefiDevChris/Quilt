@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ProjectTemplates } from '@/components/studio/ProjectTemplates';
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -9,8 +10,24 @@ interface NewProjectDialogProps {
   onBrowsePatterns?: () => void;
 }
 
+interface ProjectTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  unitSystem: 'imperial' | 'metric';
+  gridSettings: {
+    enabled: boolean;
+    size: number;
+    snapToGrid: boolean;
+  };
+  canvasWidth: number;
+  canvasHeight: number;
+  createdAt: string;
+}
+
 export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProjectDialogProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'blank' | 'template'>('blank');
   const [name, setName] = useState('Untitled Quilt');
   const [unitSystem, setUnitSystem] = useState<'imperial' | 'metric'>('imperial');
   const [canvasWidth, setCanvasWidth] = useState(48);
@@ -22,6 +39,17 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
   const [isCreating, setIsCreating] = useState(false);
 
   if (!open) return null;
+
+  const handleSelectTemplate = (template: ProjectTemplate) => {
+    setName(`${template.name} Copy`);
+    setUnitSystem(template.unitSystem);
+    setCanvasWidth(template.canvasWidth);
+    setCanvasHeight(template.canvasHeight);
+    setGridEnabled(template.gridSettings.enabled);
+    setGridSize(template.gridSettings.size);
+    setSnapToGrid(template.gridSettings.snapToGrid);
+    setActiveTab('blank');
+  };
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -70,7 +98,7 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
-      <div className="w-full max-w-md rounded-xl bg-surface shadow-elevation-3 p-6">
+      <div className="w-full max-w-md rounded-xl bg-surface shadow-elevation-3 p-6 max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-semibold text-on-surface mb-4">New Project</h2>
 
         {error && (
@@ -79,50 +107,91 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
           </div>
         )}
 
-        {onBrowsePatterns && (
+        {/* Tabs */}
+        <div className="flex gap-1 mb-6 bg-surface-container rounded-lg p-1">
           <button
             type="button"
-            onClick={() => {
-              onClose();
-              onBrowsePatterns();
-            }}
-            className="w-full mb-4 flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3.5 text-left transition-colors hover:bg-surface-container-high group"
+            onClick={() => setActiveTab('blank')}
+            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === 'blank'
+                ? 'bg-surface text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            }`}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="shrink-0 text-primary"
-            >
-              <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
-              <rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
-              <rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
-              <rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
-            </svg>
-            <div>
-              <p className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
-                Start from Pattern
-              </p>
-              <p className="text-xs text-secondary">Choose from our pattern library</p>
-            </div>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              className="ml-auto text-secondary"
-            >
-              <path
-                d="M6 3l5 5-5 5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            Blank Project
           </button>
-        )}
+          <button
+            type="button"
+            onClick={() => setActiveTab('template')}
+            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === 'template'
+                ? 'bg-surface text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            }`}
+          >
+            From Template
+          </button>
+        </div>
+
+        {activeTab === 'template' ? (
+          <div className="space-y-4">
+            <ProjectTemplates onSelectTemplate={handleSelectTemplate} showCreateButton={false} />
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md px-4 py-2.5 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {onBrowsePatterns && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onBrowsePatterns();
+                }}
+                className="w-full mb-4 flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3.5 text-left transition-colors hover:bg-surface-container-high group"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="shrink-0 text-primary"
+                >
+                  <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
+                  <rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
+                  <rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.4" />
+                  <rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.7" />
+                </svg>
+                <div>
+                  <p className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
+                    Start from Pattern
+                  </p>
+                  <p className="text-xs text-secondary">Choose from our pattern library</p>
+                </div>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  className="ml-auto text-secondary"
+                >
+                  <path
+                    d="M6 3l5 5-5 5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
 
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
@@ -263,7 +332,7 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
               {isCreating ? 'Creating...' : 'Create Project'}
             </button>
           </div>
-        </form>
+        )}
       </div>
     </div>
   );

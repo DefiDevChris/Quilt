@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import type { BlogPostListItem } from '@/types/community';
-import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { SUPPORT_EMAIL } from '@/lib/constants';
 
 function formatDate(date: Date | string | null): string {
@@ -41,19 +41,17 @@ function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: bool
 function BentoCard({
   post,
   bentoStyle,
-  onOpen,
 }: {
   post: BlogPostListItem;
   bentoStyle: BentoStyle;
-  onOpen: () => void;
 }) {
   const image = post.featuredImageUrl || '/images/quilts/quilt_01_bed_geometric.png';
 
   if (bentoStyle === 'hero') {
     return (
-      <button
-        onClick={onOpen}
-        className="relative w-full h-full rounded-[1.5rem] overflow-hidden group cursor-pointer text-left"
+      <Link
+        href={`/blog/${post.slug}`}
+        className="relative w-full h-full rounded-[1.5rem] overflow-hidden group cursor-pointer text-left block"
       >
         <img src={image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -68,14 +66,14 @@ function BentoCard({
           )}
           <AuthorRow post={post} dark />
         </div>
-      </button>
+      </Link>
     );
   }
 
   if (bentoStyle === 'wide') {
     return (
-      <button
-        onClick={onOpen}
+      <Link
+        href={`/blog/${post.slug}`}
         className="w-full h-full glass-panel-social rounded-[1.5rem] overflow-hidden group cursor-pointer flex text-left"
       >
         <div className="w-2/5 shrink-0 overflow-hidden">
@@ -92,14 +90,14 @@ function BentoCard({
           </div>
           <AuthorRow post={post} />
         </div>
-      </button>
+      </Link>
     );
   }
 
   if (bentoStyle === 'tall') {
     return (
-      <button
-        onClick={onOpen}
+      <Link
+        href={`/blog/${post.slug}`}
         className="w-full h-full glass-panel-social rounded-[1.5rem] overflow-hidden group cursor-pointer flex flex-col text-left"
       >
         <div className="flex-1 min-h-0 overflow-hidden">
@@ -111,14 +109,14 @@ function BentoCard({
           </h4>
           <AuthorRow post={post} />
         </div>
-      </button>
+      </Link>
     );
   }
 
   if (bentoStyle === 'side') {
     return (
-      <button
-        onClick={onOpen}
+      <Link
+        href={`/blog/${post.slug}`}
         className="w-full h-full glass-panel-social rounded-[1.5rem] overflow-hidden group cursor-pointer flex flex-col text-left"
       >
         <div className="flex-1 min-h-0 overflow-hidden">
@@ -129,14 +127,14 @@ function BentoCard({
             {post.title}
           </h4>
         </div>
-      </button>
+      </Link>
     );
   }
 
   // compact
   return (
-    <button
-      onClick={onOpen}
+    <Link
+      href={`/blog/${post.slug}`}
       className="w-full h-full glass-panel-social rounded-[1.5rem] overflow-hidden group cursor-pointer flex flex-col text-left"
     >
       <div className="h-[55%] overflow-hidden">
@@ -152,7 +150,7 @@ function BentoCard({
           {formatDate(post.publishedAt)}
         </p>
       </div>
-    </button>
+    </Link>
   );
 }
 
@@ -162,7 +160,6 @@ interface BlogContentProps {
 }
 
 export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContentProps) {
-  const { open } = useSocialQuickView();
   const [posts, setPosts] = useState<BlogPostListItem[]>(initialPosts);
   const [loading, setLoading] = useState(initialPosts.length === 0);
   const [page, setPage] = useState(1);
@@ -195,20 +192,6 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
     setPage(next);
     fetchPosts(next);
   };
-
-  const openModal = (post: BlogPostListItem) =>
-    open({
-      type: 'blog',
-      slug: post.slug,
-      title: post.title,
-      imageUrl: post.featuredImageUrl,
-      authorName: post.authorName,
-      authorAvatarUrl: post.authorAvatarUrl ?? null,
-      excerpt: post.excerpt,
-      category: post.category,
-      readTimeMinutes: post.readTimeMinutes,
-      publishedAt: post.publishedAt,
-    });
 
   if (loading && posts.length === 0) {
     return (
@@ -262,7 +245,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
         {/* Row 1: Full-width hero */}
         {posts.length > 0 && (
           <div style={{ height: '460px' }}>
-            <BentoCard post={posts[0]} bentoStyle="hero" onOpen={() => openModal(posts[0])} />
+            <BentoCard post={posts[0]} bentoStyle="hero" />
           </div>
         )}
 
@@ -271,7 +254,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
           <div className="flex gap-6">
             {posts.slice(1, 3).map((post) => (
               <div key={post.id} className="flex-1" style={{ height: '320px' }}>
-                <BentoCard post={post} bentoStyle="tall" onOpen={() => openModal(post)} />
+                <BentoCard post={post} bentoStyle="tall" />
               </div>
             ))}
           </div>
@@ -282,7 +265,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
           <div className="flex gap-6">
             {posts.slice(3, 6).map((post) => (
               <div key={post.id} className="flex-1" style={{ height: '240px' }}>
-                <BentoCard post={post} bentoStyle="compact" onOpen={() => openModal(post)} />
+                <BentoCard post={post} bentoStyle="compact" />
               </div>
             ))}
           </div>
@@ -292,11 +275,11 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
         {posts.length > 6 && (
           <div className="flex gap-6">
             <div className="flex-[3]" style={{ height: '300px' }}>
-              <BentoCard post={posts[6]} bentoStyle="wide" onOpen={() => openModal(posts[6])} />
+              <BentoCard post={posts[6]} bentoStyle="wide" />
             </div>
             {posts[7] && (
               <div className="flex-[2]" style={{ height: '300px' }}>
-                <BentoCard post={posts[7]} bentoStyle="tall" onOpen={() => openModal(posts[7])} />
+                <BentoCard post={posts[7]} bentoStyle="tall" />
               </div>
             )}
           </div>
@@ -307,12 +290,12 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
           <div className="flex gap-6">
             {posts[8] && (
               <div className="flex-[2]" style={{ height: '300px' }}>
-                <BentoCard post={posts[8]} bentoStyle="tall" onOpen={() => openModal(posts[8])} />
+                <BentoCard post={posts[8]} bentoStyle="tall" />
               </div>
             )}
             {posts[9] && (
               <div className="flex-[3]" style={{ height: '300px' }}>
-                <BentoCard post={posts[9]} bentoStyle="wide" onOpen={() => openModal(posts[9])} />
+                <BentoCard post={posts[9]} bentoStyle="wide" />
               </div>
             )}
           </div>
@@ -323,7 +306,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
           <div className="grid grid-cols-4 gap-6">
             {posts.slice(10).map((post) => (
               <div key={post.id} style={{ height: '200px' }}>
-                <BentoCard post={post} bentoStyle="compact" onOpen={() => openModal(post)} />
+                <BentoCard post={post} bentoStyle="compact" />
               </div>
             ))}
           </div>
