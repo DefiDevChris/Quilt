@@ -12,12 +12,17 @@ import {
 import { FREE_BLOCK_LIMIT } from '@/lib/constants';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`blocks:${session.user.id}`, API_RATE_LIMITS.blocks);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const url = request.nextUrl;
   const parsed = blockSearchSchema.safeParse({
@@ -34,8 +39,7 @@ export async function GET(request: NextRequest) {
 
   const { search, category, scope, page, limit } = parsed.data;
   const offset = (page - 1) * limit;
-  const userRole = session.user.role;
-  const isPro = userRole === 'pro' || userRole === 'admin';
+  const userIsPro = isPro(session.user.role as UserRole);
 
   try {
     // Build WHERE conditions
@@ -95,7 +99,7 @@ export async function GET(request: NextRequest) {
     // Free users can access the first FREE_BLOCK_LIMIT system blocks (by name order)
     // We need to determine which blocks are within the free limit
     let freeBlockIds: Set<string> | null = null;
-    if (!isPro) {
+    if (!userIsPro) {
       const freeBlocks = await db
         .select({ id: blocks.id })
         .from(blocks)
@@ -113,7 +117,8 @@ export async function GET(request: NextRequest) {
       tags: block.tags ?? [],
       thumbnailUrl: block.thumbnailUrl,
       isDefault: block.isDefault,
-      isLocked: !isPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
+      isLocked:
+        !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
     }));
 
     return Response.json({
@@ -140,9 +145,7 @@ export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(`blocks:${session.user.id}`, API_RATE_LIMITS.blocks);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
-  const userRole = session.user.role;
-  const isPro = userRole === 'pro' || userRole === 'admin';
-  if (!isPro) {
+  if (!isPro(session.user.role as UserRole)) {
     return errorResponse('Custom block creation requires a Pro subscription.', 'PRO_REQUIRED', 403);
   }
 
@@ -157,11 +160,15 @@ export async function POST(request: NextRequest) {
     const svgData = typeof rawSvgData === 'string' ? sanitizeSvg(rawSvgData) : rawSvgData;
 
     // Embed parent block IDs in fabricJsData metadata if present
+    const existingMetadata =
+      typeof fabricJsData === 'object' && fabricJsData !== null && '_metadata' in fabricJsData
+        ? (fabricJsData._metadata as Record<string, unknown>)
+        : undefined;
     const enrichedFabricData = parentBlockIds
       ? {
           ...fabricJsData,
           _metadata: {
-            ...(fabricJsData._metadata as Record<string, unknown> | undefined),
+            ...existingMetadata,
             parentBlockIds,
           },
         }

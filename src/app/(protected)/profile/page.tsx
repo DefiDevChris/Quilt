@@ -7,7 +7,7 @@ import { userProfiles } from '@/db/schema';
 import { UserProfilePage } from '@/components/community/profiles/UserProfilePage';
 
 export const metadata: Metadata = {
-  title: 'My Profile | QuiltCorgi',
+  title: 'My Profile',
   description: 'View your QuiltCorgi profile and shared projects.',
 };
 

@@ -15,7 +15,6 @@ type SubscriptionInfo = {
 
 export function BillingSection() {
   const user = useAuthStore((s) => s.user);
-  const setUser = useAuthStore((s) => s.setUser);
   const searchParams = useSearchParams();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,10 +45,11 @@ export function BillingSection() {
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
       setSuccessMessage('Welcome to Pro! Your subscription is now active.');
-      if (user) setUser({ ...user, role: 'pro' });
+      // Refetch subscription to get actual server-side role instead of optimistic promotion
+      fetchSubscription();
       window.history.replaceState({}, '', '/settings');
     }
-  }, [searchParams, user, setUser]);
+  }, [searchParams, fetchSubscription]);
 
   async function handleUpgrade() {
     setIsCheckoutLoading(true);
@@ -259,7 +259,7 @@ export function BillingSection() {
             <ul className="space-y-1.5 text-[11px] text-slate-500">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
-              <li>Full 659+ block library</li>
+              <li>Full 651+ block library</li>
               <li>Full fabric library + upload</li>
               <li>Export all formats</li>
               <li>Photo-to-quilt OCR</li>

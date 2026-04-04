@@ -33,8 +33,8 @@ export default function AllProjectsPage() {
         const data = await res.json();
         setProjects(data.data.projects);
         setFilteredProjects(data.data.projects);
-      } catch (error) {
-        console.error('Failed to fetch projects:', error);
+      } catch {
+        // Silently handle fetch failure — user sees empty state
       } finally {
         setLoading(false);
       }
@@ -60,13 +60,13 @@ export default function AllProjectsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-surface-container rounded w-48"></div>
-          <div className="h-12 bg-surface-container rounded"></div>
+          <div className="h-8 bg-surface-container rounded w-48" />
+          <div className="h-12 bg-surface-container rounded-xl" />
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-48 bg-surface-container rounded-xl"></div>
+              <div key={i} className="h-48 bg-surface-container rounded-xl" />
             ))}
           </div>
         </div>
@@ -75,11 +75,11 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
+    <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">All Projects</h1>
-          <p className="text-secondary mt-1">{filteredProjects.length} designs</p>
+          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">My Quiltbook</h1>
+          <p className="text-secondary mt-1">{filteredProjects.length} saved designs</p>
         </div>
 
         <div className="flex items-center gap-3">

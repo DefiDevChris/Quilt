@@ -57,7 +57,7 @@ interface PhotoPatternState {
   setStep: (step: PhotoPatternStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
   setCorrectedImageRef: (ref: CorrectedImageRef) => void;
-  setPerspectiveCorners: (corners: [Point2D, Point2D, Point2D, Point2D]) => void;
+  setPerspectiveCorners: (corners: [Point2D, Point2D, Point2D, Point2D] | null) => void;
   setDetectedPieces: (pieces: readonly DetectedPiece[]) => void;
   setPipelineSteps: (steps: readonly PipelineStep[]) => void;
   setSensitivity: (value: number) => void;

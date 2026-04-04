@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, users } from '@/db/schema';
+import { socialPosts, users } from '@/db/schema';
 import { PostDetail } from '@/components/social/PostDetail';
 import { SocialLayout } from '@/components/social/SocialLayout';
 
@@ -29,14 +29,14 @@ async function getPostMeta(postId: string) {
   try {
     const [row] = await db
       .select({
-        title: communityPosts.title,
-        description: communityPosts.description,
-        thumbnailUrl: communityPosts.thumbnailUrl,
+        title: socialPosts.title,
+        description: socialPosts.description,
+        thumbnailUrl: socialPosts.thumbnailUrl,
         creatorName: users.name,
       })
-      .from(communityPosts)
-      .leftJoin(users, eq(communityPosts.userId, users.id))
-      .where(and(eq(communityPosts.id, postId), eq(communityPosts.status, 'approved')))
+      .from(socialPosts)
+      .leftJoin(users, eq(socialPosts.userId, users.id))
+      .where(and(eq(socialPosts.id, postId), isNull(socialPosts.deletedAt)))
       .limit(1);
 
     return row ?? null;

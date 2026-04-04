@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { getPixelsPerUnit, snapToGrid, maybeSnap } from '@/lib/canvas-utils';
+import { maybeSnap } from '@/lib/canvas-utils';
 
 export function useDrawingTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -43,12 +43,7 @@ export function useDrawingTool() {
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       // Tools handled by their own hooks — exit early
-      if (
-        activeTool === 'text' ||
-        activeTool === 'blockbuilder' ||
-        activeTool === 'eyedropper' ||
-        activeTool === 'spraycan'
-      ) {
+      if (activeTool === 'blockbuilder' || activeTool === 'spraycan') {
         return;
       }
 
@@ -76,10 +71,6 @@ export function useDrawingTool() {
       let startX = 0;
       let startY = 0;
       let previewShape: InstanceType<typeof fabric.FabricObject> | null = null;
-      let polygonPoints: { x: number; y: number }[] = [];
-      let polygonPreviewLine: InstanceType<typeof fabric.Line> | null = null;
-      let lineChain: { x: number; y: number }[] = [];
-      let lineObjects: InstanceType<typeof fabric.Line>[] = [];
 
       function onMouseDown(e: { e: MouseEvent }) {
         if (stateRef.current.isSpacePressed) return;
@@ -90,57 +81,11 @@ export function useDrawingTool() {
         const sx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
         const sy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
-        if (activeTool === 'polygon') {
-          polygonPoints.push({ x: sx, y: sy });
-          if (polygonPreviewLine) {
-            canvas.remove(polygonPreviewLine);
-          }
-          if (polygonPoints.length > 1) {
-            const prev = polygonPoints[polygonPoints.length - 2];
-            const line = new fabric.Line([prev.x, prev.y, sx, sy], {
-              stroke: stateRef.current.strokeColor,
-              strokeWidth: 1,
-              selectable: false,
-              evented: false,
-              strokeDashArray: [5, 5],
-            });
-            canvas.add(line);
-            polygonPreviewLine = null;
-          }
-          const preview = new fabric.Line([sx, sy, sx, sy], {
-            stroke: stateRef.current.strokeColor,
-            strokeWidth: 1,
-            selectable: false,
-            evented: false,
-            strokeDashArray: [5, 5],
-          });
-          canvas.add(preview);
-          polygonPreviewLine = preview;
-          canvas.renderAll();
-          return;
-        }
-
-        // Line tool: check if starting a new chain or continuing
-        if (activeTool === 'line' && lineChain.length > 0) {
-          const last = lineChain[lineChain.length - 1];
-          const SNAP_THRESHOLD = 5;
-          const continuesChain =
-            Math.abs(sx - last.x) < SNAP_THRESHOLD && Math.abs(sy - last.y) < SNAP_THRESHOLD;
-
-          if (!continuesChain) {
-            // Starting new chain - reset
-            lineChain = [];
-            lineObjects = [];
-          }
-        }
-
         isDrawing = true;
         startX = sx;
         startY = sy;
 
-        const { strokeColor, strokeWidth } = stateRef.current;
-
-        if (activeTool === 'rectangle') {
+        if (activeTool === 'rectangle' || activeTool === 'sashing' || activeTool === 'border') {
           previewShape = new fabric.Rect({
             left: sx,
             top: sy,
@@ -171,14 +116,6 @@ export function useDrawingTool() {
               evented: false,
             }
           );
-        } else if (activeTool === 'line') {
-          previewShape = new fabric.Line([sx, sy, sx, sy], {
-            stroke: '#00FF00',
-            strokeWidth: 4,
-            strokeDashArray: [5, 5],
-            selectable: false,
-            evented: false,
-          });
         }
 
         if (previewShape) {
@@ -189,20 +126,14 @@ export function useDrawingTool() {
 
       function onMouseMove(e: { e: MouseEvent }) {
         if (!fabric || !canvas) return;
+        if (!isDrawing || !previewShape) return;
+
         const pointer = canvas.getScenePoint(e.e);
         const s = stateRef.current;
         const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
         const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
-        if (activeTool === 'polygon' && polygonPreviewLine) {
-          polygonPreviewLine.set({ x2: cx, y2: cy });
-          canvas.renderAll();
-          return;
-        }
-
-        if (!isDrawing || !previewShape) return;
-
-        if (activeTool === 'rectangle') {
+        if (activeTool === 'rectangle' || activeTool === 'sashing' || activeTool === 'border') {
           const width = cx - startX;
           const height = cy - startY;
           previewShape.set({
@@ -220,8 +151,6 @@ export function useDrawingTool() {
           ];
           poly.setBoundingBox(true);
           poly.setCoords();
-        } else if (activeTool === 'line') {
-          (previewShape as InstanceType<typeof fabric.Line>).set({ x2: cx, y2: cy });
         }
 
         canvas.renderAll();
@@ -229,79 +158,35 @@ export function useDrawingTool() {
 
       function onMouseUp() {
         if (!fabric || !canvas) return;
-        if (activeTool === 'polygon') return;
         if (!isDrawing || !previewShape) return;
         isDrawing = false;
 
         const w = previewShape.width ?? 0;
         const h = previewShape.height ?? 0;
-        const isZeroArea =
-          activeTool === 'line'
-            ? Math.abs(
-                (previewShape as InstanceType<typeof fabric.Line>).x2! -
-                  (previewShape as InstanceType<typeof fabric.Line>).x1!
-              ) < 2 &&
-              Math.abs(
-                (previewShape as InstanceType<typeof fabric.Line>).y2! -
-                  (previewShape as InstanceType<typeof fabric.Line>).y1!
-              ) < 2
-            : w < 2 && h < 2;
+        const isZeroArea = w < 2 && h < 2;
 
         if (isZeroArea) {
           canvas.remove(previewShape);
         } else {
           const { fillColor, strokeColor, strokeWidth } = stateRef.current;
+          
+          // Tag sashing and border shapes with metadata
+          const metadata: Record<string, unknown> = {};
+          if (activeTool === 'sashing') {
+            metadata.type = 'sashing';
+          } else if (activeTool === 'border') {
+            metadata.type = 'border';
+          }
+
           previewShape.set({
-            fill: activeTool === 'line' ? undefined : fillColor,
+            fill: fillColor,
             stroke: strokeColor,
             strokeWidth,
             strokeDashArray: undefined,
             selectable: true,
             evented: true,
+            data: metadata,
           });
-
-          // Line tool: track chain and check for closed shape
-          if (activeTool === 'line') {
-            const line = previewShape as InstanceType<typeof fabric.Line>;
-            const x1 = line.x1!;
-            const y1 = line.y1!;
-            const x2 = line.x2!;
-            const y2 = line.y2!;
-
-            if (lineChain.length === 0) {
-              lineChain.push({ x: x1, y: y1 }, { x: x2, y: y2 });
-            } else {
-              lineChain.push({ x: x2, y: y2 });
-            }
-            lineObjects.push(line);
-
-            // Check if shape is closed (endpoint connects to start)
-            const SNAP_THRESHOLD = 5;
-            const first = lineChain[0];
-            const last = lineChain[lineChain.length - 1];
-            const isClosed =
-              Math.abs(last.x - first.x) < SNAP_THRESHOLD &&
-              Math.abs(last.y - first.y) < SNAP_THRESHOLD;
-
-            if (isClosed && lineChain.length >= 4) {
-              // Remove all line segments
-              lineObjects.forEach((l) => canvas.remove(l));
-
-              // Create polygon from chain
-              const polygon = new fabric.Polygon([...lineChain.slice(0, -1)], {
-                fill: fillColor,
-                stroke: strokeColor,
-                strokeWidth,
-                selectable: true,
-                evented: true,
-              });
-              canvas.add(polygon);
-
-              // Reset chain
-              lineChain = [];
-              lineObjects = [];
-            }
-          }
 
           const json = JSON.stringify(canvas.toJSON());
           useCanvasStore.getState().pushUndoState(json);
@@ -312,52 +197,15 @@ export function useDrawingTool() {
         canvas.renderAll();
       }
 
-      function onDoubleClick() {
-        if (!fabric || !canvas || activeTool !== 'polygon') return;
-        if (polygonPoints.length < 3) {
-          polygonPoints = [];
-          if (polygonPreviewLine) {
-            canvas.remove(polygonPreviewLine);
-            polygonPreviewLine = null;
-          }
-          return;
-        }
-
-        canvas.getObjects().forEach((obj) => {
-          if (obj.strokeDashArray) canvas.remove(obj);
-        });
-
-        const { fillColor, strokeColor, strokeWidth } = stateRef.current;
-        const polygon = new fabric.Polygon([...polygonPoints], {
-          fill: fillColor,
-          stroke: strokeColor,
-          strokeWidth,
-          selectable: true,
-          evented: true,
-        });
-        canvas.add(polygon);
-
-        const json = JSON.stringify(canvas.toJSON());
-        useCanvasStore.getState().pushUndoState(json);
-        useProjectStore.getState().setDirty(true);
-
-        polygonPoints = [];
-        polygonPreviewLine = null;
-        canvas.renderAll();
-      }
-
       canvas.on('mouse:down', onMouseDown as never);
       canvas.on('mouse:move', onMouseMove as never);
       canvas.on('mouse:up', onMouseUp as never);
-      canvas.on('mouse:dblclick', onDoubleClick as never);
 
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);
-        canvas.off('mouse:dblclick', onDoubleClick as never);
         if (previewShape) canvas.remove(previewShape);
-        if (polygonPreviewLine) canvas.remove(polygonPreviewLine);
       };
     })();
 

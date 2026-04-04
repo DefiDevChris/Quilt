@@ -44,8 +44,7 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
-  } catch (error) {
-    console.error('[Publish Template Error]', error);
+  } catch {
     return errorResponse('Failed to publish template', 'INTERNAL_ERROR', 500);
   }
 }

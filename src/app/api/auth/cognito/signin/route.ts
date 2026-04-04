@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = parsed.data;
 
     // Dev bypass: skip Cognito, look up by email with no password check
-    if (process.env.DEV_AUTH_BYPASS === 'true') {
+    if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
       const [existing] = await db
         .select({ id: users.id, role: users.role })
         .from(users)

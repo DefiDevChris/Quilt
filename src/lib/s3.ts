@@ -40,7 +40,7 @@ interface PresignedUrlParams {
   userId: string;
   filename: string;
   contentType: string;
-  purpose: 'fabric' | 'thumbnail' | 'export';
+  purpose: 'fabric' | 'thumbnail' | 'export' | 'block';
 }
 
 export async function generatePresignedUrl({

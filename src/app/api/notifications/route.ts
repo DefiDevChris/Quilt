@@ -9,12 +9,16 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`notifications:${session.user.id}`, API_RATE_LIMITS.profile);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const url = request.nextUrl;
   const parsed = notificationQuerySchema.safeParse({

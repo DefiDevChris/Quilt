@@ -41,9 +41,8 @@ export function saveTempProject(
 
   try {
     localStorage.setItem(getStorageKey(projectId), JSON.stringify(tempData));
-  } catch (error) {
+  } catch {
     // Silently fail — temp storage is best-effort
-    console.error('Failed to save temp project:', error);
   }
 }
 

@@ -19,7 +19,7 @@ export default function Footer() {
             </div>
             <p className="text-warm-text-secondary text-sm leading-relaxed max-w-xs">
               Design your quilts, calculate your yardage, and print patterns ready for the sewing
-              room. Four worktables, 659+ blocks, and a community of quilters who get it.
+              room. Four worktables, 651+ blocks, and a community of quilters who get it.
             </p>
           </div>
 

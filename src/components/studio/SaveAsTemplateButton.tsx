@@ -48,8 +48,8 @@ export function SaveAsTemplateButton({
       setShowDialog(false);
       setTemplateName(`${projectName} Template`);
       // Could add a toast notification here
-    } catch (error) {
-      console.error('Failed to save template:', error);
+    } catch {
+      // Failed to save template
     } finally {
       setSaving(false);
     }

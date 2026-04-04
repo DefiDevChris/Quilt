@@ -9,6 +9,14 @@ export function validateEnv(): void {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  // CRITICAL: DEV_AUTH_BYPASS must never be active in production
+  if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV === 'production') {
+    errors.push(
+      'DEV_AUTH_BYPASS=true is set in production. This disables ALL authentication. ' +
+        'Remove DEV_AUTH_BYPASS from production environment variables immediately.'
+    );
+  }
+
   // DATABASE_URL — always required
   if (!process.env.DATABASE_URL) {
     errors.push('DATABASE_URL must be set');
@@ -45,22 +53,23 @@ export function validateEnv(): void {
     if (!awsBucket) errors.push('AWS_S3_BUCKET must be set when any AWS variable is configured');
   }
 
-  // Upstash Redis — required in production for distributed rate limiting.
-  // Falls back to in-memory in dev (single process), but in production this
-  // means rate limits don't survive restarts or span multiple instances.
+  // Upstash Redis — required in production for distributed rate limiting and webhook dedup.
   if (process.env.NODE_ENV === 'production') {
     if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-      warnings.push(
-        'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are not set. ' +
-          'Auth rate limiting will fall back to in-memory (does not survive restarts or span instances). ' +
-          'Add these to the quiltcorgi/prod Secrets Manager secret.'
+      errors.push(
+        'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set in production. ' +
+          'Without Redis, rate limiting is per-instance (ineffective in serverless) and ' +
+          'webhook deduplication is disabled. Add these to the quiltcorgi/prod Secrets Manager secret.'
       );
     }
   }
 
-  if (warnings.length > 0) {
-    for (const warning of warnings) {
-      console.warn(`[env] WARNING: ${warning}`);
+  // NEXT_PUBLIC_APP_URL — required for Stripe redirect URLs
+  if (!process.env.NEXT_PUBLIC_APP_URL) {
+    if (process.env.NODE_ENV === 'production') {
+      errors.push('NEXT_PUBLIC_APP_URL must be set in production (used for Stripe redirect URLs)');
+    } else {
+      warnings.push('NEXT_PUBLIC_APP_URL is not set — Stripe checkout redirects may fail');
     }
   }
 

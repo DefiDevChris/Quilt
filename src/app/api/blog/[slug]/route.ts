@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, and, or } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import {
@@ -21,16 +21,7 @@ export async function GET(
   const { slug } = await params;
 
   try {
-    const session = await getRequiredSession();
-    const userId = session?.user?.id ?? null;
-
     const conditions = [eq(blogPosts.slug, slug)];
-
-    if (userId) {
-      conditions.push(or(eq(blogPosts.status, 'published'), eq(blogPosts.authorId, userId))!);
-    } else {
-      conditions.push(eq(blogPosts.status, 'published'));
-    }
 
     const [post] = await db
       .select({
@@ -43,8 +34,6 @@ export async function GET(
         featuredImageUrl: blogPosts.featuredImageUrl,
         category: blogPosts.category,
         tags: blogPosts.tags,
-        status: blogPosts.status,
-        publishedAt: blogPosts.publishedAt,
         createdAt: blogPosts.createdAt,
         updatedAt: blogPosts.updatedAt,
         authorName: users.name,
@@ -72,8 +61,6 @@ export async function GET(
       featuredImageUrl: post.featuredImageUrl,
       category: post.category,
       tags: post.tags,
-      status: post.status,
-      publishedAt: post.publishedAt,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       readTimeMinutes: calculateReadTime(post.content),
@@ -106,11 +93,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const [existing] = await db
-      .select({
-        id: blogPosts.id,
-        authorId: blogPosts.authorId,
-        status: blogPosts.status,
-      })
+      .select({ id: blogPosts.id, authorId: blogPosts.authorId })
       .from(blogPosts)
       .where(eq(blogPosts.slug, slug))
       .limit(1);
@@ -119,19 +102,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return notFoundResponse('Blog post not found.');
     }
 
-    const isAdmin = session.user.role === 'admin';
-    const isOwner = existing.authorId === session.user.id;
-
-    if (!isAdmin && !isOwner) {
-      return errorResponse('You can only edit your own posts.', 'FORBIDDEN', 403);
-    }
-
-    if (!isAdmin && existing.status !== 'draft' && existing.status !== 'pending') {
-      return errorResponse(
-        'You can only edit posts that are in draft or pending status.',
-        'FORBIDDEN',
-        403
-      );
+    if (session.user.role !== 'admin') {
+      return errorResponse('Only admins can edit blog posts.', 'FORBIDDEN', 403);
     }
 
     // Explicitly pick only allowed fields to prevent injection
@@ -143,7 +115,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       featuredImageUrl?: string;
       category?: BlogCategory;
       tags?: string[];
-      status?: 'draft' | 'pending';
       updatedAt: Date;
     } = {
       updatedAt: new Date(),
@@ -156,7 +127,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       updateData.featuredImageUrl = parsed.data.featuredImageUrl;
     if (parsed.data.category !== undefined) updateData.category = parsed.data.category;
     if (parsed.data.tags !== undefined) updateData.tags = parsed.data.tags;
-    if (parsed.data.status !== undefined) updateData.status = parsed.data.status;
 
     const [updated] = await db
       .update(blogPosts)

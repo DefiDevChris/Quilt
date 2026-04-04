@@ -1,9 +1,9 @@
 export const dynamic = 'force-dynamic';
 
 import type { MetadataRoute } from 'next';
-import { eq } from 'drizzle-orm';
+import { isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { blogPosts, userProfiles, communityPosts } from '@/db/schema';
+import { blogPosts, userProfiles, socialPosts } from '@/db/schema';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://quiltcorgi.com';
 
@@ -27,14 +27,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const [publishedBlogPosts, profiles, approvedCommunityPosts] = await Promise.all([
+  const [publishedBlogPosts, profiles, communityEntryRows] = await Promise.all([
     db
       .select({
         slug: blogPosts.slug,
         updatedAt: blogPosts.updatedAt,
       })
-      .from(blogPosts)
-      .where(eq(blogPosts.status, 'published')),
+      .from(blogPosts),
     db
       .select({
         username: userProfiles.username,
@@ -43,11 +42,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(50_000),
     db
       .select({
-        id: communityPosts.id,
-        createdAt: communityPosts.createdAt,
+        id: socialPosts.id,
+        createdAt: socialPosts.createdAt,
       })
-      .from(communityPosts)
-      .where(eq(communityPosts.status, 'approved')),
+      .from(socialPosts)
+      .where(isNull(socialPosts.deletedAt)),
   ]);
 
   const blogEntries: MetadataRoute.Sitemap = publishedBlogPosts.map((post) => ({
@@ -63,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const communityEntries: MetadataRoute.Sitemap = approvedCommunityPosts.map((post) => ({
+  const communityEntries: MetadataRoute.Sitemap = communityEntryRows.map((post) => ({
     url: `${BASE_URL}/socialthreads/${post.id}`,
     lastModified: post.createdAt,
     changeFrequency: 'monthly' as const,

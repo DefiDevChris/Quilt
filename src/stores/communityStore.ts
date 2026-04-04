@@ -1,8 +1,6 @@
 'use client';
 
 import { create } from 'zustand';
-import type { CommunityCategory } from '@/types/community';
-
 export type FeedTab = 'discover' | 'saved';
 
 export interface CommunityPost {
@@ -12,7 +10,7 @@ export interface CommunityPost {
   thumbnailUrl: string;
   likeCount: number;
   commentCount: number;
-  category: CommunityCategory;
+  category: string;
   creatorName: string;
   creatorUsername: string | null;
   creatorAvatarUrl: string | null;
@@ -31,7 +29,7 @@ interface CommunityState {
   search: string;
   sort: 'newest' | 'popular';
   tab: FeedTab;
-  category: CommunityCategory | undefined;
+  category: string | undefined;
   page: number;
   totalPages: number;
   total: number;
@@ -41,7 +39,7 @@ interface CommunityState {
   setSearch: (search: string) => void;
   setSort: (sort: 'newest' | 'popular') => void;
   setTab: (tab: FeedTab) => void;
-  setCategory: (category: CommunityCategory | undefined) => void;
+  setCategory: (category: string | undefined) => void;
   fetchPosts: (append?: boolean) => Promise<void>;
   loadMore: () => Promise<void>;
   likePost: (postId: string) => void;
@@ -54,7 +52,7 @@ const INITIAL_STATE = {
   search: '',
   sort: 'newest' as const,
   tab: 'discover' as FeedTab,
-  category: undefined as CommunityCategory | undefined,
+  category: undefined as string | undefined,
   page: 1,
   totalPages: 1,
   total: 0,

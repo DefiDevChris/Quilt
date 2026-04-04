@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { X, Check } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastProvider';
+import { PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY } from '@/lib/constants';
 
 interface ProUpgradeModalProps {
   onClose: () => void;
@@ -19,7 +20,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(priceId ? { priceId } : {}),
+        body: JSON.stringify(priceId ? { interval: priceId } : {}),
       });
       const data = await res.json();
       if (data.success && data.data.checkoutUrl) {
@@ -43,7 +44,6 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-on-surface/60 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="relative w-full max-w-4xl glass-elevated rounded-3xl overflow-hidden shadow-elevation-4 animate-expandIn my-8">
-
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -53,7 +53,6 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
-
           {/* Left Column: Mascots & Visuals */}
           <div className="bg-primary/10 p-10 flex flex-col items-center justify-center relative overflow-hidden">
             {/* Background decorative elements */}
@@ -65,10 +64,11 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 QuiltCorgi Pro
               </span>
               <h2 className="text-4xl font-extrabold text-on-surface leading-tight mb-4">
-                Unlock Your <br/> Quilt Magic
+                Unlock Your <br /> Quilt Magic
               </h2>
               <p className="text-secondary font-medium text-lg">
-                Join our pro quilters and access every tool you need to design, calculate, and create.
+                Join our pro quilters and access every tool you need to design, calculate, and
+                create.
               </p>
             </div>
 
@@ -85,7 +85,8 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
             <div className="mt-8 bg-white/60 backdrop-blur-md rounded-xl p-4 shadow-elevation-1 border border-white/50 text-center w-full max-w-sm">
               <p className="text-on-surface font-bold">Save More, Quilt More!</p>
               <p className="text-secondary text-sm mt-1">
-                At $60/year, QuiltCorgi Pro is cheaper than buying just 4 standalone quilt patterns!
+                At ${PRO_PRICE_YEARLY}/year, QuiltCorgi Pro is cheaper than buying just 4 standalone
+                quilt patterns!
               </p>
             </div>
           </div>
@@ -96,14 +97,14 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
 
             <ul className="space-y-4 mb-8 flex-1">
               {[
-                'Full Library of 659+ Quilt Blocks',
+                'Full Library of 651+ Quilt Blocks',
                 'AI Photo-to-Pattern Generator',
                 'Save unlimited projects & worktables',
                 'Export Print-Ready PDF Patterns (1:1 Scale)',
                 'Yardage Estimator & Cutting Charts',
                 'FPP Templates with seam allowances',
                 'Fabric Calibration & Fussy Cutting',
-                'Post designs to Social'
+                'Post designs to Social',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className="mt-0.5 w-5 h-5 rounded-full bg-primary/20 text-primary-dark flex items-center justify-center shrink-0">
@@ -125,8 +126,13 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                     Best Value
                   </div>
                   <div className="font-bold text-lg text-on-surface">Yearly</div>
-                  <div className="text-3xl font-extrabold text-on-surface my-1">$60<span className="text-base font-medium text-secondary">/yr</span></div>
-                  <div className="text-sm font-medium text-secondary">Just $5/month</div>
+                  <div className="text-3xl font-extrabold text-on-surface my-1">
+                    ${PRO_PRICE_YEARLY}
+                    <span className="text-base font-medium text-secondary">/yr</span>
+                  </div>
+                  <div className="text-sm font-medium text-secondary">
+                    Just ${Math.round(PRO_PRICE_YEARLY / 12)}/month
+                  </div>
                 </button>
 
                 {/* Monthly Plan */}
@@ -135,17 +141,20 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                   className="flex-1 rounded-2xl border-2 border-outline-variant bg-surface p-4 text-left transition-all hover:border-primary/50 hover:bg-surface-container hover:shadow-elevation-2"
                 >
                   <div className="font-bold text-lg text-on-surface">Monthly</div>
-                  <div className="text-3xl font-extrabold text-on-surface my-1">$8<span className="text-base font-medium text-secondary">/mo</span></div>
+                  <div className="text-3xl font-extrabold text-on-surface my-1">
+                    ${PRO_PRICE_MONTHLY}
+                    <span className="text-base font-medium text-secondary">/mo</span>
+                  </div>
                   <div className="text-sm font-medium text-secondary">Cancel anytime</div>
                 </button>
               </div>
 
               <p className="text-center text-xs font-medium text-secondary/70 mt-4">
-                Secure checkout powered by Stripe. You can cancel your subscription at any time from your profile.
+                Secure checkout powered by Stripe. You can cancel your subscription at any time from
+                your profile.
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </div>

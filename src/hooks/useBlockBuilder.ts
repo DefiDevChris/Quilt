@@ -52,8 +52,8 @@ const PATCH_COLORS = [
 export function useBlockBuilder({
   draftCanvasRef,
   isOpen,
-  fillColor,
-  strokeColor,
+  fillColor: _fillColor,
+  strokeColor: _strokeColor,
   gridCols,
   gridRows,
   canvasSize,
@@ -201,7 +201,9 @@ export function useBlockBuilder({
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
       };
-    })();
+    })().catch(() => {
+      // Block builder render failed — canvas state unchanged
+    });
 
     return () => {
       isMounted = false;

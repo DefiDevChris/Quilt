@@ -32,8 +32,7 @@ export async function loadSecrets(): Promise<void> {
     const response = await client.send(command);
 
     if (!response.SecretString) {
-      console.error(`[secrets] Secret "${SECRET_NAME}" has no string value`);
-      return;
+      throw new Error(`Secret "${SECRET_NAME}" has no string value`);
     }
 
     const secrets: Record<string, string> = JSON.parse(response.SecretString);
@@ -51,9 +50,6 @@ export async function loadSecrets(): Promise<void> {
         `Failed to load secrets from "${SECRET_NAME}": ${err instanceof Error ? err.message : String(err)}`
       );
     }
-    // In other environments, warn but continue (secrets may come from .env)
-    console.error(
-      `[secrets] Failed to load from Secrets Manager (non-fatal): ${err instanceof Error ? err.message : String(err)}`
-    );
+    // In other environments, silently continue (secrets may come from .env)
   }
 }

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, desc, count, inArray } from 'drizzle-orm';
+import { eq, and, ilike, desc, count, inArray, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, users, projects, userProfiles, likes } from '@/db/schema';
+import { socialPosts, users, projects, userProfiles, likes } from '@/db/schema';
 import {
   communityFeedSchema,
   createCommunityPostExtendedSchema,
@@ -14,13 +14,24 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
+import {
+  checkTrustLevel,
+  checkPrivacyPermission,
+  checkCommunityRateLimit,
+} from '@/middleware/trust-guard';
 import { escapeLikePattern } from '@/lib/escape-like';
 import { formatCreatorName } from '@/lib/format-utils';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`community:${ip}`, API_RATE_LIMITS.blocks);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const session = await getSession();
 
   const url = request.nextUrl;
@@ -42,57 +53,58 @@ export async function GET(request: NextRequest) {
   const offset = (page - 1) * limit;
 
   try {
-    const conditions = [eq(communityPosts.status, 'approved')];
+    // Filter for posts that are not soft-deleted
+    const conditions = [isNull(socialPosts.deletedAt)];
 
     if (category) {
-      conditions.push(eq(communityPosts.category, category));
+      conditions.push(eq(socialPosts.category, category));
     }
 
     if (creatorId) {
-      conditions.push(eq(communityPosts.userId, creatorId));
+      conditions.push(eq(socialPosts.userId, creatorId));
     }
 
     if (search) {
-      conditions.push(ilike(communityPosts.title, `%${escapeLikePattern(search)}%`));
+      conditions.push(ilike(socialPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...conditions);
 
     const orderBy =
       sort === 'popular'
-        ? [desc(communityPosts.likeCount), desc(communityPosts.createdAt)]
-        : [desc(communityPosts.createdAt)];
+        ? [desc(socialPosts.likeCount), desc(socialPosts.createdAt)]
+        : [desc(socialPosts.createdAt)];
 
     const [postRows, [totalRow]] = await Promise.all([
       db
         .select({
-          id: communityPosts.id,
-          title: communityPosts.title,
-          description: communityPosts.description,
-          thumbnailUrl: communityPosts.thumbnailUrl,
-          likeCount: communityPosts.likeCount,
-          commentCount: communityPosts.commentCount,
-          category: communityPosts.category,
-          createdAt: communityPosts.createdAt,
-          creatorId: communityPosts.userId,
+          id: socialPosts.id,
+          title: socialPosts.title,
+          description: socialPosts.description,
+          thumbnailUrl: socialPosts.thumbnailUrl,
+          likeCount: socialPosts.likeCount,
+          commentCount: socialPosts.commentCount,
+          category: socialPosts.category,
+          createdAt: socialPosts.createdAt,
+          creatorId: socialPosts.userId,
           creatorName: users.name,
           creatorUsername: userProfiles.username,
           creatorAvatarUrl: userProfiles.avatarUrl,
           creatorRole: users.role,
-          projectId: communityPosts.projectId,
+          projectId: socialPosts.projectId,
           projectName: projects.name,
           projectThumbnailUrl: projects.thumbnailUrl,
-          templateId: communityPosts.templateId,
+          templateId: socialPosts.templateId,
         })
-        .from(communityPosts)
-        .leftJoin(users, eq(communityPosts.userId, users.id))
-        .leftJoin(userProfiles, eq(communityPosts.userId, userProfiles.userId))
-        .leftJoin(projects, eq(communityPosts.projectId, projects.id))
+        .from(socialPosts)
+        .leftJoin(users, eq(socialPosts.userId, users.id))
+        .leftJoin(userProfiles, eq(socialPosts.userId, userProfiles.userId))
+        .leftJoin(projects, eq(socialPosts.projectId, projects.id))
         .where(whereClause)
         .orderBy(...orderBy)
         .limit(limit)
         .offset(offset),
-      db.select({ count: count() }).from(communityPosts).where(whereClause),
+      db.select({ count: count() }).from(socialPosts).where(whereClause),
     ]);
 
     const total = totalRow?.count ?? 0;
@@ -123,7 +135,7 @@ export async function GET(request: NextRequest) {
       creatorName: post.creatorName ? formatCreatorName(post.creatorName) : 'Anonymous',
       creatorUsername: post.creatorUsername ?? null,
       creatorAvatarUrl: post.creatorAvatarUrl ?? null,
-      isPro: post.creatorRole === 'pro' || post.creatorRole === 'admin',
+      isPro: isPro((post.creatorRole ?? 'free') as UserRole),
       projectId: post.projectId,
       projectName: post.projectName ?? null,
       projectThumbnailUrl: post.projectThumbnailUrl ?? null,
@@ -144,8 +156,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('[Community API Error]', error);
+  } catch {
     return errorResponse('Failed to load community feed', 'INTERNAL_ERROR', 500);
   }
 }
@@ -162,7 +173,7 @@ export async function POST(request: NextRequest) {
   const privacyCheck = await checkPrivacyPermission(session.user.id, 'canPost');
   if (!privacyCheck.allowed) return privacyCheck.response!;
 
-  const rateLimitCheck = await checkRateLimit(session.user.id, trustCheck.role, 'posts');
+  const rateLimitCheck = await checkCommunityRateLimit(session.user.id, trustCheck.role, 'posts');
   if (!rateLimitCheck.allowed) {
     return rateLimitCheck.response!;
   }
@@ -170,17 +181,16 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Try extended schema first (with projectId), then simple schema
-    const extendedParsed = createCommunityPostExtendedSchema.safeParse(body);
-    const simpleParsed = createCommunityPostSimpleSchema.safeParse(body);
-
-    const parsed = extendedParsed.success ? extendedParsed : simpleParsed;
+    // Pick schema based on whether the body includes a category (extended) or not (simple)
+    const schema = body.category
+      ? createCommunityPostExtendedSchema
+      : createCommunityPostSimpleSchema;
+    const parsed = schema.safeParse(body);
 
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
     }
 
-    const isAdmin = session.user.role === 'admin';
     let thumbnailUrl = '';
 
     // If projectId is provided, validate and get thumbnail
@@ -196,9 +206,9 @@ export async function POST(request: NextRequest) {
       }
 
       const [existingPost] = await db
-        .select({ id: communityPosts.id })
-        .from(communityPosts)
-        .where(eq(communityPosts.projectId, parsed.data.projectId))
+        .select({ id: socialPosts.id })
+        .from(socialPosts)
+        .where(eq(socialPosts.projectId, parsed.data.projectId))
         .limit(1);
 
       if (existingPost) {
@@ -218,7 +228,7 @@ export async function POST(request: NextRequest) {
     const projectId = 'projectId' in parsed.data ? (parsed.data.projectId ?? null) : null;
 
     const [created] = await db
-      .insert(communityPosts)
+      .insert(socialPosts)
       .values({
         userId: session.user.id,
         projectId: projectId,
@@ -226,7 +236,6 @@ export async function POST(request: NextRequest) {
         description: parsed.data.description ?? null,
         thumbnailUrl,
         category: parsed.data.category,
-        status: isAdmin ? 'approved' : 'pending',
       })
       .returning();
 

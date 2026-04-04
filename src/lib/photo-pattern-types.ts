@@ -148,19 +148,6 @@ export interface ShapeCluster {
   readonly masterArea: number;
 }
 
-/**
- * Extended detected piece that includes shape clustering information.
- * Used internally during the standardization process.
- */
-export interface DetectedPieceWithShape extends DetectedPiece {
-  /** ID of the cluster this piece belongs to */
-  readonly clusterId: string;
-  /** The shape type classification */
-  readonly shapeType: ShapeType;
-  /** The standardized contour after shape matching */
-  readonly standardizedContour: readonly Point2D[];
-}
-
 // ============================================================================
 // Worker Communication Types (Objective 5: Web Worker)
 // ============================================================================

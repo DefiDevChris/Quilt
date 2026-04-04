@@ -73,7 +73,7 @@
 
 ### ✅ Studio Features
 - Canvas initialization and tools
-- Block library (659+ blocks)
+- Block library (651+ blocks)
 - Fabric library with calibration
 - Worktable management (up to 10)
 - History panel with undo/redo

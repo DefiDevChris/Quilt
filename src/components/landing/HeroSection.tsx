@@ -153,7 +153,7 @@ export default function HeroSection() {
               className="text-lg md:text-xl text-warm-text-secondary max-w-xl leading-relaxed"
             >
               Design your quilt, pick your fabrics, calculate your yardage, and export true-scale
-              patterns with seam allowances built in. Four worktables, 659+ blocks, and a community
+              patterns with seam allowances built in. Four worktables, 651+ blocks, and a community
               of quilters who get it.
             </motion.p>
 

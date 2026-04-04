@@ -9,7 +9,7 @@ test.describe('Landing Page', () => {
 
   test('renders feature highlights section', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('659+ block library')).toBeVisible();
+    await expect(page.getByText('651+ block library')).toBeVisible();
     await expect(page.getByText('True-scale PDF with seam allowances')).toBeVisible();
     await expect(page.getByText('Automatic yardage estimation')).toBeVisible();
   });

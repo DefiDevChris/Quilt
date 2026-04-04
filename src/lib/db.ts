@@ -9,15 +9,19 @@ if (!connectionString && process.env.NODE_ENV === 'production') {
 
 const pool = new Pool({
   connectionString: connectionString ?? 'postgresql://localhost:5432/quiltcorgi',
-  max: 5,
+  max: process.env.NODE_ENV === 'production' ? 2 : 5,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,
-  statement_timeout: 30_000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected pg pool error:', err);
+// Set statement timeout per connection (Pool config key is silently ignored by pg)
+pool.on('connect', (client) => {
+  client.query('SET statement_timeout = 30000');
+});
+
+pool.on('error', () => {
+  // Pool errors are handled by query execution
 });
 
 export const db = drizzle(pool, { schema });

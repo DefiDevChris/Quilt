@@ -61,7 +61,6 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
       onClose();
       router.push(`/dashboard?tab=fabrics&uploaded=${encodeURIComponent(publicUrl)}`);
     } catch (err) {
-      console.error('Fabric upload failed:', err);
       setUploadError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);

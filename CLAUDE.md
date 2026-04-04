@@ -56,11 +56,11 @@ src/
     studio/[projectId]/  # Design canvas (desktop only)
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
-  stores/           # Zustand stores (17 files)
+  stores/           # Zustand stores
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
-  db/schema/        # Drizzle table definitions (17 tables)
+  db/schema/        # Drizzle table definitions (18 tables, includes user_fabrics)
   types/            # Shared TypeScript type definitions
 ```
 
@@ -71,6 +71,7 @@ src/
 **Auth flow**: Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role.
 
 **Route protection**:
+
 - `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
 - `/admin/*` — cookie + role check (`admin` role only)
 - `/dashboard` — public, but protected actions trigger `AuthGateModal`
@@ -122,12 +123,80 @@ src/
 ## Product Context
 
 - **Photo-to-Pattern** is the key differentiator — never scale it back
+  - 7-step wizard: Upload → Image Prep (straighten/flip/perspective) → Scan Settings → Processing → Results → Dimensions → Export
+  - **Perspective tool** in Image Prep: Manual corner-dragging to correct photos taken at an angle (uses OpenCV warpPerspective)
+  - OpenCV runs AFTER perspective correction in the processing step
 - Studio is desktop-only (`StudioGate` redirects mobile users)
 - Mobile shell: Home, Upload FAB, Profile/Sign In — 3 items only
 - SVG overlays live in `/quilt_blocks/` and `/quilt_patterns/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
 - Onboarding uses simple localStorage flags (no complex tour system)
 
+### Block Creation
+
+- **Simple Drawing**: 4 basic tools (Select, Rectangle, Triangle, Line) on a 12×12 grid canvas
+- **Photo Upload**: Upload a photo of a physical block with crop/straighten tools (rotate, draggable corner handles, optional auto-detect)
+- **No Complex Features**: Removed tabs, overlays, symmetry tools — just draw or photograph
+- **Block Library**: Browse 651+ system blocks, create custom blocks (draw or photo), manage user collection
+- **Mode Switcher**: "Draw | Upload Photo" toggle in BlockDraftingShell — photo mode delegates to SimplePhotoBlockUpload
+- **Photo blocks**: Saved with `photoUrl` field, no shape detection or cutting instructions (just the cropped image)
+
+### Fabric.js Block Builder Patterns
+
+```typescript
+// Grid lines to filter out
+const userObjects = canvas.getObjects().filter((o) => o.stroke !== '#E5E2DD');
+
+// Drawing tool interaction
+if (activeTool === 'rectangle') {
+  previewShape = new fabric.Rect({
+    left: startX,
+    top: startY,
+    width: 0,
+    height: 0,
+    fill: 'transparent',
+    stroke: strokeColor,
+    strokeWidth: 1,
+    strokeDashArray: [5, 5],
+    selectable: false,
+    evented: false,
+  });
+}
+
+// Save block to API
+const res = await fetch('/api/blocks', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: blockName.trim(),
+    category: category.trim() || 'Custom',
+    svgData,
+    fabricJsData,
+    tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+    photoUrl: imageUrl, // Only for photo blocks
+  }),
+});
+```
+
+### Layout System
+
+- **No Layout** mode: Freeform placement with dedicated Sashing Tool (S) and Border Tool (B) for drawing custom strips, plus background fill color control
+- **Select Layout** mode: 9 predefined templates (Grid 3×3–5×5, Sashing 3×3–5×5, On-Point 3×3–5×5) that instantly apply all settings
+- Layout library in `src/lib/layout-library.ts`
+- Sashing/border shapes tagged with metadata: `data: { type: 'sashing' | 'border' }`
+- Background color stored in canvas store, defaults to `#F5F5F0` (neutral cream)
+
+### Database: User Fabrics
+
+- User-uploaded fabrics live in a separate `user_fabrics` table (not the system `fabrics` table)
+- `userId` is required (not nullable) with cascade delete
+- API routes: `scope=user` queries `user_fabrics`, `scope=system` queries `fabrics`
+- Pro-only feature — free users only see system fabrics
+
 ### Removed Features
 
 These were intentionally removed — do not reintroduce:
+
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour
+- Block builder tabs (Freeform/BlockBuilder/Applique), block overlays, complex drafting modes
+- Studio tools: Line, Polygon, Text, Eyedropper — removed for UX simplicity
+- Reference Image dialog and `referenceImageOpacity` canvas state

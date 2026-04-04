@@ -24,9 +24,9 @@ const VISIBLE_STEPS: readonly PhotoPatternStep[] = [
 
 const STEP_SUBTITLES: Record<PhotoPatternStep, string> = {
   upload: 'Upload your quilt photo',
-  imagePrep: 'Straighten & adjust your image',
+  imagePrep: 'Straighten, flip, or correct perspective',
   scanSettings: 'Tell us about your quilt',
-  correction: 'Adjust perspective',
+  correction: 'Adjust perspective (optional)',
   processing: 'Analyzing...',
   results: 'Review detected pieces',
   dimensions: 'Set quilt dimensions',

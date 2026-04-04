@@ -68,7 +68,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
   }, []);
 
   const getAddBlocksLabel = useCallback(() => {
-    if (layoutType === 'free-form') return 'Expand Canvas';
+    if (layoutType === 'none') return 'Expand Canvas';
     return 'Add Empty Blocks';
   }, [layoutType]);
 
@@ -217,7 +217,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               This changes the entire quilt dimensions from {formattedCurrent} to {formattedNew}.
             </p>
 
-            {layoutType !== 'free-form' && (
+            {layoutType !== 'none' && (
               <label className="flex items-center gap-2 mb-4 text-body-sm text-secondary cursor-pointer">
                 <input
                   type="checkbox"

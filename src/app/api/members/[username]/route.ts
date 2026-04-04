@@ -1,10 +1,12 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, count, and, sql } from 'drizzle-orm';
+import { eq, desc, count, and, sql, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { userProfiles, users, communityPosts, likes } from '@/db/schema';
+import { userProfiles, users, socialPosts, likes } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { getSession } from '@/lib/cognito-session';
+import { isPro as checkIsPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,31 +64,28 @@ export async function GET(
     );
     const offset = (page - 1) * limit;
 
+    // Filter out soft-deleted posts
     const [postRows, [totalRow]] = await Promise.all([
       db
         .select({
-          id: communityPosts.id,
-          title: communityPosts.title,
-          description: communityPosts.description,
-          thumbnailUrl: communityPosts.thumbnailUrl,
-          likeCount: communityPosts.likeCount,
-          commentCount: communityPosts.commentCount,
-          category: communityPosts.category,
-          createdAt: communityPosts.createdAt,
+          id: socialPosts.id,
+          title: socialPosts.title,
+          description: socialPosts.description,
+          thumbnailUrl: socialPosts.thumbnailUrl,
+          likeCount: socialPosts.likeCount,
+          commentCount: socialPosts.commentCount,
+          category: socialPosts.category,
+          createdAt: socialPosts.createdAt,
         })
-        .from(communityPosts)
-        .where(
-          and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
-        )
-        .orderBy(desc(communityPosts.createdAt))
+        .from(socialPosts)
+        .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt)))
+        .orderBy(desc(socialPosts.createdAt))
         .limit(limit)
         .offset(offset),
       db
         .select({ count: count() })
-        .from(communityPosts)
-        .where(
-          and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
-        ),
+        .from(socialPosts)
+        .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt))),
     ]);
 
     const total = totalRow?.count ?? 0;
@@ -108,8 +107,6 @@ export async function GET(
       isLikedByUser: likedPostIds.has(p.id),
     }));
 
-    const isPro = profile.role === 'pro' || profile.role === 'admin';
-
     return Response.json({
       success: true,
       data: {
@@ -126,7 +123,7 @@ export async function GET(
           youtubeHandle: profile.youtubeHandle,
           tiktokHandle: profile.tiktokHandle,
           publicEmail: profile.publicEmail,
-          isPro,
+          isPro: checkIsPro((profile.role ?? 'free') as UserRole),
           privacyMode: profile.privacyMode ?? 'public',
           createdAt: profile.createdAt,
         },

@@ -106,3 +106,27 @@ export function floatEquals(a: number, b: number, epsilon = EPSILON): boolean {
 export function isEffectivelyZero(value: number, epsilon = EPSILON): boolean {
   return Number.isFinite(value) && Math.abs(value) < epsilon;
 }
+
+// ============================================================================
+// Statistical Functions
+// ============================================================================
+
+/**
+ * Compute the median of an array of numbers.
+ * Returns 0 for empty arrays.
+ */
+export function median(values: readonly number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+/**
+ * Compute the mean (average) of an array of numbers.
+ * Returns 0 for empty arrays.
+ */
+export function mean(values: readonly number[]): number {
+  if (values.length === 0) return 0;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}

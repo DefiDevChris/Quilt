@@ -1350,19 +1350,3 @@ export interface DetectionResult {
   readonly pieces: readonly DetectedPiece[];
   readonly clusters?: readonly ShapeCluster[];
 }
-
-export function detectPiecesFromImageData(
-  cv: OpenCV,
-  imageData: ImageData,
-  options: DetectionOptions = {}
-): DetectionResult {
-  const src = new cv.Mat(imageData.height, imageData.width, cv.CV_8UC4);
-  src.data.set(imageData.data);
-
-  try {
-    const pieces = detectPieces(cv, src, options);
-    return { pieces };
-  } finally {
-    src.delete();
-  }
-}

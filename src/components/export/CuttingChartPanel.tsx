@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   generateCuttingChart,
   optimizeStripCutting,
-  formatFraction,
   type CuttingChartEntry,
   type CuttingChartItem,
 } from '@/lib/cutting-chart-generator';
+import { formatFraction } from '@/lib/piece-detection-utils';
 import type { WOF } from '@/lib/yardage-utils';
 
 interface CuttingChartPanelProps {

@@ -174,7 +174,9 @@ export function useAppliqueDraw({
 
       canvas.renderAll();
       prevLayersRef.current = layers;
-    })();
+    })().catch(() => {
+      // Applique render failed — canvas state unchanged
+    });
 
     return () => {
       cancelled = true;

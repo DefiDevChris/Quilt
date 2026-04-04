@@ -14,10 +14,7 @@ export default function TermsPage() {
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
         <div className="text-center mb-12">
-          <h1
-            className="text-3xl md:text-4xl font-bold text-warm-text mb-4"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
+          <h1 className="text-3xl md:text-4xl font-bold text-warm-text mb-4 font-display">
             Terms of Service
           </h1>
           <p className="text-warm-text-secondary text-sm">Effective date: March 30, 2026</p>

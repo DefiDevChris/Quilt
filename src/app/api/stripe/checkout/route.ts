@@ -10,6 +10,8 @@ import {
   validationErrorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +26,7 @@ export async function POST(request: Request) {
   const rl = await checkRateLimit(`stripe:${session.user.id}`, API_RATE_LIMITS.stripe);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
-  if (session.user.role === 'pro' || session.user.role === 'admin') {
+  if (isPro(session.user.role as UserRole)) {
     return errorResponse('You already have a Pro subscription.', 'FORBIDDEN', 403);
   }
 
@@ -93,8 +95,7 @@ export async function POST(request: Request) {
       success: true,
       data: { checkoutUrl: checkoutSession.url },
     });
-  } catch (error) {
-    console.error('Stripe checkout error:', error);
+  } catch {
     return errorResponse('Failed to create checkout session', 'INTERNAL_ERROR', 500);
   }
 }

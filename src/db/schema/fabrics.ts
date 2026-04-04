@@ -4,7 +4,6 @@ import {
   varchar,
   text,
   doublePrecision,
-  numeric,
   boolean,
   timestamp,
   index,
@@ -29,8 +28,6 @@ export const fabrics = pgTable(
     scaleX: doublePrecision('scaleX').notNull().default(1.0),
     scaleY: doublePrecision('scaleY').notNull().default(1.0),
     rotation: doublePrecision('rotation').notNull().default(0.0),
-    ppi: numeric('ppi', { precision: 10, scale: 4 }),
-    calibrated: boolean('calibrated').notNull().default(false),
     isDefault: boolean('isDefault').notNull().default(false),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })

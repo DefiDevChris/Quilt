@@ -112,8 +112,8 @@ export async function compressImageForUpload(file: File): Promise<{
           quality: 0.9,
         });
         sourceBlob = Array.isArray(converted) ? converted[0] : converted;
-      } catch (heicError) {
-        console.warn('HEIC conversion failed, falling back to raw file:', heicError);
+      } catch {
+        // HEIC conversion failed, use raw file
         sourceBlob = file;
       }
     }
@@ -132,9 +132,8 @@ export async function compressImageForUpload(file: File): Promise<{
       originalSize,
       compressedSize: compressedBlob.size,
     };
-  } catch (error) {
+  } catch {
     // Fallback: return the original file if compression fails entirely
-    console.warn('Image compression failed, uploading original:', error);
     return {
       blob: file,
       contentType: file.type || 'image/jpeg',

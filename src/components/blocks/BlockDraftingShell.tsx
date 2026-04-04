@@ -1,21 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { useCanvasStore, type BlockDraftingMode } from '@/stores/canvasStore';
-import { FreeformDraftingTab } from './FreeformDraftingTab';
-import { BlockBuilderTab } from './BlockBuilderTab';
-import { AppliqueTab } from './AppliqueTab';
-
-import { BlockOverlaySelector } from './BlockOverlaySelector';
+import { useState, useRef, useEffect, useCallback, type MutableRefObject } from 'react';
+import { useCanvasStore } from '@/stores/canvasStore';
+import { SimplePhotoBlockUpload } from './SimplePhotoBlockUpload';
 
 export interface DraftTabProps {
-  draftCanvasRef: React.MutableRefObject<unknown>;
+  draftCanvasRef: MutableRefObject<unknown>;
   fillColor: string;
   strokeColor: string;
   isOpen: boolean;
-  activeOverlay?: string | null;
-  overlayOpacity?: number;
-  setOverlayOpacity?: (opacity: number) => void;
 }
 
 interface BlockDraftingShellProps {
@@ -27,30 +20,27 @@ interface BlockDraftingShellProps {
 const DRAFT_CANVAS_SIZE = 400;
 const BLOCK_SIZE_UNITS = 12;
 
-const TAB_LABELS: Record<BlockDraftingMode, string> = {
-  freeform: 'Freeform',
-  blockbuilder: 'BlockBuilder',
-  applique: 'Applique',
-};
+type DrawTool = 'select' | 'rectangle' | 'triangle' | 'line';
+type CreateMode = 'draw' | 'photo';
+
+const TOOLS: { id: DrawTool; label: string; icon: string }[] = [
+  { id: 'select', label: 'Select', icon: '↖' },
+  { id: 'rectangle', label: 'Rectangle', icon: '▭' },
+  { id: 'triangle', label: 'Triangle', icon: '△' },
+  { id: 'line', label: 'Line', icon: '╱' },
+];
 
 export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingShellProps) {
+  const [mode, setMode] = useState<CreateMode>('draw');
   const [blockName, setBlockName] = useState('');
   const [category, setCategory] = useState('Custom');
   const [tags, setTags] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [showOverlaySelector, setShowOverlaySelector] = useState(false);
-  const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
-  const [overlayDimensions, setOverlayDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-  const [overlayOpacity, setOverlayOpacity] = useState(0.3);
+  const [activeTool, setActiveTool] = useState<DrawTool>('select');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
 
-  const activeMode = useCanvasStore((s) => s.blockDraftingMode);
-  const setActiveMode = useCanvasStore((s) => s.setBlockDraftingMode);
   const fillColor = useCanvasStore((s) => s.fillColor);
   const strokeColor = useCanvasStore((s) => s.strokeColor);
 
@@ -109,95 +99,156 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
     };
   }, [isOpen]);
 
-  // Load overlay SVG onto canvas when activeOverlay changes
+  // Handle drawing tool interactions
   useEffect(() => {
     if (!draftCanvasRef.current || !isOpen) return;
 
+    let fabric: typeof import('fabric') | null = null;
+    let cleanup: (() => void) | null = null;
+
     (async () => {
-      const fabric = await import('fabric');
+      fabric = await import('fabric');
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
-      // Remove existing overlay objects (tagged with 'overlay-ref')
-      const existing = canvas
-        .getObjects()
-        .filter((o) => (o as unknown as { name?: string }).name === 'overlay-ref');
-      for (const obj of existing) {
-        canvas.remove(obj);
-      }
-
-      if (!activeOverlay) {
+      if (activeTool === 'select') {
+        canvas.selection = true;
+        canvas.defaultCursor = 'default';
+        canvas.getObjects().forEach((obj) => {
+          if (obj.stroke !== '#E5E2DD') {
+            obj.selectable = true;
+            obj.evented = true;
+          }
+        });
         canvas.renderAll();
         return;
       }
 
-      // Fetch and load SVG
-      try {
-        const res = await fetch(activeOverlay);
-        if (!res.ok) return;
-        const svgText = await res.text();
+      canvas.selection = false;
+      canvas.defaultCursor = 'crosshair';
+      canvas.discardActiveObject();
 
-        fabric.loadSVGFromString(svgText, (objects, options) => {
-          const objs = objects as unknown as Array<InstanceType<typeof fabric.FabricObject>> | null;
-          if (!objs || objs.length === 0) return;
+      let isDrawing = false;
+      let startX = 0;
+      let startY = 0;
+      let previewShape: InstanceType<typeof fabric.FabricObject> | null = null;
 
-          const svgWidth = options.width || 300;
-          const svgHeight = options.height || 300;
+      function onMouseDown(e: { e: MouseEvent }) {
+        if (!fabric || !canvas) return;
+        const pointer = canvas.getScenePoint(e.e);
+        isDrawing = true;
+        startX = pointer.x;
+        startY = pointer.y;
 
-          // Always maintain the SVG's original aspect ratio
-          const fitScale = DRAFT_CANVAS_SIZE / Math.max(svgWidth, svgHeight);
-          const scaleX = fitScale;
-          const scaleY = fitScale;
-
-          const scaledW = svgWidth * scaleX;
-          const scaledH = svgHeight * scaleY;
-
-          const group = new fabric.Group(objs, {
+        if (activeTool === 'rectangle') {
+          previewShape = new fabric.Rect({
+            left: startX,
+            top: startY,
+            width: 0,
+            height: 0,
+            fill: 'transparent',
+            stroke: strokeColor,
+            strokeWidth: 1,
+            strokeDashArray: [5, 5],
             selectable: false,
             evented: false,
-            opacity: overlayOpacity,
-            scaleX,
-            scaleY,
-            left: (DRAFT_CANVAS_SIZE - scaledW) / 2,
-            top: (DRAFT_CANVAS_SIZE - scaledH) / 2,
-          } as Record<string, unknown>);
+          });
+        } else if (activeTool === 'triangle') {
+          previewShape = new fabric.Polygon(
+            [
+              { x: startX, y: startY },
+              { x: startX, y: startY },
+              { x: startX, y: startY },
+            ],
+            {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: 1,
+              strokeDashArray: [5, 5],
+              selectable: false,
+              evented: false,
+            }
+          );
+        } else if (activeTool === 'line') {
+          previewShape = new fabric.Line([startX, startY, startX, startY], {
+            stroke: strokeColor,
+            strokeWidth: 1,
+            strokeDashArray: [5, 5],
+            selectable: false,
+            evented: false,
+          });
+        }
 
-          (group as unknown as { name: string }).name = 'overlay-ref';
-
-          canvas.add(group);
-          canvas.renderAll();
-        });
-      } catch {
-        // Silently fail — overlay is optional
+        if (previewShape) canvas.add(previewShape);
+        canvas.renderAll();
       }
+
+      function onMouseMove(e: { e: MouseEvent }) {
+        if (!fabric || !isDrawing || !previewShape) return;
+        const pointer = canvas.getScenePoint(e.e);
+        if (activeTool === 'rectangle') {
+          previewShape.set({
+            left: Math.min(startX, pointer.x),
+            top: Math.min(startY, pointer.y),
+            width: Math.abs(pointer.x - startX),
+            height: Math.abs(pointer.y - startY),
+          });
+        } else if (activeTool === 'triangle') {
+          const poly = previewShape as InstanceType<typeof fabric.Polygon>;
+          poly.points = [
+            { x: startX, y: pointer.y },
+            { x: pointer.x, y: pointer.y },
+            { x: startX, y: startY },
+          ];
+          poly.setBoundingBox(true);
+          poly.setCoords();
+        } else if (activeTool === 'line') {
+          (previewShape as InstanceType<typeof fabric.Line>).set({ x2: pointer.x, y2: pointer.y });
+        }
+        canvas.renderAll();
+      }
+
+      function onMouseUp() {
+        if (!fabric || !isDrawing || !previewShape) return;
+        isDrawing = false;
+        const w = previewShape.width ?? 0;
+        const h = previewShape.height ?? 0;
+        if (w < 2 && h < 2) {
+          canvas.remove(previewShape);
+        } else {
+          previewShape.set({
+            fill: activeTool === 'line' ? undefined : fillColor,
+            stroke: strokeColor,
+            strokeWidth: 1,
+            strokeDashArray: undefined,
+            selectable: true,
+            evented: true,
+          });
+        }
+        previewShape = null;
+        canvas.renderAll();
+      }
+
+      canvas.on('mouse:down', onMouseDown as never);
+      canvas.on('mouse:move', onMouseMove as never);
+      canvas.on('mouse:up', onMouseUp as never);
+
+      cleanup = () => {
+        canvas.off('mouse:down', onMouseDown as never);
+        canvas.off('mouse:move', onMouseMove as never);
+        canvas.off('mouse:up', onMouseUp as never);
+      };
     })();
-  }, [isOpen, activeOverlay, overlayOpacity]);
 
-  const handleOverlaySelect = useCallback(
-    (svgPath: string, _type: 'block' | 'pattern', width?: number, height?: number) => {
-      setActiveOverlay(svgPath);
-      if (width && height) {
-        setOverlayDimensions({ width, height });
-      } else {
-        setOverlayDimensions(null);
-      }
-      setShowOverlaySelector(false);
-    },
-    []
-  );
-
-  const handleClearOverlay = useCallback(() => {
-    setActiveOverlay(null);
-  }, []);
+    return () => {
+      cleanup?.();
+    };
+  }, [isOpen, activeTool, fillColor, strokeColor]);
 
   const generateThumbnailSvg = useCallback(async (): Promise<string> => {
     if (!draftCanvasRef.current) return '';
     const fabric = await import('fabric');
     const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
-    const objs = canvas.getObjects().filter((o) => {
-      if (o.stroke === '#E5E2DD') return false;
-      if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
-      return true;
-    });
+    const objs = canvas.getObjects().filter((o) => o.stroke !== '#E5E2DD');
     if (objs.length === 0) return '';
 
     const parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'];
@@ -222,11 +273,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
       const fabric = await import('fabric');
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
-      const objs = canvas.getObjects().filter((o) => {
-        if (o.stroke === '#E5E2DD') return false;
-        if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
-        return true;
-      });
+      const objs = canvas.getObjects().filter((o) => o.stroke !== '#E5E2DD');
       if (objs.length === 0) {
         setError('Draw at least one shape before saving');
         setSaving(false);
@@ -273,166 +320,137 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
 
   if (!isOpen) return null;
 
-  const tabProps: DraftTabProps = {
-    draftCanvasRef,
-    fillColor,
-    strokeColor,
-    isOpen,
-    activeOverlay,
-    overlayOpacity,
-    setOverlayOpacity,
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-on-surface">Draft Custom Block</h2>
+          <h2 className="text-lg font-semibold text-on-surface">Create Custom Block</h2>
           <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
             ✕
           </button>
         </div>
 
-        {/* Tab switcher */}
+        {/* Mode switcher */}
         <div className="mb-3 flex gap-1 rounded-lg bg-background p-1">
-          {(Object.keys(TAB_LABELS) as BlockDraftingMode[]).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setActiveMode(mode)}
-              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                activeMode === mode
-                  ? 'bg-primary text-white'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
-            >
-              {TAB_LABELS[mode]}
-            </button>
-          ))}
-        </div>
-
-        {/* Active tab toolbar */}
-        {activeMode === 'freeform' && <FreeformDraftingTab {...tabProps} />}
-        {activeMode === 'blockbuilder' && <BlockBuilderTab {...tabProps} />}
-        {activeMode === 'applique' && <AppliqueTab {...tabProps} />}
-
-        {/* Overlay controls */}
-        <div className="mb-2 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setShowOverlaySelector(true)}
-            className="rounded-md bg-background px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface"
+            onClick={() => setMode('draw')}
+            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
+              mode === 'draw' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
+            }`}
           >
-            {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
+            Draw
           </button>
-          {activeOverlay && (
-            <>
+          <button
+            type="button"
+            onClick={() => setMode('photo')}
+            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
+              mode === 'photo' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
+            }`}
+          >
+            Upload Photo
+          </button>
+        </div>
+
+        {mode === 'draw' && (
+          <>
+            {/* Drawing tools */}
+            <div className="mb-3 flex items-center gap-1">
+              {TOOLS.map((tool) => (
+                <button
+                  key={tool.id}
+                  type="button"
+                  onClick={() => setActiveTool(tool.id)}
+                  title={tool.label}
+                  className={`h-8 w-8 rounded text-sm ${
+                    activeTool === tool.id
+                      ? 'bg-primary text-white'
+                      : 'text-secondary hover:bg-background'
+                  }`}
+                >
+                  {tool.icon}
+                </button>
+              ))}
+            </div>
+
+            {/* Drafting canvas */}
+            <div className="mb-4 flex justify-center rounded border border-outline-variant bg-white">
+              <canvas ref={canvasRef} width={DRAFT_CANVAS_SIZE} height={DRAFT_CANVAS_SIZE} />
+            </div>
+
+            {/* Block metadata */}
+            <div className="mb-4 grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-secondary">
+                  Block Name *
+                </label>
+                <input
+                  type="text"
+                  value={blockName}
+                  onChange={(e) => setBlockName(e.target.value)}
+                  placeholder="My Custom Block"
+                  maxLength={255}
+                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
+                <input
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="Custom"
+                  maxLength={100}
+                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="mb-1 block text-xs font-medium text-secondary">
+                  Tags (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="modern, geometric, stars"
+                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {error && <p className="mb-3 text-sm text-error">{error}</p>}
+
+            <div className="flex justify-end gap-2">
               <button
                 type="button"
-                onClick={handleClearOverlay}
-                className="rounded-md bg-background px-3 py-1.5 text-xs font-medium text-error hover:text-red-700"
+                onClick={onClose}
+                className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
               >
-                Clear
+                Cancel
               </button>
-              {overlayDimensions && (
-                <span className="text-[10px] text-secondary">
-                  {overlayDimensions.width}&quot; &times; {overlayDimensions.height}&quot;
-                </span>
-              )}
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] text-secondary">Opacity</span>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="0.8"
-                  step="0.05"
-                  value={overlayOpacity}
-                  onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
-                  className="w-16"
-                />
-                <span className="text-[10px] text-secondary">
-                  {Math.round(overlayOpacity * 100)}%
-                </span>
-              </div>
-            </>
-          )}
-        </div>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Block'}
+              </button>
+            </div>
+          </>
+        )}
 
-        {/* Reference Image Tracing */}
-
-
-        {/* Drafting canvas */}
-        <div className="mb-4 flex justify-center rounded border border-outline-variant bg-white">
-          <canvas ref={canvasRef} width={DRAFT_CANVAS_SIZE} height={DRAFT_CANVAS_SIZE} />
-        </div>
-
-        {/* Block metadata */}
-        <div className="mb-4 grid grid-cols-2 gap-3">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-secondary">Block Name *</label>
-            <input
-              type="text"
-              value={blockName}
-              onChange={(e) => setBlockName(e.target.value)}
-              placeholder="My Custom Block"
-              maxLength={255}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Custom"
-              maxLength={100}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="col-span-2">
-            <label className="mb-1 block text-xs font-medium text-secondary">
-              Tags (comma-separated)
-            </label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="modern, geometric, stars"
-              className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-        </div>
-
-        {error && <p className="mb-3 text-sm text-error">{error}</p>}
-
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Block'}
-          </button>
-        </div>
+        {mode === 'photo' && (
+          <SimplePhotoBlockUpload
+            isOpen={true}
+            onClose={() => setMode('draw')}
+            onSaved={() => {
+              onSaved();
+              onClose();
+            }}
+          />
+        )}
       </div>
-
-      {/* Overlay selector modal */}
-      {showOverlaySelector && (
-        <BlockOverlaySelector
-          onSelect={handleOverlaySelect}
-          onClose={() => setShowOverlaySelector(false)}
-          currentOverlay={activeOverlay}
-        />
-      )}
     </div>
   );
 }

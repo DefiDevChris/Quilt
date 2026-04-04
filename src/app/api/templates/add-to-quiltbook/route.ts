@@ -69,8 +69,7 @@ export async function POST(request: NextRequest) {
     });
 
     return Response.json({ success: true, data: { projectId: newProject.id } }, { status: 201 });
-  } catch (error) {
-    console.error('[Add to Quiltbook Error]', error);
+  } catch {
     return errorResponse('Failed to add to quiltbook', 'INTERNAL_ERROR', 500);
   }
 }

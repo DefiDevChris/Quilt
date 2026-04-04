@@ -1,11 +1,10 @@
-import { pgTable, uuid, text, integer, boolean, timestamp, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, integer, timestamp, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { projects } from './projects';
 import { publishedTemplates } from './publishedTemplates';
-import { postStatusEnum, communityCategoryEnum } from './enums';
 
-export const communityPosts = pgTable(
-  'community_posts',
+export const socialPosts = pgTable(
+  'social_threads',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     userId: uuid('userId')
@@ -17,11 +16,9 @@ export const communityPosts = pgTable(
     description: text('description'),
     thumbnailUrl: text('thumbnailUrl').notNull(),
     likeCount: integer('likeCount').notNull().default(0),
-    status: postStatusEnum('status').notNull().default('pending'),
-    isFeatured: boolean('isFeatured').notNull().default(false),
-    isPinned: boolean('isPinned').notNull().default(false),
     commentCount: integer('commentCount').notNull().default(0),
-    category: communityCategoryEnum('category').notNull().default('general'),
+    category: text('category').notNull().default('general'),
+    deletedAt: timestamp('deletedAt', { mode: 'date', withTimezone: true }),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()
@@ -29,11 +26,9 @@ export const communityPosts = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
-    index('idx_community_posts_status_createdAt').on(table.status, table.createdAt),
-    index('idx_community_posts_status_likeCount').on(table.status, table.likeCount),
     index('idx_community_posts_userId').on(table.userId),
-    index('idx_community_posts_category').on(table.category),
-    index('idx_community_posts_isFeatured').on(table.isFeatured),
+    index('idx_community_posts_projectId').on(table.projectId),
     index('idx_community_posts_templateId').on(table.templateId),
+    index('idx_community_posts_deletedAt').on(table.deletedAt),
   ]
 );

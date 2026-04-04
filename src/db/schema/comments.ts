@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp, index, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { users } from './users';
-import { communityPosts } from './communityPosts';
+import { socialPosts } from './socialPosts';
 import { commentStatusEnum } from './enums';
 
 export const comments = pgTable(
@@ -9,7 +9,7 @@ export const comments = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     postId: uuid('postId')
       .notNull()
-      .references(() => communityPosts.id, { onDelete: 'cascade' }),
+      .references(() => socialPosts.id, { onDelete: 'cascade' }),
     authorId: uuid('authorId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),

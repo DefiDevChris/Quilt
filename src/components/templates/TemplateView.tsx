@@ -43,7 +43,7 @@ export function TemplateView({ templateId }: TemplateViewProps) {
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
-        const res = await fetch(`/api/templates/${templateId}`);
+        const res = await fetch(`/api/templates/published/${templateId}`);
         const json = await res.json();
         if (!res.ok) throw new Error(json.error?.message || 'Failed to load template');
         setTemplate(json.data);

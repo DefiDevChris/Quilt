@@ -158,10 +158,7 @@ export function usePhotoPatternImport() {
 
       canvas.renderAll();
 
-      // 4. Set reference image opacity
-      useCanvasStore.getState().setReferenceImageOpacity(PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT);
-
-      // 5. Open print list panel to show imported pieces
+      // 4. Open print list panel to show imported pieces
       if (!usePrintlistStore.getState().isPanelOpen) {
         usePrintlistStore.getState().togglePanel();
       }

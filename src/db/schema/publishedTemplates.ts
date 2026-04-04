@@ -1,5 +1,6 @@
 import { pgTable, uuid, text, jsonb, boolean, timestamp, integer, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
+import { projects } from './projects';
 
 export const publishedTemplates = pgTable(
   'published_templates',
@@ -8,7 +9,7 @@ export const publishedTemplates = pgTable(
     userId: uuid('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    projectId: uuid('projectId'),
+    projectId: uuid('projectId').references(() => projects.id, { onDelete: 'set null' }),
     title: text('title').notNull(),
     description: text('description'),
     thumbnailUrl: text('thumbnailUrl'),

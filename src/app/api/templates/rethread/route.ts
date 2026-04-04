@@ -1,15 +1,19 @@
 import { NextRequest } from 'next/server';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { publishedTemplates, communityPosts } from '@/db/schema';
+import { publishedTemplates, socialPosts } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
-import { templateIdSchema } from '@/lib/validation';
+import {
+  checkTrustLevel,
+  checkPrivacyPermission,
+  checkCommunityRateLimit,
+} from '@/middleware/trust-guard';
+import { shareToThreadsSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,18 +27,18 @@ export async function POST(request: NextRequest) {
   const privacyCheck = await checkPrivacyPermission(session.user.id, 'canPost');
   if (!privacyCheck.allowed) return privacyCheck.response!;
 
-  const rateLimitCheck = await checkRateLimit(session.user.id, trustCheck.role, 'posts');
+  const rateLimitCheck = await checkCommunityRateLimit(session.user.id, trustCheck.role, 'posts');
   if (!rateLimitCheck.allowed) return rateLimitCheck.response!;
 
   try {
     const body = await request.json();
-    const parsed = templateIdSchema.safeParse(body);
+    const parsed = shareToThreadsSchema.safeParse(body);
 
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    const { templateId } = parsed.data;
+    const { templateId, comment } = parsed.data;
 
     const [template] = await db
       .select()
@@ -46,20 +50,17 @@ export async function POST(request: NextRequest) {
       return errorResponse('Template not found', 'NOT_FOUND', 404);
     }
 
-    const isAdmin = session.user.role === 'admin';
-
     const post = await db.transaction(async (tx) => {
       const [created] = await tx
-        .insert(communityPosts)
+        .insert(socialPosts)
         .values({
           userId: session.user.id,
           projectId: null,
           templateId,
           title: template.title,
-          description: template.description,
+          description: comment?.trim() || template.description,
           thumbnailUrl: template.thumbnailUrl || '',
           category: 'general',
-          status: isAdmin ? 'approved' : 'pending',
         })
         .returning();
 
@@ -72,8 +73,7 @@ export async function POST(request: NextRequest) {
     });
 
     return Response.json({ success: true, data: post }, { status: 201 });
-  } catch (error) {
-    console.error('[Rethread Error]', error);
-    return errorResponse('Failed to rethread', 'INTERNAL_ERROR', 500);
+  } catch {
+    return errorResponse('Failed to share template', 'INTERNAL_ERROR', 500);
   }
 }

@@ -126,7 +126,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       if (state.worktables.length <= 1) return state;
       const filtered = state.worktables.filter((w) => w.id !== id);
       const newActive =
-        state.activeWorktableId === id ? filtered[0]?.id ?? 'main' : state.activeWorktableId;
+        state.activeWorktableId === id ? (filtered[0]?.id ?? 'main') : state.activeWorktableId;
       return { worktables: filtered, activeWorktableId: newActive, isDirty: true };
     }),
   renameWorktable: (id, name) =>
@@ -168,5 +168,6 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       fabricPresets: [],
       worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
       activeWorktableId: 'main',
+      version: 1,
     }),
 }));

@@ -3,9 +3,9 @@ import {
   classifyPatchShape,
   generateCuttingChart,
   optimizeStripCutting,
-  formatFraction,
   type PatchShape,
 } from '@/lib/cutting-chart-generator';
+import { formatFraction } from '@/lib/piece-detection-utils';
 
 describe('cutting-chart-generator', () => {
   describe('classifyPatchShape', () => {

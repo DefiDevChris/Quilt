@@ -12,6 +12,8 @@ import {
 import { escapeLikePattern } from '@/lib/escape-like';
 import type { PatternTemplateListItem } from '@/types/pattern-template';
 import { FREE_PATTERN_LIST_LIMIT } from '@/lib/constants';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -59,10 +61,10 @@ export async function GET(request: NextRequest) {
           ? desc(patternTemplates.createdAt)
           : desc(patternTemplates.importCount);
 
-    const isPro = session.user.role === 'pro' || session.user.role === 'admin';
+    const userIsPro = isPro(session.user.role as UserRole);
 
-    const effectiveLimit = isPro ? limit : Math.min(limit, FREE_PATTERN_LIST_LIMIT);
-    const effectiveOffset = isPro ? offset : 0;
+    const effectiveLimit = userIsPro ? limit : Math.min(limit, FREE_PATTERN_LIST_LIMIT);
+    const effectiveOffset = userIsPro ? offset : 0;
 
     const [rows, [totalRow]] = await Promise.all([
       db
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const total = totalRow?.count ?? 0;
-    const upgradeRequired = !isPro && total > FREE_PATTERN_LIST_LIMIT;
+    const upgradeRequired = !userIsPro && total > FREE_PATTERN_LIST_LIMIT;
 
     const data = rows as PatternTemplateListItem[];
 

@@ -3,12 +3,16 @@ import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
 import { getStripe } from '@/lib/stripe';
 import { getRequiredSession, unauthorizedResponse, errorResponse } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`stripe-portal:${session.user.id}`, API_RATE_LIMITS.stripe);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
     const [sub] = await db
@@ -35,8 +39,7 @@ export async function POST() {
       success: true,
       data: { portalUrl: portalSession.url },
     });
-  } catch (error) {
-    console.error('Stripe portal error:', error);
+  } catch {
     return errorResponse('Failed to create portal session', 'INTERNAL_ERROR', 500);
   }
 }

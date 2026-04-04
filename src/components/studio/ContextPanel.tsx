@@ -4,10 +4,10 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { BlockBuilderOptions } from '@/components/studio/BlockBuilderOptions';
 import { ColorThemeTools } from '@/components/studio/ColorThemeTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
+import { BackgroundColorControl } from '@/components/studio/BackgroundColorControl';
 
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
@@ -395,6 +395,9 @@ function QuiltPanel() {
       <CollapsibleSection title="Selection" defaultOpen={true}>
         <SelectionPanel />
       </CollapsibleSection>
+      <CollapsibleSection title="Background">
+        <BackgroundColorControl />
+      </CollapsibleSection>
       <CollapsibleSection title="Precision">
         <PrecisionBar />
       </CollapsibleSection>
@@ -403,9 +406,6 @@ function QuiltPanel() {
       </CollapsibleSection>
       <CollapsibleSection title="Color Theme">
         <ColorThemeTools />
-      </CollapsibleSection>
-      <CollapsibleSection title="Text">
-        <TextToolOptions />
       </CollapsibleSection>
       <CollapsibleSection title="Block Builder">
         <BlockBuilderOptions />

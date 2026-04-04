@@ -1,5 +1,10 @@
 import { gcd } from './math-utils';
 
+// ── Constants ──────────────────────────────────────────────────────
+
+/** Precision threshold for continued fraction convergence */
+const CONVERGENCE_THRESHOLD = 1e-10;
+
 export interface Fraction {
   readonly numerator: number;
   readonly denominator: number;
@@ -136,7 +141,7 @@ export function decimalToFraction(decimal: number): Fraction {
     k1 = k2;
 
     const remainder = abs - a;
-    if (remainder < 1e-10) break;
+    if (remainder < CONVERGENCE_THRESHOLD) break;
     abs = 1 / remainder;
   }
 
