@@ -197,8 +197,12 @@ export default function DashboardPage() {
             <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
               <Sparkles size={20} className="text-primary-dark" />
               <div className="text-left">
-                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">Upgrade to Pro</p>
-                <p className="text-xs font-medium text-secondary leading-none">Unlock AI & Exports</p>
+                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">
+                  Upgrade to Pro
+                </p>
+                <p className="text-xs font-medium text-secondary leading-none">
+                  Unlock AI & Exports
+                </p>
               </div>
             </div>
           </button>
@@ -214,56 +218,84 @@ export default function DashboardPage() {
       />
 
       <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20 relative z-10">
-        {/* ── 1. New Design — col 1-8, row 1 ──────────────────────── */}
+        {/* ── 1. Blank Project — col 1-4, row 1 ──────────────────────── */}
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="col-span-12 md:col-span-8 rounded-xl p-8 md:p-10 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60"
+          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60 flex flex-col justify-between"
         >
-          {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute -bottom-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-700">
-            <Scissors size={320} strokeWidth={1} className="text-[#C67B5C]" />
+            <Scissors size={180} strokeWidth={1} className="text-[#C67B5C]" />
           </div>
-
-          <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between z-10">
-            <div>
-              <p className="text-on-surface font-extrabold text-2xl tracking-tight">New Design</p>
-              <p className="text-secondary text-sm mt-1 font-medium">
-                Start a fresh quilt from scratch
-              </p>
+          <div className="relative z-10 mb-auto">
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all">
+              <Plus size={24} className="text-white" strokeWidth={3} />
             </div>
-            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all flex-shrink-0">
-              <Plus size={28} className="text-white" strokeWidth={3} />
-            </div>
+          </div>
+          <div className="relative z-10 mt-auto">
+            <p className="text-on-surface font-extrabold text-2xl tracking-tight leading-none mb-2">
+              Blank Project
+            </p>
+            <p className="text-secondary text-sm font-medium">
+              Start from scratch with a custom grid/layout
+            </p>
           </div>
         </button>
 
-        {/* ── 2. Photo to Pattern — col 9-12, row 1 ─ */}
+        {/* ── 2. Start from Template — col 5-8, row 1 ─────────────────── */}
+        <button
+          type="button"
+          onClick={() => setActiveTab('patterns')}
+          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50 flex flex-col justify-between"
+        >
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
+            <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
+          </div>
+          <div className="relative z-10 mb-auto">
+            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
+              <LayoutGrid size={22} className="text-secondary" />
+            </div>
+          </div>
+          <div className="relative z-10 mt-auto">
+            <p className="text-on-surface font-extrabold text-2xl tracking-tight leading-none mb-2">
+              Start from Template
+            </p>
+            <p className="text-secondary text-sm font-medium">
+              Browse the Pattern Library for a pre-made layout
+            </p>
+          </div>
+        </button>
+
+        {/* ── 3. Photo to Pattern — col 9-12, row 1 ─ */}
         <button
           type="button"
           onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50"
+          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50 flex flex-col justify-between"
         >
           {/* Custom Bento Graphic Background (Lucide) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-15 pointer-events-none group-hover:scale-125 transition-transform duration-700">
             <ScanLine size={180} strokeWidth={1} className="text-primary-dark" />
           </div>
 
-          <div className="absolute bottom-8 left-8 right-8 z-10">
-            <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-[10px] font-extrabold uppercase tracking-widest rounded-full mb-4">
+          <div className="relative z-10 mb-auto">
+            <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-[10px] font-extrabold uppercase tracking-widest rounded-full">
               AI Feature
             </span>
-            <p className="text-on-surface text-2xl font-extrabold tracking-tight leading-none">
+          </div>
+          <div className="relative z-10 mt-auto">
+            <p className="text-on-surface text-2xl font-extrabold tracking-tight leading-none mb-2">
               Photo to Pattern
             </p>
-            <p className="text-secondary text-sm mt-2 font-medium">Extract blocks from a photo</p>
+            <p className="text-secondary text-sm font-medium">
+              Upload a photo to automatically detect patterns
+            </p>
           </div>
         </button>
 
-        {/* ── 3. Quiltbook — col 1-4, row 2 ───────────────────────── */}
+        {/* ── 4. Quiltbook — col 1-6, row 2 ───────────────────────── */}
         <Link
           href="/projects"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
         >
           <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
@@ -324,30 +356,10 @@ export default function DashboardPage() {
           </div>
         </Link>
 
-        {/* ── 4. Browse Patterns — col 5-8, row 2 ─────────────────── */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('patterns')}
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 text-left glass-card border-white/40 group flex flex-col justify-between"
-        >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
-            <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
-          </div>
-          <div className="relative z-10">
-            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
-              <LayoutGrid size={22} className="text-secondary" />
-            </div>
-          </div>
-          <div className="relative z-10 mt-auto">
-            <p className="text-on-surface font-extrabold text-xl tracking-tight">Browse Patterns</p>
-            <p className="text-secondary text-sm mt-1 font-medium">Explore pre-made designs</p>
-          </div>
-        </button>
-
-        {/* ── 5. Community — col 9-12, row 2 ───────────────────────── */}
+        {/* ── 5. Community — col 7-12, row 2 ───────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
@@ -417,9 +429,7 @@ export default function DashboardPage() {
       />
 
       {/* Pro upgrade modal */}
-      {showProUpgrade && (
-        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
-      )}
+      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
     </div>
   );
 }

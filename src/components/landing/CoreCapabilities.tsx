@@ -256,7 +256,7 @@ export default function CoreCapabilities() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
+            className={'relative'}
           >
             <StudioPreviewMockup />
           </motion.div>
