@@ -38,13 +38,7 @@ function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: bool
   );
 }
 
-function BentoCard({
-  post,
-  bentoStyle,
-}: {
-  post: BlogPostListItem;
-  bentoStyle: BentoStyle;
-}) {
+function BentoCard({ post, bentoStyle }: { post: BlogPostListItem; bentoStyle: BentoStyle }) {
   const image = post.featuredImageUrl || '/images/quilts/quilt_01_bed_geometric.png';
 
   if (bentoStyle === 'hero') {
@@ -85,7 +79,9 @@ function BentoCard({
               {post.title}
             </h4>
             {post.excerpt && (
-              <p className="text-xs text-secondary/80 line-clamp-2 leading-relaxed">{post.excerpt}</p>
+              <p className="text-xs text-secondary/80 line-clamp-2 leading-relaxed">
+                {post.excerpt}
+              </p>
             )}
           </div>
           <AuthorRow post={post} />
@@ -147,7 +143,7 @@ function BentoCard({
           </h4>
         </div>
         <p className="text-[10px] text-secondary/80 font-medium mt-1">
-          {formatDate(post.publishedAt)}
+          {formatDate(post.createdAt)}
         </p>
       </div>
     </Link>

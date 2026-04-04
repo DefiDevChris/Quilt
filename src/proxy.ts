@@ -57,7 +57,7 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
 
 export async function proxy(req: NextRequest) {
   // Dev auth bypass — allows testing all pages without Cognito credentials
-  if (process.env.DEV_AUTH_BYPASS === 'true') {
+  if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
     return NextResponse.next();
   }
 

@@ -115,17 +115,6 @@ function useQuiltFloatingTools(): FloatingTool[] {
       ),
     },
     {
-      id: 'line',
-      label: 'Line',
-      shortcut: 'L',
-      toolType: 'line',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M4 18L18 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
       id: 'undo',
       label: 'Undo',
       shortcut: 'Ctrl+Z',
@@ -151,37 +140,12 @@ function useQuiltFloatingTools(): FloatingTool[] {
 const BLOCK_TOOLS: FloatingTool[] = [
   { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
   {
-    id: 'line',
-    label: 'Line',
-    toolType: 'line',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M4 18L18 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
     id: 'rectangle',
     label: 'Rectangle',
     toolType: 'rectangle',
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <rect x="3" y="5" width="16" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
-  },
-  {
-    id: 'polygon',
-    label: 'Polygon',
-    toolType: 'polygon',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path
-          d="M11 3L18.5 8.5L16 17H6L3.5 8.5L11 3Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
       </svg>
     ),
   },

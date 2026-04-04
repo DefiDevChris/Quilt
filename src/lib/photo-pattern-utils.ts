@@ -546,14 +546,3 @@ export async function runDetectionPipeline(
     }
   }
 }
-
-// ── Fallback: Main-thread Detection ────────────────────────────────────────
-
-export async function detectPiecesMainThread(
-  cv: OpenCV,
-  correctedImage: OpenCVMat,
-  options: DetectionOptions = {}
-): Promise<readonly DetectedPiece[]> {
-  const { detectPieces } = await import('@/lib/piece-detection-utils');
-  return detectPieces(cv, correctedImage, options) as DetectedPiece[];
-}

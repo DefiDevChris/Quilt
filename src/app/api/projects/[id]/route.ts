@@ -12,6 +12,8 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 async function getOwnedProject(projectId: string, userId: string) {
   const [project] = await db
@@ -25,6 +27,9 @@ async function getOwnedProject(projectId: string, userId: string) {
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
+
+  const rl = await checkRateLimit(`projects:${session.user.id}`, API_RATE_LIMITS.projects);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const { id } = await params;
   const project = await getOwnedProject(id, session.user.id);
@@ -65,8 +70,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return notFoundResponse('Project not found.');
   }
 
-  const isPro = session.user.role === 'pro' || session.user.role === 'admin';
-  if (!isPro) {
+  if (!isPro(session.user.role as UserRole)) {
     return errorResponse(
       'Saving projects requires a Pro subscription. Upgrade to Pro for $8/month.',
       'PRO_REQUIRED',

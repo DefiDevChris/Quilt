@@ -18,7 +18,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   return (
     <>
       <PublicNav />
-      <main className="max-w-4xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
       <Footer />
     </>
   );

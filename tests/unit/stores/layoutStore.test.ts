@@ -9,7 +9,6 @@ function resetStore() {
     blockSize: 6,
     sashing: { width: 1, color: '#F5F0E8', fabricId: null },
     borders: [],
-    isPanelOpen: false,
   });
 }
 
@@ -147,21 +146,6 @@ describe('layoutStore', () => {
     });
   });
 
-  describe('panel', () => {
-    it('toggles panel open state', () => {
-      expect(useLayoutStore.getState().isPanelOpen).toBe(false);
-      useLayoutStore.getState().togglePanel();
-      expect(useLayoutStore.getState().isPanelOpen).toBe(true);
-      useLayoutStore.getState().togglePanel();
-      expect(useLayoutStore.getState().isPanelOpen).toBe(false);
-    });
-
-    it('sets panel open directly', () => {
-      useLayoutStore.getState().setPanelOpen(true);
-      expect(useLayoutStore.getState().isPanelOpen).toBe(true);
-    });
-  });
-
   describe('reset', () => {
     it('resets all state to defaults', () => {
       useLayoutStore.getState().setLayoutType('sashing');
@@ -170,7 +154,6 @@ describe('layoutStore', () => {
       useLayoutStore.getState().setBlockSize(12);
       useLayoutStore.getState().setSashing({ width: 3, color: '#000' });
       useLayoutStore.getState().addBorder();
-      useLayoutStore.getState().setPanelOpen(true);
 
       useLayoutStore.getState().reset();
 
@@ -181,7 +164,6 @@ describe('layoutStore', () => {
       expect(state.blockSize).toBe(6);
       expect(state.sashing.width).toBe(1);
       expect(state.borders).toEqual([]);
-      expect(state.isPanelOpen).toBe(false);
     });
   });
 });

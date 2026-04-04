@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and, isNull, desc, count, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { comments, communityPosts, users, userProfiles } from '@/db/schema';
+import { comments, socialPosts, users, userProfiles } from '@/db/schema';
 import { createCommentSchema, commentsPaginationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
@@ -10,7 +10,12 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
+import { getSession } from '@/lib/cognito-session';
+import {
+  checkTrustLevel,
+  checkPrivacyPermission,
+  checkCommunityRateLimit,
+} from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -26,7 +31,6 @@ interface CommentRow {
   authorId: string;
   content: string;
   replyToId: string | null;
-  likeCount: number;
   status: 'visible' | 'hidden' | 'deleted';
   createdAt: Date;
   authorName: string | null;
@@ -34,7 +38,7 @@ interface CommentRow {
   authorAvatarUrl: string | null;
 }
 
-function formatComment(row: CommentRow, isLikedByUser: boolean) {
+function formatComment(row: CommentRow) {
   const displayContent =
     row.status === 'hidden'
       ? HIDDEN_CONTENT_PLACEHOLDER
@@ -48,13 +52,11 @@ function formatComment(row: CommentRow, isLikedByUser: boolean) {
     authorId: row.authorId,
     content: displayContent,
     replyToId: row.replyToId,
-    likeCount: row.likeCount,
     status: row.status,
     createdAt: row.createdAt,
     authorName: row.authorName ?? 'Anonymous',
     authorUsername: row.authorUsername ?? null,
     authorAvatarUrl: row.authorAvatarUrl ?? null,
-    isLikedByUser,
   };
 }
 
@@ -62,7 +64,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
-  await getRequiredSession();
+  void (await getSession());
   const { postId } = await params;
 
   const url = request.nextUrl;
@@ -80,9 +82,9 @@ export async function GET(
 
   try {
     const [post] = await db
-      .select({ id: communityPosts.id })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ id: socialPosts.id })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     if (!post) {
@@ -97,7 +99,6 @@ export async function GET(
           authorId: comments.authorId,
           content: comments.content,
           replyToId: comments.replyToId,
-          likeCount: sql<number>`0`.as('likeCount'),
           status: comments.status,
           createdAt: comments.createdAt,
           authorName: users.name,
@@ -133,7 +134,6 @@ export async function GET(
             authorId: comments.authorId,
             content: comments.content,
             replyToId: comments.replyToId,
-            likeCount: sql<number>`0`.as('likeCount'),
             status: comments.status,
             createdAt: comments.createdAt,
             authorName: users.name,
@@ -160,8 +160,6 @@ export async function GET(
       replyCountRows = replyCounts;
     }
 
-    const likedCommentIds = new Set<string>();
-
     const replyCountMap = new Map(replyCountRows.map((r) => [r.replyToId, r.count]));
 
     const repliesByParent = new Map<string, CommentRow[]>();
@@ -178,8 +176,8 @@ export async function GET(
         .slice(0, MAX_INLINE_REPLIES);
 
       return {
-        ...formatComment(topComment as CommentRow, likedCommentIds.has(topComment.id)),
-        replies: sortedReplies.map((r) => formatComment(r, likedCommentIds.has(r.id))),
+        ...formatComment(topComment as CommentRow),
+        replies: sortedReplies.map((r) => formatComment(r)),
         totalReplyCount: replyCountMap.get(topComment.id) ?? 0,
       };
     });
@@ -216,7 +214,7 @@ export async function POST(
   const privacyCheck = await checkPrivacyPermission(session.user.id, 'canComment');
   if (!privacyCheck.allowed) return privacyCheck.response!;
 
-  const rateCheck = await checkRateLimit(session.user.id, trustCheck.role, 'comments');
+  const rateCheck = await checkCommunityRateLimit(session.user.id, trustCheck.role, 'comments');
   if (!rateCheck.allowed) return rateCheck.response!;
 
   try {
@@ -229,9 +227,9 @@ export async function POST(
     const { content, replyToId } = parsed.data;
 
     const [post] = await db
-      .select({ id: communityPosts.id, userId: communityPosts.userId, title: communityPosts.title })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ id: socialPosts.id, userId: socialPosts.userId, title: socialPosts.title })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     if (!post) {
@@ -278,9 +276,9 @@ export async function POST(
         .returning();
 
       await tx
-        .update(communityPosts)
-        .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
-        .where(eq(communityPosts.id, postId));
+        .update(socialPosts)
+        .set({ commentCount: sql`${socialPosts.commentCount} + 1` })
+        .where(eq(socialPosts.id, postId));
 
       return [comment];
     });

@@ -298,5 +298,5 @@ export function useBlockBuilderCanvas() {
       isMounted = false;
       cleanup?.();
     };
-  }, [fabricCanvas, activeTool, blockBuilderMode]);
+  }, [fabricCanvas, activeTool]);
 }

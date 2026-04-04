@@ -14,7 +14,6 @@ export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
   onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
-  onOpenReferenceImage?: () => void;
   onOpenPatternOverlay?: () => void;
 }
 
@@ -106,7 +105,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'blocks',
       label: 'Block Library',
       shortcut: 'B',
-      description: 'Browse 659+ quilt blocks and drag them onto your canvas',
+      description: 'Browse 651+ quilt blocks and drag them onto your canvas',
       mascot: '/mascots&avatars/corgi4.png',
       group: 'library',
       tier: 'primary',
@@ -169,7 +168,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       group: 'layout',
       tier: 'primary',
       onClick: callbacks.onOpenLayoutSettings,
-      isActive: () => layoutType !== 'free-form',
+      isActive: () => layoutType !== 'none',
       dataTour: 'layout-settings',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -177,6 +176,39 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <rect x="11" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="3" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="11" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    // ── Sashing & Border Tools (No Layout mode only) ──
+    {
+      id: 'sashing',
+      label: 'Sashing',
+      shortcut: 'S',
+      description: 'Draw sashing strips between blocks',
+      mascot: '/mascots&avatars/corgi14.png',
+      toolType: 'sashing',
+      group: 'layout',
+      tier: 'primary',
+      isActive: () => layoutType === 'none',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="8" width="14" height="4" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'border',
+      label: 'Border',
+      shortcut: 'B',
+      description: 'Draw border strips around your quilt',
+      mascot: '/mascots&avatars/corgi16.png',
+      toolType: 'border',
+      group: 'layout',
+      tier: 'primary',
+      isActive: () => layoutType === 'none',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" />
         </svg>
       ),
     },
@@ -228,41 +260,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             strokeWidth="1.4"
             strokeLinejoin="round"
           />
-        </svg>
-      ),
-    },
-    {
-      id: 'polygon',
-      label: 'Polygon',
-      shortcut: 'P',
-      description: 'Draw a polygon — adjust sides after placing',
-      mascot: '/mascots&avatars/corgi20.png',
-      toolType: 'polygon',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 3L16.5 7.5L14.5 15H5.5L3.5 7.5L10 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'line',
-      label: 'Line',
-      shortcut: 'L',
-      description: 'Draw a straight line — hold Shift for 45-degree angles',
-      mascot: '/mascots&avatars/corgi22.png',
-      toolType: 'line',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
         </svg>
       ),
     },
@@ -371,26 +368,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <rect x="15" y="9" width="2" height="5" stroke="currentColor" strokeWidth="1.2" />
           <rect x="3" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" />
           <rect x="9" y="15" width="5" height="2" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      ),
-    },
-    {
-      id: 'reference-image',
-      label: 'Reference Image',
-      description: 'Import a photo to trace over — adjust opacity and lock in place',
-      mascot: '/mascots&avatars/corgi9.png',
-      group: 'view-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenReferenceImage,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <circle cx="7" cy="7" r="1.5" fill="currentColor" opacity="0.5" />
-          <path
-            d="M3 14L7 10L10 13L14 9L17 12V15C17 15.5 16.5 16 16 16H4C3.5 16 3 15.5 3 15V14Z"
-            fill="currentColor"
-            opacity="0.3"
-          />
         </svg>
       ),
     },
@@ -679,19 +656,6 @@ export function useBlockTools(): ToolDef[] {
       ),
     },
     {
-      id: 'line',
-      label: 'Line',
-      shortcut: 'L',
-      description: 'Draw a seam line between two points',
-      toolType: 'line',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
       id: 'rectangle',
       label: 'Rectangle',
       shortcut: 'R',
@@ -701,24 +665,6 @@ export function useBlockTools(): ToolDef[] {
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    {
-      id: 'polygon',
-      label: 'Polygon',
-      shortcut: 'P',
-      description: 'Draw a polygon — adjust sides after placing',
-      toolType: 'polygon',
-      group: 'tools',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 3L16.5 7.5L14.5 15H5.5L3.5 7.5L10 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
         </svg>
       ),
     },

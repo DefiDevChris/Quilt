@@ -30,7 +30,7 @@ const features = [
       'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from four layout modes including sashing and on-point.',
     iconSrc: '/icons/quilt-13-dashed-squares-Photoroom.png',
     iconAlt: 'Quilt layout squares',
-    checks: ['4 connected worktables', '659+ block library', '6 layout modes'],
+    checks: ['4 connected worktables', '651+ block library', '6 layout modes'],
   },
   {
     title: 'Yardage & Cutting Made Easy',

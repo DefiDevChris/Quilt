@@ -1,5 +1,3 @@
-export type CommunityCategory = 'show-and-tell' | 'wip' | 'help' | 'inspiration' | 'general';
-
 export interface CommunityPost {
   id: string;
   userId: string;
@@ -9,10 +7,7 @@ export interface CommunityPost {
   thumbnailUrl: string;
   likeCount: number;
   commentCount: number;
-  status: 'pending' | 'approved' | 'rejected';
-  isFeatured: boolean;
-  isPinned: boolean;
-  category: CommunityCategory;
+  deletedAt: Date | null;
   createdAt: Date;
 }
 
@@ -23,7 +18,6 @@ export interface CommunityPostListItem {
   thumbnailUrl: string;
   likeCount: number;
   commentCount: number;
-  category: CommunityCategory;
   creatorName: string;
   creatorUsername: string | null;
   creatorAvatarUrl: string | null;
@@ -42,14 +36,11 @@ export interface Comment {
   authorAvatarUrl: string | null;
   content: string;
   replyToId: string | null;
-  likeCount: number;
   status: CommentStatus;
+  likeCount: number;
   createdAt: Date;
-  isLikedByUser: boolean;
   replies?: Comment[];
 }
-
-export type BlogPostStatus = 'draft' | 'pending' | 'published' | 'rejected';
 
 export interface TiptapNode {
   readonly type: string;
@@ -74,8 +65,6 @@ export interface BlogPost {
   featuredImageUrl: string | null;
   category: string;
   tags: string[];
-  status: BlogPostStatus;
-  publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -90,7 +79,7 @@ export interface BlogPostListItem {
   tags: string[];
   authorName: string;
   authorAvatarUrl: string | null;
-  publishedAt: Date | null;
+  createdAt: Date;
   readTimeMinutes: number;
 }
 

@@ -1,6 +1,6 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { users, comments, communityPosts, userProfiles } from '@/db/schema';
+import { users, comments, socialPosts, userProfiles } from '@/db/schema';
 import { getRolePermissions, getRateLimit, type UserRole } from '@/lib/trust-utils';
 import { errorResponse } from '@/lib/api-responses';
 
@@ -101,7 +101,7 @@ export async function checkPrivacyPermission(
   };
 }
 
-export async function checkRateLimit(
+export async function checkCommunityRateLimit(
   userId: string,
   role: UserRole,
   action: 'comments' | 'posts'
@@ -122,8 +122,8 @@ export async function checkRateLimit(
   } else if (action === 'posts') {
     const [row] = await db
       .select({ count: count() })
-      .from(communityPosts)
-      .where(and(eq(communityPosts.userId, userId), gte(communityPosts.createdAt, oneDayAgo)));
+      .from(socialPosts)
+      .where(and(eq(socialPosts.userId, userId), gte(socialPosts.createdAt, oneDayAgo)));
     currentCount = row?.count ?? 0;
   }
 

@@ -31,7 +31,7 @@ export function ShareToThreadsModal({ templateId, onClose, onNeedPublish }: Shar
     setError(null);
 
     try {
-      const res = await fetch('/api/templates/share-to-threads', {
+      const res = await fetch('/api/templates/rethread', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

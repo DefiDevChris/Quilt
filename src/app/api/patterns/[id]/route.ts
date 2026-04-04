@@ -10,13 +10,14 @@ import {
 } from '@/lib/auth-helpers';
 import type { PatternTemplateDetail } from '@/types/pattern-template';
 import type { ParsedPattern } from '@/lib/pattern-parser-types';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const isPro = session.user.role === 'pro' || session.user.role === 'admin';
-  if (!isPro) {
+  if (!isPro(session.user.role as UserRole)) {
     return errorResponse(
       'Pattern templates require a Pro subscription. Upgrade to access the full pattern library.',
       'PRO_REQUIRED',

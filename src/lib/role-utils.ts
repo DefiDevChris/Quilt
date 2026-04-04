@@ -7,10 +7,3 @@ export type UserRole = 'free' | 'pro' | 'admin';
 export function isPro(role: UserRole): boolean {
   return role === 'pro' || role === 'admin';
 }
-
-/**
- * Check if a user has admin access.
- */
-export function isAdmin(role: UserRole): boolean {
-  return role === 'admin';
-}

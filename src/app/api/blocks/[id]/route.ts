@@ -10,6 +10,8 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { FREE_BLOCK_LIMIT } from '@/lib/constants';
+import { isPro } from '@/lib/role-utils';
+import type { UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +29,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     // Check if free user is trying to access a locked block
-    const userRole = session.user.role;
-    const isPro = userRole === 'pro' || userRole === 'admin';
-
-    if (!isPro && block.isDefault) {
+    if (!isPro(session.user.role as UserRole) && block.isDefault) {
       // Check if this block is within the free limit
       const freeBlocks = await db
         .select({ id: blocks.id })

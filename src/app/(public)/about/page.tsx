@@ -12,10 +12,7 @@ export default function AboutPage() {
     <>
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24 text-center">
-        <h1
-          className="text-3xl md:text-4xl font-bold text-warm-text mb-6"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
+        <h1 className="text-3xl md:text-4xl font-bold text-warm-text mb-6 font-display">
           About QuiltCorgi
         </h1>
         <p className="text-lg text-warm-text-secondary leading-relaxed">

@@ -62,6 +62,9 @@ export async function GET() {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
+  const rl = await checkRateLimit(`profile:${session.user.id}`, API_RATE_LIMITS.profile);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   try {
     const [profile] = await db
       .select()

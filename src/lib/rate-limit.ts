@@ -13,13 +13,6 @@ import { Redis } from '@upstash/redis';
 // --- Redis Implementation ---
 const useRedis = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
 
-// Warn if Redis is not configured in production
-if (!useRedis && process.env.NODE_ENV === 'production') {
-  console.warn(
-    '[RATE_LIMIT] Redis not configured - falling back to in-memory rate limiter. This is not recommended for production as rate limits will not be shared across serverless instances.'
-  );
-}
-
 const redisLimiterCache = new Map<string, Ratelimit>();
 function getRedisRatelimiter(limit: number, windowMs: number): Ratelimit {
   const cacheKey = `${limit}:${windowMs}`;

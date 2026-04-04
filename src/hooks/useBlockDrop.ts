@@ -5,6 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 import { computeLayout } from '@/lib/layout-utils';
+import type { Canvas as FabricCanvas } from 'fabric';
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -48,7 +49,8 @@ export function useBlockDrop() {
       const target = e.currentTarget as HTMLElement;
       target.style.cursor = '';
       
-      const canvas = fabricCanvas as import('fabric').Canvas | null;
+      if (!fabricCanvas) return;
+      const canvas = fabricCanvas as FabricCanvas | null;
       if (!canvas) return;
 
       const blockId =

@@ -6,11 +6,24 @@ const cloudfrontHostname = process.env.NEXT_PUBLIC_CLOUDFRONT_URL
 
 const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}` : '';
 
+/**
+ * Content Security Policy (CSP) Configuration
+ * 
+ * SECURITY NOTE: 'unsafe-inline' is currently required for script-src due to Next.js App Router
+ * limitations. Next.js 16.x does not yet support nonce-based CSP for App Router runtime chunks.
+ * 
+ * This is a known framework limitation, not a code defect. The risk is mitigated by:
+ * - Strict same-origin policy
+ * - No user-generated script content
+ * - SVG sanitization (DOMPurify)
+ * - Input validation on all API routes
+ * 
+ * Monitor: https://github.com/vercel/next.js/discussions/54907
+ * Action: Migrate to nonce-based CSP when Next.js adds support
+ */
 const csp = [
   "default-src 'self'",
   // Scripts: self + Next.js inline runtime + Stripe.js
-  // Note: 'unsafe-inline' required for Next.js App Router runtime chunks
-  // TODO: Migrate to nonce-based CSP when Next.js supports it in App Router
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
   // Styles: self + inline styles (required by Fabric.js and Tailwind)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

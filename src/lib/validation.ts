@@ -168,14 +168,12 @@ export const fabricSearchSchema = z.object({
 export const createFabricSchema = z.object({
   name: z.string().min(1).max(255),
   imageUrl: assetUrlSchema,
-  thumbnailUrl: z.string().optional(),
+  thumbnailUrl: assetUrlSchema.optional(),
   manufacturer: z.string().max(255).optional(),
   sku: z.string().max(100).optional(),
   scaleX: z.number().min(0.1).max(10).default(1.0),
   scaleY: z.number().min(0.1).max(10).default(1.0),
   rotation: z.number().min(-360).max(360).default(0.0),
-  ppi: z.number().min(72).max(1200).optional(),
-  calibrated: z.boolean().optional().default(false),
 });
 
 export const calibrationInputSchema = z.discriminatedUnion('method', [
@@ -192,7 +190,7 @@ export const calibrationInputSchema = z.discriminatedUnion('method', [
 export const presignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
   contentType: z.enum(ACCEPTED_IMAGE_TYPES),
-  purpose: z.enum(['fabric', 'thumbnail', 'export']),
+  purpose: z.enum(['fabric', 'thumbnail', 'export', 'block']),
 });
 
 export const communitySearchSchema = z.object({
@@ -283,7 +281,7 @@ export const communityFeedSchema = z.object({
   search: z.string().optional(),
   sort: z.enum(['newest', 'popular']).default('newest'),
   tab: z.enum(['discover']).default('discover'),
-  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).optional(),
+  category: z.string().optional(),
   creatorId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
@@ -293,15 +291,17 @@ export const createCommunityPostExtendedSchema = z.object({
   projectId: z.string().uuid(),
   title: z.string().min(1).max(100),
   description: z.string().max(2000).optional(),
-  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']),
+  category: z.string().optional(),
 });
 
 export const createCommunityPostSimpleSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().max(2000).optional(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: assetUrlSchema.optional(),
   projectId: z.string().uuid().optional(),
-  category: z.enum(['show-and-tell', 'wip', 'help', 'inspiration', 'general']).default('general'),
+  category: z
+    .enum(['general', 'showcase', 'question', 'tutorial', 'inspiration', 'wip'])
+    .default('general'),
 });
 
 export const createCommentSchema = z.object({
@@ -330,20 +330,18 @@ export const createBlogPostSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
-  featuredImageUrl: z.string().url().optional(),
+  featuredImageUrl: assetUrlSchema.optional(),
   category: z.enum(BLOG_POST_CATEGORIES),
   tags: z.array(z.string().max(50)).max(5).default([]),
-  status: z.enum(['draft', 'pending']).default('draft'),
 });
 
 export const updateBlogPostSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(300).optional(),
-  featuredImageUrl: z.string().url().optional(),
+  featuredImageUrl: assetUrlSchema.optional(),
   category: z.enum(BLOG_POST_CATEGORIES).optional(),
   tags: z.array(z.string().max(50)).max(5).optional(),
-  status: z.enum(['draft', 'pending']).optional(),
 });
 
 export const blogSearchSchema = z.object({
@@ -354,12 +352,7 @@ export const blogSearchSchema = z.object({
   limit: z.coerce.number().int().min(1).max(20).default(10),
 });
 
-export const blogAdminStatusSchema = z.object({
-  status: z.enum(['published', 'rejected']),
-});
-
 export const blogAdminListSchema = z.object({
-  status: z.enum(['all', 'draft', 'pending', 'published', 'rejected']).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });

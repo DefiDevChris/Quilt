@@ -12,11 +12,11 @@ export function useBeforeUnload() {
 
   useEffect(() => {
     function handleBeforeUnload(e: BeforeUnloadEvent) {
-      // Only warn free users with unsaved work
-      if (!isPro && isDirty) {
+      // Warn all users with unsaved work
+      if (isDirty) {
         e.preventDefault();
-        // Delete temp data on unload (user declined to save)
-        if (projectId) {
+        // Free users: delete temp data on unload (user declined to save)
+        if (!isPro && projectId) {
           deleteTempProject(projectId);
         }
       }

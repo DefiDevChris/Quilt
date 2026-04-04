@@ -60,15 +60,17 @@ export function useCanvasKeyboard() {
           e.preventDefault();
           const { projectId } = useProjectStore.getState();
           if (projectId) {
-            saveProject({ projectId, fabricCanvas }).then(() => {
-              // Show success toast
-              if (typeof window !== 'undefined') {
-                const event = new CustomEvent('quiltcorgi:save-success');
-                window.dispatchEvent(event);
-              }
-            }).catch(() => {
-              // Error handling is done in saveProject
-            });
+            saveProject({ projectId, fabricCanvas })
+              .then(() => {
+                // Show success toast
+                if (typeof window !== 'undefined') {
+                  const event = new CustomEvent('quiltcorgi:save-success');
+                  window.dispatchEvent(event);
+                }
+              })
+              .catch(() => {
+                // Error handling is done in saveProject
+              });
           }
           return;
         }
@@ -157,8 +159,6 @@ export function useCanvasKeyboard() {
             v: 'select',
             r: 'rectangle',
             t: 'triangle',
-            p: 'polygon',
-            l: 'line',
             h: 'pan',
             o: 'circle',
             e: 'blockbuilder',

@@ -7,7 +7,6 @@ import {
   spraycanRecolor,
   swapColors,
   randomizeColors,
-  normalizeColor,
   type PatchColor,
   type ColorChange,
 } from '@/lib/colortheme-utils';
@@ -62,47 +61,6 @@ export function useColorThemeTool() {
       cleanup?.();
     };
   }, [fabricCanvas, activeTool, fillColor]);
-
-  // Eyedropper: click a patch → set fillColor to that patch's color
-  useEffect(() => {
-    if (!fabricCanvas || activeTool !== 'eyedropper') return;
-
-    let isMounted = true;
-    let cleanup: (() => void) | null = null;
-
-    (async () => {
-      const fabric = await import('fabric');
-      if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-
-      canvas.defaultCursor = 'crosshair';
-      canvas.selection = false;
-
-      function onMouseDown(e: { e: MouseEvent }) {
-        const target = canvas.findTarget(e.e) as unknown as InstanceType<
-          typeof fabric.FabricObject
-        > | null;
-        if (!target) return;
-
-        const targetFill = typeof target.fill === 'string' ? target.fill : null;
-        if (!targetFill) return;
-
-        useCanvasStore.getState().setFillColor(normalizeColor(targetFill));
-        useCanvasStore.getState().setActiveTool('select');
-      }
-
-      canvas.on('mouse:down', onMouseDown as never);
-      cleanup = () => {
-        canvas.off('mouse:down', onMouseDown as never);
-        canvas.defaultCursor = 'default';
-      };
-    })();
-
-    return () => {
-      isMounted = false;
-      cleanup?.();
-    };
-  }, [fabricCanvas, activeTool]);
 
   // Swap colors action
   const executeSwap = useCallback(

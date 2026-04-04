@@ -1,18 +1,17 @@
 # Quilt
 
-Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, 659+ quilt blocks, and a community of quilters who get it — all in your browser, free to start.
+Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, 651+ quilt blocks, and a community of quilters who get it — all in your browser, free to start.
 
 ## What You Can Do
 
 - **Design Studio** — Multiple worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
-- **659+ Block Library** — Browse by category or draft your own with EasyDraw, Applique, and Freeform tools
-- **Block Overlay Templates** — 20 traditional quilt block SVGs + 10 full-pattern overlays with recommended dimensions, aspect-ratio-locked scaling, and opacity controls for tracing
+- **651+ Block Library** — Browse by category, draw your own with simple shape tools, or upload a photo of a physical block
 - **Project Management** — All Projects view with search, project templates for reusable settings
 - **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
 - **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
-- **Creative Tools** — Photo Patchwork, fabric calibration
+- **Creative Tools** — Photo Patchwork (AI-powered photo-to-quilt), fabric calibration
 - **Community** — Share designs, discover inspiration, threaded comments, and a blog
-- **Pro Features** — Snap a photo of a quilt and recreate it digitally, fabric calibration, unlimited projects
+- **Pro Features** — Photo-to-Pattern (snap a quilt photo, correct perspective distortion, extract pieces), fabric calibration, unlimited projects
 
 ## Tech Stack
 
@@ -21,9 +20,9 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2.1 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand (12 stores)                                  |
+| State     | Zustand stores                                       |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (17 tables)            |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (18 tables)            |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
@@ -66,7 +65,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Pattern, FPP templates, cutting charts, yardage estimator, community posting
+- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Pattern (with perspective correction), FPP templates, cutting charts, yardage estimator, community posting
 
 ## Roles
 
@@ -132,8 +131,8 @@ src/
     social/               # FeedContent, SavedContent, TrendingContent, SocialLayout, BlogContent
     mobile/               # MobileShell, MobileBottomNav (3-item: Home, Upload FAB, Profile/SignIn)
     editor/               # TiptapRenderer for blog content
-    studio/               # HistoryPanel, ReferenceImageDialog, ProjectTemplates, SaveAsTemplateButton
-    blocks/               # BlockDraftingShell, BlockBuilderTab, BlockOverlaySelector, RecommendedDimensionsModal
+    studio/               # HistoryPanel, ProjectTemplates, SaveAsTemplateButton
+    blocks/               # BlockDraftingShell, PhotoBlockUpload, SimplePhotoBlockUpload, BlockLibrary
     settings/             # DeleteAccountSection
   hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
   stores/                 # Zustand stores (17 total)
@@ -145,7 +144,7 @@ src/
   types/                  # Shared TypeScript type definitions
   data/                   # Static data files (pattern definitions, etc.)
   db/
-    schema/               # Drizzle table definitions (17 tables)
+    schema/               # Drizzle table definitions (18 tables)
     migrations/           # Generated SQL migrations
     seed/                 # Seed scripts
   content/
@@ -176,7 +175,6 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Canvas Enhancements
 
-- **Reference Image Tool** — Import, adjust opacity, lock/unlock
 - **Seam Allowance Toggle** — Show/hide seam allowances in print preview
 - **Print Scale Preview** — 0.5x to 2.0x scale adjustment
 - **Pattern Overlay** — Show layout cell boundaries with auto-align to cells (Grid, Sashing, On-Point)
@@ -192,11 +190,28 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Studio Tools
 
-- Circle, Polygon
+- Select, Pan, Rectangle, Circle, Triangle, Easy Draw, Curved Edge
+- **Sashing Tool** — Draw custom sashing strips (No Layout mode only)
+- **Border Tool** — Draw custom border strips (No Layout mode only)
+- **Spraycan** — Recolor all matching patches at once
 - Block Grid, Alignment helpers
 - Group/Ungroup operations
 - Grid/Snap toggles
+- **Background Fill** — Set canvas background color with presets or custom colors (No Layout mode only)
 - **Undo/Redo** — Standard Ctrl+Z/Ctrl+Shift+Z with 20-state history
+
+### Block Creation
+
+- **Drawing Tools** — Rectangle, Triangle tools in drafting canvas with grid snap
+- **Photo Upload** — 3-step workflow (Upload → Image Prep → Crop) for digitizing physical blocks
+- **Image Prep Tools** — Straighten (rotation/flip) and perspective correction without OpenCV
+- **Block Library** — Browse system blocks, upload custom blocks, manage user collection
+
+### Layout System
+
+- **No Layout** — Freeform placement with dedicated sashing/border drawing tools and background fill
+- **Select Layout** — 9 predefined templates (Grid 3×3–5×5, Sashing 3×3–5×5, On-Point 3×3–5×5)
+- Templates instantly apply all settings (rows, cols, block size, sashing, borders)
 
 ### Community & Social
 
@@ -206,7 +221,7 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ## Database Schema
 
-17 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
+18 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `user_fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
 
 ## Mobile
 

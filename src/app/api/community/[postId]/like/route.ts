@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, likes } from '@/db/schema';
+import { socialPosts, likes } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -30,9 +30,9 @@ export async function POST(
 
   try {
     const [post] = await db
-      .select({ id: communityPosts.id })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ id: socialPosts.id })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     if (!post) {
@@ -46,20 +46,20 @@ export async function POST(
           communityPostId: postId,
         });
         await tx
-          .update(communityPosts)
+          .update(socialPosts)
           .set({
-            likeCount: sql`${communityPosts.likeCount} + 1`,
+            likeCount: sql`${socialPosts.likeCount} + 1`,
           })
-          .where(eq(communityPosts.id, postId));
+          .where(eq(socialPosts.id, postId));
       });
     } catch {
       return errorResponse('Already liked', 'CONFLICT', 409);
     }
 
     const [updated] = await db
-      .select({ likeCount: communityPosts.likeCount })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ likeCount: socialPosts.likeCount })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     return Response.json({
@@ -93,11 +93,11 @@ export async function DELETE(
 
       if (deleted.length > 0) {
         await tx
-          .update(communityPosts)
+          .update(socialPosts)
           .set({
-            likeCount: sql`GREATEST(${communityPosts.likeCount} - 1, 0)`,
+            likeCount: sql`GREATEST(${socialPosts.likeCount} - 1, 0)`,
           })
-          .where(eq(communityPosts.id, postId));
+          .where(eq(socialPosts.id, postId));
       }
     });
 
@@ -106,9 +106,9 @@ export async function DELETE(
     }
 
     const [updated] = await db
-      .select({ likeCount: communityPosts.likeCount })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ likeCount: socialPosts.likeCount })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     return Response.json({

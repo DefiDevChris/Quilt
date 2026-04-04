@@ -76,7 +76,7 @@ except Exception:
 text_x = margin + 48
 draw.text((text_x, 150), 'QuiltCorgi',                                       font=font_title, fill=BRAND_TEXT)
 draw.text((text_x, 262), 'Design quilts in your browser.',                    font=font_sub,   fill=BRAND_MUTED)
-draw.text((text_x, 314), '659+ blocks · fabric visualizer · 1:1 PDF export', font=font_tag,   fill=BRAND_MUTED)
+draw.text((text_x, 314), '651+ blocks · fabric visualizer · 1:1 PDF export', font=font_tag,   fill=BRAND_MUTED)
 draw.text((text_x, 430), 'quiltcorgi.com',                                   font=font_tag,   fill=BRAND_PEACH)
 
 # Corgi — right half only, sized to fit within x: 620–1140

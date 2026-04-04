@@ -38,7 +38,7 @@ export function useCanvasInit(
       const canvas = new fabric.Canvas(fabricCanvasRef.current, {
         width: rect.width,
         height: rect.height,
-        backgroundColor: 'transparent',
+        backgroundColor: useCanvasStore.getState().backgroundColor,
         selection: true,
         preserveObjectStacking: true,
       });

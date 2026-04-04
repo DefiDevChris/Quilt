@@ -6,7 +6,7 @@ test.describe('Block Library', () => {
     await page.goto('/studio/test-project-id');
     const blockButton = page.getByRole('button', { name: /blocks/i });
     await blockButton.click();
-    await expect(page.getByText(/659/i)).toBeVisible();
+    await expect(page.getByText(/651/i)).toBeVisible();
   });
 
   test.skip('block categories are visible', async ({ page }) => {

@@ -25,6 +25,7 @@ export const blogPosts = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    index('idx_blog_posts_status_category').on(table.status, table.category),
     index('idx_blog_posts_status_publishedAt').on(table.status, table.publishedAt),
     index('idx_blog_posts_authorId').on(table.authorId),
   ]

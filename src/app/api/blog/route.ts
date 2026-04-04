@@ -10,12 +10,17 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`blog:${ip}`, API_RATE_LIMITS.blog);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const url = request.nextUrl;
   const parsed = blogSearchSchema.safeParse({
     search: url.searchParams.get('search') ?? undefined,
@@ -60,7 +65,7 @@ export async function GET(request: NextRequest) {
           category: blogPosts.category,
           tags: blogPosts.tags,
           content: blogPosts.content,
-          publishedAt: blogPosts.publishedAt,
+          createdAt: blogPosts.createdAt,
           authorName: users.name,
           authorAvatarUrl: userProfiles.avatarUrl,
         })
@@ -68,7 +73,7 @@ export async function GET(request: NextRequest) {
         .leftJoin(users, eq(blogPosts.authorId, users.id))
         .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
         .where(whereClause)
-        .orderBy(desc(blogPosts.publishedAt))
+        .orderBy(desc(blogPosts.createdAt))
         .limit(limit)
         .offset(offset),
       db.select({ count: count() }).from(blogPosts).where(whereClause),
@@ -86,7 +91,7 @@ export async function GET(request: NextRequest) {
       tags: post.tags,
       authorName: post.authorName ?? 'QuiltCorgi Team',
       authorAvatarUrl: post.authorAvatarUrl ?? null,
-      publishedAt: post.publishedAt,
+      createdAt: post.createdAt,
       readTimeMinutes: calculateReadTime(post.content),
     }));
 
@@ -122,7 +127,7 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
     }
 
-    const { title, content, excerpt, featuredImageUrl, category, tags, status } = parsed.data;
+    const { title, content, excerpt, featuredImageUrl, category, tags } = parsed.data;
 
     let slug = generateSlug(title);
 
@@ -153,7 +158,6 @@ export async function POST(request: NextRequest) {
             featuredImageUrl: featuredImageUrl ?? null,
             category,
             tags,
-            status,
           })
           .returning();
 

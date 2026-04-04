@@ -11,30 +11,7 @@ import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-al
 import { PIXELS_PER_INCH } from '@/lib/constants';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { gcd } from '@/lib/math-utils';
-
-/**
- * Format a decimal inch value as a fractional string rounded to eighths.
- * e.g. 3.5 -> '3-1/2', 0.25 -> '1/4'
- */
-export function formatFraction(value: number, separator: string = ' '): string {
-  const rounded = Math.round(value * 8) / 8;
-  const whole = Math.floor(rounded);
-  const eighths = Math.round((rounded - whole) * 8);
-
-  if (eighths === 0) {
-    return `${whole}`;
-  }
-
-  const gcdValue = gcd(eighths, 8);
-  const numerator = eighths / gcdValue;
-  const denominator = 8 / gcdValue;
-
-  if (whole === 0) {
-    return `${numerator}/${denominator}`;
-  }
-
-  return `${whole}${separator}${numerator}/${denominator}`;
-}
+import { formatFraction } from '@/lib/piece-detection-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 

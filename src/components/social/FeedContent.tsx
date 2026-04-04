@@ -9,6 +9,7 @@ import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
 import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
+import { ReportModal } from './ReportModal';
 
 interface CommunityPost {
   id: string;
@@ -153,9 +154,11 @@ export function FeedContent() {
 
 function PostCard({ post }: { post: CommunityPost }) {
   const { open } = useSocialQuickView();
+  const user = useAuthStore((s) => s.user);
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -174,13 +177,13 @@ function PostCard({ post }: { post: CommunityPost }) {
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // If post has a template, open template modal instead
     if (post.templateId) {
       setShowTemplateModal(true);
       return;
     }
-    
+
     open({
       type: 'post',
       id: post.id,
@@ -220,6 +223,29 @@ function PostCard({ post }: { post: CommunityPost }) {
             </p>
           </div>
         </Link>
+        {user && (
+          <button
+            type="button"
+            onClick={() => setShowReport(true)}
+            className="p-1.5 text-secondary hover:text-on-surface transition-colors rounded-lg"
+            title="Report post"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+              />
+            </svg>
+          </button>
+        )}
       </div>
 
       <p className="text-on-surface/80 mb-3 text-[15px] leading-relaxed">
@@ -261,13 +287,14 @@ function PostCard({ post }: { post: CommunityPost }) {
           <Share2 size={20} /> Full Post
         </Link>
       </div>
-      
+
       {showTemplateModal && post.templateId && (
         <TemplateDetailModal
           templateId={post.templateId}
           onClose={() => setShowTemplateModal(false)}
         />
       )}
+      {showReport && <ReportModal postId={post.id} onClose={() => setShowReport(false)} />}
     </article>
   );
 }

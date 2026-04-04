@@ -1,24 +1,20 @@
 import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts } from '@/db/schema';
-import { adminModerationSchema } from '@/lib/validation';
+import { socialPosts } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
   notFoundResponse,
-  validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
-import { createNotification } from '@/lib/create-notification';
-import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
-export async function PATCH(
-  request: NextRequest,
+export async function DELETE(
+  _request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
   const session = await getRequiredSession();
@@ -33,53 +29,26 @@ export async function PATCH(
   const { postId } = await params;
 
   try {
-    const body = await request.json();
-    const parsed = adminModerationSchema.safeParse(body);
-    if (!parsed.success) {
-      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid moderation data');
-    }
-
-    const { status } = parsed.data;
-
     const [existingPost] = await db
-      .select({ id: communityPosts.id, userId: communityPosts.userId, title: communityPosts.title })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+      .select({ id: socialPosts.id, userId: socialPosts.userId })
+      .from(socialPosts)
+      .where(eq(socialPosts.id, postId))
       .limit(1);
 
     if (!existingPost) {
       return notFoundResponse('Community post not found.');
     }
 
-    const [updatedPost] = await db
-      .update(communityPosts)
-      .set({ status })
-      .where(eq(communityPosts.id, postId))
-      .returning();
-
-    if (status === 'approved') {
-      await createNotification({
-        userId: existingPost.userId,
-        type: NOTIFICATION_TYPES.POST_APPROVED,
-        title: 'Design approved!',
-        message: `Your design "${existingPost.title}" has been approved and is now visible on the community board.`,
-        metadata: { postId },
-      });
-    } else {
-      await createNotification({
-        userId: existingPost.userId,
-        type: NOTIFICATION_TYPES.POST_REJECTED,
-        title: 'Design not approved',
-        message: `Your design "${existingPost.title}" was not approved for the community board.`,
-        metadata: { postId },
-      });
-    }
+    await db
+      .update(socialPosts)
+      .set({ deletedAt: new Date(), updatedAt: new Date() })
+      .where(eq(socialPosts.id, postId));
 
     return Response.json({
       success: true,
-      data: updatedPost,
+      data: { deleted: true },
     });
   } catch {
-    return errorResponse('Failed to moderate community post', 'INTERNAL_ERROR', 500);
+    return errorResponse('Failed to delete community post', 'INTERNAL_ERROR', 500);
   }
 }

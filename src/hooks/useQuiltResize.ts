@@ -64,6 +64,11 @@ export function useQuiltResize() {
       const canvas = useCanvasStore.getState().fabricCanvas as FabricCanvas | null;
       if (!canvas) return;
 
+      // Validate dimensions
+      if (newWidth <= 0 || newHeight <= 0) return;
+      const MAX_DIMENSION = 1000; // Reasonable upper bound
+      if (newWidth > MAX_DIMENSION || newHeight > MAX_DIMENSION) return;
+
       const { unitSystem } = useCanvasStore.getState();
       const { canvasWidth, canvasHeight, projectId } = useProjectStore.getState();
       const layoutStore = useLayoutStore.getState();

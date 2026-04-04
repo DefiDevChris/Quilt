@@ -10,7 +10,10 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   const session = await getSession();
   if (!session) {
-    return Response.json({ success: false, error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
+    return Response.json(
+      { success: false, error: 'Unauthorized', code: 'UNAUTHORIZED' },
+      { status: 401 }
+    );
   }
 
   const ip = getClientIp(request);
@@ -49,11 +52,11 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (existing) {
-      return Response.json({ available: false, message: 'Username is already taken.' });
+      return Response.json({ available: false, message: 'Username is not available.' });
     }
 
     return Response.json({ available: true, normalized });
   } catch {
-    return Response.json({ available: false, message: 'Could not check username.' });
+    return Response.json({ available: false, message: 'Username is not available.' });
   }
 }

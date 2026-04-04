@@ -7,7 +7,7 @@ import { desc, eq } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Blog | QuiltCorgi',
+  title: 'Blog',
   description:
     'Quilting tutorials, pattern inspiration, and design tips from the QuiltCorgi community.',
 };
@@ -22,16 +22,14 @@ export default async function BlogPage() {
       excerpt: blogPosts.excerpt,
       featuredImageUrl: blogPosts.featuredImageUrl,
       category: blogPosts.category,
-      publishedAt: blogPosts.publishedAt,
-      updatedAt: blogPosts.updatedAt,
+      createdAt: blogPosts.createdAt,
       authorName: users.name,
       authorAvatarUrl: userProfiles.avatarUrl,
     })
     .from(blogPosts)
     .leftJoin(users, eq(blogPosts.authorId, users.id))
     .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
-    .where(eq(blogPosts.status, 'published'))
-    .orderBy(desc(blogPosts.publishedAt))
+    .orderBy(desc(blogPosts.createdAt))
     .limit(20);
 
   const postsWithReadTime = posts.map((post) => ({
@@ -44,23 +42,21 @@ export default async function BlogPage() {
     tags: [],
     authorName: post.authorName ?? 'Anonymous',
     authorAvatarUrl: post.authorAvatarUrl,
-    publishedAt: post.publishedAt,
+    createdAt: post.createdAt,
     readTimeMinutes: post.content
       ? Math.max(1, Math.ceil(String(post.content).split(/\s+/).length / 200))
       : 1,
   }));
 
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <header className="mb-12">
-          <h1 className="text-4xl font-bold text-on-surface mb-3">Blog</h1>
-          <p className="text-lg text-secondary">
-            Quilting tutorials, pattern inspiration, and design tips.
-          </p>
-        </header>
-        <BlogContent initialPosts={postsWithReadTime} initialTotal={postsWithReadTime.length} />
-      </div>
-    </div>
+    <>
+      <header className="mb-12">
+        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">Blog</h1>
+        <p className="text-secondary mt-1">
+          Quilting tutorials, pattern inspiration, and design tips.
+        </p>
+      </header>
+      <BlogContent initialPosts={postsWithReadTime} initialTotal={postsWithReadTime.length} />
+    </>
   );
 }

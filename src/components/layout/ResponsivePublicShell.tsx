@@ -23,7 +23,7 @@ export function ResponsivePublicShell({
   return (
     <>
       <PublicNav />
-      <main className={`${maxWidth} mx-auto px-4 py-8`}>{children}</main>
+      <main className={`${maxWidth} mx-auto px-6 py-8`}>{children}</main>
       <Footer />
     </>
   );

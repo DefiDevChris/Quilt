@@ -7,6 +7,7 @@ import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommentStore } from '@/stores/commentStore';
 import type { Comment } from '@/types/community';
+import { ReportModal } from '@/components/social/ReportModal';
 
 interface CommentCardProps {
   comment: Comment;
@@ -52,6 +53,7 @@ export function CommentCard({
   onReply,
 }: CommentCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const user = useAuthStore((s) => s.user);
@@ -59,6 +61,7 @@ export function CommentCard({
 
   const isOwn = currentUserId === comment.authorId;
   const canDelete = isOwn || isAdmin;
+  const canReport = !!user && !isOwn;
   const isRemoved = comment.status === 'hidden' || comment.status === 'deleted';
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -148,8 +151,8 @@ export function CommentCard({
             </button>
           )}
 
-          {/* Delete menu */}
-          {canDelete && user && (
+          {/* Actions menu */}
+          {(canDelete || canReport) && (
             <div className="relative ml-auto" ref={menuRef}>
               <button
                 type="button"
@@ -175,16 +178,33 @@ export function CommentCard({
 
               {menuOpen && (
                 <div className="absolute right-0 top-full mt-1 w-36 rounded-lg bg-surface shadow-elevation-2 border border-outline-variant py-1 z-10">
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="w-full text-left px-3 py-2 text-sm text-error hover:bg-surface-container-high transition-colors"
-                  >
-                    Delete
-                  </button>
+                  {canDelete && (
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      className="w-full text-left px-3 py-2 text-sm text-error hover:bg-surface-container-high transition-colors"
+                    >
+                      Delete
+                    </button>
+                  )}
+                  {canReport && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setReportOpen(true);
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-on-surface hover:bg-surface-container-high transition-colors"
+                    >
+                      Report
+                    </button>
+                  )}
                 </div>
               )}
             </div>
+          )}
+          {reportOpen && (
+            <ReportModal commentId={comment.id} onClose={() => setReportOpen(false)} />
           )}
         </div>
       )}

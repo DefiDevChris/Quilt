@@ -161,7 +161,7 @@ export default function CommunityPreview() {
                     className="text-2xl font-bold text-warm-peach"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    659+
+                    651+
                   </div>
                   <div className="text-sm text-warm-text-secondary">Quilt blocks</div>
                 </div>

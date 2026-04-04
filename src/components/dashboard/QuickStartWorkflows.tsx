@@ -65,7 +65,7 @@ export function QuickStartWorkflows({
               Start from Template
             </p>
             <p className="text-secondary text-sm font-medium">
-              Browse 659+ pre-made quilt patterns and blocks
+              Browse 651+ pre-made quilt patterns and blocks
             </p>
           </div>
         </button>

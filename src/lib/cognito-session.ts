@@ -11,14 +11,18 @@ const COOKIE_ID_TOKEN = 'qc_id_token';
 const COOKIE_ACCESS_TOKEN = 'qc_access_token';
 const COOKIE_REFRESH_TOKEN = 'qc_refresh_token';
 
-const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json`;
-
-// Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading
+// Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading.
+// COGNITO_USER_POOL_ID and COGNITO_REGION are read at call time, not module-load time,
+// so secrets loaded by instrumentation.ts are available.
 let jwksInstance: ReturnType<typeof createRemoteJWKSet> | null = null;
+let jwksCachedPoolId: string | null = null;
 
 function getJwks() {
-  if (!jwksInstance) {
-    jwksInstance = createRemoteJWKSet(new URL(JWKS_URL));
+  const currentPoolId = COGNITO_USER_POOL_ID;
+  if (!jwksInstance || jwksCachedPoolId !== currentPoolId) {
+    const jwksUrl = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${currentPoolId}/.well-known/jwks.json`;
+    jwksInstance = createRemoteJWKSet(new URL(jwksUrl));
+    jwksCachedPoolId = currentPoolId;
   }
   return jwksInstance;
 }
@@ -113,7 +117,7 @@ export async function clearAuthCookies(): Promise<void> {
  * Requires a DB lookup to get the user's role (stored in our DB, not Cognito).
  */
 export async function getSession(): Promise<CognitoSession | null> {
-  if (process.env.DEV_AUTH_BYPASS === 'true') {
+  if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
     const cookieStore = await cookies();
     const devUserId = cookieStore.get('qc_dev_user_id')?.value;
 
@@ -229,9 +233,8 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
         refreshToken,
         expiresIn: newTokens.expiresIn,
       });
-    } catch (error) {
-      // Cookie write failed (likely RSC context) — log for monitoring
-      console.warn('[cognito-session] Failed to set auth cookies during refresh:', error);
+    } catch {
+      // Cookie write failed (likely RSC context) — silently continue
     }
 
     // Re-parse the new id token
@@ -244,8 +247,7 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
       user: sessionUser,
       accessToken: newTokens.accessToken,
     };
-  } catch (error) {
-    console.error('[cognito-session] Token refresh failed:', error);
+  } catch {
     return null;
   }
 }

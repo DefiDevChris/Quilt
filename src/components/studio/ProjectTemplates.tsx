@@ -57,8 +57,8 @@ export function ProjectTemplates({
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
       setTemplates(data.data);
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
+    } catch {
+      // Failed to fetch templates
     } finally {
       setLoading(false);
     }
@@ -86,8 +86,8 @@ export function ProjectTemplates({
         gridSettings: { enabled: true, size: 1, snapToGrid: true },
       });
       fetchTemplates();
-    } catch (error) {
-      console.error('Failed to create template:', error);
+    } catch {
+      // Failed to create template
     }
   };
 
@@ -101,8 +101,8 @@ export function ProjectTemplates({
 
       if (!res.ok) throw new Error('Failed to delete');
       fetchTemplates();
-    } catch (error) {
-      console.error('Failed to delete template:', error);
+    } catch {
+      // Failed to delete template
     }
   };
 

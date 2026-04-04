@@ -40,10 +40,6 @@ export function ColorThemeTools() {
     setActiveTool(activeTool === 'spraycan' ? 'select' : 'spraycan');
   }, [activeTool, setActiveTool]);
 
-  const handleEyedropper = useCallback(() => {
-    setActiveTool(activeTool === 'eyedropper' ? 'select' : 'eyedropper');
-  }, [activeTool, setActiveTool]);
-
   const handleSwap = useCallback(() => {
     executeSwap(swapColorA, swapColorB);
   }, [executeSwap, swapColorA, swapColorB]);
@@ -85,7 +81,7 @@ export function ColorThemeTools() {
 
       {isExpanded && (
         <div className="space-y-2 pb-2">
-          {/* Spraycan + Eyedropper row */}
+          {/* Spraycan */}
           <div className="flex gap-1">
             <button
               type="button"
@@ -99,23 +95,13 @@ export function ColorThemeTools() {
             >
               Spray
             </button>
-            <button
-              type="button"
-              onClick={handleEyedropper}
-              title="Eyedropper — pick color from patch"
-              className={`flex-1 h-8 rounded text-xs font-medium ${
-                activeTool === 'eyedropper'
-                  ? 'bg-primary text-white'
-                  : 'bg-surface-container text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high'
-              }`}
-            >
-              Pick
-            </button>
           </div>
 
           {/* Swap Colors */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Swap Colors</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+              Swap Colors
+            </span>
             <div className="flex items-center gap-1">
               <input
                 type="color"
@@ -151,7 +137,9 @@ export function ColorThemeTools() {
 
           {/* Randomize */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Randomize Palette</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+              Randomize Palette
+            </span>
             <div className="flex flex-wrap gap-1 mb-1">
               {palette.map((color, i) => (
                 <input
@@ -174,7 +162,9 @@ export function ColorThemeTools() {
 
           {/* Color Scheme Generator */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">Suggest Palette</span>
+            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+              Suggest Palette
+            </span>
             <div className="space-y-1">
               <div className="flex items-center gap-1">
                 <input

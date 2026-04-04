@@ -53,8 +53,7 @@ export async function GET(
         },
       },
     });
-  } catch (error) {
-    console.error('[Get Template Error]', error);
+  } catch {
     return errorResponse('Failed to load template', 'INTERNAL_ERROR', 500);
   }
 }

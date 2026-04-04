@@ -6,7 +6,7 @@
  * All outputs are in pixels. Callers convert from units using pxPerUnit.
  */
 
-export type LayoutType = 'free-form' | 'grid' | 'sashing' | 'on-point';
+export type LayoutType = 'none' | 'free-form' | 'grid' | 'sashing' | 'on-point';
 
 export interface SashingConfig {
   width: number;
@@ -107,7 +107,7 @@ const EMPTY_RESULT: LayoutResult = {
 };
 
 export function computeLayout(config: LayoutConfig, pxPerUnit: number): LayoutResult {
-  if (config.type === 'free-form') {
+  if (config.type === 'none') {
     return { ...EMPTY_RESULT };
   }
 

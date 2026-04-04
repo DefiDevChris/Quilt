@@ -40,7 +40,6 @@ import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
 
-import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
 
 import { useAuthStore } from '@/stores/authStore';
@@ -198,7 +197,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
-  const [isReferenceImageOpen, setIsReferenceImageOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
   const isPro = useAuthStore((s) => s.isPro);
@@ -384,7 +382,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
                 : setProUpgradeFeature('Photo to Pattern')
             }
             onOpenResize={() => setIsResizeOpen(true)}
-            onOpenReferenceImage={() => setIsReferenceImageOpen(true)}
             onOpenPatternOverlay={() => setIsPatternOverlayOpen(true)}
           />
         )}
@@ -535,12 +532,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* Resize quilt dialog */}
       <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />
-
-      {/* Reference image dialog */}
-      <ReferenceImageDialog
-        isOpen={isReferenceImageOpen}
-        onClose={() => setIsReferenceImageOpen(false)}
-      />
 
       {/* Help panel (opened from top bar) */}
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />

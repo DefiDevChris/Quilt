@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, count } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { communityPosts, users } from '@/db/schema';
-import { adminModerationListSchema } from '@/lib/validation';
+import { socialPosts, users } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -11,8 +11,14 @@ import {
 } from '@/lib/auth-helpers';
 import { checkTrustLevel } from '@/middleware/trust-guard';
 import { formatCreatorName } from '@/lib/format-utils';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
+
+const paginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+});
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -22,8 +28,7 @@ export async function GET(request: NextRequest) {
   if (!trustCheck.allowed) return trustCheck.response!;
 
   const url = request.nextUrl;
-  const parsed = adminModerationListSchema.safeParse({
-    status: url.searchParams.get('status') ?? undefined,
+  const parsed = paginationSchema.safeParse({
     page: url.searchParams.get('page') ?? undefined,
     limit: url.searchParams.get('limit') ?? undefined,
   });
@@ -32,32 +37,28 @@ export async function GET(request: NextRequest) {
     return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
   }
 
-  const { status, page, limit } = parsed.data;
+  const { page, limit } = parsed.data;
   const offset = (page - 1) * limit;
 
   try {
-    const whereClause = status && status !== 'all' ? eq(communityPosts.status, status) : undefined;
-
     const [postRows, [totalRow]] = await Promise.all([
       db
         .select({
-          id: communityPosts.id,
-          title: communityPosts.title,
-          description: communityPosts.description,
-          thumbnailUrl: communityPosts.thumbnailUrl,
-          likeCount: communityPosts.likeCount,
-          status: communityPosts.status,
-          createdAt: communityPosts.createdAt,
+          id: socialPosts.id,
+          title: socialPosts.title,
+          description: socialPosts.description,
+          thumbnailUrl: socialPosts.thumbnailUrl,
+          likeCount: socialPosts.likeCount,
+          createdAt: socialPosts.createdAt,
           creatorName: users.name,
-          userId: communityPosts.userId,
+          userId: socialPosts.userId,
         })
-        .from(communityPosts)
-        .leftJoin(users, eq(communityPosts.userId, users.id))
-        .where(whereClause)
-        .orderBy(desc(communityPosts.createdAt))
+        .from(socialPosts)
+        .leftJoin(users, eq(socialPosts.userId, users.id))
+        .orderBy(desc(socialPosts.createdAt))
         .limit(limit)
         .offset(offset),
-      db.select({ count: count() }).from(communityPosts).where(whereClause),
+      db.select({ count: count() }).from(socialPosts),
     ]);
 
     const total = totalRow?.count ?? 0;
@@ -68,7 +69,6 @@ export async function GET(request: NextRequest) {
       description: post.description,
       thumbnailUrl: post.thumbnailUrl,
       likeCount: post.likeCount,
-      status: post.status,
       creatorName: post.creatorName ? formatCreatorName(post.creatorName) : 'Anonymous',
       userId: post.userId,
       createdAt: post.createdAt,

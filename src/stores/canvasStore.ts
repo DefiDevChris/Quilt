@@ -13,7 +13,6 @@ import {
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
-  REFERENCE_IMAGE_DEFAULT_OPACITY,
   DEFAULT_FILL_COLOR,
   DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
@@ -26,15 +25,17 @@ export type ToolType =
   | 'rectangle'
   | 'circle'
   | 'triangle'
-  | 'polygon'
-  | 'line'
   | 'blockbuilder'
   | 'easydraw'
-  | 'text'
   | 'spraycan'
   | 'bend'
   | 'curve'
-  | 'eyedropper';
+  | 'sashing'
+  | 'border'
+  | 'text'
+  | 'eyedropper'
+  | 'polygon'
+  | 'line';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
@@ -55,10 +56,10 @@ interface CanvasStoreState {
   fillColor: string;
   strokeColor: string;
   strokeWidth: number;
+  backgroundColor: string;
   undoStack: string[];
   redoStack: string[];
   blockDraftingMode: BlockDraftingMode;
-  referenceImageOpacity: number;
   activeColorwayTool: ColorThemeTool | null;
 
   isViewportLocked: boolean;
@@ -73,6 +74,7 @@ interface CanvasStoreState {
   clipboard: unknown[];
   showPatternOverlay: boolean;
   autoAlignToPattern: boolean;
+  referenceImageOpacity: number;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -86,6 +88,7 @@ interface CanvasStoreState {
   setFillColor: (color: string) => void;
   setStrokeColor: (color: string) => void;
   setStrokeWidth: (width: number) => void;
+  setBackgroundColor: (color: string) => void;
   pushUndoState: (json: string) => boolean;
   popUndo: (currentJson: string) => string | null;
   popRedo: (currentJson: string) => string | null;
@@ -93,7 +96,6 @@ interface CanvasStoreState {
   canRedo: () => boolean;
   resetHistory: () => void;
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
-  setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorThemeTool | null) => void;
 
   setViewportLocked: (locked: boolean) => void;
@@ -107,6 +109,7 @@ interface CanvasStoreState {
   setClipboard: (objects: unknown[]) => void;
   setShowPatternOverlay: (show: boolean) => void;
   setAutoAlignToPattern: (auto: boolean) => void;
+  setReferenceImageOpacity: (opacity: number) => void;
   reset: () => void;
 }
 
@@ -131,10 +134,10 @@ const INITIAL_STATE = {
   fillColor: DEFAULT_FILL_COLOR,
   strokeColor: DEFAULT_STROKE_COLOR,
   strokeWidth: 1,
+  backgroundColor: '#F5F5F0',
   undoStack: [] as string[],
   redoStack: [] as string[],
   blockDraftingMode: 'freeform' as BlockDraftingMode,
-  referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null as ColorThemeTool | null,
 
   isViewportLocked: true,
@@ -149,6 +152,7 @@ const INITIAL_STATE = {
   clipboard: [] as unknown[],
   showPatternOverlay: true,
   autoAlignToPattern: true,
+  referenceImageOpacity: 0.5,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -178,14 +182,18 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setFillColor: (color) => set({ fillColor: color }),
   setStrokeColor: (color) => set({ strokeColor: color }),
   setStrokeWidth: (width) => set({ strokeWidth: width }),
+  setBackgroundColor: (color) => {
+    set({ backgroundColor: color });
+    const canvas = get().fabricCanvas;
+    if (canvas) {
+      canvas.backgroundColor = color;
+      canvas.renderAll();
+    }
+  },
 
   pushUndoState: (json) => {
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
-      console.warn(
-        `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
-          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
-          'Undo disabled for this action. Consider reducing canvas complexity.'
-      );
+      // Snapshot too large - skip undo for this action
       return false;
     }
     set((state) => ({
@@ -222,8 +230,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   resetHistory: () => set({ undoStack: [], redoStack: [] }),
 
   setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
-
-  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
@@ -293,6 +299,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setShowPatternOverlay: (showPatternOverlay) => set({ showPatternOverlay }),
 
   setAutoAlignToPattern: (autoAlignToPattern) => set({ autoAlignToPattern }),
+
+  setReferenceImageOpacity: (referenceImageOpacity) => set({ referenceImageOpacity }),
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

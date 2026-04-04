@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (process.env.DEV_AUTH_BYPASS === 'true') {
       await db
         .insert(users)
-        .values({ name, email, role: 'pro', emailVerified: new Date() })
+        .values({ name, email, role: 'free', emailVerified: new Date() })
         .onConflictDoNothing({ target: users.email });
 
       const [user] = await db
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       if (user) {
         const cookieStore = await cookies();
         cookieStore.set('qc_dev_user_id', user.id, { httpOnly: true, path: '/', maxAge: 86400 });
-        cookieStore.set('qc_user_role', 'pro', { httpOnly: true, path: '/', maxAge: 86400 });
+        cookieStore.set('qc_user_role', 'free', { httpOnly: true, path: '/', maxAge: 86400 });
       }
 
       return Response.json(

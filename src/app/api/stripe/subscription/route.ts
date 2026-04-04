@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/db/schema';
 import { getRequiredSession, unauthorizedResponse } from '@/lib/auth-helpers';
+import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,9 @@ export async function GET() {
   try {
     const session = await getRequiredSession();
     if (!session) return unauthorizedResponse();
+
+    const rl = await checkRateLimit(`stripe-sub:${session.user.id}`, API_RATE_LIMITS.stripe);
+    if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
     const [sub] = await db
       .select({
