@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePatternStore } from '@/stores/patternStore';
 import { formatDimensionDisplay } from '@/components/patterns/PatternCard';
 import type { ParsedPiece } from '@/lib/pattern-parser-types';
+import { PatternPreviewCanvas } from '@/components/patterns/PatternPreviewCanvas';
 
 interface PatternDetailDialogProps {
   readonly patternId: string | null;
@@ -269,6 +270,23 @@ export function PatternDetailDialog({
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--color-secondary)' }}>
                   {pattern.description}
                 </p>
+              </div>
+            )}
+
+            {/* Visual Layout Preview */}
+            {pattern.patternData.layout.rows != null && pattern.patternData.layout.cols != null && (
+              <div className="px-4 md:px-6 pb-5">
+                <h3
+                  className="text-sm font-semibold mb-3"
+                  style={{ color: 'var(--color-on-surface)' }}
+                >
+                  Preview
+                </h3>
+                <PatternPreviewCanvas
+                  layout={pattern.patternData.layout}
+                  fabrics={pattern.patternData.fabrics}
+                  blocks={pattern.patternData.blocks}
+                />
               </div>
             )}
 

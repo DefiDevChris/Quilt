@@ -88,9 +88,9 @@ export function FeedContent() {
       {/* Error State */}
       {!loading && error && (
         <div className="glass-panel rounded-[2rem] p-10 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-rose-500"
+              className="w-8 h-8 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -209,8 +209,8 @@ function PostCard({ post }: { post: CommunityPost }) {
     <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
       <div className="flex items-center justify-between mb-3">
         <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1">
-            <span className="text-sm font-bold text-orange-500">
+          <div className="w-12 h-12 rounded-full border-2 border-white bg-primary-golden/10 flex items-center justify-center shadow-elevation-1">
+            <span className="text-sm font-bold text-primary-golden">
               {post.creatorName.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -269,7 +269,7 @@ function PostCard({ post }: { post: CommunityPost }) {
       <div className="flex gap-2 border-t border-white/40 pt-4">
         <button
           onClick={handleLike}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-rose-500 bg-rose-50/50' : 'text-secondary hover:bg-white/50'}`}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-primary bg-primary/10' : 'text-secondary hover:bg-white/50'}`}
         >
           <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
           {likeCount}

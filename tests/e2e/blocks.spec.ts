@@ -91,28 +91,12 @@ test.describe('Block Builder', () => {
 });
 
 test.describe('Block Overlay Templates', () => {
-  test.skip('overlay selector opens', async ({ page }) => {
-    // Requires auth setup
-    await page.goto('/studio/test-project-id');
-    const overlayButton = page.getByRole('button', { name: /overlay/i });
-    await overlayButton.click();
-    await expect(page.getByText(/pattern overlay/i)).toBeVisible();
-  });
-
   test.skip('traditional block overlays are available', async ({ page }) => {
     // Requires auth setup
     await page.goto('/studio/test-project-id');
     const overlayButton = page.getByRole('button', { name: /overlay/i });
     await overlayButton.click();
     await expect(page.getByText(/nine patch/i)).toBeVisible();
-  });
-
-  test.skip('full pattern overlays are available', async ({ page }) => {
-    // Requires auth setup
-    await page.goto('/studio/test-project-id');
-    const overlayButton = page.getByRole('button', { name: /overlay/i });
-    await overlayButton.click();
-    await expect(page.getByText(/baby quilt/i)).toBeVisible();
   });
 
   test.skip('overlay opacity can be adjusted', async ({ page }) => {

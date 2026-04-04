@@ -312,6 +312,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
+                    aria-label="Upload images"
                     className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 text-sm font-bold text-secondary hover:bg-white/70 transition-colors disabled:opacity-50"
                   >
                     {isUploading ? (
@@ -386,6 +387,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'image' && !imageUrl && !uploadedImage) ||
                   (mode === 'project' && !selectedProject)
                 }
+                aria-label="Publish post"
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white text-sm font-bold hover:from-orange-500 hover:to-rose-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

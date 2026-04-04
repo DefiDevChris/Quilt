@@ -58,7 +58,7 @@ function QuiltWorktableMockup() {
         </div>
 
         {/* Canvas */}
-        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-surface-container-lowest relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -194,7 +194,7 @@ function BlockWorktableMockup() {
           </div>
         </div>
 
-        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-surface-container-lowest relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -339,7 +339,7 @@ function PrintWorktableMockup() {
       </div>
 
       <div className="flex flex-1 overflow-hidden relative">
-        <div className="flex-1 bg-[#f0f0f0] relative flex items-center justify-center overflow-hidden p-6">
+        <div className="flex-1 bg-surface-container-low relative flex items-center justify-center overflow-hidden p-6">
           {/* PDF page mockup */}
           <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-gray-200 p-4 flex flex-col">
             <div

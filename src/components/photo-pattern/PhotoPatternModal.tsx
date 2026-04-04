@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { loadOpenCv } from '@/lib/opencv-loader';
+import { PhotoPatternErrorBoundary } from './PhotoPatternErrorBoundary';
 import { UploadStep } from './steps/UploadStep';
 import { ImagePrepStep } from './steps/ImagePrepStep';
 import { ScanSettingsStep } from './steps/ScanSettingsStep';
@@ -59,12 +60,13 @@ export function PhotoPatternModal() {
   const step = usePhotoPatternStore((s) => s.step);
   const reset = usePhotoPatternStore((s) => s.reset);
   const closeModal = usePhotoPatternStore((s) => s.closeModal);
+  const [openCvError, setOpenCvError] = useState(false);
 
   // Pre-load OpenCV when modal opens (non-blocking)
   useEffect(() => {
     if (isModalOpen) {
       loadOpenCv().catch(() => {
-        // Non-blocking — will retry when actually needed
+        setOpenCvError(true);
       });
     }
   }, [isModalOpen]);
@@ -104,11 +106,12 @@ export function PhotoPatternModal() {
   const currentStepIndex = VISIBLE_STEPS.indexOf(step);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
-      onClick={handleBackdropClick}
-    >
+    <PhotoPatternErrorBoundary>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
+        onClick={handleBackdropClick}
+      >
       <div
         className="glass-elevated rounded-xl w-[95vw] max-w-[1000px] h-[80vh] flex flex-col"
         role="dialog"
@@ -138,6 +141,15 @@ export function PhotoPatternModal() {
           </button>
         </div>
 
+        {/* OpenCV Warning Banner */}
+        {openCvError && (
+          <div className="px-6 py-2 bg-warning/10 border-b border-warning/20 flex-shrink-0">
+            <p className="text-xs text-warning">
+              Advanced features loading... Perspective correction may be unavailable.
+            </p>
+          </div>
+        )}
+
         {/* Step content */}
         <div className="flex-1 min-h-0 px-6 py-4 overflow-y-auto">
           <StepContent step={step} />
@@ -160,5 +172,6 @@ export function PhotoPatternModal() {
         </div>
       </div>
     </div>
+    </PhotoPatternErrorBoundary>
   );
 }

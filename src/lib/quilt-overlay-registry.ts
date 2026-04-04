@@ -1,9 +1,8 @@
 /**
- * Quilt Block & Pattern Overlay Registry
+ * Quilt Block Overlay Registry
  *
- * Maps block and pattern names to their SVG overlay files in /quilt_blocks/ and /quilt_patterns/.
+ * Maps block names to their SVG overlay files in /quilt_blocks/.
  * All block SVGs use a 300x300 viewBox with filled patches.
- * Pattern SVGs use proportional viewBoxes matching actual quilt dimensions.
  */
 
 export interface BlockOverlay {
@@ -15,16 +14,6 @@ export interface BlockOverlay {
   description: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   gridUnits: number;
-}
-
-export interface PatternOverlay {
-  id: string;
-  name: string;
-  displayName: string;
-  svgPath: string;
-  dimensions: { width: number; height: number };
-  description: string;
-  blockLayout?: { cols: number; rows: number };
 }
 
 export const BLOCK_OVERLAYS: BlockOverlay[] = [
@@ -232,96 +221,6 @@ export const BLOCK_OVERLAYS: BlockOverlay[] = [
   },
 ];
 
-export const PATTERN_OVERLAYS: PatternOverlay[] = [
-  {
-    id: 'baby-quilt',
-    name: 'baby_quilt',
-    displayName: 'Baby Quilt',
-    svgPath: '/quilt_patterns/01_baby_quilt.svg',
-    dimensions: { width: 36, height: 46 },
-    description: 'Perfect for newborns and infants',
-    blockLayout: { cols: 6, rows: 8 },
-  },
-  {
-    id: 'crib-quilt',
-    name: 'crib_quilt',
-    displayName: 'Crib Quilt',
-    svgPath: '/quilt_patterns/02_crib_quilt.svg',
-    dimensions: { width: 36, height: 52 },
-    description: 'Standard crib size',
-    blockLayout: { cols: 6, rows: 9 },
-  },
-  {
-    id: 'throw-quilt',
-    name: 'throw_quilt',
-    displayName: 'Throw / Lap Quilt',
-    svgPath: '/quilt_patterns/03_throw_quilt.svg',
-    dimensions: { width: 50, height: 65 },
-    description: 'Ideal for couch or lap use',
-    blockLayout: { cols: 8, rows: 11 },
-  },
-  {
-    id: 'twin-quilt',
-    name: 'twin_quilt',
-    displayName: 'Twin Quilt',
-    svgPath: '/quilt_patterns/04_twin_quilt.svg',
-    dimensions: { width: 66, height: 90 },
-    description: 'Standard twin bed size',
-    blockLayout: { cols: 11, rows: 15 },
-  },
-  {
-    id: 'full-quilt',
-    name: 'full_quilt',
-    displayName: 'Full / Double Quilt',
-    svgPath: '/quilt_patterns/05_full_quilt.svg',
-    dimensions: { width: 80, height: 90 },
-    description: 'Full/double bed size',
-    blockLayout: { cols: 10, rows: 12 },
-  },
-  {
-    id: 'queen-quilt',
-    name: 'queen_quilt',
-    displayName: 'Queen Quilt',
-    svgPath: '/quilt_patterns/06_queen_quilt.svg',
-    dimensions: { width: 88, height: 96 },
-    description: 'Queen bed size',
-    blockLayout: { cols: 11, rows: 13 },
-  },
-  {
-    id: 'king-quilt',
-    name: 'king_quilt',
-    displayName: 'King Quilt',
-    svgPath: '/quilt_patterns/07_king_quilt.svg',
-    dimensions: { width: 104, height: 108 },
-    description: 'King bed size',
-    blockLayout: { cols: 13, rows: 13 },
-  },
-  {
-    id: 'double-wedding-ring',
-    name: 'double_wedding_ring',
-    displayName: 'Double Wedding Ring',
-    svgPath: '/quilt_patterns/08_double_wedding_ring.svg',
-    dimensions: { width: 72, height: 88 },
-    description: 'Interlocking rings — classic heirloom/wedding quilt',
-  },
-  {
-    id: 'trip-around-world',
-    name: 'trip_around_world',
-    displayName: 'Trip Around the World',
-    svgPath: '/quilt_patterns/09_trip_around_world.svg',
-    dimensions: { width: 60, height: 80 },
-    description: 'Concentric square rings radiating from center',
-  },
-  {
-    id: 'yellow-brick-road',
-    name: 'yellow_brick_road',
-    displayName: 'Yellow Brick Road',
-    svgPath: '/quilt_patterns/10_yellow_brick_road.svg',
-    dimensions: { width: 54, height: 72 },
-    description: 'Offset brick rectangles — beginner-friendly and quick to assemble',
-  },
-];
-
 /**
  * Get a block overlay by ID
  */
@@ -330,27 +229,8 @@ export function getBlockOverlay(id: string): BlockOverlay | undefined {
 }
 
 /**
- * Get a pattern overlay by ID
- */
-export function getPatternOverlay(id: string): PatternOverlay | undefined {
-  return PATTERN_OVERLAYS.find((p) => p.id === id);
-}
-
-/**
  * Get all blocks by difficulty level
  */
 export function getBlocksByDifficulty(difficulty: BlockOverlay['difficulty']): BlockOverlay[] {
   return BLOCK_OVERLAYS.filter((b) => b.difficulty === difficulty);
-}
-
-/**
- * Calculate how many blocks are needed for a given pattern and block size
- */
-export function calculateBlockCount(
-  pattern: PatternOverlay,
-  blockSize: number
-): { cols: number; rows: number; total: number } {
-  const cols = Math.ceil(pattern.dimensions.width / blockSize);
-  const rows = Math.ceil(pattern.dimensions.height / blockSize);
-  return { cols, rows, total: cols * rows };
 }

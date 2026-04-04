@@ -4,7 +4,6 @@ import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { computeLayout } from '@/lib/layout-utils';
 import type { Canvas as FabricCanvas } from 'fabric';
 
 /**
@@ -15,16 +14,9 @@ import type { Canvas as FabricCanvas } from 'fabric';
 export function useBlockDrop() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const autoAlignToPattern = useCanvasStore((s) => s.autoAlignToPattern);
-  const unitSystem = useCanvasStore((s) => s.unitSystem);
   const pushUndoState = useCanvasStore((s) => s.pushUndoState);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
-  const layoutType = useLayoutStore((s) => s.layoutType);
-  const rows = useLayoutStore((s) => s.rows);
-  const cols = useLayoutStore((s) => s.cols);
   const blockSize = useLayoutStore((s) => s.blockSize);
-  const sashing = useLayoutStore((s) => s.sashing);
-  const borders = useLayoutStore((s) => s.borders);
   const dragBlockIdRef = useRef<string | null>(null);
 
   const handleDragStart = useCallback((_e: React.DragEvent, blockId: string) => {
@@ -48,7 +40,7 @@ export function useBlockDrop() {
       e.preventDefault();
       const target = e.currentTarget as HTMLElement;
       target.style.cursor = '';
-      
+
       if (!fabricCanvas) return;
       const canvas = fabricCanvas as FabricCanvas | null;
       if (!canvas) return;
@@ -77,40 +69,10 @@ export function useBlockDrop() {
         let dropX = (e.clientX - rect.left - (vpt?.[4] ?? 0)) / zoom;
         let dropY = (e.clientY - rect.top - (vpt?.[5] ?? 0)) / zoom;
 
-        let cellRotation = 0;
-        let skipGridSnap = false;
+        const cellRotation = 0;
 
-        // Auto-align to pattern cell if enabled
-        if (autoAlignToPattern && layoutType !== 'free-form') {
-          const pxPerUnit = unitSystem === 'imperial' ? PIXELS_PER_INCH : PIXELS_PER_INCH / 2.54;
-          const layout = computeLayout(
-            { type: layoutType, rows, cols, blockSize, sashing, borders },
-            pxPerUnit
-          );
-
-          if (layout.cells.length > 0) {
-            let nearestCell = layout.cells[0];
-            let minDist = Infinity;
-
-            for (const cell of layout.cells) {
-              const dx = dropX - cell.centerX;
-              const dy = dropY - cell.centerY;
-              const dist = dx * dx + dy * dy;
-              if (dist < minDist) {
-                minDist = dist;
-                nearestCell = cell;
-              }
-            }
-
-            dropX = nearestCell.centerX;
-            dropY = nearestCell.centerY;
-            cellRotation = nearestCell.rotation;
-            skipGridSnap = true;
-          }
-        }
-
-        // Snap to grid if enabled and not already aligned to pattern
-        if (!skipGridSnap && gridSettings.snapToGrid && gridSettings.enabled) {
+        // Snap to grid if enabled
+        if (gridSettings.snapToGrid && gridSettings.enabled) {
           const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
           dropX = Math.round(dropX / gridSizePx) * gridSizePx;
           dropY = Math.round(dropY / gridSizePx) * gridSizePx;
@@ -157,7 +119,7 @@ export function useBlockDrop() {
 
       dragBlockIdRef.current = null;
     },
-    [fabricCanvas, gridSettings, autoAlignToPattern, unitSystem, layoutType, rows, cols, blockSize, sashing, borders, pushUndoState, setActiveTool]
+    [fabricCanvas, gridSettings, blockSize, pushUndoState, setActiveTool]
   );
 
   return { handleDragStart, handleDragOver, handleDrop, handleDragLeave };

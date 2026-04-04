@@ -138,7 +138,7 @@ src/
   stores/                 # Zustand stores (17 total)
   lib/                    # Pure utility modules and engines
     *-engine.ts           # Pure computation — zero React/Fabric/DOM deps, fully testable
-    quilt-overlay-registry.ts  # Block/pattern SVG registry with metadata and dimension helpers
+    quilt-overlay-registry.ts  # Block SVG registry with metadata and dimension helpers
     trust-engine.ts       # 3-role system: free/pro/admin
     *-utils.ts            # Domain-specific utility modules (canvas, geometry, math, pattern, etc.)
   types/                  # Shared TypeScript type definitions

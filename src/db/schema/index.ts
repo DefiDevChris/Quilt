@@ -24,3 +24,4 @@ export { blogPosts } from './blogPosts';
 export { publishedTemplates } from './publishedTemplates';
 export { projectTemplates } from './projectTemplates';
 export { reports } from './reports';
+export { follows } from './follows';

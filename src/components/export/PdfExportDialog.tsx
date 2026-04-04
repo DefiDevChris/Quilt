@@ -4,7 +4,8 @@ import { useState, useCallback } from 'react';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { generatePatternPdf, downloadPdf, type PaperSize } from '@/lib/pdf-generator';
+import { generatePatternPdf, type PaperSize } from '@/lib/pdf-generator';
+import { downloadPdf } from '@/lib/dom-utils';
 
 interface PdfExportDialogProps {
   isOpen: boolean;
@@ -74,9 +75,9 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
         {/* Info */}
         <div className="rounded-lg bg-background p-3 mb-4">
           <p className="text-[11px] text-secondary leading-relaxed">
-            Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is included on page
-            1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use &quot;Fit to
-            Page&quot;.
+            Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
+            included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
+            &quot;Fit to Page&quot;.
           </p>
         </div>
 

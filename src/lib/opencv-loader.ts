@@ -51,10 +51,3 @@ export async function loadOpenCv(): Promise<OpenCV> {
 export function isOpenCvLoaded(): boolean {
   return cvInstance !== null;
 }
-
-/**
- * @deprecated Not currently used. Exists for testing purposes only.
- */
-export function resetOpenCv(): void {
-  cvInstance = null;
-}

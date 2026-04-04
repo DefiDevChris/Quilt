@@ -18,7 +18,6 @@ interface AuthState {
   isAdmin: boolean;
   isPrivate: boolean;
   setUser: (user: AuthUser | null) => void;
-  setLoading: (loading: boolean) => void;
   reset: () => void;
 }
 
@@ -40,6 +39,5 @@ export const useAuthStore = create<AuthState>((set) => ({
       isAdmin: user?.role === 'admin',
       isPrivate: user?.privacyMode === 'private',
     }),
-  setLoading: (isLoading) => set({ isLoading }),
   reset: () => set({ ...INITIAL_STATE }),
 }));

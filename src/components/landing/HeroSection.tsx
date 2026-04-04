@@ -18,7 +18,7 @@ function StudioMockup() {
       </div>
 
       {/* Canvas with quilt layout mockup */}
-      <div className="flex bg-[#FEFCFA]">
+      <div className="flex bg-surface-container-lowest">
         {/* Tool rail */}
         <div className="w-12 bg-warm-surface/60 border-r border-warm-border py-3 flex flex-col items-center gap-3">
           {[

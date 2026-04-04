@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';
+import { SkeletonGrid } from '@/components/ui/Skeleton';
 import type { BlockListItem } from '@/types/block';
 
 type TabType = 'library' | 'myblocks';
@@ -115,11 +116,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   {/* Block Grid */}
                   <div className="flex-1 overflow-y-auto px-3 py-1">
                     {isLoading ? (
-                      <div className="grid grid-cols-3 gap-2">
-                        {Array.from({ length: 12 }).map((_, i) => (
-                          <div key={i} className="h-24 animate-pulse rounded-lg bg-background" />
-                        ))}
-                      </div>
+                      <SkeletonGrid count={12} columns={3} />
                     ) : error ? (
                       <div className="py-8 text-center">
                         <p className="text-sm text-error">{error}</p>

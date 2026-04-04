@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect, useCallback, type MutableRefObject } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { SimplePhotoBlockUpload } from './SimplePhotoBlockUpload';
+import { BlockDraftingErrorBoundary } from './BlockDraftingErrorBoundary';
 
 export interface DraftTabProps {
-  draftCanvasRef: MutableRefObject<unknown>;
+  draftCanvasRef: MutableRefObject<import('fabric').Canvas | null>;
   fillColor: string;
   strokeColor: string;
   isOpen: boolean;
@@ -280,6 +281,18 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         return;
       }
 
+      // Validate shape sizes
+      const tooSmall = objs.find((obj) => {
+        const width = obj.width ?? 0;
+        const height = obj.height ?? 0;
+        return width < 5 || height < 5;
+      });
+      if (tooSmall) {
+        setError('Shapes must be at least 5px in size');
+        setSaving(false);
+        return;
+      }
+
       const clones = await Promise.all(objs.map((o) => o.clone()));
       const group = new fabric.Group(clones);
       const rawData = group.toObject() as unknown as Record<string, unknown>;
@@ -321,7 +334,8 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <BlockDraftingErrorBoundary onClose={onClose}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-on-surface">Create Custom Block</h2>
@@ -452,5 +466,6 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         )}
       </div>
     </div>
+    </BlockDraftingErrorBoundary>
   );
 }

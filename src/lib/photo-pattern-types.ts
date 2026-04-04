@@ -161,8 +161,8 @@ export type WorkerRequestMessage = {
 
 /** Messages sent FROM the detection worker */
 export type WorkerResponseMessage =
-  | { type: 'DETECT_PIECES_RESULT'; pieces: DetectedPiece[] }
-  | { type: 'DETECT_PIECES_ERROR'; error: string };
+  | { type: 'DETECT_PIECES_RESULT'; pieces: DetectedPiece[]; _messageId?: number }
+  | { type: 'DETECT_PIECES_ERROR'; error: string; _messageId?: number };
 
 /** Progress updates from the worker during processing */
 export interface WorkerProgressMessage {

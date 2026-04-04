@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
+
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
@@ -20,18 +20,7 @@ export function useCanvasKeyboard() {
 
     (async () => {
       const fabric = await import('fabric');
-      const canvas = fabricCanvas as unknown as {
-        toJSON: () => Record<string, unknown>;
-        loadFromJSON: (json: Record<string, unknown>) => Promise<void>;
-        renderAll: () => void;
-        getActiveObjects: () => { id?: string; clone: () => Promise<unknown> }[];
-        getObjects: () => { _layoutElement?: boolean }[];
-        remove: (obj: unknown) => void;
-        discardActiveObject: () => void;
-        setActiveObject: (obj: unknown) => void;
-        add: (...objs: unknown[]) => void;
-        requestRenderAll: () => void;
-      };
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
       const ActiveSelection = fabric.ActiveSelection;
 
       function onKeyDown(e: KeyboardEvent) {
@@ -95,13 +84,9 @@ export function useCanvasKeyboard() {
               canvas.discardActiveObject();
               const OFFSET = 20;
               clones.forEach((clone) => {
-                const clonedObj = clone as {
-                  left: number;
-                  top: number;
-                  set: (props: Record<string, number>) => void;
-                };
+                const clonedObj = clone as InstanceType<typeof fabric.FabricObject>;
                 clonedObj.set({ left: clonedObj.left + OFFSET, top: clonedObj.top + OFFSET });
-                canvas.add(clone);
+                canvas.add(clonedObj);
               });
               canvas.requestRenderAll();
               const json = JSON.stringify(canvas.toJSON());
@@ -116,7 +101,7 @@ export function useCanvasKeyboard() {
           const active = canvas.getActiveObjects();
           if (active.length > 0) {
             e.preventDefault();
-            active.forEach((obj) => canvas.remove(obj));
+            active.forEach((obj) => canvas.remove(obj as InstanceType<typeof fabric.FabricObject>));
             canvas.discardActiveObject();
             const json = JSON.stringify(canvas.toJSON());
             useCanvasStore.getState().pushUndoState(json);
@@ -129,10 +114,12 @@ export function useCanvasKeyboard() {
         if (isCtrl && e.key === 'a') {
           e.preventDefault();
           const allObjects = canvas.getObjects();
-          const userObjects = allObjects.filter((obj) => !obj._layoutElement);
+          const userObjects = allObjects.filter(
+            (obj) => !(obj as unknown as { _layoutElement?: boolean })._layoutElement
+          );
           if (userObjects.length > 0) {
-            const selection = new ActiveSelection(userObjects as never[], {
-              canvas: canvas as never,
+            const selection = new ActiveSelection(userObjects, {
+              canvas: canvas,
             });
             canvas.setActiveObject(selection);
             canvas.requestRenderAll();

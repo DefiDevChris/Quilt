@@ -26,7 +26,7 @@ function SocialThreadsScreenshot() {
         </div>
 
         {/* App content - matching actual SocialLayout styling */}
-        <div className="bg-[#FDF9F6] min-h-[420px] relative overflow-hidden">
+        <div className="bg-surface-container min-h-[420px] relative overflow-hidden">
           {/* Background orbs (matching SocialLayout) */}
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-200/50 rounded-full blur-[60px] pointer-events-none" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50 rounded-full blur-[80px] pointer-events-none" />
@@ -62,7 +62,7 @@ function SocialThreadsScreenshot() {
                 </div>
               </div>
               <p className="text-slate-700 mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The fussy cut feature helped me position the
+                Finally finished my Ohio Star quilt! The fabric positioning tools helped me place the
                 center motifs perfectly 🌟
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">

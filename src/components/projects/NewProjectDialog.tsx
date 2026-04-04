@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ProjectTemplates } from '@/components/studio/ProjectTemplates';
+import { LAYOUT_PRESETS, type LayoutPreset } from '@/lib/layout-library';
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -27,7 +28,7 @@ interface ProjectTemplate {
 
 export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProjectDialogProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'blank' | 'template'>('blank');
+  const [activeTab, setActiveTab] = useState<'blank' | 'template' | 'layout'>('blank');
   const [name, setName] = useState('Untitled Quilt');
   const [unitSystem, setUnitSystem] = useState<'imperial' | 'metric'>('imperial');
   const [canvasWidth, setCanvasWidth] = useState(48);
@@ -48,6 +49,20 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
     setGridEnabled(template.gridSettings.enabled);
     setGridSize(template.gridSettings.size);
     setSnapToGrid(template.gridSettings.snapToGrid);
+    setActiveTab('blank');
+  };
+
+  const handleSelectLayoutPreset = (preset: LayoutPreset) => {
+    setName(preset.name);
+    setUnitSystem('imperial');
+    const config = preset.config;
+    const totalWidth = config.cols * config.blockSize + (config.sashing.width * (config.cols - 1)) + config.borders.reduce((sum, b) => sum + b.width * 2, 0);
+    const totalHeight = config.rows * config.blockSize + (config.sashing.width * (config.rows - 1)) + config.borders.reduce((sum, b) => sum + b.width * 2, 0);
+    setCanvasWidth(totalWidth);
+    setCanvasHeight(totalHeight);
+    setGridEnabled(true);
+    setGridSize(1);
+    setSnapToGrid(true);
     setActiveTab('blank');
   };
 
@@ -111,30 +126,75 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
           <button
             type="button"
             onClick={() => setActiveTab('blank')}
-            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
               activeTab === 'blank'
                 ? 'bg-surface text-on-surface shadow-sm'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
-            Blank Project
+            Blank
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('layout')}
+            className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
+              activeTab === 'layout'
+                ? 'bg-surface text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            }`}
+          >
+            Layout
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('template')}
-            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
               activeTab === 'template'
                 ? 'bg-surface text-on-surface shadow-sm'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
-            From Template
+            Template
           </button>
         </div>
 
         {activeTab === 'template' ? (
           <div className="space-y-4">
             <ProjectTemplates onSelectTemplate={handleSelectTemplate} showCreateButton={false} />
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md px-4 py-2.5 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : activeTab === 'layout' ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-3">
+              {LAYOUT_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => handleSelectLayoutPreset(preset)}
+                  className="flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3 text-left transition-colors hover:bg-surface-container-high group"
+                >
+                  <div className="w-8 h-8 bg-primary/20 rounded flex items-center justify-center shrink-0">
+                    <div className={`grid gap-0.5 ${preset.config.rows <= 3 ? 'grid-cols-3' : preset.config.rows === 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
+                      {Array.from({ length: preset.config.rows * preset.config.cols }).map((_, i) => (
+                        <div key={i} className="w-1 h-1 bg-primary rounded-sm" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-on-surface">{preset.name}</p>
+                    <p className="text-xs text-secondary">{preset.description}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
             <div className="flex justify-end">
               <button
                 type="button"
