@@ -252,19 +252,37 @@ export async function generatePatternPdf(
 
     // Draw seam line (dashed, gray) — only if enabled
     if (shape.seamLine) {
-      drawPolyline(page, shape.seamLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, scale, {
-        color: { r: 0.5, g: 0.5, b: 0.5 },
-        lineWidth: 0.5,
-        dashArray: [3, 3],
-        dashPhase: 0,
-      });
+      drawPolyline(
+        page,
+        shape.seamLine,
+        drawX,
+        drawY,
+        shape.seamBbox.minX,
+        shape.seamBbox.minY,
+        scale,
+        {
+          color: { r: 0.5, g: 0.5, b: 0.5 },
+          lineWidth: 0.5,
+          dashArray: [3, 3],
+          dashPhase: 0,
+        }
+      );
     }
 
     // Draw cut line (solid, black) — same origin as seam line
-    drawPolyline(page, shape.cutLine, drawX, drawY, shape.seamBbox.minX, shape.seamBbox.minY, scale, {
-      color: { r: 0, g: 0, b: 0 },
-      lineWidth: 1,
-    });
+    drawPolyline(
+      page,
+      shape.cutLine,
+      drawX,
+      drawY,
+      shape.seamBbox.minX,
+      shape.seamBbox.minY,
+      scale,
+      {
+        color: { r: 0, g: 0, b: 0 },
+        lineWidth: 1,
+      }
+    );
 
     // Shape label
     const pts = PDF_POINTS_PER_INCH;
@@ -305,19 +323,4 @@ export async function generatePatternPdf(
   }
 
   return pdfDoc.save();
-}
-
-/**
- * Helper to download a PDF blob.
- */
-export function downloadPdf(pdfBytes: Uint8Array, filename: string) {
-  const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }

@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { compressImageForUpload } from '@/lib/image-compression';
 import { uploadToS3 } from '@/lib/image-processing';
+import { useAuthStore } from '@/stores/authStore';
 
 interface UploadSheetProps {
   isOpen: boolean;
@@ -15,13 +16,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const isPro = useAuthStore((s) => s.isPro);
 
   if (!isOpen) return null;
-
-  function handleUploadFabric() {
-    onClose();
-    router.push('/dashboard?tab=fabrics&upload=true');
-  }
 
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -31,11 +28,8 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
     setUploadError(null);
 
     try {
-      // Step 1: Compress / convert the image client-side
-      const { blob, contentType, originalSize, compressedSize } =
-        await compressImageForUpload(file);
+      const { blob, contentType } = await compressImageForUpload(file);
 
-      // Step 2: Request a presigned upload URL from the API
       const presignedRes = await fetch('/api/upload/presigned-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,18 +48,29 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
       const presignedData = await presignedRes.json();
       const { uploadUrl, publicUrl } = presignedData.data;
 
-      // Step 3: Upload the compressed blob to S3
       await uploadToS3(uploadUrl, blob, contentType);
 
-      // Step 4: Navigate to the fabrics tab with the uploaded URL
       onClose();
       router.push(`/dashboard?tab=fabrics&uploaded=${encodeURIComponent(publicUrl)}`);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);
-      // Reset file input so the same file can be selected again
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  function handleUploadBlock() {
+    onClose();
+    router.push('/dashboard?tab=blocks&upload=true');
+  }
+
+  function handlePhotoToQuilt() {
+    onClose();
+    if (isPro) {
+      router.push('/dashboard?action=photo-to-pattern');
+    } else {
+      router.push('/dashboard?upgrade=photo-to-pattern');
     }
   }
 
@@ -86,6 +91,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface rounded-t-2xl pb-10 pt-3 shadow-elevation-4">
         <div className="w-10 h-1 rounded-full bg-outline-variant mx-auto mb-6" />
         <div className="px-6 space-y-3">
+          {/* Upload Fabric */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -118,6 +124,76 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               <p className="text-xs text-secondary mt-0.5">Add a fabric photo to your library</p>
             </div>
           </button>
+
+          {/* Upload Block */}
+          <button
+            type="button"
+            onClick={handleUploadBlock}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
+          >
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: 'var(--color-primary-golden-glow)' }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--color-primary-golden)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="8" height="8" rx="1" />
+                <rect x="13" y="3" width="8" height="8" rx="1" />
+                <rect x="3" y="13" width="8" height="8" rx="1" />
+                <rect x="13" y="13" width="8" height="8" rx="1" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-on-surface">Upload Block</p>
+              <p className="text-xs text-secondary mt-0.5">
+                Photograph a quilt block to add to your collection
+              </p>
+            </div>
+          </button>
+
+          {/* Photo to Quilt */}
+          <button
+            type="button"
+            onClick={handlePhotoToQuilt}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
+          >
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: 'var(--color-primary-golden-glow)' }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--color-primary-golden)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-on-surface">Photo to Quilt</p>
+              <p className="text-xs text-secondary mt-0.5">
+                {isPro
+                  ? 'Turn a photo into a quilt pattern'
+                  : 'Turn a photo into a quilt pattern (Pro)'}
+              </p>
+            </div>
+          </button>
+
+          {/* Share to Social */}
           <button
             type="button"
             onClick={handleShareToSocial}

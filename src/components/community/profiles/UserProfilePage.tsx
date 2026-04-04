@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useProfileStore } from '@/stores/profileStore';
 import { useAuthStore } from '@/stores/authStore';
 import { LikeButton } from '@/components/community/LikeButton';
+import { FollowButton } from '@/components/community/FollowButton';
+import { FollowListModal } from '@/components/community/FollowListModal';
 import { formatRelativeTime } from '@/lib/format-time';
 
 interface UserProfilePageProps {
@@ -114,6 +116,10 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
     useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
+  const [followListTab, setFollowListTab] = useState<'followers' | 'following'>('followers');
+  const [showFollowList, setShowFollowList] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     fetchProfile(username);
@@ -121,6 +127,15 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       useProfileStore.getState().reset();
     };
   }, [username, fetchProfile]);
+
+  // Sync follow counts from profile data
+  useEffect(() => {
+    if (profile) {
+      const p = profile as unknown as Record<string, unknown>;
+      setFollowerCount(typeof p.followerCount === 'number' ? p.followerCount : 0);
+      setFollowingCount(typeof p.followingCount === 'number' ? p.followingCount : 0);
+    }
+  }, [profile]);
 
   if (isLoading) {
     return (
@@ -173,7 +188,33 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               )}
             </div>
 
-            <p className="text-body-md text-secondary mb-3">@{profile.username}</p>
+            <p className="text-body-md text-secondary mb-2">@{profile.username}</p>
+
+            {/* Follow counts */}
+            <div className="flex items-center gap-4 mb-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setFollowListTab('followers');
+                  setShowFollowList(true);
+                }}
+                className="text-sm hover:underline"
+              >
+                <span className="font-semibold text-on-surface">{followerCount}</span>{' '}
+                <span className="text-secondary">followers</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFollowListTab('following');
+                  setShowFollowList(true);
+                }}
+                className="text-sm hover:underline"
+              >
+                <span className="font-semibold text-on-surface">{followingCount}</span>{' '}
+                <span className="text-secondary">following</span>
+              </button>
+            </div>
 
             {profile.bio && <p className="text-body-md text-secondary mb-3">{profile.bio}</p>}
 
@@ -186,8 +227,8 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
 
             <SocialLinks profile={profile} />
 
-            {isOwner && (
-              <div className="mt-4">
+            <div className="mt-4 flex items-center gap-3">
+              {isOwner ? (
                 <Link
                   href="/settings"
                   className="inline-flex items-center gap-2 rounded-lg border border-outline-variant px-4 py-2 text-body-sm font-medium text-on-surface hover:bg-surface-container-high transition-colors"
@@ -202,8 +243,18 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                   </svg>
                   Edit Profile
                 </Link>
-              </div>
-            )}
+              ) : currentUser ? (
+                <FollowButton
+                  username={profile.username}
+                  initialFollowing={
+                    !!(profile as unknown as Record<string, unknown>).isFollowedByCurrentUser
+                  }
+                  onToggle={(isFollowing) => {
+                    setFollowerCount((prev) => prev + (isFollowing ? 1 : -1));
+                  }}
+                />
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -274,6 +325,14 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       )}
 
       {activeTab === 'about' && <AboutTab profile={profile} />}
+
+      {/* Follow list modal */}
+      <FollowListModal
+        username={profile.username}
+        tab={followListTab}
+        isOpen={showFollowList}
+        onClose={() => setShowFollowList(false)}
+      />
     </div>
   );
 }

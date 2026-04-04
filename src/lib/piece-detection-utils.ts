@@ -37,6 +37,9 @@ import type {
   ContourHierarchy,
   DetectionOptions,
   QuiltDetectionConfig,
+  QuiltShapeType,
+  DetectedPieceWithEdgeInfo,
+  QuiltBoundary,
 } from './photo-pattern-types';
 import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-pattern-types';
 import { rgbToHex } from './color-math';
@@ -49,6 +52,19 @@ import {
 } from './constants';
 import * as ClipperLib from 'clipper-lib';
 import type { OpenCV, OpenCVMat, OpenCVMatVector } from '../types/opencv-js';
+import {
+  applyQuiltConfigToOptions,
+  getMinAreaRatioForPieceScale,
+  dynamicKernelSize,
+  getEffectiveDetectionOptions,
+  DEFAULT_WATERSHED_THRESHOLD,
+  DEFAULT_MIN_SOLIDITY,
+  DEFAULT_MAX_ASPECT_RATIO,
+  DEFAULT_SOBEL_THRESHOLD_MULTIPLIER,
+  DEFAULT_TOPSTITCHING_KERNEL_FACTOR,
+  DEFAULT_SHARPENING_INTENSITY,
+  DEFAULT_CLAHE_CLIP_LIMIT,
+} from './piece-detection-shared';
 
 /** Scale factor for Clipper-lib integer math */
 const CLIPPER_SCALE = 1000;
@@ -145,62 +161,6 @@ export function formatFraction(value: number, separator: string = ' '): string {
   }
 
   return `${whole}${separator}${numerator}/${denominator}`;
-}
-
-/** Calculate dynamic kernel size based on image width (Objective 4) */
-function dynamicKernelSize(imageWidth: number, factor: number = 0.005): number {
-  const size = Math.max(3, Math.round(imageWidth * factor));
-  return size % 2 === 0 ? size + 1 : size; // Ensure odd
-}
-
-/**
- * Applies quiltConfig "priors" to derive effective DetectionOptions.
- * Maps user-friendly scan settings to technical OpenCV parameters.
- */
-function applyQuiltConfigToOptions(
-  options: DetectionOptions,
-  quiltConfig: QuiltDetectionConfig
-): DetectionOptions {
-  const result = { ...options };
-
-  // hasApplique: Change contour retrieval mode from RETR_EXTERNAL to RETR_TREE
-  // This is handled in detectPieces by using detectNestedShapes
-  if (quiltConfig.hasApplique) {
-    result.detectNestedShapes = true;
-  }
-
-  // hasLowContrastSeams: Activate watershed segmentation
-  if (quiltConfig.hasLowContrastSeams) {
-    result.enableWatershed = true;
-    // More aggressive watershed for very low contrast
-    result.watershedDistanceThreshold = 3;
-  }
-
-  // hasHeavyTopstitching: Increase kernel size for morphological opening
-  if (quiltConfig.hasHeavyTopstitching) {
-    result.removeTopstitching = true;
-    // Double the kernel factor for aggressive thread removal
-    result.topstitchingKernelFactor = 0.004;
-  }
-
-  return result;
-}
-
-/**
- * Gets the minimum area ratio based on piece scale setting.
- * 'tiny' lowers threshold to catch small pieces.
- * 'large' raises threshold to filter noise.
- */
-function getMinAreaRatioForPieceScale(pieceScale: QuiltDetectionConfig['pieceScale']): number {
-  switch (pieceScale) {
-    case 'tiny':
-      return PHOTO_PATTERN_PIECE_MIN_AREA_RATIO * 0.4; // Lower threshold for tiny pieces
-    case 'large':
-      return PHOTO_PATTERN_PIECE_MIN_AREA_RATIO * 2.5; // Higher threshold for large pieces
-    case 'standard':
-    default:
-      return PHOTO_PATTERN_PIECE_MIN_AREA_RATIO;
-  }
 }
 
 // ============================================================================
@@ -1101,12 +1061,6 @@ function calculateBounds(contour: readonly Point2D[]): Rect {
 // ============================================================================
 // NON-RECTANGULAR QUILT SUPPORT
 // ============================================================================
-
-import type {
-  QuiltShapeType,
-  DetectedPieceWithEdgeInfo,
-  QuiltBoundary,
-} from './photo-pattern-types';
 
 /** Distance threshold for edge detection (in pixels) */
 const EDGE_DISTANCE_THRESHOLD = 10;

@@ -49,10 +49,10 @@ function SavedStripVertical() {
               height="32"
               patternUnits="userSpaceOnUse"
             >
-              <rect x="0" y="0" width="32" height="32" fill="#FFF9F2" />
+              <rect x="0" y="0" width="32" height="32" fill="var(--color-surface-container-lowest)" />
               <path
                 d="M16 28 C16 28 4 20 4 12 C4 6 10 4 16 10 C22 4 28 6 28 12 C28 20 16 28 16 28Z"
-                fill="#F43F5E"
+                fill="var(--color-primary)"
                 opacity="0.5"
               />
             </pattern>
@@ -66,14 +66,14 @@ function SavedStripVertical() {
         className="absolute left-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+            'repeating-linear-gradient(to bottom, var(--color-primary) 0px, var(--color-primary) 3px, transparent 3px, transparent 7px)',
         }}
       />
       <div
         className="absolute right-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+            'repeating-linear-gradient(to bottom, var(--color-primary) 0px, var(--color-primary) 3px, transparent 3px, transparent 7px)',
         }}
       />
 
@@ -88,7 +88,7 @@ function SavedStripVertical() {
         <div className="flex-1 flex items-center justify-center w-full">
           <div className="relative">
             {/* Warm rose glow */}
-            <div className="absolute inset-0 bg-rose-300/30 rounded-full blur-2xl scale-[1.8]" />
+            <div className="absolute inset-0 bg-primary/30 rounded-full blur-2xl scale-[1.8]" />
             {/* Icon - NO ring */}
             <div className="relative w-28 h-28 flex items-center justify-center">
               <img

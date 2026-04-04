@@ -7,9 +7,6 @@ interface GridRenderOptions {
   unitSystem: UnitSystem;
   quiltWidth: number;
   quiltHeight: number;
-  showPatternOverlay?: boolean;
-  layoutType?: string;
-  layoutCells?: Array<{ centerX: number; centerY: number; size: number; rotation: number }>;
 }
 
 const CORNER_MARK_LENGTH = 8;
@@ -86,37 +83,6 @@ function renderCornerMarks(
   ctx.stroke();
 }
 
-function renderPatternOverlay(
-  ctx: CanvasRenderingContext2D,
-  cells: Array<{ centerX: number; centerY: number; size: number; rotation: number }>,
-  zoom: number
-): void {
-  ctx.lineWidth = 1.5 / zoom;
-  ctx.setLineDash([6 / zoom, 4 / zoom]);
-
-  for (const cell of cells) {
-    const halfSize = cell.size / 2;
-
-    // Fill
-    ctx.fillStyle = 'rgba(100, 150, 255, 0.08)';
-    ctx.save();
-    ctx.translate(cell.centerX, cell.centerY);
-    ctx.rotate((cell.rotation * Math.PI) / 180);
-    ctx.fillRect(-halfSize, -halfSize, cell.size, cell.size);
-    ctx.restore();
-
-    // Border
-    ctx.strokeStyle = '#6496FF';
-    ctx.save();
-    ctx.translate(cell.centerX, cell.centerY);
-    ctx.rotate((cell.rotation * Math.PI) / 180);
-    ctx.strokeRect(-halfSize, -halfSize, cell.size, cell.size);
-    ctx.restore();
-  }
-
-  ctx.setLineDash([]);
-}
-
 export function renderGrid(
   gridEl: HTMLCanvasElement,
   fabricCanvas: { getZoom: () => number; viewportTransform: number[] },
@@ -175,16 +141,6 @@ export function renderGrid(
     zoom
   );
   renderCornerMarks(ctx, quiltWidthPx, quiltHeightPx, zoom);
-
-  // Pattern overlay
-  if (
-    options.showPatternOverlay &&
-    options.layoutType &&
-    options.layoutType !== 'free-form' &&
-    options.layoutCells
-  ) {
-    renderPatternOverlay(ctx, options.layoutCells, zoom);
-  }
 
   ctx.restore();
 }

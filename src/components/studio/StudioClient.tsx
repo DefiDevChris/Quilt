@@ -21,10 +21,10 @@ import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
-import { PatternOverlayPanel } from '@/components/studio/PatternOverlayPanel';
 
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
+import { ExportOptionsDialog } from '@/components/export/ExportOptionsDialog';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
@@ -34,6 +34,9 @@ import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
 import { saveProject } from '@/lib/save-project';
 
 import { HelpPanel } from '@/components/studio/HelpPanel';
+import { KeyboardShortcutsModal } from '@/components/studio/KeyboardShortcutsModal';
+import { TourOverlay } from '@/components/onboarding/TourOverlay';
+import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
@@ -190,14 +193,15 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isDraftingOpen, setIsDraftingOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
-  const [isPatternOverlayOpen, setIsPatternOverlayOpen] = useState(false);
 
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
+  const [isExportOptionsOpen, setIsExportOptionsOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
   const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
@@ -208,6 +212,21 @@ export function StudioClient({ projectId }: StudioClientProps) {
   // Cleanup expired temp projects on mount
   useEffect(() => {
     cleanupExpiredProjects();
+  }, []);
+
+  // ? key opens keyboard shortcuts modal
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        e.key === '?' &&
+        !['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)
+      ) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Migrate temp project to server when user upgrades to Pro
@@ -244,6 +263,8 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   useYardageCalculation();
   usePhotoPatternImport();
+
+  const { shouldShowTour, tourActive, startTour, completeTour, dismissTour } = useOnboardingTour();
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
@@ -382,7 +403,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
                 : setProUpgradeFeature('Photo to Pattern')
             }
             onOpenResize={() => setIsResizeOpen(true)}
-            onOpenPatternOverlay={() => setIsPatternOverlayOpen(true)}
           />
         )}
 
@@ -465,9 +485,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
           {isLayoutSettingsOpen && (
             <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
           )}
-          {isPatternOverlayOpen && (
-            <PatternOverlayPanel onClose={() => setIsPatternOverlayOpen(false)} />
-          )}
 
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
@@ -536,11 +553,57 @@ export function StudioClient({ projectId }: StudioClientProps) {
       {/* Help panel (opened from top bar) */}
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
 
+      {/* Keyboard shortcuts modal (? key) */}
+      <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
+
+      {/* Unified export options dialog */}
+      <ExportOptionsDialog
+        isOpen={isExportOptionsOpen}
+        onClose={() => setIsExportOptionsOpen(false)}
+        onOpenPdfExport={() => setIsPdfExportOpen(true)}
+        onOpenImageExport={() => setIsImageExportOpen(true)}
+      />
+
       {/* History panel (opened from top bar) */}
       <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
+
+      {/* Onboarding: start prompt for new users */}
+      {shouldShowTour && !tourActive && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="bg-surface rounded-xl shadow-elevation-3 p-4 max-w-xs border border-outline-variant/20">
+            <p className="text-sm font-medium text-on-surface mb-1">New here?</p>
+            <p className="text-xs text-secondary mb-3">
+              Take a quick tour to learn your way around the studio.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={dismissTour}
+                className="px-3 py-1.5 text-xs text-secondary hover:text-on-surface transition-colors"
+              >
+                No thanks
+              </button>
+              <button
+                type="button"
+                onClick={startTour}
+                className="px-4 py-1.5 text-xs font-semibold rounded-md hover:opacity-90 transition-opacity"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'var(--color-primary-on)',
+                }}
+              >
+                Show me around
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding: guided tour overlay */}
+      {tourActive && <TourOverlay onComplete={completeTour} onDismiss={dismissTour} />}
     </div>
   );
 }

@@ -316,6 +316,8 @@ export function SocialQuickViewModal() {
     <div
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-6 bg-black/60 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && close()}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         className="relative w-full sm:max-w-5xl glass-panel-social rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col shadow-elevation-4"

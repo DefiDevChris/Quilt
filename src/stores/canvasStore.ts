@@ -72,8 +72,6 @@ interface CanvasStoreState {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >;
   clipboard: unknown[];
-  showPatternOverlay: boolean;
-  autoAlignToPattern: boolean;
   referenceImageOpacity: number;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
@@ -107,8 +105,6 @@ interface CanvasStoreState {
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
-  setShowPatternOverlay: (show: boolean) => void;
-  setAutoAlignToPattern: (auto: boolean) => void;
   setReferenceImageOpacity: (opacity: number) => void;
   reset: () => void;
 }
@@ -150,8 +146,6 @@ const INITIAL_STATE = {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >,
   clipboard: [] as unknown[],
-  showPatternOverlay: true,
-  autoAlignToPattern: true,
   referenceImageOpacity: 0.5,
 };
 
@@ -295,10 +289,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   },
 
   setClipboard: (clipboard) => set({ clipboard }),
-
-  setShowPatternOverlay: (showPatternOverlay) => set({ showPatternOverlay }),
-
-  setAutoAlignToPattern: (autoAlignToPattern) => set({ autoAlignToPattern }),
 
   setReferenceImageOpacity: (referenceImageOpacity) => set({ referenceImageOpacity }),
 

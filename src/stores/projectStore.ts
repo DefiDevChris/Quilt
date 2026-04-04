@@ -155,6 +155,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   updateWorktableCanvas: (id, canvasData) =>
     set((state) => ({
       worktables: state.worktables.map((w) => (w.id === id ? { ...w, canvasData } : w)),
+      isDirty: true,
     })),
   reset: () =>
     set({

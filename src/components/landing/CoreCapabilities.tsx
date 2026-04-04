@@ -234,7 +234,7 @@ export default function CoreCapabilities() {
 
             <ul className="space-y-4 mb-10">
               <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
-              <CheckItem>Fussy Cut previewing and precision fabric positioning</CheckItem>
+              <CheckItem>Fabric pattern adjustments and precision positioning</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
               <CheckItem>BlockBuilder for drafting custom blocks by seam line</CheckItem>
               <CheckItem>Applique layering and one-click ColorTheme recoloring</CheckItem>

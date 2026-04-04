@@ -3,7 +3,7 @@ import {
   saveProject,
   cancelSaveProject,
   cancelAllSaveProjects,
-  type SaveProjectOptions
+  type SaveProjectOptions,
 } from '@/lib/save-project';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -12,7 +12,7 @@ import { saveTempProject } from '@/lib/temp-project-storage';
 
 // Mock global fetch
 const mockFetch = vi.fn().mockImplementation(async (url, options) => {
-  await new Promise(resolve => setTimeout(resolve, 10));
+  await new Promise((resolve) => setTimeout(resolve, 10));
   if (options?.signal?.aborted) {
     const error = new Error('Aborted');
     error.name = 'AbortError';
@@ -47,11 +47,11 @@ describe('save-project', () => {
     });
     useProjectStore.getState().setSaveStatus('saved');
     useProjectStore.getState().setDirty(false);
-    
+
     useCanvasStore.getState().resetHistory();
     useCanvasStore.getState().setUnitSystem('imperial');
     useCanvasStore.getState().setGridSettings({ enabled: true, size: 1, snapToGrid: true });
-    
+
     // Mock auth as pro user so server save path is taken
     vi.spyOn(useAuthStore, 'getState').mockReturnValue({
       isPro: true,
@@ -60,10 +60,9 @@ describe('save-project', () => {
       isAdmin: false,
       isPrivate: false,
       setUser: vi.fn(),
-      setLoading: vi.fn(),
       reset: vi.fn(),
     } as unknown as ReturnType<typeof useAuthStore.getState>);
-    
+
     // Reset fetch mock
     mockFetch.mockReset();
   });
@@ -86,9 +85,9 @@ describe('save-project', () => {
     it('sets status to saved on success', async () => {
       mockFetch.mockResolvedValueOnce({ ok: true });
 
-      await saveProject({ 
-        projectId: 'test-project', 
-        fabricCanvas: mockFabricCanvas 
+      await saveProject({
+        projectId: 'test-project',
+        fabricCanvas: mockFabricCanvas,
       });
 
       expect(useProjectStore.getState().saveStatus).toBe('saved');
@@ -99,9 +98,9 @@ describe('save-project', () => {
     it('sets status to error on failure', async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
-      await saveProject({ 
-        projectId: 'test-project', 
-        fabricCanvas: mockFabricCanvas 
+      await saveProject({
+        projectId: 'test-project',
+        fabricCanvas: mockFabricCanvas,
       });
 
       expect(useProjectStore.getState().saveStatus).toBe('error');
@@ -110,9 +109,9 @@ describe('save-project', () => {
     it('calls fetch with correct parameters', async () => {
       mockFetch.mockResolvedValueOnce({ ok: true });
 
-      await saveProject({ 
-        projectId: 'test-project', 
-        fabricCanvas: mockFabricCanvas 
+      await saveProject({
+        projectId: 'test-project',
+        fabricCanvas: mockFabricCanvas,
       });
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -136,29 +135,26 @@ describe('save-project', () => {
       // Test the exponential backoff formula directly
       const RETRY_DELAY_BASE_MS = 2000;
       const RETRY_DELAY_MAX_MS = 30000;
-      
+
       const getRetryDelayMs = (retryCount: number): number => {
-        return Math.min(
-          RETRY_DELAY_BASE_MS * Math.pow(2, retryCount),
-          RETRY_DELAY_MAX_MS
-        );
+        return Math.min(RETRY_DELAY_BASE_MS * Math.pow(2, retryCount), RETRY_DELAY_MAX_MS);
       };
-      
+
       // retryCount=0: 2000 * 1 = 2000ms
       expect(getRetryDelayMs(0)).toBe(2000);
-      
+
       // retryCount=1: 2000 * 2 = 4000ms
       expect(getRetryDelayMs(1)).toBe(4000);
-      
+
       // retryCount=2: 2000 * 4 = 8000ms
       expect(getRetryDelayMs(2)).toBe(8000);
-      
+
       // retryCount=3: 2000 * 8 = 16000ms
       expect(getRetryDelayMs(3)).toBe(16000);
-      
+
       // retryCount=4: 2000 * 16 = 32000ms, capped at 30000ms
       expect(getRetryDelayMs(4)).toBe(30000);
-      
+
       // retryCount=5: would be 64000ms, capped at 30000ms
       expect(getRetryDelayMs(5)).toBe(30000);
     });
@@ -168,23 +164,23 @@ describe('save-project', () => {
     it('auto-save yields to in-flight manual save', async () => {
       // Use fake timers for this test
       vi.useFakeTimers({ shouldAdvanceTime: true });
-      
-      mockFetch.mockImplementation(() => 
-        new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 1000))
+
+      mockFetch.mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 1000))
       );
 
       // Start manual save
-      const manualSave = saveProject({ 
-        projectId: 'test-project', 
+      const manualSave = saveProject({
+        projectId: 'test-project',
         fabricCanvas: mockFabricCanvas,
-        source: 'manual'
+        source: 'manual',
       });
 
       // Try auto-save while manual is in-flight
-      const autoSave = saveProject({ 
-        projectId: 'test-project', 
+      const autoSave = saveProject({
+        projectId: 'test-project',
         fabricCanvas: mockFabricCanvas,
-        source: 'auto'
+        source: 'auto',
       });
 
       // Advance time to let manual save complete
@@ -202,23 +198,23 @@ describe('save-project', () => {
 
     it('manual save cancels auto-save', async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
-      
-      mockFetch.mockImplementation(() => 
-        new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 1000))
+
+      mockFetch.mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 1000))
       );
 
       // Start auto-save
-      const autoSave = saveProject({ 
-        projectId: 'test-project', 
+      const autoSave = saveProject({
+        projectId: 'test-project',
         fabricCanvas: mockFabricCanvas,
-        source: 'auto'
+        source: 'auto',
       });
 
       // Start manual save (should cancel auto)
-      const manualSave = saveProject({ 
-        projectId: 'test-project', 
+      const manualSave = saveProject({
+        projectId: 'test-project',
         fabricCanvas: mockFabricCanvas,
-        source: 'manual'
+        source: 'manual',
       });
 
       await vi.advanceTimersByTimeAsync(1000);
@@ -239,7 +235,11 @@ describe('save-project', () => {
     });
 
     it('cancels active controllers', async () => {
-      const savePromise = saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas, source: 'manual' });
+      const savePromise = saveProject({
+        projectId: 'test-project',
+        fabricCanvas: mockFabricCanvas,
+        source: 'manual',
+      });
       cancelSaveProject('test-project');
       await expect(savePromise).resolves.toBeUndefined();
       expect(abortSpy).toHaveBeenCalledTimes(1);
@@ -254,8 +254,16 @@ describe('save-project', () => {
     });
 
     it('cancels all active controllers', async () => {
-      const manualPromise = saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas, source: 'manual' });
-      const autoPromise = saveProject({ projectId: 'test-project-2', fabricCanvas: mockFabricCanvas, source: 'auto' });
+      const manualPromise = saveProject({
+        projectId: 'test-project',
+        fabricCanvas: mockFabricCanvas,
+        source: 'manual',
+      });
+      const autoPromise = saveProject({
+        projectId: 'test-project-2',
+        fabricCanvas: mockFabricCanvas,
+        source: 'auto',
+      });
       cancelAllSaveProjects();
       await expect(manualPromise).resolves.toBeUndefined();
       await expect(autoPromise).resolves.toBeUndefined();
@@ -272,15 +280,17 @@ describe('save-project', () => {
         isAdmin: false,
         isPrivate: false,
         setUser: vi.fn(),
-        setLoading: vi.fn(),
         reset: vi.fn(),
       });
       await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
-      expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith('test-project', expect.objectContaining({
-        canvasData: { version: '1.0', objects: [] },
-        unitSystem: 'imperial',
-        gridSettings: { enabled: true, size: 1, snapToGrid: true },
-      }));
+      expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith(
+        'test-project',
+        expect.objectContaining({
+          canvasData: { version: '1.0', objects: [] },
+          unitSystem: 'imperial',
+          gridSettings: { enabled: true, size: 1, snapToGrid: true },
+        })
+      );
       expect(useProjectStore.getState().saveStatus).toBe('saved');
       expect(mockFetch).not.toHaveBeenCalled();
     });

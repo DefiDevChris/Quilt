@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, desc, count, and, sql, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { userProfiles, users, socialPosts, likes } from '@/db/schema';
+import { userProfiles, users, socialPosts, likes, follows } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { getSession } from '@/lib/cognito-session';
@@ -90,6 +90,25 @@ export async function GET(
 
     const total = totalRow?.count ?? 0;
 
+    // Follow counts + isFollowedByCurrentUser
+    const [followerCountRows, followingCountRows, isFollowedRows] = await Promise.all([
+      db.select({ count: count() }).from(follows).where(eq(follows.followingId, profile.userId)),
+      db.select({ count: count() }).from(follows).where(eq(follows.followerId, profile.userId)),
+      currentUserId && currentUserId !== profile.userId
+        ? db
+            .select({ followerId: follows.followerId })
+            .from(follows)
+            .where(
+              and(eq(follows.followerId, currentUserId), eq(follows.followingId, profile.userId))
+            )
+            .limit(1)
+        : Promise.resolve([]),
+    ]);
+
+    const followerCount = followerCountRows[0]?.count ?? 0;
+    const followingCount = followingCountRows[0]?.count ?? 0;
+    const isFollowedByCurrentUser = isFollowedRows.length > 0;
+
     let likedPostIds = new Set<string>();
     if (currentUserId && postRows.length > 0) {
       const postIds = postRows.map((p) => p.id);
@@ -126,6 +145,9 @@ export async function GET(
           isPro: checkIsPro((profile.role ?? 'free') as UserRole),
           privacyMode: profile.privacyMode ?? 'public',
           createdAt: profile.createdAt,
+          followerCount,
+          followingCount,
+          isFollowedByCurrentUser,
         },
         posts,
         pagination: {

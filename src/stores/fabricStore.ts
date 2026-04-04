@@ -179,8 +179,8 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
     set({ selectedFabricId, selectedFabricUrl });
   },
 
-  setWhereUsedFabric: (whereUsedFabricId, whereUsedFabricUrl) => {
-    set({ whereUsedFabricId, whereUsedFabricUrl });
+  setWhereUsedFabric: (fabricId, fabricUrl) => {
+    set({ whereUsedFabricId: fabricId, whereUsedFabricUrl: fabricUrl });
   },
 
   reset: () => {

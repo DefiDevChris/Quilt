@@ -128,7 +128,7 @@ src/
   - OpenCV runs AFTER perspective correction in the processing step
 - Studio is desktop-only (`StudioGate` redirects mobile users)
 - Mobile shell: Home, Upload FAB, Profile/Sign In — 3 items only
-- SVG overlays live in `/quilt_blocks/` and `/quilt_patterns/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
+- SVG overlays live in `/quilt_blocks/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
 - Onboarding uses simple localStorage flags (no complex tour system)
 
 ### Block Creation
@@ -171,7 +171,10 @@ const res = await fetch('/api/blocks', {
     category: category.trim() || 'Custom',
     svgData,
     fabricJsData,
-    tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+    tags: tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
     photoUrl: imageUrl, // Only for photo blocks
   }),
 });

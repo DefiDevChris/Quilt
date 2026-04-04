@@ -52,6 +52,12 @@ export default function PublicNav() {
             Blog
           </Link>
           <Link
+            href="/help"
+            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+          >
+            Help
+          </Link>
+          <Link
             href="/auth/signup"
             className="px-5 py-2 bg-warm-peach text-warm-text rounded-full font-semibold hover:bg-warm-peach-dark transition-colors whitespace-nowrap"
           >
@@ -112,6 +118,13 @@ export default function PublicNav() {
             onClick={() => setMenuOpen(false)}
           >
             Blog
+          </Link>
+          <Link
+            href="/help"
+            className="block text-warm-text-secondary font-medium py-2"
+            onClick={() => setMenuOpen(false)}
+          >
+            Help
           </Link>
           <Link
             href="/auth/signup"

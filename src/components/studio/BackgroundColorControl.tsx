@@ -16,7 +16,7 @@ export function BackgroundColorControl() {
   const setBackgroundColor = useCanvasStore((s) => s.setBackgroundColor);
 
   // Only show in No Layout mode
-  if (layoutType !== 'none') return null;
+  if (layoutType !== 'free-form') return null;
 
   return (
     <div className="flex items-center gap-2 px-3 py-2 bg-surface-container rounded-lg border border-outline-variant/20">

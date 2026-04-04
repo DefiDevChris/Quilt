@@ -175,5 +175,5 @@ export function useYardageCalculation() {
         clearTimeout(recalcTimerRef.current);
       }
     };
-  }, [fabricCanvas, isPanelOpen, wof, wasteMargin, borders, setResults]);
+  }, [fabricCanvas, isPanelOpen, wof, wasteMargin, borders]);
 }

@@ -101,8 +101,8 @@ export function SocialLayout({
   return (
     <div className="min-h-screen bg-surface relative overflow-hidden font-sans selection:bg-primary-container selection:text-primary-dark">
       {/* Background Orbs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-rose-200/50 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-orange-200/50 rounded-full blur-[140px] pointer-events-none" />
+      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-primary/30 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-primary-golden/30 rounded-full blur-[140px] pointer-events-none" />
       <div className="fixed top-[20%] left-[30%] w-[40vw] h-[40vw] bg-white/60 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}

@@ -131,13 +131,6 @@ test.describe('Studio Action Buttons', () => {
     }
   });
 
-  test('pattern overlay button', async ({ page }) => {
-    const overlayBtn = page.getByRole('button', { name: /overlay/i });
-    if (await overlayBtn.isVisible()) {
-      await overlayBtn.click();
-    }
-  });
-
   test('yardage button', async ({ page }) => {
     const yardageBtn = page.getByRole('button', { name: /yardage/i });
     if (await yardageBtn.isVisible()) {

@@ -103,7 +103,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 'Export Print-Ready PDF Patterns (1:1 Scale)',
                 'Yardage Estimator & Cutting Charts',
                 'FPP Templates with seam allowances',
-                'Fabric Calibration & Fussy Cutting',
+                'Fabric Calibration & Pattern Adjustments',
                 'Post designs to Social',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-start gap-3">

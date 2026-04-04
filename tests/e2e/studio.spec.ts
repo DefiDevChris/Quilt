@@ -93,14 +93,6 @@ test.describe('Canvas Design Tools', () => {
     await yardageButton.click();
     await expect(page.getByText(/fabric usage/i)).toBeVisible();
   });
-
-  test.skip('pattern overlay selector opens', async ({ page }) => {
-    // Requires auth setup
-    await page.goto('/studio/test-project-id');
-    const overlayButton = page.getByRole('button', { name: /overlay/i });
-    await overlayButton.click();
-    await expect(page.getByText(/pattern/i)).toBeVisible();
-  });
 });
 
 test.describe('Canvas Design Tools', () => {
@@ -269,21 +261,6 @@ test.describe('Block and Pattern Tools', () => {
 
     if (await blockElement.isVisible()) {
       await blockElement.dragTo(canvas, { targetPosition: { x: 150, y: 150 } });
-    }
-  });
-
-  test('pattern overlay toggles correctly', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/studio/test-project');
-
-    const overlayButton = page.getByRole('button', { name: /pattern.*overlay|grid/i }).first();
-    if (await overlayButton.isVisible()) {
-      await overlayButton.click();
-
-      // Pattern overlay should be visible on canvas
-      const overlayElement = page.locator('[data-overlay="pattern"]').first();
-      await expect(overlayElement).toBeVisible();
     }
   });
 

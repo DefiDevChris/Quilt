@@ -14,7 +14,6 @@ export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
   onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
-  onOpenPatternOverlay?: () => void;
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
@@ -208,7 +207,15 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isActive: () => layoutType === 'none',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" />
+          <rect
+            x="3"
+            y="3"
+            width="14"
+            height="14"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            fill="none"
+          />
         </svg>
       ),
     },
@@ -388,92 +395,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <circle cx="6" cy="14" r="1.5" fill="currentColor" />
           <circle cx="14" cy="14" r="1.5" fill="currentColor" />
           <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
-        </svg>
-      ),
-    },
-    {
-      id: 'pattern-overlay',
-      label: 'Pattern Overlay',
-      description: 'Show layout cell boundaries and enable auto-align to cells',
-      mascot: '/mascots&avatars/corgi17.png',
-      group: 'view-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenPatternOverlay,
-      isActive: () => useCanvasStore.getState().showPatternOverlay,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect
-            x="3"
-            y="3"
-            width="5"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="9"
-            y="3"
-            width="5"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="15"
-            y="3"
-            width="2"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="3"
-            y="9"
-            width="5"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="9"
-            y="9"
-            width="5"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="15"
-            y="9"
-            width="2"
-            height="5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="3"
-            y="15"
-            width="5"
-            height="2"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="9"
-            y="15"
-            width="5"
-            height="2"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
         </svg>
       ),
     },
