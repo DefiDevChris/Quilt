@@ -2,73 +2,59 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
+import { useCommunityStore } from '@/stores/communityStore';
+import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Loader2 } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
 import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
 import { ReportModal } from './ReportModal';
+import { ProjectCard } from '@/components/projects/ProjectCard';
 
-interface CommunityPost {
-  id: string;
-  title: string;
-  description: string | null;
-  thumbnailUrl: string;
-  likeCount: number;
-  commentCount: number;
-  category: string;
-  createdAt: string;
-  creatorName: string;
-  creatorUsername: string | null;
-  creatorAvatarUrl: string | null;
-  isLikedByUser: boolean;
-  templateId: string | null;
-}
+// We now import CommunityPost from the store to ensure type matching
+import type { CommunityPost } from '@/stores/communityStore';
 
 export function FeedContent() {
   const user = useAuthStore((s) => s.user);
-  const [posts, setPosts] = useState<CommunityPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      params.set('tab', 'discover');
-      params.set('sort', 'newest');
-      params.set('page', '1');
-      params.set('limit', '24');
+  // Use community store for state
+  const { posts, isLoading, error, fetchPosts, loadMore, page, totalPages, reset } = useCommunityStore();
 
-      const res = await fetch(`/api/community?${params.toString()}`);
-      const json = await res.json();
-
-      if (!res.ok) {
-        throw new Error(json.error || 'Failed to load posts');
-      }
-
-      setPosts(json.data?.posts || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load community feed');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Setup intersection observer for infinite scroll
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '400px',
+  });
 
   useEffect(() => {
+    // Initial fetch
     fetchPosts();
-  }, [fetchPosts]);
+    return () => reset();
+  }, [fetchPosts, reset]);
+
+  useEffect(() => {
+    // Load more when scrolled to bottom
+    if (inView && !isLoading && page < totalPages) {
+      loadMore();
+    }
+  }, [inView, isLoading, page, totalPages, loadMore]);
+
+  const handlePostCreated = useCallback(() => {
+    // Refresh feed when a new post is created
+    reset();
+    fetchPosts();
+  }, [reset, fetchPosts]);
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Create Post Composer */}
-      <CreatePostComposer onSuccess={fetchPosts} />
+      <CreatePostComposer onSuccess={handlePostCreated} />
 
-      {/* Loading State */}
-      {loading && (
+      {/* Initial Loading State */}
+      {isLoading && page === 1 && (
         <div className="space-y-8">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="glass-panel rounded-[2rem] p-6 animate-pulse">
@@ -86,7 +72,7 @@ export function FeedContent() {
       )}
 
       {/* Error State */}
-      {!loading && error && (
+      {!isLoading && error && posts.length === 0 && (
         <div className="glass-panel rounded-[2rem] p-10 text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
             <svg
@@ -114,7 +100,7 @@ export function FeedContent() {
       )}
 
       {/* Empty State */}
-      {!loading && !error && posts.length === 0 && (
+      {!isLoading && !error && posts.length === 0 && (
         <div className="glass-panel rounded-[2rem] p-10 text-center">
           <div className="w-24 h-24 mx-auto mb-6">
             <Mascot pose="sitting" size="lg" />
@@ -141,18 +127,36 @@ export function FeedContent() {
       )}
 
       {/* Posts */}
-      {!loading && !error && posts.length > 0 && (
+      {posts.length > 0 && (
         <div className="space-y-6">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
+
+          {/* Infinite Scroll trigger and Loading indicator */}
+          {page < totalPages && (
+            <div ref={ref} className="py-8 flex justify-center">
+              {isLoading && (
+                <div className="flex items-center gap-2 text-secondary">
+                  <Loader2 className="animate-spin" size={20} />
+                  <span className="font-medium text-sm">Loading more designs...</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!isLoading && page >= totalPages && posts.length > 0 && (
+            <div className="py-8 text-center text-secondary font-medium">
+              You've reached the end of the feed!
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function PostCard({ post }: { post: CommunityPost }) {
+function PostCard({ post }: { post: CommunityPost & { templateId?: string | null } }) {
   const { open } = useSocialQuickView();
   const user = useAuthStore((s) => s.user);
   const [liked, setLiked] = useState(post.isLikedByUser);
@@ -253,7 +257,7 @@ function PostCard({ post }: { post: CommunityPost }) {
       </p>
 
       {/* Clicking the image opens the quick-view modal */}
-      {post.thumbnailUrl && (
+      {post.thumbnailUrl && !post.projectId && (
         <button
           onClick={openModal}
           className="w-full rounded-2xl overflow-hidden shadow-elevation-1 border border-white/50 mb-3 block cursor-zoom-in"
@@ -264,6 +268,21 @@ function PostCard({ post }: { post: CommunityPost }) {
             className="w-full h-auto max-h-96 object-cover"
           />
         </button>
+      )}
+
+      {/* Attached project inline render */}
+      {post.projectId && post.projectName && (
+        <div className="mb-4">
+          <ProjectCard
+            id={post.projectId}
+            name={post.projectName}
+            thumbnailUrl={post.projectThumbnailUrl || post.thumbnailUrl}
+            unitSystem="imperial"
+            updatedAt={post.createdAt}
+            onDelete={() => {}}
+            onRename={() => {}}
+          />
+        </div>
       )}
 
       <div className="flex gap-2 border-t border-white/40 pt-4">
