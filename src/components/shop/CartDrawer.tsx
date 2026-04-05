@@ -6,11 +6,11 @@ import { isShopifyEnabled } from '@/lib/shopify';
 
 /**
  * CartDrawer Component
- * 
+ *
  * A slide-out drawer that displays the current cart contents.
  * Reads from the cartStore and provides a "Proceed to Checkout" button
  * that redirects to the Shopify checkout URL.
- * 
+ *
  * Feature-flagged behind NEXT_PUBLIC_ENABLE_SHOP
  */
 export function CartDrawer() {
@@ -98,9 +98,7 @@ export function CartDrawer() {
               {items.length === 0 ? (
                 <div className="text-center py-12 text-secondary">
                   <p className="text-lg mb-2">Your cart is empty</p>
-                  <p className="text-sm">
-                    Add fabrics from the Yardage Panel to get started.
-                  </p>
+                  <p className="text-sm">Add fabrics from the Yardage Panel to get started.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -186,7 +184,7 @@ function CartItemCard({
   const itemTotal = ((item.pricePerYard * item.quantityInYards) / 100).toFixed(2);
 
   return (
-    <div className="flex gap-3 p-3 bg-background rounded-lg border border-outline-variant">
+    <div className="relative flex gap-3 p-3 bg-background rounded-lg border border-outline-variant">
       {/* Fabric Image */}
       <div className="w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-surface">
         {item.fabricImageUrl ? (
@@ -238,7 +236,12 @@ function CartItemCard({
         title="Remove item"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
 
