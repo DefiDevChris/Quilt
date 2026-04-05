@@ -1,6 +1,7 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const userRoleEnum = pgEnum('user_role', ['free', 'pro', 'admin']);
+export const userStatusEnum = pgEnum('user_status', ['active', 'suspended', 'banned']);
 export const unitSystemEnum = pgEnum('unit_system', ['imperial', 'metric']);
 export const paperSizeEnum = pgEnum('paper_size', ['letter', 'a4']);
 export const subscriptionPlanEnum = pgEnum('subscription_plan', ['free', 'pro']);
