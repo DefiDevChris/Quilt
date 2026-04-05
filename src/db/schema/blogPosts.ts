@@ -1,6 +1,6 @@
 import { pgTable, uuid, varchar, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core';
 import { users } from './users';
-import { blogPostStatusEnum, blogPostCategoryEnum } from './enums';
+import { blogPostStatusEnum, blogPostCategoryEnum, blogPostLayoutEnum } from './enums';
 
 export const blogPosts = pgTable(
   'blog_posts',
@@ -17,6 +17,7 @@ export const blogPosts = pgTable(
     category: blogPostCategoryEnum('category').notNull(),
     tags: text('tags').array().notNull().default([]),
     status: blogPostStatusEnum('status').notNull().default('draft'),
+    layout: blogPostLayoutEnum('layout').notNull().default('standard'),
     publishedAt: timestamp('publishedAt', { mode: 'date', withTimezone: true }),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })

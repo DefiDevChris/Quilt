@@ -30,6 +30,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
 
   const [activeMarks, setActiveMarks] = useState<Set<string>>(new Set());
   const [blockType, setBlockType] = useState<string>('paragraph');
+  const [selectedImage, setSelectedImage] = useState<HTMLElement | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
   const toggleMark = useCallback((markType: string) => {
@@ -104,7 +105,11 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
       case 'img':
         return {
           type: 'image',
-          attrs: { src: el.getAttribute('src') || '', alt: el.getAttribute('alt') || '' },
+          attrs: { 
+            src: el.getAttribute('src') || '', 
+            alt: el.getAttribute('alt') || '',
+            align: (el.getAttribute('data-align') as 'left' | 'right' | 'center' | 'full') || 'center'
+          },
         };
     }
 
@@ -142,6 +147,36 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
       execCommand('createLink', url);
     }
   }, [execCommand]);
+
+  const setImageAlignment = useCallback((align: 'left' | 'right' | 'center' | 'full') => {
+    if (!selectedImage && editorRef.current) {
+      // If no image selected, try to find the clicked image in the selection
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const img = range.startContainer.nodeType === Node.ELEMENT_NODE 
+          ? (range.startContainer as HTMLElement).querySelector('img')
+          : (range.startContainer.parentElement?.closest('img') || null);
+        if (img) {
+          setSelectedImage(img as HTMLElement);
+        }
+      }
+    }
+    
+    if (selectedImage) {
+      selectedImage.setAttribute('data-align', align);
+      handleInput();
+      setSelectedImage(null);
+    } else if (editorRef.current) {
+      // Apply to the last inserted image
+      const images = editorRef.current.querySelectorAll('img');
+      if (images.length > 0) {
+        const lastImg = images[images.length - 1];
+        lastImg.setAttribute('data-align', align);
+        handleInput();
+      }
+    }
+  }, [selectedImage, handleInput]);
 
   return (
     <div className="space-y-3">
@@ -240,6 +275,42 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
 
         <div className="w-px h-6 bg-outline-variant mx-1" />
 
+        {/* Image Alignment */}
+        <button
+          type="button"
+          onClick={() => setImageAlignment('left')}
+          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          title="Float Left"
+        >
+          ⬅️ Left
+        </button>
+        <button
+          type="button"
+          onClick={() => setImageAlignment('center')}
+          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          title="Center"
+        >
+          ↔️ Center
+        </button>
+        <button
+          type="button"
+          onClick={() => setImageAlignment('right')}
+          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          title="Float Right"
+        >
+          ➡️ Right
+        </button>
+        <button
+          type="button"
+          onClick={() => setImageAlignment('full')}
+          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          title="Full Width"
+        >
+          ⤡ Full
+        </button>
+
+        <div className="w-px h-6 bg-outline-variant mx-1" />
+
         {/* Undo/Redo */}
         <button
           type="button"
@@ -320,7 +391,8 @@ function nodeToHtml(node: TiptapNode): string {
     case 'image':
       const src = (node.attrs?.src as string) || '';
       const alt = (node.attrs?.alt as string) || '';
-      return `<img src="${src}" alt="${alt}" />`;
+      const align = (node.attrs?.align as string) || 'center';
+      return `<img src="${src}" alt="${alt}" data-align="${align}" />`;
     case 'horizontalRule': return `<hr />`;
     default: return children;
   }
