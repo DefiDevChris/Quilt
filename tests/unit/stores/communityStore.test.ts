@@ -33,8 +33,7 @@ function resetStore() {
     sort: 'newest',
     tab: 'discover',
     category: undefined,
-    page: 1,
-    totalPages: 1,
+    hasNextPage: false,
     nextCursor: null,
     isLoading: false,
     error: null,
@@ -69,25 +68,26 @@ describe('communityStore', () => {
     expect(state.posts).toEqual([]);
     expect(state.search).toBe('');
     expect(state.sort).toBe('newest');
-    expect(state.page).toBe(1);
-    expect(state.totalPages).toBe(1);
+    expect(state.hasNextPage).toBe(false);
     expect(state.nextCursor).toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
   });
 
-  it('setSearch resets page to 1 and updates search', () => {
-    useCommunityStore.setState({ page: 3 });
+  it('setSearch resets cursor and updates search', () => {
+    useCommunityStore.setState({ hasNextPage: true, nextCursor: 'abc' });
     useCommunityStore.getState().setSearch('star quilt');
     expect(useCommunityStore.getState().search).toBe('star quilt');
-    expect(useCommunityStore.getState().page).toBe(1);
+    expect(useCommunityStore.getState().hasNextPage).toBe(false);
+    expect(useCommunityStore.getState().nextCursor).toBeNull();
   });
 
-  it('setSort resets page to 1 and updates sort', () => {
-    useCommunityStore.setState({ page: 5 });
+  it('setSort resets cursor and updates sort', () => {
+    useCommunityStore.setState({ hasNextPage: true, nextCursor: 'abc' });
     useCommunityStore.getState().setSort('popular');
     expect(useCommunityStore.getState().sort).toBe('popular');
-    expect(useCommunityStore.getState().page).toBe(1);
+    expect(useCommunityStore.getState().hasNextPage).toBe(false);
+    expect(useCommunityStore.getState().nextCursor).toBeNull();
   });
 
   it('initializes tab and category with defaults', () => {
@@ -96,18 +96,20 @@ describe('communityStore', () => {
     expect(state.category).toBeUndefined();
   });
 
-  it('setTab resets page to 1 and updates tab', () => {
-    useCommunityStore.setState({ page: 3 });
+  it('setTab resets cursor and updates tab', () => {
+    useCommunityStore.setState({ hasNextPage: true, nextCursor: 'abc' });
     useCommunityStore.getState().setTab('discover');
     expect(useCommunityStore.getState().tab).toBe('discover');
-    expect(useCommunityStore.getState().page).toBe(1);
+    expect(useCommunityStore.getState().hasNextPage).toBe(false);
+    expect(useCommunityStore.getState().nextCursor).toBeNull();
   });
 
-  it('setCategory resets page to 1 and updates category', () => {
-    useCommunityStore.setState({ page: 4 });
+  it('setCategory resets cursor and updates category', () => {
+    useCommunityStore.setState({ hasNextPage: true, nextCursor: 'abc' });
     useCommunityStore.getState().setCategory('help');
     expect(useCommunityStore.getState().category).toBe('help');
-    expect(useCommunityStore.getState().page).toBe(1);
+    expect(useCommunityStore.getState().hasNextPage).toBe(false);
+    expect(useCommunityStore.getState().nextCursor).toBeNull();
   });
 
   it('setCategory clears category when undefined', () => {
@@ -163,8 +165,7 @@ describe('communityStore', () => {
       posts: [makeMockPost()],
       search: 'quilts',
       sort: 'popular',
-      page: 3,
-      totalPages: 5,
+      hasNextPage: true,
       nextCursor: '123',
       isLoading: true,
       error: 'some error',
@@ -176,15 +177,19 @@ describe('communityStore', () => {
     expect(state.posts).toEqual([]);
     expect(state.search).toBe('');
     expect(state.sort).toBe('newest');
-    expect(state.page).toBe(1);
-    expect(state.totalPages).toBe(1);
+    expect(state.hasNextPage).toBe(false);
     expect(state.nextCursor).toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
   });
 
   it('fetchPosts calls fetch with correct params', async () => {
-    useCommunityStore.setState({ search: 'star', sort: 'popular', page: 2, nextCursor: '2026-03-27' });
+    useCommunityStore.setState({
+      search: 'star',
+      sort: 'popular',
+      hasNextPage: true,
+      nextCursor: '2026-03-27',
+    });
 
     await useCommunityStore.getState().fetchPosts(true);
 
@@ -271,9 +276,13 @@ describe('communityStore', () => {
     expect(useCommunityStore.getState().isLoading).toBe(false);
   });
 
-  it('loadMore increments page and appends', async () => {
+  it('loadMore appends posts from next cursor', async () => {
     const existingPost = makeMockPost({ id: 'existing' });
-    useCommunityStore.setState({ posts: [existingPost], page: 1, totalPages: 3, nextCursor: '2026-03-27' });
+    useCommunityStore.setState({
+      posts: [existingPost],
+      hasNextPage: true,
+      nextCursor: '2026-03-27',
+    });
 
     const newPost = makeMockPost({ id: 'page2' });
     global.fetch = vi.fn().mockResolvedValue(
@@ -291,7 +300,7 @@ describe('communityStore', () => {
     await useCommunityStore.getState().loadMore();
 
     expect(useCommunityStore.getState().posts).toHaveLength(2);
-    expect(useCommunityStore.getState().page).toBe(2);
+    expect(useCommunityStore.getState().hasNextPage).toBe(false);
   });
 
   it('likePost reverts on server error', async () => {
@@ -333,7 +342,7 @@ describe('communityStore', () => {
   });
 
   it('fetchPosts includes tab and category in params', async () => {
-    useCommunityStore.setState({ tab: 'discover', category: 'help', page: 1 });
+    useCommunityStore.setState({ tab: 'discover', category: 'help' });
 
     await useCommunityStore.getState().fetchPosts();
 
@@ -343,7 +352,7 @@ describe('communityStore', () => {
   });
 
   it('fetchPosts omits category param when undefined', async () => {
-    useCommunityStore.setState({ tab: 'discover', category: undefined, page: 1 });
+    useCommunityStore.setState({ tab: 'discover', category: undefined });
 
     await useCommunityStore.getState().fetchPosts();
 

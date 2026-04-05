@@ -1,6 +1,5 @@
 'use client';
 
-import { useOptimistic, startTransition } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommunityStore } from '@/stores/communityStore';
 
@@ -16,18 +15,10 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
   const likePost = useCommunityStore((s) => s.likePost);
   const unlikePost = useCommunityStore((s) => s.unlikePost);
 
-  const [optimisticState, addOptimisticState] = useOptimistic(
-    { count: likeCount, liked: isLikedByUser },
-    (state, nextLiked: boolean) => ({
-      liked: nextLiked,
-      count: nextLiked ? state.count + 1 : state.count - 1,
-    })
-  );
-
   const iconSize = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4';
   const textSize = size === 'lg' ? 'text-base' : 'text-xs';
 
-  async function handleClick(e: React.MouseEvent) {
+  function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
     if (!user) {
@@ -35,16 +26,10 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
       return;
     }
 
-    const nextLiked = !optimisticState.liked;
-
-    startTransition(() => {
-      addOptimisticState(nextLiked);
-    });
-
-    if (!nextLiked) {
-      await unlikePost(postId);
+    if (isLikedByUser) {
+      unlikePost(postId);
     } else {
-      await likePost(postId);
+      likePost(postId);
     }
   }
 
@@ -54,13 +39,13 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
       onClick={handleClick}
       disabled={!user}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
-        optimisticState.liked
+        isLikedByUser
           ? 'bg-error/10 text-error hover:bg-error/20'
           : 'hover:bg-surface-container text-secondary'
       } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
-      title={!user ? 'Sign in to like' : optimisticState.liked ? 'Unlike' : 'Like'}
+      title={!user ? 'Sign in to like' : isLikedByUser ? 'Unlike' : 'Like'}
     >
-      {optimisticState.liked ? (
+      {isLikedByUser ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -86,9 +71,9 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
         </svg>
       )}
       <span
-        className={`${textSize} ${optimisticState.liked ? 'text-error font-medium' : 'text-secondary'}`}
+        className={`${textSize} ${isLikedByUser ? 'text-error font-medium' : 'text-secondary'}`}
       >
-        {optimisticState.count}
+        {likeCount}
       </span>
     </button>
   );

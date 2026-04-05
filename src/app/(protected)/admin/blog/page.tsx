@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 
 interface BlogPost {
@@ -25,7 +24,6 @@ interface PaginationInfo {
 }
 
 export default function AdminBlogPage() {
-  const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -36,24 +34,27 @@ export default function AdminBlogPage() {
   });
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  async function fetchPosts() {
-    try {
-      const res = await fetch(`/api/admin/blog?page=${pagination.page}&limit=${pagination.limit}`);
-      if (res.ok) {
-        const data = await res.json();
-        setPosts(data.data?.posts ?? []);
-        setPagination(data.data?.pagination ?? pagination);
+  const fetchPosts = useCallback(
+    async (page: number) => {
+      try {
+        const res = await fetch(`/api/admin/blog?page=${page}&limit=${pagination.limit}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPosts(data.data?.posts ?? []);
+          setPagination(data.data?.pagination ?? pagination);
+        }
+      } catch {
+        // fetch failed silently
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Failed to fetch posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [pagination.limit]
+  );
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts(pagination.page);
+  }, [fetchPosts, pagination.page]);
 
   async function handleTogglePublish(postId: string, currentStatus: string) {
     const newStatus = currentStatus === 'published' ? 'draft' : 'published';
@@ -65,9 +66,7 @@ export default function AdminBlogPage() {
       });
       if (res.ok) {
         setPosts((prev) =>
-          prev.map((p) =>
-            p.id === postId ? { ...p, status: newStatus as BlogPost['status'] } : p
-          )
+          prev.map((p) => (p.id === postId ? { ...p, status: newStatus as BlogPost['status'] } : p))
         );
       }
     } catch (error) {
@@ -168,9 +167,7 @@ export default function AdminBlogPage() {
                     <div className="max-w-md">
                       <p className="font-medium text-on-surface truncate">{post.title}</p>
                       {post.excerpt && (
-                        <p className="text-xs text-secondary mt-0.5 line-clamp-1">
-                          {post.excerpt}
-                        </p>
+                        <p className="text-xs text-secondary mt-0.5 line-clamp-1">{post.excerpt}</p>
                       )}
                     </div>
                   </td>
@@ -206,8 +203,8 @@ export default function AdminBlogPage() {
                       </button>
                       <Link
                         href={`/admin/blog/${post.id}`}
-                        className="text-sm font-medium text-secondary hover:text-on-surface transition-colors"
-                        disabled={deletingId === post.id}
+                        className={`text-sm font-medium transition-colors ${deletingId === post.id ? 'pointer-events-none opacity-50 text-secondary' : 'text-secondary hover:text-on-surface'}`}
+                        aria-disabled={deletingId === post.id}
                       >
                         Edit
                       </Link>

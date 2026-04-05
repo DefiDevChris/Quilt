@@ -30,8 +30,7 @@ interface CommunityState {
   sort: 'newest' | 'popular';
   tab: FeedTab;
   category: string | undefined;
-  page: number;
-  totalPages: number; // Keeping for compatibility with FeedContent
+  hasNextPage: boolean;
   nextCursor: string | null;
   isLoading: boolean;
   error: string | null;
@@ -53,8 +52,7 @@ const INITIAL_STATE = {
   sort: 'newest' as const,
   tab: 'discover' as FeedTab,
   category: undefined as string | undefined,
-  page: 1,
-  totalPages: 1, // Kept for compatibility, indicates hasNextPage if page < totalPages
+  hasNextPage: false,
   nextCursor: null as string | null,
   isLoading: false,
   error: null as string | null,
@@ -82,29 +80,29 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   ...INITIAL_STATE,
 
   setSearch: (search) => {
-    set({ search, page: 1, nextCursor: null, totalPages: 1 });
+    set({ search, hasNextPage: false, nextCursor: null });
     get().fetchPosts();
   },
 
   setSort: (sort) => {
-    set({ sort, page: 1, nextCursor: null, totalPages: 1 });
+    set({ sort, hasNextPage: false, nextCursor: null });
     get().fetchPosts();
   },
 
   setTab: (tab) => {
-    set({ tab, page: 1, nextCursor: null, totalPages: 1 });
+    set({ tab, hasNextPage: false, nextCursor: null });
     get().fetchPosts();
   },
 
   setCategory: (category) => {
-    set({ category, page: 1, nextCursor: null, totalPages: 1 });
+    set({ category, hasNextPage: false, nextCursor: null });
     get().fetchPosts();
   },
 
   fetchPosts: async (append = false) => {
     communityAbortController?.abort();
     communityAbortController = new AbortController();
-    const { search, sort, tab, category, nextCursor, page } = get();
+    const { search, sort, tab, category, nextCursor } = get();
 
     // Only use cursor if appending
     const cursor = append ? nextCursor : null;
@@ -136,9 +134,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       set((state) => ({
         posts: append ? [...state.posts, ...data.posts] : data.posts,
         nextCursor: returnedNextCursor,
-        // Make page < totalPages true if we have a next cursor, false otherwise
-        page: append ? state.page + 1 : 1,
-        totalPages: returnedNextCursor ? (append ? state.page + 2 : 2) : (append ? state.page + 1 : 1),
+        hasNextPage: returnedNextCursor !== null,
         isLoading: false,
       }));
     } catch (error) {

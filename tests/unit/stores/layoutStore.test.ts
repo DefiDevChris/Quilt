@@ -3,7 +3,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 
 function resetStore() {
   useLayoutStore.setState({
-    layoutType: 'free-form',
+    layoutType: 'none',
     rows: 3,
     cols: 3,
     blockSize: 6,
@@ -16,8 +16,8 @@ describe('layoutStore', () => {
   beforeEach(resetStore);
 
   describe('layoutType', () => {
-    it('defaults to free-form', () => {
-      expect(useLayoutStore.getState().layoutType).toBe('free-form');
+    it('defaults to none', () => {
+      expect(useLayoutStore.getState().layoutType).toBe('none');
     });
 
     it('sets layout type', () => {
@@ -158,7 +158,7 @@ describe('layoutStore', () => {
       useLayoutStore.getState().reset();
 
       const state = useLayoutStore.getState();
-      expect(state.layoutType).toBe('free-form');
+      expect(state.layoutType).toBe('none');
       expect(state.rows).toBe(3);
       expect(state.cols).toBe(3);
       expect(state.blockSize).toBe(6);
