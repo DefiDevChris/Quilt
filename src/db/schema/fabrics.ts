@@ -7,6 +7,7 @@ import {
   boolean,
   timestamp,
   index,
+  integer,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
@@ -29,6 +30,19 @@ export const fabrics = pgTable(
     scaleY: doublePrecision('scaleY').notNull().default(1.0),
     rotation: doublePrecision('rotation').notNull().default(0.0),
     isDefault: boolean('isDefault').notNull().default(false),
+    
+    // Shopify Integration Fields (feature-flagged)
+    // isPurchasable: indicates if this fabric can be purchased via Shopify
+    isPurchasable: boolean('isPurchasable').notNull().default(false),
+    // shopifyProductId: The Shopify product ID for this fabric
+    shopifyProductId: varchar('shopifyProductId', { length: 255 }),
+    // shopifyVariantId: The Shopify variant ID (crucial for cart operations)
+    shopifyVariantId: varchar('shopifyVariantId', { length: 255 }),
+    // pricePerYard: Price in cents (for quick UI rendering without API calls)
+    pricePerYard: integer('pricePerYard'),
+    // inStock: Whether the fabric is currently in stock
+    inStock: boolean('inStock').notNull().default(true),
+    
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()
@@ -40,5 +54,8 @@ export const fabrics = pgTable(
     index('idx_fabrics_isDefault').on(table.isDefault),
     index('idx_fabrics_colorFamily').on(table.colorFamily),
     index('idx_fabrics_manufacturer').on(table.manufacturer),
+    index('idx_fabrics_isPurchasable').on(table.isPurchasable),
+    index('idx_fabrics_shopifyProductId').on(table.shopifyProductId),
+    index('idx_fabrics_inStock').on(table.inStock),
   ]
 );
