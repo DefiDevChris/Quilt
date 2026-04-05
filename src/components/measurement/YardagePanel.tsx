@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { STANDARD_WOFS, type WOF } from '@/lib/yardage-utils';
+import { useCartStore } from '@/stores/cartStore';
 
 export function YardagePanel() {
   const isPanelOpen = useYardageStore((s) => s.isPanelOpen);
@@ -14,6 +15,7 @@ export function YardagePanel() {
   const setWasteMargin = useYardageStore((s) => s.setWasteMargin);
   const results = useYardageStore((s) => s.results);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
+  const addProjectYardageToCart = useCartStore((s) => s.addProjectYardageToCart);
 
   const wastePercent = Math.round(wasteMargin * 100);
 
@@ -143,7 +145,7 @@ export function YardagePanel() {
 
             {/* Footer Totals */}
             {results.length > 0 && (
-              <div className="px-4 py-3 border-t border-outline-variant bg-background">
+              <div className="px-4 py-3 border-t border-outline-variant bg-background space-y-3">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                   <div className="font-medium text-on-surface">Total Yardage</div>
                   <div className="text-on-surface font-mono text-right font-semibold">
@@ -154,6 +156,20 @@ export function YardagePanel() {
                     {totalFatQuarters}
                   </div>
                 </div>
+
+                {process.env.NEXT_PUBLIC_ENABLE_SHOP === 'true' && (
+                  <button
+                    onClick={() => {
+                      // Note: We need the actual purchasable fabrics map here to properly filter and add to cart.
+                      // For now, we will pass an empty map as a placeholder to satisfy the function signature.
+                      // This should be populated with data from the database.
+                      addProjectYardageToCart(results, new Map());
+                    }}
+                    className="w-full py-2 bg-primary text-on-primary rounded font-semibold text-sm hover:bg-primary-hover transition-colors"
+                  >
+                    Add Purchasable Fabrics to Cart
+                  </button>
+                )}
               </div>
             )}
           </div>

@@ -7,6 +7,7 @@ import {
   boolean,
   timestamp,
   index,
+  integer,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
@@ -29,6 +30,12 @@ export const fabrics = pgTable(
     scaleY: doublePrecision('scaleY').notNull().default(1.0),
     rotation: doublePrecision('rotation').notNull().default(0.0),
     isDefault: boolean('isDefault').notNull().default(false),
+    // Shopify integration fields
+    isPurchasable: boolean('isPurchasable').notNull().default(false),
+    shopifyProductId: varchar('shopifyProductId', { length: 255 }),
+    shopifyVariantId: varchar('shopifyVariantId', { length: 255 }),
+    pricePerYard: integer('pricePerYard'),
+    inStock: boolean('inStock').notNull().default(true),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()
