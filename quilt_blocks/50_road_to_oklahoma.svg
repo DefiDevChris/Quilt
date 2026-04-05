@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Road to Oklahoma: 3x3 grid (100px cells), 6x6 sub-grid (50px) -->
+  <!-- Different diagonal arrangement than Jacob's Ladder -->
+  <!-- Four-patches at (0,0), (0,2), (2,0) -->
+  <!-- Position (0,0) four-patch -->
+  <rect x="0" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Position (0,2) four-patch -->
+  <rect x="0" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Position (2,0) four-patch -->
+  <rect x="200" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- HST pairs at remaining positions -->
+  <!-- Position (1,0): HST -->
+  <polygon points="100,0 200,0 100,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 200,100 100,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Position (0,1): HST -->
+  <polygon points="0,100 100,100 0,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,100 100,200 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Position (1,1) center: four-patch -->
+  <rect x="100" y="100" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="100" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="150" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="150" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Position (2,1): HST -->
+  <polygon points="200,100 300,100 300,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,100 200,200 300,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Position (1,2): HST -->
+  <polygon points="100,200 200,200 200,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,200 100,300 200,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Position (2,2): four-patch -->
+  <rect x="200" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+</svg>

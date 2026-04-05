@@ -259,7 +259,7 @@ export function BillingSection() {
             <ul className="space-y-1.5 text-[11px] text-slate-500">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
-              <li>Full 651+ block library</li>
+              <li>Full block library (always growing)</li>
               <li>Full fabric library + upload</li>
               <li>Export all formats</li>
               <li>Photo-to-quilt OCR</li>

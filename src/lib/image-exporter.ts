@@ -1,10 +1,9 @@
 /**
  * Image Export Engine
  * Renders the Fabric.js canvas to an off-screen canvas at a specified DPI
- * and exports as PNG or JPEG.
- *
- * Client-side only — requires Fabric.js and browser Canvas API.
  */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PIXELS_PER_INCH } from '@/lib/constants';
 

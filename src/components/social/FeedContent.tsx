@@ -146,7 +146,7 @@ export function FeedContent() {
 
           {!isLoading && !hasNextPage && posts.length > 0 && (
             <div className="py-8 text-center text-secondary font-medium">
-              You've reached the end of the feed!
+              You&apos;ve reached the end of the feed!
             </div>
           )}
         </div>

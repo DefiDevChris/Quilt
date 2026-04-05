@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Double Pinwheel: two layered pinwheel patterns -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Outer ring: 4 quadrants divided into triangles -->
+  <!-- Top-left quadrant -->
+  <polygon points="0,0 75,0 0,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,0 75,75 0,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Top edge -->
+  <polygon points="75,0 150,0 75,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="150,0 150,75 75,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right upper -->
+  <polygon points="150,0 225,0 150,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,0 225,75 150,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner -->
+  <polygon points="225,0 300,0 225,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 300,75 225,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right upper -->
+  <polygon points="225,75 300,75 225,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,75 300,150 225,150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Right lower -->
+  <polygon points="225,150 300,150 225,225" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,150 300,225 225,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner -->
+  <polygon points="225,225 300,225 225,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,225 300,300 225,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom right -->
+  <polygon points="150,225 225,225 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="225,225 225,300 150,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom left -->
+  <polygon points="75,225 150,225 75,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,225 150,300 75,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner -->
+  <polygon points="0,225 75,225 0,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,225 75,300 0,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left lower -->
+  <polygon points="0,150 75,150 0,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,150 75,225 0,225" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Left upper -->
+  <polygon points="0,75 75,75 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 75,150 0,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Inner pinwheel (505050): 4 blades spinning clockwise -->
+  <polygon points="75,75 150,75 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,75 225,75 225,150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,75 225,150 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="225,150 225,225 150,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 225,150 150,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,150 150,225 75,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,150 150,150 150,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 75,150 150,75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+</svg>

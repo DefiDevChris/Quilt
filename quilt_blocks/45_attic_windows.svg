@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Attic Windows: 2x2 grid of 3D window illusion units, each 150x150 -->
+  <!-- Unit top-left (0,0) -->
+  <!-- Main window pane -->
+  <rect x="30" y="0" width="120" height="120" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left parallelogram (dark, creates depth) -->
+  <polygon points="0,0 30,0 30,120 0,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom parallelogram (medium, creates depth) -->
+  <polygon points="0,150 30,120 150,120 150,150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Unit top-right (1,0) -->
+  <rect x="180" y="0" width="120" height="120" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,0 180,0 180,120 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 180,120 300,120 300,150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Unit bottom-left (0,1) -->
+  <rect x="30" y="150" width="120" height="120" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,150 30,150 30,270 0,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 30,270 150,270 150,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Unit bottom-right (1,1) -->
+  <rect x="180" y="150" width="120" height="120" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 180,150 180,270 150,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,300 180,270 300,270 300,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+</svg>

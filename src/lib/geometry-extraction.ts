@@ -1,4 +1,4 @@
-import { boundingBoxFromPoints as _bbfp, type Point, type BBox } from './geometry-utils';
+import { boundingBoxFromPoints as _bbfp, type BBox } from './geometry-utils';
 export { boundingBoxFromPoints } from './geometry-utils';
 import type { Point2D } from '@/types/geometry';
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Cathedral Star: gothic-inspired 8-pointed star with pointed arch elements -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Corner squares -->
+  <rect x="0" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- 8 pointed arch shapes radiating from center (D0D0D0) -->
+  <!-- Top arch -->
+  <path d="M112.5,75 L150,0 L187.5,75 Q175,110 150,112.5 Q125,110 112.5,75 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right arch -->
+  <path d="M187.5,75 L225,75 Q210,110 200,120 L150,150 Q175,110 187.5,75 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right arch -->
+  <path d="M225,112.5 L300,150 L225,187.5 Q190,175 187.5,150 Q190,125 225,112.5 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right arch -->
+  <path d="M225,187.5 L225,225 Q190,210 180,200 L150,150 Q190,175 225,187.5 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom arch -->
+  <path d="M187.5,225 L150,300 L112.5,225 Q125,190 150,187.5 Q175,190 187.5,225 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left arch -->
+  <path d="M112.5,225 L75,225 Q90,190 100,180 L150,150 Q125,190 112.5,225 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left arch -->
+  <path d="M75,187.5 L0,150 L75,112.5 Q110,125 112.5,150 Q110,175 75,187.5 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-left arch -->
+  <path d="M75,112.5 L75,75 Q110,90 120,100 L150,150 Q110,125 75,112.5 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Edge fill triangles -->
+  <polygon points="75,0 112.5,75 75,75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,0 187.5,75 225,75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,75 75,112.5 75,75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 75,187.5 75,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,300 112.5,225 75,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,300 187.5,225 225,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,75 225,112.5 225,75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,225 225,187.5 225,225" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Side edge fills -->
+  <polygon points="75,0 150,0 112.5,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="225,0 150,0 187.5,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,75 0,150 75,112.5" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 0,150 75,187.5" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,75 300,150 225,112.5" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,225 300,150 225,187.5" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,300 150,300 112.5,225" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="225,300 150,300 187.5,225" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Center octagon (505050) -->
+  <polygon points="112.5,112.5 187.5,112.5 212.5,137.5 212.5,162.5 187.5,187.5 112.5,187.5 87.5,162.5 87.5,137.5" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

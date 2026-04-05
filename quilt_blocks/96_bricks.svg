@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background / mortar -->
+  <rect x="0" y="0" width="300" height="300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Row 1 (y=0-46): full bricks, no offset -->
+  <rect x="2" y="2" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="102" y="2" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="202" y="2" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 2 (y=50-96): offset by half brick -->
+  <rect x="-48" y="52" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="52" y="52" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="152" y="52" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="252" y="52" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 3 -->
+  <rect x="2" y="102" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="102" y="102" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="202" y="102" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 4: offset -->
+  <rect x="-48" y="152" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="52" y="152" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="152" y="152" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="252" y="152" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 5 -->
+  <rect x="2" y="202" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="102" y="202" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="202" y="202" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 6: offset -->
+  <rect x="-48" y="252" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="52" y="252" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="152" y="252" width="96" height="46" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="252" y="252" width="96" height="46" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

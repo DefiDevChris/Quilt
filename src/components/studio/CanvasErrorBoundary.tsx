@@ -27,7 +27,7 @@ export class CanvasErrorBoundary extends Component<
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+  componentDidCatch(_e: Error, _i: React.ErrorInfo): void {
     // Attempt to save canvas state before crash
     try {
       if (typeof window !== 'undefined') {

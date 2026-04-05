@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useRef, useEffect, useCallback, type MutableRefObject } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { SimplePhotoBlockUpload } from './SimplePhotoBlockUpload';
@@ -336,136 +337,140 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
   return (
     <BlockDraftingErrorBoundary onClose={onClose}>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-on-surface">Create Custom Block</h2>
-          <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
-            ✕
-          </button>
-        </div>
+        <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-on-surface">Create Custom Block</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-secondary hover:text-on-surface"
+            >
+              ✕
+            </button>
+          </div>
 
-        {/* Mode switcher */}
-        <div className="mb-3 flex gap-1 rounded-lg bg-background p-1">
-          <button
-            type="button"
-            onClick={() => setMode('draw')}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
-              mode === 'draw' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
-            }`}
-          >
-            Draw
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('photo')}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
-              mode === 'photo' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
-            }`}
-          >
-            Upload Photo
-          </button>
-        </div>
+          {/* Mode switcher */}
+          <div className="mb-3 flex gap-1 rounded-lg bg-background p-1">
+            <button
+              type="button"
+              onClick={() => setMode('draw')}
+              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
+                mode === 'draw' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
+              }`}
+            >
+              Draw
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('photo')}
+              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
+                mode === 'photo' ? 'bg-primary text-white' : 'text-secondary hover:text-on-surface'
+              }`}
+            >
+              Upload Photo
+            </button>
+          </div>
 
-        {mode === 'draw' && (
-          <>
-            {/* Drawing tools */}
-            <div className="mb-3 flex items-center gap-1">
-              {TOOLS.map((tool) => (
+          {mode === 'draw' && (
+            <>
+              {/* Drawing tools */}
+              <div className="mb-3 flex items-center gap-1">
+                {TOOLS.map((tool) => (
+                  <button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => setActiveTool(tool.id)}
+                    title={tool.label}
+                    className={`h-8 w-8 rounded text-sm ${
+                      activeTool === tool.id
+                        ? 'bg-primary text-white'
+                        : 'text-secondary hover:bg-background'
+                    }`}
+                  >
+                    {tool.icon}
+                  </button>
+                ))}
+              </div>
+
+              {/* Drafting canvas */}
+              <div className="mb-4 flex justify-center rounded border border-outline-variant bg-white">
+                <canvas ref={canvasRef} width={DRAFT_CANVAS_SIZE} height={DRAFT_CANVAS_SIZE} />
+              </div>
+
+              {/* Block metadata */}
+              <div className="mb-4 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-secondary">
+                    Block Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={blockName}
+                    onChange={(e) => setBlockName(e.target.value)}
+                    placeholder="My Custom Block"
+                    maxLength={255}
+                    className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
+                  <input
+                    type="text"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="Custom"
+                    maxLength={100}
+                    className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="mb-1 block text-xs font-medium text-secondary">
+                    Tags (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    placeholder="modern, geometric, stars"
+                    className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {error && <p className="mb-3 text-sm text-error">{error}</p>}
+
+              <div className="flex justify-end gap-2">
                 <button
-                  key={tool.id}
                   type="button"
-                  onClick={() => setActiveTool(tool.id)}
-                  title={tool.label}
-                  className={`h-8 w-8 rounded text-sm ${
-                    activeTool === tool.id
-                      ? 'bg-primary text-white'
-                      : 'text-secondary hover:bg-background'
-                  }`}
+                  onClick={onClose}
+                  className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
                 >
-                  {tool.icon}
+                  Cancel
                 </button>
-              ))}
-            </div>
-
-            {/* Drafting canvas */}
-            <div className="mb-4 flex justify-center rounded border border-outline-variant bg-white">
-              <canvas ref={canvasRef} width={DRAFT_CANVAS_SIZE} height={DRAFT_CANVAS_SIZE} />
-            </div>
-
-            {/* Block metadata */}
-            <div className="mb-4 grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-secondary">
-                  Block Name *
-                </label>
-                <input
-                  type="text"
-                  value={blockName}
-                  onChange={(e) => setBlockName(e.target.value)}
-                  placeholder="My Custom Block"
-                  maxLength={255}
-                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-                />
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save Block'}
+                </button>
               </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
-                <input
-                  type="text"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="Custom"
-                  maxLength={100}
-                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="mb-1 block text-xs font-medium text-secondary">
-                  Tags (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="modern, geometric, stars"
-                  className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-                />
-              </div>
-            </div>
+            </>
+          )}
 
-            {error && <p className="mb-3 text-sm text-error">{error}</p>}
-
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-md px-4 py-2 text-sm text-secondary hover:bg-background"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-              >
-                {saving ? 'Saving...' : 'Save Block'}
-              </button>
-            </div>
-          </>
-        )}
-
-        {mode === 'photo' && (
-          <SimplePhotoBlockUpload
-            isOpen={true}
-            onClose={() => setMode('draw')}
-            onSaved={() => {
-              onSaved();
-              onClose();
-            }}
-          />
-        )}
+          {mode === 'photo' && (
+            <SimplePhotoBlockUpload
+              isOpen={true}
+              onClose={() => setMode('draw')}
+              onSaved={() => {
+                onSaved();
+                onClose();
+              }}
+            />
+          )}
+        </div>
       </div>
-    </div>
     </BlockDraftingErrorBoundary>
   );
 }

@@ -104,7 +104,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       id: 'blocks',
       label: 'Block Library',
       shortcut: 'B',
-      description: 'Browse 651+ quilt blocks and drag them onto your canvas',
+      description: 'Browse quilt blocks and drag them onto your canvas',
       mascot: '/mascots&avatars/corgi4.png',
       group: 'library',
       tier: 'primary',

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><style>
+body { background: #fff; font-family: sans-serif; margin: 20px; }
+.grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; }
+.block { text-align: center; border: 1px solid #ccc; padding: 8px; border-radius: 4px; }
+.block img { width: 150px; height: 150px; border: 1px solid #eee; }
+.block p { font-size: 11px; margin: 4px 0 0; color: #333; }
+h2 { margin: 24px 0 8px; }
+</style></head><body>
+<h1>Quilt Block Library Verification — 105 Blocks</h1>
+<h2>Original 20 (1–20)</h2>
+<div class="grid" id="orig"></div>
+<h2>Batch 1: Simple & Traditional (21–41)</h2>
+<div class="grid" id="b1"></div>
+<h2>Batch 2: Classic & Geometric (42–62)</h2>
+<div class="grid" id="b2"></div>
+<h2>Batch 3: Stars & Complex (63–83)</h2>
+<div class="grid" id="b3"></div>
+<h2>Batch 4: Nature & Modern (84–105)</h2>
+<div class="grid" id="b4"></div>
+<script>
+const blocks = [
+  {n:1,f:"01_nine_patch",d:"Nine Patch"},{n:2,f:"02_churn_dash",d:"Churn Dash"},{n:3,f:"03_log_cabin",d:"Log Cabin"},{n:4,f:"04_ohio_star",d:"Ohio Star"},{n:5,f:"05_bear_paw",d:"Bear Paw"},{n:6,f:"06_pinwheel",d:"Pinwheel"},{n:7,f:"07_flying_geese",d:"Flying Geese"},{n:8,f:"08_drunkards_path",d:"Drunkard's Path"},{n:9,f:"09_shoo_fly",d:"Shoo Fly"},{n:10,f:"10_sawtooth_star",d:"Sawtooth Star"},{n:11,f:"11_friendship_star",d:"Friendship Star"},{n:12,f:"12_square_in_square",d:"Square in Square"},{n:13,f:"13_rail_fence",d:"Rail Fence"},{n:14,f:"14_card_trick",d:"Card Trick"},{n:15,f:"15_double_star",d:"Double Star"},{n:16,f:"16_lone_star",d:"Lone Star"},{n:17,f:"17_tumbling_blocks",d:"Tumbling Blocks"},{n:18,f:"18_dresden_plate",d:"Dresden Plate"},{n:19,f:"19_irish_chain",d:"Irish Chain"},{n:20,f:"20_hst",d:"HST"},
+  {n:21,f:"21_four_patch",d:"Four Patch"},{n:22,f:"22_double_four_patch",d:"Double Four Patch"},{n:23,f:"23_snowball",d:"Snowball"},{n:24,f:"24_bow_tie",d:"Bow Tie"},{n:25,f:"25_windmill",d:"Windmill"},{n:26,f:"26_hourglass",d:"Hourglass"},{n:27,f:"27_broken_dishes",d:"Broken Dishes"},{n:28,f:"28_variable_star",d:"Variable Star"},{n:29,f:"29_evening_star",d:"Evening Star"},{n:30,f:"30_north_star",d:"North Star"},{n:31,f:"31_maple_leaf",d:"Maple Leaf"},{n:32,f:"32_basket",d:"Basket"},{n:33,f:"33_grandmothers_fan",d:"Grandmother's Fan"},{n:34,f:"34_economy_block",d:"Economy Block"},{n:35,f:"35_yankee_puzzle",d:"Yankee Puzzle"},{n:36,f:"36_dutchmans_puzzle",d:"Dutchman's Puzzle"},{n:37,f:"37_weather_vane",d:"Weather Vane"},{n:38,f:"38_anvil",d:"Anvil"},{n:39,f:"39_puss_in_corner",d:"Puss in Corner"},{n:40,f:"40_corn_and_beans",d:"Corn & Beans"},{n:41,f:"41_gentlemans_fancy",d:"Gentleman's Fancy"},
+  {n:42,f:"42_jacobs_ladder",d:"Jacob's Ladder"},{n:43,f:"43_monkey_wrench",d:"Monkey Wrench"},{n:44,f:"44_courthouse_steps",d:"Courthouse Steps"},{n:45,f:"45_attic_windows",d:"Attic Windows"},{n:46,f:"46_crosses_and_losses",d:"Crosses & Losses"},{n:47,f:"47_goose_tracks",d:"Goose Tracks"},{n:48,f:"48_handy_andy",d:"Handy Andy"},{n:49,f:"49_old_maids_puzzle",d:"Old Maid's Puzzle"},{n:50,f:"50_road_to_oklahoma",d:"Road to Oklahoma"},{n:51,f:"51_double_nine_patch",d:"Double Nine Patch"},{n:52,f:"52_disappearing_nine_patch",d:"Disappearing 9-Patch"},{n:53,f:"53_split_nine_patch",d:"Split Nine Patch"},{n:54,f:"54_five_patch",d:"Five Patch"},{n:55,f:"55_t_block",d:"T-Block"},{n:56,f:"56_spider_web",d:"Spider Web"},{n:57,f:"57_kaleidoscope",d:"Kaleidoscope"},{n:58,f:"58_mosaic",d:"Mosaic"},{n:59,f:"59_roman_stripe",d:"Roman Stripe"},{n:60,f:"60_chinese_coins",d:"Chinese Coins"},{n:61,f:"61_snails_trail",d:"Snail's Trail"},{n:62,f:"62_storm_at_sea",d:"Storm at Sea"},
+  {n:63,f:"63_carpenters_star",d:"Carpenter's Star"},{n:64,f:"64_lemoyne_star",d:"LeMoyne Star"},{n:65,f:"65_morning_star",d:"Morning Star"},{n:66,f:"66_hunters_star",d:"Hunter's Star"},{n:67,f:"67_prairie_star",d:"Prairie Star"},{n:68,f:"68_rolling_star",d:"Rolling Star"},{n:69,f:"69_blazing_star",d:"Blazing Star"},{n:70,f:"70_mexican_star",d:"Mexican Star"},{n:71,f:"71_cathedral_star",d:"Cathedral Star"},{n:72,f:"72_broken_star",d:"Broken Star"},{n:73,f:"73_star_of_bethlehem",d:"Star of Bethlehem"},{n:74,f:"74_mariners_compass",d:"Mariner's Compass"},{n:75,f:"75_ocean_waves",d:"Ocean Waves"},{n:76,f:"76_steps_to_altar",d:"Steps to Altar"},{n:77,f:"77_spinning_top",d:"Spinning Top"},{n:78,f:"78_winged_square",d:"Winged Square"},{n:79,f:"79_cross_and_crown",d:"Cross & Crown"},{n:80,f:"80_devils_claw",d:"Devil's Claw"},{n:81,f:"81_whirlwind",d:"Whirlwind"},{n:82,f:"82_double_pinwheel",d:"Double Pinwheel"},{n:83,f:"83_chevron",d:"Chevron"},
+  {n:84,f:"84_schoolhouse",d:"Schoolhouse"},{n:85,f:"85_pine_tree",d:"Pine Tree"},{n:86,f:"86_tree_of_life",d:"Tree of Life"},{n:87,f:"87_sunflower",d:"Sunflower"},{n:88,f:"88_tulip_block",d:"Tulip Block"},{n:89,f:"89_carolina_lily",d:"Carolina Lily"},{n:90,f:"90_cactus_basket",d:"Cactus Basket"},{n:91,f:"91_butterfly",d:"Butterfly"},{n:92,f:"92_lily",d:"Lily"},{n:93,f:"93_pineapple",d:"Pineapple"},{n:94,f:"94_zigzag",d:"Zigzag"},{n:95,f:"95_herringbone",d:"Herringbone"},{n:96,f:"96_bricks",d:"Bricks"},{n:97,f:"97_trip_around_world",d:"Trip Around World"},{n:98,f:"98_cathedral_windows",d:"Cathedral Windows"},{n:99,f:"99_double_wedding_ring",d:"Double Wedding Ring"},{n:100,f:"100_grandmothers_flower_garden",d:"Grandma's Flower Garden"},{n:101,f:"101_crown_royal",d:"Crown Royal"},{n:102,f:"102_rose_of_sharon",d:"Rose of Sharon"},{n:103,f:"103_bargello_strip",d:"Bargello Strip"},{n:104,f:"104_dove_at_window",d:"Dove at Window"},{n:105,f:"105_grandmothers_choice",d:"Grandma's Choice"}
+];
+function render(container, items) {
+  const el = document.getElementById(container);
+  items.forEach(b => {
+    el.innerHTML += `<div class="block"><img src="${b.f}.svg" alt="${b.d}"><p>#${b.n} ${b.d}</p></div>`;
+  });
+}
+render('orig', blocks.slice(0,20));
+render('b1', blocks.slice(20,41));
+render('b2', blocks.slice(41,62));
+render('b3', blocks.slice(62,83));
+render('b4', blocks.slice(83));
+</script></body></html>

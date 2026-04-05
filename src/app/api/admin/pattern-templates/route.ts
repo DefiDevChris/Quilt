@@ -1,8 +1,13 @@
 import { NextRequest } from 'next/server';
-import { desc, eq, count } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { patternTemplates } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
 import { isAdmin } from '@/lib/trust-utils';
 import { z } from 'zod';
 
@@ -99,10 +104,7 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid template data');
     }
 
-    const [created] = await db
-      .insert(patternTemplates)
-      .values(parsed.data)
-      .returning();
+    const [created] = await db.insert(patternTemplates).values(parsed.data).returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
   } catch {

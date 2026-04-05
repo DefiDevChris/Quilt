@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Four Patch: 2x2 grid, alternating dark and medium-light -->
+  <!-- Top-left: dark -->
+  <rect x="0" y="0" width="150" height="150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-right: medium-light -->
+  <rect x="150" y="0" width="150" height="150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left: medium-light -->
+  <rect x="0" y="150" width="150" height="150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right: dark -->
+  <rect x="150" y="150" width="150" height="150" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

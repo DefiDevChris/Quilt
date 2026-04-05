@@ -1,8 +1,13 @@
 import { NextRequest } from 'next/server';
-import { desc, eq, count } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+  errorResponse,
+} from '@/lib/auth-helpers';
 import { isAdmin } from '@/lib/trust-utils';
 import { z } from 'zod';
 
@@ -49,12 +54,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const [blockRows, [totalRow]] = await Promise.all([
-      db
-        .select()
-        .from(blocks)
-        .orderBy(desc(blocks.createdAt))
-        .limit(limit)
-        .offset(offset),
+      db.select().from(blocks).orderBy(desc(blocks.createdAt)).limit(limit).offset(offset),
       db.select({ count: count() }).from(blocks),
     ]);
 

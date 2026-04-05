@@ -52,8 +52,8 @@ const PATCH_COLORS = [
 export function useBlockBuilder({
   draftCanvasRef,
   isOpen,
-  fillColor: _fillColor,
-  strokeColor: _strokeColor,
+  fillColor,
+  strokeColor,
   gridCols,
   gridRows,
   canvasSize,

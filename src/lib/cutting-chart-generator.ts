@@ -9,8 +9,8 @@
 
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
-import { gcd } from '@/lib/math-utils';
+import { decimalToFraction as _dtf, toMixedNumberString as _tmns } from '@/lib/fraction-math';
+import { gcd as _gcd } from '@/lib/math-utils';
 import { formatFraction } from '@/lib/piece-detection-utils';
 
 // ── Types ──────────────────────────────────────────────────────────

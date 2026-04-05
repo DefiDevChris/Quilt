@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { findSimilarObjects, getAvailableSimilarityModes } from '@/lib/select-similar-engine';
+import type { SimilarityMode } from '@/lib/select-similar-engine';
 
 describe('select-similar-engine', () => {
   describe('getAvailableSimilarityModes', () => {
@@ -12,13 +13,13 @@ describe('select-similar-engine', () => {
 
   describe('findSimilarObjects', () => {
     it('should handle empty object arrays', () => {
-      const result = findSimilarObjects([], 'color' as any, 'fillColor' as any);
+      const result = findSimilarObjects([], 'color' as SimilarityMode, 'fillColor');
       expect(result).toEqual([]);
     });
 
     it('should handle invalid similarity modes', () => {
       const objects = [{ id: '1', fill: '#ff0000' }];
-      const result = findSimilarObjects(objects, 'invalid' as any, 'fillColor' as any);
+      const result = findSimilarObjects(objects, 'invalid' as SimilarityMode, 'fillColor');
       expect(result).toEqual([]);
     });
   });

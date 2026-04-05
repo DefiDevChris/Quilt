@@ -25,35 +25,31 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 const features = [
   {
-    title: 'Your Design Studio',
+    title: 'Turn Photos Into Quilt Patterns',
     description:
-      'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from four layout modes including sashing and on-point.',
+      "Simply upload any favorite photo — a family portrait, a scenic landscape, or a beloved pet — and watch as our intelligent algorithms transform it into a perfectly categorized, block-by-block quilting pattern. It's that easy to create personalized, unforgettable gifts.",
     iconSrc: '/icons/quilt-13-dashed-squares-Photoroom.png',
     iconAlt: 'Quilt layout squares',
-    checks: ['4 connected worktables', '651+ block library', '6 layout modes'],
+    checks: ['Photo-to-Pattern wizard', '7-step guided process', 'OpenCV-powered processing'],
   },
   {
-    title: 'Yardage & Cutting Made Easy',
+    title: 'Your Full-Service Design Studio',
     description:
-      'No more guesswork at the fabric counter. QuiltCorgi calculates your yardage, generates sub-cutting charts, and even calibrates imported fabric photos to real-world scale.',
+      'Prefer starting from a blank canvas? Our comprehensive design studio lets you sketch your ideas, choose from a huge library of blocks, and build your design from scratch. With four connected worktables and six layout modes, the possibilities are endless.',
     iconSrc: '/icons/quilt-09-measuring-tape-Photoroom.png',
-    iconAlt: 'Measuring tape',
-    checks: [
-      'Automatic yardage estimation',
-      'Sub-cutting & rotary charts',
-      'Real-world fabric calibration',
-    ],
+    iconAlt: 'Design studio',
+    checks: ['105+ quilt blocks', '4 connected worktables', '6 layout modes including free-form'],
   },
   {
-    title: 'Print-Ready Patterns',
+    title: 'Visualize Your Quilt Before You Sew',
     description:
-      'Export true 1:1 scale PDFs with seam allowances baked right in. Generate Foundation Paper Piecing templates and rotary cutting charts that go straight from your printer to your sewing room.',
+      "See a stunning, realistic preview of your finished quilt. Make changes to colors, rearrange blocks, and adjust fabric choices instantly. This visualization ensures you'll fall in love with your design before you make a single cut.",
     iconSrc: '/icons/quilt-04-scissors-Photoroom.png',
     iconAlt: 'Quilting scissors',
     checks: [
       'True-scale PDF with seam allowances',
+      'Yardage & cutting calculations',
       'FPP template generation',
-      'Rotary cutting charts',
     ],
   },
 ];
@@ -89,10 +85,10 @@ export default function FeatureHighlights() {
               className="text-3xl md:text-4xl font-bold text-warm-text"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Everything But the Fabric
+              What Makes QuiltCorgi Special?
             </h2>
             <p className="text-lg text-warm-text-secondary mt-2">
-              Design, calculate, and print — all in one place
+              Our user-friendly online studio combines simplicity with powerful design tools
             </p>
           </div>
         </motion.div>

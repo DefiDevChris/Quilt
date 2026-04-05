@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Steps to the Altar: 5x5 grid (60px cells), stepped diagonal pattern -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Step 1: bottom-left largest step -->
+  <rect x="0" y="240" width="300" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Step 1 border -->
+  <rect x="0" y="228" width="300" height="12" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Step 2 -->
+  <rect x="60" y="180" width="240" height="48" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Step 2 border -->
+  <rect x="60" y="168" width="240" height="12" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Step 3 -->
+  <rect x="120" y="120" width="180" height="48" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Step 3 border -->
+  <rect x="120" y="108" width="180" height="12" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Step 4 -->
+  <rect x="180" y="60" width="120" height="48" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Step 4 border -->
+  <rect x="180" y="48" width="120" height="12" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Step 5: top-right smallest step -->
+  <rect x="240" y="0" width="60" height="48" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Vertical risers connecting steps (D0D0D0) -->
+  <rect x="48" y="168" width="12" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="108" y="108" width="12" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="168" y="48" width="12" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="228" y="0" width="12" height="48" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Blazing Star: multi-layered star with inner and outer star layers -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Corner squares -->
+  <rect x="0" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Outer star layer points (D0D0D0) — larger, reaching to edges -->
+  <!-- Top outer point -->
+  <polygon points="150,0 187.5,75 112.5,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right outer point -->
+  <polygon points="225,0 225,75 187.5,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 225,75 225,0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,75 225,75 225,112.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right outer point -->
+  <polygon points="300,150 225,187.5 225,112.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right outer point -->
+  <polygon points="300,225 225,225 225,187.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,300 225,225 300,225" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="225,300 225,225 187.5,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom outer point -->
+  <polygon points="150,300 112.5,225 187.5,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left outer point -->
+  <polygon points="75,300 75,225 112.5,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 75,225 75,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 75,225 75,187.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left outer point -->
+  <polygon points="0,150 75,112.5 75,187.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-left outer point -->
+  <polygon points="0,75 75,75 75,112.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,0 75,75 0,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,0 75,75 112.5,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Inner star layer (505050) -->
+  <polygon points="150,75 187.5,112.5 187.5,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="225,150 187.5,112.5 225,112.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="225,150 187.5,187.5 225,187.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,225 187.5,187.5 187.5,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,225 112.5,187.5 112.5,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,150 112.5,187.5 75,187.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,150 112.5,112.5 75,112.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,75 112.5,112.5 112.5,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Center octagon -->
+  <polygon points="112.5,112.5 187.5,112.5 225,150 187.5,187.5 112.5,187.5 75,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Inner center -->
+  <polygon points="130,130 170,130 185,150 170,170 130,170 115,150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+</svg>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Snowball: Center octagon effect with corner triangles -->
+  <!-- Background square -->
+  <rect x="0" y="0" width="300" height="300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Corner triangles creating the snowball/octagon effect -->
+  <!-- Top-left corner triangle -->
+  <polygon points="0,0 75,0 0,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner triangle -->
+  <polygon points="225,0 300,0 300,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner triangle -->
+  <polygon points="0,225 0,300 75,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner triangle -->
+  <polygon points="300,225 300,300 225,300" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

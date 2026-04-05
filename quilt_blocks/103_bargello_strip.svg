@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Bargello wave pattern: 12 vertical columns (25px each) with varying heights creating a wave -->
+  <!-- Column 1 (x=0) - start of wave going up -->
+  <rect x="0" y="0" width="25" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="60" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="120" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="180" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="240" width="25" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 2 (x=25) - shifted up -->
+  <rect x="25" y="0" width="25" height="40" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="25" y="40" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="25" y="100" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="25" y="160" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="25" y="220" width="25" height="80" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 3 (x=50) - peak -->
+  <rect x="50" y="0" width="25" height="20" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="20" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="80" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="140" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="200" width="25" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 4 (x=75) - coming down -->
+  <rect x="75" y="0" width="25" height="40" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="75" y="40" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="75" y="100" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="75" y="160" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="75" y="220" width="25" height="80" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 5 (x=100) -->
+  <rect x="100" y="0" width="25" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="60" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="120" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="180" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="240" width="25" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 6 (x=125) - valley -->
+  <rect x="125" y="0" width="25" height="80" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="125" y="80" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="125" y="140" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="125" y="200" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="125" y="260" width="25" height="40" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 7 (x=150) - valley bottom -->
+  <rect x="150" y="0" width="25" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="100" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="160" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="220" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="280" width="25" height="20" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 8 (x=175) - coming back up -->
+  <rect x="175" y="0" width="25" height="80" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="175" y="80" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="175" y="140" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="175" y="200" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="175" y="260" width="25" height="40" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 9 (x=200) -->
+  <rect x="200" y="0" width="25" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="60" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="120" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="180" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="240" width="25" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 10 (x=225) - peak again -->
+  <rect x="225" y="0" width="25" height="20" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="20" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="80" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="140" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="225" y="200" width="25" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 11 (x=250) -->
+  <rect x="250" y="0" width="25" height="40" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="40" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="100" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="160" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="220" width="25" height="80" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Column 12 (x=275) -->
+  <rect x="275" y="0" width="25" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="275" y="60" width="25" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="275" y="120" width="25" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="275" y="180" width="25" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="275" y="240" width="25" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+</svg>

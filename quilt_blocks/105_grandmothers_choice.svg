@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 3x3 grid using 6-unit subdivisions = 100px main cells, 50px sub-cells -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Corner cells (0,0), (2,0), (0,2), (2,2): HSTs -->
+  <!-- Top-left corner -->
+  <polygon points="0,0 100,0 0,100" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 100,100 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner -->
+  <polygon points="200,0 300,0 300,100" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 200,100 300,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner -->
+  <polygon points="0,200 100,200 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,200 0,300 100,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner -->
+  <polygon points="200,200 300,200 300,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,200 200,300 300,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Side cells: rectangular elements -->
+  <!-- Top-center -->
+  <rect x="100" y="0" width="100" height="50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="50" width="100" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Middle-left -->
+  <rect x="0" y="100" width="50" height="100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="50" y="100" width="50" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Middle-right -->
+  <rect x="200" y="100" width="50" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="250" y="100" width="50" height="100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-center -->
+  <rect x="100" y="200" width="100" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="250" width="100" height="50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center cell: square-in-square (diamond) -->
+  <rect x="100" y="100" width="100" height="100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,100 200,150 150,200 100,150" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 4x4 grid = 75px cells -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Row 1 -->
+  <!-- Cell (0,0): corner HST -->
+  <polygon points="0,0 75,0 0,75" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,0 75,75 0,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Cell (1,0): top frame -->
+  <rect x="75" y="0" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (2,0): top frame -->
+  <rect x="150" y="0" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (3,0): corner HST -->
+  <polygon points="225,0 300,0 300,75" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,0 225,75 300,75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Row 2 -->
+  <!-- Cell (0,1): left frame -->
+  <rect x="0" y="75" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (1,1): inner HST (part of diamond) -->
+  <polygon points="75,75 150,75 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 75,150 150,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (2,1): inner HST -->
+  <polygon points="150,75 225,75 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="225,75 225,150 150,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (3,1): right frame -->
+  <rect x="225" y="75" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 3 -->
+  <!-- Cell (0,2): left frame -->
+  <rect x="0" y="150" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (1,2): inner HST -->
+  <polygon points="75,150 150,150 75,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 150,225 75,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (2,2): inner HST -->
+  <polygon points="150,150 225,150 225,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 150,225 225,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (3,2): right frame -->
+  <rect x="225" y="150" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Row 4 -->
+  <!-- Cell (0,3): corner HST -->
+  <polygon points="0,225 75,225 75,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 0,300 75,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (1,3): bottom frame -->
+  <rect x="75" y="225" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (2,3): bottom frame -->
+  <rect x="150" y="225" width="75" height="75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Cell (3,3): corner HST -->
+  <polygon points="225,225 300,225 225,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,225 300,300 225,300" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+</svg>

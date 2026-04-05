@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Five Patch: 5x5 grid (60px cells) checkerboard pattern -->
+  <!-- Row 0 -->
+  <rect x="0" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Row 1 -->
+  <rect x="0" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="60" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="60" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Row 2 -->
+  <rect x="0" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Row 3 -->
+  <rect x="0" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="180" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="180" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Row 4 -->
+  <rect x="0" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

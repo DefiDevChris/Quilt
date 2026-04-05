@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getStorageFlag, setStorageFlag } from '@/lib/onboarding-utils';
 
@@ -11,24 +10,9 @@ interface ContextualTooltipProps {
 }
 
 export function ContextualTooltip({ toolId, message, visible }: ContextualTooltipProps) {
-  const [show, setShow] = useState(false);
   const storageKey = `quiltcorgi-tooltip-seen-${toolId}`;
-
-  useEffect(() => {
-    if (!visible) {
-      setShow(false);
-      return;
-    }
-
-    const alreadySeen = getStorageFlag(storageKey);
-    if (alreadySeen) return;
-
-    setShow(true);
-    setStorageFlag(storageKey, true);
-
-    const timer = setTimeout(() => setShow(false), 5000);
-    return () => clearTimeout(timer);
-  }, [visible, storageKey]);
+  const alreadySeen = typeof window !== 'undefined' && getStorageFlag(storageKey);
+  const show = visible && !alreadySeen;
 
   return (
     <AnimatePresence>
@@ -39,7 +23,9 @@ export function ContextualTooltip({ toolId, message, visible }: ContextualToolti
           exit={{ opacity: 0, y: 4 }}
           transition={{ duration: 0.15 }}
           className="absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 px-3 py-2 rounded-lg bg-surface shadow-elevation-3 border border-outline-variant/20 whitespace-nowrap"
-          onClick={() => setShow(false)}
+          onClick={() => {
+            setStorageFlag(storageKey, true);
+          }}
         >
           <p className="text-xs text-on-surface">{message}</p>
         </motion.div>

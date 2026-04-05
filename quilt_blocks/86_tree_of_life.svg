@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Central trunk -->
+  <rect x="137.5" y="60" width="25" height="210" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Root base -->
+  <rect x="100" y="270" width="100" height="30" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top crown triangle -->
+  <polygon points="150,10 120,60 180,60" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Left branches (HSTs going outward) - top pair -->
+  <polygon points="137.5,80 137.5,110 95,110" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="137.5,80 95,80 95,110" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right branches - top pair -->
+  <polygon points="162.5,80 205,110 162.5,110" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="162.5,80 205,80 205,110" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left branches - second pair -->
+  <polygon points="137.5,120 137.5,155 75,155" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="137.5,120 75,120 75,155" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right branches - second pair -->
+  <polygon points="162.5,120 225,155 162.5,155" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="162.5,120 225,120 225,155" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left branches - third pair -->
+  <polygon points="137.5,165 137.5,205 55,205" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="137.5,165 55,165 55,205" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right branches - third pair -->
+  <polygon points="162.5,165 245,205 162.5,205" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="162.5,165 245,165 245,205" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left branches - bottom pair -->
+  <polygon points="137.5,215 137.5,255 40,255" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="137.5,215 40,215 40,255" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right branches - bottom pair -->
+  <polygon points="162.5,215 260,255 162.5,255" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="162.5,215 260,215 260,255" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

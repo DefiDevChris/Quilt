@@ -18,8 +18,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-warm-text-secondary text-sm leading-relaxed max-w-xs">
-              Design your quilts, calculate your yardage, and print patterns ready for the sewing
-              room. Four worktables, 651+ blocks, and a community of quilters who get it.
+              Turn photos into quilt patterns, design from scratch, calculate yardage, and print
+              true-scale patterns — all in your browser. Free to start.
             </p>
           </div>
 

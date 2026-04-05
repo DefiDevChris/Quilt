@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { desc, eq, count } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
 import { getRequiredSession, unauthorizedResponse, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';

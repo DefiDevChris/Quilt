@@ -4,13 +4,13 @@ import PublicNav from '@/components/landing/PublicNav';
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} — Your Next Quilt Starts Here`,
+  title: `${APP_NAME} — Design Quilts in Your Browser`,
   description:
-    'Design quilts in your browser with a 651+ block library, drag-and-drop fabrics, photo-to-pattern tools, and 1:1 PDF export. Free to start.',
+    'Turn photos into quilt patterns, browse a growing block library, calculate yardage, and export 1:1 PDFs with seam allowances. Sign up for free.',
   openGraph: {
-    title: `${APP_NAME} — Your Next Quilt Starts Here`,
+    title: `${APP_NAME} — Design Quilts in Your Browser`,
     description:
-      'A modern, browser-based quilt design studio. Free to start, low-cost Pro subscription.',
+      'Browser-based quilt design studio. Photo-to-pattern, 105+ blocks, yardage calculation, true-scale PDF export.',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: APP_NAME }],
   },

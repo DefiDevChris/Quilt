@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Basket (large triangle at bottom) -->
+  <polygon points="30,300 150,180 270,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Basket weave detail lines -->
+  <polygon points="75,260 150,180 150,260" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,260 150,180 225,260" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Central cactus stem -->
+  <rect x="140" y="50" width="20" height="130" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left arm -->
+  <polygon points="140,100 90,70 90,100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="80" y="50" width="20" height="50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left arm top -->
+  <polygon points="80,50 90,30 100,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right arm -->
+  <polygon points="160,110 210,80 210,110" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="55" width="20" height="55" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right arm top -->
+  <polygon points="200,55 210,35 220,55" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center stem top -->
+  <polygon points="140,50 150,25 160,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

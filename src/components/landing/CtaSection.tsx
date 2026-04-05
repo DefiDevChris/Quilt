@@ -21,11 +21,11 @@ export default function CtaSection() {
               className="text-3xl md:text-4xl font-bold text-warm-text mb-4"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Your Next Quilt Is Waiting
+              Ready to Start Your Next Quilting Adventure?
             </h2>
             <p className="text-lg text-warm-text-secondary mb-8 max-w-xl mx-auto">
-              Jump in and start designing — no credit card, no commitment, just you and your next
-              great quilt.
+              Explore QuiltCorgi today and experience the joy of effortless, digital quilt design.
+              No credit card, no commitment — just you and your next great quilt.
             </p>
 
             <Link

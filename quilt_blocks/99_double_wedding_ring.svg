@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Ring 1 (left) - arc of small pieced segments -->
+  <path d="M 75,60 A 100,100 0 0,1 210,45 L 200,70 A 75,75 0 0,0 85,82 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+  <path d="M 210,45 A 100,100 0 0,1 255,150 L 230,150 A 75,75 0 0,0 200,70 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <path d="M 255,150 A 100,100 0 0,1 210,255 L 200,230 A 75,75 0 0,0 230,150 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+  <path d="M 210,255 A 100,100 0 0,1 75,240 L 85,218 A 75,75 0 0,0 200,230 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <path d="M 75,240 A 100,100 0 0,1 45,150 L 70,150 A 75,75 0 0,0 85,218 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+  <path d="M 45,150 A 100,100 0 0,1 75,60 L 85,82 A 75,75 0 0,0 70,150 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Ring 2 (right, overlapping) -->
+  <path d="M 165,60 A 100,100 0 0,1 285,80 L 275,102 A 75,75 0 0,0 175,82 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <path d="M 285,80 A 100,100 0 0,1 285,220 L 260,210 A 75,75 0 0,0 275,102 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+  <path d="M 285,220 A 100,100 0 0,1 165,240 L 175,218 A 75,75 0 0,0 260,210 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <path d="M 165,240 A 100,100 0 0,1 105,150 L 125,150 A 75,75 0 0,0 175,218 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+  <path d="M 105,150 A 100,100 0 0,1 165,60 L 175,82 A 75,75 0 0,0 125,150 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Overlap intersection area -->
+  <path d="M 165,82 A 75,75 0 0,1 200,100 A 75,75 0 0,1 200,70 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <path d="M 165,218 A 75,75 0 0,0 200,200 A 75,75 0 0,0 200,230 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Center decorative element where rings cross -->
+  <polygon points="150,120 180,150 150,180 120,150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+</svg>

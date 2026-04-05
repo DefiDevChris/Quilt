@@ -4,20 +4,20 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-PUBLIC = os.path.join(os.path.dirname(__file__), '..', 'public')
+PUBLIC = os.path.join(os.path.dirname(__file__), "..", "public")
 
-BRAND_BG    = (255, 249, 242)   # --color-background #FFF9F2
-BRAND_PEACH = (255, 176, 133)   # --color-primary #FFB085
-BRAND_TEXT  = (74,  59,  50)    # --color-on-surface #4A3B32
-BRAND_MUTED = (107, 90,  77)    # --color-secondary #6B5A4D
+BRAND_BG = (255, 249, 242)  # --color-background #FFF9F2
+BRAND_PEACH = (255, 176, 133)  # --color-primary #FFB085
+BRAND_TEXT = (74, 59, 50)  # --color-on-surface #4A3B32
+BRAND_MUTED = (107, 90, 77)  # --color-secondary #6B5A4D
 
 # ── icon-192.png ──────────────────────────────────────────────────────────────
-logo = Image.open(os.path.join(PUBLIC, 'logo.png')).convert('RGBA')
+logo = Image.open(os.path.join(PUBLIC, "logo.png")).convert("RGBA")
 
-icon = Image.new('RGBA', (192, 192), BRAND_BG + (255,))
+icon = Image.new("RGBA", (192, 192), BRAND_BG + (255,))
 
 # Circular clip mask
-mask = Image.new('L', (192, 192), 0)
+mask = Image.new("L", (192, 192), 0)
 ImageDraw.Draw(mask).ellipse((0, 0, 191, 191), fill=255)
 
 # Resize logo to fit inside circle with padding
@@ -33,14 +33,14 @@ icon.paste(logo_sq, (ox, oy), logo_sq)
 icon.putalpha(mask)
 
 # Save as RGB PNG (no alpha needed for apple-touch-icon — white bg)
-icon_rgb = Image.new('RGB', (192, 192), BRAND_BG)
+icon_rgb = Image.new("RGB", (192, 192), BRAND_BG)
 icon_rgb.paste(icon, mask=icon.split()[3])
-icon_rgb.save(os.path.join(PUBLIC, 'icon-192.png'), 'PNG', optimize=True)
+icon_rgb.save(os.path.join(PUBLIC, "icon-192.png"), "PNG", optimize=True)
 print("✓ icon-192.png")
 
 # ── og-image.png ──────────────────────────────────────────────────────────────
 OG_W, OG_H = 1200, 630
-og = Image.new('RGB', (OG_W, OG_H), BRAND_BG)
+og = Image.new("RGB", (OG_W, OG_H), BRAND_BG)
 draw = ImageDraw.Draw(og)
 
 # Warm peach accent bar at top
@@ -65,29 +65,42 @@ draw.rectangle(
 
 # Text on the left — constrained to left 50% of image
 try:
-    font_title = ImageFont.truetype('/usr/share/fonts/liberation/LiberationSans-Bold.ttf', 80)
-    font_sub   = ImageFont.truetype('/usr/share/fonts/liberation/LiberationSans-Regular.ttf', 34)
-    font_tag   = ImageFont.truetype('/usr/share/fonts/liberation/LiberationSans-Regular.ttf', 26)
+    font_title = ImageFont.truetype(
+        "/usr/share/fonts/liberation/LiberationSans-Bold.ttf", 80
+    )
+    font_sub = ImageFont.truetype(
+        "/usr/share/fonts/liberation/LiberationSans-Regular.ttf", 34
+    )
+    font_tag = ImageFont.truetype(
+        "/usr/share/fonts/liberation/LiberationSans-Regular.ttf", 26
+    )
 except Exception:
     font_title = ImageFont.load_default()
-    font_sub   = font_title
-    font_tag   = font_title
+    font_sub = font_title
+    font_tag = font_title
 
 text_x = margin + 48
-draw.text((text_x, 150), 'QuiltCorgi',                                       font=font_title, fill=BRAND_TEXT)
-draw.text((text_x, 262), 'Design quilts in your browser.',                    font=font_sub,   fill=BRAND_MUTED)
-draw.text((text_x, 314), '651+ blocks · fabric visualizer · 1:1 PDF export', font=font_tag,   fill=BRAND_MUTED)
-draw.text((text_x, 430), 'quiltcorgi.com',                                   font=font_tag,   fill=BRAND_PEACH)
+draw.text((text_x, 150), "QuiltCorgi", font=font_title, fill=BRAND_TEXT)
+draw.text(
+    (text_x, 262), "Design quilts in your browser.", font=font_sub, fill=BRAND_MUTED
+)
+draw.text(
+    (text_x, 314),
+    "105+ blocks · fabric visualizer · 1:1 PDF export",
+    font=font_tag,
+    fill=BRAND_MUTED,
+)
+draw.text((text_x, 430), "quiltcorgi.com", font=font_tag, fill=BRAND_PEACH)
 
 # Corgi — right half only, sized to fit within x: 620–1140
-corgi = Image.open(os.path.join(PUBLIC, 'logo.png')).convert('RGBA')
+corgi = Image.open(os.path.join(PUBLIC, "logo.png")).convert("RGBA")
 corgi_h = 400
 ratio = corgi_h / corgi.height
 corgi_w = int(corgi.width * ratio)
 corgi = corgi.resize((corgi_w, corgi_h), Image.LANCZOS)
 # Center horizontally in the right half (620 to 1140)
 right_zone_start = 620
-right_zone_end   = OG_W - margin
+right_zone_end = OG_W - margin
 cx = right_zone_start + (right_zone_end - right_zone_start - corgi_w) // 2
 cy = OG_H - corgi_h - 40
 og.paste(corgi, (cx, cy), corgi)
@@ -95,5 +108,5 @@ og.paste(corgi, (cx, cy), corgi)
 # Peach accent bar at bottom
 draw.rectangle([(0, OG_H - 8), (OG_W, OG_H)], fill=BRAND_PEACH)
 
-og.save(os.path.join(PUBLIC, 'og-image.png'), 'PNG', optimize=True)
+og.save(os.path.join(PUBLIC, "og-image.png"), "PNG", optimize=True)
 print("✓ og-image.png")

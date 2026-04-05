@@ -97,7 +97,7 @@ export function useColorThemeTool() {
 
 function extractPatchColors(
   canvas: { getObjects: () => { stroke?: unknown; fill?: unknown; id?: unknown }[] },
-  _fabric: typeof import('fabric')
+  _f: typeof import('fabric')
 ): PatchColor[] {
   return canvas
     .getObjects()

@@ -113,7 +113,7 @@ export default function CommunityPreview() {
             </div>
             {hasPosts ? (
               <div className="grid grid-cols-3 gap-4">
-                {posts.slice(0, 6).map((post, i) => (
+                {posts.slice(0, 6).map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))}
               </div>
@@ -161,7 +161,7 @@ export default function CommunityPreview() {
                     className="text-2xl font-bold text-warm-peach"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    651+
+                    105+
                   </div>
                   <div className="text-sm text-warm-text-secondary">Quilt blocks</div>
                 </div>

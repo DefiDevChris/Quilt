@@ -49,7 +49,7 @@ export default function AdminBlogPage() {
         setLoading(false);
       }
     },
-    [pagination.limit]
+    [pagination]
   );
 
   useEffect(() => {

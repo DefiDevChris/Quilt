@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Herringbone pattern: parallelogram strips in alternating V arrangements -->
+  <!-- Column 1 - leaning right -->
+  <polygon points="0,0 75,0 75,37.5 0,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="0,75 75,37.5 75,112.5 0,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,150 75,112.5 75,187.5 0,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 75,187.5 75,262.5 0,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Column 2 - leaning left -->
+  <polygon points="75,0 150,0 150,75 75,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,37.5 150,75 150,150 75,112.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="75,112.5 150,150 150,225 75,187.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,187.5 150,225 150,300 75,262.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Column 3 - leaning right -->
+  <polygon points="150,0 225,0 225,37.5 150,75" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,75 225,37.5 225,112.5 150,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 225,112.5 225,187.5 150,225" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="150,225 225,187.5 225,262.5 150,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Column 4 - leaning left -->
+  <polygon points="225,0 300,0 300,75 225,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,37.5 300,75 300,150 225,112.5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="225,112.5 300,150 300,225 225,187.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,187.5 300,225 300,300 225,262.5" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

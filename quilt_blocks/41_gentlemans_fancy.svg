@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Gentleman's Fancy: Elaborated 9-patch on 6x6 grid (50px cells) -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Center square-in-square (diamond) at center 2x2 cells (100-200) -->
+  <!-- Center background square -->
+  <rect x="100" y="100" width="100" height="100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center diamond -->
+  <polygon points="150,100 200,150 150,200 100,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Corner triangles of center square-in-square -->
+  <polygon points="100,100 150,100 100,150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,100 200,100 200,150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="200,150 200,200 150,200" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="100,150 150,200 100,200" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Corner HSTs (each corner is 2x2 cells = 100x100) -->
+  <!-- Top-left corner HST -->
+  <polygon points="0,0 100,0 0,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 100,100 0,100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner HST -->
+  <polygon points="200,0 300,0 300,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 300,100 200,100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner HST -->
+  <polygon points="0,200 100,200 100,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,200 100,300 0,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner HST -->
+  <polygon points="200,200 300,200 200,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,200 300,300 200,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Side rectangles with small accent triangles -->
+  <!-- Top side (100,0 to 200,100) -->
+  <rect x="100" y="0" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 150,50 100,100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 200,100 150,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right side (200,100 to 300,200) -->
+  <rect x="200" y="100" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,100 300,100 250,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="250,150 300,200 200,200" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom side (100,200 to 200,300) -->
+  <rect x="100" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,200 150,250 100,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="200,200 200,300 150,250" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left side (0,100 to 100,200) -->
+  <rect x="0" y="100" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,100 100,100 50,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="50,150 100,200 0,200" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>
