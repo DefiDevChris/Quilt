@@ -5,7 +5,7 @@
  */
 
 import { readdirSync, statSync } from 'fs';
-import { join, basename } from 'path';
+import { join } from 'path';
 
 const FABRICS_DIR = join(process.cwd(), '..', 'fabrics');
 
@@ -21,17 +21,31 @@ interface FabricEntry {
 function extractColorFamily(filename: string): string {
   const colorCode = filename.split('-')[1]?.replace('.jpg', '').toUpperCase();
   const colorMap: Record<string, string> = {
-    B: 'Blue', L: 'Blue', LB: 'Blue', T: 'Teal', G: 'Green', LG: 'Green',
-    Y: 'Yellow', LT: 'Yellow', O: 'Orange', R: 'Red', P: 'Pink', V: 'Purple',
-    K: 'Black', E: 'Neutral', C: 'Neutral', N: 'Neutral', W: 'White'
+    B: 'Blue',
+    L: 'Blue',
+    LB: 'Blue',
+    T: 'Teal',
+    G: 'Green',
+    LG: 'Green',
+    Y: 'Yellow',
+    LT: 'Yellow',
+    O: 'Orange',
+    R: 'Red',
+    P: 'Pink',
+    V: 'Purple',
+    K: 'Black',
+    E: 'Neutral',
+    C: 'Neutral',
+    N: 'Neutral',
+    W: 'White',
   };
   return colorMap[colorCode] || 'Multi';
 }
 
 function scanFabrics(): FabricEntry[] {
   const entries: FabricEntry[] = [];
-  
-  const collections = readdirSync(FABRICS_DIR).filter(name => {
+
+  const collections = readdirSync(FABRICS_DIR).filter((name) => {
     const path = join(FABRICS_DIR, name);
     return statSync(path).isDirectory();
   });
@@ -42,8 +56,8 @@ function scanFabrics(): FabricEntry[] {
       ? collection.split(' by ')
       : [collection, 'Unknown'];
 
-    const files = readdirSync(collectionPath).filter(f => 
-      f.endsWith('.jpg') && !f.startsWith('.')
+    const files = readdirSync(collectionPath).filter(
+      (f) => f.endsWith('.jpg') && !f.startsWith('.')
     );
 
     for (const file of files) {
@@ -54,7 +68,7 @@ function scanFabrics(): FabricEntry[] {
         sku,
         collection: collectionName,
         colorFamily: extractColorFamily(file),
-        imagePath: join(collectionPath, file)
+        imagePath: join(collectionPath, file),
       });
     }
   }
@@ -76,7 +90,9 @@ async function seedFabrics() {
   const db = drizzle(pool);
 
   const entries = scanFabrics();
-  console.log(`Found ${entries.length} fabric images across ${new Set(entries.map(e => e.collection)).size} collections`);
+  console.log(
+    `Found ${entries.length} fabric images across ${new Set(entries.map((e) => e.collection)).size} collections`
+  );
 
   const { fabrics } = await import('../src/db/schema');
   const { eq } = await import('drizzle-orm');
@@ -85,9 +101,9 @@ async function seedFabrics() {
     .select({ sku: fabrics.sku })
     .from(fabrics)
     .where(eq(fabrics.isDefault, true));
-  const existingSkus = new Set(existingFabrics.map(f => f.sku));
+  const existingSkus = new Set(existingFabrics.map((f) => f.sku));
 
-  const newEntries = entries.filter(e => !existingSkus.has(e.sku));
+  const newEntries = entries.filter((e) => !existingSkus.has(e.sku));
 
   if (newEntries.length === 0) {
     console.log('All fabrics already exist. Skipping seed.');
@@ -102,7 +118,7 @@ async function seedFabrics() {
 
   for (let i = 0; i < newEntries.length; i += BATCH_SIZE) {
     const batch = newEntries.slice(i, i + BATCH_SIZE);
-    const values = batch.map(entry => {
+    const values = batch.map((entry) => {
       const collectionPath = entry.collection.includes(' by ')
         ? entry.collection
         : entry.collection;
@@ -136,7 +152,7 @@ if (process.env.NODE_ENV === 'production') {
   process.exit(1);
 }
 
-seedFabrics().catch(err => {
+seedFabrics().catch((err) => {
   console.error('Seeding failed:', err);
   process.exit(1);
 });

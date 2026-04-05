@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Mariner's Compass: 16-point compass rose with 8 large and 8 small points -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Background circle area -->
+  <circle cx="150" cy="150" r="140" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- 8 large compass points (505050) — N, NE, E, SE, S, SW, W, NW -->
+  <!-- North -->
+  <polygon points="150,10 165,110 150,90 135,110" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Northeast -->
+  <polygon points="248.99,51.01 179.71,120.29 170,106.21 189.79,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- East -->
+  <polygon points="290,150 190,165 210,150 190,135" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Southeast -->
+  <polygon points="248.99,248.99 179.71,179.71 193.79,170 200,189.79" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- South -->
+  <polygon points="150,290 135,190 150,210 165,190" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Southwest -->
+  <polygon points="51.01,248.99 120.29,179.71 106.21,170 100,189.79" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- West -->
+  <polygon points="10,150 110,135 90,150 110,165" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Northwest -->
+  <polygon points="51.01,51.01 120.29,120.29 106.21,130 100,110.21" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- 8 small compass points (D0D0D0) — NNE, ENE, ESE, SSE, SSW, WSW, WNW, NNW -->
+  <!-- NNE -->
+  <polygon points="192.13,25.44 173,108 165,110 167,95" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- ENE -->
+  <polygon points="274.56,107.87 192,127 190,135 205,133" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- ESE -->
+  <polygon points="274.56,192.13 192,173 205,167 190,165" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- SSE -->
+  <polygon points="192.13,274.56 173,192 167,205 165,190" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- SSW -->
+  <polygon points="107.87,274.56 127,192 135,190 133,205" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- WSW -->
+  <polygon points="25.44,192.13 108,173 110,165 95,167" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- WNW -->
+  <polygon points="25.44,107.87 108,127 95,133 110,135" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- NNW -->
+  <polygon points="107.87,25.44 127,108 133,95 135,110" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center circle (B0B0B0) -->
+  <circle cx="150" cy="150" r="30" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Inner center circle -->
+  <circle cx="150" cy="150" r="15" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Corner fills to complete 300x300 coverage -->
+  <polygon points="0,0 150,0 0,150" fill="#F8F8F8" stroke="#333" stroke-width="0.5"/>
+  <polygon points="300,0 300,150 150,0" fill="#F8F8F8" stroke="#333" stroke-width="0.5"/>
+  <polygon points="300,300 150,300 300,150" fill="#F8F8F8" stroke="#333" stroke-width="0.5"/>
+  <polygon points="0,300 0,150 150,300" fill="#F8F8F8" stroke="#333" stroke-width="0.5"/>
+</svg>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Monkey Wrench: 3x3 grid (100px cells) -->
+  <!-- Center square dark -->
+  <rect x="100" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- 4 corner HSTs with dark toward center -->
+  <!-- Top-left corner: dark lower-right triangle -->
+  <polygon points="0,0 100,0 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 100,100 0,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner: dark lower-left triangle -->
+  <polygon points="200,0 300,0 300,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 300,100 200,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner: dark upper-right triangle -->
+  <polygon points="0,200 100,200 100,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="0,200 0,300 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner: dark upper-left triangle -->
+  <polygon points="200,200 300,200 200,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="300,200 300,300 200,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- 4 side positions: wrench shapes with rotating frame effect -->
+  <!-- Top side: dark rectangle with triangular notch -->
+  <rect x="100" y="0" width="100" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,50 200,50 200,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,50 100,100 200,100" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right side: dark rectangle with triangular notch -->
+  <rect x="250" y="100" width="50" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,100 250,100 250,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,100 200,200 250,200" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom side: dark rectangle with triangular notch -->
+  <rect x="100" y="250" width="100" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,200 200,200 100,250" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,200 200,250 100,250" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left side: dark rectangle with triangular notch -->
+  <rect x="0" y="100" width="50" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="50,100 50,200 100,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="50,100 100,100 100,200" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+</svg>

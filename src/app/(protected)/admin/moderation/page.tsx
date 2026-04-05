@@ -47,37 +47,36 @@ export default function AdminModerationPage() {
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   useEffect(() => {
+    async function fetchContent() {
+      setLoading(true);
+      try {
+        if (activeTab === 'reports') {
+          const res = await fetch('/api/admin/reports');
+          if (res.ok) {
+            const data = await res.json();
+            setReports(data.data?.reports ?? []);
+          }
+        } else if (activeTab === 'posts') {
+          const res = await fetch('/api/admin/community');
+          if (res.ok) {
+            const data = await res.json();
+            setPosts(data.data?.posts ?? []);
+          }
+        } else if (activeTab === 'comments') {
+          const res = await fetch('/api/admin/comments?reported=true');
+          if (res.ok) {
+            const data = await res.json();
+            setComments(data.data?.comments ?? []);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchContent();
   }, [activeTab]);
-
-  async function fetchContent() {
-    setLoading(true);
-    try {
-      if (activeTab === 'reports') {
-        const res = await fetch('/api/admin/reports');
-        if (res.ok) {
-          const data = await res.json();
-          setReports(data.data?.reports ?? []);
-        }
-      } else if (activeTab === 'posts') {
-        const res = await fetch('/api/admin/community');
-        if (res.ok) {
-          const data = await res.json();
-          setPosts(data.data?.posts ?? []);
-        }
-      } else if (activeTab === 'comments') {
-        const res = await fetch('/api/admin/comments?reported=true');
-        if (res.ok) {
-          const data = await res.json();
-          setComments(data.data?.comments ?? []);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch content:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleDismissReport(reportId: string) {
     if (!confirm('Dismiss this report?')) return;
@@ -165,11 +164,21 @@ export default function AdminModerationPage() {
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Reason</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Reporter</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Date</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Reason
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Reporter
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/30 bg-surface">
@@ -186,7 +195,9 @@ export default function AdminModerationPage() {
                           <span className="text-sm">{report.postId ? 'Post' : 'Comment'}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm text-on-surface max-w-md truncate">{report.reason}</p>
+                          <p className="text-sm text-on-surface max-w-md truncate">
+                            {report.reason}
+                          </p>
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm text-secondary">
@@ -221,11 +232,21 @@ export default function AdminModerationPage() {
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Post</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Creator</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Likes</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Date</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Post
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Creator
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Likes
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/30 bg-surface">
@@ -242,12 +263,16 @@ export default function AdminModerationPage() {
                           <div className="max-w-md">
                             <p className="font-medium text-on-surface truncate">{post.title}</p>
                             {post.description && (
-                              <p className="text-xs text-secondary mt-0.5 line-clamp-1">{post.description}</p>
+                              <p className="text-xs text-secondary mt-0.5 line-clamp-1">
+                                {post.description}
+                              </p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">{formatCreatorName(post.creatorName)}</span>
+                          <span className="text-sm text-secondary">
+                            {formatCreatorName(post.creatorName)}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm text-secondary">{post.likeCount}</span>
@@ -280,11 +305,21 @@ export default function AdminModerationPage() {
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Comment</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Author</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">On Post</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">Date</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Comment
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Author
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      On Post
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/30 bg-surface">
@@ -298,10 +333,14 @@ export default function AdminModerationPage() {
                     comments.map((comment) => (
                       <tr key={comment.id} className="hover:bg-surface-container-low">
                         <td className="px-4 py-3">
-                          <p className="text-sm text-on-surface max-w-md truncate">{comment.content}</p>
+                          <p className="text-sm text-on-surface max-w-md truncate">
+                            {comment.content}
+                          </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">{formatCreatorName(comment.authorName)}</span>
+                          <span className="text-sm text-secondary">
+                            {formatCreatorName(comment.authorName)}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm text-secondary max-w-xs truncate block">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useProfileStore } from '@/stores/profileStore';
@@ -111,31 +111,23 @@ function EmailIcon() {
 
 type ProfileTab = 'posts' | 'about';
 
-export function UserProfilePage({ username }: UserProfilePageProps) {
-  const { profile, posts, pagination, isLoading, error, fetchProfile, loadMore } =
-    useProfileStore();
+export function UserProfilePage({}: UserProfilePageProps) {
+  const { profile, posts, pagination, isLoading, error, loadMore } = useProfileStore();
   const currentUser = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
   const [followListTab, setFollowListTab] = useState<'followers' | 'following'>('followers');
   const [showFollowList, setShowFollowList] = useState(false);
-  const [followerCount, setFollowerCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [followDelta, setFollowDelta] = useState(0);
 
-  useEffect(() => {
-    fetchProfile(username);
-    return () => {
-      useProfileStore.getState().reset();
-    };
-  }, [username, fetchProfile]);
-
-  // Sync follow counts from profile data
-  useEffect(() => {
-    if (profile) {
-      const p = profile as unknown as Record<string, unknown>;
-      setFollowerCount(typeof p.followerCount === 'number' ? p.followerCount : 0);
-      setFollowingCount(typeof p.followingCount === 'number' ? p.followingCount : 0);
-    }
-  }, [profile]);
+  const profileData = profile as unknown as Record<string, unknown>;
+  const followerCount =
+    profile && typeof profileData.followerCount === 'number'
+      ? (profileData.followerCount as number) + followDelta
+      : 0;
+  const followingCount =
+    profile && typeof profileData.followingCount === 'number'
+      ? (profileData.followingCount as number)
+      : 0;
 
   if (isLoading) {
     return (
@@ -250,7 +242,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                     !!(profile as unknown as Record<string, unknown>).isFollowedByCurrentUser
                   }
                   onToggle={(isFollowing) => {
-                    setFollowerCount((prev) => prev + (isFollowing ? 1 : -1));
+                    setFollowDelta((prev) => prev + (isFollowing ? 1 : -1));
                   }}
                 />
               ) : null}

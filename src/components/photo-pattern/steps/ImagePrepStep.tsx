@@ -180,6 +180,7 @@ export function ImagePrepStep() {
   const hasStraightenTransform = rotation !== 0 || flipH || flipV;
   const hasPerspectiveTransform = perspectiveCorners !== null;
   const hasTransform = mode === 'straighten' ? hasStraightenTransform : hasPerspectiveTransform;
+  void hasTransform;
 
   useEffect(() => {
     if (!originalImage || !containerRef.current || mode !== 'perspective') return;

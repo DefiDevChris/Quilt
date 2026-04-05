@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Puss in the Corner: 3x3 grid, dark corners and center, background sides -->
+  <!-- Corner squares (dark) -->
+  <rect x="0" y="0" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="0" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="200" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="200" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Center square (dark) -->
+  <rect x="100" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Side rectangles (background) -->
+  <rect x="100" y="0" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="100" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="200" y="100" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+</svg>

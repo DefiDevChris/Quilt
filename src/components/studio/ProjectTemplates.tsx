@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Trash2, Settings } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -45,13 +45,8 @@ export function ProjectTemplates({
     },
   });
 
-  useEffect(() => {
-    fetchTemplates();
-  }, [user]);
-
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     if (!user) return;
-
     try {
       const res = await fetch('/api/project-templates');
       if (!res.ok) throw new Error('Failed to fetch');
@@ -62,7 +57,11 @@ export function ProjectTemplates({
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
   const handleCreateTemplate = async (e: React.FormEvent) => {
     e.preventDefault();

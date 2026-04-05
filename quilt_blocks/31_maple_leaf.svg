@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Maple Leaf: 3x3 grid (100px cells) -->
+  <!-- Top-left: HST with dark upper-left -->
+  <polygon points="0,0 100,0 0,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 100,100 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Top-center: HST with dark upper-right -->
+  <polygon points="100,0 200,0 200,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 200,100 100,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Top-right: solid dark -->
+  <rect x="200" y="0" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Middle-left: HST with dark upper-left -->
+  <polygon points="0,100 100,100 0,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="100,100 100,200 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Center: solid dark -->
+  <rect x="100" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Middle-right: background -->
+  <rect x="200" y="100" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left: background -->
+  <rect x="0" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-center: background with stem -->
+  <rect x="100" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Diagonal stem line -->
+  <path d="M 200,200 L 140,260" fill="none" stroke="#505050" stroke-width="3"/>
+  <!-- Bottom-right: background -->
+  <rect x="200" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+</svg>

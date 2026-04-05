@@ -196,13 +196,11 @@ export function stripPatternName(rawName: string): string {
   // This ensures "Quilt - Collection by Manufacturer" splits at " - "
   // rather than at " by ".
   let earliestIndex = Infinity;
-  let earliestEnd = 0;
 
   for (const separator of NAME_SEPARATORS) {
     const match = cleaned.match(separator);
     if (match && match.index !== undefined && match.index < earliestIndex) {
       earliestIndex = match.index;
-      earliestEnd = match.index + match[0].length;
     }
   }
 

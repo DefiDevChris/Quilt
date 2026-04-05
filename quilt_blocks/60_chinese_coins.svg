@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Chinese Coins: vertical strips of alternating colors and varying widths -->
+  <rect x="0" y="0" width="300" height="30" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="30" width="300" height="20" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="50" width="300" height="40" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="90" width="300" height="15" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="105" width="300" height="35" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="140" width="300" height="25" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="165" width="300" height="30" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="195" width="300" height="20" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="215" width="300" height="40" fill="#505050" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="255" width="300" height="15" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="270" width="300" height="30" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+</svg>

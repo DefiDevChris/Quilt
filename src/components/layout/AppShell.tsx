@@ -21,7 +21,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isAuthenticated = !!user;
-  const isPro = user?.role === 'pro' || user?.role === 'admin';
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -56,9 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <nav
         aria-label="Main navigation"
         className={`sticky top-0 z-40 h-14 backdrop-blur-[28px] px-4 flex items-center justify-between transition-all duration-300 border-b ${
-          scrolled
-            ? 'glass-card'
-            : 'bg-surface/80 border-transparent'
+          scrolled ? 'glass-card' : 'bg-surface/80 border-transparent'
         }`}
       >
         <Link href="/dashboard" className="flex items-center gap-2">
@@ -217,9 +214,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {showProUpgrade && (
-        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
-      )}
+      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
     </div>
   );
 }

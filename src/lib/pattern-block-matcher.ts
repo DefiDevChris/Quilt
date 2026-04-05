@@ -1,7 +1,7 @@
 /**
  * Pattern Block Matcher Engine
  *
- * Matches parsed pattern blocks to the 651-block library using a multi-strategy
+ * Matches parsed pattern blocks to the block library using a multi-strategy
  * approach: exact name, normalized name, and tag-based keyword search.
  * Generates placeholder SVGs for unmatched blocks.
  *
@@ -33,7 +33,7 @@ export interface BlockMatchResult {
 
 // ── Constants ──────────────────────────────────────────────────────
 
-const TRAILING_SUFFIXES = /\b(quilt|block|unit)$/;
+// const TRAILING_SUFFIXES = /\b(quilt|block|unit)$/;
 
 const STOP_WORDS = new Set([
   'the',

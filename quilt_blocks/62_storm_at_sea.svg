@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Storm at Sea: center diamond (square-in-square), rectangular wave units, background -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Outer layer: corner squares with HSTs creating wave motion -->
+  <!-- Top-left corner square -->
+  <rect x="0" y="0" width="75" height="75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,0 75,0 37.5,37.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,0 75,75 37.5,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 0,75 37.5,37.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,75 0,0 37.5,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right corner square -->
+  <rect x="225" y="0" width="75" height="75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,0 300,0 262.5,37.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 300,75 262.5,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,75 225,75 262.5,37.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,75 225,0 262.5,37.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left corner square -->
+  <rect x="0" y="225" width="75" height="75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,225 75,225 37.5,262.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,225 75,300 37.5,262.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="75,300 0,300 37.5,262.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 0,225 37.5,262.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right corner square -->
+  <rect x="225" y="225" width="75" height="75" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,225 300,225 262.5,262.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,225 300,300 262.5,262.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="300,300 225,300 262.5,262.5" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="225,300 225,225 262.5,262.5" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Side rectangular wave units (flying geese creating wave) -->
+  <!-- Top side -->
+  <rect x="75" y="0" width="150" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 150,0 225,75" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom side -->
+  <rect x="75" y="225" width="150" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,225 150,300 225,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left side -->
+  <rect x="0" y="75" width="75" height="150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="75,75 0,150 75,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right side -->
+  <rect x="225" y="75" width="75" height="150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="225,75 300,150 225,225" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center: square-in-square (diamond) -->
+  <!-- Outer square background -->
+  <rect x="75" y="75" width="150" height="150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Diamond (rotated inner square) -->
+  <polygon points="150,75 225,150 150,225 75,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Inner diamond -->
+  <polygon points="150,100 200,150 150,200 100,150" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

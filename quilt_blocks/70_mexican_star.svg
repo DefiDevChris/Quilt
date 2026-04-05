@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Mexican Star: 8-pointed star with elongated thin diamond points -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- 8 elongated diamond points alternating colors -->
+  <!-- Top point (505050) — thin diamond from center to top edge -->
+  <polygon points="150,0 170,100 150,150 130,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-right point (D0D0D0) -->
+  <polygon points="256,44 200,120 150,150 180,80" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right point (505050) -->
+  <polygon points="300,150 200,170 150,150 200,130" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right point (D0D0D0) -->
+  <polygon points="256,256 200,180 150,150 180,220" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom point (505050) -->
+  <polygon points="150,300 130,200 150,150 170,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left point (D0D0D0) -->
+  <polygon points="44,256 100,180 150,150 120,220" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Left point (505050) -->
+  <polygon points="0,150 100,130 150,150 100,170" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-left point (D0D0D0) -->
+  <polygon points="44,44 100,120 150,150 120,80" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Background fill triangles in corners -->
+  <polygon points="0,0 44,44 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,0 100,0 44,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 256,44 300,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 200,0 256,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,300 256,256 300,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,300 200,300 256,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 44,256 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 100,300 44,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Background fill between points on edges -->
+  <polygon points="100,0 150,0 130,100 44,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,0 150,0 170,100 256,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,100 300,150 200,130 256,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,200 300,150 200,170 256,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="200,300 150,300 170,200 256,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,300 150,300 130,200 44,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,200 0,150 100,170 44,256" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,100 0,150 100,130 44,44" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+</svg>

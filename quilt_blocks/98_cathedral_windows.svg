@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Four folded squares (muslin base) -->
+  <rect x="0" y="0" width="150" height="150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="0" width="150" height="150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="150" width="150" height="150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="150" y="150" width="150" height="150" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Curved "window" petals at each intersection using arc paths -->
+  <!-- Center window (where all 4 squares meet) -->
+  <path d="M 150,100 A 50,50 0 0,1 200,150 A 50,50 0 0,1 150,200 A 50,50 0 0,1 100,150 A 50,50 0 0,1 150,100 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-left curved petal -->
+  <path d="M 75,0 A 75,75 0 0,1 150,75 A 75,75 0 0,1 75,0 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Top-right curved petal -->
+  <path d="M 150,75 A 75,75 0 0,1 225,0 A 75,75 0 0,1 150,75 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left curved petal -->
+  <path d="M 75,300 A 75,75 0 0,1 150,225 A 75,75 0 0,1 75,300 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right curved petal -->
+  <path d="M 150,225 A 75,75 0 0,1 225,300 A 75,75 0 0,1 150,225 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Left curved petal -->
+  <path d="M 0,75 A 75,75 0 0,1 75,150 A 75,75 0 0,1 0,225 A 75,75 0 0,0 0,75 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Right curved petal -->
+  <path d="M 300,75 A 75,75 0 0,0 225,150 A 75,75 0 0,0 300,225 A 75,75 0 0,1 300,75 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top curved petal -->
+  <path d="M 75,0 A 75,75 0 0,0 150,75 A 75,75 0 0,1 75,0 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center accent dots at intersections -->
+  <circle cx="150" cy="150" r="8" fill="#505050" stroke="#333" stroke-width="1"/>
+  <circle cx="0" cy="150" r="6" fill="#505050" stroke="#333" stroke-width="1"/>
+  <circle cx="300" cy="150" r="6" fill="#505050" stroke="#333" stroke-width="1"/>
+  <circle cx="150" cy="0" r="6" fill="#505050" stroke="#333" stroke-width="1"/>
+  <circle cx="150" cy="300" r="6" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

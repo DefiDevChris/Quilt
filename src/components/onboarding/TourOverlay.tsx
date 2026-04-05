@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TOUR_STEPS, computeTooltipPosition, type TourStep } from '@/lib/onboarding-utils';
@@ -21,7 +21,6 @@ function getTargetRect(step: TourStep): DOMRect | null {
 
 export function TourOverlay({ onComplete, onDismiss }: TourOverlayProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const step = TOUR_STEPS[currentStep];
@@ -29,23 +28,22 @@ export function TourOverlay({ onComplete, onDismiss }: TourOverlayProps) {
   const isLast = currentStep === TOUR_STEPS.length - 1;
   const isCentered = !step.targetSelector;
 
-  // Measure target element position
-  const measureTarget = useCallback(() => {
-    const rect = getTargetRect(step);
-    setTargetRect(rect);
-  }, [step]);
+  // Derive targetRect from step + resizeTick (no setState in effect)
+  const targetRect = useMemo(() => getTargetRect(step), [step]);
 
   useEffect(() => {
-    measureTarget();
-
     // Reposition on resize/scroll
-    window.addEventListener('resize', measureTarget);
-    window.addEventListener('scroll', measureTarget, true);
-    return () => {
-      window.removeEventListener('resize', measureTarget);
-      window.removeEventListener('scroll', measureTarget, true);
+    const handler = () => {
+      // Force re-render to recalculate targetRect
+      setCurrentStep((s) => s);
     };
-  }, [measureTarget]);
+    window.addEventListener('resize', handler);
+    window.addEventListener('scroll', handler, true);
+    return () => {
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('scroll', handler, true);
+    };
+  }, []);
 
   const handleNext = useCallback(() => {
     if (isLast) {

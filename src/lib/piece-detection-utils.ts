@@ -58,12 +58,6 @@ import {
   dynamicKernelSize,
   getEffectiveDetectionOptions,
   DEFAULT_WATERSHED_THRESHOLD,
-  DEFAULT_MIN_SOLIDITY,
-  DEFAULT_MAX_ASPECT_RATIO,
-  DEFAULT_SOBEL_THRESHOLD_MULTIPLIER,
-  DEFAULT_TOPSTITCHING_KERNEL_FACTOR,
-  DEFAULT_SHARPENING_INTENSITY,
-  DEFAULT_CLAHE_CLIP_LIMIT,
 } from './piece-detection-shared';
 
 /** Scale factor for Clipper-lib integer math */
@@ -1075,6 +1069,8 @@ export function detectQuiltShape(
   _imageWidth: number,
   _imageHeight: number
 ): QuiltBoundary {
+  void _imageWidth;
+  void _imageHeight;
   // Calculate bounding box of all pieces
   let minX = Infinity,
     minY = Infinity,

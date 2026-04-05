@@ -15,7 +15,7 @@ export default function AdminLibrariesPage() {
         {['fabrics', 'blocks', 'templates'].map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab as any)}
+            onClick={() => setActiveTab(tab as 'fabrics' | 'blocks' | 'templates')}
             className={`px-4 py-2 font-medium text-sm transition-colors ${
               activeTab === tab
                 ? 'border-b-2 border-primary text-primary'

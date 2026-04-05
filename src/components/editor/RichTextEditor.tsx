@@ -15,6 +15,106 @@ interface TiptapDoc {
   content: TiptapNode[];
 }
 
+// Simple HTML to Tiptap JSON converter (pure function, outside component)
+function htmlToTiptapInner(html: string): TiptapDoc {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  const nodes: TiptapNode[] = [];
+
+  for (const child of Array.from(doc.body.children)) {
+    const node = elementToTiptapNode(child);
+    if (node) nodes.push(node);
+  }
+
+  return {
+    type: 'doc',
+    content: nodes.length > 0 ? nodes : [{ type: 'paragraph', content: [] }],
+  };
+}
+
+function elementToTiptapNode(el: Element): TiptapNode | null {
+  const tag = el.tagName.toLowerCase();
+
+  if (tag === '#text') {
+    return null;
+  }
+
+  // Handle block elements
+  let nodeType = 'paragraph';
+  let attrs: Record<string, unknown> = {};
+
+  switch (tag) {
+    case 'h1':
+      nodeType = 'heading';
+      attrs = { level: 1 };
+      break;
+    case 'h2':
+      nodeType = 'heading';
+      attrs = { level: 2 };
+      break;
+    case 'h3':
+      nodeType = 'heading';
+      attrs = { level: 3 };
+      break;
+    case 'h4':
+      nodeType = 'heading';
+      attrs = { level: 4 };
+      break;
+    case 'ul':
+      nodeType = 'bulletList';
+      break;
+    case 'ol':
+      nodeType = 'orderedList';
+      break;
+    case 'li':
+      nodeType = 'listItem';
+      break;
+    case 'blockquote':
+      nodeType = 'blockquote';
+      break;
+    case 'pre':
+      nodeType = 'codeBlock';
+      break;
+    case 'hr':
+      return { type: 'horizontalRule' };
+    case 'img':
+      return {
+        type: 'image',
+        attrs: {
+          src: el.getAttribute('src') || '',
+          alt: el.getAttribute('alt') || '',
+          align:
+            (el.getAttribute('data-align') as 'left' | 'right' | 'center' | 'full') || 'center',
+        },
+      };
+  }
+
+  const children: TiptapNode[] = [];
+
+  for (const child of Array.from(el.childNodes)) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const text = child.textContent || '';
+      if (text) {
+        children.push({ type: 'text', text });
+      }
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const childNode = elementToTiptapNode(child as Element);
+      if (childNode) children.push(childNode);
+    }
+  }
+
+  if (nodeType === 'paragraph' && children.length === 0) {
+    return { type: 'paragraph', content: [] };
+  }
+
+  return {
+    type: nodeType,
+    content: children,
+    ...(Object.keys(attrs).length > 0 ? { attrs } : {}),
+  };
+}
+
 interface RichTextEditorProps {
   initialContent?: unknown;
   onChange?: (content: unknown) => void;
@@ -60,79 +160,10 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
     if (!editorRef.current) return;
 
     const html = editorRef.current.innerHTML;
-    const doc = htmlToTiptap(html);
+    const doc = htmlToTiptapInner(html);
     setContent(doc);
     onChange?.(doc);
   }, [onChange]);
-
-  // Simple HTML to Tiptap JSON converter
-  function htmlToTiptap(html: string): TiptapDoc {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    
-    const nodes: TiptapNode[] = [];
-    
-    for (const child of Array.from(doc.body.children)) {
-      const node = elementToTiptapNode(child);
-      if (node) nodes.push(node);
-    }
-
-    return { type: 'doc', content: nodes.length > 0 ? nodes : [{ type: 'paragraph', content: [] }] };
-  }
-
-  function elementToTiptapNode(el: Element): TiptapNode | null {
-    const tag = el.tagName.toLowerCase();
-
-    if (tag === '#text') {
-      return null;
-    }
-
-    // Handle block elements
-    let nodeType = 'paragraph';
-    let attrs: Record<string, unknown> = {};
-
-    switch (tag) {
-      case 'h1': nodeType = 'heading'; attrs = { level: 1 }; break;
-      case 'h2': nodeType = 'heading'; attrs = { level: 2 }; break;
-      case 'h3': nodeType = 'heading'; attrs = { level: 3 }; break;
-      case 'h4': nodeType = 'heading'; attrs = { level: 4 }; break;
-      case 'ul': nodeType = 'bulletList'; break;
-      case 'ol': nodeType = 'orderedList'; break;
-      case 'li': nodeType = 'listItem'; break;
-      case 'blockquote': nodeType = 'blockquote'; break;
-      case 'pre': nodeType = 'codeBlock'; break;
-      case 'hr': return { type: 'horizontalRule' };
-      case 'img':
-        return {
-          type: 'image',
-          attrs: { 
-            src: el.getAttribute('src') || '', 
-            alt: el.getAttribute('alt') || '',
-            align: (el.getAttribute('data-align') as 'left' | 'right' | 'center' | 'full') || 'center'
-          },
-        };
-    }
-
-    const children: TiptapNode[] = [];
-    
-    for (const child of Array.from(el.childNodes)) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        const text = child.textContent || '';
-        if (text) {
-          children.push({ type: 'text', text });
-        }
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        const childNode = elementToTiptapNode(child as Element);
-        if (childNode) children.push(childNode);
-      }
-    }
-
-    if (nodeType === 'paragraph' && children.length === 0) {
-      return { type: 'paragraph', content: [] };
-    }
-
-    return { type: nodeType, content: children, ...(Object.keys(attrs).length > 0 ? { attrs } : {}) };
-  }
 
   const insertImage = useCallback(async () => {
     const url = prompt('Enter image URL:');
@@ -148,35 +179,39 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
     }
   }, [execCommand]);
 
-  const setImageAlignment = useCallback((align: 'left' | 'right' | 'center' | 'full') => {
-    if (!selectedImage && editorRef.current) {
-      // If no image selected, try to find the clicked image in the selection
-      const selection = window.getSelection();
-      if (selection && selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        const img = range.startContainer.nodeType === Node.ELEMENT_NODE 
-          ? (range.startContainer as HTMLElement).querySelector('img')
-          : (range.startContainer.parentElement?.closest('img') || null);
-        if (img) {
-          setSelectedImage(img as HTMLElement);
+  const setImageAlignment = useCallback(
+    (align: 'left' | 'right' | 'center' | 'full') => {
+      if (!selectedImage && editorRef.current) {
+        // If no image selected, try to find the clicked image in the selection
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const img =
+            range.startContainer.nodeType === Node.ELEMENT_NODE
+              ? (range.startContainer as HTMLElement).querySelector('img')
+              : range.startContainer.parentElement?.closest('img') || null;
+          if (img) {
+            setSelectedImage(img as HTMLElement);
+          }
         }
       }
-    }
-    
-    if (selectedImage) {
-      selectedImage.setAttribute('data-align', align);
-      handleInput();
-      setSelectedImage(null);
-    } else if (editorRef.current) {
-      // Apply to the last inserted image
-      const images = editorRef.current.querySelectorAll('img');
-      if (images.length > 0) {
-        const lastImg = images[images.length - 1];
-        lastImg.setAttribute('data-align', align);
+
+      if (selectedImage) {
+        selectedImage.setAttribute('data-align', align);
         handleInput();
+        setSelectedImage(null);
+      } else if (editorRef.current) {
+        // Apply to the last inserted image
+        const images = editorRef.current.querySelectorAll('img');
+        if (images.length > 0) {
+          const lastImg = images[images.length - 1];
+          lastImg.setAttribute('data-align', align);
+          handleInput();
+        }
       }
-    }
-  }, [selectedImage, handleInput]);
+    },
+    [selectedImage, handleInput]
+  );
 
   return (
     <div className="space-y-3">
@@ -361,15 +396,25 @@ function nodeToHtml(node: TiptapNode): string {
     if (node.marks) {
       for (const mark of node.marks) {
         switch (mark.type) {
-          case 'bold': text = `<strong>${text}</strong>`; break;
-          case 'italic': text = `<em>${text}</em>`; break;
-          case 'underline': text = `<u>${text}</u>`; break;
-          case 'strike': text = `<s>${text}</s>`; break;
+          case 'bold':
+            text = `<strong>${text}</strong>`;
+            break;
+          case 'italic':
+            text = `<em>${text}</em>`;
+            break;
+          case 'underline':
+            text = `<u>${text}</u>`;
+            break;
+          case 'strike':
+            text = `<s>${text}</s>`;
+            break;
           case 'link':
             const href = (mark.attrs?.href as string) || '#';
             text = `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             break;
-          case 'code': text = `<code>${text}</code>`; break;
+          case 'code':
+            text = `<code>${text}</code>`;
+            break;
         }
       }
     }
@@ -379,21 +424,29 @@ function nodeToHtml(node: TiptapNode): string {
   const children = node.content?.map(nodeToHtml).join('') || '';
 
   switch (node.type) {
-    case 'paragraph': return `<p>${children}</p>`;
+    case 'paragraph':
+      return `<p>${children}</p>`;
     case 'heading':
       const level = (node.attrs?.level as number) || 2;
       return `<h${level}>${children}</h${level}>`;
-    case 'bulletList': return `<ul>${children}</ul>`;
-    case 'orderedList': return `<ol>${children}</ol>`;
-    case 'listItem': return `<li>${children}</li>`;
-    case 'blockquote': return `<blockquote>${children}</blockquote>`;
-    case 'codeBlock': return `<pre><code>${children}</code></pre>`;
+    case 'bulletList':
+      return `<ul>${children}</ul>`;
+    case 'orderedList':
+      return `<ol>${children}</ol>`;
+    case 'listItem':
+      return `<li>${children}</li>`;
+    case 'blockquote':
+      return `<blockquote>${children}</blockquote>`;
+    case 'codeBlock':
+      return `<pre><code>${children}</code></pre>`;
     case 'image':
       const src = (node.attrs?.src as string) || '';
       const alt = (node.attrs?.alt as string) || '';
       const align = (node.attrs?.align as string) || 'center';
       return `<img src="${src}" alt="${alt}" data-align="${align}" />`;
-    case 'horizontalRule': return `<hr />`;
-    default: return children;
+    case 'horizontalRule':
+      return `<hr />`;
+    default:
+      return children;
   }
 }

@@ -67,7 +67,7 @@ test.describe('Canvas Design Tools', () => {
     await page.goto('/studio/test-project-id');
     const blockButton = page.getByRole('button', { name: /blocks/i });
     await blockButton.click();
-    await expect(page.getByText(/651/i)).toBeVisible();
+    await expect(page.getByText(/block library/i)).toBeVisible();
   });
 
   test.skip('fabric library opens', async ({ page }) => {
@@ -241,7 +241,7 @@ test.describe('Block and Pattern Tools', () => {
     await blockButton.click();
 
     // Check that block library panel opens
-    await expect(page.getByText(/block library|651 blocks/i)).toBeVisible();
+    await expect(page.getByText(/block library/i)).toBeVisible();
 
     // Check for block categories
     await expect(page.getByText(/traditional|modern|geometric/i).first()).toBeVisible();

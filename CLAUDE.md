@@ -53,6 +53,8 @@ src/
     (protected)/    # Auth-gated routes (layout redirects guests)
     (public)/       # Public marketing pages
     api/            # API route handlers
+      admin/        # Admin APIs (blog, blocks, fabrics, templates, comments, users, reports)
+      shop/         # Shopify cart API (feature-flagged)
     studio/[projectId]/  # Design canvas (desktop only)
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
@@ -60,7 +62,7 @@ src/
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
-  db/schema/        # Drizzle table definitions (18 tables, includes user_fabrics)
+  db/schema/        # Drizzle table definitions (18 tables, 10 enums)
   types/            # Shared TypeScript type definitions
 ```
 
@@ -136,7 +138,7 @@ src/
 - **Simple Drawing**: 4 basic tools (Select, Rectangle, Triangle, Line) on a 12×12 grid canvas
 - **Photo Upload**: Upload a photo of a physical block with crop/straighten tools (rotate, draggable corner handles, optional auto-detect)
 - **No Complex Features**: Removed tabs, overlays, symmetry tools — just draw or photograph
-- **Block Library**: Browse 651+ system blocks, create custom blocks (draw or photo), manage user collection
+- **Block Library**: Browse 105 system blocks (SVGs in `/quilt_blocks/`), create custom blocks (draw or photo), manage user collection
 - **Mode Switcher**: "Draw | Upload Photo" toggle in BlockDraftingShell — photo mode delegates to SimplePhotoBlockUpload
 - **Photo blocks**: Saved with `photoUrl` field, no shape detection or cutting instructions (just the cropped image)
 
@@ -194,6 +196,26 @@ const res = await fetch('/api/blocks', {
 - `userId` is required (not nullable) with cascade delete
 - API routes: `scope=user` queries `user_fabrics`, `scope=system` queries `fabrics`
 - Pro-only feature — free users only see system fabrics
+
+### Admin Dashboard
+
+- Admin pages at `src/app/(protected)/admin/` — blog, community, libraries, moderation
+- Admin API routes at `src/app/api/admin/` — blocks, blog, comments, community, fabrics, libraries, pattern-templates, reports, users
+- All admin endpoints validate session + admin role via `getRequiredSession()` and `isAdmin()`
+- User status: `active | suspended | banned` enum on users table
+- Blog POST uses Zod validation (`createBlogPostSchema`) with slug conflict retry logic (up to 3 attempts)
+
+### Shopify Integration (Feature-Flagged)
+
+- **Feature flag**: `NEXT_PUBLIC_ENABLE_SHOP=true` enables all Shopify features; disabled by default
+- **Client**: `src/lib/shopify.ts` — Shopify Storefront API GraphQL client (cart create, add items, fetch)
+- **Store**: `src/stores/cartStore.ts` — Zustand cart state with Shopify sync
+- **UI**: `src/components/shop/CartDrawer.tsx` — slide-out cart drawer with quantity controls
+- **Shop page**: `src/app/(public)/shop/page.tsx` — displays purchasable fabrics from DB
+- **API**: `src/app/api/shop/cart/route.ts` — server-side cart operations
+- **Schema**: `fabrics` table has Shopify fields: `isPurchasable`, `shopifyProductId`, `shopifyVariantId`, `pricePerYard` (cents), `inStock`
+- **Env vars**: `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN`, `NEXT_PUBLIC_ENABLE_SHOP`
+- Check `isShopifyEnabled()` from `@/lib/shopify` before rendering shop features
 
 ### Removed Features
 

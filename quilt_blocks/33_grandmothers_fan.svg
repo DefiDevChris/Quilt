@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Grandmother's Fan: Quarter-circle fan in bottom-left corner -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Fan wedges radiating from bottom-left corner (0,300) -->
+  <!-- 6 wedges spanning from 0 degrees (right) to 90 degrees (up) -->
+  <!-- Wedge 1: 0-15 degrees -->
+  <path d="M 0,300 L 280,300 A 280,280 0 0,0 271,226 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Wedge 2: 15-30 degrees -->
+  <path d="M 0,300 L 271,226 A 280,280 0 0,0 242,158 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Wedge 3: 30-45 degrees -->
+  <path d="M 0,300 L 242,158 A 280,280 0 0,0 198,102 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Wedge 4: 45-60 degrees -->
+  <path d="M 0,300 L 198,102 A 280,280 0 0,0 140,60 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Wedge 5: 60-75 degrees -->
+  <path d="M 0,300 L 140,60 A 280,280 0 0,0 74,34 Z" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Wedge 6: 75-90 degrees -->
+  <path d="M 0,300 L 74,34 A 280,280 0 0,0 0,20 Z" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Quarter-circle base (small arc at the corner) -->
+  <path d="M 0,300 L 70,300 A 70,70 0 0,0 0,230 Z" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

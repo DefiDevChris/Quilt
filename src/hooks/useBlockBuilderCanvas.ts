@@ -8,7 +8,7 @@ import { maybeSnap } from '@/lib/canvas-utils';
 export function useBlockBuilderCanvas() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
-  const blockBuilderMode = useCanvasStore((s) => s.blockBuilderMode);
+  const _blockBuilderMode = useCanvasStore((s) => s.blockBuilderMode);
 
   const stateRef = useRef({
     fillColor: '#D4883C',
@@ -133,10 +133,7 @@ export function useBlockBuilderCanvas() {
         return douglasPeucker(points, sqTolerance);
       }
 
-      function pointsToClosedPathData(
-        points: { x: number; y: number }[],
-        smooth: boolean
-      ): string {
+      function pointsToClosedPathData(points: { x: number; y: number }[], smooth: boolean): string {
         if (points.length < 2) return '';
         if (points.length === 2) {
           return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y} Z`;

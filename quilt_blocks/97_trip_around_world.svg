@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 5x5 grid = 60px cells. Concentric diamond rings from center outward -->
+  <!-- Outermost ring / background - corners -->
+  <rect x="0" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Ring 3 (outermost colored ring) - E0E0E0 -->
+  <rect x="120" y="0" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="120" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="240" y="120" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="240" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Ring 2 - D0D0D0 -->
+  <rect x="60" y="60" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="60" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="180" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="180" width="60" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="60" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="60" y="120" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="180" y="120" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <rect x="120" y="180" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Ring 1 - B0B0B0 -->
+  <rect x="120" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Center square - 505050 (on-point diamond inside center cell) -->
+  <polygon points="150,120 180,150 150,180 120,150" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

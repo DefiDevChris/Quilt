@@ -1,16 +1,18 @@
 # Quilt
 
-Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, 651+ quilt blocks, and a community of quilters who get it — all in your browser, free to start.
+Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, 105+ quilt blocks (always growing), and a community of quilters who get it — all in your browser. Sign up for free.
 
 ## What You Can Do
 
 - **Design Studio** — Multiple worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
-- **651+ Block Library** — Browse by category, draw your own with simple shape tools, or upload a photo of a physical block
+- **105+ Block Library** — Browse by category, draw your own with simple shape tools, or upload a photo of a physical block
 - **Project Management** — All Projects view with search, project templates for reusable settings
 - **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
 - **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
 - **Creative Tools** — Photo Patchwork (AI-powered photo-to-quilt), fabric calibration
 - **Community** — Share designs, discover inspiration, threaded comments, and a blog
+- **Fabric Shop** — Browse and purchase fabrics via headless Shopify integration (feature-flagged behind `NEXT_PUBLIC_ENABLE_SHOP`)
+- **Admin Dashboard** — Manage system libraries (fabrics, blocks, templates), moderate community posts/comments, and control user status
 - **Pro Features** — Photo-to-Pattern (snap a quilt photo, correct perspective distortion, extract pieces), fabric calibration, unlimited projects
 
 ## Tech Stack
@@ -26,6 +28,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
+| Commerce  | Shopify Storefront API (headless, feature-flagged)    |
 | Payments  | Stripe (checkout, webhooks, subscription management) |
 | Testing   | Vitest + Playwright E2E                              |
 
@@ -73,7 +76,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 - Free: like, save, comment — cannot post
 - Pro: like, save, comment, post
-- Admin: all permissions + moderation
+- Admin: all permissions + moderation + system library management + user status control
 
 ## Getting Started
 
@@ -114,10 +117,11 @@ src/
       projects/           # All Projects view with search
       templates/          # Project template management
       settings/           # Profile settings with delete account
-    (public)/             # Public marketing pages
-    admin/                # Admin moderation tools
+    (public)/             # Public marketing pages (includes /shop)
     api/                  # API route handlers
-      blog/               # Blog CRUD and admin endpoints
+      admin/              # Admin APIs (blog, blocks, fabrics, templates, comments, users, reports)
+      shop/               # Shopify cart API (feature-flagged)
+      blog/               # Blog CRUD endpoints
       project-templates/  # Template CRUD operations
     auth/                 # Sign in/up/verify/forgot-password pages
     blog/                 # Blog list and individual post pages
@@ -135,10 +139,11 @@ src/
     blocks/               # BlockDraftingShell, PhotoBlockUpload, SimplePhotoBlockUpload, BlockLibrary
     settings/             # DeleteAccountSection
   hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
-  stores/                 # Zustand stores (17 total)
+  stores/                 # Zustand stores (18 total, includes cartStore for Shopify)
   lib/                    # Pure utility modules and engines
     *-engine.ts           # Pure computation — zero React/Fabric/DOM deps, fully testable
-    quilt-overlay-registry.ts  # Block SVG registry with metadata and dimension helpers
+    quilt-overlay-registry.ts  # Block SVG registry (105 blocks) with metadata and dimension helpers
+    shopify.ts            # Shopify Storefront API GraphQL client (feature-flagged)
     trust-engine.ts       # 3-role system: free/pro/admin
     *-utils.ts            # Domain-specific utility modules (canvas, geometry, math, pattern, etc.)
   types/                  # Shared TypeScript type definitions
@@ -217,11 +222,27 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 - **Social Threads** — Discover (all posts), Saved (bookmarked)
 - **Trending** — "Most Saved" with month/all-time toggle
-- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API, Tiptap JSON rendering
+- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API with Zod validation and slug conflict retry logic, Tiptap JSON rendering
+
+### Admin Dashboard
+
+- **System Libraries** — CRUD management for system fabrics, blocks, and pattern templates (available to all users)
+- **Community Moderation** — View/manage social posts, suspend or ban users
+- **Blog Management** — Create, edit, and publish blog posts with slug auto-generation
+- **User Status** — `active | suspended | banned` status enum with admin-only update API
+- **Trust-Level Gating** — All admin endpoints validate session + role via `getRequiredSession()` and `isAdmin()`
+
+### Shopify Integration (Feature-Flagged)
+
+- **Headless Storefront** — GraphQL client for Shopify Storefront API (cart create, add items, fetch)
+- **Shop Page** — `/shop` displays purchasable fabrics from the database (filterable by `isPurchasable`)
+- **Cart Drawer** — Slide-out cart with quantity controls, price totals, and Shopify checkout redirect
+- **Yardage-to-Cart** — Add calculated fabric yardage directly to Shopify cart from the Yardage Panel
+- **Feature Flag** — All Shopify code gated behind `NEXT_PUBLIC_ENABLE_SHOP=true`; disabled by default
 
 ## Database Schema
 
-18 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `user_fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
+18 tables across 20 schema files, 10 enums. Key tables: `users` (with `user_status` enum), `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics` (with Shopify fields: `isPurchasable`, `shopifyProductId`, `shopifyVariantId`, `pricePerYard`, `inStock`), `user_fabrics`, `patternTemplates`, `socialPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`
 
 ## Mobile
 

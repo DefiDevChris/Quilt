@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Windmill: 4 HSTs with dark triangles spinning clockwise -->
+  <!-- Top-left quadrant: dark triangle upper-right -->
+  <polygon points="0,0 150,0 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="150,0 150,150 0,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Top-right quadrant: dark triangle lower-right -->
+  <polygon points="150,0 300,0 150,150" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 300,150 150,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right quadrant: dark triangle lower-left -->
+  <polygon points="150,150 300,150 300,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="150,150 300,300 150,300" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left quadrant: dark triangle upper-left -->
+  <polygon points="0,150 150,150 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,150 150,300 0,300" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>

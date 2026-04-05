@@ -100,7 +100,7 @@ export default function DashboardPage() {
     }
 
     createProjectAndNavigate();
-  }, [photoPatternStep, isPhotoPatternOpen]);
+  }, [photoPatternStep, isPhotoPatternOpen, toast]);
 
   const fetchProjects = useCallback(async () => {
     try {

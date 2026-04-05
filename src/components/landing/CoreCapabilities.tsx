@@ -221,26 +221,27 @@ export default function CoreCapabilities() {
               >
                 Tools quilters actually need.
                 <br />
-                <span className="text-warm-peach">Built by quilters who care.</span>
+                <span className="text-warm-peach">
+                  Say goodbye to guesswork and expensive software.
+                </span>
               </h2>
             </div>
 
             <p className="text-lg text-warm-text-secondary mb-8">
-              Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
-              positioning fabric motifs with precision, or exploring unexpected color combinations
-              with ColorTheme — every tool is made to help you create something you&apos;ll be proud
-              of.
+              Whether you&apos;re turning photos into quilt patterns with a click, drafting custom
+              blocks with snap-to-grid precision, or exploring unexpected color combinations — every
+              tool is made to help you create something you&apos;ll be proud of.
             </p>
 
             <ul className="space-y-4 mb-10">
+              <CheckItem>Turn any photo into a block-by-block quilt pattern (Pro)</CheckItem>
+              <CheckItem>105+ quilt blocks to browse, customize, and use</CheckItem>
               <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
-              <CheckItem>Fabric pattern adjustments and precision positioning</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
-              <CheckItem>BlockBuilder for drafting custom blocks by seam line</CheckItem>
-              <CheckItem>Applique layering and one-click ColorTheme recoloring</CheckItem>
-              <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
-              <CheckItem>Snap a photo of a quilt and recreate it digitally (Pro)</CheckItem>
+              <CheckItem>Block drafting with snap-to-grid precision</CheckItem>
               <CheckItem>Six layout modes on an infinite canvas</CheckItem>
+              <CheckItem>Fabric pattern adjustments and real-world calibration</CheckItem>
+              <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
             </ul>
 
             <Link

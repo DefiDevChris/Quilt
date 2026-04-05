@@ -16,8 +16,6 @@ interface CommentsProps {
   isAdmin?: boolean;
 }
 
-const PREVIEW_COUNT = 2;
-
 export function RedditStyleComments({ postId, currentUserId, isAdmin }: CommentsProps) {
   const comments = useCommentStore((s) => s.comments);
   const isLoading = useCommentStore((s) => s.isLoading);
@@ -193,7 +191,10 @@ function CommentNode({
         {/* Body */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <Link href={profileHref} className="text-sm font-bold text-on-surface hover:text-primary transition-colors">
+            <Link
+              href={profileHref}
+              className="text-sm font-bold text-on-surface hover:text-primary transition-colors"
+            >
               {comment.authorName}
             </Link>
             <span className="text-xs font-medium text-secondary/70">

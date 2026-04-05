@@ -97,7 +97,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
 
             <ul className="space-y-4 mb-8 flex-1">
               {[
-                'Full Library of 651+ Quilt Blocks',
+                'Full Library of Quilt Blocks (always growing)',
                 'AI Photo-to-Pattern Generator',
                 'Save unlimited projects & worktables',
                 'Export Print-Ready PDF Patterns (1:1 Scale)',

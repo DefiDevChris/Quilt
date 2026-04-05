@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Background sky -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Roof triangle -->
+  <polygon points="30,120 150,20 270,120" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Chimney -->
+  <rect x="210" y="40" width="25" height="80" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- House body -->
+  <rect x="30" y="120" width="240" height="160" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Door -->
+  <rect x="120" y="195" width="60" height="85" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Door knob -->
+  <circle cx="168" cy="240" r="5" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Left window -->
+  <rect x="52" y="155" width="50" height="50" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Left window cross -->
+  <rect x="52" y="178" width="50" height="2" fill="#333" stroke="none"/>
+  <rect x="75" y="155" width="2" height="50" fill="#333" stroke="none"/>
+  <!-- Right window -->
+  <rect x="198" y="155" width="50" height="50" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
+  <!-- Right window cross -->
+  <rect x="198" y="178" width="50" height="2" fill="#333" stroke="none"/>
+  <rect x="221" y="155" width="2" height="50" fill="#333" stroke="none"/>
+</svg>

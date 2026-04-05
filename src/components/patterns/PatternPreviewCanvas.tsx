@@ -46,11 +46,8 @@ function getFabricColor(fabric: PatternFabric): string {
   return COLOR_MAP[fabric.colorFamily.toLowerCase()] ?? '#C4B8A8';
 }
 
-export function PatternPreviewCanvas({
-  layout,
-  fabrics,
-  blocks: _blocks,
-}: PatternPreviewCanvasProps) {
+export function PatternPreviewCanvas({ layout, fabrics, blocks }: PatternPreviewCanvasProps) {
+  void blocks;
   const rows = layout.rows ?? 3;
   const cols = layout.cols ?? 3;
   const hasSashing = (layout.sashingWidth ?? 0) > 0;

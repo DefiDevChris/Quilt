@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -136,8 +137,16 @@ export function HamburgerDrawer({
     {
       title: 'Edit',
       items: [
-        { label: `Undo${canUndo ? ` (${undoCount})` : ''}`, shortcut: 'Ctrl+Z', onClick: handleUndo },
-        { label: `Redo${canRedo ? ` (${redoCount})` : ''}`, shortcut: 'Ctrl+Shift+Z', onClick: handleRedo },
+        {
+          label: `Undo${canUndo ? ` (${undoCount})` : ''}`,
+          shortcut: 'Ctrl+Z',
+          onClick: handleUndo,
+        },
+        {
+          label: `Redo${canRedo ? ` (${redoCount})` : ''}`,
+          shortcut: 'Ctrl+Shift+Z',
+          onClick: handleRedo,
+        },
         { label: 'Duplicate', shortcut: 'Ctrl+D', onClick: handleDuplicate },
         { label: 'Delete', shortcut: 'Del', onClick: handleDelete },
         { label: 'Select All', shortcut: 'Ctrl+A', onClick: handleSelectAll },
@@ -168,9 +177,7 @@ export function HamburgerDrawer({
     },
     {
       title: 'Help',
-      items: [
-        { label: 'Keyboard Shortcuts', shortcut: '?', onClick: onOpenHelp },
-      ],
+      items: [{ label: 'Keyboard Shortcuts', shortcut: '?', onClick: onOpenHelp }],
     },
   ];
 

@@ -379,11 +379,7 @@ function deduplicateSegments(segments: Segment[]): Segment[] {
   return result;
 }
 
-function buildAdjacency(
-  segments: Segment[],
-  _gridCols: number,
-  _gridRows: number
-): Map<string, string[]> {
+function buildAdjacency(segments: Segment[], _gc: number, _gr: number): Map<string, string[]> {
   const adj = new Map<string, string[]>();
   const adjSets = new Map<string, Set<string>>();
 

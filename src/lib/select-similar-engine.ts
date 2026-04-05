@@ -4,7 +4,7 @@
  * stroke color, or block structure. Pure logic — no DOM dependencies.
  */
 
-import { getBlockSignature, signaturesMatch, type BlockSignature } from '@/lib/block-matching';
+import { getBlockSignature, signaturesMatch } from '@/lib/block-matching';
 
 export type SimilarityMode = 'fabric' | 'fillColor' | 'strokeColor' | 'blockStructure';
 

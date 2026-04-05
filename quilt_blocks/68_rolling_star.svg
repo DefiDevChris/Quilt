@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Rolling Star: 8-pointed star with points offset clockwise for spinning motion -->
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Corner background fills -->
+  <polygon points="0,0 100,0 50,50 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,0 300,100 250,50 200,0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="300,300 200,300 250,250 300,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,300 0,200 50,250 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <!-- Rolling star points offset clockwise (505050) -->
+  <!-- Top point (offset right) -->
+  <polygon points="150,50 200,0 250,50 150,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Right point (offset down) -->
+  <polygon points="250,150 300,200 250,250 200,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Bottom point (offset left) -->
+  <polygon points="150,250 100,300 50,250 150,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Left point (offset up) -->
+  <polygon points="50,150 0,100 50,50 100,150" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Secondary star shapes creating spin effect (D0D0D0) -->
+  <!-- Top-right kite -->
+  <polygon points="200,0 300,0 300,100 250,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-right kite -->
+  <polygon points="300,200 300,300 200,300 250,250" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Bottom-left kite -->
+  <polygon points="100,300 0,300 0,200 50,250" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Top-left kite -->
+  <polygon points="0,100 0,0 100,0 50,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Connecting mid-triangles -->
+  <polygon points="150,50 250,50 250,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="250,150 250,250 150,250" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,250 50,250 50,150" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <polygon points="50,150 50,50 150,50" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
+  <!-- Center square -->
+  <polygon points="150,50 250,150 150,250 50,150" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <polygon points="150,100 200,150 150,200 100,150" fill="#505050" stroke="#333" stroke-width="1"/>
+</svg>
