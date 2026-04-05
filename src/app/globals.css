@@ -202,7 +202,11 @@ body {
 
 /* Standard bordered input */
 .input-standard {
-  @apply w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200 focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30;
+  @apply w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2.5 text-on-surface outline-none transition-colors duration-200 focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30;
+  font-size: var(--font-size-body-md);
+}
+.input-standard::placeholder {
+  color: var(--color-tertiary);
 }
 
 /* Glass panel — cards, landing sections, content containers */
