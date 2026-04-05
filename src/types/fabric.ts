@@ -13,6 +13,12 @@ export interface Fabric {
   rotation: number;
   isDefault: boolean;
   createdAt: Date;
+  // Shopify Integration Fields (feature-flagged)
+  isPurchasable: boolean;
+  shopifyProductId: string | null;
+  shopifyVariantId: string | null;
+  pricePerYard: number | null;
+  inStock: boolean;
 }
 
 export interface FabricListItem {
@@ -25,4 +31,10 @@ export interface FabricListItem {
   collection: string | null;
   colorFamily: string | null;
   isDefault: boolean;
+  // Shopify Integration Fields (feature-flagged)
+  isPurchasable: boolean;
+  shopifyProductId: string | null;
+  shopifyVariantId: string | null;
+  pricePerYard: number | null;
+  inStock: boolean;
 }
