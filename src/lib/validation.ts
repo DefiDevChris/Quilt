@@ -283,7 +283,7 @@ export const communityFeedSchema = z.object({
   tab: z.enum(['discover']).default('discover'),
   category: z.string().optional(),
   creatorId: z.string().uuid().optional(),
-  page: z.coerce.number().int().min(1).default(1),
+  cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
 });
 

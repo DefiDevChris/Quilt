@@ -29,7 +29,6 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
   const isPrivate = useAuthStore((s) => s.isPrivate);
 
   const [sort, setSort] = useState<SortMode>('recent');
-  const [showAll, setShowAll] = useState(false);
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
 
   const canComment = Boolean(currentUserId) && !isPrivate;
@@ -41,31 +40,15 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
     };
   }, [postId, fetchComments, reset]);
 
-  const flat = useMemo(() => {
-    const all: Comment[] = [];
-    for (const c of comments) {
-      all.push(c);
-      if (c.replies) {
-        for (const r of c.replies) {
-          all.push(r);
-        }
-      }
-    }
-    return all;
-  }, [comments]);
-
-  const sorted = useMemo(() => {
-    const list = [...flat];
+  const sortedComments = useMemo(() => {
+    const list = [...comments];
     if (sort === 'top') {
       list.sort((a, b) => b.likeCount - a.likeCount);
     } else {
       list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
     return list;
-  }, [flat, sort]);
-
-  const visible = showAll || sort !== 'recent' ? sorted : sorted.slice(0, PREVIEW_COUNT);
-  const hiddenCount = sorted.length - PREVIEW_COUNT;
+  }, [comments, sort]);
 
   const handleSubmit = useCallback(
     async (content: string) => {
@@ -86,14 +69,13 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
   return (
     <div>
       {/* Sort tabs */}
-      {flat.length > 0 && (
+      {comments.length > 0 && (
         <div className="flex items-center gap-4 mb-4">
           {(['recent', 'top'] as const).map((s) => (
             <button
               key={s}
               onClick={() => {
                 setSort(s);
-                setShowAll(s !== 'recent');
               }}
               className={`text-sm font-semibold transition-colors ${
                 sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
@@ -106,7 +88,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
       )}
 
       {/* Loading */}
-      {isLoading && flat.length === 0 && (
+      {isLoading && comments.length === 0 && (
         <div className="space-y-4">
           {[1, 2].map((i) => (
             <CommentSkeleton key={i} />
@@ -115,36 +97,26 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
       )}
 
       {/* Empty */}
-      {!isLoading && flat.length === 0 && (
+      {!isLoading && comments.length === 0 && (
         <p className="text-sm text-secondary py-4">No comments yet</p>
       )}
 
       {/* Comments */}
-      <div className="space-y-1">
-        {visible.map((comment) => (
-          <CommentRow
+      <div className="space-y-4">
+        {sortedComments.map((comment) => (
+          <CommentNode
             key={comment.id}
             comment={comment}
             currentUserId={currentUserId}
             isAdmin={isAdmin}
-            onReply={() => setReplyTo({ id: comment.id, name: comment.authorName })}
-            onDelete={() => handleDelete(comment.id)}
+            onReply={(id, name) => setReplyTo({ id, name })}
+            onDelete={handleDelete}
           />
         ))}
       </div>
 
-      {/* View all */}
-      {sort === 'recent' && !showAll && hiddenCount > 0 && (
-        <button
-          onClick={() => setShowAll(true)}
-          className="text-sm font-semibold text-secondary/80 hover:text-on-surface mt-2 transition-colors"
-        >
-          View all {sorted.length} comments
-        </button>
-      )}
-
       {/* Input */}
-      <div className="mt-4">
+      <div className="mt-6 border-t border-white/20 pt-4">
         {canComment ? (
           <CommentInput
             onSubmit={handleSubmit}
@@ -166,7 +138,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
   );
 }
 
-function CommentRow({
+function CommentNode({
   comment,
   currentUserId,
   isAdmin,
@@ -176,66 +148,113 @@ function CommentRow({
   comment: Comment;
   currentUserId?: string;
   isAdmin?: boolean;
-  onReply: () => void;
-  onDelete: () => void;
+  onReply: (id: string, name: string) => void;
+  onDelete: (id: string) => void;
 }) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const isOwn = currentUserId === comment.authorId;
   const profileHref = comment.authorUsername ? `/members/${comment.authorUsername}` : '#';
 
+  const hasReplies = comment.replies && comment.replies.length > 0;
+
   return (
-    <div className="flex gap-3 py-2 group">
-      {/* Avatar */}
-      <Link href={profileHref} className="shrink-0">
-        {comment.authorAvatarUrl ? (
-          <Image
-            src={comment.authorAvatarUrl}
-            alt=""
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-full object-cover"
-            unoptimized
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-            <span className="text-xs font-semibold text-orange-500">
-              {comment.authorName.charAt(0)}
-            </span>
-          </div>
-        )}
-      </Link>
+    <div className="flex flex-col group">
+      <div className="flex gap-3 py-1">
+        {/* Collapse toggle or Avatar */}
+        <div className="flex flex-col items-center shrink-0">
+          <Link href={profileHref} className="shrink-0 mb-1 z-10">
+            {comment.authorAvatarUrl ? (
+              <Image
+                src={comment.authorAvatarUrl}
+                alt=""
+                width={28}
+                height={28}
+                className="w-7 h-7 rounded-full object-cover shadow-sm"
+                unoptimized
+              />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center shadow-sm">
+                <span className="text-xs font-bold text-orange-500">
+                  {comment.authorName.charAt(0)}
+                </span>
+              </div>
+            )}
+          </Link>
 
-      {/* Body */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm">
-          <Link href={profileHref} className="font-semibold text-on-surface hover:underline">
-            {comment.authorName}
-          </Link>{' '}
-          <span className="text-on-surface">{comment.content}</span>
-        </p>
-
-        {/* Meta row */}
-        <div className="flex items-center gap-4 mt-1">
-          <span className="text-xs text-secondary/80">{formatRelativeTime(comment.createdAt)}</span>
-
-          {currentUserId && (
+          {!isCollapsed && hasReplies && (
             <button
-              onClick={onReply}
-              className="text-xs font-semibold text-secondary/80 hover:text-on-surface transition-colors"
-            >
-              Reply
-            </button>
+              onClick={() => setIsCollapsed(true)}
+              className="flex-1 w-0.5 bg-border/40 hover:bg-primary/50 hover:w-1 transition-all mt-1 mb-[-4px] z-0 rounded-full"
+              aria-label="Collapse comment thread"
+            />
           )}
+        </div>
 
-          {(isOwn || isAdmin) && (
-            <button
-              onClick={onDelete}
-              className="text-xs text-secondary/80 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-            >
-              Delete
-            </button>
+        {/* Body */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <Link href={profileHref} className="text-sm font-bold text-on-surface hover:text-primary transition-colors">
+              {comment.authorName}
+            </Link>
+            <span className="text-xs font-medium text-secondary/70">
+              {formatRelativeTime(comment.createdAt)}
+            </span>
+            {isCollapsed && hasReplies && (
+              <button
+                onClick={() => setIsCollapsed(false)}
+                className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full ml-2"
+              >
+                +{comment.replies!.length} replies
+              </button>
+            )}
+          </div>
+
+          {!isCollapsed && (
+            <>
+              <p className="text-[15px] text-on-surface/90 mt-0.5 leading-snug">
+                {comment.content}
+              </p>
+
+              {/* Meta row */}
+              <div className="flex items-center gap-4 mt-1.5">
+                {currentUserId && (
+                  <button
+                    onClick={() => onReply(comment.id, comment.authorName)}
+                    className="text-xs font-bold text-secondary hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    Reply
+                  </button>
+                )}
+
+                {(isOwn || isAdmin) && (
+                  <button
+                    onClick={() => onDelete(comment.id)}
+                    className="text-xs font-bold text-error/70 hover:text-error transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
+
+      {/* Recursive Replies */}
+      {!isCollapsed && hasReplies && (
+        <div className="ml-3 pl-3 sm:ml-4 sm:pl-4 border-l-2 border-border/40 mt-1 space-y-2">
+          {comment.replies!.map((reply) => (
+            <CommentNode
+              key={reply.id}
+              comment={reply}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+              onReply={onReply}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
