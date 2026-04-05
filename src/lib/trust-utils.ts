@@ -1,6 +1,10 @@
 import type { UserRole } from './role-utils';
 export type { UserRole };
 
+export function isAdmin(role: UserRole | string | null): boolean {
+  return role === 'admin';
+}
+
 export interface RolePermissions {
   canLike: boolean;
   canComment: boolean;
