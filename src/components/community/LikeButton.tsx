@@ -1,5 +1,6 @@
 'use client';
 
+import { useOptimistic, useState, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommunityStore } from '@/stores/communityStore';
 
@@ -15,37 +16,68 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
   const likePost = useCommunityStore((s) => s.likePost);
   const unlikePost = useCommunityStore((s) => s.unlikePost);
 
+  const [optimisticLiked, setOptimisticLiked] = useOptimistic(
+    isLikedByUser,
+    (state, newOptimistic: boolean) => newOptimistic
+  );
+
+  const [optimisticCount, setOptimisticCount] = useOptimistic(
+    likeCount,
+    (state, action: 'increment' | 'decrement') => (action === 'increment' ? state + 1 : state - 1)
+  );
+
+  const [pending, setPending] = useState(false);
+
   const iconSize = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4';
   const textSize = size === 'lg' ? 'text-base' : 'text-xs';
 
-  function handleClick(e: React.MouseEvent) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!user) {
-      window.dispatchEvent(new CustomEvent('quiltcorgi:show-auth-gate'));
-      return;
-    }
+  const handleClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (!user) {
+        window.dispatchEvent(new CustomEvent('quiltcorgi:show-auth-gate'));
+        return;
+      }
 
-    if (isLikedByUser) {
-      unlikePost(postId);
-    } else {
-      likePost(postId);
-    }
-  }
+      setPending(true);
+      const wasLiked = optimisticLiked;
+      const previousCount = optimisticCount;
+
+      // Optimistically update UI
+      setOptimisticLiked(!wasLiked);
+      setOptimisticCount(wasLiked ? 'decrement' : 'increment');
+
+      try {
+        if (wasLiked) {
+          await unlikePost(postId);
+        } else {
+          await likePost(postId);
+        }
+      } catch {
+        // Revert on failure
+        setOptimisticLiked(wasLiked);
+        setOptimisticCount(wasLiked ? 'increment' : 'decrement');
+      } finally {
+        setPending(false);
+      }
+    },
+    [user, optimisticLiked, optimisticCount, postId, likePost, unlikePost, setOptimisticLiked, setOptimisticCount]
+  );
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      disabled={!user}
+      disabled={!user || pending}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
-        isLikedByUser
+        optimisticLiked
           ? 'bg-error/10 text-error hover:bg-error/20'
           : 'hover:bg-surface-container text-secondary'
-      } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
-      title={!user ? 'Sign in to like' : isLikedByUser ? 'Unlike' : 'Like'}
+      } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'} ${pending ? 'opacity-70' : ''}`}
+      title={!user ? 'Sign in to like' : optimisticLiked ? 'Unlike' : 'Like'}
     >
-      {isLikedByUser ? (
+      {optimisticLiked ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -71,9 +103,9 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
         </svg>
       )}
       <span
-        className={`${textSize} ${isLikedByUser ? 'text-error font-medium' : 'text-secondary'}`}
+        className={`${textSize} ${optimisticLiked ? 'text-error font-medium' : 'text-secondary'}`}
       >
-        {likeCount}
+        {optimisticCount}
       </span>
     </button>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
@@ -10,6 +10,8 @@ import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
 import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
 import { ReportModal } from './ReportModal';
+import { ProjectCard } from '@/components/projects/ProjectCard';
+import { PatternCard } from '@/components/patterns/PatternCard';
 
 interface CommunityPost {
   id: string;
@@ -25,47 +27,117 @@ interface CommunityPost {
   creatorAvatarUrl: string | null;
   isLikedByUser: boolean;
   templateId: string | null;
+  projectId?: string | null;
+  patternId?: string | null;
+  projectName?: string | null;
+  projectThumbnailUrl?: string | null;
 }
+
+const PAGE_SIZE = 10;
 
 export function FeedContent() {
   const user = useAuthStore((s) => s.user);
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const postsRef = useRef<Map<string, CommunityPost>>(new Map());
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      params.set('tab', 'discover');
-      params.set('sort', 'newest');
-      params.set('page', '1');
-      params.set('limit', '24');
-
-      const res = await fetch(`/api/community?${params.toString()}`);
-      const json = await res.json();
-
-      if (!res.ok) {
-        throw new Error(json.error || 'Failed to load posts');
+  const fetchPosts = useCallback(
+    async (isAppend = false) => {
+      if (isAppend) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
       }
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        params.set('tab', 'discover');
+        params.set('sort', 'newest');
+        params.set('limit', PAGE_SIZE.toString());
+        if (isAppend && cursor) {
+          params.set('cursor', cursor);
+        }
 
-      setPosts(json.data?.posts || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load community feed');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const res = await fetch(`/api/community?${params.toString()}`);
+        const json = await res.json();
+
+        if (!res.ok) {
+          throw new Error(json.error || 'Failed to load posts');
+        }
+
+        const newPosts = json.data?.posts || [];
+        const nextCursor = json.data?.nextCursor || null;
+
+        if (isAppend) {
+          const merged = [...posts, ...newPosts];
+          setPosts(merged);
+          newPosts.forEach((post: CommunityPost) => postsRef.current.set(post.id, post));
+        } else {
+          setPosts(newPosts);
+          postsRef.current.clear();
+          newPosts.forEach((post: CommunityPost) => postsRef.current.set(post.id, post));
+        }
+
+        setHasMore(!!nextCursor && newPosts.length === PAGE_SIZE);
+        setCursor(nextCursor);
+      } catch (err) {
+        if (!isAppend) {
+          setError(err instanceof Error ? err.message : 'Failed to load community feed');
+        }
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [cursor, posts]
+  );
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    fetchPosts(false);
+  }, []);
+
+  // Infinite scroll using native Intersection Observer
+  useEffect(() => {
+    if (!sentinelRef.current || loadingMore || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          fetchPosts(true);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(sentinelRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, loadingMore, loading, fetchPosts]);
+
+  const updatePostInList = useCallback((postId: string, updater: (post: CommunityPost) => CommunityPost) => {
+    setPosts((prev) =>
+      prev.map((p) => {
+        if (p.id === postId) {
+          const updated = updater(p);
+          postsRef.current.set(postId, updated);
+          return updated;
+        }
+        return p;
+      })
+    );
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Create Post Composer */}
-      <CreatePostComposer onSuccess={fetchPosts} />
+      <CreatePostComposer onSuccess={() => fetchPosts(false)} />
 
       {/* Loading State */}
       {loading && (
@@ -105,7 +177,7 @@ export function FeedContent() {
           </div>
           <p className="text-secondary mb-4 font-medium">{error}</p>
           <button
-            onClick={fetchPosts}
+            onClick={() => fetchPosts(false)}
             className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
           >
             Retry
@@ -144,15 +216,32 @@ export function FeedContent() {
       {!loading && !error && posts.length > 0 && (
         <div className="space-y-6">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} onUpdate={updatePostInList} />
           ))}
+          {/* Sentinel element for infinite scroll */}
+          <div ref={sentinelRef} className="py-4 flex justify-center">
+            {loadingMore && (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            )}
+          </div>
+          {!hasMore && posts.length > 0 && (
+            <div className="text-center py-4 text-sm text-secondary font-medium">
+              You've reached the end of the feed
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function PostCard({ post }: { post: CommunityPost }) {
+function PostCard({
+  post,
+  onUpdate,
+}: {
+  post: CommunityPost;
+  onUpdate: (id: string, updater: (p: CommunityPost) => CommunityPost) => void;
+}) {
   const { open } = useSocialQuickView();
   const user = useAuthStore((s) => s.user);
   const [liked, setLiked] = useState(post.isLikedByUser);
@@ -163,14 +252,19 @@ function PostCard({ post }: { post: CommunityPost }) {
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const previousLiked = liked;
+    const previousCount = likeCount;
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
     try {
       const response = await fetch(`/api/community/${post.id}/like`, { method: 'POST' });
-      if (response.ok) {
-        setLiked(!liked);
-        setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+      if (!response.ok) {
+        throw new Error('Failed to like');
       }
+      onUpdate(post.id, (p) => ({ ...p, isLikedByUser: !previousLiked, likeCount: previousLiked ? previousCount - 1 : previousCount + 1 }));
     } catch {
-      /* ignore */
+      setLiked(previousLiked);
+      setLikeCount(previousCount);
     }
   };
 
@@ -178,7 +272,6 @@ function PostCard({ post }: { post: CommunityPost }) {
     e.preventDefault();
     e.stopPropagation();
 
-    // If post has a template, open template modal instead
     if (post.templateId) {
       setShowTemplateModal(true);
       return;
@@ -266,10 +359,46 @@ function PostCard({ post }: { post: CommunityPost }) {
         </button>
       )}
 
+      {/* Attached Project Card */}
+      {post.projectId && post.projectName && (
+        <div className="mb-4">
+          <ProjectCard
+            id={post.projectId}
+            name={post.projectName}
+            thumbnailUrl={post.projectThumbnailUrl || null}
+            unitSystem="imperial"
+            updatedAt={post.createdAt}
+            onDelete={() => {}}
+            onRename={() => {}}
+          />
+        </div>
+      )}
+
+      {/* Attached Pattern Card */}
+      {post.patternId && (
+        <div className="mb-4">
+          <PatternCard
+            pattern={{
+              id: post.patternId,
+              name: post.title,
+              thumbnailUrl: post.thumbnailUrl,
+              skillLevel: 'beginner',
+              finishedWidth: 12,
+              finishedHeight: 12,
+              blockCount: 1,
+              fabricCount: 3,
+            }}
+            onPreview={() => {}}
+          />
+        </div>
+      )}
+
       <div className="flex gap-2 border-t border-white/40 pt-4">
         <button
           onClick={handleLike}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-primary bg-primary/10' : 'text-secondary hover:bg-white/50'}`}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${
+            liked ? 'text-primary bg-primary/10' : 'text-secondary hover:bg-white/50'
+          }`}
         >
           <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
           {likeCount}

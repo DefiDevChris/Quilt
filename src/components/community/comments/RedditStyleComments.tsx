@@ -7,6 +7,7 @@ import { useCommentStore } from '@/stores/commentStore';
 import { useAuthStore } from '@/stores/authStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import type { Comment } from '@/types/community';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 type SortMode = 'recent' | 'top' | 'all';
 
@@ -236,6 +237,155 @@ function CommentRow({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Recursive Comment Thread Component
+ * Renders a comment and its nested replies with collapsible branches
+ */
+function CommentThread({
+  comment,
+  depth = 0,
+  currentUserId,
+  isAdmin,
+  onReply,
+  onDelete,
+}: {
+  comment: Comment;
+  depth?: number;
+  currentUserId?: string;
+  isAdmin?: boolean;
+  onReply: (commentId: string, username: string) => void;
+  onDelete: (commentId: string) => void;
+}) {
+  const [collapsed, setCollapsed] = useState(false);
+  const isOwn = currentUserId === comment.authorId;
+  const profileHref = comment.authorUsername ? `/members/${comment.authorUsername}` : '#';
+  const hasReplies = comment.replies && comment.replies.length > 0;
+
+  // Auto-collapse deep threads (depth >= 3)
+  useEffect(() => {
+    if (depth >= 3) {
+      setCollapsed(true);
+    }
+  }, [depth]);
+
+  return (
+    <div className={`${depth > 0 ? 'ml-4' : ''}`}>
+      <div className={`flex gap-3 py-2 group ${collapsed ? 'opacity-70' : ''}`}>
+        {/* Left border for nesting levels */}
+        {depth > 0 && (
+          <div className="border-l-2 border-border/50 ml-2" style={{ marginLeft: `${depth * 0.5}rem` }} />
+        )}
+
+        {/* Collapse toggle */}
+        {hasReplies && (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="shrink-0 mt-1 p-0.5 hover:bg-white/50 rounded transition-colors"
+            title={collapsed ? 'Expand replies' : 'Collapse replies'}
+          >
+            {collapsed ? (
+              <ChevronRight size={14} className="text-secondary" />
+            ) : (
+              <ChevronDown size={14} className="text-secondary" />
+            )}
+          </button>
+        )}
+
+        {/* Avatar */}
+        <Link href={profileHref} className="shrink-0">
+          {comment.authorAvatarUrl ? (
+            <Image
+              src={comment.authorAvatarUrl}
+              alt=""
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+              <span className="text-xs font-semibold text-orange-500">
+                {comment.authorName.charAt(0)}
+              </span>
+            </div>
+          )}
+        </Link>
+
+        {/* Body */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <Link href={profileHref} className="font-semibold text-on-surface text-sm hover:underline">
+              {comment.authorName}
+            </Link>
+            {depth >= 1 && (
+              <span className="text-xs text-secondary bg-surface-container-high px-1.5 py-0.5 rounded">
+                Level {depth}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-on-surface mt-1">{comment.content}</p>
+
+          {/* Meta row */}
+          <div className="flex items-center gap-4 mt-2">
+            <span className="text-xs text-secondary/80">{formatRelativeTime(comment.createdAt)}</span>
+
+            {currentUserId && !collapsed && (
+              <button
+                onClick={() => onReply(comment.id, comment.authorName)}
+                className="text-xs font-semibold text-secondary/80 hover:text-on-surface transition-colors"
+              >
+                Reply
+              </button>
+            )}
+
+            {(isOwn || isAdmin) && (
+              <button
+                onClick={() => onDelete(comment.id)}
+                className="text-xs text-secondary/80 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+              >
+                Delete
+              </button>
+            )}
+
+            {hasReplies && (
+              <span className="text-xs text-secondary/80">
+                {comment.replies?.length} {comment.replies?.length === 1 ? 'reply' : 'replies'}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Nested replies - recursively render */}
+      {!collapsed && hasReplies && (
+        <div className="border-l-2 border-border/50 ml-6">
+          {comment.replies!.map((reply) => (
+            <CommentThread
+              key={reply.id}
+              comment={reply}
+              depth={depth + 1}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+              onReply={onReply}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Collapsed indicator */}
+      {collapsed && hasReplies && (
+        <button
+          onClick={() => setCollapsed(false)}
+          className="text-xs text-secondary/80 hover:text-on-surface ml-14 mt-1 transition-colors"
+        >
+          Show {comment.replies!.length} {comment.replies!.length === 1 ? 'reply' : 'replies'}
+        </button>
+      )}
     </div>
   );
 }
