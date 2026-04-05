@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema/fabrics';
 import { eq } from 'drizzle-orm';
 import { Suspense } from 'react';
@@ -6,7 +6,7 @@ import { isShopifyEnabled } from '@/lib/shopify';
 
 /**
  * Shop Page
- * 
+ *
  * A basic grid layout showing purchasable fabrics.
  * Feature-flagged behind NEXT_PUBLIC_ENABLE_SHOP
  */
@@ -69,18 +69,14 @@ export default async function ShopPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!shopEnabled ? (
           <div className="text-center py-16">
-            <h2 className="text-xl font-semibold text-on-surface mb-2">
-              Shop Coming Soon
-            </h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-2">Shop Coming Soon</h2>
             <p className="text-secondary">
               Our fabric shop is currently being set up. Check back soon!
             </p>
           </div>
         ) : purchasableFabrics.length === 0 ? (
           <div className="text-center py-16">
-            <h2 className="text-xl font-semibold text-on-surface mb-2">
-              No Fabrics Available
-            </h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-2">No Fabrics Available</h2>
             <p className="text-secondary">
               We&apos;re working on adding purchasable fabrics to our collection.
             </p>
@@ -159,22 +155,14 @@ function FabricCard({
 
         {/* Metadata */}
         <div className="mt-2 space-y-1 text-sm text-secondary">
-          {fabric.manufacturer && (
-            <p className="truncate">{fabric.manufacturer}</p>
-          )}
-          {fabric.collection && (
-            <p className="truncate">{fabric.collection}</p>
-          )}
-          {fabric.colorFamily && (
-            <p className="capitalize">{fabric.colorFamily}</p>
-          )}
+          {fabric.manufacturer && <p className="truncate">{fabric.manufacturer}</p>}
+          {fabric.collection && <p className="truncate">{fabric.collection}</p>}
+          {fabric.colorFamily && <p className="capitalize">{fabric.colorFamily}</p>}
         </div>
 
         {/* Price and Stock */}
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-lg font-semibold text-on-surface">
-            {displayPrice}
-          </span>
+          <span className="text-lg font-semibold text-on-surface">{displayPrice}</span>
           {fabric.inStock ? (
             <span className="text-xs font-medium text-success bg-success-container px-2 py-1 rounded">
               In Stock

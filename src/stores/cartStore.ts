@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import type { YardageResult } from '@/lib/yardage-utils';
-import type { Fabric } from '@/types/fabric';
+import type { FabricListItem } from '@/types/fabric';
 import { isShopifyEnabled, createCart, addToCart, type ShopifyCartLineInput } from '@/lib/shopify';
 
 /**
@@ -49,14 +49,17 @@ interface CartState {
   setDrawerOpen: (open: boolean) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
+
   /**
    * Add project yardage to cart
    * Maps yardage calculation results to cart items
    * Filters out fabrics that are not purchasable or lack shopifyVariantId
    */
-  addProjectYardageToCart: (yardageData: YardageResult[], availableFabrics: Fabric[]) => Promise<void>;
-  
+  addProjectYardageToCart: (
+    yardageData: YardageResult[],
+    availableFabrics: FabricListItem[]
+  ) => Promise<void>;
+
   /**
    * Sync local cart with Shopify
    * Creates a new cart or updates existing one
@@ -78,45 +81,52 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   setShopifyCartId: (shopifyCartId) => set({ shopifyCartId }),
   setCheckoutUrl: (checkoutUrl) => set({ checkoutUrl }),
-  
-  addItem: (item) => set((state) => {
-    const existingIndex = state.items.findIndex((i) => i.fabricId === item.fabricId);
-    if (existingIndex >= 0) {
-      // Update existing item
-      const updatedItems = [...state.items];
-      updatedItems[existingIndex] = {
-        ...updatedItems[existingIndex],
-        quantityInYards: updatedItems[existingIndex].quantityInYards + item.quantityInYards,
-      };
-      return { items: updatedItems };
-    }
-    // Add new item
-    return { items: [...state.items, item] };
-  }),
-  
-  removeItem: (fabricId) => set((state) => ({
-    items: state.items.filter((item) => item.fabricId !== fabricId),
-  })),
-  
-  updateItemQuantity: (fabricId, quantityInYards) => set((state) => ({
-    items: state.items.map((item) =>
-      item.fabricId === fabricId ? { ...item, quantityInYards } : item
-    ),
-  })),
-  
-  clearCart: () => set({ 
-    shopifyCartId: null, 
-    checkoutUrl: null, 
-    items: [],
-    error: null,
-  }),
-  
+
+  addItem: (item) =>
+    set((state) => {
+      const existingIndex = state.items.findIndex((i) => i.fabricId === item.fabricId);
+      if (existingIndex >= 0) {
+        // Update existing item
+        const updatedItems = [...state.items];
+        updatedItems[existingIndex] = {
+          ...updatedItems[existingIndex],
+          quantityInYards: updatedItems[existingIndex].quantityInYards + item.quantityInYards,
+        };
+        return { items: updatedItems };
+      }
+      // Add new item
+      return { items: [...state.items, item] };
+    }),
+
+  removeItem: (fabricId) =>
+    set((state) => ({
+      items: state.items.filter((item) => item.fabricId !== fabricId),
+    })),
+
+  updateItemQuantity: (fabricId, quantityInYards) =>
+    set((state) => ({
+      items: state.items.map((item) =>
+        item.fabricId === fabricId ? { ...item, quantityInYards } : item
+      ),
+    })),
+
+  clearCart: () =>
+    set({
+      shopifyCartId: null,
+      checkoutUrl: null,
+      items: [],
+      error: null,
+    }),
+
   toggleDrawer: () => set((state) => ({ isDrawerOpen: !state.isDrawerOpen })),
   setDrawerOpen: (isDrawerOpen) => set({ isDrawerOpen }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
 
-  addProjectYardageToCart: async (yardageData: YardageResult[], availableFabrics: Fabric[]) => {
+  addProjectYardageToCart: async (
+    yardageData: YardageResult[],
+    availableFabrics: FabricListItem[]
+  ) => {
     // Check if Shopify is enabled
     if (!isShopifyEnabled()) {
       set({ error: 'Shopify integration is not enabled' });
@@ -127,7 +137,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     try {
       // Create a fabric lookup map for quick access
-      const fabricMap = new Map<string, Fabric>();
+      const fabricMap = new Map<string, FabricListItem>();
       availableFabrics.forEach((fabric) => {
         fabricMap.set(fabric.id, fabric);
       });
@@ -136,8 +146,8 @@ export const useCartStore = create<CartState>((set, get) => ({
       // Filter out:
       // - User-uploaded fabrics that are not purchasable (isPurchasable: false)
       // - Fabrics without a shopifyVariantId
-      const cartItems: CartItem[] = yardageData
-        .map((yardage) => {
+      const cartItems = yardageData
+        .map((yardage): CartItem | null => {
           if (!yardage.fabricId) {
             // This is a color fill, not a fabric - skip
             return null;
@@ -170,13 +180,13 @@ export const useCartStore = create<CartState>((set, get) => ({
             quantityInYards: yardage.yardsRequired,
             pricePerYard: fabric.pricePerYard || 0,
             fabricName: fabric.name,
-            fabricImageUrl: fabric.imageUrl,
+            fabricImageUrl: fabric.imageUrl as string | null,
           };
         })
         .filter((item): item is CartItem => item !== null);
 
       if (cartItems.length === 0) {
-        set({ 
+        set({
           error: 'No purchasable fabrics found in your design',
           isLoading: false,
           isDrawerOpen: true,
@@ -192,13 +202,13 @@ export const useCartStore = create<CartState>((set, get) => ({
       // Sync with Shopify
       await get().syncWithShopify();
 
-      set({ 
+      set({
         isLoading: false,
         isDrawerOpen: true,
       });
     } catch (error) {
       console.error('Failed to add yardage to cart:', error);
-      set({ 
+      set({
         error: error instanceof Error ? error.message : 'Failed to add to cart',
         isLoading: false,
       });
@@ -207,7 +217,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   syncWithShopify: async () => {
     const state = get();
-    
+
     if (!isShopifyEnabled()) {
       throw new Error('Shopify integration is not enabled');
     }
@@ -245,7 +255,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error('Failed to sync with Shopify:', error);
-      set({ 
+      set({
         error: error instanceof Error ? error.message : 'Failed to sync cart',
         isLoading: false,
       });

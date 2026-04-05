@@ -76,6 +76,11 @@ describe('fabricStore', () => {
           collection: null,
           colorFamily: null,
           isDefault: false,
+          isPurchasable: false,
+          shopifyProductId: null,
+          shopifyVariantId: null,
+          pricePerYard: null,
+          inStock: true,
         },
         {
           id: 'fab-2',
@@ -87,6 +92,11 @@ describe('fabricStore', () => {
           collection: null,
           colorFamily: null,
           isDefault: false,
+          isPurchasable: false,
+          shopifyProductId: null,
+          shopifyVariantId: null,
+          pricePerYard: null,
+          inStock: true,
         },
       ],
     });
@@ -143,7 +153,9 @@ describe('fabricStore', () => {
         }
         return Promise.resolve({
           ok: true,
-          json: async () => ({ data: { fabrics: [], pagination: { total: 0, totalPages: 1, page: 1 } } }),
+          json: async () => ({
+            data: { fabrics: [], pagination: { total: 0, totalPages: 1, page: 1 } },
+          }),
         });
       });
       globalThis.fetch = mockFetch;
@@ -204,7 +216,24 @@ describe('fabricStore', () => {
 
     it('does not remove fabric when delete fails', async () => {
       useFabricStore.setState({
-        userFabrics: [{ id: 'fab-1', name: 'F1', imageUrl: '/f1.jpg', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
+        userFabrics: [
+          {
+            id: 'fab-1',
+            name: 'F1',
+            imageUrl: '/f1.jpg',
+            thumbnailUrl: null,
+            manufacturer: null,
+            sku: null,
+            collection: null,
+            colorFamily: null,
+            isDefault: false,
+            isPurchasable: false,
+            shopifyProductId: null,
+            shopifyVariantId: null,
+            pricePerYard: null,
+            inStock: true,
+          },
+        ],
       });
       const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
       globalThis.fetch = mockFetch;
@@ -218,7 +247,9 @@ describe('fabricStore', () => {
     it('opens panel and fetches fabrics if empty', async () => {
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({ data: { fabrics: [], pagination: { total: 0, totalPages: 1, page: 1 } } }),
+        json: async () => ({
+          data: { fabrics: [], pagination: { total: 0, totalPages: 1, page: 1 } },
+        }),
       });
       globalThis.fetch = mockFetch;
 
@@ -227,7 +258,26 @@ describe('fabricStore', () => {
     });
 
     it('opens panel without fetching if fabrics exist', () => {
-      useFabricStore.setState({ fabrics: [{ id: 'f1', name: 'F1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }] });
+      useFabricStore.setState({
+        fabrics: [
+          {
+            id: 'f1',
+            name: 'F1',
+            imageUrl: '',
+            thumbnailUrl: null,
+            manufacturer: null,
+            sku: null,
+            collection: null,
+            colorFamily: null,
+            isDefault: false,
+            isPurchasable: false,
+            shopifyProductId: null,
+            shopifyVariantId: null,
+            pricePerYard: null,
+            inStock: true,
+          },
+        ],
+      });
       useFabricStore.getState().setPanelOpen(true);
       expect(useFabricStore.getState().isPanelOpen).toBe(true);
     });
@@ -236,8 +286,42 @@ describe('fabricStore', () => {
   describe('reset', () => {
     it('clears all state', async () => {
       useFabricStore.setState({
-        fabrics: [{ id: 'f1', name: 'F1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
-        userFabrics: [{ id: 'u1', name: 'U1', imageUrl: '', thumbnailUrl: null, manufacturer: null, sku: null, collection: null, colorFamily: null, isDefault: false }],
+        fabrics: [
+          {
+            id: 'f1',
+            name: 'F1',
+            imageUrl: '',
+            thumbnailUrl: null,
+            manufacturer: null,
+            sku: null,
+            collection: null,
+            colorFamily: null,
+            isDefault: false,
+            isPurchasable: false,
+            shopifyProductId: null,
+            shopifyVariantId: null,
+            pricePerYard: null,
+            inStock: true,
+          },
+        ],
+        userFabrics: [
+          {
+            id: 'u1',
+            name: 'U1',
+            imageUrl: '',
+            thumbnailUrl: null,
+            manufacturer: null,
+            sku: null,
+            collection: null,
+            colorFamily: null,
+            isDefault: false,
+            isPurchasable: false,
+            shopifyProductId: null,
+            shopifyVariantId: null,
+            pricePerYard: null,
+            inStock: true,
+          },
+        ],
         search: 'test',
         manufacturer: 'M1',
         colorFamily: 'Blue',
