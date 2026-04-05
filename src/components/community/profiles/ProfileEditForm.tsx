@@ -346,7 +346,7 @@ export function ProfileEditForm() {
       <button
         type="submit"
         disabled={isSaving}
-        className="w-full px-5 py-2.5 rounded-lg bg-primary text-primary-on font-medium text-body-md hover:bg-primary-dark transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+        className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSaving ? 'Saving...' : 'Save Profile'}
       </button>

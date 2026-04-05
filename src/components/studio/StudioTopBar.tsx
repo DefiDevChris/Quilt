@@ -26,11 +26,7 @@ function formatTimestamp(date: Date | null): string {
   return date.toLocaleDateString();
 }
 
-function ViewMenu({
-  onOpenGridDimensions,
-}: {
-  onOpenGridDimensions?: () => void;
-}) {
+function ViewMenu({ onOpenGridDimensions }: { onOpenGridDimensions?: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
@@ -51,12 +47,26 @@ function ViewMenu({
     {
       label: isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport',
       icon: isViewportLocked ? (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.4"
+        >
           <rect x="4" y="9" width="12" height="8" rx="2" />
           <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9" strokeLinecap="round" />
         </svg>
       ) : (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.4"
+        >
           <rect x="4" y="9" width="12" height="8" rx="2" />
           <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7" strokeLinecap="round" />
         </svg>
@@ -69,7 +79,14 @@ function ViewMenu({
     {
       label: 'Recenter Viewport',
       icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.4"
+        >
           <circle cx="10" cy="10" r="3" />
           <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
         </svg>
@@ -131,14 +148,25 @@ function ViewMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-body-md font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
       >
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d="M3 5H17M3 10H17M3 15H17"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </svg>
         View
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M3 4.5L6 7.5L9 4.5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
       {open && (
@@ -148,7 +176,7 @@ function ViewMenu({
               key={item.label}
               type="button"
               onClick={item.action}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-body-md text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
             >
               <span className="text-on-surface/50 flex-shrink-0">{item.icon}</span>
               {item.label}
@@ -186,9 +214,20 @@ function ToolsMenu({
       description: 'View and restore previous states',
       icon: (
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <path d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
           <path d="M10 7V10L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M5 13L3 11L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M5 13L3 11L5 9"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
       action: () => {
@@ -202,7 +241,12 @@ function ToolsMenu({
       icon: (
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
           <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
           <circle cx="10" cy="13" r="0.75" fill="currentColor" />
         </svg>
       ),
@@ -218,7 +262,7 @@ function ToolsMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-body-md font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
       >
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
@@ -228,7 +272,13 @@ function ToolsMenu({
         </svg>
         Tools
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M3 4.5L6 7.5L9 4.5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
       {open && (
@@ -242,8 +292,8 @@ function ToolsMenu({
             >
               <span className="text-on-surface/50 flex-shrink-0 mt-0.5">{item.icon}</span>
               <div>
-                <div className="text-[13px] font-medium text-on-surface">{item.label}</div>
-                <div className="text-[11px] text-on-surface/50">{item.description}</div>
+                <div className="text-body-md font-medium text-on-surface">{item.label}</div>
+                <div className="text-label-sm text-on-surface/50">{item.description}</div>
               </div>
             </button>
           ))}
@@ -296,7 +346,11 @@ export function StudioTopBar({
     <>
       <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <TooltipHint name="Menu" description="Access project settings and options" mascot="/mascots&avatars/corgi5.png">
+          <TooltipHint
+            name="Menu"
+            description="Access project settings and options"
+            mascot="/mascots&avatars/corgi5.png"
+          >
             <button
               type="button"
               onClick={() => setDrawerOpen((prev) => !prev)}
@@ -315,7 +369,7 @@ export function StudioTopBar({
           </TooltipHint>
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="QuiltCorgi Logo" className="h-6 w-auto" />
-            <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
+            <span className="font-semibold text-body-lg text-on-surface tracking-[-0.01em]">
               QuiltCorgi
             </span>
           </div>
@@ -342,47 +396,47 @@ export function StudioTopBar({
             <TooltipHint
               name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
               description={
-                isViewportLocked 
-                  ? 'Click to unlock and pan/zoom freely' 
+                isViewportLocked
+                  ? 'Click to unlock and pan/zoom freely'
                   : 'Click to lock viewport to centered fit'
               }
               mascot="/mascots&avatars/corgi29.png"
             >
               <button
                 type="button"
-                onClick={() =>
-                  useCanvasStore.getState().setViewportLocked(!isViewportLocked)
-                }
+                onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
                 className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  isViewportLocked 
-                    ? 'hover:bg-surface-container' 
+                  isViewportLocked
+                    ? 'hover:bg-surface-container'
                     : 'bg-primary/10 hover:bg-primary/20'
                 }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
                 {isViewportLocked ? (
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <rect
-                      x="4"
-                      y="9"
-                      width="12"
-                      height="8"
-                      rx="2"
-                    />
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="#4a3b32"
+                    strokeWidth="1.4"
+                  >
+                    <rect x="4" y="9" width="12" height="8" rx="2" />
                     <path
                       d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
                       strokeLinecap="round"
                     />
                   </svg>
                 ) : (
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <rect
-                      x="4"
-                      y="9"
-                      width="12"
-                      height="8"
-                      rx="2"
-                    />
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="#4a3b32"
+                    strokeWidth="1.4"
+                  >
+                    <rect x="4" y="9" width="12" height="8" rx="2" />
                     <path
                       d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
                       strokeLinecap="round"
@@ -394,23 +448,27 @@ export function StudioTopBar({
 
             {/* Quick recenter — only visible when unlocked */}
             {!isViewportLocked && (
-              <TooltipHint name="Recenter Viewport" description="Snap grid back to center of canvas" mascot="/mascots&avatars/corgi1.png">
+              <TooltipHint
+                name="Recenter Viewport"
+                description="Snap grid back to center of canvas"
+                mascot="/mascots&avatars/corgi1.png"
+              >
                 <button
                   type="button"
                   onClick={() => useCanvasStore.getState().centerAndFitViewport()}
                   className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
                   aria-label="Recenter viewport"
                 >
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4a3b32" strokeWidth="1.4">
-                    <circle
-                      cx="10"
-                      cy="10"
-                      r="3"
-                    />
-                    <path
-                      d="M10 3V7M10 13V17M3 10H7M13 10H17"
-                      strokeLinecap="round"
-                    />
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="#4a3b32"
+                    strokeWidth="1.4"
+                  >
+                    <circle cx="10" cy="10" r="3" />
+                    <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
                   </svg>
                 </button>
               </TooltipHint>
@@ -419,14 +477,14 @@ export function StudioTopBar({
 
           <div className="text-right">
             <div className="flex items-center justify-end gap-2">
-              <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
+              <div className="text-body-md font-medium text-on-surface truncate max-w-48">
                 {projectName}
               </div>
               {isDirty && (
                 <div className="w-1.5 h-1.5 rounded-full bg-warning" title="Unsaved changes" />
               )}
             </div>
-            <div className="text-[11px] text-on-surface/45">
+            <div className="text-label-sm text-on-surface/45">
               {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
             </div>
           </div>
@@ -439,7 +497,11 @@ export function StudioTopBar({
             <ToolsMenu onOpenHistory={onOpenHistory} onOpenHelp={onOpenHelp} />
           </div>
 
-          <TooltipHint name="Export" description="Export your quilt as PNG, SVG, or PDF" mascot="/mascots&avatars/corgi23.png">
+          <TooltipHint
+            name="Export"
+            description="Export your quilt as PNG, SVG, or PDF"
+            mascot="/mascots&avatars/corgi23.png"
+          >
             <button
               type="button"
               onClick={() => {
@@ -449,7 +511,7 @@ export function StudioTopBar({
                 }
                 onOpenImageExport?.();
               }}
-              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
+              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-body-md font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
               Export
               {!isPro && <Sparkles size={12} className="text-primary" />}
@@ -467,9 +529,7 @@ export function StudioTopBar({
         onOpenHelp={onOpenHelp}
       />
 
-      {showProUpgrade && (
-        <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />
-      )}
+      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
     </>
   );
 }

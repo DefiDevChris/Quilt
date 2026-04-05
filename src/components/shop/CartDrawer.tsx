@@ -142,9 +142,7 @@ export function CartDrawer() {
                     type="button"
                     onClick={handleCheckout}
                     disabled={isLoading || !checkoutUrl}
-                    className="w-full py-3 px-4 bg-primary text-on-primary rounded-lg font-medium
-                             hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed
-                             transition-colors"
+                    className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? 'Processing...' : 'Proceed to Checkout'}
                   </button>

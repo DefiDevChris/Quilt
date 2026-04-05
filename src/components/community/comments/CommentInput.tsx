@@ -123,7 +123,7 @@ export function CommentInput({
           <button
             type="submit"
             disabled={!canSubmit}
-            className="rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Posting...' : 'Post'}
           </button>

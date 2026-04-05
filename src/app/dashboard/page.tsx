@@ -131,12 +131,12 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="flex items-center gap-2 text-secondary hover:text-slate-900 transition-colors"
+            className="flex items-center gap-2 text-secondary hover:text-on-surface transition-colors"
           >
             <ArrowLeft size={16} strokeWidth={2} />
             <span className="text-sm font-semibold">Dashboard</span>
           </button>
-          <div className="w-px h-4 bg-slate-300/60" />
+          <div className="w-px h-4 bg-outline-variant/60" />
           <h1 className="text-on-surface font-bold text-sm">Pattern Library</h1>
         </div>
         <div className="flex-1 overflow-auto p-6">
@@ -225,7 +225,7 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60 flex flex-col justify-between"
         >
           <div className="absolute -bottom-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-700">
-            <Scissors size={180} strokeWidth={1} className="text-[#C67B5C]" />
+            <Scissors size={180} strokeWidth={1} className="text-primary-dark" />
           </div>
           <div className="relative z-10 mb-auto">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all">
@@ -278,7 +278,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="relative z-10 mb-auto">
-            <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-[10px] font-extrabold uppercase tracking-widest rounded-full">
+            <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-caption font-extrabold uppercase tracking-widest rounded-full">
               AI Feature
             </span>
           </div>
@@ -362,7 +362,7 @@ export default function DashboardPage() {
           className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-            <HeartHandshake size={200} strokeWidth={1} className="text-[#C67B5C]" />
+            <HeartHandshake size={200} strokeWidth={1} className="text-primary-dark" />
           </div>
           <div className="relative z-10">
             <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">

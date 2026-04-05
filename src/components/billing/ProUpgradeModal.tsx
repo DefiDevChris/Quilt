@@ -122,7 +122,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                   onClick={() => handleCheckout('yearly')}
                   className="flex-1 rounded-2xl border-2 border-primary bg-primary/5 p-4 text-left transition-all hover:bg-primary/10 hover:shadow-elevation-2 group relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 bg-primary text-primary-on text-[10px] font-extrabold px-2 py-1 rounded-bl-lg uppercase tracking-wider">
+                  <div className="absolute top-0 right-0 bg-primary text-primary-on text-caption font-extrabold px-2 py-1 rounded-bl-lg uppercase tracking-wider">
                     Best Value
                   </div>
                   <div className="font-bold text-lg text-on-surface">Yearly</div>
@@ -149,7 +149,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 </button>
               </div>
 
-              <p className="text-center text-xs font-medium text-secondary/70 mt-4">
+              <p className="text-center text-xs font-medium text-tertiary mt-4">
                 Secure checkout powered by Stripe. You can cancel your subscription at any time from
                 your profile.
               </p>

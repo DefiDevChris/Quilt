@@ -18,14 +18,14 @@ export default function PublicNav() {
 
   return (
     <header
-      className="sticky top-0 z-50 bg-warm-bg/90 backdrop-blur-xl transition-shadow duration-200"
+      className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl transition-shadow duration-200"
       style={{ boxShadow: scrolled ? '0 4px 24px rgba(74, 59, 50, 0.06)' : 'none' }}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-4">
         <Link href="/" className="flex items-center gap-3">
           <Mascot pose="waving" size="sm" />
           <span
-            className="text-2xl font-bold text-warm-text"
+            className="text-2xl font-bold text-on-surface"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             QuiltCorgi
@@ -35,44 +35,35 @@ export default function PublicNav() {
         <div className="hidden lg:flex items-center gap-6">
           <a
             href="#features"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+            className="text-secondary hover:text-primary transition-colors font-medium"
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+            className="text-secondary hover:text-primary transition-colors font-medium"
           >
             Social Threads
           </a>
           <Link
             href="/blog"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+            className="text-secondary hover:text-primary transition-colors font-medium"
           >
             Blog
           </Link>
           <Link
             href="/help"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
+            className="text-secondary hover:text-primary transition-colors font-medium"
           >
             Help
           </Link>
-          <Link
-            href="/auth/signup"
-            className="px-5 py-2 bg-warm-peach text-warm-text rounded-full font-semibold hover:bg-warm-peach-dark transition-colors whitespace-nowrap"
-          >
+          <Link href="/auth/signup" className="btn-primary-xs whitespace-nowrap">
             Start Designing
-          </Link>
-          <Link
-            href="/auth/signin"
-            className="text-warm-text-secondary hover:text-warm-peach transition-colors font-medium"
-          >
-            Sign In
           </Link>
         </div>
 
         <button
-          className="lg:hidden p-2 text-warm-text"
+          className="lg:hidden p-2 text-on-surface"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation menu"
         >
@@ -97,48 +88,41 @@ export default function PublicNav() {
       </nav>
 
       {menuOpen && (
-        <div className="lg:hidden border-t border-warm-border bg-warm-bg px-6 py-4 space-y-3">
+        <div className="lg:hidden border-t border-outline-variant bg-background px-6 py-4 space-y-3">
           <a
             href="#features"
-            className="block text-warm-text-secondary font-medium py-2"
+            className="block text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="block text-warm-text-secondary font-medium py-2"
+            className="block text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Social Threads
           </a>
           <Link
             href="/blog"
-            className="block text-warm-text-secondary font-medium py-2"
+            className="block text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Blog
           </Link>
           <Link
             href="/help"
-            className="block text-warm-text-secondary font-medium py-2"
+            className="block text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Help
           </Link>
           <Link
             href="/auth/signup"
-            className="block text-center px-6 py-3 bg-warm-peach text-warm-text rounded-full font-semibold"
+            className="btn-primary-sm block text-center"
             onClick={() => setMenuOpen(false)}
           >
             Start Designing
-          </Link>
-          <Link
-            href="/auth/signin"
-            className="block text-center text-warm-text-secondary font-medium py-2 hover:text-warm-peach transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            Sign In
           </Link>
         </div>
       )}

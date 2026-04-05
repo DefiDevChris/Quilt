@@ -93,7 +93,7 @@ export function YardagePanel() {
                   onChange={(e) => setWasteMargin(Number(e.target.value) / 100)}
                   className="w-full accent-primary"
                 />
-                <div className="flex justify-between text-[10px] text-secondary">
+                <div className="flex justify-between text-caption text-secondary">
                   <span>5%</span>
                   <span>25%</span>
                 </div>

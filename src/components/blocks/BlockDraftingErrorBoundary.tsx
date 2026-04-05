@@ -37,12 +37,19 @@ export class BlockDraftingErrorBoundary extends Component<
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-error">
-                  <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-on-surface mb-2">Block Drafting Error</h3>
               <p className="text-sm text-secondary mb-6">
-                Something went wrong with the block drafting canvas. This might be due to browser compatibility or drawing tool issues.
+                Something went wrong with the block drafting canvas. This might be due to browser
+                compatibility or drawing tool issues.
               </p>
               <div className="flex gap-2 justify-center">
                 <button
@@ -55,7 +62,7 @@ export class BlockDraftingErrorBoundary extends Component<
                 <button
                   type="button"
                   onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
+                  className="btn-primary-xs"
                 >
                   Reload Page
                 </button>

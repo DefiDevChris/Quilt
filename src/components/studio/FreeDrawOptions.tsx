@@ -19,8 +19,9 @@ export function FreeDrawOptions() {
         checked={easyDrawMode === 'smooth'}
         onChange={(checked) => setEasyDrawMode(checked ? 'smooth' : 'straight')}
       />
-      <p className="text-[11px] text-on-surface/60 mt-2">
-        When enabled, drawn lines are smoothed with curves. When disabled, lines snap to straight segments between grid points.
+      <p className="text-label-sm text-on-surface/60 mt-2">
+        When enabled, drawn lines are smoothed with curves. When disabled, lines snap to straight
+        segments between grid points.
       </p>
     </div>
   );

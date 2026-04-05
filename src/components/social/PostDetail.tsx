@@ -146,7 +146,7 @@ export function PostDetail({ postId }: PostDetailProps) {
 
         {/* Title & Description */}
         <h1 className="text-2xl font-bold text-on-surface mb-2">{post.title}</h1>
-        <p className="text-on-surface/80 mb-4 text-[15px] leading-relaxed">
+        <p className="text-on-surface/80 mb-4 text-body-lg leading-relaxed">
           {post.description || post.title}
         </p>
 
@@ -261,17 +261,14 @@ function PostNotFound() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="glass-panel rounded-[2rem] p-10 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surface-container-high flex items-center justify-center">
           <span className="text-2xl">🔍</span>
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Post Not Found</h2>
         <p className="text-secondary mb-6">
           This post may have been removed or is pending approval.
         </p>
-        <Link
-          href="/socialthreads"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
-        >
+        <Link href="/socialthreads" className="btn-primary-sm inline-flex items-center gap-2">
           <ArrowLeft size={18} />
           Back to Feed
         </Link>
@@ -289,10 +286,7 @@ function PostLoadError({ onRetry }: { onRetry: () => void }) {
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Failed to Load</h2>
         <p className="text-secondary mb-6">Something went wrong loading this post.</p>
-        <button
-          onClick={onRetry}
-          className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
-        >
+        <button onClick={onRetry} className="btn-primary-sm">
           Try Again
         </button>
       </div>

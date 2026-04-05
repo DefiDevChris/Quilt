@@ -11,9 +11,7 @@ export function WorktableSwitcher() {
   const activeWorktableId = useProjectStore((s) => s.activeWorktableId);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const [showNewDialog, setShowNewDialog] = useState(false);
-  const [contextMenu, setContextMenu] = useState<{ id: string; x: number; y: number } | null>(
-    null
-  );
+  const [contextMenu, setContextMenu] = useState<{ id: string; x: number; y: number } | null>(null);
 
   const switchWorktable = (id: string) => {
     if (id === activeWorktableId || !fabricCanvas) return;
@@ -45,7 +43,7 @@ export function WorktableSwitcher() {
               <button
                 type="button"
                 onClick={() => switchWorktable(wt.id)}
-                className={`relative px-3.5 py-1.5 font-medium text-[12px] tracking-[0.04em] rounded-md transition-colors ${
+                className={`relative px-3.5 py-1.5 font-medium text-body-sm tracking-[0.04em] rounded-md transition-colors ${
                   isActive ? 'text-on-surface' : 'text-on-surface/50 hover:text-on-surface/70'
                 }`}
               >
@@ -139,11 +137,7 @@ function NewWorktableDialog({ onClose }: { onClose: () => void }) {
           >
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={handleCreate}
-            className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
-          >
+          <button type="button" onClick={handleCreate} className="btn-primary-xs">
             Create Worktable
           </button>
         </div>
@@ -265,11 +259,7 @@ function RenameDialog({ worktableId, onClose }: { worktableId: string; onClose: 
           >
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={handleRename}
-            className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
-          >
+          <button type="button" onClick={handleRename} className="btn-primary-xs">
             Rename
           </button>
         </div>

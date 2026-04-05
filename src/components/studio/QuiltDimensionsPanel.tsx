@@ -195,7 +195,7 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
               onChange={(e) => handleGridSizeChange(parseFloat(e.target.value))}
               className="w-full accent-primary"
             />
-            <div className="flex justify-between text-[10px] text-secondary mt-0.5">
+            <div className="flex justify-between text-caption text-secondary mt-0.5">
               <span>{formatGridSize(GRID_CELL_SIZE_MIN)}</span>
               <span>{formatGridSize(GRID_CELL_SIZE_MAX)}</span>
             </div>

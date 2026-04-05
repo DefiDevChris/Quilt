@@ -237,9 +237,7 @@ export function OnboardingForm() {
     }
   }
 
-  const isComplete =
-    displayName.trim().length > 0 &&
-    usernameStatus === 'available';
+  const isComplete = displayName.trim().length > 0 && usernameStatus === 'available';
 
   const usernameBorderColor =
     usernameStatus === 'available'
@@ -261,17 +259,17 @@ export function OnboardingForm() {
           className="object-contain mb-4"
           priority
         />
-        <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface text-center">
+        <h1 className="text-headline-md font-bold text-on-surface text-center">
           Welcome to QuiltCorgi!
         </h1>
-        <p className="mt-2 text-[length:var(--font-size-body-md)] text-secondary text-center">
+        <p className="mt-2 text-body-md text-secondary text-center">
           Set up your profile to get started.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-[length:var(--font-size-body-sm)] text-error">
+          <div className="rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-body-sm text-error">
             {error}
           </div>
         )}
@@ -280,7 +278,7 @@ export function OnboardingForm() {
         <div>
           <label
             htmlFor="displayName"
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            className="block text-body-sm font-medium text-secondary mb-1.5"
           >
             Your name
           </label>
@@ -290,7 +288,7 @@ export function OnboardingForm() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
+            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200"
             placeholder="How should we call you?"
             autoComplete="name"
             maxLength={60}
@@ -301,7 +299,7 @@ export function OnboardingForm() {
         <div>
           <label
             htmlFor="username"
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            className="block text-body-sm font-medium text-secondary mb-1.5"
           >
             Username
           </label>
@@ -311,14 +309,14 @@ export function OnboardingForm() {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-surface-container border-b ${usernameBorderColor} focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200`}
+            className={`w-full bg-surface-container border-b ${usernameBorderColor} focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200`}
             placeholder="quilter_jane"
             autoComplete="username"
             maxLength={60}
           />
           {usernameMessage && (
             <p
-              className={`mt-1 text-[length:var(--font-size-body-sm)] ${
+              className={`mt-1 text-body-sm ${
                 usernameStatus === 'available' ? 'text-success' : 'text-error'
               }`}
             >
@@ -328,17 +326,14 @@ export function OnboardingForm() {
               )}
             </p>
           )}
-          <p className="mt-1 text-[length:var(--font-size-body-sm)] text-secondary/60">
+          <p className="mt-1 text-body-sm text-secondary/60">
             Lowercase letters, numbers, and hyphens only.
           </p>
         </div>
 
         {/* Bio */}
         <div>
-          <label
-            htmlFor="bio"
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
-          >
+          <label htmlFor="bio" className="block text-body-sm font-medium text-secondary mb-1.5">
             Bio <span className="text-secondary/60">(optional)</span>
           </label>
           <textarea
@@ -347,14 +342,14 @@ export function OnboardingForm() {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200 resize-none"
+            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200 resize-none"
             placeholder="Tell the community a little about yourself..."
           />
         </div>
 
         {/* Privacy Toggle */}
         <div>
-          <label className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-3">
+          <label className="block text-body-sm font-medium text-secondary mb-3">
             Social visibility
           </label>
           <div className="flex gap-2">
@@ -367,8 +362,8 @@ export function OnboardingForm() {
                   : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
               }`}
             >
-              <div className="text-[length:var(--font-size-body-md)] font-medium">Public</div>
-              <div className="mt-0.5 text-[length:var(--font-size-body-sm)] text-secondary/80">
+              <div className="text-body-md font-medium">Public</div>
+              <div className="mt-0.5 text-body-sm text-secondary/80">
                 View, post, comment &amp; heart
               </div>
             </button>
@@ -381,8 +376,8 @@ export function OnboardingForm() {
                   : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
               }`}
             >
-              <div className="text-[length:var(--font-size-body-md)] font-medium">Private</div>
-              <div className="mt-0.5 text-[length:var(--font-size-body-sm)] text-secondary/80">
+              <div className="text-body-md font-medium">Private</div>
+              <div className="mt-0.5 text-body-sm text-secondary/80">
                 Completely hidden from others
               </div>
             </button>
@@ -391,8 +386,11 @@ export function OnboardingForm() {
 
         {/* Avatar Selection */}
         <div>
-          <label className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-3">
-            Choose your corgi <span className="text-secondary/60">(optional — we&apos;ll pick one for you if you skip)</span>
+          <label className="block text-body-sm font-medium text-secondary mb-3">
+            Choose your corgi{' '}
+            <span className="text-secondary/60">
+              (optional — we&apos;ll pick one for you if you skip)
+            </span>
           </label>
           <div className="grid grid-cols-6 sm:grid-cols-7 gap-2 max-h-[280px] overflow-y-auto pr-1 pb-2">
             {CORGI_IMAGES.map((corgi) => (
@@ -406,7 +404,7 @@ export function OnboardingForm() {
                 }}
                 className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${
                   selectedCorgi === corgi.id
-                    ? 'border-primary shadow-[var(--shadow-elevation-2)] ring-2 ring-primary/30'
+                    ? 'border-primary shadow-elevation-2 ring-2 ring-primary/30'
                     : 'border-outline-variant/20 hover:border-outline-variant/40'
                 }`}
                 aria-label={corgi.alt}
@@ -419,9 +417,7 @@ export function OnboardingForm() {
 
         {/* Upload Own */}
         <div>
-          <p className="text-[length:var(--font-size-body-sm)] text-secondary mb-2">
-            Or upload your own
-          </p>
+          <p className="text-body-sm text-secondary mb-2">Or upload your own</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -443,7 +439,7 @@ export function OnboardingForm() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-[length:var(--font-size-body-sm)] text-primary hover:underline"
+                className="text-body-sm text-primary hover:underline"
               >
                 Change image
               </button>
@@ -452,7 +448,7 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 rounded-lg border border-dashed border-outline-variant/40 hover:border-primary/50 px-4 py-3 text-[length:var(--font-size-body-sm)] text-secondary hover:text-on-surface transition-colors w-full"
+              className="flex items-center gap-2 rounded-lg border border-dashed border-outline-variant/40 hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-on-surface transition-colors w-full"
             >
               <svg
                 className="w-5 h-5 shrink-0"
@@ -476,7 +472,7 @@ export function OnboardingForm() {
         <button
           type="submit"
           disabled={isSaving || !isComplete}
-          className="w-full bg-primary text-primary-on rounded-md px-4 py-3 text-[length:var(--font-size-body-md)] font-medium hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSaving ? 'Setting up your account...' : "Let's go!"}
         </button>

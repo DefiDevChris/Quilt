@@ -61,7 +61,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                 }`}
               >
                 <div className="text-sm font-medium text-on-surface">{opt.label}</div>
-                <div className="text-[10px] text-secondary mt-0.5">{opt.desc}</div>
+                <div className="text-caption text-secondary mt-0.5">{opt.desc}</div>
               </button>
             ))}
           </div>
@@ -198,7 +198,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                   <div>
                     <label
                       htmlFor={`border-width-${i}`}
-                      className="block text-[10px] text-secondary mb-0.5"
+                      className="block text-caption text-secondary mb-0.5"
                     >
                       Width ({unit})
                     </label>
@@ -220,7 +220,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                   <div>
                     <label
                       htmlFor={`border-color-${i}`}
-                      className="block text-[10px] text-secondary mb-0.5"
+                      className="block text-caption text-secondary mb-0.5"
                     >
                       Color
                     </label>

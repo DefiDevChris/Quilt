@@ -59,10 +59,10 @@ export function AuthGateModal({
 
           {/* Header */}
           <div className="text-center mb-6">
-            <h2 className="text-[length:var(--font-size-headline-sm)] font-bold text-on-surface">
+            <h2 className="text-headline-sm font-bold text-on-surface">
               {mode === 'signup' ? title : 'Welcome back'}
             </h2>
-            <p className="text-[length:var(--font-size-body-sm)] text-secondary mt-2">
+            <p className="text-body-sm text-secondary mt-2">
               {mode === 'signup' ? description : 'Sign in to continue designing quilts.'}
             </p>
           </div>
@@ -71,7 +71,7 @@ export function AuthGateModal({
           <AuthFormInner mode={mode} onSuccess={onClose} compact />
 
           {/* Toggle mode */}
-          <p className="mt-6 text-center text-[length:var(--font-size-body-sm)] text-secondary">
+          <p className="mt-6 text-center text-body-sm text-secondary">
             {mode === 'signup' ? (
               <>
                 Already have an account?{' '}
@@ -97,7 +97,7 @@ export function AuthGateModal({
 
           {/* Alternative option */}
           <div className="mt-6 pt-6 border-t border-outline-variant/30 text-center">
-            <p className="text-[length:var(--font-size-body-sm)] text-secondary">
+            <p className="text-body-sm text-secondary">
               Want to explore first?{' '}
               <Link
                 href="/socialthreads"

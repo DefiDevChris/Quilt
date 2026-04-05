@@ -66,7 +66,7 @@ export function ColorThemeTools() {
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center justify-between py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface/70 hover:text-on-surface transition-colors"
+        className="flex w-full items-center justify-between py-1 text-label-sm font-semibold uppercase tracking-[0.06em] text-on-surface/70 hover:text-on-surface transition-colors"
       >
         Colorway
         <svg
@@ -99,7 +99,7 @@ export function ColorThemeTools() {
 
           {/* Swap Colors */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+            <span className="text-label-sm text-on-surface/70 font-medium block mb-1">
               Swap Colors
             </span>
             <div className="flex items-center gap-1">
@@ -128,7 +128,7 @@ export function ColorThemeTools() {
               <button
                 type="button"
                 onClick={handleSwap}
-                className="ml-auto rounded bg-surface-container px-2 py-1 text-[10px] text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
+                className="ml-auto rounded bg-surface-container px-2 py-1 text-caption text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
               >
                 Swap
               </button>
@@ -137,7 +137,7 @@ export function ColorThemeTools() {
 
           {/* Randomize */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+            <span className="text-label-sm text-on-surface/70 font-medium block mb-1">
               Randomize Palette
             </span>
             <div className="flex flex-wrap gap-1 mb-1">
@@ -154,7 +154,7 @@ export function ColorThemeTools() {
             <button
               type="button"
               onClick={handleRandomize}
-              className="w-full rounded bg-surface-container px-2 py-1.5 text-[10px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high"
+              className="w-full rounded bg-surface-container px-2 py-1.5 text-caption font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high"
             >
               Shuffle
             </button>
@@ -162,7 +162,7 @@ export function ColorThemeTools() {
 
           {/* Color Scheme Generator */}
           <div>
-            <span className="text-[11px] text-on-surface/70 font-medium block mb-1">
+            <span className="text-label-sm text-on-surface/70 font-medium block mb-1">
               Suggest Palette
             </span>
             <div className="space-y-1">
@@ -177,7 +177,7 @@ export function ColorThemeTools() {
                 <select
                   value={selectedScheme}
                   onChange={(e) => setSelectedScheme(e.target.value as ColorSchemeType)}
-                  className="flex-1 text-[10px] bg-surface-container border border-outline-variant/20 rounded px-1 py-1 text-on-surface/70"
+                  className="flex-1 text-caption bg-surface-container border border-outline-variant/20 rounded px-1 py-1 text-on-surface/70"
                 >
                   {COLOR_SCHEMES.map((scheme) => (
                     <option key={scheme.id} value={scheme.id}>
@@ -190,14 +190,14 @@ export function ColorThemeTools() {
                 <button
                   type="button"
                   onClick={handleGenerateScheme}
-                  className="flex-1 rounded bg-surface-container px-2 py-1 text-[10px] text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
+                  className="flex-1 rounded bg-surface-container px-2 py-1 text-caption text-on-surface/70 font-medium hover:text-on-surface hover:bg-surface-container-high"
                 >
                   Generate
                 </button>
                 <button
                   type="button"
                   onClick={handleApplyScheme}
-                  className="flex-1 rounded bg-primary px-2 py-1 text-[10px] text-white hover:bg-primary/90"
+                  className="flex-1 rounded bg-primary px-2 py-1 text-caption text-white hover:bg-primary/90"
                 >
                   Apply
                 </button>

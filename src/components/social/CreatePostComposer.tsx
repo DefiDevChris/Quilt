@@ -388,7 +388,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'project' && !selectedProject)
                 }
                 aria-label="Publish post"
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-400 text-white text-sm font-bold hover:from-orange-500 hover:to-rose-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                 Post

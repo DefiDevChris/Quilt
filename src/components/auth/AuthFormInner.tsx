@@ -86,13 +86,13 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
   }
 
   const inputClassName = compact
-    ? 'w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2 text-[length:var(--font-size-body-sm)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200'
-    : 'w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200';
+    ? 'w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2 text-body-sm text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200'
+    : 'w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-[length:var(--font-size-body-sm)] text-error">
+        <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-body-sm text-error">
           {error}
         </div>
       )}
@@ -101,7 +101,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div>
           <label
             htmlFor={compact ? 'modal-name' : 'name'}
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            className="block text-body-sm font-medium text-secondary mb-1.5"
           >
             Name
           </label>
@@ -121,7 +121,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <div>
         <label
           htmlFor={compact ? 'modal-email' : 'email'}
-          className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+          className="block text-body-sm font-medium text-secondary mb-1.5"
         >
           Email
         </label>
@@ -141,14 +141,14 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div className="flex items-center justify-between mb-1.5">
           <label
             htmlFor={compact ? 'modal-password' : 'password'}
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary"
+            className="block text-body-sm font-medium text-secondary"
           >
             Password
           </label>
           {!isSignUp && !compact && (
             <Link
               href="/auth/forgot-password"
-              className="text-[length:var(--font-size-body-sm)] text-primary hover:underline"
+              className="text-body-sm text-primary hover:underline"
             >
               Forgot password?
             </Link>
@@ -201,7 +201,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           </button>
         </div>
         {isSignUp && (
-          <p className="mt-1.5 text-[length:var(--font-size-body-sm)] text-secondary">
+          <p className="mt-1.5 text-body-sm text-secondary">
             Must include uppercase, lowercase, and numbers
           </p>
         )}
@@ -210,7 +210,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-primary text-primary-on rounded-md px-4 py-3 text-[length:var(--font-size-body-md)] font-medium hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading
           ? isSignUp

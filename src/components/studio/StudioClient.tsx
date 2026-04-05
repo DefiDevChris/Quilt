@@ -139,7 +139,7 @@ function PrintOptionsPanel({
               onChange={(e) => setPrintScale(parseFloat(e.target.value))}
               className="w-full"
             />
-            <div className="flex justify-between text-[10px] text-secondary mt-0.5">
+            <div className="flex justify-between text-caption text-secondary mt-0.5">
               <span>50%</span>
               <span>1:1</span>
               <span>200%</span>

@@ -39,7 +39,7 @@ export function BlockBuilderOptions() {
           Smooth Curve
         </button>
       </div>
-      <p className="text-[11px] text-on-surface/60">
+      <p className="text-label-sm text-on-surface/60">
         {blockBuilderMode === 'straight'
           ? 'Click and drag to draw. Path snaps to grid points with straight segments and auto-closes into a shape.'
           : 'Click and drag to draw. Path snaps to grid with smooth curves and auto-closes into a shape.'}

@@ -178,10 +178,7 @@ function FabricCard({
         <button
           type="button"
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-4 w-full py-2.5 px-4 bg-primary text-on-primary rounded-lg 
-                   font-medium text-sm hover:bg-primary-hover 
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-colors"
+          className="btn-primary-xs mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {fabric.shopifyVariantId ? 'Add to Cart' : 'Not Available'}
         </button>

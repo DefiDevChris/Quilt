@@ -98,7 +98,7 @@ export function CuttingChartPanel({
                   <span className="text-xs font-medium text-on-surface">
                     {entry.fabricDisplayName}
                   </span>
-                  <span className="text-[10px] text-secondary">({entry.totalPieces} pieces)</span>
+                  <span className="text-caption text-secondary">({entry.totalPieces} pieces)</span>
                 </div>
 
                 {/* Patches Table */}
@@ -122,7 +122,7 @@ export function CuttingChartPanel({
                           )}
                         </td>
                         <td className="px-2 py-1.5 text-on-surface text-right">{patch.quantity}</td>
-                        <td className="px-2 py-1.5 text-secondary text-[10px]">
+                        <td className="px-2 py-1.5 text-secondary text-caption">
                           {patch.specialInstructions ?? '-'}
                         </td>
                       </tr>

@@ -165,10 +165,7 @@ export function ProjectTemplates({
           </div>
 
           <div className="flex gap-3">
-            <button
-              type="submit"
-              className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors"
-            >
+            <button type="submit" className="btn-primary-sm">
               Save Template
             </button>
             <button

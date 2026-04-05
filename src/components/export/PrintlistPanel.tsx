@@ -118,7 +118,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                       {/* Quantity + Seam Allowance */}
                       <div className="flex gap-2">
                         <div className="flex-1">
-                          <label className="text-[10px] text-secondary block mb-0.5">Qty</label>
+                          <label className="text-caption text-secondary block mb-0.5">Qty</label>
                           <input
                             type="number"
                             min={1}
@@ -135,7 +135,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-0.5">
-                            <label className="text-[10px] text-secondary">
+                            <label className="text-caption text-secondary">
                               Seam ({item.unitSystem === 'metric' ? 'cm' : 'in'})
                             </label>
                             <button

@@ -429,7 +429,7 @@ export function ImagePrepStep() {
         <button
           type="button"
           onClick={() => setMode('straighten')}
-          className={`flex-1 px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors ${
+          className={`flex-1 px-3 py-1.5 text-body-md font-medium rounded-md transition-colors ${
             mode === 'straighten'
               ? 'bg-surface text-on-surface shadow-sm'
               : 'text-secondary hover:text-on-surface'
@@ -440,7 +440,7 @@ export function ImagePrepStep() {
         <button
           type="button"
           onClick={() => setMode('perspective')}
-          className={`flex-1 px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors ${
+          className={`flex-1 px-3 py-1.5 text-body-md font-medium rounded-md transition-colors ${
             mode === 'perspective'
               ? 'bg-surface text-on-surface shadow-sm'
               : 'text-secondary hover:text-on-surface'
@@ -469,10 +469,10 @@ export function ImagePrepStep() {
           <div className="flex-shrink-0 space-y-4">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-medium text-on-surface/60 uppercase tracking-wider">
+                <span className="text-label-sm font-medium text-on-surface/60 uppercase tracking-wider">
                   Straighten
                 </span>
-                <span className="text-[12px] font-mono text-on-surface/50">{rotation}°</span>
+                <span className="text-body-sm font-mono text-on-surface/50">{rotation}°</span>
               </div>
               <input
                 type="range"
@@ -489,21 +489,21 @@ export function ImagePrepStep() {
               <button
                 type="button"
                 onClick={() => setRotation((r) => r - 90)}
-                className="flex-1 bg-surface text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+                className="flex-1 bg-surface text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
               >
                 -90°
               </button>
               <button
                 type="button"
                 onClick={() => setRotation((r) => r + 90)}
-                className="flex-1 bg-surface text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+                className="flex-1 bg-surface text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
               >
                 +90°
               </button>
               <button
                 type="button"
                 onClick={() => setFlipH((v) => !v)}
-                className={`flex-1 rounded-md py-2 text-[12px] font-medium transition-colors ${
+                className={`flex-1 rounded-md py-2 text-body-sm font-medium transition-colors ${
                   flipH
                     ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
                     : 'bg-surface text-on-surface hover:bg-surface-container-high'
@@ -514,7 +514,7 @@ export function ImagePrepStep() {
               <button
                 type="button"
                 onClick={() => setFlipV((v) => !v)}
-                className={`flex-1 rounded-md py-2 text-[12px] font-medium transition-colors ${
+                className={`flex-1 rounded-md py-2 text-body-sm font-medium transition-colors ${
                   flipV
                     ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
                     : 'bg-surface text-on-surface hover:bg-surface-container-high'
@@ -526,7 +526,7 @@ export function ImagePrepStep() {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-3 rounded-md py-2 text-[12px] font-medium text-on-surface/50 hover:text-on-surface bg-surface hover:bg-surface-container-high transition-colors"
+                  className="px-3 rounded-md py-2 text-body-sm font-medium text-on-surface/50 hover:text-on-surface bg-surface hover:bg-surface-container-high transition-colors"
                 >
                   Reset
                 </button>
@@ -561,7 +561,7 @@ export function ImagePrepStep() {
               <button
                 type="button"
                 onClick={handleResetPerspective}
-                className="self-start px-3 py-1.5 text-[12px] font-medium text-on-surface/50 hover:text-on-surface bg-surface rounded-md hover:bg-surface-container-high transition-colors"
+                className="self-start px-3 py-1.5 text-body-sm font-medium text-on-surface/50 hover:text-on-surface bg-surface rounded-md hover:bg-surface-container-high transition-colors"
               >
                 Reset Corners
               </button>
@@ -584,7 +584,7 @@ export function ImagePrepStep() {
           type="button"
           onClick={handleContinue}
           disabled={applying}
-          className="px-6 py-2.5 text-body-md font-medium text-on-primary bg-primary rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="btn-primary-sm disabled:opacity-50"
         >
           {applying
             ? 'Applying...'

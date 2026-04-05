@@ -52,7 +52,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
         {item.imageUrl ? (
           <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-slate-300 gap-4">
+          <div className="flex flex-col items-center justify-center h-full text-tertiary gap-4">
             <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -61,7 +61,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span className="text-sm font-medium text-warm-text-muted">No image</span>
+            <span className="text-sm font-medium text-tertiary">No image</span>
           </div>
         )}
       </div>
@@ -123,7 +123,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
         <div className="px-5 py-3 border-b border-outline-variant shrink-0">
           <Link
             href={`/socialthreads/${item.id}`}
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-warm-peach hover:text-warm-peach-dark transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:text-orange-500 transition-colors"
           >
             <ExternalLink size={13} />
             View on profile &amp; full thread
@@ -156,34 +156,32 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
       </div>
 
       {/* Right: info */}
-      <div className="w-full md:w-[380px] shrink-0 flex flex-col border-l border-warm-border overflow-y-auto bg-surface">
+      <div className="w-full md:w-[380px] shrink-0 flex flex-col border-l border-outline-variant overflow-y-auto bg-surface">
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-warm-border/40">
-          <p className="text-xs font-semibold text-warm-peach uppercase tracking-widest mb-2">
+        <div className="p-6 pb-4 border-b border-outline-variant/40">
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">
             {item.category}
           </p>
-          <h2 className="text-xl font-extrabold text-warm-text leading-snug mb-3">{item.title}</h2>
-          {item.excerpt && (
-            <p className="text-warm-text-secondary leading-relaxed text-sm">{item.excerpt}</p>
-          )}
+          <h2 className="text-xl font-extrabold text-on-surface leading-snug mb-3">{item.title}</h2>
+          {item.excerpt && <p className="text-secondary leading-relaxed text-sm">{item.excerpt}</p>}
         </div>
 
         {/* Author row */}
-        <div className="px-6 py-4 flex items-center gap-3 border-b border-warm-border/40">
+        <div className="px-6 py-4 flex items-center gap-3 border-b border-outline-variant/40">
           {item.authorAvatarUrl ? (
             <img
               src={item.authorAvatarUrl}
               alt={item.authorName}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-warm-border shadow-elevation-1"
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-outline-variant shadow-elevation-1"
             />
           ) : (
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-warm-border shadow-elevation-1 shrink-0">
+            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-outline-variant shadow-elevation-1 shrink-0">
               <img src="/logo.png" alt={item.authorName} className="w-full h-full object-cover" />
             </div>
           )}
           <div>
-            <p className="text-sm font-bold text-warm-text">{item.authorName}</p>
-            <div className="flex items-center gap-1.5 text-xs text-warm-text-muted">
+            <p className="text-sm font-bold text-on-surface">{item.authorName}</p>
+            <div className="flex items-center gap-1.5 text-xs text-tertiary">
               <Clock size={11} />
               {item.readTimeMinutes} min read
             </div>
@@ -192,20 +190,16 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
 
         {/* Article preview */}
         <div className="px-6 py-5 flex-1">
-          <p className="text-sm text-warm-text-secondary leading-relaxed">
-            {item.title}
-          </p>
-          <p className="mt-3 text-xs text-warm-text-muted">
-            Tap &quot;View Social&quot; to read the full post, see photos, and join the conversation.
+          <p className="text-sm text-secondary leading-relaxed">{item.title}</p>
+          <p className="mt-3 text-xs text-tertiary">
+            Tap &quot;View Social&quot; to read the full post, see photos, and join the
+            conversation.
           </p>
         </div>
 
         {/* CTA */}
         <div className="p-6 pt-0">
-          <Link
-            href="/socialthreads"
-            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-warm-peach text-warm-text font-bold text-sm shadow-elevation-1 hover:bg-warm-peach-dark transition-all"
-          >
+          <Link href="/socialthreads" className="btn-primary-sm w-full justify-center gap-2">
             View Social
             <ExternalLink size={14} />
           </Link>
@@ -222,20 +216,17 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
       </div>
       <div className="w-full md:w-[340px] shrink-0 flex flex-col p-8 border-l border-outline-variant">
-        <p className="text-xs font-semibold text-warm-peach uppercase tracking-widest mb-2">
+        <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">
           Fabric
         </p>
-        <h2 className="text-2xl font-extrabold text-warm-text mb-3">{item.name}</h2>
+        <h2 className="text-2xl font-extrabold text-on-surface mb-3">{item.name}</h2>
         {item.manufacturer && (
           <p className="text-sm text-secondary/80 font-medium mb-1">By {item.manufacturer}</p>
         )}
         {item.colorFamily && (
           <p className="text-sm text-secondary/80 font-medium mb-8">Color: {item.colorFamily}</p>
         )}
-        <Link
-          href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-warm-peach to-warm-terracotta text-white font-bold text-sm shadow-elevation-1 hover:from-warm-peach-dark hover:to-primary-dark transition-all mt-auto"
-        >
+        <Link href="/dashboard" className="btn-primary-sm w-full justify-center gap-2 mt-auto">
           View in Fabric Library
           <ExternalLink size={14} />
         </Link>
@@ -278,10 +269,7 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
         {item.category && (
           <p className="text-sm text-secondary/80 font-medium mb-8">Category: {item.category}</p>
         )}
-        <Link
-          href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-warm-peach to-warm-terracotta text-white font-bold text-sm shadow-elevation-1 hover:from-warm-peach-dark hover:to-primary-dark transition-all mt-auto"
-        >
+        <Link href="/dashboard" className="btn-primary-sm w-full justify-center gap-2 mt-auto">
           Open in Studio
           <ExternalLink size={14} />
         </Link>
@@ -326,7 +314,7 @@ export function SocialQuickViewModal() {
         {/* Close button */}
         <button
           onClick={close}
-          className="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-700 shadow-elevation-1 transition-all"
+          className="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-on-surface shadow-elevation-1 transition-all"
           aria-label="Close"
         >
           <X size={18} />

@@ -20,16 +20,10 @@ export default function NotFound() {
             deleted, or never existed.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
-            >
+            <Link href="/dashboard" className="btn-primary-sm">
               Go to Dashboard
             </Link>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center px-6 py-3 border border-outline-variant text-on-surface rounded-lg font-medium hover:bg-surface-container transition-colors"
-            >
+            <Link href="/" className="btn-secondary">
               Back to Home
             </Link>
           </div>

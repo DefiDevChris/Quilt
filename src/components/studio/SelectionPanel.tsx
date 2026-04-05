@@ -373,7 +373,7 @@ export function SelectionPanel() {
                   applyColor(customColor);
                   setColorPickerOpen(false);
                 }}
-                className="bg-primary text-on-primary rounded-md px-3 py-1.5 text-body-sm font-medium hover:bg-primary/90 transition-colors"
+                className="btn-primary-xs"
               >
                 Apply
               </button>

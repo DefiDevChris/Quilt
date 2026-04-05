@@ -34,7 +34,7 @@ export function QuickStartWorkflows({
               <ScanLine size={32} className="text-primary-dark" />
             </div>
             {!isPro && (
-              <span className="inline-block px-2 py-1 bg-primary/20 text-primary-dark text-[10px] font-extrabold uppercase tracking-widest rounded-full mb-2">
+              <span className="inline-block px-2 py-1 bg-primary/20 text-primary-dark text-caption font-extrabold uppercase tracking-widest rounded-full mb-2">
                 Pro
               </span>
             )}

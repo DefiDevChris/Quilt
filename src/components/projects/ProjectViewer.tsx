@@ -89,7 +89,11 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
         fabricRef.current = canvas;
 
         const canvasData = project!.canvasData;
-        if (canvasData && typeof canvasData === 'object' && 'objects' in (canvasData as Record<string, unknown>)) {
+        if (
+          canvasData &&
+          typeof canvasData === 'object' &&
+          'objects' in (canvasData as Record<string, unknown>)
+        ) {
           await canvas.loadFromJSON(canvasData);
           canvas.renderAll();
 
@@ -162,11 +166,10 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-on-surface mb-2">Design Not Available</h1>
-          <p className="text-secondary mb-6">{error ?? 'This design may have been removed or made private.'}</p>
-          <Link
-            href="/"
-            className="inline-flex px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition-opacity"
-          >
+          <p className="text-secondary mb-6">
+            {error ?? 'This design may have been removed or made private.'}
+          </p>
+          <Link href="/" className="btn-primary-sm">
             Go Home
           </Link>
         </main>
@@ -198,7 +201,9 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
                   />
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-xs font-bold text-secondary">
-                    {(project.creator.displayName ?? project.creator.username ?? '?').charAt(0).toUpperCase()}
+                    {(project.creator.displayName ?? project.creator.username ?? '?')
+                      .charAt(0)
+                      .toUpperCase()}
                   </div>
                 )}
                 <span className="text-sm text-secondary">
@@ -233,10 +238,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-3 mt-6">
-          <Link
-            href="/auth/signup"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
-          >
+          <Link href="/auth/signup" className="btn-primary-xs gap-2">
             Start Designing on QuiltCorgi
           </Link>
           <button

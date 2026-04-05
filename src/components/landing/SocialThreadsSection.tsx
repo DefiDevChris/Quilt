@@ -9,9 +9,9 @@ function SocialThreadsScreenshot() {
   return (
     <div className="relative">
       {/* Browser chrome */}
-      <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-elevation-4 border border-outline-variant overflow-hidden">
         {/* Window header */}
-        <div className="h-12 bg-gradient-to-r from-orange-50 to-rose-50 border-b border-warm-border flex items-center px-4 justify-between">
+        <div className="h-12 bg-gradient-to-r from-orange-50 to-rose-50 border-b border-outline-variant flex items-center px-4 justify-between">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -20,7 +20,7 @@ function SocialThreadsScreenshot() {
             </div>
             <div className="ml-4 flex items-center gap-2">
               <Image src="/logo.png" alt="QuiltCorgi" width={24} height={24} className="rounded" />
-              <span className="text-sm font-bold text-slate-700">Social Threads</span>
+              <span className="text-sm font-bold text-on-surface">Social Threads</span>
             </div>
           </div>
         </div>
@@ -61,9 +61,9 @@ function SocialThreadsScreenshot() {
                   <p className="text-xs text-secondary/80">@sarah_quilts • 2h ago</p>
                 </div>
               </div>
-              <p className="text-slate-700 mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The fabric positioning tools helped me place the
-                center motifs perfectly 🌟
+              <p className="text-on-surface mb-3 text-sm leading-relaxed">
+                Finally finished my Ohio Star quilt! The fabric positioning tools helped me place
+                the center motifs perfectly 🌟
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
@@ -125,7 +125,7 @@ function SocialThreadsScreenshot() {
                   <p className="text-xs text-secondary/80">@modern_q • 5h ago</p>
                 </div>
               </div>
-              <p className="text-slate-700 mb-3 text-sm leading-relaxed">
+              <p className="text-on-surface mb-3 text-sm leading-relaxed">
                 Playing with improv piecing on this one. Love how the layout tool lets me visualize
                 different arrangements!
               </p>
@@ -202,17 +202,17 @@ function FeatureCard({
 }) {
   return (
     <div className="glass-panel rounded-xl p-4 flex items-start gap-3 hover:shadow-elevation-3 transition-all">
-      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-warm-peach flex-shrink-0">
+      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-primary flex-shrink-0">
         {icon}
       </div>
       <div>
         <h4
-          className="font-bold text-warm-text text-sm mb-1"
+          className="font-bold text-on-surface text-sm mb-1"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           {title}
         </h4>
-        <p className="text-xs text-warm-text-secondary leading-relaxed">{description}</p>
+        <p className="text-xs text-secondary leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -222,11 +222,11 @@ export default function SocialThreadsSection() {
   return (
     <section
       id="social-threads"
-      className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden"
+      className="px-6 lg:px-12 py-16 lg:py-24 bg-background relative overflow-hidden"
     >
       {/* Background gradient orbs */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-orange-200/20 to-rose-200/20 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 -translate-x-1/3" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-warm-peach/10 to-warm-golden/10 rounded-full blur-[80px] pointer-events-none translate-y-1/2 translate-x-1/3" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-primary/10 to-accent/10 rounded-full blur-[80px] pointer-events-none translate-y-1/2 translate-x-1/3" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -239,7 +239,7 @@ export default function SocialThreadsSection() {
             className="space-y-6"
           >
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-warm-text leading-tight"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-on-surface leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
@@ -248,7 +248,7 @@ export default function SocialThreadsSection() {
               </span>
             </h2>
 
-            <p className="text-lg text-warm-text-secondary leading-relaxed">
+            <p className="text-lg text-secondary leading-relaxed">
               Share your latest creations, discover inspiration from fellow quilters, and build
               connections that spark new ideas. Whether you&apos;re looking for feedback on your
               color palette or just want to show off your finished masterpiece — this is your
@@ -330,10 +330,7 @@ export default function SocialThreadsSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link
-                href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
-              >
+              <Link href="/socialthreads" className="btn-primary">
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -344,7 +341,7 @@ export default function SocialThreadsSection() {
                   />
                 </svg>
               </Link>
-              <span className="text-sm text-warm-text-muted self-center">
+              <span className="text-sm text-tertiary self-center">
                 Join thousands of quilters already sharing
               </span>
             </div>

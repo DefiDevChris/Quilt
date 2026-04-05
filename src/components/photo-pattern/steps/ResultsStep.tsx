@@ -178,7 +178,7 @@ export function ResultsStep() {
             type="button"
             onClick={handleAddToProject}
             disabled={pieceCount === 0}
-            className="px-4 py-2 text-body-md font-medium text-on-primary bg-primary rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="btn-primary-xs disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Add to Project
           </button>

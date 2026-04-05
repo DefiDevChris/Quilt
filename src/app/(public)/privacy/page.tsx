@@ -14,13 +14,13 @@ export default function PrivacyPage() {
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-warm-text mb-4 font-display">
+          <h1 className="text-3xl md:text-4xl font-bold text-on-surface mb-4 font-display">
             Privacy Policy
           </h1>
-          <p className="text-warm-text-secondary text-sm">Effective date: March 30, 2026</p>
+          <p className="text-secondary text-sm">Effective date: March 30, 2026</p>
         </div>
 
-        <div className="text-left text-warm-text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
+        <div className="text-left text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
             Your privacy matters to us. This Privacy Policy explains how QuiltCorgi LLC
             (&ldquo;QuiltCorgi,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;)
@@ -35,9 +35,11 @@ export default function PrivacyPage() {
 
           {/* 1. Information We Collect */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">1. Information We Collect</h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
+              1. Information We Collect
+            </h2>
 
-            <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
+            <h3 className="text-lg font-medium text-on-surface mt-5 mb-2">
               Information You Provide to Us
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -80,7 +82,7 @@ export default function PrivacyPage() {
               </li>
             </ul>
 
-            <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
+            <h3 className="text-lg font-medium text-on-surface mt-5 mb-2">
               Information Collected Automatically
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -97,7 +99,7 @@ export default function PrivacyPage() {
               </li>
             </ul>
 
-            <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
+            <h3 className="text-lg font-medium text-on-surface mt-5 mb-2">
               Information We Do <em>Not</em> Collect
             </h3>
             <p>
@@ -110,7 +112,7 @@ export default function PrivacyPage() {
 
           {/* 2. How We Use Your Information */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               2. How We Use Your Information
             </h2>
             <p className="mb-3">We use the information we collect to:</p>
@@ -137,7 +139,7 @@ export default function PrivacyPage() {
 
           {/* 3. How We Share Your Information */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               3. How We Share Your Information
             </h2>
             <p className="mb-3">
@@ -193,7 +195,7 @@ export default function PrivacyPage() {
 
           {/* 4. Data Retention */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">4. Data Retention</h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-3">4. Data Retention</h2>
             <p className="mb-3">
               We retain your information for as long as your account is active or as needed to
               provide you the Service. Specifically:
@@ -228,7 +230,7 @@ export default function PrivacyPage() {
 
           {/* 5. Security */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">5. Data Security</h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-3">5. Data Security</h2>
             <p className="mb-3">
               We take the security of your data seriously. Our security measures include:
             </p>
@@ -269,7 +271,7 @@ export default function PrivacyPage() {
 
           {/* 6. Your Rights & Choices */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               6. Your Rights &amp; Choices
             </h2>
             <p className="mb-3">
@@ -310,7 +312,7 @@ export default function PrivacyPage() {
               To exercise any of these rights, contact us at{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-warm-peach underline underline-offset-2"
+                className="text-primary underline underline-offset-2"
               >
                 support@quiltcorgi.com
               </a>
@@ -320,7 +322,7 @@ export default function PrivacyPage() {
 
           {/* 7. Cookies */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               7. Cookies &amp; Authentication
             </h2>
             <p className="mb-3">
@@ -330,23 +332,25 @@ export default function PrivacyPage() {
             <p className="mb-3">The cookies we use are:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">qc_id_token</code>{' '}
+                <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
+                  qc_id_token
+                </code>{' '}
                 &mdash; Your authentication token (expires with your session, typically 1 hour).
               </li>
               <li>
-                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
                   qc_access_token
                 </code>{' '}
                 &mdash; API access token (expires with your session).
               </li>
               <li>
-                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
                   qc_refresh_token
                 </code>{' '}
                 &mdash; Used to renew your session (max age: 30 days).
               </li>
               <li>
-                <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
                   qc_user_role
                 </code>{' '}
                 &mdash; Stores your account role for access control (max age: 1 hour).
@@ -354,11 +358,18 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-3">
               All cookies are set as{' '}
-              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">HttpOnly</code>,{' '}
-              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">Secure</code> (in
-              production), and{' '}
-              <code className="text-sm bg-warm-surface-2 px-1.5 py-0.5 rounded">SameSite=Lax</code>.
-              They cannot be accessed by client-side JavaScript.
+              <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
+                HttpOnly
+              </code>
+              ,{' '}
+              <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
+                Secure
+              </code>{' '}
+              (in production), and{' '}
+              <code className="text-sm bg-surface-container-high px-1.5 py-0.5 rounded">
+                SameSite=Lax
+              </code>
+              . They cannot be accessed by client-side JavaScript.
             </p>
             <p className="mt-3">
               Because we only use essential cookies, there is no cookie consent banner&mdash;these
@@ -369,7 +380,7 @@ export default function PrivacyPage() {
 
           {/* 8. International Data Transfers */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               8. International Data Transfers
             </h2>
             <p className="mb-3">
@@ -387,7 +398,7 @@ export default function PrivacyPage() {
 
           {/* 9. GDPR Rights (European Economic Area) */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               9. European Economic Area (EEA) &amp; UK Users
             </h2>
             <p className="mb-3">
@@ -395,7 +406,7 @@ export default function PrivacyPage() {
               you have additional rights under the General Data Protection Regulation (GDPR).
             </p>
 
-            <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
+            <h3 className="text-lg font-medium text-on-surface mt-5 mb-2">
               Legal Bases for Processing
             </h3>
             <p className="mb-3">
@@ -423,7 +434,7 @@ export default function PrivacyPage() {
               </li>
             </ul>
 
-            <h3 className="text-lg font-medium text-warm-text mt-5 mb-2">
+            <h3 className="text-lg font-medium text-on-surface mt-5 mb-2">
               International Transfers
             </h3>
             <p>
@@ -435,7 +446,7 @@ export default function PrivacyPage() {
 
           {/* 10. Children's Privacy */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               10. Children&rsquo;s Privacy
             </h2>
             <p>
@@ -446,7 +457,7 @@ export default function PrivacyPage() {
               us with personal information, please contact us at{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-warm-peach underline underline-offset-2"
+                className="text-primary underline underline-offset-2"
               >
                 support@quiltcorgi.com
               </a>
@@ -456,7 +467,7 @@ export default function PrivacyPage() {
 
           {/* 11. Changes to This Policy */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">
+            <h2 className="text-xl font-semibold text-on-surface mb-3">
               11. Changes to This Policy
             </h2>
             <p>
@@ -470,13 +481,13 @@ export default function PrivacyPage() {
 
           {/* 12. Contact */}
           <section>
-            <h2 className="text-xl font-semibold text-warm-text mb-3">12. Contact Us</h2>
+            <h2 className="text-xl font-semibold text-on-surface mb-3">12. Contact Us</h2>
             <p>
               If you have questions, concerns, or requests regarding this Privacy Policy or our data
               practices, please reach out:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-warm-peach underline underline-offset-2"
+                className="text-primary underline underline-offset-2"
               >
                 support@quiltcorgi.com
               </a>

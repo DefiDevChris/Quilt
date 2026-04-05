@@ -89,9 +89,7 @@ export function ReportModal({ postId, commentId, onClose }: ReportModalProps) {
               </span>
             </div>
 
-            {submitState === 'error' && (
-              <p className="text-sm text-error">{errorMessage}</p>
-            )}
+            {submitState === 'error' && <p className="text-sm text-error">{errorMessage}</p>}
 
             <div className="flex gap-3 justify-end">
               <button
@@ -106,7 +104,7 @@ export function ReportModal({ postId, commentId, onClose }: ReportModalProps) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isLoading || !reason.trim()}
-                className="px-4 py-2 rounded-xl text-sm font-medium bg-primary text-primary-on hover:opacity-90 transition-opacity disabled:opacity-40"
+                className="btn-primary-xs disabled:opacity-40"
               >
                 {isLoading ? 'Submitting…' : 'Submit Report'}
               </button>
