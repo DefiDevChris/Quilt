@@ -1,62 +1,55 @@
+```
 # Dependencies
 node_modules/
 
-# Next.js
+# Build outputs
+dist/
+build/
 .next/
 out/
-build/
 
-# Debug logs
-firebase-debug.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Environment files
+# Environment variables
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.env.*
 
-# TypeScript
-*.tsbuildinfo
-
-# Testing
-coverage/
-.playwright-mcp/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
+# IDE files
 .vscode/
+.idea/
 *.swp
 *.swo
 
-# Vercel
-.vercel
+# Logs
+*.log
 
-# Misc
-*.pem
+# Python cache (if applicable)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Fabric images
-fabrics/
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
 
-# Playwright
-/playwright-report/
-/test-results/
+# Temporary files
+*.tmp
+*.temp
 
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# OS files
+.DS_Store
+Thumbs.db
 
-# PnP
-/.pnp
-.pnp.*
+# Database
+*.db
+*.db-journal
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Next.js specific
+.next/cache/
+.next/static/
+```
