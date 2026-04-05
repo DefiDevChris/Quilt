@@ -12,7 +12,6 @@ import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
 import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
 import { ReportModal } from './ReportModal';
-import { ProjectCard } from '@/components/projects/ProjectCard';
 
 // We now import CommunityPost from the store to ensure type matching
 import type { CommunityPost } from '@/stores/communityStore';
@@ -21,7 +20,7 @@ export function FeedContent() {
   const user = useAuthStore((s) => s.user);
 
   // Use community store for state
-  const { posts, isLoading, error, fetchPosts, loadMore, page, totalPages, reset } = useCommunityStore();
+  const { posts, isLoading, error, fetchPosts, loadMore, hasNextPage, reset } = useCommunityStore();
 
   // Setup intersection observer for infinite scroll
   const { ref, inView } = useInView({
@@ -37,10 +36,10 @@ export function FeedContent() {
 
   useEffect(() => {
     // Load more when scrolled to bottom
-    if (inView && !isLoading && page < totalPages) {
+    if (inView && !isLoading && hasNextPage) {
       loadMore();
     }
-  }, [inView, isLoading, page, totalPages, loadMore]);
+  }, [inView, isLoading, hasNextPage, loadMore]);
 
   const handlePostCreated = useCallback(() => {
     // Refresh feed when a new post is created
@@ -54,7 +53,7 @@ export function FeedContent() {
       <CreatePostComposer onSuccess={handlePostCreated} />
 
       {/* Initial Loading State */}
-      {isLoading && page === 1 && (
+      {isLoading && posts.length === 0 && (
         <div className="space-y-8">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="glass-panel rounded-[2rem] p-6 animate-pulse">
@@ -91,7 +90,7 @@ export function FeedContent() {
           </div>
           <p className="text-secondary mb-4 font-medium">{error}</p>
           <button
-            onClick={fetchPosts}
+            onClick={() => fetchPosts()}
             className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
           >
             Retry
@@ -134,7 +133,7 @@ export function FeedContent() {
           ))}
 
           {/* Infinite Scroll trigger and Loading indicator */}
-          {page < totalPages && (
+          {hasNextPage && (
             <div ref={ref} className="py-8 flex justify-center">
               {isLoading && (
                 <div className="flex items-center gap-2 text-secondary">
@@ -145,7 +144,7 @@ export function FeedContent() {
             </div>
           )}
 
-          {!isLoading && page >= totalPages && posts.length > 0 && (
+          {!isLoading && !hasNextPage && posts.length > 0 && (
             <div className="py-8 text-center text-secondary font-medium">
               You've reached the end of the feed!
             </div>
@@ -270,19 +269,27 @@ function PostCard({ post }: { post: CommunityPost & { templateId?: string | null
         </button>
       )}
 
-      {/* Attached project inline render */}
+      {/* Attached project read-only preview */}
       {post.projectId && post.projectName && (
-        <div className="mb-4">
-          <ProjectCard
-            id={post.projectId}
-            name={post.projectName}
-            thumbnailUrl={post.projectThumbnailUrl || post.thumbnailUrl}
-            unitSystem="imperial"
-            updatedAt={post.createdAt}
-            onDelete={() => {}}
-            onRename={() => {}}
-          />
-        </div>
+        <Link
+          href={`/studio/${post.projectId}`}
+          className="block mb-4 rounded-xl overflow-hidden border border-white/50 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
+        >
+          <div className="aspect-video bg-background flex items-center justify-center overflow-hidden">
+            {post.projectThumbnailUrl || post.thumbnailUrl ? (
+              <img
+                src={post.projectThumbnailUrl || post.thumbnailUrl}
+                alt={post.projectName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-secondary text-sm">No preview</span>
+            )}
+          </div>
+          <div className="px-3 py-2 bg-surface-container">
+            <p className="text-sm font-medium text-on-surface truncate">{post.projectName}</p>
+          </div>
+        </Link>
       )}
 
       <div className="flex gap-2 border-t border-white/40 pt-4">

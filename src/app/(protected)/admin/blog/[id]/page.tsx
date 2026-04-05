@@ -8,7 +8,7 @@ import { TiptapRenderer } from '@/components/editor/TiptapRenderer';
 interface BlogPostFormData {
   title: string;
   excerpt: string;
-  content?: unknown;
+  content?: Record<string, unknown>;
   featuredImageUrl: string;
   category: string;
   tags: string[];
@@ -162,7 +162,6 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
         });
 
         if (res.ok) {
-          const data = await res.json();
           router.push('/admin/blog');
         } else {
           const error = await res.json();
@@ -263,15 +262,30 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   className="absolute top-2 right-2 p-1.5 bg-error text-white rounded-full hover:bg-error/90"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
             ) : (
               <label className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container transition-colors">
                 <div className="text-center">
-                  <svg className="mx-auto h-8 w-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="mx-auto h-8 w-8 text-secondary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <p className="mt-1 text-sm text-secondary">
                     {uploading ? 'Uploading...' : 'Click to upload or enter URL'}
@@ -290,7 +304,9 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               <input
                 type="url"
                 value={formData.featuredImageUrl}
-                onChange={(e) => setFormData((prev) => ({ ...prev, featuredImageUrl: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, featuredImageUrl: e.target.value }))
+                }
                 className="w-full max-w-lg px-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="Or paste image URL..."
               />
@@ -325,7 +341,10 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               id="layout"
               value={formData.layout}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, layout: e.target.value as BlogPostFormData['layout'] }))
+                setFormData((prev) => ({
+                  ...prev,
+                  layout: e.target.value as BlogPostFormData['layout'],
+                }))
               }
               className="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
@@ -342,7 +361,10 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               id="status"
               value={formData.status}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, status: e.target.value as BlogPostFormData['status'] }))
+                setFormData((prev) => ({
+                  ...prev,
+                  status: e.target.value as BlogPostFormData['status'],
+                }))
               }
               className="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
@@ -409,7 +431,9 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
           <label className="block text-sm font-medium text-on-surface mb-2">Content</label>
           <RichTextEditor
             initialContent={formData.content}
-            onChange={(content) => setFormData((prev) => ({ ...prev, content }))}
+            onChange={(content) =>
+              setFormData((prev) => ({ ...prev, content: content as Record<string, unknown> }))
+            }
           />
         </div>
 

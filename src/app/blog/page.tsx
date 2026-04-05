@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
-import { desc, eq, and } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,13 +22,6 @@ interface BlogPostCard {
   createdAt: Date | null;
   authorName: string | null;
   authorAvatarUrl: string | null;
-}
-
-function calculateReadTime(content: unknown): number {
-  if (!content) return 1;
-  const text = typeof content === 'string' ? content : JSON.stringify(content);
-  const words = text.split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
 }
 
 function formatDate(date: Date | null): string {
@@ -115,9 +108,7 @@ function BlogPostCard({ post, isFeatured }: { post: BlogPostCard; isFeatured?: b
         >
           {post.title}
         </h3>
-        {post.excerpt && (
-          <p className="text-sm text-secondary mt-2 line-clamp-2">{post.excerpt}</p>
-        )}
+        {post.excerpt && <p className="text-sm text-secondary mt-2 line-clamp-2">{post.excerpt}</p>}
         <div className="flex items-center gap-2 mt-4">
           {post.authorAvatarUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -135,10 +126,6 @@ function BlogPostCard({ post, isFeatured }: { post: BlogPostCard; isFeatured?: b
           )}
           <span className="text-xs text-secondary font-medium">
             {post.authorName ?? 'QuiltCorgi Team'}
-          </span>
-          <span className="text-xs text-secondary">·</span>
-          <span className="text-xs text-secondary">
-            {calculateReadTime(post.excerpt)} min read
           </span>
         </div>
       </div>

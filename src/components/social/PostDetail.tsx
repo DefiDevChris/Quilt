@@ -7,7 +7,6 @@ import { useAuthStore } from '@/stores/authStore';
 
 import { formatRelativeTime } from '@/lib/format-time';
 import { RedditStyleComments } from '@/components/community/comments/RedditStyleComments';
-import { ProjectCard } from '@/components/projects/ProjectCard';
 
 interface PostDetail {
   id: string;
@@ -172,18 +171,28 @@ export function PostDetail({ postId }: PostDetailProps) {
         {/* Linked Project */}
         {post.projectId && post.projectName && (
           <div className="mb-4">
-            <p className="text-xs font-bold text-secondary mb-2 uppercase tracking-wider">Attached Project</p>
-            <div className="w-full max-w-sm">
-              <ProjectCard
-                id={post.projectId}
-                name={post.projectName}
-                thumbnailUrl={post.projectThumbnailUrl}
-                unitSystem="imperial"
-                updatedAt={post.createdAt}
-                onDelete={() => {}}
-                onRename={() => {}}
-              />
-            </div>
+            <p className="text-xs font-bold text-secondary mb-2 uppercase tracking-wider">
+              Attached Project
+            </p>
+            <Link
+              href={`/studio/${post.projectId}`}
+              className="block w-full max-w-sm rounded-xl overflow-hidden border border-white/50 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
+            >
+              <div className="aspect-video bg-background flex items-center justify-center overflow-hidden">
+                {post.projectThumbnailUrl ? (
+                  <img
+                    src={post.projectThumbnailUrl}
+                    alt={post.projectName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-secondary text-sm">No preview</span>
+                )}
+              </div>
+              <div className="px-3 py-2 bg-surface-container">
+                <p className="text-sm font-medium text-on-surface truncate">{post.projectName}</p>
+              </div>
+            </Link>
           </div>
         )}
 

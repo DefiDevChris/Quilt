@@ -343,6 +343,7 @@ export const updateBlogPostSchema = z.object({
   category: z.enum(BLOG_POST_CATEGORIES).optional(),
   tags: z.array(z.string().max(50)).max(5).optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
+  layout: z.enum(['standard', 'hero-cover', 'staggered-media']).optional(),
 });
 
 export const blogSearchSchema = z.object({

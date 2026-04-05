@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, desc, count, inArray, isNull, lt } from 'drizzle-orm';
+import { eq, and, ilike, desc, inArray, isNull, lt } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { socialPosts, users, projects, userProfiles, likes } from '@/db/schema';
 import {
@@ -67,7 +67,9 @@ export async function GET(request: NextRequest) {
       conditions.push(ilike(socialPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
-    if (cursor) {
+    // Cursor pagination only works with createdAt ordering (newest sort).
+    // For popular sort, cursor is ignored — client should use offset via page param.
+    if (cursor && sort === 'newest') {
       const cursorDate = new Date(cursor);
       conditions.push(lt(socialPosts.createdAt, cursorDate));
     }
@@ -80,36 +82,38 @@ export async function GET(request: NextRequest) {
         : [desc(socialPosts.createdAt)];
 
     const postRows = await db
-        .select({
-          id: socialPosts.id,
-          title: socialPosts.title,
-          description: socialPosts.description,
-          thumbnailUrl: socialPosts.thumbnailUrl,
-          likeCount: socialPosts.likeCount,
-          commentCount: socialPosts.commentCount,
-          category: socialPosts.category,
-          createdAt: socialPosts.createdAt,
-          creatorId: socialPosts.userId,
-          creatorName: users.name,
-          creatorUsername: userProfiles.username,
-          creatorAvatarUrl: userProfiles.avatarUrl,
-          creatorRole: users.role,
-          projectId: socialPosts.projectId,
-          projectName: projects.name,
-          projectThumbnailUrl: projects.thumbnailUrl,
-          templateId: socialPosts.templateId,
-        })
-        .from(socialPosts)
-        .leftJoin(users, eq(socialPosts.userId, users.id))
-        .leftJoin(userProfiles, eq(socialPosts.userId, userProfiles.userId))
-        .leftJoin(projects, eq(socialPosts.projectId, projects.id))
-        .where(whereClause)
-        .orderBy(...orderBy)
-        .limit(limit + 1); // Fetch one extra to determine if there's a next page
+      .select({
+        id: socialPosts.id,
+        title: socialPosts.title,
+        description: socialPosts.description,
+        thumbnailUrl: socialPosts.thumbnailUrl,
+        likeCount: socialPosts.likeCount,
+        commentCount: socialPosts.commentCount,
+        category: socialPosts.category,
+        createdAt: socialPosts.createdAt,
+        creatorId: socialPosts.userId,
+        creatorName: users.name,
+        creatorUsername: userProfiles.username,
+        creatorAvatarUrl: userProfiles.avatarUrl,
+        creatorRole: users.role,
+        projectId: socialPosts.projectId,
+        projectName: projects.name,
+        projectThumbnailUrl: projects.thumbnailUrl,
+        templateId: socialPosts.templateId,
+      })
+      .from(socialPosts)
+      .leftJoin(users, eq(socialPosts.userId, users.id))
+      .leftJoin(userProfiles, eq(socialPosts.userId, userProfiles.userId))
+      .leftJoin(projects, eq(socialPosts.projectId, projects.id))
+      .where(whereClause)
+      .orderBy(...orderBy)
+      .limit(limit + 1); // Fetch one extra to determine if there's a next page
 
     const hasNextPage = postRows.length > limit;
     const postsToReturn = hasNextPage ? postRows.slice(0, -1) : postRows;
-    const nextCursor = hasNextPage ? postsToReturn[postsToReturn.length - 1].createdAt.toISOString() : null;
+    const nextCursor = hasNextPage
+      ? postsToReturn[postsToReturn.length - 1].createdAt.toISOString()
+      : null;
 
     // Compute isLikedByUser for the current user
     let likedPostIds = new Set<string>();

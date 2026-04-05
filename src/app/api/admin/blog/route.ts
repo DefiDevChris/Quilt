@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, desc } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
 import { getRequiredSession } from '@/lib/auth-helpers';
@@ -42,8 +42,10 @@ export async function GET(request: NextRequest) {
         .orderBy(desc(blogPosts.createdAt))
         .limit(limit)
         .offset(offset),
-      db.select().from(blogPosts),
+      db.select({ total: count() }).from(blogPosts),
     ]);
+
+    const total = totalCountResult[0]?.total ?? 0;
 
     return Response.json({
       success: true,
@@ -52,8 +54,8 @@ export async function GET(request: NextRequest) {
         pagination: {
           page,
           limit,
-          total: totalCountResult.length,
-          totalPages: Math.ceil(totalCountResult.length / limit),
+          total,
+          totalPages: Math.ceil(total / limit),
         },
       },
     });

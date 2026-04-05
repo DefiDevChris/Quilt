@@ -43,7 +43,7 @@ function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
 }
 
 export const useLayoutStore = create<LayoutStoreState>((set) => ({
-  layoutType: 'free-form',
+  layoutType: 'none',
   selectedPresetId: null,
   rows: 3,
   cols: 3,
@@ -86,7 +86,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
 
   reset: () =>
     set({
-      layoutType: 'free-form',
+      layoutType: 'none',
       selectedPresetId: null,
       rows: 3,
       cols: 3,
