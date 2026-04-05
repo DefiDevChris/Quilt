@@ -2,7 +2,7 @@
 # Dependencies
 node_modules/
 
-# Build outputs
+# Build artifacts
 dist/
 build/
 .next/
@@ -22,34 +22,65 @@ out/
 # Logs
 *.log
 
-# Python cache (if applicable)
+# Python specific
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+*.so
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Coverage reports
 coverage/
 htmlcov/
 .coverage
 
-# Temporary files
-*.tmp
-*.temp
+# Cache directories
+.cache/
+.mypy_cache/
+.pytest_cache/
+.nyc_output/
+coverage/
 
-# OS files
-.DS_Store
-Thumbs.db
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+.MF
+classes/
+lib/
+logs/
+project/target/
+target/
 
-# Database
-*.db
-*.db-journal
+# Documentation
+docs/_build/
 
-# Lock files
-package-lock.json
-yarn.lock
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# Next.js specific
-.next/cache/
-.next/static/
+# Local configuration
+config.local
 ```
