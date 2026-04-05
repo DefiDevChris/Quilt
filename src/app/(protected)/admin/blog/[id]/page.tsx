@@ -13,6 +13,7 @@ interface BlogPostFormData {
   category: string;
   tags: string[];
   status: 'draft' | 'published' | 'archived';
+  layout: 'standard' | 'hero-cover' | 'staggered-media';
 }
 
 const BLOG_CATEGORIES = [
@@ -39,6 +40,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
     category: 'Tutorials',
     tags: [],
     status: 'draft',
+    layout: 'standard',
   });
   const [tagInput, setTagInput] = useState('');
   const [postId, setPostId] = useState<string | null>(null);
@@ -67,6 +69,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             category: post.category || 'Tutorials',
             tags: post.tags || [],
             status: post.status || 'draft',
+            layout: post.layout || 'standard',
           });
         }
       } catch (error) {
@@ -295,8 +298,8 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Category & Status */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Category & Status & Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-on-surface mb-2">
               Category
@@ -312,6 +315,23 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   {cat}
                 </option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="layout" className="block text-sm font-medium text-on-surface mb-2">
+              Layout
+            </label>
+            <select
+              id="layout"
+              value={formData.layout}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, layout: e.target.value as BlogPostFormData['layout'] }))
+              }
+              className="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="standard">Standard</option>
+              <option value="hero-cover">Hero Cover</option>
+              <option value="staggered-media">Staggered Media</option>
             </select>
           </div>
           <div>
