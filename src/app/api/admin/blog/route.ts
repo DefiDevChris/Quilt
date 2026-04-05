@@ -1,10 +1,16 @@
 import { NextRequest } from 'next/server';
-import { desc, count } from 'drizzle-orm';
+import { desc, count, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
 import { getRequiredSession } from '@/lib/auth-helpers';
-import { errorResponse, unauthorizedResponse, forbiddenResponse, validationErrorResponse } from '@/lib/api-responses';
+import {
+  errorResponse,
+  unauthorizedResponse,
+  forbiddenResponse,
+  validationErrorResponse,
+} from '@/lib/api-responses';
 import { isAdmin } from '@/lib/trust-utils';
+import { createBlogPostSchema } from '@/lib/validation';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 
 export const dynamic = 'force-dynamic';
@@ -77,45 +83,64 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+    const parsed = createBlogPostSchema.safeParse(body);
 
-    if (!body.title) {
-      return validationErrorResponse('Title is required');
+    if (!parsed.success) {
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid post data');
     }
 
-    let newSlug = generateSlug(body.title);
+    const { title, content, excerpt, featuredImageUrl, category, tags } = parsed.data;
+
+    let slug = generateSlug(title);
 
     // Check for slug conflict
-    const conflictRes = await db
+    const [existing] = await db
       .select({ id: blogPosts.id })
       .from(blogPosts)
-      .where(eq(blogPosts.slug, newSlug));
+      .where(eq(blogPosts.slug, slug))
+      .limit(1);
 
-    if (conflictRes.length > 0) {
-      newSlug = appendSlugSuffix(newSlug);
+    if (existing) {
+      slug = appendSlugSuffix(slug);
     }
 
-    const postData = {
-      authorId: session.user.id,
-      title: body.title,
-      slug: newSlug,
-      excerpt: body.excerpt || null,
-      content: body.content || null,
-      category: body.category || 'Product Updates',
-      layout: body.layout || 'standard',
-      status: body.status || 'draft',
-      tags: body.tags || [],
-      featuredImageUrl: body.featuredImageUrl || null,
-      ...(body.status === 'published' ? { publishedAt: new Date() } : {}),
-    };
+    // Attempt insert with retry logic for race condition handling
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    const [inserted] = await db
-      .insert(blogPosts)
-      .values(postData as any) // Type assertion to handle complex JSON types and enums
-      .returning();
+    while (attempts < maxAttempts) {
+      try {
+        const [created] = await db
+          .insert(blogPosts)
+          .values({
+            authorId: session.user.id,
+            title,
+            slug,
+            content: content ?? null,
+            excerpt: excerpt ?? null,
+            featuredImageUrl: featuredImageUrl ?? null,
+            category,
+            tags,
+          })
+          .returning();
 
-    return Response.json({ success: true, data: inserted });
-  } catch (error) {
-    console.error('Failed to create blog post', error);
+        return Response.json({ success: true, data: created }, { status: 201 });
+      } catch (err) {
+        // Check for unique constraint violation (PostgreSQL error code 23505)
+        if (err && typeof err === 'object' && 'code' in err && err.code === '23505') {
+          attempts++;
+          if (attempts >= maxAttempts) {
+            break;
+          }
+          slug = appendSlugSuffix(slug);
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    return errorResponse('Failed to create blog post: slug conflict', 'SLUG_CONFLICT', 409);
+  } catch {
     return errorResponse('Failed to create blog post', 'INTERNAL_ERROR', 500);
   }
 }
