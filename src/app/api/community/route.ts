@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, desc, count, inArray, isNull } from 'drizzle-orm';
+import { eq, and, ilike, desc, count, inArray, isNull, lt } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { socialPosts, users, projects, userProfiles, likes } from '@/db/schema';
 import {
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     tab: url.searchParams.get('tab') ?? undefined,
     category: url.searchParams.get('category') ?? undefined,
     creatorId: url.searchParams.get('creatorId') ?? undefined,
-    page: url.searchParams.get('page') ?? undefined,
+    cursor: url.searchParams.get('cursor') ?? undefined,
     limit: url.searchParams.get('limit') ?? undefined,
   });
 
@@ -49,8 +49,7 @@ export async function GET(request: NextRequest) {
     return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
   }
 
-  const { search, sort, category, creatorId, page, limit } = parsed.data;
-  const offset = (page - 1) * limit;
+  const { search, sort, category, creatorId, cursor, limit } = parsed.data;
 
   try {
     // Filter for posts that are not soft-deleted
@@ -68,6 +67,11 @@ export async function GET(request: NextRequest) {
       conditions.push(ilike(socialPosts.title, `%${escapeLikePattern(search)}%`));
     }
 
+    if (cursor) {
+      const cursorDate = new Date(cursor);
+      conditions.push(lt(socialPosts.createdAt, cursorDate));
+    }
+
     const whereClause = and(...conditions);
 
     const orderBy =
@@ -75,8 +79,7 @@ export async function GET(request: NextRequest) {
         ? [desc(socialPosts.likeCount), desc(socialPosts.createdAt)]
         : [desc(socialPosts.createdAt)];
 
-    const [postRows, [totalRow]] = await Promise.all([
-      db
+    const postRows = await db
         .select({
           id: socialPosts.id,
           title: socialPosts.title,
@@ -102,12 +105,11 @@ export async function GET(request: NextRequest) {
         .leftJoin(projects, eq(socialPosts.projectId, projects.id))
         .where(whereClause)
         .orderBy(...orderBy)
-        .limit(limit)
-        .offset(offset),
-      db.select({ count: count() }).from(socialPosts).where(whereClause),
-    ]);
+        .limit(limit + 1); // Fetch one extra to determine if there's a next page
 
-    const total = totalRow?.count ?? 0;
+    const hasNextPage = postRows.length > limit;
+    const postsToReturn = hasNextPage ? postRows.slice(0, -1) : postRows;
+    const nextCursor = hasNextPage ? postsToReturn[postsToReturn.length - 1].createdAt.toISOString() : null;
 
     // Compute isLikedByUser for the current user
     let likedPostIds = new Set<string>();
@@ -149,10 +151,8 @@ export async function GET(request: NextRequest) {
       data: {
         posts: postsWithMeta,
         pagination: {
-          page,
+          nextCursor,
           limit,
-          total,
-          totalPages: Math.ceil(total / limit),
         },
       },
     });
