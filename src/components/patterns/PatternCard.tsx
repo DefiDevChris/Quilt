@@ -122,7 +122,7 @@ export function PatternCard({ pattern, onPreview }: PatternCardProps) {
         </p>
 
         <span
-          className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-semibold rounded-full"
+          className="inline-block mt-1.5 px-2 py-0.5 text-caption font-semibold rounded-full"
           style={{
             backgroundColor: 'var(--color-primary-container)',
             color: 'var(--color-primary-on-container)',

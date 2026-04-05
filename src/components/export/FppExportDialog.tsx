@@ -137,7 +137,7 @@ export function FppExportDialog({ isOpen, onClose, blocks, onGeneratePdf }: FppE
             </label>
           </div>
 
-          <p className="text-[10px] text-secondary">
+          <p className="text-caption text-secondary">
             Template is automatically mirrored for paper piecing (you sew on the back).
           </p>
         </div>

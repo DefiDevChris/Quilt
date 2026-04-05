@@ -129,7 +129,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-secondary mt-1">
+            <p className="text-caption text-secondary mt-1">
               {dpi === 72 && 'Screen resolution — smallest file'}
               {dpi === 150 && 'Good for sharing online'}
               {dpi === 300 && 'Print quality — recommended'}

@@ -117,7 +117,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
 
             {activeTab === 'library' ? (
               <>
-                <div className="px-3 py-1 text-[10px] text-secondary">{total} fabrics</div>
+                <div className="px-3 py-1 text-caption text-secondary">{total} fabrics</div>
 
                 <div className="flex-1 overflow-y-auto px-3 py-1">
                   {isLoading ? (
@@ -156,7 +156,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                     >
                       ← Prev
                     </button>
-                    <span className="text-[10px] text-on-surface/50">
+                    <span className="text-caption text-on-surface/50">
                       {page} / {totalPages}
                     </span>
                     <button
@@ -172,7 +172,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               </>
             ) : activeTab === 'presets' ? (
               <>
-                <div className="px-3 py-2 text-[10px] text-secondary">
+                <div className="px-3 py-2 text-caption text-secondary">
                   {fabricPresets.length} preset{fabricPresets.length !== 1 ? 's' : ''}
                 </div>
                 <div className="flex-1 overflow-y-auto px-3 py-1">
@@ -242,9 +242,15 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                               }
                             }}
                             onBlur={() => setConfirmDeleteId(null)}
-                            title={confirmDeleteId === fabric.id ? 'Click again to confirm delete' : 'Delete fabric'}
-                            className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
-                              confirmDeleteId === fabric.id ? 'bg-error ring-2 ring-error/50 !opacity-100' : 'bg-error'
+                            title={
+                              confirmDeleteId === fabric.id
+                                ? 'Click again to confirm delete'
+                                : 'Delete fabric'
+                            }
+                            className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                              confirmDeleteId === fabric.id
+                                ? 'bg-error ring-2 ring-error/50 !opacity-100'
+                                : 'bg-error'
                             }`}
                           >
                             {confirmDeleteId === fabric.id ? '✓' : '✕'}

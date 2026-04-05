@@ -130,10 +130,7 @@ export default function AllProjectsPage() {
               ? 'Try a different search term'
               : 'Create your first quilt design to get started'}
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors"
-          >
+          <Link href="/dashboard" className="btn-primary-sm gap-2">
             Start Designing
           </Link>
         </div>

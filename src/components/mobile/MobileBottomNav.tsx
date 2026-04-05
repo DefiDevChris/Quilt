@@ -97,7 +97,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
       >
         <HomeIcon active={homeActive} />
         <span
-          className="text-[11px] font-semibold uppercase tracking-wide"
+          className="text-label-sm font-semibold uppercase tracking-wide"
           style={{
             color: homeActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
           }}
@@ -148,7 +148,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
           <SignInIcon active={profileActive} />
         )}
         <span
-          className="text-[11px] font-semibold uppercase tracking-wide"
+          className="text-label-sm font-semibold uppercase tracking-wide"
           style={{
             color: profileActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
           }}

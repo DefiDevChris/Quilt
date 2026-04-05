@@ -121,7 +121,7 @@ export function TemplateDetailModal({ templateId, onClose }: TemplateDetailModal
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div className="bg-surface rounded-2xl p-6 m-4 max-w-md">
           <p className="text-error">{error || 'Template not found'}</p>
-          <button onClick={onClose} className="mt-4 px-4 py-2 bg-primary text-white rounded-lg">
+          <button onClick={onClose} className="btn-primary-xs mt-4">
             Close
           </button>
         </div>

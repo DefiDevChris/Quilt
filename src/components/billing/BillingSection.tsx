@@ -112,7 +112,7 @@ export function BillingSection() {
       {isPastDue && (
         <div className="mb-4 rounded-xl border border-warning/30 bg-warning/5 p-3.5">
           <h3 className="text-sm font-semibold text-warning mb-1">Payment Past Due</h3>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-secondary">
             Your last payment failed. Please update your payment method within 7 days to keep your
             Pro access.
           </p>
@@ -135,15 +135,15 @@ export function BillingSection() {
               className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 ${
                 isPro
                   ? 'text-primary-dark bg-primary-container border-primary/30'
-                  : 'text-slate-500 border-slate-200'
+                  : 'text-secondary border-outline-variant'
               }`}
             >
               {isPro ? 'Pro' : 'Free'}
             </span>
             {isLoading ? (
-              <span className="text-[10px] text-slate-400 animate-pulse">Checking...</span>
+              <span className="text-caption text-tertiary animate-pulse">Checking...</span>
             ) : isPro && subscription && subscription.plan === 'pro' ? (
-              <span className="text-[10px] text-secondary/80">
+              <span className="text-caption text-tertiary">
                 {isCanceling
                   ? `Cancels ${new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString()}`
                   : subscription.status === 'active'
@@ -151,7 +151,7 @@ export function BillingSection() {
                     : subscription.status.replace('_', ' ')}
               </span>
             ) : isPro ? (
-              <span className="text-[10px] text-secondary/80">Active</span>
+              <span className="text-caption text-tertiary">Active</span>
             ) : null}
           </div>
 
@@ -160,7 +160,7 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-lg glass-inset text-slate-700 px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
+              className="rounded-lg border border-outline-variant/30 text-on-surface px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
             >
               {isPortalLoading ? 'Loading...' : 'Manage'}
             </button>
@@ -168,9 +168,9 @@ export function BillingSection() {
         </div>
 
         {isPro && subscription?.currentPeriodEnd && (
-          <p className="text-xs text-secondary/80">
+          <p className="text-xs text-tertiary">
             {isCanceling ? 'Access until' : 'Next billing date'}:{' '}
-            <span className="font-medium text-slate-700">
+            <span className="font-medium text-on-surface">
               {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
             </span>
           </p>
@@ -180,7 +180,7 @@ export function BillingSection() {
       {/* Upgrade section (free only) */}
       {!isPro && (
         <div className="rounded-xl bg-primary-container/60 backdrop-blur-sm p-5 border border-primary/15 mb-3">
-          <h3 className="text-sm font-semibold text-slate-800 mb-2.5">Upgrade to Pro</h3>
+          <h3 className="text-sm font-semibold text-on-surface mb-2.5">Upgrade to Pro</h3>
 
           {/* Billing toggle */}
           <div className="flex items-center gap-1.5 mb-3 bg-white/60 rounded-full p-0.5 w-fit">
@@ -190,7 +190,7 @@ export function BillingSection() {
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'monthly'
                   ? 'bg-surface-canvas text-on-surface'
-                  : 'text-slate-500 hover:text-slate-800'
+                  : 'text-secondary hover:text-on-surface'
               }`}
             >
               Monthly
@@ -201,11 +201,11 @@ export function BillingSection() {
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 billingInterval === 'yearly'
                   ? 'bg-surface-canvas text-on-surface'
-                  : 'text-slate-500 hover:text-slate-800'
+                  : 'text-secondary hover:text-on-surface'
               }`}
             >
               Yearly
-              <span className="ml-1 text-[10px] text-primary-dark font-semibold">
+              <span className="ml-1 text-caption text-primary-dark font-semibold">
                 Save {PRO_YEARLY_SAVINGS_PERCENT}%
               </span>
             </button>
@@ -216,11 +216,11 @@ export function BillingSection() {
             <span className="text-2xl font-bold text-on-surface">
               ${billingInterval === 'monthly' ? PRO_PRICE_MONTHLY : PRO_PRICE_YEARLY}
             </span>
-            <span className="text-xs text-secondary/80">
+            <span className="text-xs text-tertiary">
               /{billingInterval === 'monthly' ? 'month' : 'year'}
             </span>
             {billingInterval === 'yearly' && (
-              <span className="block text-[10px] text-secondary/80 mt-0.5">
+              <span className="block text-caption text-tertiary mt-0.5">
                 ${(PRO_PRICE_YEARLY / 12).toFixed(0)}/month, billed annually
               </span>
             )}
@@ -230,7 +230,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="btn-primary-xs disabled:opacity-50"
           >
             {isCheckoutLoading ? 'Loading...' : 'Start Pro'}
           </button>
@@ -243,20 +243,20 @@ export function BillingSection() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <h4 className="text-xs font-semibold text-on-surface mb-2">Free</h4>
-            <ul className="space-y-1.5 text-[11px] text-secondary/80">
+            <ul className="space-y-1.5 text-label-sm text-tertiary">
               <li>All design tools</li>
               <li>20 starter blocks</li>
               <li>10 basic fabrics</li>
               <li>Browse community</li>
               <li>All tutorials</li>
-              <li className="text-slate-300 line-through">Save projects</li>
-              <li className="text-slate-300 line-through">Export (PDF, PNG, SVG)</li>
-              <li className="text-slate-300 line-through">Full block library</li>
+              <li className="text-tertiary line-through">Save projects</li>
+              <li className="text-tertiary line-through">Export (PDF, PNG, SVG)</li>
+              <li className="text-tertiary line-through">Full block library</li>
             </ul>
           </div>
           <div>
             <h4 className="text-xs font-semibold text-primary-dark mb-2">Pro</h4>
-            <ul className="space-y-1.5 text-[11px] text-slate-500">
+            <ul className="space-y-1.5 text-label-sm text-secondary">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
               <li>Full block library (always growing)</li>

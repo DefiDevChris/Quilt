@@ -112,7 +112,7 @@ export function SocialLayout({
           <Link href="/" className="flex items-center">
             <img src="/logo.png" alt="QuiltCorgi" className="h-10 w-auto" />
           </Link>
-          <div className="hidden sm:block w-px h-8 bg-slate-300/50 mx-2" />
+          <div className="hidden sm:block w-px h-8 bg-tertiary/50 mx-2" />
           <div className="text-left hidden sm:block">
             <h1 className="text-xl font-extrabold text-on-surface tracking-tight leading-tight">
               {splitMode ? SPLIT_HEADERS[splitPanel].label : activeSectionData.label}
@@ -125,7 +125,7 @@ export function SocialLayout({
 
         {/* Center: Section Title (mobile) */}
         <div className="flex justify-center">
-          <span className="md:hidden text-sm font-bold text-slate-700">
+          <span className="md:hidden text-sm font-bold text-on-surface">
             {activeSectionData.label}
           </span>
         </div>
@@ -160,7 +160,7 @@ export function SocialLayout({
             {dropdownOpen && user && (
               <div className="absolute top-16 right-0 w-56 bg-white/90 backdrop-blur-xl rounded-2xl shadow-elevation-4 z-50 border border-white/80 overflow-hidden">
                 {/* User info */}
-                <div className="px-4 py-3 border-b border-slate-100">
+                <div className="px-4 py-3 border-b border-outline-variant">
                   <p className="text-sm font-bold text-on-surface truncate">{user.name}</p>
                   <p className="text-xs text-secondary/80 truncate">{user.email}</p>
                 </div>
@@ -170,14 +170,14 @@ export function SocialLayout({
                   <Link
                     href="/socialthreads"
                     onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                    className="block px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-orange-50 hover:text-orange-600 transition-colors"
                   >
                     Profile
                   </Link>
                 </div>
 
                 {/* Sign out */}
-                <div className="py-1 border-t border-slate-100">
+                <div className="py-1 border-t border-outline-variant">
                   <button
                     onClick={handleSignOut}
                     disabled={signingOut}

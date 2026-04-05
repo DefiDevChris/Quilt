@@ -158,7 +158,7 @@ export function QuickInfo() {
       className="absolute z-40 min-w-[160px] rounded-lg border border-outline-variant bg-surface p-2 shadow-elevation-3"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
-      <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-secondary">
+      <div className="mb-1 text-caption font-semibold uppercase tracking-wider text-secondary">
         Quick Info
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">

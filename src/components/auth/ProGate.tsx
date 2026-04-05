@@ -78,7 +78,7 @@ function DefaultFallback({ featureName }: { featureName?: string }) {
             type="button"
             onClick={handleUpgrade}
             disabled={isLoading}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="btn-primary-xs disabled:opacity-50"
           >
             {isLoading ? 'Loading...' : 'Upgrade to Pro'}
           </button>

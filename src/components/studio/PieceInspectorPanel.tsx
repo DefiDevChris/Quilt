@@ -174,8 +174,8 @@ function SeamAllowanceSlider({
           aria-label="Seam allowance"
         />
         <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-secondary">0&quot;</span>
-          <span className="text-[10px] text-secondary">1&quot;</span>
+          <span className="text-caption text-secondary">0&quot;</span>
+          <span className="text-caption text-secondary">1&quot;</span>
         </div>
       </div>
     </section>

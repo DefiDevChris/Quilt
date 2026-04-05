@@ -87,22 +87,22 @@ export function VerifyEmailForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface">
+        <h1 className="text-headline-md font-bold text-on-surface">
           Verify your email
         </h1>
-        <p className="mt-2 text-[length:var(--font-size-body-sm)] text-secondary text-center">
+        <p className="mt-2 text-body-sm text-secondary text-center">
           We sent a verification code to your email. Enter it below to verify your account.
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-[length:var(--font-size-body-sm)] text-error">
+        <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-body-sm text-error">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-sm bg-green-50 border border-green-200 px-4 py-3 text-[length:var(--font-size-body-sm)] text-green-800">
+        <div className="mb-4 rounded-sm bg-green-50 border border-green-200 px-4 py-3 text-body-sm text-green-800">
           {success}
         </div>
       )}
@@ -111,7 +111,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="verify-email"
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            className="block text-body-sm font-medium text-secondary mb-1.5"
           >
             Email
           </label>
@@ -121,7 +121,7 @@ export function VerifyEmailForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200"
+            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200"
             placeholder="you@example.com"
             autoComplete="email"
           />
@@ -130,7 +130,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="code"
-            className="block text-[length:var(--font-size-body-sm)] font-medium text-secondary mb-1.5"
+            className="block text-body-sm font-medium text-secondary mb-1.5"
           >
             Verification Code
           </label>
@@ -143,7 +143,7 @@ export function VerifyEmailForm() {
             maxLength={6}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-[length:var(--font-size-body-md)] text-on-surface placeholder:text-secondary/60 outline-none transition-colors duration-200 tracking-[0.3em] text-center text-lg"
+            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200 tracking-[0.3em] text-center text-lg"
             placeholder="000000"
           />
         </div>
@@ -151,7 +151,7 @@ export function VerifyEmailForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primary text-primary-on rounded-md px-4 py-3 text-[length:var(--font-size-body-md)] font-medium hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Verifying...' : 'Verify Email'}
         </button>
@@ -162,13 +162,13 @@ export function VerifyEmailForm() {
           type="button"
           onClick={handleResend}
           disabled={isResending}
-          className="text-[length:var(--font-size-body-sm)] text-primary hover:underline disabled:opacity-50"
+          className="text-body-sm text-primary hover:underline disabled:opacity-50"
         >
           {isResending ? 'Sending...' : "Didn't receive a code? Resend"}
         </button>
       </div>
 
-      <p className="mt-6 text-center text-[length:var(--font-size-body-sm)] text-secondary">
+      <p className="mt-6 text-center text-body-sm text-secondary">
         <Link href="/auth/signin" className="text-primary hover:underline font-medium">
           Back to sign in
         </Link>

@@ -16,6 +16,7 @@ export const dynamic = 'force-dynamic';
 
 const updateUserRoleSchema = z.object({
   role: z.enum(['free', 'pro', 'admin']).optional(),
+  status: z.enum(['active', 'suspended', 'banned']).optional(),
   suspended: z.boolean().optional(),
   suspensionReason: z.string().max(500).optional(),
 });
@@ -103,9 +104,10 @@ export async function PUT(
       updateData.role = parsed.data.role;
     }
 
-    // Note: For suspension, we'll use a separate user_moderation table or add fields
-    // For now, we'll just update the role (suspension could be implemented by setting role to 'suspended')
-    
+    if (parsed.data.status !== undefined) {
+      updateData.status = parsed.data.status;
+    }
+
     const [updatedUser] = await db
       .update(users)
       .set(updateData)

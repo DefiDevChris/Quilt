@@ -15,7 +15,7 @@ type BentoStyle = 'hero' | 'side' | 'compact' | 'wide' | 'tall';
 
 function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: boolean }) {
   const textClass = dark ? 'text-white/75' : 'text-secondary/80';
-  const nameClass = dark ? 'font-bold text-white' : 'font-bold text-slate-700';
+  const nameClass = dark ? 'font-bold text-white' : 'font-bold text-on-surface';
   return (
     <div className={`flex items-center gap-2 text-xs ${textClass}`}>
       {post.authorAvatarUrl ? (
@@ -142,7 +142,7 @@ function BentoCard({ post, bentoStyle }: { post: BlogPostListItem; bentoStyle: B
             {post.title}
           </h4>
         </div>
-        <p className="text-[10px] text-secondary/80 font-medium mt-1">
+        <p className="text-caption text-secondary/80 font-medium mt-1">
           {formatDate(post.createdAt)}
         </p>
       </div>
@@ -220,7 +220,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
     return (
       <div className="glass-panel-social rounded-[2rem] p-12 text-center">
         <p className="text-secondary font-medium">No posts yet</p>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-tertiary mt-1">
           Check back soon for quilt design tips and tutorials.
         </p>
       </div>
@@ -231,7 +231,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
     <div className="space-y-10">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-extrabold text-on-surface tracking-tight">From the Blog</h2>
-        <span className="text-xs font-medium text-slate-400 hidden sm:block">
+        <span className="text-xs font-medium text-tertiary hidden sm:block">
           Tap any post to preview
         </span>
       </div>
@@ -313,7 +313,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
         <div className="flex justify-center pt-2">
           <button
             onClick={loadMore}
-            className="glass-panel-social px-8 py-3 rounded-full font-bold text-slate-700 hover:bg-white/80 transition-all text-sm"
+            className="glass-panel-social px-8 py-3 rounded-full font-bold text-on-surface hover:bg-white/80 transition-all text-sm"
           >
             Load more posts
           </button>
@@ -329,7 +329,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
         </p>
         <a
           href={`mailto:${SUPPORT_EMAIL}?subject=Blog%20Submission`}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-on-primary font-medium hover:opacity-90 transition-opacity"
+          className="btn-primary-sm gap-2"
         >
           Submit Your Story
         </a>

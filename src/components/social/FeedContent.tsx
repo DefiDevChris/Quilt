@@ -89,10 +89,7 @@ export function FeedContent() {
             </svg>
           </div>
           <p className="text-secondary mb-4 font-medium">{error}</p>
-          <button
-            onClick={() => fetchPosts()}
-            className="bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
-          >
+          <button onClick={() => fetchPosts()} className="btn-primary-sm">
             Retry
           </button>
         </div>
@@ -107,10 +104,7 @@ export function FeedContent() {
           <p className="text-xl font-bold text-on-surface mb-2">No designs yet</p>
           <p className="text-secondary mb-6 font-medium">Be the first to share your quilt!</p>
           {user && (
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 hover:from-orange-500 hover:to-rose-500 text-white px-6 py-2.5 rounded-full font-bold shadow-elevation-2 transition-all"
-            >
+            <Link href="/dashboard" className="btn-primary-sm inline-flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -251,7 +245,7 @@ function PostCard({ post }: { post: CommunityPost & { templateId?: string | null
         )}
       </div>
 
-      <p className="text-on-surface/80 mb-3 text-[15px] leading-relaxed">
+      <p className="text-on-surface/80 mb-3 text-body-lg leading-relaxed">
         {post.description || post.title}
       </p>
 

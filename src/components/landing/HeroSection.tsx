@@ -6,21 +6,21 @@ import Mascot from './Mascot';
 
 function StudioMockup() {
   return (
-    <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-elevation-4 border border-outline-variant overflow-hidden">
       {/* Window chrome */}
-      <div className="bg-warm-surface px-4 py-3 border-b border-warm-border flex items-center gap-3">
+      <div className="bg-surface-container px-4 py-3 border-b border-outline-variant flex items-center gap-3">
         <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-warm-terracotta" />
-          <div className="w-3 h-3 rounded-full bg-warm-golden" />
-          <div className="w-3 h-3 rounded-full bg-warm-peach" />
+          <div className="w-3 h-3 rounded-full bg-primary-dark" />
+          <div className="w-3 h-3 rounded-full bg-accent" />
+          <div className="w-3 h-3 rounded-full bg-primary" />
         </div>
-        <span className="text-sm text-warm-text-secondary">My_Quilt_Project.qc</span>
+        <span className="text-sm text-secondary">My_Quilt_Project.qc</span>
       </div>
 
       {/* Canvas with quilt layout mockup */}
       <div className="flex bg-surface-container-lowest">
         {/* Tool rail */}
-        <div className="w-12 bg-warm-surface/60 border-r border-warm-border py-3 flex flex-col items-center gap-3">
+        <div className="w-12 bg-surface-container/60 border-r border-outline-variant py-3 flex flex-col items-center gap-3">
           {[
             <svg
               key="sel"
@@ -62,7 +62,7 @@ function StudioMockup() {
             <div
               key={i}
               className={`w-8 h-8 flex items-center justify-center rounded-lg ${
-                i === 1 ? 'bg-warm-peach/10 text-warm-peach' : 'text-warm-text-muted'
+                i === 1 ? 'bg-primary/10 text-primary' : 'text-tertiary'
               }`}
             >
               {icon}
@@ -72,11 +72,11 @@ function StudioMockup() {
 
         {/* Quilt canvas */}
         <div className="flex-1 p-6">
-          <div className="grid grid-cols-3 gap-2 bg-warm-peach-light p-2 border-[3px] border-warm-terracotta/60 mx-auto max-w-[260px]">
+          <div className="grid grid-cols-3 gap-2 bg-primary/20 p-2 border-[3px] border-primary-dark/60 mx-auto max-w-[260px]">
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-white flex items-center justify-center border border-warm-border/30 overflow-hidden"
+                className="aspect-square bg-white flex items-center justify-center border border-outline-variant/30 overflow-hidden"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <polygon points="0,0 50,50 0,100" fill="#ffdfc4" />
@@ -90,35 +90,35 @@ function StudioMockup() {
         </div>
 
         {/* Properties panel */}
-        <div className="w-40 bg-white border-l border-warm-border p-3 hidden sm:flex flex-col gap-3 text-xs">
-          <div className="font-bold text-warm-text text-[10px]">Layout</div>
-          <div className="h-6 bg-warm-surface rounded flex items-center px-2 text-warm-text-muted">
+        <div className="w-40 bg-white border-l border-outline-variant p-3 hidden sm:flex flex-col gap-3 text-xs">
+          <div className="font-bold text-on-surface text-caption">Layout</div>
+          <div className="h-6 bg-surface-container rounded flex items-center px-2 text-tertiary">
             Grid 3 x 3
           </div>
-          <div className="font-bold text-warm-text text-[10px]">Sashing</div>
+          <div className="font-bold text-on-surface text-caption">Sashing</div>
           <div className="flex gap-2">
             {['#FFB085', '#FFD166', '#C67B5C', '#E07B67', '#4A3B32'].map((color, i) => (
               <div
                 key={i}
-                className="w-5 h-5 rounded-full border border-warm-border"
+                className="w-5 h-5 rounded-full border border-outline-variant"
                 style={{ backgroundColor: color }}
               />
             ))}
           </div>
-          <div className="font-bold text-warm-text text-[10px]">Size</div>
-          <div className="h-6 bg-warm-surface rounded flex items-center px-2 text-warm-text-muted font-mono text-[10px]">
+          <div className="font-bold text-on-surface text-caption">Size</div>
+          <div className="h-6 bg-surface-container rounded flex items-center px-2 text-tertiary font-mono text-caption">
             36&quot; x 45&quot;
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="bg-warm-surface px-4 py-2 border-t border-warm-border flex items-center justify-between">
+      <div className="bg-surface-container px-4 py-2 border-t border-outline-variant flex items-center justify-between">
         <div className="flex gap-2">
           {['#FFB085', '#FFD166', '#C67B5C', '#E07B67', '#4A3B32'].map((color, i) => (
             <div
               key={i}
-              className="w-5 h-5 rounded-full border border-warm-border"
+              className="w-5 h-5 rounded-full border border-outline-variant"
               style={{ backgroundColor: color }}
             />
           ))}
@@ -130,7 +130,7 @@ function StudioMockup() {
 
 export default function HeroSection() {
   return (
-    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden">
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Text */}
@@ -139,18 +139,18 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-warm-text leading-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               From First Stitch
-              <span className="block text-warm-peach">to Finished Quilt</span>
+              <span className="block text-primary">to Finished Quilt</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-warm-text-secondary max-w-xl leading-relaxed"
+              className="text-lg md:text-xl text-secondary max-w-xl leading-relaxed"
             >
               Design your quilt, pick your fabrics, calculate your yardage, and export true-scale
               patterns with seam allowances built in. Four worktables, a growing block library, and
@@ -163,10 +163,7 @@ export default function HeroSection() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Link
-                href="/auth/signup"
-                className="px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-elevation-3 text-center"
-              >
+              <Link href="/auth/signup" className="btn-primary text-center">
                 Start Designing Free
               </Link>
             </motion.div>

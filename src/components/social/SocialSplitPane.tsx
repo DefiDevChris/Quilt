@@ -49,7 +49,13 @@ function SavedStripVertical() {
               height="32"
               patternUnits="userSpaceOnUse"
             >
-              <rect x="0" y="0" width="32" height="32" fill="var(--color-surface-container-lowest)" />
+              <rect
+                x="0"
+                y="0"
+                width="32"
+                height="32"
+                fill="var(--color-surface-container-lowest)"
+              />
               <path
                 d="M16 28 C16 28 4 20 4 12 C4 6 10 4 16 10 C22 4 28 6 28 12 C28 20 16 28 16 28Z"
                 fill="var(--color-primary)"
@@ -469,7 +475,7 @@ function SavedContent() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center border border-white shadow-elevation-1">
-                    <span className="text-[10px] font-bold text-orange-500">
+                    <span className="text-caption font-bold text-orange-500">
                       {post.author.charAt(0)}
                     </span>
                   </div>
@@ -587,7 +593,7 @@ function ProfileContentPanel() {
             <p className="text-xs text-secondary mt-0.5">Edit profile, billing, and account</p>
           </div>
           <svg
-            className="w-4 h-4 text-slate-400"
+            className="w-4 h-4 text-tertiary"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -122,10 +122,7 @@ export function TemplateView({ templateId }: TemplateViewProps) {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-surface rounded-2xl p-6 max-w-md text-center">
           <p className="text-error mb-4">{error || 'Template not found'}</p>
-          <button
-            onClick={() => router.push('/socialthreads')}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity"
-          >
+          <button onClick={() => router.push('/socialthreads')} className="btn-primary-xs">
             Back to Social Threads
           </button>
         </div>

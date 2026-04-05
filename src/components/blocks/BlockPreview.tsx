@@ -144,7 +144,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
                 {block.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-background px-2 py-0.5 text-[10px] text-secondary"
+                    className="rounded-full bg-background px-2 py-0.5 text-caption text-secondary"
                   >
                     {tag}
                   </span>

@@ -10,9 +10,9 @@ function CheckItem({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="flex items-start gap-4 text-warm-text-secondary font-medium"
+      className="flex items-start gap-4 text-secondary font-medium"
     >
-      <div className="w-6 h-6 rounded-full bg-warm-peach/10 flex items-center justify-center text-warm-peach mt-0.5 flex-shrink-0">
+      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 flex-shrink-0">
         <svg
           width="14"
           height="14"
@@ -43,23 +43,23 @@ function StudioPreviewMockup() {
   return (
     <div className="relative group">
       {/* Studio window — sits directly on the page background, no outer container */}
-      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(74,59,50,0.12)] w-full border border-warm-border overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(74,59,50,0.12)] w-full border border-outline-variant overflow-hidden flex flex-col">
         {/* Studio Top Bar */}
-        <div className="h-10 border-b border-warm-border flex items-center px-3 justify-between bg-warm-surface shrink-0">
+        <div className="h-10 border-b border-outline-variant flex items-center px-3 justify-between bg-surface-container shrink-0">
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
               <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-300" />
             </div>
-            <span className="text-[10px] font-bold text-warm-text-muted ml-2">Ohio Star Throw</span>
+            <span className="text-caption font-bold text-tertiary ml-2">Ohio Star Throw</span>
           </div>
           <div className="flex items-center gap-1.5">
             {['Quilt', 'Block', 'Print'].map((tab, i) => (
               <div
                 key={tab}
-                className={`text-[9px] font-bold px-2 py-0.5 rounded ${
-                  i === 0 ? 'bg-warm-peach/15 text-warm-peach' : 'text-warm-text-muted'
+                className={`text-caption font-bold px-2 py-0.5 rounded ${
+                  i === 0 ? 'bg-primary/15 text-primary' : 'text-tertiary'
                 }`}
               >
                 {tab}
@@ -70,8 +70,8 @@ function StudioPreviewMockup() {
 
         <div className="flex" style={{ minHeight: '280px' }}>
           {/* Mini Tool Rail */}
-          <div className="w-9 border-r border-warm-border bg-white py-2 hidden sm:flex flex-col items-center gap-2 shrink-0">
-            <div className="w-6 h-6 rounded-md bg-warm-peach/10 flex items-center justify-center text-warm-peach">
+          <div className="w-9 border-r border-outline-variant bg-white py-2 hidden sm:flex flex-col items-center gap-2 shrink-0">
+            <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
               <svg
                 width="11"
                 height="11"
@@ -83,7 +83,7 @@ function StudioPreviewMockup() {
                 <path d="M5 3l14 9-6 2-4 7-4-18z" />
               </svg>
             </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-warm-text-muted">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
               <svg
                 width="11"
                 height="11"
@@ -98,7 +98,7 @@ function StudioPreviewMockup() {
                 <rect x="14" y="14" width="7" height="7" />
               </svg>
             </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-warm-text-muted">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
               <svg
                 width="11"
                 height="11"
@@ -111,7 +111,7 @@ function StudioPreviewMockup() {
                 <path d="M2 12h20M12 2v20" />
               </svg>
             </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-warm-text-muted">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
               <svg
                 width="11"
                 height="11"
@@ -123,8 +123,8 @@ function StudioPreviewMockup() {
                 <path d="M21 3H3v18h18V3zM9 3v18M15 3v18M3 9h18M3 15h18" />
               </svg>
             </div>
-            <div className="w-5 border-t border-warm-border mt-1 mb-1" />
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-warm-text-muted/50">
+            <div className="w-5 border-t border-outline-variant mt-1 mb-1" />
+            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary/50">
               <svg
                 width="10"
                 height="10"
@@ -140,11 +140,11 @@ function StudioPreviewMockup() {
           </div>
 
           {/* Canvas area */}
-          <div className="flex-1 flex items-center justify-center p-5 bg-gradient-to-br from-warm-surface/30 to-white/20 relative">
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[8px] font-mono text-warm-text-muted/60">
+          <div className="flex-1 flex items-center justify-center p-5 bg-gradient-to-br from-surface-container/30 to-white/20 relative">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-caption font-mono text-tertiary/60">
               54&quot; × 54&quot;
             </div>
-            <div className="grid grid-cols-6 gap-[2px] p-[2px] bg-warm-text/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
+            <div className="grid grid-cols-6 gap-[2px] p-[2px] bg-on-surface/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
               {QUILT_GRID.flat().map((color, i) => (
                 <motion.div
                   key={i}
@@ -157,14 +157,14 @@ function StudioPreviewMockup() {
                 />
               ))}
             </div>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[7px] font-bold text-warm-text-muted/50 uppercase tracking-widest">
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-caption font-bold text-tertiary/50 uppercase tracking-widest">
               Grid Layout • 9&quot; blocks
             </div>
           </div>
 
           {/* Right context panel */}
-          <div className="w-[120px] border-l border-warm-border bg-warm-surface/40 p-2.5 hidden md:flex flex-col gap-2 shrink-0 overflow-hidden">
-            <div className="text-[8px] font-bold text-warm-text-muted uppercase tracking-wider">
+          <div className="w-[120px] border-l border-outline-variant bg-surface-container/40 p-2.5 hidden md:flex flex-col gap-2 shrink-0 overflow-hidden">
+            <div className="text-caption font-bold text-tertiary uppercase tracking-wider">
               Fabrics
             </div>
             {[
@@ -174,23 +174,23 @@ function StudioPreviewMockup() {
             ].map((item) => (
               <div key={item.fabric} className="flex items-center gap-1.5">
                 <div
-                  className="w-4 h-4 rounded-sm border border-warm-border shrink-0"
+                  className="w-4 h-4 rounded-sm border border-outline-variant shrink-0"
                   style={{ backgroundColor: item.color }}
                 />
                 <div className="min-w-0">
-                  <div className="text-[8px] font-medium text-warm-text truncate">
+                  <div className="text-caption font-medium text-on-surface truncate">
                     {item.fabric}
                   </div>
-                  <div className="text-[7px] text-warm-text-muted">{item.pieces} pcs</div>
+                  <div className="text-caption text-tertiary">{item.pieces} pcs</div>
                 </div>
               </div>
             ))}
-            <div className="border-t border-warm-border pt-1.5 mt-1">
-              <div className="text-[8px] font-bold text-warm-text-muted uppercase tracking-wider mb-1">
+            <div className="border-t border-outline-variant pt-1.5 mt-1">
+              <div className="text-caption font-bold text-tertiary uppercase tracking-wider mb-1">
                 Layout
               </div>
-              <div className="text-[8px] text-warm-text">6 × 6 grid</div>
-              <div className="text-[7px] text-warm-text-muted">½&quot; seam allowance</div>
+              <div className="text-caption text-on-surface">6 × 6 grid</div>
+              <div className="text-caption text-tertiary">½&quot; seam allowance</div>
             </div>
           </div>
         </div>
@@ -201,9 +201,9 @@ function StudioPreviewMockup() {
 
 export default function CoreCapabilities() {
   return (
-    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-warm-bg overflow-x-clip">
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-warm-peach/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warm-text-secondary/5 rounded-full blur-[80px] pointer-events-none translate-y-1/2 -translate-x-1/3" />
+    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-background overflow-x-clip">
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[80px] pointer-events-none translate-y-1/2 -translate-x-1/3" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -216,18 +216,18 @@ export default function CoreCapabilities() {
             <div className="flex items-center gap-4 mb-6">
               <Mascot pose="sitting" size="lg" />
               <h2
-                className="text-3xl md:text-4xl font-bold text-warm-text leading-tight"
+                className="text-3xl md:text-4xl font-bold text-on-surface leading-tight"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Tools quilters actually need.
                 <br />
-                <span className="text-warm-peach">
+                <span className="text-primary">
                   Say goodbye to guesswork and expensive software.
                 </span>
               </h2>
             </div>
 
-            <p className="text-lg text-warm-text-secondary mb-8">
+            <p className="text-lg text-secondary mb-8">
               Whether you&apos;re turning photos into quilt patterns with a click, drafting custom
               blocks with snap-to-grid precision, or exploring unexpected color combinations — every
               tool is made to help you create something you&apos;ll be proud of.
@@ -244,10 +244,7 @@ export default function CoreCapabilities() {
               <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
             </ul>
 
-            <Link
-              href="/auth/signup"
-              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform"
-            >
+            <Link href="/auth/signup" className="btn-primary">
               See What You Can Create
             </Link>
           </motion.div>

@@ -61,7 +61,7 @@ export default async function BlogPage() {
       {posts.length === 0 ? (
         <div className="glass-panel-social rounded-[2rem] p-12 text-center">
           <p className="text-secondary font-medium">No posts yet</p>
-          <p className="text-sm text-slate-400 mt-1">Check back soon for new content.</p>
+          <p className="text-sm text-tertiary mt-1">Check back soon for new content.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

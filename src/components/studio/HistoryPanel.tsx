@@ -78,7 +78,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 className="w-full text-left p-2 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors"
               >
                 <div className="text-body-sm text-on-surface">State {entries.length - i}</div>
-                <div className="text-[10px] text-secondary">
+                <div className="text-caption text-secondary">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </div>
               </button>

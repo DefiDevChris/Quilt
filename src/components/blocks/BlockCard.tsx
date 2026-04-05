@@ -70,7 +70,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
         )}
       </div>
 
-      <span className="mt-1 text-center text-[10px] leading-tight text-secondary line-clamp-2">
+      <span className="mt-1 text-center text-caption leading-tight text-secondary line-clamp-2">
         {block.name}
       </span>
 

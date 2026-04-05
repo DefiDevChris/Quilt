@@ -199,10 +199,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               >
                 Sign In
               </Link>
-              <Link
-                href="/auth/signup"
-                className="bg-primary text-primary-on px-4 py-2 rounded-md text-label-lg font-medium hover:opacity-90 transition-opacity"
-              >
+              <Link href="/auth/signup" className="btn-primary-xs">
                 Sign Up
               </Link>
             </div>

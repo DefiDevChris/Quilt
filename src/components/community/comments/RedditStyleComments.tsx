@@ -212,7 +212,7 @@ function CommentNode({
 
           {!isCollapsed && (
             <>
-              <p className="text-[15px] text-on-surface/90 mt-0.5 leading-snug">
+              <p className="text-body-lg text-on-surface/90 mt-0.5 leading-snug">
                 {comment.content}
               </p>
 
@@ -288,7 +288,7 @@ function CommentInput({
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         disabled={isSubmitting}
-        className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-slate-400 border-b border-white/40 py-2 focus:outline-none focus:border-orange-400 transition-colors"
+        className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-tertiary border-b border-white/40 py-2 focus:outline-none focus:border-orange-400 transition-colors"
       />
       {content.trim() && (
         <button

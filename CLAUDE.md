@@ -99,12 +99,103 @@ src/
 - No `any` — use `unknown` with proper casts
 - Type assertions at boundaries only (Fabric.js interop)
 
-### Styling
+### Design System
 
-- Tailwind CSS v4 with Material 3-inspired design system
-- Use design tokens: `bg-surface`, `text-on-surface`, `bg-primary`, `shadow-elevation-4`
-- Don't use hardcoded colors — use the cream palette system
-- Social components use separate design system (hardcoded slate+orange Tailwind, NOT main CSS variables)
+Tailwind CSS v4 with a unified warm cream + orange-rose gradient system. Everything derives from the hero button's DNA: warm gradients, pill shapes, elevation shadows, scale-on-hover.
+
+#### Color Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `text-on-surface` | #4a3b32 | Primary text (dark warm brown) |
+| `text-secondary` | #6b5a4d | Supporting text |
+| `text-tertiary` | #8a7a6d | Muted/placeholder text |
+| `bg-surface` | #ffffff | Page background |
+| `bg-surface-container` | #fdfaf7 | Card/input backgrounds |
+| `bg-surface-container-high` | #faf6f2 | Elevated containers |
+| `bg-surface-container-highest` | #f7f2ed | Badges, tags |
+| `border-outline-variant` | #f0e8df | All borders |
+| `text-primary` / `bg-primary` | #ffb085 | Brand peach (surfaces) |
+| `text-primary-dark` | #c67b5c | Terracotta accent |
+| `text-accent` | #ffd166 | Golden highlight |
+
+**Accent colors** (Tailwind built-ins, not CSS vars):
+- `orange-400`, `orange-500` — interactive accent
+- `rose-400` — gradient endpoint
+- `orange-100` — light accent backgrounds
+- `from-orange-400 to-rose-400` — THE primary gradient
+
+**Never use**: `text-slate-*`, `bg-slate-*`, `text-gray-*`, `bg-gray-*`, hardcoded hex colors, or the removed `warm-*`/`pattern-*` tokens.
+
+#### Button System (CSS utility classes in globals.css)
+
+All buttons are gradient pills built around the hero CTA style:
+
+| Class | Size | Usage |
+|-------|------|-------|
+| `btn-primary` | `px-8 py-4 text-lg` | Hero CTAs, page-level actions |
+| `btn-primary-sm` | `px-6 py-3 text-base` | Inline actions, form submits |
+| `btn-primary-xs` | `px-4 py-2 text-sm` | Compact/tight spaces |
+| `btn-secondary` | `px-6 py-3 text-base` | Outlined pill, secondary actions |
+| `btn-ghost` | `px-4 py-2 text-sm` | Text-only actions |
+
+```tsx
+// Hero CTA
+<a className="btn-primary" href="/studio">Start Designing</a>
+
+// Form submit
+<button className="btn-primary-sm w-full disabled:opacity-50" disabled={loading}>Submit</button>
+
+// Small action
+<button className="btn-primary-xs">Follow</button>
+```
+
+Never write gradient button classes inline — always use `btn-primary` variants.
+
+#### Font Size Tokens
+
+| Token | Size | Usage |
+|-------|------|-------|
+| `text-display-lg` | 3.5rem | Hero headlines |
+| `text-display-md` | 2.5rem | Section headlines |
+| `text-headline-md` | 1.5rem | Page titles |
+| `text-headline-sm` | 1.25rem | Card titles |
+| `text-body-lg` | 1rem (16px) | Large body text |
+| `text-body-md` | 0.875rem (14px) | Default body/input text |
+| `text-body-sm` | 0.75rem (12px) | Small body, labels |
+| `text-label-sm` | 0.6875rem (11px) | Section titles, small labels |
+| `text-caption` | 0.625rem (10px) | Captions, metadata, badges |
+
+Never use arbitrary `text-[Xpx]` — map to the nearest token. Standard Tailwind sizes (`text-sm`, `text-xs`, `text-base`, `text-lg`, etc.) are also acceptable.
+
+#### Glass / Elevation
+
+| Class | Usage |
+|-------|-------|
+| `glass-card` | Base glass cards |
+| `glass-elevated` | Floating panels, modals, dropdowns |
+| `glass-panel` | Landing/marketing cards |
+| `glass-panel-social` | Social thread cards (peach glow accent) |
+| `glass-inset` | Recessed input wells |
+| `shadow-elevation-1` through `shadow-elevation-4` | Depth hierarchy |
+
+#### Input Fields
+
+Use `className="input-standard"` for all standard inputs (defined in globals.css):
+```
+w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30
+```
+
+Auth forms use a variant with `border-b` underline style — that's the one exception.
+
+#### Border Radius Rules
+
+| Shape | Radius | Components |
+|-------|--------|------------|
+| `rounded-full` | Pill | All buttons |
+| `rounded-xl` | 24px | Modals, large cards |
+| `rounded-lg` | 16px | Cards, inputs, containers |
+| `rounded-md` | 10px | Small elements, badges |
 
 ### State Management
 

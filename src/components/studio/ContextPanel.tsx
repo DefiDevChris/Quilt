@@ -28,7 +28,7 @@ function CollapsibleSection({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between py-2.5 px-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface/70 transition-shadow shadow-elevation-1 hover:shadow-elevation-2 rounded-md"
+        className="w-full flex items-center justify-between py-2.5 px-1 text-label-sm font-semibold uppercase tracking-[0.06em] text-on-surface/70 transition-shadow shadow-elevation-1 hover:shadow-elevation-2 rounded-md"
       >
         {title}
         <svg
@@ -288,14 +288,14 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         <button
           type="button"
           onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+          className="bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
         >
           +90&#176;
         </button>
         <button
           type="button"
           onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+          className="bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
         >
           -90&#176;
         </button>
@@ -304,14 +304,14 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
         <button
           type="button"
           onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+          className="bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
         >
           Flip H
         </button>
         <button
           type="button"
           onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
+          className="bg-surface-container text-on-surface rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high transition-colors"
         >
           Flip V
         </button>
@@ -361,14 +361,14 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
             active.set({ skewX: 0, skewY: 0 });
           })
         }
-        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4 border border-outline-variant/10"
+        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4 border border-outline-variant/10"
       >
         Reset Transform
       </button>
 
       {includeCanvasColor && (
         <div className="flex items-center gap-2.5">
-          <span className="text-[11px] font-medium text-on-surface/70 uppercase tracking-wider">
+          <span className="text-label-sm font-medium text-on-surface/70 uppercase tracking-wider">
             Canvas
           </span>
           <div

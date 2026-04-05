@@ -23,15 +23,15 @@ interface CommunityResponse {
 
 function PostCard({ post }: { post: CommunityPost }) {
   return (
-    <div className="aspect-square rounded-xl bg-white border border-warm-border/60 overflow-hidden shadow-elevation-1 hover:shadow-elevation-2 transition-shadow relative">
+    <div className="aspect-square rounded-xl bg-white border border-outline-variant/60 overflow-hidden shadow-elevation-1 hover:shadow-elevation-2 transition-shadow relative">
       {post.thumbnailUrl ? (
         <div
           className="w-full h-full bg-center bg-cover"
           style={{ backgroundImage: `url(${post.thumbnailUrl})` }}
         />
       ) : (
-        <div className="w-full h-full bg-warm-surface flex items-center justify-center">
-          <ImageIcon className="w-10 h-10 text-warm-border" />
+        <div className="w-full h-full bg-surface-container flex items-center justify-center">
+          <ImageIcon className="w-10 h-10 text-outline-variant" />
         </div>
       )}
     </div>
@@ -97,19 +97,19 @@ export default function CommunityPreview() {
   const hasPosts = !isLoading && posts.length > 0;
 
   return (
-    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-warm-surface/50 to-transparent">
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-surface-container/50 to-transparent">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Community preview */}
           <div className="relative order-2 lg:order-1">
             <div className="flex items-center justify-between mb-4">
               <h3
-                className="font-bold text-warm-text"
+                className="font-bold text-on-surface"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Community Gallery
               </h3>
-              <span className="text-sm text-warm-text-muted">Latest designs</span>
+              <span className="text-sm text-tertiary">Latest designs</span>
             </div>
             {hasPosts ? (
               <div className="grid grid-cols-3 gap-4">
@@ -135,13 +135,13 @@ export default function CommunityPreview() {
             <div className="flex items-center gap-4">
               <Mascot pose="begging" size="lg" />
               <h2
-                className="text-3xl md:text-4xl font-bold text-warm-text"
+                className="text-3xl md:text-4xl font-bold text-on-surface"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Quilters Who Get It
               </h2>
             </div>
-            <p className="text-lg text-warm-text-secondary leading-relaxed">
+            <p className="text-lg text-secondary leading-relaxed">
               Share your latest designs, discover inspiration from fellow quilters, and pick up new
               techniques along the way. Whether it&apos;s your first quilt or your fiftieth,
               there&apos;s always something new to learn and someone to cheer you on.
@@ -158,12 +158,12 @@ export default function CommunityPreview() {
                 />
                 <div>
                   <div
-                    className="text-2xl font-bold text-warm-peach"
+                    className="text-2xl font-bold text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     105+
                   </div>
-                  <div className="text-sm text-warm-text-secondary">Quilt blocks</div>
+                  <div className="text-sm text-secondary">Quilt blocks</div>
                 </div>
               </div>
               <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
@@ -176,12 +176,12 @@ export default function CommunityPreview() {
                 />
                 <div>
                   <div
-                    className="text-2xl font-bold text-warm-peach"
+                    className="text-2xl font-bold text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     6
                   </div>
-                  <div className="text-sm text-warm-text-secondary">Layout modes</div>
+                  <div className="text-sm text-secondary">Layout modes</div>
                 </div>
               </div>
               <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
@@ -194,12 +194,12 @@ export default function CommunityPreview() {
                 />
                 <div>
                   <div
-                    className="text-2xl font-bold text-warm-peach"
+                    className="text-2xl font-bold text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     10+
                   </div>
-                  <div className="text-sm text-warm-text-secondary">Tutorials</div>
+                  <div className="text-sm text-secondary">Tutorials</div>
                 </div>
               </div>
               <div className="glass-panel rounded-xl p-4 flex items-center gap-3">
@@ -212,20 +212,17 @@ export default function CommunityPreview() {
                 />
                 <div>
                   <div
-                    className="text-2xl font-bold text-warm-peach"
+                    className="text-2xl font-bold text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     4
                   </div>
-                  <div className="text-sm text-warm-text-secondary">Worktables</div>
+                  <div className="text-sm text-secondary">Worktables</div>
                 </div>
               </div>
             </div>
 
-            <Link
-              href="/socialthreads"
-              className="inline-block bg-[var(--color-primary)] text-[var(--color-primary-on)] font-bold px-8 py-4 rounded-full shadow-elevation-3 hover:bg-[var(--color-primary-dark)] transition-all"
-            >
+            <Link href="/socialthreads" className="btn-primary">
               See the Gallery
             </Link>
           </div>

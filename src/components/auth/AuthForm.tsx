@@ -25,14 +25,14 @@ export function AuthForm({ mode }: AuthFormProps) {
             priority
           />
         </Link>
-        <h1 className="text-[length:var(--font-size-headline-md)] font-bold text-on-surface">
+        <h1 className="text-headline-md font-bold text-on-surface">
           {isSignUp ? 'Create your account' : 'Welcome back'}
         </h1>
       </div>
 
       <AuthFormInner mode={mode} />
 
-      <p className="mt-6 text-center text-[length:var(--font-size-body-sm)] text-secondary">
+      <p className="mt-6 text-center text-body-sm text-secondary">
         {isSignUp ? (
           <>
             Already have an account?{' '}

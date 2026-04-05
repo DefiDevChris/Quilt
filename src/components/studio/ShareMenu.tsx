@@ -118,7 +118,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-body-md font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
         >
           <Share2 size={16} />
           Share
@@ -139,7 +139,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
                 setOpen(false);
                 setShowPublishModal(true);
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-medium text-primary hover:bg-surface-container-high transition-colors text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-md font-medium text-primary hover:bg-surface-container-high transition-colors text-left"
             >
               <Share2 size={16} />
               Publish Template
@@ -150,7 +150,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
               type="button"
               onClick={handleTogglePublic}
               disabled={togglingPublic}
-              className="w-full flex items-center justify-between px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left disabled:opacity-50"
+              className="w-full flex items-center justify-between px-3 py-2 text-body-md text-on-surface/80 hover:bg-surface-container-high transition-colors text-left disabled:opacity-50"
             >
               <span className="flex items-center gap-2.5">
                 <span className="text-on-surface/50">
@@ -172,7 +172,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
                 key={item.label}
                 type="button"
                 onClick={item.action}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-body-md text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
               >
                 <span className="text-on-surface/50">{item.icon}</span>
                 {item.label}
