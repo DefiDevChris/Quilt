@@ -8,6 +8,13 @@
       "when": 1775090865463,
       "tag": "0000_add_version_column",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775368073853,
+      "tag": "0001_moaning_newton_destine",
+      "breakpoints": true
     }
   ]
 }
