@@ -170,14 +170,24 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
     case 'image': {
       const rawSrc = (node.attrs?.src as string) ?? '';
       const alt = (node.attrs?.alt as string) ?? '';
+      const align = (node.attrs?.align as string) ?? 'center';
       const src = isSafeHref(rawSrc) ? rawSrc : '#';
+      
+      // Alignment classes for staggered media layout
+      const alignClasses = {
+        left: 'float-left mr-6 mb-4 w-1/2 md:w-1/3 rounded-xl',
+        right: 'float-right ml-6 mb-4 w-1/2 md:w-1/3 rounded-xl',
+        center: 'mx-auto mb-4 rounded-xl',
+        full: 'w-full mb-4 rounded-xl',
+      };
+      
       return (
-        <figure key={key} className="mb-4">
+        <figure key={key} className={`mb-4 ${alignClasses[align as keyof typeof alignClasses] || alignClasses.center}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt={alt}
-            className="rounded-lg w-full max-h-[500px] object-cover"
+            className="w-full h-auto object-cover"
             loading="lazy"
           />
           {alt && (
@@ -186,7 +196,6 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
         </figure>
       );
     }
-
     case 'horizontalRule':
       return <hr key={key} className="border-outline-variant/30 my-6" />;
 

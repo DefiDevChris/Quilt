@@ -25,3 +25,10 @@ export const blogPostCategoryEnum = pgEnum('blog_post_category', [
   'History',
   'Organization',
 ]);
+
+// Blog post layout types
+export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
+  'standard',
+  'hero-cover',
+  'staggered-media',
+]);
