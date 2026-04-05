@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 
 import { formatRelativeTime } from '@/lib/format-time';
 import { RedditStyleComments } from '@/components/community/comments/RedditStyleComments';
+import { ProjectCard } from '@/components/projects/ProjectCard';
 
 interface PostDetail {
   id: string;
@@ -170,26 +171,20 @@ export function PostDetail({ postId }: PostDetailProps) {
 
         {/* Linked Project */}
         {post.projectId && post.projectName && (
-          <Link
-            href={`/studio/${post.projectId}`}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white/40 border border-white/50 mb-4 hover:bg-white/60 transition-colors"
-          >
-            {post.projectThumbnailUrl ? (
-              <img
-                src={post.projectThumbnailUrl}
-                alt={post.projectName}
-                className="w-12 h-12 rounded-lg object-cover"
+          <div className="mb-4">
+            <p className="text-xs font-bold text-secondary mb-2 uppercase tracking-wider">Attached Project</p>
+            <div className="w-full max-w-sm">
+              <ProjectCard
+                id={post.projectId}
+                name={post.projectName}
+                thumbnailUrl={post.projectThumbnailUrl}
+                unitSystem="imperial"
+                updatedAt={post.createdAt}
+                onDelete={() => {}}
+                onRename={() => {}}
               />
-            ) : (
-              <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
-                <span className="text-xl">🧵</span>
-              </div>
-            )}
-            <div>
-              <p className="text-xs text-secondary font-medium">Project</p>
-              <p className="font-bold text-on-surface">{post.projectName}</p>
             </div>
-          </Link>
+          </div>
         )}
 
         {/* Actions */}

@@ -31,8 +31,8 @@ interface CommunityState {
   tab: FeedTab;
   category: string | undefined;
   page: number;
-  totalPages: number;
-  total: number;
+  totalPages: number; // Keeping for compatibility with FeedContent
+  nextCursor: string | null;
   isLoading: boolean;
   error: string | null;
 
@@ -54,8 +54,8 @@ const INITIAL_STATE = {
   tab: 'discover' as FeedTab,
   category: undefined as string | undefined,
   page: 1,
-  totalPages: 1,
-  total: 0,
+  totalPages: 1, // Kept for compatibility, indicates hasNextPage if page < totalPages
+  nextCursor: null as string | null,
   isLoading: false,
   error: null as string | null,
 };
@@ -82,29 +82,33 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   ...INITIAL_STATE,
 
   setSearch: (search) => {
-    set({ search, page: 1 });
+    set({ search, page: 1, nextCursor: null, totalPages: 1 });
     get().fetchPosts();
   },
 
   setSort: (sort) => {
-    set({ sort, page: 1 });
+    set({ sort, page: 1, nextCursor: null, totalPages: 1 });
     get().fetchPosts();
   },
 
   setTab: (tab) => {
-    set({ tab, page: 1 });
+    set({ tab, page: 1, nextCursor: null, totalPages: 1 });
     get().fetchPosts();
   },
 
   setCategory: (category) => {
-    set({ category, page: 1 });
+    set({ category, page: 1, nextCursor: null, totalPages: 1 });
     get().fetchPosts();
   },
 
   fetchPosts: async (append = false) => {
     communityAbortController?.abort();
     communityAbortController = new AbortController();
-    const { search, sort, tab, category, page } = get();
+    const { search, sort, tab, category, nextCursor, page } = get();
+
+    // Only use cursor if appending
+    const cursor = append ? nextCursor : null;
+
     set({ isLoading: true, error: null });
 
     try {
@@ -113,7 +117,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       params.set('sort', sort);
       params.set('tab', tab);
       if (category) params.set('category', category);
-      params.set('page', String(page));
+      if (cursor) params.set('cursor', cursor);
       params.set('limit', '24');
 
       const res = await fetch(`/api/community?${params.toString()}`, {
@@ -127,11 +131,14 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       }
 
       const data = json.data;
+      const returnedNextCursor = data.pagination.nextCursor;
+
       set((state) => ({
         posts: append ? [...state.posts, ...data.posts] : data.posts,
-        total: data.pagination.total,
-        totalPages: data.pagination.totalPages,
-        page: data.pagination.page,
+        nextCursor: returnedNextCursor,
+        // Make page < totalPages true if we have a next cursor, false otherwise
+        page: append ? state.page + 1 : 1,
+        totalPages: returnedNextCursor ? (append ? state.page + 2 : 2) : (append ? state.page + 1 : 1),
         isLoading: false,
       }));
     } catch (error) {
@@ -141,15 +148,9 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   loadMore: async () => {
-    if (get().isLoading) return;
-    const prevPage = get().page;
-    set({ page: prevPage + 1 });
-    try {
-      await get().fetchPosts(true);
-    } catch {
-      // Revert page on failure to prevent counter drift
-      set({ page: prevPage });
-    }
+    const state = get();
+    if (state.isLoading || !state.nextCursor) return;
+    await get().fetchPosts(true);
   },
 
   likePost: (postId) => {

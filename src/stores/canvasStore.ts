@@ -290,7 +290,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setClipboard: (clipboard) => set({ clipboard }),
 
-  setReferenceImageOpacity: (referenceImageOpacity) => set({ referenceImageOpacity }),
+  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

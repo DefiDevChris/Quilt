@@ -48,6 +48,7 @@
     "polygon-clipping": "^0.15.7",
     "react": "~19.2.4",
     "react-dom": "~19.2.4",
+    "react-intersection-observer": "^10.0.3",
     "stripe": "~21.0.1",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"

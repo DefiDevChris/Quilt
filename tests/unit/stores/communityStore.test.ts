@@ -35,7 +35,7 @@ function resetStore() {
     category: undefined,
     page: 1,
     totalPages: 1,
-    total: 0,
+    nextCursor: null,
     isLoading: false,
     error: null,
   });
@@ -52,7 +52,7 @@ describe('communityStore', () => {
         JSON.stringify({
           data: {
             posts: [],
-            pagination: { total: 0, totalPages: 1, page: 1 },
+            pagination: { nextCursor: null, limit: 24 },
           },
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -71,7 +71,7 @@ describe('communityStore', () => {
     expect(state.sort).toBe('newest');
     expect(state.page).toBe(1);
     expect(state.totalPages).toBe(1);
-    expect(state.total).toBe(0);
+    expect(state.nextCursor).toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
   });
@@ -165,7 +165,7 @@ describe('communityStore', () => {
       sort: 'popular',
       page: 3,
       totalPages: 5,
-      total: 100,
+      nextCursor: '123',
       isLoading: true,
       error: 'some error',
     });
@@ -178,15 +178,15 @@ describe('communityStore', () => {
     expect(state.sort).toBe('newest');
     expect(state.page).toBe(1);
     expect(state.totalPages).toBe(1);
-    expect(state.total).toBe(0);
+    expect(state.nextCursor).toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
   });
 
   it('fetchPosts calls fetch with correct params', async () => {
-    useCommunityStore.setState({ search: 'star', sort: 'popular', page: 2 });
+    useCommunityStore.setState({ search: 'star', sort: 'popular', page: 2, nextCursor: '2026-03-27' });
 
-    await useCommunityStore.getState().fetchPosts();
+    await useCommunityStore.getState().fetchPosts(true);
 
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/community?'),
@@ -195,7 +195,7 @@ describe('communityStore', () => {
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
     expect(callUrl).toContain('search=star');
     expect(callUrl).toContain('sort=popular');
-    expect(callUrl).toContain('page=2');
+    expect(callUrl).toContain('cursor=2026-03-27');
     expect(callUrl).toContain('limit=24');
   });
 
@@ -210,7 +210,7 @@ describe('communityStore', () => {
         JSON.stringify({
           data: {
             posts: [newPost],
-            pagination: { total: 1, totalPages: 1, page: 1 },
+            pagination: { nextCursor: null, limit: 24 },
           },
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -234,7 +234,7 @@ describe('communityStore', () => {
         JSON.stringify({
           data: {
             posts: [newPost],
-            pagination: { total: 2, totalPages: 1, page: 1 },
+            pagination: { nextCursor: null, limit: 24 },
           },
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -273,7 +273,7 @@ describe('communityStore', () => {
 
   it('loadMore increments page and appends', async () => {
     const existingPost = makeMockPost({ id: 'existing' });
-    useCommunityStore.setState({ posts: [existingPost], page: 1, totalPages: 3 });
+    useCommunityStore.setState({ posts: [existingPost], page: 1, totalPages: 3, nextCursor: '2026-03-27' });
 
     const newPost = makeMockPost({ id: 'page2' });
     global.fetch = vi.fn().mockResolvedValue(
@@ -281,7 +281,7 @@ describe('communityStore', () => {
         JSON.stringify({
           data: {
             posts: [newPost],
-            pagination: { total: 2, totalPages: 3, page: 2 },
+            pagination: { nextCursor: null, limit: 24 },
           },
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }

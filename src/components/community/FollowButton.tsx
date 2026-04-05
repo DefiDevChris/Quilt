@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useOptimistic, startTransition, useCallback } from 'react';
 
 interface FollowButtonProps {
   readonly username: string;
@@ -10,6 +10,12 @@ interface FollowButtonProps {
 
 export function FollowButton({ username, initialFollowing, onToggle }: FollowButtonProps) {
   const [isFollowing, setIsFollowing] = useState(initialFollowing);
+
+  const [optimisticFollowing, addOptimisticFollowing] = useOptimistic(
+    isFollowing,
+    (_, nextFollowing: boolean) => nextFollowing
+  );
+
   const [loading, setLoading] = useState(false);
   const [hover, setHover] = useState(false);
 
@@ -17,23 +23,27 @@ export function FollowButton({ username, initialFollowing, onToggle }: FollowBut
     if (loading) return;
     setLoading(true);
 
-    const method = isFollowing ? 'DELETE' : 'POST';
+    const nextState = !optimisticFollowing;
+    const method = optimisticFollowing ? 'DELETE' : 'POST';
+
+    startTransition(() => {
+      addOptimisticFollowing(nextState);
+    });
 
     try {
       const res = await fetch(`/api/members/${encodeURIComponent(username)}/follow`, { method });
       if (res.ok) {
-        const newState = !isFollowing;
-        setIsFollowing(newState);
-        onToggle?.(newState);
+        setIsFollowing(nextState);
+        onToggle?.(nextState);
       }
     } catch {
-      // Silently fail — user can retry
+      // Reverts automatically because setIsFollowing wasn't called
     } finally {
       setLoading(false);
     }
-  }, [isFollowing, loading, username, onToggle]);
+  }, [optimisticFollowing, loading, username, onToggle, addOptimisticFollowing]);
 
-  if (isFollowing) {
+  if (optimisticFollowing) {
     return (
       <button
         type="button"
