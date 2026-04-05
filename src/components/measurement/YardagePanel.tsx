@@ -3,7 +3,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCartStore } from '@/stores/cartStore';
+import { useFabricStore } from '@/stores/fabricStore';
 import { STANDARD_WOFS, type WOF } from '@/lib/yardage-utils';
+import { isShopifyEnabled } from '@/lib/shopify';
 
 export function YardagePanel() {
   const isPanelOpen = useYardageStore((s) => s.isPanelOpen);
@@ -14,11 +17,22 @@ export function YardagePanel() {
   const setWasteMargin = useYardageStore((s) => s.setWasteMargin);
   const results = useYardageStore((s) => s.results);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
+  
+  // Cart integration
+  const { addProjectYardageToCart, isLoading: isAddingToCart } = useCartStore();
+  const fabrics = useFabricStore((s) => s.fabrics);
 
   const wastePercent = Math.round(wasteMargin * 100);
 
   const totalYards = results.reduce((sum, r) => sum + r.yardsRequired, 0);
   const totalFatQuarters = results.reduce((sum, r) => sum + r.fatQuartersRequired, 0);
+
+  // Check if Shopify is enabled
+  const shopEnabled = isShopifyEnabled();
+
+  const handleAddToCart = async () => {
+    await addProjectYardageToCart(results, fabrics);
+  };
 
   return (
     <AnimatePresence>
@@ -154,6 +168,36 @@ export function YardagePanel() {
                     {totalFatQuarters}
                   </div>
                 </div>
+
+                {/* Add to Cart Button (Shopify Integration) */}
+                {shopEnabled && (
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    className="w-full mt-3 py-2.5 px-4 bg-secondary text-on-secondary rounded-lg 
+                             font-medium text-sm hover:bg-secondary-hover 
+                             disabled:opacity-50 disabled:cursor-not-allowed
+                             transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isAddingToCart ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Add Purchasable Fabrics to Cart
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </div>
