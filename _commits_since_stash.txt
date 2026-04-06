@@ -1,0 +1,21 @@
+140df31 chore: remove temp scripts and test outputs
+1c53597 refactor: update design system tokens and remove legacy assets
+755aa7a docs: update README and CLAUDE.md with admin dashboard, Shopify integration, and 105 quilt blocks
+d4d3944 fix: post-merge fixes for admin dashboard and Shopify integration
+18a97f4 Merge remote-tracking branch 'origin/shopify-headless-integration-framework-d8185'
+7a06714 Merge remote-tracking branch 'origin/admin-dashboard-implementation-ba31a'
+46edc6d Merge remote-tracking branch 'origin/feat/admin-dashboard-improvements-13381812387507931821'
+b2b794b feat(admin): complete admin dashboard implementation
+d00b379 Add admin moderation API routes and update blog functionality
+07c127d Title: Implement Shopify Storefront API integration with cart management and fabric purchasing features
+c861849 fix: post-merge fixes for blog (PR #8) and social (PR #9)
+63f00f7 Merge pull request #9 from DefiDevChris/feature/social-threads-polish-6620032058932832607
+0544d63 Merge pull request #8 from DefiDevChris/dynamic-blog-system-integration-d33b1
+eeed789 Merge pull request #10 from DefiDevChris/nextjs-drizzle-blog-layout-enhancements-074a1
+b7d1970 Title: Implement dynamic blog post layouts with image alignment support
+16874f9 feat(social): implement infinite scroll, optimistic UI, and recursive comments
+e4de897 **Title:** Implement dynamic blog with admin CMS and rich text editor
+b8b7e76 refactor: comprehensive cleanup, new features, and UI improvements
+8159dba merge: merge feature/phase-1-dashboard-redesign into main
+54db692 feat: refactor community posts to social posts, remove admin blog routes
+fe6d0cf feat: Implement phase 1 dashboard redesign entry points

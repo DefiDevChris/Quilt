@@ -7,8 +7,6 @@ import Image from 'next/image';
 import {
   Plus,
   ArrowLeft,
-  Scissors,
-  ScanLine,
   BookOpen,
   LayoutGrid,
   HeartHandshake,
@@ -23,7 +21,6 @@ import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
-import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
 
 const PatternLibrary = dynamic(
   () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
@@ -148,38 +145,14 @@ export default function DashboardPage() {
 
   /* ── Main bento grid ─────────────────────────────────────────────── */
   return (
-    <div className="max-w-6xl mx-auto md:pt-16 md:pb-12 px-6 relative z-10 w-full transition-all duration-500">
-      {/* Corgi mascots */}
-      <Image
-        src="/mascots&avatars/corgi2.png"
-        alt=""
-        width={80}
-        height={80}
-        className="hidden md:block absolute right-8 pointer-events-none"
-        style={{ top: '62px' }}
-      />
-      <Image
-        src="/mascots&avatars/corgi3.png"
-        alt=""
-        width={80}
-        height={80}
-        className="hidden md:block absolute bottom-32 -left-16 pointer-events-none"
-      />
-      <Image
-        src="/mascots&avatars/corgi7.png"
-        alt=""
-        width={80}
-        height={80}
-        className="hidden md:block absolute bottom-32 -right-16 pointer-events-none"
-      />
-
-      {/* Greeting and Pro Upgrade Button */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-20">
+    <div className="max-w-6xl mx-auto px-6 relative z-10 w-full h-[calc(100vh-56px)] flex flex-col justify-center overflow-hidden">
+      {/* Greeting */}
+      <div className="mb-3 flex flex-col md:flex-row md:items-end justify-between gap-3 relative z-20 flex-shrink-0">
         <div>
-          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-1">
             {greeting}
           </p>
-          <h1 className="text-on-surface text-4xl font-extrabold tracking-tight flex items-center gap-3">
+          <h1 className="text-on-surface text-3xl font-extrabold tracking-tight flex items-center gap-3">
             Hello, {displayName}
             {isPro && (
               <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-xs font-extrabold uppercase tracking-widest rounded-full align-middle">
@@ -192,15 +165,15 @@ export default function DashboardPage() {
         {!isPro && !isLoadingAuth && user && (
           <button
             onClick={() => setShowProUpgrade(true)}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
+            className="relative overflow-hidden rounded-lg bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-shadow duration-200 hover:shadow-elevation-2"
           >
-            <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
-              <Sparkles size={20} className="text-primary-dark" />
+            <div className="flex items-center gap-2.5 rounded-[6px] bg-white/90 px-5 py-2.5 backdrop-blur-sm">
+              <Sparkles size={18} className="text-primary-dark" />
               <div className="text-left">
-                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">
+                <p className="text-sm font-bold text-on-surface leading-none mb-0.5">
                   Upgrade to Pro
                 </p>
-                <p className="text-xs font-medium text-secondary leading-none">
+                <p className="text-caption font-medium text-secondary leading-none">
                   Unlock AI & Exports
                 </p>
               </div>
@@ -209,211 +182,148 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Quick Start Workflows */}
-      <QuickStartWorkflows
-        onPhotoToPattern={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-        onStartFromTemplate={() => setActiveTab('patterns')}
-        onBlankProject={() => setDialogOpen(true)}
-        isPro={isPro}
-      />
-
-      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[280px_200px_160px] gap-6 pb-20 relative z-10">
-        {/* ── 1. Blank Project — col 1-4, row 1 ──────────────────────── */}
+      <div className="grid grid-cols-12 auto-rows-min gap-3 relative z-10 flex-1 min-h-0">
+        {/* ── 1. Blank Project — wide left ─────────────────────────── */}
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-elevated border-white/60 flex flex-col justify-between"
+          className="col-span-12 md:col-span-5 rounded-lg p-5 text-left relative overflow-hidden cursor-pointer glass-elevated border-white/60 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute -bottom-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-700">
-            <Scissors size={180} strokeWidth={1} className="text-primary-dark" />
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm">
+            <Plus size={20} className="text-white" strokeWidth={3} />
           </div>
-          <div className="relative z-10 mb-auto">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-elevation-3 shadow-primary/30 group-hover:scale-110 transition-all">
-              <Plus size={24} className="text-white" strokeWidth={3} />
-            </div>
-          </div>
-          <div className="relative z-10 mt-auto">
-            <p className="text-on-surface font-extrabold text-2xl tracking-tight leading-none mb-2">
-              Blank Project
-            </p>
-            <p className="text-secondary text-sm font-medium">
-              Start from scratch with a custom grid/layout
-            </p>
+          <div>
+            <p className="text-on-surface font-bold text-lg leading-tight">Blank Project</p>
+            <p className="text-secondary text-body-sm mt-0.5">Start from scratch</p>
           </div>
         </button>
 
-        {/* ── 2. Start from Template — col 5-8, row 1 ─────────────────── */}
+        {/* ── 2. Start from Template — narrow right ───────────────── */}
         <button
           type="button"
           onClick={() => setActiveTab('patterns')}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50 flex flex-col justify-between"
+          className="col-span-12 md:col-span-3 rounded-lg p-5 text-left glass-card border-white/50 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-12 group-hover:scale-110 transition-transform duration-1000">
-            <LayoutGrid size={240} strokeWidth={1} className="text-on-surface" />
+          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center">
+            <LayoutGrid size={18} className="text-secondary" />
           </div>
-          <div className="relative z-10 mb-auto">
-            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
-              <LayoutGrid size={22} className="text-secondary" />
-            </div>
-          </div>
-          <div className="relative z-10 mt-auto">
-            <p className="text-on-surface font-extrabold text-2xl tracking-tight leading-none mb-2">
-              Start from Template
-            </p>
-            <p className="text-secondary text-sm font-medium">
-              Browse the Pattern Library for a pre-made layout
-            </p>
+          <div>
+            <p className="text-on-surface font-bold text-base leading-tight">Templates</p>
+            <p className="text-secondary text-body-sm mt-0.5">Browse patterns</p>
           </div>
         </button>
 
-        {/* ── 3. Photo to Pattern — col 9-12, row 1 ─ */}
+        {/* ── 3. Photo to Pattern — medium right ─────────────────── */}
         <button
           type="button"
           onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-          className="col-span-12 md:col-span-4 rounded-xl p-8 text-left relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-elevation-3 glass-card border-white/50 flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-lg p-5 text-left glass-card border-white/50 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          {/* Custom Bento Graphic Background (Lucide) */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-15 pointer-events-none group-hover:scale-125 transition-transform duration-700">
-            <ScanLine size={180} strokeWidth={1} className="text-primary-dark" />
-          </div>
-
-          <div className="relative z-10 mb-auto">
-            <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-caption font-extrabold uppercase tracking-widest rounded-full">
-              AI Feature
-            </span>
-          </div>
-          <div className="relative z-10 mt-auto">
-            <p className="text-on-surface text-2xl font-extrabold tracking-tight leading-none mb-2">
-              Photo to Pattern
-            </p>
-            <p className="text-secondary text-sm font-medium">
-              Upload a photo to automatically detect patterns
-            </p>
+          <span className="inline-block px-2.5 py-0.5 bg-primary/20 text-primary-dark text-caption font-bold uppercase tracking-widest rounded-full w-fit">
+            AI
+          </span>
+          <div>
+            <p className="text-on-surface font-bold text-base leading-tight">Photo to Pattern</p>
+            <p className="text-secondary text-body-sm mt-0.5">Detect patterns from a photo</p>
           </div>
         </button>
 
-        {/* ── 4. Quiltbook — col 1-6, row 2 ───────────────────────── */}
+        {/* ── 4. Quiltbook — wider left ──────────────────────────── */}
         <Link
           href="/projects"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 flex flex-col justify-between group"
+          className="col-span-12 md:col-span-7 rounded-lg p-5 glass-card border-white/40 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute -bottom-6 right-0 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-            <BookOpen size={200} strokeWidth={1} className="text-primary-dark" />
-          </div>
-          <div className="flex items-start justify-between relative z-10">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-on-surface font-extrabold text-xl tracking-tight">My Quiltbook</p>
-              <p className="text-secondary text-sm mt-1 font-medium">
+              <p className="text-on-surface font-bold text-base leading-tight">My Quiltbook</p>
+              <p className="text-secondary text-body-sm mt-0.5">
                 {projectCount !== null ? `${projectCount} saved designs` : 'Your saved designs'}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center flex-shrink-0">
-              <BookOpen size={22} className="text-primary-dark" />
-            </div>
+            <BookOpen size={20} className="text-secondary" />
           </div>
 
-          <div className="relative z-10">
-            {projects.length > 0 ? (
-              <div className="flex gap-2.5">
-                {projects.slice(0, 3).map((p) => (
-                  <div
-                    key={p.id}
-                    className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden border border-outline-variant/30 shadow-elevation-1"
-                  >
-                    {p.thumbnailUrl ? (
-                      <Image
-                        src={p.thumbnailUrl}
-                        alt={p.name}
-                        width={56}
-                        height={56}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-surface-container-low">
-                        <span className="text-secondary/50 text-sm font-extrabold">
-                          {p.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex gap-2.5">
-                {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-14 h-14 rounded-lg border-2 border-dashed border-outline-variant/50 bg-white/30"
-                  />
-                ))}
-              </div>
-            )}
-            <p className="text-xs text-secondary/70 mt-4 font-bold tracking-wide">
-              {projects.length > 0
-                ? `LAST EDITED ${formatRelativeTime(projects[0].updatedAt).toUpperCase()}`
-                : 'NO PROJECTS YET'}
-            </p>
-          </div>
+          {projects.length > 0 ? (
+            <div className="flex gap-2">
+              {projects.slice(0, 3).map((p) => (
+                <div
+                  key={p.id}
+                  className="w-11 h-11 rounded-md bg-surface-container overflow-hidden border border-outline-variant/30"
+                >
+                  {p.thumbnailUrl ? (
+                    <Image
+                      src={p.thumbnailUrl}
+                      alt={p.name}
+                      width={44}
+                      height={44}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-surface-container-low">
+                      <span className="text-secondary/50 text-body-sm font-bold">
+                        {p.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-11 h-11 rounded-md border-2 border-dashed border-outline-variant/50 bg-white/30"
+                />
+              ))}
+            </div>
+          )}
+          <p className="text-caption text-secondary/70 font-bold tracking-wide">
+            {projects.length > 0
+              ? `LAST EDITED ${formatRelativeTime(projects[0].updatedAt).toUpperCase()}`
+              : 'NO PROJECTS YET'}
+          </p>
         </Link>
 
-        {/* ── 5. Community — col 7-12, row 2 ───────────────────────── */}
+        {/* ── 5. Community — narrower right ────────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex flex-col justify-between"
+          className="col-span-12 md:col-span-5 rounded-lg p-5 glass-card border-white/40 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-            <HeartHandshake size={200} strokeWidth={1} className="text-primary-dark" />
+          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center">
+            <HeartHandshake size={18} className="text-primary-dark" />
           </div>
-          <div className="relative z-10">
-            <div className="w-12 h-12 rounded-full glass-inset flex items-center justify-center">
-              <HeartHandshake size={22} className="text-primary-dark" />
-            </div>
-          </div>
-          <div className="relative z-10 mt-auto">
-            <p className="text-on-surface font-extrabold text-xl tracking-tight">
-              Community Threads
-            </p>
-            <p className="text-secondary text-sm mt-1 font-medium">Share blocks &amp; discover</p>
+          <div>
+            <p className="text-on-surface font-bold text-base leading-tight">Community</p>
+            <p className="text-secondary text-body-sm mt-0.5">Share blocks &amp; discover</p>
           </div>
         </Link>
 
-        {/* ── 6. Profile — col 1-6, row 3 ──────────────────────────── */}
+        {/* ── 6. Profile — narrow left ─────────────────────────────── */}
         <Link
           href="/profile"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-4 rounded-lg px-5 py-4 glass-card border-white/40 flex items-center gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute top-[-30%] right-[-10%] opacity-[0.02] pointer-events-none transition-transform duration-1000 group-hover:scale-110">
-            <UserCircle size={320} strokeWidth={1} className="text-on-surface" />
+          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center shrink-0">
+            <UserCircle size={20} className="text-secondary" />
           </div>
-          <div className="w-16 h-16 rounded-full glass-inset flex items-center justify-center relative z-10 shrink-0">
-            <UserCircle size={32} className="text-secondary" />
-          </div>
-          <div className="relative z-10">
-            <p className="text-on-surface font-extrabold text-xl tracking-tight">My Profile</p>
-            <p className="text-secondary text-sm mt-1 font-medium">
-              Manage details and public settings
-            </p>
+          <div>
+            <p className="text-on-surface font-bold text-sm leading-tight">My Profile</p>
+            <p className="text-secondary text-body-sm">Public settings</p>
           </div>
         </Link>
 
-        {/* ── 7. Settings — col 7-12, row 3 ────────────────────────── */}
+        {/* ── 7. Settings — wider right ────────────────────────────── */}
         <Link
           href="/settings"
-          className="col-span-12 md:col-span-6 rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:shadow-elevation-2 glass-card border-white/40 group flex items-center gap-6"
+          className="col-span-12 md:col-span-8 rounded-lg px-5 py-4 glass-card border-white/40 flex items-center gap-3 justify-end text-right transition-shadow duration-200 hover:shadow-elevation-2"
         >
-          <div className="absolute top-1/2 left-[-15%] -translate-y-1/2 opacity-[0.03] pointer-events-none group-hover:rotate-90 transition-transform duration-1000">
-            <Settings size={280} strokeWidth={1} className="text-on-surface" />
+          <div>
+            <p className="text-on-surface font-bold text-sm leading-tight">System Settings</p>
+            <p className="text-secondary text-body-sm">Units, theme, and defaults</p>
           </div>
-          <div className="relative z-10 flex items-center gap-6 w-full justify-end">
-            <div className="text-right">
-              <p className="text-on-surface font-extrabold text-xl tracking-tight">
-                System Settings
-              </p>
-              <p className="text-secondary text-sm mt-1 font-medium">Units, theme, and defaults</p>
-            </div>
-            <div className="w-16 h-16 rounded-full glass-inset flex items-center justify-center shrink-0">
-              <Settings size={32} className="text-secondary" />
-            </div>
+          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center shrink-0">
+            <Settings size={20} className="text-secondary" />
           </div>
         </Link>
       </div>

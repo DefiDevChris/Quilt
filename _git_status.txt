@@ -1,0 +1,70 @@
+ D public/scissor-1.svg
+ D src/app/(protected)/admin/blog/[id]/page.tsx
+ D src/app/(protected)/admin/blog/page.tsx
+ D src/app/(protected)/admin/community/page.tsx
+ D src/app/(protected)/admin/libraries/page.tsx
+ D src/app/(protected)/admin/moderation/page.tsx
+ M src/app/(protected)/layout.tsx
+ M src/app/auth/layout.tsx
+ M src/app/dashboard/layout.tsx
+ M src/app/dashboard/page.tsx
+ M src/components/auth/AuthForm.tsx
+ M src/components/auth/AuthFormInner.tsx
+ D src/components/blocks/PhotoBlockUpload.tsx
+ D src/components/canvas/UndoRedoOverlay.tsx
+ D src/components/community/comments/CommentCard.tsx
+ D src/components/community/comments/CommentThread.tsx
+ D src/components/dashboard/BentoGraphics.tsx
+ D src/components/dashboard/QuickStartWorkflows.tsx
+ D src/components/export/CuttingChartPanel.tsx
+ D src/components/export/FppExportDialog.tsx
+ M src/components/layout/AppShell.tsx
+ D src/components/onboarding/ContextualTooltip.tsx
+ D src/components/projects/ProjectCard.tsx
+ D src/components/shop/CartDrawer.tsx
+ D src/components/social/BlogContent.tsx
+ D src/components/studio/FreeDrawOptions.tsx
+ D src/components/studio/GridSettingsPanel.tsx
+ D src/components/studio/HelpButton.tsx
+ D src/components/studio/SaveAsTemplateButton.tsx
+ D src/components/ui/MdxComponents.tsx
+ D src/hooks/useAppliqueDraw.ts
+ D src/lib/applique-utils.ts
+ D src/lib/border-generator.ts
+ D src/lib/empty-module.ts
+ D src/lib/fabric-object-to-svg.ts
+ D src/lib/fabric-usage-engine.ts
+ D src/lib/fpp-generator.ts
+ D src/lib/fussy-cut-utils.ts
+ D src/lib/geometry-extraction.ts
+ D src/lib/image-tracing-utils.ts
+ D src/lib/mdx-utils.ts
+ D src/lib/ocr/block-recognition.ts
+ D src/lib/ocr/color-extraction.ts
+ D src/lib/ocr/image-preprocess.ts
+ D src/lib/ocr/measurement.ts
+ D src/lib/piece-detection.worker.ts
+ D src/lib/quilt-overlay-registry.ts
+ D src/lib/text-tool-utils.ts
+ D src/lib/wizard-utils.ts
+ D tests/unit/lib/applique-engine.test.ts
+ D tests/unit/lib/border-generator.test.ts
+ D tests/unit/lib/fabric-object-to-svg.test.ts
+ D tests/unit/lib/fabric-usage-engine.test.ts
+ D tests/unit/lib/fpp-generator.test.ts
+ D tests/unit/lib/geometry-extraction.test.ts
+ D tests/unit/lib/image-tracing-validation.test.ts
+ D tests/unit/lib/mdx-engine.test.ts
+ D tests/unit/lib/mdx-utils.test.ts
+ D tests/unit/lib/ocr/block-recognition.test.ts
+ D tests/unit/lib/ocr/color-extraction.test.ts
+ D tests/unit/lib/ocr/image-preprocess.test.ts
+ D tests/unit/lib/ocr/measurement.test.ts
+ D tests/unit/lib/text-tool-validation.test.ts
+ D tests/unit/lib/wizard-engine.test.ts
+?? .claude/
+?? _git_info.txt
+?? _git_status.txt
+?? _stash_info.txt
+?? public/background.png
+?? src/app/(admin)/
