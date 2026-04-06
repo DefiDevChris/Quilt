@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
+import { useShopEnabled } from '@/hooks/useShopEnabled';
 import Mascot from './Mascot';
 
 export default function PublicNav() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = !!user;
+  const shopEnabled = useShopEnabled();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -59,6 +61,14 @@ export default function PublicNav() {
           >
             Blog
           </a>
+          {shopEnabled && (
+            <Link
+              href="/shop"
+              className="text-secondary hover:text-on-surface transition-colors font-medium"
+            >
+              Shop
+            </Link>
+          )}
 
           {isAuthenticated ? (
             <Link
@@ -135,6 +145,15 @@ export default function PublicNav() {
           >
             Blog
           </a>
+          {shopEnabled && (
+            <Link
+              href="/shop"
+              className="block text-secondary font-medium py-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              Shop
+            </Link>
+          )}
           {isAuthenticated ? (
             <Link
               href="/dashboard"

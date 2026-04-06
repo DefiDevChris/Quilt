@@ -144,7 +144,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'account',
     title: 'What do I get with Pro?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Pattern, FPP template generation, and PDF export.',
+      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Design, FPP template generation, and PDF export.',
   },
   {
     id: 'ac-2',
@@ -258,9 +258,9 @@ export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
   },
   {
     id: 'vt-2',
-    title: 'Using Photo-to-Pattern',
+    title: 'Using Photo-to-Design',
     description:
-      'Turn any photo into a quilt pattern using our 7-step wizard with OpenCV processing.',
+      'Turn any photo into a quilt design using our 7-step wizard with OpenCV processing.',
     category: 'design-tools',
     duration: '8 min',
     thumbnailUrl: null,

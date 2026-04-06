@@ -1,7 +1,7 @@
 /**
  * Color Math — Pure color conversion and distance utilities.
  *
- * Shared by Photo to Pattern and OCR engines. Zero external dependencies.
+ * Shared by Photo to Design and OCR engines. Zero external dependencies.
  * All functions are pure and immutable.
  *
  * Uses the D65 illuminant reference white for sRGB -> XYZ -> LAB conversion.

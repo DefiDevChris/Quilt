@@ -202,98 +202,11 @@ export const communitySearchSchema = z.object({
   limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
 });
 
-export const createCommunityPostSchema = z.object({
-  projectId: z.string().uuid(),
-  title: z.string().min(1).max(255),
-  description: z.string().max(2000).optional(),
-});
-
-export const fussyCutConfigSchema = z.object({
-  fabricId: z.string().min(1),
-  offsetX: z.number().min(-2000).max(2000).default(0),
-  offsetY: z.number().min(-2000).max(2000).default(0),
-  rotation: z.number().min(-360).max(360).default(0),
-  scale: z.number().min(0.1).max(10).default(1),
-});
-
-export const adminModerationSchema = z.object({
-  status: z.enum(['approved', 'rejected']),
-});
-
-export const adminModerationListSchema = z.object({
-  status: z.enum(['all', 'pending', 'approved', 'rejected']).default('pending'),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
-});
-
-export const notificationQuerySchema = z.object({
-  unreadOnly: z
-    .string()
-    .optional()
-    .transform((v) => v === 'true'),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
-});
-
-export const markNotificationsReadSchema = z.union([
-  z.object({ notificationIds: z.literal('all') }),
-  z.object({ notificationIds: z.array(z.string().uuid()) }),
-]);
-
-// Phase 17: Community, Profiles & Blog
-
-export const updateProfileSchema = z.object({
-  displayName: z
-    .string()
-    .min(1)
-    .max(60)
-    .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Display name contains invalid characters'),
-  bio: z.string().max(500).optional(),
-  location: z.string().max(100).optional(),
-  websiteUrl: z
-    .string()
-    .max(255)
-    .refine(
-      (url) => {
-        if (!url) return true;
-        try {
-          const parsed = new URL(url);
-          return parsed.protocol === 'https:';
-        } catch {
-          return false;
-        }
-      },
-      { message: 'Website URL must use https.' }
-    )
-    .optional(),
-  instagramHandle: z.string().max(50).optional(),
-  youtubeHandle: z.string().max(50).optional(),
-  tiktokHandle: z.string().max(50).optional(),
-  publicEmail: z.string().email().max(255).optional(),
-  privacyMode: z.enum(['public', 'private']).default('public').optional(),
-  // Username can be changed, but must be unique (validated server-side)
-  username: z
-    .string()
-    .min(3)
-    .max(60)
-    .regex(/^[a-z0-9\-]+$/, 'Username must be lowercase alphanumeric with hyphens only')
-    .optional(),
-});
-
-export const communityFeedSchema = z.object({
-  search: z.string().optional(),
-  sort: z.enum(['newest', 'popular']).default('newest'),
-  tab: z.enum(['discover']).default('discover'),
-  category: z.string().optional(),
-  creatorId: z.string().uuid().optional(),
-  cursor: z.string().optional(),
-  limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
-});
-
 export const createCommunityPostExtendedSchema = z.object({
   projectId: z.string().uuid(),
   title: z.string().min(1).max(100),
   description: z.string().max(2000).optional(),
-  category: z.string().optional(),
+  category: z.enum(['general', 'show-and-tell', 'wip', 'help', 'inspiration']).optional(),
 });
 
 export const createCommunityPostSimpleSchema = z.object({
@@ -301,9 +214,7 @@ export const createCommunityPostSimpleSchema = z.object({
   description: z.string().max(2000).optional(),
   imageUrl: assetUrlSchema.optional(),
   projectId: z.string().uuid().optional(),
-  category: z
-    .enum(['general', 'showcase', 'question', 'tutorial', 'inspiration', 'wip'])
-    .default('general'),
+  category: z.enum(['general', 'show-and-tell', 'wip', 'help', 'inspiration']).default('general'),
 });
 
 export const createCommentSchema = z.object({
@@ -367,4 +278,57 @@ export const templateQuerySchema = z.object({
   skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),
   search: z.string().max(200).optional(),
   sort: z.enum(['popular', 'name', 'newest']).default('popular'),
+});
+
+// --- Community / Social Feed Schemas ---
+
+export const communityFeedSchema = z.object({
+  sort: z.enum(['newest', 'popular']).default('newest'),
+  search: z.string().optional(),
+  category: z.string().optional(),
+  creatorId: z.string().optional(),
+  tab: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
+});
+
+// --- Notification Schemas ---
+
+export const notificationQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  unreadOnly: z.preprocess((val) => {
+    if (val === 'true' || val === true) return true;
+    return false;
+  }, z.boolean().default(false)),
+});
+
+export const markNotificationsReadSchema = z.object({
+  notificationIds: z.union([z.literal('all'), z.array(z.string().uuid())]),
+});
+
+// --- Profile Schemas ---
+
+export const updateProfileSchema = z.object({
+  displayName: z.string().min(1).max(60),
+  bio: z.string().max(500).optional(),
+  location: z.string().max(100).optional(),
+  websiteUrl: z
+    .string()
+    .refine((val) => val === '' || /^https:\/\//.test(val), {
+      message: 'Website URL must use https.',
+    })
+    .optional()
+    .or(z.literal('')),
+  instagramHandle: z.string().max(50).optional(),
+  youtubeHandle: z.string().max(50).optional(),
+  tiktokHandle: z.string().max(50).optional(),
+  publicEmail: z.string().email().optional().or(z.literal('')),
+  username: z
+    .string()
+    .min(3)
+    .max(60)
+    .regex(/^[a-z0-9-]+$/, 'Username must be lowercase alphanumeric with hyphens only')
+    .optional(),
+  privacyMode: z.enum(['public', 'private']).default('public'),
 });

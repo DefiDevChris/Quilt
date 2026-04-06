@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { useToast } from '@/components/ui/ToastProvider';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
+import { startStripeCheckout } from '@/lib/stripe-checkout';
 
 interface ProGateProps {
   children: React.ReactNode;
@@ -13,31 +13,11 @@ interface ProGateProps {
 
 function DefaultFallback({ featureName }: { featureName?: string }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   async function handleUpgrade() {
     setIsLoading(true);
-    try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      } else {
-        toast({
-          type: 'error',
-          title: 'Checkout failed',
-          description: data.error ?? 'Unable to start checkout. Please try again.',
-        });
-      }
-    } catch {
-      toast({
-        type: 'error',
-        title: 'Connection error',
-        description: 'Unable to connect. Please check your connection and try again.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await startStripeCheckout();
+    setIsLoading(false);
   }
 
   return (

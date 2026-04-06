@@ -22,10 +22,10 @@ test.describe('Dashboard Features (Authenticated)', () => {
     await expect(newDesignCard).toBeVisible();
   });
 
-  test.skip('photo to pattern card is visible', async ({ page }) => {
+  test.skip('photo to design card is visible', async ({ page }) => {
     // Requires auth setup
     await page.goto('/dashboard');
-    await expect(page.getByText(/photo to pattern/i)).toBeVisible();
+    await expect(page.getByText(/photo to design/i)).toBeVisible();
   });
 
   test.skip('recent projects section exists', async ({ page }) => {

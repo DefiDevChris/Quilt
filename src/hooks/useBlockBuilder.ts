@@ -7,8 +7,17 @@ import {
   gridPointToPixel,
   type Segment,
   type DrawSegment,
+  type ArcSegment,
   type Patch,
 } from '@/lib/blockbuilder-utils';
+import {
+  generateTriangle,
+  generateRectangle,
+  pixelToGridCell,
+  isValidCell,
+  findNearestSegment,
+} from '@/lib/block-builder-engine';
+import { GRID_LINE_COLOR } from '@/lib/constants';
 
 interface UseBlockBuilderOptions {
   draftCanvasRef: React.MutableRefObject<unknown>;
@@ -25,15 +34,17 @@ interface UseBlockBuilderReturn {
   setActiveMode: (mode: BlockBuilderMode) => void;
   segments: readonly DrawSegment[];
   patches: readonly Patch[];
+  patchFills: Readonly<Record<string, string>>;
   clearSegments: () => void;
   undoSegment: () => void;
+  redrawGrid: () => void;
 }
 
 const SNAP_RADIUS_FRACTION = 0.3;
 const SEAM_LINE_COLOR = '#383831';
 const SEAM_LINE_WIDTH = 2;
+const CURVE_HIT_TOLERANCE = 12;
 
-// Default patch fill colors for auto-coloring
 const PATCH_COLORS = [
   '#ffca9d',
   '#f5deb3',
@@ -58,13 +69,14 @@ export function useBlockBuilder({
   gridRows,
   canvasSize,
 }: UseBlockBuilderOptions): UseBlockBuilderReturn {
-  const [activeMode, setActiveMode] = useState<BlockBuilderMode>('line');
+  const [activeMode, setActiveMode] = useState<BlockBuilderMode>('freedraw');
   const [segments, setSegments] = useState<readonly DrawSegment[]>([]);
   const [patches, setPatches] = useState<readonly Patch[]>([]);
+  const [patchFills, setPatchFills] = useState<Record<string, string>>({});
   const segmentsRef = useRef(segments);
   segmentsRef.current = segments;
   const startPointRef = useRef<{ row: number; col: number } | null>(null);
-  const previewLineRef = useRef<unknown>(null);
+  const previewRef = useRef<unknown>(null);
 
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
 
@@ -86,6 +98,31 @@ export function useBlockBuilder({
     [gridSize, gridCols, gridRows]
   );
 
+  // Add segments, deduplicating against existing
+  const addShapeSegments = useCallback((newSegs: Segment[]) => {
+    setSegments((prev) => {
+      const existing = new Set(
+        prev.map((s) => {
+          if ('center' in s) return '';
+          const f = s.from;
+          const t = s.to;
+          const [a, b] =
+            f.row < t.row || (f.row === t.row && f.col < t.col) ? [f, t] : [t, f];
+          return `${a.row},${a.col}-${b.row},${b.col}`;
+        })
+      );
+      const toAdd = newSegs.filter((s) => {
+        const f = s.from;
+        const t = s.to;
+        const [a, b] =
+          f.row < t.row || (f.row === t.row && f.col < t.col) ? [f, t] : [t, f];
+        return !existing.has(`${a.row},${a.col}-${b.row},${b.col}`);
+      });
+      if (toAdd.length === 0) return prev;
+      return [...prev, ...toAdd];
+    });
+  }, []);
+
   // Recompute patches whenever segments change
   useEffect(() => {
     const lineSegments = segments.filter((s): s is Segment => !('center' in s));
@@ -93,7 +130,49 @@ export function useBlockBuilder({
     setPatches(newPatches);
   }, [segments, gridCols, gridRows]);
 
-  // Draw seam lines and patches on canvas
+  // Redraw grid lines on canvas
+  const redrawGrid = useCallback(() => {
+    if (!draftCanvasRef.current || !isOpen) return;
+
+    (async () => {
+      const fabric = await import('fabric');
+      const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
+
+      // Remove old grid lines
+      const gridLines = canvas.getObjects().filter((o) => o.stroke === GRID_LINE_COLOR);
+      for (const obj of gridLines) {
+        canvas.remove(obj);
+      }
+
+      // Draw new grid
+      const step = canvasSize / Math.max(gridCols, gridRows);
+      const maxUnits = Math.max(gridCols, gridRows);
+      for (let i = 0; i <= maxUnits; i++) {
+        const pos = i * step;
+        canvas.add(
+          new fabric.Line([pos, 0, pos, canvasSize], {
+            stroke: GRID_LINE_COLOR,
+            strokeWidth: i === 0 || i === maxUnits ? 2 : 0.5,
+            selectable: false,
+            evented: false,
+          })
+        );
+        canvas.add(
+          new fabric.Line([0, pos, canvasSize, pos], {
+            stroke: GRID_LINE_COLOR,
+            strokeWidth: i === 0 || i === maxUnits ? 2 : 0.5,
+            selectable: false,
+            evented: false,
+          })
+        );
+      }
+      canvas.renderAll();
+    })().catch(() => {
+      // Grid redraw failed
+    });
+  }, [draftCanvasRef, isOpen, canvasSize, gridCols, gridRows]);
+
+  // Draw seam lines, arcs, and patches on canvas + handle mouse events
   useEffect(() => {
     if (!draftCanvasRef.current || !isOpen) return;
 
@@ -105,8 +184,12 @@ export function useBlockBuilder({
       if (!isMounted) return;
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
-      // Clear existing user objects (keep grid lines)
-      const toRemove = canvas.getObjects().filter((o) => o.stroke !== '#E5E2DD');
+      // Clear existing user objects (keep grid lines and overlay)
+      const toRemove = canvas.getObjects().filter((o) => {
+        if (o.stroke === GRID_LINE_COLOR) return false;
+        if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
+        return true;
+      });
       for (const obj of toRemove) {
         canvas.remove(obj);
       }
@@ -120,53 +203,150 @@ export function useBlockBuilder({
         }));
         if (pixelVerts.length < 3) continue;
 
+        const fill = patchFills[patch.id] ?? PATCH_COLORS[i % PATCH_COLORS.length];
+
         const polygon = new fabric.Polygon(pixelVerts, {
-          fill: PATCH_COLORS[i % PATCH_COLORS.length],
+          fill,
           stroke: 'transparent',
           strokeWidth: 0,
-          selectable: true,
-          evented: true,
+          selectable: false,
+          evented: false,
           opacity: 0.6,
         });
         canvas.add(polygon);
       }
 
-      // Draw seam lines
+      // Draw seam lines and arcs
       for (const seg of segmentsRef.current) {
-        if ('center' in seg) continue;
-        const fromPx = gridPointToPixel(seg.from, gridSize);
-        const toPx = gridPointToPixel(seg.to, gridSize);
-        const line = new fabric.Line([fromPx.x, fromPx.y, toPx.x, toPx.y], {
-          stroke: SEAM_LINE_COLOR,
-          strokeWidth: SEAM_LINE_WIDTH,
-          selectable: false,
-          evented: false,
-        });
-        canvas.add(line);
+        if ('center' in seg) {
+          // Arc segment — draw as a Fabric.js path
+          const arc = seg as ArcSegment;
+          const fromPx = gridPointToPixel(arc.from, gridSize);
+          const toPx = gridPointToPixel(arc.to, gridSize);
+          const centerPx = gridPointToPixel(arc.center, gridSize);
+          const dx = fromPx.x - centerPx.x;
+          const dy = fromPx.y - centerPx.y;
+          const radius = Math.sqrt(dx * dx + dy * dy);
+          const sweepFlag = arc.clockwise ? 1 : 0;
+
+          const pathStr = `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`;
+          const pathObj = new fabric.Path(pathStr, {
+            fill: '',
+            stroke: SEAM_LINE_COLOR,
+            strokeWidth: SEAM_LINE_WIDTH,
+            selectable: false,
+            evented: false,
+          });
+          canvas.add(pathObj);
+        } else {
+          const fromPx = gridPointToPixel(seg.from, gridSize);
+          const toPx = gridPointToPixel(seg.to, gridSize);
+          const line = new fabric.Line([fromPx.x, fromPx.y, toPx.x, toPx.y], {
+            stroke: SEAM_LINE_COLOR,
+            strokeWidth: SEAM_LINE_WIDTH,
+            selectable: false,
+            evented: false,
+          });
+          canvas.add(line);
+        }
       }
 
       canvas.renderAll();
 
-      // Mouse interaction for drawing new segments
-      if (activeMode === 'select') {
-        canvas.selection = true;
-        canvas.defaultCursor = 'default';
-        return;
-      }
-
+      // Set cursor
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = activeMode === 'curve' ? 'pointer' : 'crosshair';
 
       function onMouseDown(e: { e: MouseEvent }) {
         const pointer = canvas.getScenePoint(e.e);
+
+        // ─── Curve tool: click near a straight segment to convert to arc ───
+        if (activeMode === 'curve') {
+          const lineSegs = segmentsRef.current
+            .map((s, i) => ({ seg: s, idx: i }))
+            .filter((s) => !('center' in s.seg));
+
+          const plainSegs = lineSegs.map((s) => s.seg as Segment);
+          const hitIdx = findNearestSegment(
+            pointer.x,
+            pointer.y,
+            plainSegs,
+            gridSize,
+            CURVE_HIT_TOLERANCE
+          );
+          if (hitIdx === -1) return;
+
+          const originalIdx = lineSegs[hitIdx].idx;
+          const seg = segmentsRef.current[originalIdx] as Segment;
+
+          // Compute arc center as midpoint offset perpendicular
+          const midRow = (seg.from.row + seg.to.row) / 2;
+          const midCol = (seg.from.col + seg.to.col) / 2;
+
+          const arcSeg: ArcSegment = {
+            from: seg.from,
+            to: seg.to,
+            center: { row: midRow, col: midCol },
+            clockwise: true,
+          };
+
+          setSegments((prev) => {
+            const updated = [...prev];
+            updated[originalIdx] = arcSeg;
+            return updated;
+          });
+          return;
+        }
+
+        // ─── Triangle tool: click a grid cell ─────────────────────────────
+        if (activeMode === 'triangle') {
+          const cell = pixelToGridCell(pointer.x, pointer.y, gridSize, gridCols, gridRows);
+          if (!cell || !isValidCell(cell.row, cell.col, gridCols, gridRows)) return;
+          addShapeSegments(generateTriangle(cell.row, cell.col));
+          return;
+        }
+
+        // ─── Rectangle tool: two-click corners ───────────────────────────
+        if (activeMode === 'rectangle') {
+          const gridPt = snapToGridPoint(pointer.x, pointer.y);
+          if (!gridPt) return;
+
+          if (!startPointRef.current) {
+            startPointRef.current = gridPt;
+            const px = gridPointToPixel(gridPt, gridSize);
+            const dot = new fabric.Circle({
+              left: px.x - 4,
+              top: px.y - 4,
+              radius: 4,
+              fill: '#8d4f00',
+              selectable: false,
+              evented: false,
+              stroke: '',
+            });
+            canvas.add(dot);
+            previewRef.current = dot;
+            canvas.renderAll();
+          } else {
+            const start = startPointRef.current;
+            if (start.row !== gridPt.row && start.col !== gridPt.col) {
+              addShapeSegments(generateRectangle(start.row, start.col, gridPt.row, gridPt.col));
+            }
+            startPointRef.current = null;
+            if (previewRef.current) {
+              canvas.remove(previewRef.current as InstanceType<typeof fabric.FabricObject>);
+              previewRef.current = null;
+            }
+          }
+          return;
+        }
+
+        // ─── Freedraw: continuous grid-snapped segments ──────────────────
         const gridPt = snapToGridPoint(pointer.x, pointer.y);
         if (!gridPt) return;
 
         if (!startPointRef.current) {
-          // First click — set start point
+          // First click: set start point
           startPointRef.current = gridPt;
-
-          // Draw snap indicator
           const px = gridPointToPixel(gridPt, gridSize);
           const dot = new fabric.Circle({
             left: px.x - 4,
@@ -178,41 +358,80 @@ export function useBlockBuilder({
             stroke: '',
           });
           canvas.add(dot);
-          previewLineRef.current = dot;
+          previewRef.current = dot;
           canvas.renderAll();
         } else {
-          // Second click — complete segment
           const startPt = startPointRef.current;
           if (startPt.row === gridPt.row && startPt.col === gridPt.col) return;
 
+          // Draw segment and continue chain from new point
           const newSeg: Segment = { from: startPt, to: gridPt };
           setSegments((prev) => [...prev, newSeg]);
 
-          startPointRef.current = null;
-          if (previewLineRef.current) {
-            canvas.remove(previewLineRef.current as InstanceType<typeof fabric.FabricObject>);
-            previewLineRef.current = null;
+          // Move start indicator to new point
+          startPointRef.current = gridPt;
+          if (previewRef.current) {
+            canvas.remove(previewRef.current as InstanceType<typeof fabric.FabricObject>);
           }
+          const px = gridPointToPixel(gridPt, gridSize);
+          const dot = new fabric.Circle({
+            left: px.x - 4,
+            top: px.y - 4,
+            radius: 4,
+            fill: '#8d4f00',
+            selectable: false,
+            evented: false,
+            stroke: '',
+          });
+          canvas.add(dot);
+          previewRef.current = dot;
+          canvas.renderAll();
+        }
+      }
+
+      function onDoubleClick() {
+        // End freedraw chain on double-click
+        if (activeMode === 'freedraw') {
+          startPointRef.current = null;
+          if (previewRef.current) {
+            canvas.remove(previewRef.current as InstanceType<typeof fabric.FabricObject>);
+            previewRef.current = null;
+          }
+          canvas.renderAll();
         }
       }
 
       canvas.on('mouse:down', onMouseDown as never);
+      canvas.on('mouse:dblclick', onDoubleClick as never);
 
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
+        canvas.off('mouse:dblclick', onDoubleClick as never);
       };
     })().catch(() => {
-      // Block builder render failed — canvas state unchanged
+      // Block builder render failed
     });
 
     return () => {
       isMounted = false;
       cleanup?.();
     };
-  }, [isOpen, draftCanvasRef, patches, activeMode, gridSize, gridCols, gridRows, snapToGridPoint]);
+  }, [
+    isOpen,
+    draftCanvasRef,
+    patches,
+    patchFills,
+    activeMode,
+    gridSize,
+    gridCols,
+    gridRows,
+    snapToGridPoint,
+    addShapeSegments,
+  ]);
 
   const clearSegments = useCallback(() => {
     setSegments([]);
+    setPatchFills({});
     startPointRef.current = null;
   }, []);
 
@@ -226,7 +445,9 @@ export function useBlockBuilder({
     setActiveMode,
     segments,
     patches,
+    patchFills,
     clearSegments,
     undoSegment,
+    redrawGrid,
   };
 }

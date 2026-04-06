@@ -66,7 +66,7 @@ export default function CommunityPreview() {
 
     async function fetchPosts() {
       try {
-        const response = await fetch('/api/community?limit=6&sort=newest', {
+        const response = await fetch('/api/social?limit=6&sort=newest', {
           signal: controller.signal,
         });
         if (!response.ok) {

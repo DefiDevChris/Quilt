@@ -80,6 +80,7 @@ export interface BlogPostListItem {
   authorName: string;
   authorAvatarUrl: string | null;
   createdAt: Date;
+  publishedAt: Date;
   readTimeMinutes: number;
 }
 

@@ -11,7 +11,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
 import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
-import { PhotoToPatternPromo } from '@/components/photo-pattern/PhotoToPatternPromo';
+import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
 
 const TemplateLibrary = dynamic(
   () => import('@/components/templates/TemplateLibrary').then((m) => m.TemplateLibrary),
@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
       {/* Quick Start Workflows */}
       <QuickStartWorkflows
-        onPhotoToPattern={() => setShowPhotoPromo(true)}
+        onPhotoToDesign={() => setShowPhotoPromo(true)}
         onStartFromTemplate={() => setActiveTab('templates')}
         onBlankProject={() => setDialogOpen(true)}
         isPro={isPro}
@@ -433,9 +433,9 @@ export default function DashboardPage() {
       {/* Pro upgrade modal */}
       {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
 
-      {/* Photo to Pattern promo */}
+      {/* Photo to Design promo */}
       {showPhotoPromo && (
-        <PhotoToPatternPromo isPro={isPro} onClose={() => setShowPhotoPromo(false)} />
+        <PhotoToDesignPromo isPro={isPro} onClose={() => setShowPhotoPromo(false)} />
       )}
     </div>
   );

@@ -14,11 +14,13 @@ import { ContextPanel } from '@/components/studio/ContextPanel';
 import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockDraftingModal } from '@/components/blocks/BlockDraftingModal';
+import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
-import { PatternAdjuster } from '@/components/fabrics/PatternAdjuster';
+import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
+import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
 import { LayoutOverlayPanel } from '@/components/studio/LayoutOverlayPanel';
@@ -28,11 +30,11 @@ import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
-import { PhotoToPatternPromo } from '@/components/photo-pattern/PhotoToPatternPromo';
+import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
+import { useFabricDrop } from '@/hooks/useFabricLayout';
+import { usePhotoLayoutImport } from '@/hooks/usePhotoLayoutImport';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
-import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
-import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
 import { saveProject } from '@/lib/save-project';
 
 import { HelpPanel } from '@/components/studio/HelpPanel';
@@ -58,7 +60,6 @@ import { useProjectStore } from '@/stores/projectStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
-import { useToast } from '@/components/ui/ToastProvider';
 
 function PrintOptionsPanel({
   onOpenPdfExport,
@@ -195,6 +196,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [isDraftingOpen, setIsDraftingOpen] = useState(false);
+  const [isPhotoBlockUploadOpen, setIsPhotoBlockUploadOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
   const [isLayoutOverlayOpen, setIsLayoutOverlayOpen] = useState(false);
@@ -211,7 +213,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragStart, handleFabricDragOver, handleFabricDrop } = useFabricDrop();
-  const { toast } = useToast();
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   // Cleanup expired temp projects on mount
@@ -224,27 +225,8 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   async function handleUpgrade() {
     setIsUpgrading(true);
-    try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      } else {
-        toast({
-          type: 'error',
-          title: 'Checkout failed',
-          description: data.error ?? 'Unable to start checkout. Please try again.',
-        });
-      }
-    } catch {
-      toast({
-        type: 'error',
-        title: 'Connection error',
-        description: 'Unable to connect. Please check your connection and try again.',
-      });
-    } finally {
-      setIsUpgrading(false);
-    }
+    await startStripeCheckout();
+    setIsUpgrading(false);
   }
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
@@ -254,7 +236,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
   useYardageCalculation();
-  usePhotoPatternImport();
+  usePhotoLayoutImport();
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
@@ -380,7 +362,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenPdfExport={() => setIsPdfExportOpen(true)}
             onOpenImageExport={() => setIsImageExportOpen(true)}
           />
-        ) : activeWorktable === 'pattern' ? (
+        ) : activeWorktable === 'layout' ? (
           <PatternCreatorPanel />
         ) : (
           <Toolbar
@@ -389,7 +371,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenImageExport={() =>
               isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
             }
-            onOpenPhotoToPattern={() => setIsPhotoPromoOpen(true)}
+            onOpenPhotoToDesign={() => setIsPhotoPromoOpen(true)}
             onOpenResize={() => setIsResizeOpen(true)}
             onOpenReferenceImage={() => setIsReferenceImageOpen(true)}
             onOpenLayoutOverlay={() => setIsLayoutOverlayOpen(true)}
@@ -402,6 +384,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
             <BlockLibrary
               onBlockDragStart={handleDragStart}
               onOpenDrafting={() => setIsDraftingOpen(true)}
+              onOpenPhotoUpload={() =>
+                isPro ? setIsPhotoBlockUploadOpen(true) : setProUpgradeFeature('Photo Block Upload')
+              }
             />
 
             <FabricLibrary
@@ -442,7 +427,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
             <ContextMenu />
             <QuickInfo />
-            <PatternAdjuster />
+            <LayoutAdjuster />
 
             <QuiltDimensionsPanel
               isOpen={isGridDimensionsOpen}
@@ -495,7 +480,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
         )}
 
         {/* Right context panel (hidden for PRINT and PATTERN) */}
-        {activeWorktable !== 'print' && activeWorktable !== 'pattern' && (
+        {activeWorktable !== 'print' && activeWorktable !== 'layout' && (
           <div className="relative">
             <ContextPanel />
             {isInspectorOpen && <PieceInspectorPanel />}
@@ -514,6 +499,29 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onSaved={handleBlockSaved}
           />
         </CanvasErrorBoundary>
+      )}
+
+      {/* Photo block upload — pro only */}
+      {isPro && isPhotoBlockUploadOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-on-surface">Upload Block Photo</h2>
+              <button
+                type="button"
+                onClick={() => setIsPhotoBlockUploadOpen(false)}
+                className="text-secondary hover:text-on-surface"
+              >
+                {'\u2715'}
+              </button>
+            </div>
+            <SimplePhotoBlockUpload
+              isOpen={isPhotoBlockUploadOpen}
+              onClose={() => setIsPhotoBlockUploadOpen(false)}
+              onSaved={handleBlockSaved}
+            />
+          </div>
+        </div>
       )}
 
       {/* Pro-only dialogs — only rendered for pro users */}
@@ -537,7 +545,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onClose={() => setIsImageExportOpen(false)}
           />
           {isPhotoPromoOpen && (
-            <PhotoToPatternPromo isPro={isPro} onClose={() => setIsPhotoPromoOpen(false)} />
+            <PhotoToDesignPromo isPro={isPro} onClose={() => setIsPhotoPromoOpen(false)} />
           )}
         </>
       )}

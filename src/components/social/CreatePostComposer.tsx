@@ -33,6 +33,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<'text' | 'image' | 'project'>('text');
+  const [selectedCategory, setSelectedCategory] = useState<string>('general');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,6 +69,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
     setShowProjectPicker(false);
     setError(null);
     setMode('text');
+    setSelectedCategory('general');
     onCancel?.();
   };
 
@@ -143,7 +145,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
       const payload: Record<string, unknown> = {
         title: title.trim(),
         description: description.trim() || undefined,
-        category: 'general',
+        category: selectedCategory,
       };
 
       if (mode === 'project' && selectedProject) {
@@ -152,7 +154,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
         payload.imageUrl = uploadedImage || imageUrl;
       }
 
-      const res = await fetch('/api/community', {
+      const res = await fetch('/api/social', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -199,9 +201,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                 {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
               </span>
             </div>
-            <span className="flex-1 text-secondary text-sm">
-              Share your latest quilt design...
-            </span>
+            <span className="flex-1 text-secondary text-sm">Share your latest quilt design...</span>
           </div>
         </button>
       </>
@@ -253,6 +253,19 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
             rows={3}
             className="w-full bg-white/40 rounded-xl px-3 py-2 text-sm text-on-surface placeholder:text-secondary resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 border border-white/60"
           />
+
+          {/* Category selector */}
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full bg-white/40 rounded-xl px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 border border-white/60"
+          >
+            <option value="general">General</option>
+            <option value="show-and-tell">Show &amp; Tell</option>
+            <option value="wip">WIP</option>
+            <option value="help">Help</option>
+            <option value="inspiration">Inspiration</option>
+          </select>
 
           {/* Image mode inputs */}
           {mode === 'image' && (

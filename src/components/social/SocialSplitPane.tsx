@@ -506,7 +506,7 @@ function ProfileContentPanel() {
       try {
         const [projectsRes, postsRes] = await Promise.all([
           fetch('/api/projects?limit=100'),
-          fetch('/api/community?limit=1'),
+          fetch('/api/social?limit=1'),
         ]);
         const projectsData = projectsRes.ok ? await projectsRes.json() : null;
         const postsData = postsRes.ok ? await postsRes.json() : null;

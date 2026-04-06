@@ -1,18 +1,16 @@
-# Quilt
+# QuiltCorgi
 
-Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, a growing quilt block library, and a community of quilters who get it — all in your browser, free to start.
+Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Pick a layout, assign blocks and fabrics, and export a complete pattern document — all in your browser, free to start.
 
 ## What You Can Do
 
-- **Design Studio** — Multiple worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
-- **Block Library** — Browse by category or draft your own with EasyDraw, Applique, and Freeform tools
-- **Block Overlay Templates** — 20 traditional quilt block SVGs + 10 full-pattern overlays with recommended dimensions, aspect-ratio-locked scaling, and opacity controls for tracing
-- **Project Management** — All Projects view with search, project templates for reusable settings
-- **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
-- **Print-Ready Patterns** — Three PDF export modes: Pattern Pieces (bin-packed at scale), Cut List (one template page per shape with per-edge dimensions, grain line, key block diagram), and Print Project (full pattern document with quilt overview, fabric requirements, cutting instructions, block diagrams, and totals table)
-- **Creative Tools** — Photo-to-Pattern with structure detection (grid, sashing, borders), fabric calibration
-- **Community** — Share designs, discover inspiration, threaded comments, and a blog
-- **Pro Features** — Snap a photo of a quilt and recreate it digitally, fabric calibration, unlimited projects
+- **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two modes: Worktable (full quilt) and Block Builder (draft custom blocks with grid-snapped drawing tools).
+- **Block Library** — 35 traditional quilt block SVGs. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
+- **Photo-to-Design** — Snap a photo of any quilt and recreate it digitally. OpenCV extracts individual pieces onto the worktable where you can group them into blocks, assign fabrics, and create a printlist.
+- **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
+- **Print-Ready Patterns** — PDF export with quilt overview, fabric requirements, cutting directions, block assembly diagrams, and individual cutting templates at exact 1:1 scale with seam allowance.
+- **Social Feed** — Share your designs, discover inspiration, and get feedback with likes and comments.
+- **Pro Features** — Photo-to-Design, unlimited projects, full export, fabric calibration.
 
 ## Tech Stack
 
@@ -21,9 +19,9 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand (17 stores)                                  |
+| State     | Zustand (18 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (17 tables)            |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (20 schema files)      |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
@@ -37,36 +35,19 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 **Color Palette**: Unified warm cream system
 
 - **Surface hierarchy**: `surface-container-lowest` → `surface-container-highest` (white to subtle cream tones)
-  - `surface-container-lowest`: `#ffffff` (pure white)
-  - `surface-container-low`: `#fefdfb`
-  - `surface-container`: `#fdfaf7`
-  - `surface-container-high`: `#faf6f2`
-  - `surface-container-highest`: `#f7f2ed`
 - **Primary**: Warm peach (`#ffb085`) with dark variant (`#c67b5c`)
 - **Mobile accent**: Golden amber (`#c48a28`) for FAB and active states
 - **Text**: `on-surface` (`#4a3b32`), `secondary` (`#6b5a4d`)
 - **Glassmorphism**: 4 variants — `glass-card`, `glass-elevated`, `glass-panel`, `glass-panel-social`
 
-**Typography**:
-
-- Display: Outfit (landing pages)
-- Body: Manrope (app UI)
-- Mono: JetBrains Mono (measurements, code)
+**Typography**: Outfit (display), Manrope (body), JetBrains Mono (measurements)
 
 **Shadows**: 4-level elevation system (`shadow-elevation-1` through `shadow-elevation-4`)
-
-**Border Radius**: `radius-sm` (6px) → `radius-xl` (24px)
-
-**Known Hardcoded Values** (to be refactored):
-
-- Social components use hardcoded Tailwind colors (`bg-orange-100`, `text-rose-500`, etc.)
-- Pattern SVG fills in `SocialSplitPane.tsx` use hex values
-- Background orbs in `SocialLayout.tsx` use hardcoded opacity values
 
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Pattern, FPP templates, cutting charts, yardage estimator, community posting
+- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Design, cutting charts, yardage estimator, social posting
 
 ## Roles
 
@@ -81,10 +62,12 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ```bash
 cp .env.example .env.local
 npm install
+npm run db:local:up
+npm run db:push
 npm run dev
 ```
 
-Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials. Set `AWS_SECRET_NAME=skip` for local development (secrets loaded from `.env.local` instead of Secrets Manager).
+Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials. Set `AWS_SECRET_NAME=skip` for local development.
 
 ## Commands
 
@@ -103,7 +86,8 @@ npm run db:generate      # Generate Drizzle migration from schema changes
 npm run db:migrate       # Run pending migrations
 npm run db:push          # Push schema directly (no migration file)
 npm run db:studio        # Open Drizzle Studio web UI
-npm run db:seed:blog     # Seed blog posts only
+npm run db:seed:blog     # Seed blog posts
+npm run db:seed:layouts  # Seed layout templates (8 defaults)
 ```
 
 ## Project Structure
@@ -112,128 +96,49 @@ npm run db:seed:blog     # Seed blog posts only
 src/
   app/                    # Next.js App Router — pages and API routes
     (protected)/          # Auth-gated routes (layout redirects guests)
-      projects/           # All Projects view with search
-      templates/          # Project template management
-      settings/           # Profile settings with delete account
-    (public)/             # Public marketing pages
+    (public)/             # Public marketing pages + shop (hidden)
     admin/                # Admin moderation tools
     api/                  # API route handlers
-      blog/               # Blog CRUD and admin endpoints
-      project-templates/  # Template CRUD operations
     auth/                 # Sign in/up/verify/forgot-password pages
     blog/                 # Blog list and individual post pages
-      [slug]/             # Individual blog post page
     dashboard/            # Bento grid dashboard
-    socialthreads/        # Community feed (Discover + Saved tabs)
-    studio/[projectId]/   # Design canvas (desktop only, server-side auth guard)
-    profile/              # User profile and billing
-    globals.css           # Tailwind v4 @theme — design tokens, glass classes
+    socialthreads/        # Social feed
+    studio/[projectId]/   # Design canvas (desktop only)
+    templates/            # Template browser
   components/             # React components, organized by domain
-    social/               # FeedContent, SavedContent, TrendingContent, SocialLayout, BlogContent
-    mobile/               # MobileShell, MobileBottomNav (3-item: Home, Upload FAB, Profile/SignIn)
-    editor/               # TiptapRenderer for blog content
-    studio/               # HistoryPanel, ReferenceImageDialog, ProjectTemplates, SaveAsTemplateButton
-    blocks/               # BlockDraftingShell, BlockBuilderTab, BlockOverlaySelector, RecommendedDimensionsModal
-    settings/             # DeleteAccountSection
-  hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
-  stores/                 # Zustand stores (17 total)
+    social/               # FeedContent, BlogContent, SocialLayout
+    mobile/               # MobileShell, MobileBottomNav (3 items)
+    studio/               # Studio panels and controls
+    blocks/               # BlockDraftingShell, BlockBuilderTab, BlockLibrary, SimplePhotoBlockUpload
+    export/               # PdfExportDialog, PrintlistPanel
+  hooks/                  # Custom React hooks (canvas, drawing, auth)
+  stores/                 # Zustand stores (18 total)
   lib/                    # Pure utility modules and engines
-    *-engine.ts           # Pure computation — zero React/Fabric/DOM deps, fully testable
-    quilt-overlay-registry.ts  # Block/pattern SVG registry with metadata and dimension helpers
-    trust-engine.ts       # 3-role system: free/pro/admin
-    *-utils.ts            # Domain-specific utility modules (canvas, geometry, math, pattern, etc.)
+    *-engine.ts           # Pure computation — zero DOM deps, fully testable
+    *-utils.ts            # Domain-specific utilities
+  db/schema/              # Drizzle table definitions (20 files)
   types/                  # Shared TypeScript type definitions
-  data/                   # Static data files (pattern definitions, etc.)
-  db/
-    schema/               # Drizzle table definitions (17 tables)
-    migrations/           # Generated SQL migrations
-    seed/                 # Seed scripts
-  content/
-    tutorials/            # MDX tutorial files
-  middleware/             # Middleware utilities
-  proxy.ts                # Next.js routing proxy (replaces middleware.ts)
-  instrumentation.ts      # Startup hook — loads AWS Secrets Manager in production
 ```
 
 ## Architecture
 
 All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM dependencies, fully testable in Vitest. Hooks bridge engines to Fabric.js canvas. Components handle UI.
 
-**Auth flow:** Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Rate limiting on all auth endpoints.
-
-**Security:** SVG sanitization (DOMPurify), CSP headers, open-redirect prevention, webhook signature verification, admin role gating, S3 credential validation.
+**Auth flow:** Cognito sign-in sets HTTP-only cookies. `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role.
 
 **Route protection:**
 
 - `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
-- `/profile/*` — proxy redirect
 - `/admin/*` — cookie + role check (`admin` role only)
 - `/dashboard` — public, but protected actions trigger `AuthGateModal`
 
-**Pro gating:** Check `useAuthStore.isPro` client-side before opening pro dialogs. API routes check `session.user.role` and return 403 `PRO_REQUIRED`.
-
-## Key Features
-
-### Canvas Enhancements
-
-- **Reference Image Tool** — Import, adjust opacity, lock/unlock
-- **Seam Allowance Toggle** — Show/hide seam allowances in print preview
-- **Print Scale Preview** — 0.5x to 2.0x scale adjustment
-- **Pattern Overlay** — Show layout cell boundaries with auto-align to cells (Grid, Sashing, On-Point)
-- **Piece Inspector** — View piece dimensions and fabric usage
-
-### Multi-Worktable System
-
-- **Multiple Canvases** — Up to 10 worktables per project, each with independent canvas state
-- **Tab-Based Switching** — Click tabs to switch between worktables, auto-saves current canvas
-- **Worktable Management** — Create, rename, duplicate, or delete worktables via context menu
-- **Cross-Worktable Copy/Paste** — Ctrl+C/Ctrl+V works across all worktables
-- **Smart Duplication** — Ctrl+D offers "Current Worktable" or "New Worktable" options
-
-### Studio Tools
-
-- Circle, Polygon
-- Block Grid, Alignment helpers
-- Group/Ungroup operations
-- Grid/Snap toggles
-- **Undo/Redo** — Standard Ctrl+Z/Ctrl+Shift+Z with 50-state history
-
-### PDF Export (3 Modes)
-
-- **Pattern Pieces** — Bin-packed shapes at scale with 1" validation square
-- **Cut List** — Key block diagram (page 2) + one template per shape. Solid line = cut (outer), dashed = sew (inner). Per-edge dimensions, seam allowance annotations, grain line with "GRAIN" text. Branded headers/footers on every page
-- **Print Project** — Complete pattern document: quilt overview image, fabric requirements with yardage table, rotary cutting instructions grouped by fabric, strip cutting plan, block diagrams with labeled pieces, totals summary table
-
-### Photo-to-Pattern
-
-7-step wizard using OpenCV.js in a Web Worker:
-1. Upload photo of a quilt
-2. Adjust rotation/flip
-3. Set scan priors (curved piecing, applique, piece scale)
-4. Correct perspective with draggable corners
-5. CV pipeline detects pieces (15 objectives including watershed, CLAHE, bilateral filtering)
-6. Review results with sensitivity slider
-7. Set dimensions and seam allowance
-
-Post-processing detects quilt structure: block grid, sashing, borders, cornerstones, and piece roles.
-
-### Community & Social
-
-- **Social Threads** — Discover (all posts), Saved (bookmarked)
-- **Trending** — "Most Saved" with month/all-time toggle
-- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API, Tiptap JSON rendering
-
-## Database Schema
-
-17 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
-
 ## Mobile
 
-Studio is desktop-only (`StudioGate` redirects mobile users). Mobile shell: Home, Upload FAB (center), Profile/Sign In — 3 items only. No social browsing or project gallery on mobile.
+Studio is desktop-only (`StudioGate` redirects mobile users). Mobile shell: Home, Upload FAB (center), Profile/Sign In — 3 items only.
 
 ## Brand Voice
 
-Warm, quilter-friendly, conversational — like a knowledgeable friend in a quilt shop. Address quilters directly ("you"/"your"). Use quilting vocabulary naturally (seam allowance, yardage, WOF, fat quarter). Lead with what the quilter gets, not what the software does. Headlines: 2–6 words, punchy, wordplay welcome. **Avoid**: "professional-grade", "comprehensive suite", "cutting-edge", "leverage", "utilize", "enterprise", "robust" — any generic SaaS language.
+Warm, quilter-friendly, conversational — like a knowledgeable friend in a quilt shop. Address quilters directly ("you"/"your"). Use quilting vocabulary naturally (seam allowance, yardage, WOF, fat quarter). Lead with what the quilter gets, not what the software does.
 
 ## License
 

@@ -47,7 +47,7 @@ function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
 const GROUP_LABELS: Record<string, string> = {
   tools: 'Tools',
   libraries: 'Libraries',
-  pattern: 'Pattern',
+  layout: 'Layout',
   shapes: 'Shapes',
   drawing: 'Drawing',
   canvas: 'Canvas',
@@ -102,7 +102,7 @@ export function Toolbar({
   onOpenLayoutSettings,
   onOpenGridDimensions,
   onOpenImageExport,
-  onOpenPhotoToPattern,
+  onOpenPhotoToDesign,
   onOpenResize,
   onOpenReferenceImage,
   onOpenLayoutOverlay,
@@ -116,7 +116,7 @@ export function Toolbar({
     onOpenLayoutSettings,
     onOpenGridDimensions,
     onOpenImageExport,
-    onOpenPhotoToPattern,
+    onOpenPhotoToDesign,
     onOpenResize,
     onOpenReferenceImage,
     onOpenLayoutOverlay,
@@ -130,7 +130,7 @@ export function Toolbar({
     block: blockTools,
   };
 
-  if (activeWorktable === 'print' || activeWorktable === 'image' || activeWorktable === 'pattern')
+  if (activeWorktable === 'print' || activeWorktable === 'image' || activeWorktable === 'layout')
     return null;
 
   const tools = TOOLS_MAP[activeWorktable];

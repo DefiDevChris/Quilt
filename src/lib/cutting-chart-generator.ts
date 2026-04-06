@@ -10,7 +10,6 @@
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
-import { formatFraction } from '@/lib/piece-detection-shared';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -373,4 +372,4 @@ export function optimizeStripCutting(
   return plans;
 }
 
-export { formatFraction } from '@/lib/piece-detection-shared';
+export { formatFraction } from '@/lib/piece-detection-utils';

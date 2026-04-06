@@ -181,7 +181,7 @@ export const GRID_CELL_SIZE_MIN = 0.125;
 export const GRID_CELL_SIZE_MAX = 12;
 export const GRID_CELL_SIZE_STEP = 0.125;
 
-// Photo to Pattern (Phase 21)
+// Photo to Design (Phase 21)
 export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 export const PHOTO_PATTERN_MIN_DIMENSION = 200; // px
 

@@ -35,10 +35,10 @@ export function BlockOverlaySelector({
     return matchesSearch && matchesDifficulty;
   });
 
-  const filteredPatterns = LAYOUT_OVERLAYS.filter(
-    (p) =>
-      p.displayName.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
+  const filteredLayouts = LAYOUT_OVERLAYS.filter(
+    (l) =>
+      l.displayName.toLowerCase().includes(search.toLowerCase()) ||
+      l.description.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -150,33 +150,33 @@ export function BlockOverlaySelector({
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {filteredPatterns.map((pattern) => (
+              {filteredLayouts.map((layout) => (
                 <button
-                  key={pattern.id}
+                  key={layout.id}
                   type="button"
                   onClick={() => {
-                    setPendingOverlay({ path: pattern.svgPath, type: 'layout' });
+                    setPendingOverlay({ path: layout.svgPath, type: 'layout' });
                     setShowDimensions(true);
                   }}
                   className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${
-                    currentOverlay === pattern.svgPath
+                    currentOverlay === layout.svgPath
                       ? 'border-primary bg-primary/5'
                       : 'border-outline-variant bg-white hover:border-primary/50'
                   }`}
                 >
                   <div className="mb-2 aspect-[3/4] overflow-hidden rounded bg-background">
                     <img
-                      src={pattern.svgPath}
-                      alt={pattern.displayName}
+                      src={layout.svgPath}
+                      alt={layout.displayName}
                       className="h-full w-full object-contain p-1"
                     />
                   </div>
-                  <span className="text-sm font-medium text-on-surface">{pattern.displayName}</span>
+                  <span className="text-sm font-medium text-on-surface">{layout.displayName}</span>
                   <p className="mt-1 text-[11px] text-secondary line-clamp-2">
-                    {pattern.description}
+                    {layout.description}
                   </p>
                   <p className="mt-1 text-[10px] text-secondary">
-                    {pattern.dimensions.width}&quot; &times; {pattern.dimensions.height}&quot;
+                    {layout.dimensions.width}&quot; &times; {layout.dimensions.height}&quot;
                   </p>
                 </button>
               ))}
@@ -184,7 +184,7 @@ export function BlockOverlaySelector({
           )}
 
           {((activeType === 'block' && filteredBlocks.length === 0) ||
-            (activeType === 'layout' && filteredPatterns.length === 0)) && (
+            (activeType === 'layout' && filteredLayouts.length === 0)) && (
             <div className="py-12 text-center text-secondary">
               No overlays found matching your search.
             </div>

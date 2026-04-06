@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  communitySearchSchema,
-  createCommunityPostSchema,
-  adminModerationSchema,
-  adminModerationListSchema,
-} from '@/lib/validation';
+import { communitySearchSchema, createCommunityPostExtendedSchema } from '@/lib/validation';
 
 describe('communitySearchSchema', () => {
   it('provides defaults when no params given', () => {
@@ -52,9 +47,9 @@ describe('communitySearchSchema', () => {
   });
 });
 
-describe('createCommunityPostSchema', () => {
+describe('createCommunityPostExtendedSchema', () => {
   it('parses valid input', () => {
-    const result = createCommunityPostSchema.parse({
+    const result = createCommunityPostExtendedSchema.parse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       title: 'My Beautiful Quilt',
       description: 'A lovely star quilt design.',
@@ -65,7 +60,7 @@ describe('createCommunityPostSchema', () => {
   });
 
   it('accepts input without optional description', () => {
-    const result = createCommunityPostSchema.parse({
+    const result = createCommunityPostExtendedSchema.parse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       title: 'My Quilt',
     });
@@ -73,14 +68,14 @@ describe('createCommunityPostSchema', () => {
   });
 
   it('rejects missing projectId', () => {
-    const result = createCommunityPostSchema.safeParse({
+    const result = createCommunityPostExtendedSchema.safeParse({
       title: 'My Quilt',
     });
     expect(result.success).toBe(false);
   });
 
   it('rejects non-uuid projectId', () => {
-    const result = createCommunityPostSchema.safeParse({
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: 'not-a-uuid',
       title: 'My Quilt',
     });
@@ -88,31 +83,31 @@ describe('createCommunityPostSchema', () => {
   });
 
   it('rejects empty title', () => {
-    const result = createCommunityPostSchema.safeParse({
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       title: '',
     });
     expect(result.success).toBe(false);
   });
 
-  it('rejects title exceeding 255 characters', () => {
-    const result = createCommunityPostSchema.safeParse({
+  it('rejects title exceeding 100 characters', () => {
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
-      title: 'a'.repeat(256),
+      title: 'a'.repeat(101),
     });
     expect(result.success).toBe(false);
   });
 
-  it('accepts title at exactly 255 characters', () => {
-    const result = createCommunityPostSchema.safeParse({
+  it('accepts title at exactly 100 characters', () => {
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
-      title: 'a'.repeat(255),
+      title: 'a'.repeat(100),
     });
     expect(result.success).toBe(true);
   });
 
   it('rejects description exceeding 2000 characters', () => {
-    const result = createCommunityPostSchema.safeParse({
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       title: 'My Quilt',
       description: 'a'.repeat(2001),
@@ -121,65 +116,11 @@ describe('createCommunityPostSchema', () => {
   });
 
   it('accepts description at exactly 2000 characters', () => {
-    const result = createCommunityPostSchema.safeParse({
+    const result = createCommunityPostExtendedSchema.safeParse({
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       title: 'My Quilt',
       description: 'a'.repeat(2000),
     });
     expect(result.success).toBe(true);
-  });
-});
-
-describe('adminModerationSchema', () => {
-  it('accepts approved status', () => {
-    const result = adminModerationSchema.parse({ status: 'approved' });
-    expect(result.status).toBe('approved');
-  });
-
-  it('accepts rejected status', () => {
-    const result = adminModerationSchema.parse({ status: 'rejected' });
-    expect(result.status).toBe('rejected');
-  });
-
-  it('rejects invalid status', () => {
-    const result = adminModerationSchema.safeParse({ status: 'pending' });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects missing status', () => {
-    const result = adminModerationSchema.safeParse({});
-    expect(result.success).toBe(false);
-  });
-});
-
-describe('adminModerationListSchema', () => {
-  it('defaults to pending when no status given', () => {
-    const result = adminModerationListSchema.parse({});
-    expect(result.status).toBe('pending');
-  });
-
-  it('accepts pending status', () => {
-    const result = adminModerationListSchema.parse({ status: 'pending' });
-    expect(result.status).toBe('pending');
-  });
-
-  it('accepts approved status', () => {
-    const result = adminModerationListSchema.parse({ status: 'approved' });
-    expect(result.status).toBe('approved');
-  });
-
-  it('accepts rejected status', () => {
-    const result = adminModerationListSchema.parse({ status: 'rejected' });
-    expect(result.status).toBe('rejected');
-  });
-
-  it('accepts all status', () => {
-    const result = adminModerationListSchema.parse({ status: 'all' });
-    expect(result.status).toBe('all');
-  });
-
-  it('rejects invalid status', () => {
-    const result = adminModerationListSchema.safeParse({ status: 'active' });
-    expect(result.success).toBe(false);
   });
 });

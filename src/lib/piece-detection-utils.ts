@@ -40,8 +40,8 @@ import type {
   QuiltShapeType,
   DetectedPieceWithEdgeInfo,
   QuiltBoundary,
-} from './photo-pattern-types';
-import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-pattern-types';
+} from './photo-layout-types';
+import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-layout-types';
 import { rgbToHex } from './color-math';
 import { gcd } from './math-utils';
 import { boundingBoxFromPoints } from './geometry-utils';
@@ -53,19 +53,10 @@ import {
 import {
   applyQuiltConfigToOptions,
   getMinAreaRatioForPieceScale,
-  median,
-  mean,
   dynamicKernelSize,
 } from './piece-detection-shared';
 import * as ClipperLib from 'clipper-lib';
 import type { OpenCV, OpenCVMat, OpenCVMatVector } from '../types/opencv-js';
-import {
-  applyQuiltConfigToOptions,
-  getMinAreaRatioForPieceScale,
-  dynamicKernelSize,
-  getEffectiveDetectionOptions,
-  DEFAULT_WATERSHED_THRESHOLD,
-} from './piece-detection-shared';
 
 /** Scale factor for Clipper-lib integer math */
 const CLIPPER_SCALE = 1000;

@@ -239,11 +239,6 @@ describe('canvasStore', () => {
       expect(useCanvasStore.getState().blockDraftingMode).toBe('blockbuilder');
     });
 
-    it('can be set to applique', () => {
-      useCanvasStore.getState().setBlockDraftingMode('applique');
-      expect(useCanvasStore.getState().blockDraftingMode).toBe('applique');
-    });
-
     it('updates immutably (does not mutate previous state snapshot)', () => {
       const before = useCanvasStore.getState();
       useCanvasStore.getState().setBlockDraftingMode('blockbuilder');

@@ -573,7 +573,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
       content: [
         p(
           text(
-            "QuiltCorgi's Photo to Pattern tool converts any photograph into a quilt pattern. Upload a photo and our computer vision engine detects the shapes, colors, and layout automatically."
+            "QuiltCorgi's Photo to Design tool converts any photograph into a quilt design. Upload a photo and our computer vision engine detects the shapes, colors, and layout automatically."
           )
         ),
         heading(2, 'How It Works'),
@@ -598,7 +598,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
       ],
     },
     excerpt:
-      'Convert any photograph into a quilt pattern using computer vision. Detect pieces, map colors, and edit the result.',
+      'Convert any photograph into a quilt layout using computer vision. Detect pieces, map colors, and edit the result.',
     category: 'Tutorials',
     tags: ['advanced', 'photo', 'patchwork', 'image', 'tutorial'],
     status: 'published',

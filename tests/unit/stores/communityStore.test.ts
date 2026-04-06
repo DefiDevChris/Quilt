@@ -194,7 +194,7 @@ describe('communityStore', () => {
     await useCommunityStore.getState().fetchPosts(true);
 
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/community?'),
+      expect.stringContaining('/api/social?'),
       expect.any(Object)
     );
     const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;

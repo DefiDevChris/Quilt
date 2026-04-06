@@ -27,7 +27,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
     setLiked(next);
     setLikeCount(next ? likeCount + 1 : likeCount - 1);
     try {
-      await fetch(`/api/community/${item.id}/like`, { method: 'POST' });
+      await fetch(`/api/social/${item.id}/like`, { method: 'POST' });
     } catch {
       setLiked(!next);
       setLikeCount(next ? likeCount - 1 : likeCount + 1);

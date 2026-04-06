@@ -26,8 +26,8 @@ import type {
   WorkerProgressMessage,
   Point2D,
   QuiltDetectionConfig,
-} from './photo-pattern-types';
-import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-pattern-types';
+} from './photo-layout-types';
+import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-layout-types';
 import {
   PHOTO_PATTERN_PIECE_MIN_AREA_RATIO,
   PHOTO_PATTERN_PIECE_MAX_AREA_RATIO,
@@ -36,8 +36,8 @@ import {
   applyQuiltConfigToOptions,
   getMinAreaRatioForPieceScale,
   dynamicKernelSize,
-  type DetectionOptions,
 } from './piece-detection-shared';
+import type { DetectionOptions } from './photo-layout-types';
 
 import type { OpenCV, OpenCVMat } from '../types/opencv-js';
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import type { BlockListItem } from '@/types/block';
 import type { Block } from '@/types/block';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
-import { useToast } from '@/components/ui/ToastProvider';
+import { startStripeCheckout } from '@/lib/stripe-checkout';
 
 interface BlockPreviewProps {
   block: BlockListItem;
@@ -16,31 +16,11 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isUpgrading, setIsUpgrading] = useState(false);
-  const { toast } = useToast();
 
   async function handleUpgrade() {
     setIsUpgrading(true);
-    try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      } else {
-        toast({
-          type: 'error',
-          title: 'Checkout failed',
-          description: data.error ?? 'Unable to start checkout. Please try again.',
-        });
-      }
-    } catch {
-      toast({
-        type: 'error',
-        title: 'Connection error',
-        description: 'Unable to connect. Please check your connection and try again.',
-      });
-    } finally {
-      setIsUpgrading(false);
-    }
+    await startStripeCheckout();
+    setIsUpgrading(false);
   }
 
   useEffect(() => {

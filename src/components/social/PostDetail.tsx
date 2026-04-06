@@ -44,7 +44,7 @@ export function PostDetail({ postId }: PostDetailProps) {
     setError(null);
 
     try {
-      const res = await fetch(`/api/community/${encodeURIComponent(postId)}`);
+      const res = await fetch(`/api/social/${encodeURIComponent(postId)}`);
       const json = await res.json();
 
       if (!res.ok) {
@@ -79,7 +79,7 @@ export function PostDetail({ postId }: PostDetailProps) {
     setLikeCount(next ? likeCount + 1 : likeCount - 1);
     try {
       const method = next ? 'POST' : 'DELETE';
-      await fetch(`/api/community/${encodeURIComponent(postId)}/like`, { method });
+      await fetch(`/api/social/${encodeURIComponent(postId)}/like`, { method });
     } catch {
       setLiked(!next);
       setLikeCount(next ? likeCount - 1 : likeCount + 1);
@@ -257,10 +257,7 @@ function PostNotFound() {
         <p className="text-secondary mb-6">
           This post may have been removed or is pending approval.
         </p>
-        <Link
-          href="/socialthreads"
-          className="btn-primary-sm gap-2"
-        >
+        <Link href="/socialthreads" className="btn-primary-sm gap-2">
           <ArrowLeft size={18} />
           Back to Feed
         </Link>
@@ -278,10 +275,7 @@ function PostLoadError({ onRetry }: { onRetry: () => void }) {
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Failed to Load</h2>
         <p className="text-secondary mb-6">Something went wrong loading this post.</p>
-        <button
-          onClick={onRetry}
-          className="btn-primary-sm"
-        >
+        <button onClick={onRetry} className="btn-primary-sm">
           Try Again
         </button>
       </div>
