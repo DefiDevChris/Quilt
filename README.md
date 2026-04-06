@@ -35,8 +35,9 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 **Color Palette**: Unified warm cream system
 
 - **Surface hierarchy**: `surface-container-lowest` → `surface-container-highest` (white to subtle cream tones)
-- **Primary**: Warm peach (`#ffb085`) with dark variant (`#c67b5c`)
-- **Mobile accent**: Golden amber (`#c48a28`) for FAB and active states
+- **Primary**: Orange (`#f97316`) with dark variant (`#ea580c`)
+- **Primary container**: Light peach (`#ffedd5`)
+- **CTA gradient**: `linear-gradient(to right, #f97316, #fb7185)` (orange to rose)
 - **Text**: `on-surface` (`#4a3b32`), `secondary` (`#6b5a4d`)
 - **Glassmorphism**: 4 variants — `glass-card`, `glass-elevated`, `glass-panel`, `glass-panel-social`
 

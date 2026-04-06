@@ -460,7 +460,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-lg bg-primary text-on-primary text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? 'Saving...' : postId ? 'Update Post' : 'Create Post'}
           </button>

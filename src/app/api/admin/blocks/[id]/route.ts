@@ -2,8 +2,8 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, errorResponse, notFoundResponse } from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import { errorResponse, notFoundResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,13 +12,9 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;
@@ -33,10 +29,7 @@ export async function DELETE(
       return notFoundResponse('Block not found');
     }
 
-    const [deleted] = await db
-      .delete(blocks)
-      .where(eq(blocks.id, id))
-      .returning({ id: blocks.id });
+    const [deleted] = await db.delete(blocks).where(eq(blocks.id, id)).returning({ id: blocks.id });
 
     if (!deleted) {
       return notFoundResponse('Block not found');

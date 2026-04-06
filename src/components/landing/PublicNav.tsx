@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuthStore } from '@/stores/authStore';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
-import Mascot from './Mascot';
 
 export default function PublicNav() {
   const user = useAuthStore((s) => s.user);
@@ -31,7 +31,14 @@ export default function PublicNav() {
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <Mascot pose="waving" size="sm" />
+          <Image
+            src="/logo.png"
+            alt="QuiltCorgi Logo"
+            width={40}
+            height={40}
+            unoptimized
+            className="object-contain"
+          />
           <span
             className="text-2xl font-bold text-on-surface"
             style={{ fontFamily: 'var(--font-display)' }}
@@ -73,7 +80,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-5 py-2 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors whitespace-nowrap"
+              className="px-5 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
             >
               Go to Dashboard
             </Link>
@@ -87,7 +94,7 @@ export default function PublicNav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-5 py-2 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors whitespace-nowrap"
+                className="px-5 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
               >
                 Start Designing
               </Link>
@@ -157,7 +164,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-3 bg-primary text-on-surface rounded-full font-semibold"
+              className="block text-center px-6 py-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -166,7 +173,7 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-3 bg-primary text-on-surface rounded-full font-semibold"
+                className="block text-center px-6 py-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing

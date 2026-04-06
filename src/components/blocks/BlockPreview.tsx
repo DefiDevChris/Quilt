@@ -87,7 +87,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="mt-3 inline-block rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="mt-3 inline-block rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>

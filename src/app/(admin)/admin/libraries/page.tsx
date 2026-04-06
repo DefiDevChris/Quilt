@@ -29,7 +29,7 @@ export default function AdminLibrariesPage() {
         ))}
       </div>
 
-      <div className="bg-surface rounded-xl border border-outline-variant p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-outline-variant p-6 shadow-elevation-1">
         {activeTab === 'fabrics' && <FabricForm />}
         {activeTab === 'blocks' && <BlockForm />}
         {activeTab === 'templates' && <TemplateForm />}
@@ -167,7 +167,7 @@ function FabricForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-primary text-on-primary rounded-lg font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Fabric'}
       </button>
@@ -318,7 +318,7 @@ function BlockForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-primary text-on-primary rounded-lg font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Block'}
       </button>
@@ -513,7 +513,7 @@ function TemplateForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-primary text-on-primary rounded-lg font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Template'}
       </button>
@@ -727,7 +727,7 @@ function ShopManagement() {
                       }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow transition-transform ${
+                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
                           fabric.inStock ? 'translate-x-3.5' : 'translate-x-0.5'
                         }`}
                       />
@@ -744,7 +744,7 @@ function ShopManagement() {
                       }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow transition-transform ${
+                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
                           fabric.isPurchasable ? 'translate-x-3.5' : 'translate-x-0.5'
                         }`}
                       />

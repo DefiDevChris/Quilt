@@ -1,33 +1,17 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { db } from '@/lib/db';
 import { blogPosts, users, userProfiles } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
+import FeaturedCarousel from '@/components/blog/FeaturedCarousel';
+import AsymmetricPostFeed from '@/components/blog/AsymmetricPostFeed';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Blog',
+  title: 'Blog | QuiltCorgi',
   description:
-    'Quilting tutorials, pattern inspiration, and design tips from the QuiltCorgi community.',
+    'Explore quilting tutorials, creative pattern inspiration, and expert design tips from the QuiltCorgi community.',
 };
-
-interface BlogPostCard {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  featuredImageUrl: string | null;
-  category: string;
-  createdAt: Date | null;
-  authorName: string | null;
-  authorAvatarUrl: string | null;
-}
-
-function formatDate(date: Date | null): string {
-  if (!date) return '';
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 export default async function BlogPage() {
   const posts = await db
@@ -47,88 +31,75 @@ export default async function BlogPage() {
     .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .where(eq(blogPosts.status, 'published'))
     .orderBy(desc(blogPosts.publishedAt))
-    .limit(20);
+    .limit(25);
 
-  return (
-    <>
-      <header className="mb-12">
-        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">Blog</h1>
-        <p className="text-secondary mt-1">
-          Quilting tutorials, pattern inspiration, and design tips.
-        </p>
-      </header>
-
-      {posts.length === 0 ? (
-        <div className="glass-panel-social rounded-[2rem] p-12 text-center">
-          <p className="text-secondary font-medium">No posts yet</p>
-          <p className="text-sm text-tertiary mt-1">Check back soon for new content.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} isFeatured={index === 0} />
-          ))}
-        </div>
-      )}
-    </>
-  );
-}
-
-function BlogPostCard({ post, isFeatured }: { post: BlogPostCard; isFeatured?: boolean }) {
-  const image = post.featuredImageUrl || '/images/quilts/quilt_01_bed_geometric.png';
-
-  return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className={`group relative rounded-xl overflow-hidden bg-surface-container shadow-elevation-1 hover:shadow-elevation-2 transition-all duration-300 ${
-        isFeatured ? 'md:col-span-2 lg:col-span-2' : ''
-      }`}
-    >
-      <div className={`aspect-video overflow-hidden ${isFeatured ? 'lg:aspect-[21/9]' : ''}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={image}
-          alt={post.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-      </div>
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-full">
-            {post.category}
-          </span>
-          {post.createdAt && (
-            <span className="text-xs text-secondary">{formatDate(post.createdAt)}</span>
-          )}
-        </div>
-        <h3
-          className={`font-bold text-on-surface group-hover:text-primary transition-colors ${
-            isFeatured ? 'text-xl' : 'text-lg'
-          } line-clamp-2`}
+  if (posts.length === 0) {
+    return (
+      <div
+        className="flex-grow flex items-center justify-center p-6"
+        style={{ backgroundColor: '#FAFAF7', minHeight: '100vh' }}
+      >
+        <div
+          className="max-w-md w-full text-center p-12"
+          style={{ backgroundColor: '#FAFAF7', borderRadius: 2, border: '1px solid #e5e5e0' }}
         >
-          {post.title}
-        </h3>
-        {post.excerpt && <p className="text-sm text-secondary mt-2 line-clamp-2">{post.excerpt}</p>}
-        <div className="flex items-center gap-2 mt-4">
-          {post.authorAvatarUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={post.authorAvatarUrl}
-              alt={post.authorName ?? 'Author'}
-              className="w-6 h-6 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-xs font-bold text-primary">
-                {(post.authorName ?? 'A').charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-          <span className="text-xs text-secondary font-medium">
-            {post.authorName ?? 'QuiltCorgi Team'}
-          </span>
+          <div
+            className="w-20 h-20 flex items-center justify-center mx-auto mb-6"
+            style={{ backgroundColor: '#f5f5f0', borderRadius: 2 }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1a1a1a"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+              <path d="M8 7h6" />
+              <path d="M8 11h8" />
+            </svg>
+          </div>
+          <h2
+            className="text-2xl font-normal text-[#1a1a1a] mb-2 font-serif"
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+          >
+            No stories yet
+          </h2>
+          <p className="text-[#5a5a5a] font-normal">
+            Our quilters are currently drafting new content. Check back soon for fresh inspiration.
+          </p>
         </div>
       </div>
-    </Link>
+    );
+  }
+
+  const featuredPosts = posts.slice(0, 4);
+  const regularPosts = posts.slice(4);
+
+  return (
+    <div className="flex flex-col w-full overflow-x-hidden" style={{ backgroundColor: '#FAFAF7' }}>
+      <section className="w-full">
+        <FeaturedCarousel posts={featuredPosts} />
+      </section>
+
+      <section className="w-full relative z-10" style={{ backgroundColor: '#FAFAF7' }}>
+        <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
+          <div className="mb-10">
+            <h2
+              className="text-3xl md:text-4xl font-normal text-[#1a1a1a] tracking-tight font-serif"
+              style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+            >
+              Recent Stories
+            </h2>
+          </div>
+        </div>
+
+        <AsymmetricPostFeed posts={regularPosts.length > 0 ? regularPosts : posts} />
+      </section>
+    </div>
   );
 }

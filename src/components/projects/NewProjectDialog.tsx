@@ -56,8 +56,14 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
     setName(preset.name);
     setUnitSystem('imperial');
     const config = preset.config;
-    const totalWidth = config.cols * config.blockSize + (config.sashing.width * (config.cols - 1)) + config.borders.reduce((sum, b) => sum + b.width * 2, 0);
-    const totalHeight = config.rows * config.blockSize + (config.sashing.width * (config.rows - 1)) + config.borders.reduce((sum, b) => sum + b.width * 2, 0);
+    const totalWidth =
+      config.cols * config.blockSize +
+      config.sashing.width * (config.cols - 1) +
+      config.borders.reduce((sum, b) => sum + b.width * 2, 0);
+    const totalHeight =
+      config.rows * config.blockSize +
+      config.sashing.width * (config.rows - 1) +
+      config.borders.reduce((sum, b) => sum + b.width * 2, 0);
     setCanvasWidth(totalWidth);
     setCanvasHeight(totalHeight);
     setGridEnabled(true);
@@ -128,7 +134,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
             onClick={() => setActiveTab('blank')}
             className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
               activeTab === 'blank'
-                ? 'bg-surface text-on-surface shadow-sm'
+                ? 'bg-surface text-on-surface shadow-elevation-1'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
@@ -139,7 +145,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
             onClick={() => setActiveTab('layout')}
             className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
               activeTab === 'layout'
-                ? 'bg-surface text-on-surface shadow-sm'
+                ? 'bg-surface text-on-surface shadow-elevation-1'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
@@ -150,7 +156,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
             onClick={() => setActiveTab('template')}
             className={`flex-1 px-2 py-2 text-xs font-medium rounded-md transition-colors ${
               activeTab === 'template'
-                ? 'bg-surface text-on-surface shadow-sm'
+                ? 'bg-surface text-on-surface shadow-elevation-1'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
@@ -182,10 +188,14 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
                   className="flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3 text-left transition-colors hover:bg-surface-container-high group"
                 >
                   <div className="w-8 h-8 bg-primary/20 rounded flex items-center justify-center shrink-0">
-                    <div className={`grid gap-0.5 ${preset.config.rows <= 3 ? 'grid-cols-3' : preset.config.rows === 4 ? 'grid-cols-4' : 'grid-cols-5'}`}>
-                      {Array.from({ length: preset.config.rows * preset.config.cols }).map((_, i) => (
-                        <div key={i} className="w-1 h-1 bg-primary rounded-sm" />
-                      ))}
+                    <div
+                      className={`grid gap-0.5 ${preset.config.rows <= 3 ? 'grid-cols-3' : preset.config.rows === 4 ? 'grid-cols-4' : 'grid-cols-5'}`}
+                    >
+                      {Array.from({ length: preset.config.rows * preset.config.cols }).map(
+                        (_, i) => (
+                          <div key={i} className="w-1 h-1 bg-primary rounded-sm" />
+                        )
+                      )}
                     </div>
                   </div>
                   <div className="flex-1">
@@ -310,7 +320,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
                     onClick={() => setUnitSystem('imperial')}
                     className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                       unitSystem === 'imperial'
-                        ? 'bg-primary text-primary-on'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                         : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
                     }`}
                   >
@@ -321,7 +331,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
                     onClick={() => setUnitSystem('metric')}
                     className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                       unitSystem === 'metric'
-                        ? 'bg-primary text-primary-on'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                         : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
                     }`}
                   >
@@ -421,7 +431,7 @@ export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjec
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCreating ? 'Creating...' : 'Create Project'}
                 </button>

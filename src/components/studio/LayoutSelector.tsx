@@ -15,34 +15,30 @@ const CATEGORY_LABELS: Record<string, string> = {
   'on-point': 'On-Point',
 };
 
-function LayoutThumbnail({ preset }: { readonly preset: LayoutPreset }) {
-  const { rows, cols } = preset.config;
-  const isSashing = preset.category === 'sashing';
-  const isOnPoint = preset.category === 'on-point';
-  const gridCols = Math.min(cols, 5);
-  const gridRows = Math.min(rows, 5);
+const PRESET_SVG: Record<string, string> = {
+  'grid-3x3': '/quilt_layouts/straight_3x3.svg',
+  'grid-4x4': '/quilt_layouts/straight_4x4.svg',
+  'grid-5x5': '/quilt_layouts/straight_5x5.svg',
+  'sashing-3x3': '/quilt_layouts/sashing_3x3.svg',
+  'sashing-4x4': '/quilt_layouts/sashing_4x4.svg',
+  'sashing-5x5-border': '/quilt_layouts/sashing_4x4.svg',
+  'on-point-3x3': '/quilt_layouts/on_point_3x3.svg',
+  'on-point-4x4': '/quilt_layouts/on_point_3x3.svg',
+  'on-point-5x5-border': '/quilt_layouts/on_point_2x2_border.svg',
+};
 
+function LayoutThumbnail({ preset }: { readonly preset: LayoutPreset }) {
+  const svgSrc = PRESET_SVG[preset.id];
   return (
-    <div className="w-10 h-10 bg-surface-container rounded-md flex items-center justify-center p-1">
-      <div
-        className={`grid ${isSashing ? 'gap-[3px]' : 'gap-px'}`}
-        style={{
-          gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
-          gridTemplateRows: `repeat(${gridRows}, 1fr)`,
-          transform: isOnPoint ? 'rotate(45deg) scale(0.75)' : undefined,
-        }}
-      >
-        {Array.from({ length: gridRows * gridCols }).map((_, i) => (
-          <div
-            key={i}
-            className="w-1.5 h-1.5 rounded-[1px]"
-            style={{
-              backgroundColor: 'var(--color-primary)',
-              opacity: 0.7,
-            }}
-          />
-        ))}
-      </div>
+    <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0 bg-surface-container">
+      {svgSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={svgSrc} alt={preset.name} className="w-full h-full object-contain" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-secondary text-xs">
+          {preset.config.cols}×{preset.config.rows}
+        </div>
+      )}
     </div>
   );
 }
@@ -51,7 +47,16 @@ function FreeCanvasThumbnail() {
   return (
     <div className="w-10 h-10 bg-surface-container rounded-md flex items-center justify-center">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-primary">
-        <rect x="2" y="2" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 2" />
+        <rect
+          x="2"
+          y="2"
+          width="16"
+          height="16"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeDasharray="3 2"
+        />
         <path d="M10 6v8M6 10h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     </div>
@@ -126,6 +131,11 @@ export function LayoutSelector({ onSelect, onClose }: LayoutSelectorProps) {
               <button
                 key={preset.id}
                 type="button"
+                draggable={true}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('application/quiltcorgi-layout-preset', preset.id);
+                  e.dataTransfer.effectAllowed = 'copy';
+                }}
                 onClick={() => handleSelectPreset(preset)}
                 className={`w-full flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors ${
                   isActive(preset.id)

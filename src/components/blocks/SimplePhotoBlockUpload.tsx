@@ -6,7 +6,9 @@ import type { Point2D } from '@/lib/photo-layout-types';
 interface SimplePhotoBlockUploadProps {
   isOpen: boolean;
   onClose: () => void;
-  onSaved: () => void;
+  onSaved: (blockId?: string) => void;
+  /** Pre-loaded image URL (from mobile uploads). Skips the upload step. */
+  preloadedImageUrl?: string;
 }
 
 const HANDLE_RADIUS = 8;
@@ -123,8 +125,13 @@ async function uploadToS3(blob: Blob, filename: string): Promise<string> {
 
 type Step = 'upload' | 'imagePrep' | 'crop';
 
-export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhotoBlockUploadProps) {
-  const [step, setStep] = useState<Step>('upload');
+export function SimplePhotoBlockUpload({
+  isOpen,
+  onClose,
+  onSaved,
+  preloadedImageUrl,
+}: SimplePhotoBlockUploadProps) {
+  const [step, setStep] = useState<Step>(preloadedImageUrl ? 'imagePrep' : 'upload');
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null);
   const [originalImageUrl, setOriginalImageUrl] = useState('');
   const [preparedImage, setPreparedImage] = useState<HTMLImageElement | null>(null);
@@ -152,6 +159,19 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
   const containerRef = useRef<HTMLDivElement>(null);
 
   const activeImage = step === 'crop' ? preparedImage : originalImage;
+
+  // Load preloaded image URL (from mobile uploads)
+  useEffect(() => {
+    if (!preloadedImageUrl || originalImage) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      setOriginalImage(img);
+      setOriginalImageUrl(preloadedImageUrl);
+    };
+    img.onerror = () => setError('Failed to load image from URL');
+    img.src = preloadedImageUrl;
+  }, [preloadedImageUrl, originalImage]);
 
   const handleFileSelect = useCallback((file: File) => {
     if (!file.type.match(/^image\/(png|jpeg|jpg|webp)$/)) {
@@ -278,7 +298,14 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
 
   // Draw perspective canvas
   useEffect(() => {
-    if (step !== 'imagePrep' || prepMode !== 'perspective' || !canvasRef.current || !originalImage || !containerRef.current) return;
+    if (
+      step !== 'imagePrep' ||
+      prepMode !== 'perspective' ||
+      !canvasRef.current ||
+      !originalImage ||
+      !containerRef.current
+    )
+      return;
     const canvas = canvasRef.current;
     const containerRect = containerRef.current.getBoundingClientRect();
     canvas.width = containerRect.width;
@@ -296,7 +323,14 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
 
   // Draw crop canvas
   useEffect(() => {
-    if (step !== 'crop' || !canvasRef.current || !preparedImage || !containerRef.current || !corners) return;
+    if (
+      step !== 'crop' ||
+      !canvasRef.current ||
+      !preparedImage ||
+      !containerRef.current ||
+      !corners
+    )
+      return;
     const canvas = canvasRef.current;
     const rect = containerRef.current.getBoundingClientRect();
     canvas.width = rect.width;
@@ -349,7 +383,12 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
       if (dragIndex === null) return;
       const pt = getCanvasPoint(e);
 
-      if (step === 'imagePrep' && prepMode === 'perspective' && perspectiveCorners && originalImage) {
+      if (
+        step === 'imagePrep' &&
+        prepMode === 'perspective' &&
+        perspectiveCorners &&
+        originalImage
+      ) {
         const clampedX = Math.max(0, Math.min(originalImage.naturalWidth, pt.x));
         const clampedY = Math.max(0, Math.min(originalImage.naturalHeight, pt.y));
         const updated: [Point2D, Point2D, Point2D, Point2D] = [...perspectiveCorners];
@@ -363,7 +402,16 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
         setCorners(updated);
       }
     },
-    [dragIndex, step, prepMode, perspectiveCorners, corners, originalImage, preparedImage, getCanvasPoint]
+    [
+      dragIndex,
+      step,
+      prepMode,
+      perspectiveCorners,
+      corners,
+      originalImage,
+      preparedImage,
+      getCanvasPoint,
+    ]
   );
 
   const handleMouseUp = useCallback(() => setDragIndex(null), []);
@@ -408,12 +456,13 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error ?? 'Failed to save block');
+        const respData = await res.json();
+        setError(respData.error ?? 'Failed to save block');
         return;
       }
 
-      onSaved();
+      const respData = await res.json();
+      onSaved(respData.data?.id);
       onClose();
     } catch {
       setError('Failed to save block');
@@ -470,7 +519,7 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
               onClick={() => setPrepMode('straighten')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 prepMode === 'straighten'
-                  ? 'bg-surface text-on-surface shadow-sm'
+                  ? 'bg-surface text-on-surface shadow-elevation-1'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
@@ -481,7 +530,7 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
               onClick={() => setPrepMode('perspective')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 prepMode === 'perspective'
-                  ? 'bg-surface text-on-surface shadow-sm'
+                  ? 'bg-surface text-on-surface shadow-elevation-1'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
@@ -512,27 +561,83 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
               <div className="space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-on-surface/60 uppercase tracking-wider">Straighten</span>
+                    <span className="text-xs font-medium text-on-surface/60 uppercase tracking-wider">
+                      Straighten
+                    </span>
                     <span className="text-xs font-mono text-on-surface/50">{rotation}°</span>
                   </div>
-                  <input type="range" min={-45} max={45} step={0.5} value={rotation} onChange={(e) => setRotation(parseFloat(e.target.value))} className="w-full accent-primary" />
+                  <input
+                    type="range"
+                    min={-45}
+                    max={45}
+                    step={0.5}
+                    value={rotation}
+                    onChange={(e) => setRotation(parseFloat(e.target.value))}
+                    className="w-full accent-primary"
+                  />
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => setRotation((r) => r - 90)} className="flex-1 bg-surface text-on-surface rounded-md py-2 text-xs font-medium hover:bg-surface-container-high transition-colors">-90°</button>
-                  <button type="button" onClick={() => setRotation((r) => r + 90)} className="flex-1 bg-surface text-on-surface rounded-md py-2 text-xs font-medium hover:bg-surface-container-high transition-colors">+90°</button>
-                  <button type="button" onClick={() => setFlipH((v) => !v)} className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-surface text-on-surface hover:bg-surface-container-high'}`}>Flip H</button>
-                  <button type="button" onClick={() => setFlipV((v) => !v)} className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-surface text-on-surface hover:bg-surface-container-high'}`}>Flip V</button>
+                  <button
+                    type="button"
+                    onClick={() => setRotation((r) => r - 90)}
+                    className="flex-1 bg-surface text-on-surface rounded-md py-2 text-xs font-medium hover:bg-surface-container-high transition-colors"
+                  >
+                    -90°
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRotation((r) => r + 90)}
+                    className="flex-1 bg-surface text-on-surface rounded-md py-2 text-xs font-medium hover:bg-surface-container-high transition-colors"
+                  >
+                    +90°
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFlipH((v) => !v)}
+                    className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-surface text-on-surface hover:bg-surface-container-high'}`}
+                  >
+                    Flip H
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFlipV((v) => !v)}
+                    className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-surface text-on-surface hover:bg-surface-container-high'}`}
+                  >
+                    Flip V
+                  </button>
                   {(rotation !== 0 || flipH || flipV) && (
-                    <button type="button" onClick={() => { setRotation(0); setFlipH(false); setFlipV(false); }} className="px-3 rounded-md py-2 text-xs font-medium text-on-surface/50 hover:text-on-surface bg-surface hover:bg-surface-container-high transition-colors">Reset</button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRotation(0);
+                        setFlipH(false);
+                        setFlipV(false);
+                      }}
+                      className="px-3 rounded-md py-2 text-xs font-medium text-on-surface/50 hover:text-on-surface bg-surface hover:bg-surface-container-high transition-colors"
+                    >
+                      Reset
+                    </button>
                   )}
                 </div>
               </div>
             </>
           ) : (
             <>
-              <p className="text-sm text-secondary">Drag corners to align with the edges of your block.</p>
-              <div ref={containerRef} className="relative h-96 rounded border border-outline-variant bg-white">
-                <canvas ref={canvasRef} className="cursor-crosshair" onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} />
+              <p className="text-sm text-secondary">
+                Drag corners to align with the edges of your block.
+              </p>
+              <div
+                ref={containerRef}
+                className="relative h-96 rounded border border-outline-variant bg-white"
+              >
+                <canvas
+                  ref={canvasRef}
+                  className="cursor-crosshair"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                />
               </div>
               {perspectiveCorners && (
                 <button
@@ -542,7 +647,12 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
                     const w = originalImage.naturalWidth;
                     const h = originalImage.naturalHeight;
                     const margin = Math.min(w, h) * 0.02;
-                    setPerspectiveCorners([{ x: margin, y: margin }, { x: w - margin, y: margin }, { x: w - margin, y: h - margin }, { x: margin, y: h - margin }]);
+                    setPerspectiveCorners([
+                      { x: margin, y: margin },
+                      { x: w - margin, y: margin },
+                      { x: w - margin, y: h - margin },
+                      { x: margin, y: h - margin },
+                    ]);
                   }}
                   className="self-start px-3 py-1.5 text-xs font-medium text-on-surface/50 hover:text-on-surface bg-surface rounded-md hover:bg-surface-container-high transition-colors"
                 >
@@ -553,36 +663,97 @@ export function SimplePhotoBlockUpload({ isOpen, onClose, onSaved }: SimplePhoto
           )}
 
           <div className="flex justify-between">
-            <button type="button" onClick={() => setStep('upload')} className="px-4 py-2 text-sm text-secondary hover:text-on-surface">Back</button>
-            <button type="button" onClick={handlePrepContinue} disabled={applying} className="px-6 py-2 text-sm font-medium text-on-primary bg-primary rounded-lg hover:bg-primary/90 disabled:opacity-50">{applying ? 'Applying...' : 'Continue'}</button>
+            <button
+              type="button"
+              onClick={() => setStep('upload')}
+              className="px-4 py-2 text-sm text-secondary hover:text-on-surface"
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handlePrepContinue}
+              disabled={applying}
+              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              {applying ? 'Applying...' : 'Continue'}
+            </button>
           </div>
         </div>
       )}
 
       {step === 'crop' && (
         <div className="space-y-3">
-          <p className="text-sm text-secondary">Adjust the crop area to frame your block perfectly.</p>
-          <div ref={containerRef} className="relative h-96 rounded border border-outline-variant bg-white">
-            <canvas ref={canvasRef} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} className="cursor-crosshair" />
+          <p className="text-sm text-secondary">
+            Adjust the crop area to frame your block perfectly.
+          </p>
+          <div
+            ref={containerRef}
+            className="relative h-96 rounded border border-outline-variant bg-white"
+          >
+            <canvas
+              ref={canvasRef}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              className="cursor-crosshair"
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1 block text-xs font-medium text-secondary">Block Name *</label>
-              <input type="text" value={blockName} onChange={(e) => setBlockName(e.target.value)} placeholder="My Block" maxLength={255} className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none" />
+              <input
+                type="text"
+                value={blockName}
+                onChange={(e) => setBlockName(e.target.value)}
+                placeholder="My Block"
+                maxLength={255}
+                className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
-              <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Custom" maxLength={100} className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none" />
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Custom"
+                maxLength={100}
+                className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
             </div>
             <div className="col-span-2">
               <label className="mb-1 block text-xs font-medium text-secondary">Tags</label>
-              <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="modern, geometric" className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none" />
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="modern, geometric"
+                className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
             </div>
           </div>
           {error && <p className="text-sm text-error">{error}</p>}
           <div className="flex justify-between">
-            <button type="button" onClick={() => { setCorners(null); setStep('imagePrep'); }} className="px-4 py-2 text-sm text-secondary hover:text-on-surface">Back</button>
-            <button type="button" onClick={handleSave} disabled={saving} className="px-6 py-2 text-sm font-medium text-on-primary bg-primary rounded-lg hover:bg-primary/90 disabled:opacity-50">{saving ? 'Saving...' : 'Save Block'}</button>
+            <button
+              type="button"
+              onClick={() => {
+                setCorners(null);
+                setStep('imagePrep');
+              }}
+              className="px-4 py-2 text-sm text-secondary hover:text-on-surface"
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Block'}
+            </button>
           </div>
         </div>
       )}

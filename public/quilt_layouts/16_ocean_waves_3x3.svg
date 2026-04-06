@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <polygon points="0,0 60,0 30,60 0,60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="60,0 120,0 90,60 30,60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="120,0 180,0 180,60 90,60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="0,60 30,60 60,120 0,120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="30,60 90,60 120,120 60,120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="90,60 180,60 180,120 120,120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="0,120 60,120 30,180 0,180" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="60,120 120,120 90,180 30,180" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="120,120 180,120 180,180 90,180" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+</svg>

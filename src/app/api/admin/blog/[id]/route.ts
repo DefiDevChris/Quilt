@@ -2,35 +2,28 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
-import { getRequiredSession } from '@/lib/auth-helpers';
-import { errorResponse, unauthorizedResponse, forbiddenResponse, validationErrorResponse } from '@/lib/api-responses';
-import { isAdmin } from '@/lib/trust-utils';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import {
+  errorResponse,
+  unauthorizedResponse,
+  forbiddenResponse,
+  validationErrorResponse,
+} from '@/lib/api-responses';
 import { updateBlogPostSchema } from '@/lib/validation';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 
 export const dynamic = 'force-dynamic';
 
 // GET - Get a single blog post by ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return forbiddenResponse();
-  }
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;
 
-    const [post] = await db
-      .select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, id))
-      .limit(1);
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
 
     if (!post) {
       return errorResponse('Blog post not found', 'NOT_FOUND', 404);
@@ -43,17 +36,10 @@ export async function GET(
 }
 
 // PUT - Update a blog post
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return forbiddenResponse();
-  }
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;
@@ -80,7 +66,7 @@ export async function PUT(
     // Handle slug regeneration if title changes
     if (parsed.data.title && parsed.data.title !== existing.title) {
       let newSlug = generateSlug(parsed.data.title);
-      
+
       // Check for slug conflict (excluding current post)
       const [conflict] = await db
         .select({ id: blogPosts.id })
@@ -117,21 +103,14 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return forbiddenResponse();
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;
 
-    const [deleted] = await db
-      .delete(blogPosts)
-      .where(eq(blogPosts.id, id))
-      .returning();
+    const [deleted] = await db.delete(blogPosts).where(eq(blogPosts.id, id)).returning();
 
     if (!deleted) {
       return errorResponse('Blog post not found', 'NOT_FOUND', 404);

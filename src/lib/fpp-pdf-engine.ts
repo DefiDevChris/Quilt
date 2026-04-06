@@ -13,6 +13,13 @@ export interface FppPdfConfig {
   logoPngBytes: Uint8Array | null;
 }
 
+export class FppNotImplementedError extends Error {
+  constructor() {
+    super('Foundation Paper Piecing PDF export is not yet available.');
+    this.name = 'FppNotImplementedError';
+  }
+}
+
 export async function generateFppPdf(_config: FppPdfConfig): Promise<Uint8Array> {
-  throw new Error('FPP PDF engine not yet implemented');
+  throw new FppNotImplementedError();
 }

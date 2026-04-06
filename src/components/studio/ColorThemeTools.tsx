@@ -79,7 +79,7 @@ export function ColorThemeTools() {
               title="Spraycan — click patch to recolor all matching"
               className={`flex-1 h-8 rounded text-xs font-medium ${
                 activeTool === 'spraycan'
-                  ? 'bg-primary text-white'
+                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'bg-surface-container text-on-surface/70 hover:text-on-surface hover:bg-surface-container-high'
               }`}
             >
@@ -187,7 +187,7 @@ export function ColorThemeTools() {
                 <button
                   type="button"
                   onClick={handleApplyScheme}
-                  className="flex-1 rounded bg-primary px-2 py-1 text-caption text-white hover:bg-primary/90"
+                  className="flex-1 rounded bg-gradient-to-r from-orange-500 to-rose-400 px-2 py-1 text-caption text-white hover:opacity-90"
                 >
                   Apply
                 </button>

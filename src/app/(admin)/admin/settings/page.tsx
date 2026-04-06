@@ -9,9 +9,7 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState('');
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
-    null
-  );
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -197,7 +195,7 @@ export default function AdminSettingsPage() {
                 type="button"
                 onClick={handleConfirmEnable}
                 disabled={confirmText !== 'ENABLE SHOP' || saving}
-                className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full disabled:opacity-50 hover:bg-primary-dark transition-colors"
+                className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
               >
                 {saving ? 'Enabling...' : 'Enable Shop'}
               </button>

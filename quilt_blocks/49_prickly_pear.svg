@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Prickly Pear: 6×6 grid (50px). Center diamond checkerboard,
+       sawtooth dark triangles around it, background corners. -->
+  <!-- Background fill for outer areas -->
+  <rect x="0" y="0" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="200" y="0" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="200" y="200" width="100" height="100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Sawtooth teeth (dark, pointing outward from center) -->
+  <!-- Top sawtooth: 2 triangles along top edge of center area -->
+  <polygon points="100,100 150,100 100,0" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="100,0 150,100 150,0" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,100 200,100 200,0" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="150,0 200,0 150,100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Right sawtooth -->
+  <polygon points="200,100 300,100 200,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="300,100 300,150 200,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="200,150 300,200 200,200" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="300,150 300,200 200,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom sawtooth -->
+  <polygon points="100,200 150,200 150,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="100,200 100,300 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,200 200,200 150,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="200,200 200,300 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Left sawtooth -->
+  <polygon points="0,100 100,100 100,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,100 100,150 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,150 100,150 100,200" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,150 100,200 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Center diamond on point (200×200 area, diamond from 150,50 to 250,150 to 150,250 to 50,150) -->
+  <!-- Wait, center area is 100-200, 100-200. Diamond inside: -->
+  <!-- Center diamond: 4 quarter sections (checkerboard) -->
+  <!-- Top quarter (light) -->
+  <polygon points="150,100 200,150 150,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Right quarter (medium) -->
+  <polygon points="200,150 150,200 150,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Bottom quarter (light) -->
+  <polygon points="150,200 100,150 150,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Left quarter (medium) -->
+  <polygon points="100,150 150,100 150,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Corner triangles between diamond and sawtooth (background) -->
+  <polygon points="100,100 150,100 100,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,100 200,100 200,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="200,150 200,200 150,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="100,150 150,200 100,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

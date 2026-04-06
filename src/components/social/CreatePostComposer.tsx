@@ -226,7 +226,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                 onClick={() => setMode(m)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
                   mode === m
-                    ? 'bg-primary text-white shadow-elevation-1'
+                    ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
                     : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
                 }`}
               >
@@ -377,7 +377,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'image' && !imageUrl && !uploadedImage) ||
                   (mode === 'project' && !selectedProject)
                 }
-                className="flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden text-white text-sm font-semibold shadow-elevation-1 hover:shadow-elevation-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold shadow-elevation-1 hover:shadow-elevation-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 Post

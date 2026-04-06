@@ -28,8 +28,9 @@ export const quiltTemplates = pgTable(
     tags: text('tags').array().default([]),
     importCount: integer('importCount').default(0),
     isPublished: boolean('isPublished').default(true),
-    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
+      .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
   },

@@ -204,7 +204,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
                 type="button"
                 disabled={isSameDimensions}
                 onClick={handleSubmit}
-                className="px-4 py-2 text-body-md text-on-primary bg-primary rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continue
               </button>
@@ -233,7 +233,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               <button
                 type="button"
                 onClick={() => handleConfirm('scale')}
-                className="w-full px-4 py-2.5 text-body-md text-on-primary bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                className="w-full px-4 py-2.5 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all"
               >
                 Resize Current Pattern
               </button>

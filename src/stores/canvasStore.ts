@@ -18,7 +18,8 @@ import {
   DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
-import { fitToScreenZoom, getPixelsPerUnit } from '@/lib/canvas-utils';
+import { fitToScreenZoom, computeViewportTransform } from '@/lib/canvas-utils';
+import { getProjectDimensions } from '@/stores/store-bridge';
 
 export type ToolType =
   | 'select'
@@ -145,7 +146,7 @@ const INITIAL_STATE = {
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null as ColorThemeTool | null,
 
-  isViewportLocked: true,
+  isViewportLocked: false,
   showSeamAllowance: true,
   printScale: 1.0,
   easyDrawMode: 'straight' as const,
@@ -258,22 +259,20 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     if (!fabricCanvas) return;
     const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
     if (!el) return;
-    // Lazy import to avoid circular dependency with projectStore
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { useProjectStore } = require('@/stores/projectStore') as {
-      useProjectStore: { getState: () => { canvasWidth: number; canvasHeight: number } };
-    };
-    const { canvasWidth, canvasHeight } = useProjectStore.getState();
-    const pxPerUnit = getPixelsPerUnit(unitSystem);
+    const { canvasWidth, canvasHeight } = getProjectDimensions();
     const containerW = el.clientWidth;
     const containerH = el.clientHeight;
     const zoom = fitToScreenZoom(containerW, containerH, canvasWidth, canvasHeight, unitSystem);
-    const quiltWPx = canvasWidth * pxPerUnit;
-    const quiltHPx = canvasHeight * pxPerUnit;
-    const panX = (containerW - quiltWPx * zoom) / 2;
-    const panY = (containerH - quiltHPx * zoom) / 2;
-    fabricCanvas.setViewportTransform([zoom, 0, 0, zoom, panX, panY]);
-    set({ zoom });
+    const vp = computeViewportTransform(
+      containerW,
+      containerH,
+      canvasWidth,
+      canvasHeight,
+      zoom,
+      unitSystem
+    );
+    fabricCanvas.setViewportTransform([vp.zoom, 0, 0, vp.zoom, vp.panX, vp.panY]);
+    set({ zoom: vp.zoom });
     fabricCanvas.renderAll();
   },
 
@@ -283,20 +282,19 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
     const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
     if (!el) return;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { useProjectStore } = require('@/stores/projectStore') as {
-      useProjectStore: { getState: () => { canvasWidth: number; canvasHeight: number } };
-    };
-    const { canvasWidth, canvasHeight } = useProjectStore.getState();
-    const pxPerUnit = getPixelsPerUnit(unitSystem);
+    const { canvasWidth, canvasHeight } = getProjectDimensions();
     const containerW = el.clientWidth;
     const containerH = el.clientHeight;
-    const quiltWPx = canvasWidth * pxPerUnit;
-    const quiltHPx = canvasHeight * pxPerUnit;
-    const panX = (containerW - quiltWPx * clamped) / 2;
-    const panY = (containerH - quiltHPx * clamped) / 2;
-    fabricCanvas.setViewportTransform([clamped, 0, 0, clamped, panX, panY]);
-    set({ zoom: clamped });
+    const vp = computeViewportTransform(
+      containerW,
+      containerH,
+      canvasWidth,
+      canvasHeight,
+      clamped,
+      unitSystem
+    );
+    fabricCanvas.setViewportTransform([vp.zoom, 0, 0, vp.zoom, vp.panX, vp.panY]);
+    set({ zoom: vp.zoom });
     fabricCanvas.renderAll();
   },
 

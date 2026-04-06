@@ -9,7 +9,9 @@ if (!connectionString && process.env.NODE_ENV === 'production') {
 
 const pool = new Pool({
   connectionString: connectionString ?? 'postgresql://localhost:5432/quiltcorgi',
-  max: process.env.NODE_ENV === 'production' ? 2 : 5,
+  max:
+    parseInt(process.env.DATABASE_POOL_SIZE ?? '', 10) ||
+    (process.env.NODE_ENV === 'production' ? 10 : 5),
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,

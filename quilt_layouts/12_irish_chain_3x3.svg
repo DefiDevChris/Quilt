@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <rect x="0" y="0" width="20" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="60" y="0" width="20" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="140" y="0" width="20" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="200" y="0" width="20" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="0" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="80" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="160" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="0" y="80" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="80" y="80" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="160" y="80" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="0" y="160" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="80" y="160" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="160" y="160" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="0" y="60" width="220" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="0" y="140" width="220" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+</svg>

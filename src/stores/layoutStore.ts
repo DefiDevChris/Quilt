@@ -14,6 +14,7 @@ interface LayoutStoreState {
   borders: BorderConfig[];
   hasCornerstones: boolean;
   bindingWidth: number;
+  creatorMode: 'preset' | 'custom';
 
   setLayoutType: (type: LayoutType) => void;
   setSelectedPreset: (presetId: string | null) => void;
@@ -26,6 +27,7 @@ interface LayoutStoreState {
   removeBorder: (index: number) => void;
   setHasCornerstones: (value: boolean) => void;
   setBindingWidth: (width: number) => void;
+  setCreatorMode: (mode: 'preset' | 'custom') => void;
   reset: () => void;
 }
 
@@ -46,16 +48,21 @@ function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
   };
 }
 
-export const useLayoutStore = create<LayoutStoreState>((set) => ({
-  layoutType: 'none',
-  selectedPresetId: null,
+const INITIAL_STATE = {
+  layoutType: 'none' as LayoutType,
+  selectedPresetId: null as string | null,
   rows: 3,
   cols: 3,
   blockSize: 6,
   sashing: { ...DEFAULT_SASHING },
-  borders: [],
+  borders: [] as BorderConfig[],
   hasCornerstones: true,
   bindingWidth: 0.25,
+  creatorMode: 'preset' as 'preset' | 'custom',
+};
+
+export const useLayoutStore = create<LayoutStoreState>((set) => ({
+  ...INITIAL_STATE,
 
   setLayoutType: (layoutType) => set({ layoutType }),
 
@@ -75,9 +82,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
   addBorder: () =>
     set((state) => {
       if (state.borders.length >= 5) return state;
-      return {
-        borders: [...state.borders, createBorder()],
-      };
+      return { borders: [...state.borders, createBorder()] };
     }),
 
   updateBorder: (index, updates) =>
@@ -92,18 +97,10 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
 
   setHasCornerstones: (hasCornerstones) => set({ hasCornerstones }),
 
-  setBindingWidth: (bindingWidth) => set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
+  setBindingWidth: (bindingWidth) =>
+    set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
 
-  reset: () =>
-    set({
-      layoutType: 'none',
-      selectedPresetId: null,
-      rows: 3,
-      cols: 3,
-      blockSize: 6,
-      sashing: { ...DEFAULT_SASHING },
-      borders: [],
-      hasCornerstones: true,
-      bindingWidth: 0.25,
-    }),
+  setCreatorMode: (creatorMode) => set({ creatorMode }),
+
+  reset: () => set({ ...INITIAL_STATE }),
 }));

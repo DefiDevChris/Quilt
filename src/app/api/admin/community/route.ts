@@ -3,13 +3,8 @@ import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { socialPosts, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { checkTrustLevel } from '@/middleware/trust-guard';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import { unauthorizedResponse, validationErrorResponse, errorResponse } from '@/lib/api-responses';
 import { formatCreatorName } from '@/lib/format-utils';
 import { z } from 'zod';
 
@@ -21,11 +16,9 @@ const paginationSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
-  if (!trustCheck.allowed) return trustCheck.response!;
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const url = request.nextUrl;
   const parsed = paginationSchema.safeParse({

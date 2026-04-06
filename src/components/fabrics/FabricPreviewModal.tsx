@@ -22,9 +22,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
   const [quantity, setQuantity] = useState(0.5);
 
   const isPurchasable = fabric.isPurchasable && shopEnabled;
-  const price = fabric.pricePerYard
-    ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd`
-    : null;
+  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : null;
 
   const handleAddToCart = () => {
     if (!fabric.shopifyVariantId || !fabric.inStock) return;
@@ -42,10 +40,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm glass-elevated rounded-2xl overflow-hidden">
         {/* Close */}
         <button
@@ -74,41 +69,14 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         <div className="p-5 space-y-3">
           <div>
             <h3 className="text-lg font-semibold text-on-surface">{fabric.name}</h3>
-            {fabric.manufacturer && (
-              <p className="text-sm text-secondary">{fabric.manufacturer}</p>
-            )}
-            {fabric.collection && (
-              <p className="text-xs text-secondary">{fabric.collection}</p>
-            )}
-            <div className="flex items-center gap-2 mt-1.5">
-              {fabric.colorFamily && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-primary-container/40 text-secondary capitalize">
-                  {fabric.colorFamily}
-                </span>
-              )}
-              {fabric.value && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-primary-container/40 text-secondary">
-                  {fabric.value}
-                </span>
-              )}
-            </div>
+            {fabric.manufacturer && <p className="text-sm text-secondary">{fabric.manufacturer}</p>}
+            {fabric.collection && <p className="text-xs text-secondary">{fabric.collection}</p>}
           </div>
 
           {/* Price + Stock (purchasable only) */}
           {isPurchasable && (
             <div className="flex items-center gap-3">
-              {price && (
-                <span className="text-xl font-bold text-on-surface">{price}</span>
-              )}
-              {fabric.inStock ? (
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">
-                  In Stock
-                </span>
-              ) : (
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">
-                  Out of Stock
-                </span>
-              )}
+              {price && <span className="text-xl font-bold text-on-surface">{price}</span>}
             </div>
           )}
 
@@ -156,7 +124,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List

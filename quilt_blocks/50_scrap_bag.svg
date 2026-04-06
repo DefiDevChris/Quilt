@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Scrap Bag: 5×5 grid (60px). Center square, side HSTs creating
+       a diamond star, corner nine-patch elements. -->
+  <!-- Center square (background) -->
+  <rect x="120" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Center side rectangles (background) -->
+  <rect x="120" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Side HSTs (dark/bg) creating diamond star points -->
+  <!-- Top-left HST -->
+  <polygon points="60,60 120,60 60,120" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="120,60 120,120 60,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Top-right HST -->
+  <polygon points="180,60 240,60 240,120" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="180,60 240,120 180,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom-right HST -->
+  <polygon points="180,180 240,180 240,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="180,180 240,240 180,240" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Bottom-left HST -->
+  <polygon points="60,180 120,180 60,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="120,180 120,240 60,240" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Outer side HSTs (medium/bg, larger) -->
+  <!-- Top -->
+  <polygon points="60,0 120,0 120,60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="60,0 120,60 60,60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="120,0 180,0 120,60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="180,0 180,60 120,60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Right -->
+  <polygon points="240,60 300,60 240,120" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="300,60 300,120 240,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="240,120 300,120 300,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="240,120 300,180 240,180" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Bottom -->
+  <polygon points="120,240 180,240 180,300" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="120,240 180,300 120,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="60,240 120,240 120,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="60,240 120,300 60,300" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Left -->
+  <polygon points="0,120 60,120 60,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,120 60,180 0,180" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="0,60 60,60 0,120" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="60,60 60,120 0,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Corner squares (dark accent) -->
+  <rect x="0" y="0" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <rect x="240" y="0" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <rect x="0" y="240" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <rect x="240" y="240" width="60" height="60" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <!-- Top/bottom strips -->
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

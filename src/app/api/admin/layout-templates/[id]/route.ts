@@ -2,8 +2,12 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
-import { getRequiredSession, unauthorizedResponse, errorResponse, notFoundResponse } from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
+import {
+  requireAdminSession,
+  unauthorizedResponse,
+  errorResponse,
+  notFoundResponse,
+} from '@/lib/auth-helpers';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,13 +16,9 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;

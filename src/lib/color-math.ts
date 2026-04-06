@@ -261,35 +261,3 @@ export function findClosestColor(
     color: palette[bestIndex],
   };
 }
-
-// ---------------------------------------------------------------------------
-// Sampling
-// ---------------------------------------------------------------------------
-
-/**
- * Compute the average RGB color from a segment of a Uint8ClampedArray of
- * RGBA pixel data. startIndex is the byte offset (not pixel index).
- * count is the number of pixels to average.
- */
-export function averageColor(pixels: Uint8ClampedArray, startIndex: number, count: number): RGB {
-  if (count === 0) {
-    return { r: 0, g: 0, b: 0 };
-  }
-
-  let totalR = 0;
-  let totalG = 0;
-  let totalB = 0;
-
-  for (let i = 0; i < count; i++) {
-    const offset = startIndex + i * 4;
-    totalR += pixels[offset];
-    totalG += pixels[offset + 1];
-    totalB += pixels[offset + 2];
-  }
-
-  return {
-    r: Math.round(totalR / count),
-    g: Math.round(totalG / count),
-    b: Math.round(totalB / count),
-  };
-}

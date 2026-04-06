@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /studio/
-Disallow: /profile/
-Sitemap: https://quiltcorgi.com/sitemap.xml

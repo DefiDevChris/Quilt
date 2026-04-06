@@ -1,38 +1,31 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
+import { useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { WHITE_FILL } from '@/lib/constants';
+import { LayoutSelector } from '@/components/studio/LayoutSelector';
+import { BlockLibrary } from '@/components/blocks/BlockLibrary';
+import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
+import { LayoutRolePanel } from '@/components/studio/LayoutRolePanel';
 
-import { BlockBuilderOptions } from '@/components/studio/BlockBuilderOptions';
-import { ColorThemeTools } from '@/components/studio/ColorThemeTools';
-import { SelectionPanel } from '@/components/studio/SelectionPanel';
-
-import { SectionTitle } from '@/components/ui/SectionTitle';
-import { NumberInput } from '@/components/ui/NumberInput';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { useLayoutStore } from '@/stores/layoutStore';
-import { getLayoutAreaFromObject } from '@/hooks/useLayoutRenderer';
-import type { LayoutAreaRole } from '@/types/layout';
+type SectionKey = 'layout' | 'block' | 'fabric' | 'role';
 
 function CollapsibleSection({
   title,
-  defaultOpen = false,
+  isOpen,
+  onToggle,
   children,
 }: {
   readonly title: string;
-  readonly defaultOpen?: boolean;
+  readonly isOpen: boolean;
+  readonly onToggle: () => void;
   readonly children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between py-2.5 px-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface/70 hover:text-on-surface transition-colors"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-2.5 px-3 bg-surface-container-high border-b border-outline-variant/50 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface hover:bg-surface-container-highest transition-colors"
       >
         {title}
         <svg
@@ -42,524 +35,94 @@ function CollapsibleSection({
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
-          className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         >
           <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {open && <div className="pb-3">{children}</div>}
+      {isOpen && <div className="pb-0 bg-surface">{children}</div>}
     </div>
   );
 }
 
-function usePrecisionControls() {
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-
-  const [blockWidth, setBlockWidth] = useState(() => canvasWidth.toFixed(3));
-  const [blockHeight, setBlockHeight] = useState(() => canvasHeight.toFixed(3));
-  const [snapsH, setSnapsH] = useState(() =>
-    String(Math.max(1, Math.round(canvasWidth / Math.max(gridSettings.size, 0.01))))
-  );
-  const [snapsV, setSnapsV] = useState(() =>
-    String(Math.max(1, Math.round(canvasHeight / Math.max(gridSettings.size, 0.01))))
-  );
-  const [snapToGrid, setSnapToGrid] = useState(() => gridSettings.snapToGrid);
-
-  useEffect(() => {
-    setBlockWidth(canvasWidth.toFixed(3));
-  }, [canvasWidth]);
-  useEffect(() => {
-    setBlockHeight(canvasHeight.toFixed(3));
-  }, [canvasHeight]);
-
-  const pushUndo = useCallback(() => {
-    if (!fabricCanvas) return;
-    const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
-    const json = JSON.stringify(canvas.toJSON());
-    useCanvasStore.getState().pushUndoState(json);
-    useProjectStore.getState().setDirty(true);
-  }, [fabricCanvas]);
-
-  const handleBlockWidthChange = useCallback(
-    (val: string) => {
-      setBlockWidth(val);
-      const num = parseFloat(val);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        useProjectStore.getState().setCanvasWidth(num);
-        const gridSize = useCanvasStore.getState().gridSettings.size;
-        setSnapsH(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleBlockHeightChange = useCallback(
-    (val: string) => {
-      setBlockHeight(val);
-      const num = parseFloat(val);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        useProjectStore.getState().setCanvasHeight(num);
-        const gridSize = useCanvasStore.getState().gridSettings.size;
-        setSnapsV(String(Math.max(1, Math.round(num / Math.max(gridSize, 0.01)))));
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleSnapsHChange = useCallback(
-    (val: string) => {
-      setSnapsH(val);
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        const width = useProjectStore.getState().canvasWidth;
-        useCanvasStore.getState().setGridSettings({ size: width / num });
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleSnapsVChange = useCallback(
-    (val: string) => {
-      setSnapsV(val);
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num > 0) {
-        pushUndo();
-        const height = useProjectStore.getState().canvasHeight;
-        useCanvasStore.getState().setGridSettings({ size: height / num });
-      }
-    },
-    [pushUndo]
-  );
-
-  const handleSnapToGridChange = useCallback(
-    (val: boolean) => {
-      setSnapToGrid(val);
-      pushUndo();
-      useCanvasStore.getState().setGridSettings({ snapToGrid: val });
-    },
-    [pushUndo]
-  );
-
-  return {
-    blockWidth,
-    blockHeight,
-    snapsH,
-    snapsV,
-    snapToGrid,
-    handleBlockWidthChange,
-    handleBlockHeightChange,
-    handleSnapsHChange,
-    handleSnapsVChange,
-    handleSnapToGridChange,
-    pushUndo,
-    fabricCanvas,
-  };
+interface ContextPanelProps {
+  onBlockDragStart: (e: React.DragEvent, blockId: string) => void;
+  onFabricDragStart: (e: React.DragEvent, fabricId: string) => void;
+  onOpenDrafting?: () => void;
+  onOpenPhotoUpload?: () => void;
+  onOpenUpload?: () => void;
 }
 
-function PrecisionBar() {
-  const {
-    blockWidth,
-    blockHeight,
-    snapsH,
-    snapsV,
-    snapToGrid,
-    handleBlockWidthChange,
-    handleBlockHeightChange,
-    handleSnapsHChange,
-    handleSnapsVChange,
-    handleSnapToGridChange,
-  } = usePrecisionControls();
+export function ContextPanel({
+  onBlockDragStart,
+  onFabricDragStart,
+  onOpenDrafting,
+  onOpenPhotoUpload,
+  onOpenUpload,
+}: ContextPanelProps) {
+  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const [openSection, setOpenSection] = useState<SectionKey>('layout');
 
-  return (
-    <div>
-      <SectionTitle>Precision</SectionTitle>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <NumberInput
-          label="Block Width"
-          value={blockWidth}
-          onChange={handleBlockWidthChange}
-          suffix="in"
-        />
-        <NumberInput
-          label="Block Height"
-          value={blockHeight}
-          onChange={handleBlockHeightChange}
-          suffix="in"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <NumberInput label="Snaps Horiz" value={snapsH} onChange={handleSnapsHChange} />
-        <NumberInput label="Snaps Vert" value={snapsV} onChange={handleSnapsVChange} />
-      </div>
-      <Checkbox label="Snap to Grid" checked={snapToGrid} onChange={handleSnapToGridChange} />
-    </div>
-  );
-}
+  const toggle = (key: SectionKey) =>
+    setOpenSection((prev) => (prev === key ? ('' as SectionKey) : key));
 
-function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: boolean }) {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-  const [rotation, setRotation] = useState('0');
-  const [shearH, setShearH] = useState('0');
-  const [shearV, setShearV] = useState('0');
-  const [canvasColor, setCanvasColor] = useState(() => {
-    if (!fabricCanvas) return WHITE_FILL;
-    const canvas = fabricCanvas as { backgroundColor?: string };
-    return canvas.backgroundColor && typeof canvas.backgroundColor === 'string'
-      ? canvas.backgroundColor
-      : WHITE_FILL;
-  });
-  const colorInputRef = useRef<HTMLInputElement>(null);
-  // Refs track the latest typed value so applyFn reads current data even before
-  // React state flushes (NumberInput commits on blur/Enter which is async state).
-  const rotationRef = useRef('0');
-  const shearHRef = useRef('0');
-  const shearVRef = useRef('0');
+  if (activeWorktable === 'print' || activeWorktable === 'image') {
+    return null;
+  }
 
-  const applyTransform = useCallback(
-    async (transformFn: (active: FabricObject, canvas: FabricCanvas) => void) => {
-      if (!fabricCanvas) return;
-      const canvas = fabricCanvas as FabricCanvas;
-      const active = canvas.getActiveObject();
-      if (!active) return;
-
-      transformFn(active, canvas);
-      active.setCoords();
-      canvas.renderAll();
-      const json = JSON.stringify(canvas.toJSON());
-      useCanvasStore.getState().pushUndoState(json);
-      useProjectStore.getState().setDirty(true);
-    },
-    [fabricCanvas]
-  );
-
-  const applyRotation = useCallback(() => {
-    applyTransform((active) => active.rotate(parseFloat(rotationRef.current) || 0));
-  }, [applyTransform]);
-
-  const applyShearH = useCallback(() => {
-    applyTransform((active) => active.set({ skewX: parseFloat(shearHRef.current) || 0 }));
-  }, [applyTransform]);
-
-  const applyShearV = useCallback(() => {
-    applyTransform((active) => active.set({ skewY: parseFloat(shearVRef.current) || 0 }));
-  }, [applyTransform]);
-
-  const handleRotationKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') applyRotation();
-    },
-    [applyRotation]
-  );
-
-  const handleShearHKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') applyShearH();
-    },
-    [applyShearH]
-  );
-
-  const handleShearVKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') applyShearV();
-    },
-    [applyShearV]
-  );
-
-  const handleCanvasColorClick = () => colorInputRef.current?.click();
-  const handleCanvasColorChange = (hex: string) => {
-    setCanvasColor(hex);
-    if (!fabricCanvas) return;
-    const canvas = fabricCanvas as {
-      set: (props: Record<string, unknown>) => void;
-      renderAll: () => void;
-      toJSON: () => Record<string, unknown>;
-    };
-    canvas.set({ backgroundColor: hex });
-    canvas.renderAll();
-    useCanvasStore.getState().pushUndoState(JSON.stringify(canvas.toJSON()));
-  };
-
-  return (
-    <div>
-      <SectionTitle>Rotate &amp; Shear</SectionTitle>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <button
-          type="button"
-          onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) + 90))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
-        >
-          +90&#176;
-        </button>
-        <button
-          type="button"
-          onClick={() => applyTransform((active) => active.rotate((active.angle ?? 0) - 90))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
-        >
-          -90&#176;
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <button
-          type="button"
-          onClick={() => applyTransform((active) => active.set({ flipX: !active.flipX }))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
-        >
-          Flip H
-        </button>
-        <button
-          type="button"
-          onClick={() => applyTransform((active) => active.set({ flipY: !active.flipY }))}
-          className="bg-surface-container text-on-surface rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high transition-colors"
-        >
-          Flip V
-        </button>
-      </div>
-
-      <div className="mb-3" onKeyDown={handleRotationKeyDown}>
-        <NumberInput
-          label="Rotation"
-          value={rotation}
-          onChange={(val) => {
-            setRotation(val);
-            rotationRef.current = val;
-          }}
-          suffix="deg"
-        />
-      </div>
-
-      <div className="mb-3" onKeyDown={handleShearHKeyDown}>
-        <NumberInput
-          label="Skew X"
-          value={shearH}
-          onChange={(val) => {
-            setShearH(val);
-            shearHRef.current = val;
-          }}
-          suffix="deg"
-        />
-      </div>
-
-      <div className="mb-4" onKeyDown={handleShearVKeyDown}>
-        <NumberInput
-          label="Skew Y"
-          value={shearV}
-          onChange={(val) => {
-            setShearV(val);
-            shearVRef.current = val;
-          }}
-          suffix="deg"
-        />
-      </div>
-
-      <button
-        type="button"
-        onClick={() =>
-          applyTransform((active) => {
-            active.rotate(0);
-            active.set({ skewX: 0, skewY: 0 });
-          })
-        }
-        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-[12px] font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4"
-      >
-        Reset Transform
-      </button>
-
-      {includeCanvasColor && (
-        <div className="flex items-center gap-2.5">
-          <span className="text-[11px] font-medium text-on-surface/70 uppercase tracking-wider">
-            Canvas
-          </span>
-          <div
-            className="w-6 h-6 rounded-md border border-outline-variant/30 cursor-pointer shadow-elevation-1"
-            style={{ backgroundColor: canvasColor }}
-            onClick={handleCanvasColorClick}
-          />
-          <input
-            ref={colorInputRef}
-            type="color"
-            value={canvasColor}
-            onChange={(e) => handleCanvasColorChange(e.target.value)}
-            className="sr-only"
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function QuiltPanel() {
-  return (
-    <div className="flex flex-col">
-      <CollapsibleSection title="Selection" defaultOpen={true}>
-        <SelectionPanel />
-      </CollapsibleSection>
-      <CollapsibleSection title="Precision">
-        <PrecisionBar />
-      </CollapsibleSection>
-      <CollapsibleSection title="Rotate & Shear">
-        <RotateAndShear includeCanvasColor={true} />
-      </CollapsibleSection>
-      <CollapsibleSection title="Color Theme">
-        <ColorThemeTools />
-      </CollapsibleSection>
-      <CollapsibleSection title="Block Builder">
-        <BlockBuilderOptions />
-      </CollapsibleSection>
-    </div>
-  );
-}
-
-function BlockPanel() {
-  return (
-    <div className="flex flex-col">
-      <CollapsibleSection title="Precision" defaultOpen={true}>
-        <PrecisionBar />
-      </CollapsibleSection>
-      <CollapsibleSection title="Block Builder" defaultOpen={true}>
-        <BlockBuilderOptions />
-      </CollapsibleSection>
-    </div>
-  );
-}
-
-const ROLE_LABELS: Record<LayoutAreaRole, string> = {
-  'block-cell': 'Block Cell',
-  sashing: 'Sashing',
-  cornerstone: 'Cornerstone',
-  border: 'Border',
-  binding: 'Binding',
-};
-
-const ROLE_DESCRIPTIONS: Record<LayoutAreaRole, string> = {
-  'block-cell': 'Click to assign a block from your library',
-  sashing: 'Click to assign a fabric color',
-  cornerstone: 'Click to assign a fabric color',
-  border: 'Click to assign a fabric color',
-  binding: 'Click to assign a fabric color',
-};
-
-function LayoutAreaInfo() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-  const layoutType = useLayoutStore((s) => s.layoutType);
-  const rows = useLayoutStore((s) => s.rows);
-  const cols = useLayoutStore((s) => s.cols);
-  const [selectedArea, setSelectedArea] = useState<{
-    areaId: string;
-    role: LayoutAreaRole;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!fabricCanvas) return;
-
-    const canvas = fabricCanvas as unknown as FabricCanvas;
-    const handleSelection = () => {
-      const active = canvas.getActiveObject() as Record<string, unknown> | undefined;
-      if (active) {
-        const area = getLayoutAreaFromObject(active);
-        setSelectedArea(area);
-      } else {
-        setSelectedArea(null);
-      }
-    };
-
-    const handleDeselection = () => setSelectedArea(null);
-
-    canvas.on('selection:created', handleSelection);
-    canvas.on('selection:updated', handleSelection);
-    canvas.on('selection:cleared', handleDeselection);
-
-    return () => {
-      canvas.off('selection:created', handleSelection);
-      canvas.off('selection:updated', handleDeselection);
-      canvas.off('selection:cleared', handleDeselection);
-    };
-  }, [fabricCanvas]);
-
-  if (layoutType === 'none' || layoutType === 'free-form') {
+  // Layout worktable: show role assignment panel + fabric library
+  if (activeWorktable === 'layout') {
     return (
-      <p className="text-xs text-secondary">
-        No layout applied. Use Layout Settings to choose a layout type.
-      </p>
+      <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15 flex flex-col">
+        <CollapsibleSection
+          title="Piece Role"
+          isOpen={openSection === 'role' || openSection === 'layout'}
+          onToggle={() => toggle('role')}
+        >
+          <LayoutRolePanel />
+        </CollapsibleSection>
+        <CollapsibleSection
+          title="Fabric Library"
+          isOpen={openSection === 'fabric'}
+          onToggle={() => toggle('fabric')}
+        >
+          <FabricLibrary onFabricDragStart={onFabricDragStart} onOpenUpload={onOpenUpload} />
+        </CollapsibleSection>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <div className="text-xs text-secondary">
-        <span className="font-medium text-on-surface capitalize">{layoutType}</span>
-        {' layout '}
-        <span className="text-secondary">
-          {rows} x {cols}
-        </span>
-      </div>
-
-      {selectedArea ? (
-        <div className="rounded-lg bg-surface-container p-3 space-y-2">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-sm border border-outline-variant/30"
-              style={{
-                backgroundColor:
-                  selectedArea.role === 'block-cell'
-                    ? '#F8F8F8'
-                    : selectedArea.role === 'sashing'
-                      ? '#E8E2D8'
-                      : selectedArea.role === 'cornerstone'
-                        ? '#D5CFC5'
-                        : selectedArea.role === 'border'
-                          ? '#C8D8E8'
-                          : '#505050',
-              }}
-            />
-            <span className="text-sm font-medium text-on-surface">
-              {ROLE_LABELS[selectedArea.role]}
-            </span>
+    <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15 flex flex-col">
+      {activeWorktable !== 'block' && (
+        <CollapsibleSection
+          title="Layout Library"
+          isOpen={openSection === 'layout'}
+          onToggle={() => toggle('layout')}
+        >
+          <div className="p-3">
+            <LayoutSelector />
           </div>
-          <p className="text-xs text-secondary">{ROLE_DESCRIPTIONS[selectedArea.role]}</p>
-          <p className="text-[10px] text-secondary/60 font-mono">{selectedArea.areaId}</p>
-        </div>
-      ) : (
-        <p className="text-xs text-secondary">Select a layout area to assign a block or fabric.</p>
+        </CollapsibleSection>
       )}
-    </div>
-  );
-}
-
-function LayoutPanel() {
-  return (
-    <div className="flex flex-col">
-      <CollapsibleSection title="Layout Area" defaultOpen={true}>
-        <LayoutAreaInfo />
+      <CollapsibleSection
+        title="Block Library"
+        isOpen={openSection === 'block'}
+        onToggle={() => toggle('block')}
+      >
+        <BlockLibrary
+          onBlockDragStart={onBlockDragStart}
+          onOpenDrafting={onOpenDrafting}
+          onOpenPhotoUpload={onOpenPhotoUpload}
+        />
       </CollapsibleSection>
-    </div>
-  );
-}
-
-const PANELS: Record<'quilt' | 'block' | 'layout', React.FC> = {
-  quilt: QuiltPanel,
-  block: BlockPanel,
-  layout: LayoutPanel,
-};
-
-export function ContextPanel() {
-  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-
-  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
-
-  const PanelContent = PANELS[activeWorktable as keyof typeof PANELS];
-  if (!PanelContent) return null;
-
-  return (
-    <div className="w-[280px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15">
-      <div className="px-4 py-5">
-        <PanelContent />
-      </div>
+      <CollapsibleSection
+        title="Fabric Library"
+        isOpen={openSection === 'fabric'}
+        onToggle={() => toggle('fabric')}
+      >
+        <FabricLibrary onFabricDragStart={onFabricDragStart} onOpenUpload={onOpenUpload} />
+      </CollapsibleSection>
     </div>
   );
 }

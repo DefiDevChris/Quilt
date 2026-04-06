@@ -7,6 +7,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { renderGrid } from '@/lib/canvas-grid';
 import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-utils';
 import { computeLayout } from '@/lib/layout-utils';
+import { applyCustomControls, applyHoverEffects } from '@/lib/fabric-controls';
 import type { Project } from '@/types/project';
 
 export function useCanvasInit(
@@ -44,6 +45,10 @@ export function useCanvasInit(
       });
 
       canvasInstance = canvas;
+
+      // Apply Figma-like control styling
+      applyCustomControls();
+      applyHoverEffects(canvas);
 
       const wrapper = canvas.wrapperEl as HTMLDivElement;
       wrapper.style.position = 'absolute';
@@ -195,6 +200,45 @@ export function useCanvasInit(
         obj.set({ left: newLeft, top: newTop });
       };
 
+      const onObjectScaling = (e: { target?: import('fabric').FabricObject; e?: MouseEvent }) => {
+        const { canvasWidth, canvasHeight } = useProjectStore.getState();
+        const us = useCanvasStore.getState().unitSystem;
+        const ppu = getPixelsPerUnit(us);
+        const maxX = canvasWidth * ppu;
+        const maxY = canvasHeight * ppu;
+
+        if (!e.target) return;
+        const obj = e.target;
+        const left = obj.left ?? 0;
+        const top = obj.top ?? 0;
+        const width = (obj.width ?? 0) * (obj.scaleX ?? 1);
+        const height = (obj.height ?? 0) * (obj.scaleY ?? 1);
+
+        // Minimum size enforcement (at least 4px)
+        const minScale = 4 / Math.max(obj.width ?? 1, 1);
+        if ((obj.scaleX ?? 1) < minScale) obj.set({ scaleX: minScale });
+        if ((obj.scaleY ?? 1) < minScale) obj.set({ scaleY: minScale });
+
+        // Constrain to canvas bounds
+        if (left < 0) obj.set({ left: 0 });
+        if (top < 0) obj.set({ top: 0 });
+        if (left + width > maxX) {
+          obj.set({ scaleX: (maxX - left) / (obj.width ?? 1) });
+        }
+        if (top + height > maxY) {
+          obj.set({ scaleY: (maxY - top) / (obj.height ?? 1) });
+        }
+      };
+
+      const onObjectRotating = (e: { target?: import('fabric').FabricObject; e?: MouseEvent }) => {
+        if (!e.target || !e.e) return;
+        // Snap to 15° increments when holding Shift
+        if (e.e.shiftKey) {
+          const angle = e.target.angle ?? 0;
+          e.target.set({ angle: Math.round(angle / 15) * 15 });
+        }
+      };
+
       const onObjectModified = () => {
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);
@@ -207,6 +251,8 @@ export function useCanvasInit(
       canvas.on('selection:updated', onSelectionUpdated);
       canvas.on('selection:cleared', onSelectionCleared);
       canvas.on('object:moving', onObjectMoving);
+      canvas.on('object:scaling', onObjectScaling as never);
+      canvas.on('object:rotating', onObjectRotating as never);
       canvas.on('object:modified', onObjectModified);
 
       const handleResize = () => {
@@ -242,6 +288,8 @@ export function useCanvasInit(
         canvas.off('selection:updated', onSelectionUpdated);
         canvas.off('selection:cleared', onSelectionCleared);
         canvas.off('object:moving', onObjectMoving);
+        canvas.off('object:scaling', onObjectScaling);
+        canvas.off('object:rotating', onObjectRotating);
         canvas.off('object:modified', onObjectModified);
         resizeObserver?.disconnect();
         canvas.dispose();
@@ -263,6 +311,8 @@ export function useCanvasInit(
         canvasInstance.off('selection:updated');
         canvasInstance.off('selection:cleared');
         canvasInstance.off('object:moving');
+        canvasInstance.off('object:scaling');
+        canvasInstance.off('object:rotating');
         canvasInstance.off('object:modified');
         canvasInstance.dispose();
       } else {

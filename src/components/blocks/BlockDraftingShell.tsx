@@ -17,8 +17,10 @@ export interface DraftTabProps {
   activeOverlay?: string | null;
   overlayOpacity?: number;
   setOverlayOpacity?: (opacity: number) => void;
-  gridUnits?: number;
-  onGridUnitsChange?: (units: number) => void;
+  cellSizeIn?: number;
+  onCellSizeInChange?: (units: number) => void;
+  blockWidthIn: number;
+  blockHeightIn: number;
 }
 
 interface BlockDraftingShellProps {
@@ -28,7 +30,7 @@ interface BlockDraftingShellProps {
 }
 
 const DRAFT_CANVAS_SIZE = 400;
-const DEFAULT_gridUnits = 12;
+const DEFAULT_CELL_SIZE = 3;
 
 const TAB_LABELS: Record<BlockDraftingMode, string> = {
   freeform: 'Freeform',
@@ -41,7 +43,9 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
   const [tags, setTags] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [gridUnits, setGridUnits] = useState(DEFAULT_gridUnits);
+  const [blockWidthIn, setBlockWidthIn] = useState(12);
+  const [blockHeightIn, setBlockHeightIn] = useState(12);
+  const [cellSizeIn, setCellSizeIn] = useState(DEFAULT_CELL_SIZE);
   const [showOverlaySelector, setShowOverlaySelector] = useState(false);
   const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
   const [overlayDimensions, setOverlayDimensions] = useState<{
@@ -76,26 +80,36 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
       });
 
       // Draw grid
-      const gridStep = DRAFT_CANVAS_SIZE / gridUnits;
-      for (let i = 0; i <= gridUnits; i++) {
-        const pos = i * gridStep;
+      const cols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
+      const rows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
+      
+      const gridStepX = DRAFT_CANVAS_SIZE / cols;
+      const gridStepY = DRAFT_CANVAS_SIZE / rows;
+
+      for (let i = 0; i <= cols; i++) {
+        const pos = i * gridStepX;
         canvas.add(
           new fabric.Line([pos, 0, pos, DRAFT_CANVAS_SIZE], {
             stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === gridUnits ? 2 : 0.5,
-            selectable: false,
-            evented: false,
-          })
-        );
-        canvas.add(
-          new fabric.Line([0, pos, DRAFT_CANVAS_SIZE, pos], {
-            stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === gridUnits ? 2 : 0.5,
+            strokeWidth: i === 0 || i === cols ? 2 : 0.5,
             selectable: false,
             evented: false,
           })
         );
       }
+      
+      for (let i = 0; i <= rows; i++) {
+        const pos = i * gridStepY;
+        canvas.add(
+          new fabric.Line([0, pos, DRAFT_CANVAS_SIZE, pos], {
+            stroke: GRID_LINE_COLOR,
+            strokeWidth: i === 0 || i === rows ? 2 : 0.5,
+            selectable: false,
+            evented: false,
+          })
+        );
+      }
+      
       canvas.renderAll();
       draftCanvasRef.current = canvas;
     })();
@@ -110,7 +124,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
       }
       draftCanvasRef.current = null;
     };
-  }, [isOpen]);
+  }, [isOpen, blockWidthIn, blockHeightIn, cellSizeIn]);
 
   // Load overlay SVG onto canvas when activeOverlay changes
   useEffect(() => {
@@ -239,7 +253,14 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
       const clones = await Promise.all(objs.map((o) => o.clone()));
       const group = new fabric.Group(clones);
       const rawData = group.toObject() as unknown as Record<string, unknown>;
-      const fabricJsData = { ...rawData, width: 100, height: 100 };
+      const PIXELS_PER_INCH = 96;
+      const fabricJsData = { 
+        ...rawData, 
+        width: blockWidthIn * PIXELS_PER_INCH, 
+        height: blockHeightIn * PIXELS_PER_INCH,
+        widthIn: blockWidthIn,
+        heightIn: blockHeightIn
+      };
 
       const svgData = await generateThumbnailSvg();
 
@@ -272,7 +293,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
     } finally {
       setSaving(false);
     }
-  }, [blockName, category, tags, onSaved, onClose, generateThumbnailSvg]);
+  }, [blockName, category, tags, blockWidthIn, blockHeightIn, onSaved, onClose, generateThumbnailSvg]);
 
   if (!isOpen) return null;
 
@@ -284,8 +305,10 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
     activeOverlay,
     overlayOpacity,
     setOverlayOpacity,
-    gridUnits,
-    onGridUnitsChange: setGridUnits,
+    cellSizeIn,
+    onCellSizeInChange: setCellSizeIn,
+    blockWidthIn,
+    blockHeightIn,
   };
 
   return (
@@ -307,7 +330,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
               onClick={() => setActiveMode(mode)}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 activeMode === mode
-                  ? 'bg-primary text-white'
+                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
@@ -319,7 +342,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         {/* Active tab toolbar */}
         {activeMode === 'freeform' && <FreeformDraftingTab {...tabProps} />}
         {activeMode === 'blockbuilder' && (
-          <BlockBuilderTab {...tabProps} gridUnits={gridUnits} onGridUnitsChange={setGridUnits} />
+          <BlockBuilderTab {...tabProps} cellSizeIn={cellSizeIn} onCellSizeInChange={setCellSizeIn} />
         )}
 
         {/* Overlay controls */}
@@ -372,8 +395,8 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         </div>
 
         {/* Block metadata */}
-        <div className="mb-4 grid grid-cols-2 gap-3">
-          <div>
+        <div className="mb-4 grid grid-cols-4 gap-3">
+          <div className="col-span-2">
             <label className="mb-1 block text-xs font-medium text-secondary">Block Name *</label>
             <input
               type="text"
@@ -384,7 +407,31 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
               className="w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
             />
           </div>
-          <div>
+          <div className="col-span-1">
+            <label className="mb-1 block text-xs font-medium text-secondary">W (in)</label>
+            <input
+              type="number"
+              min={1}
+              max={48}
+              step={0.5}
+              value={blockWidthIn}
+              onChange={(e) => setBlockWidthIn(parseFloat(e.target.value) || 12)}
+              className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <div className="col-span-1">
+            <label className="mb-1 block text-xs font-medium text-secondary">H (in)</label>
+            <input
+              type="number"
+              min={1}
+              max={48}
+              step={0.5}
+              value={blockHeightIn}
+              onChange={(e) => setBlockHeightIn(parseFloat(e.target.value) || 12)}
+              className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <div className="col-span-2">
             <label className="mb-1 block text-xs font-medium text-secondary">Category</label>
             <input
               type="text"
@@ -423,7 +470,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Block'}
           </button>

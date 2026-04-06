@@ -91,7 +91,14 @@ function TemplateDetailModal({
             onClick={onClose}
             className="text-secondary hover:text-on-surface transition-colors"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
               <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
             </svg>
           </button>
@@ -140,7 +147,7 @@ function TemplateDetailModal({
             type="button"
             onClick={onUse}
             disabled={isCreating}
-            className="flex-1 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex-1 rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isCreating ? 'Creating...' : 'Use This Template'}
           </button>
@@ -220,7 +227,7 @@ export function TemplateLibrary() {
           onClick={() => setFilter(null)}
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
             filter === null
-              ? 'bg-primary text-white shadow-elevation-1'
+              ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
               : 'bg-white/50 text-secondary hover:bg-white/70'
           }`}
         >
@@ -233,7 +240,7 @@ export function TemplateLibrary() {
             onClick={() => setFilter(cat)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               filter === cat
-                ? 'bg-primary text-white shadow-elevation-1'
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
                 : 'bg-white/50 text-secondary hover:bg-white/70'
             }`}
           >
@@ -271,10 +278,7 @@ export function TemplateLibrary() {
 
         {/* DB templates (if any) */}
         {dbTemplates.map((t) => (
-          <div
-            key={t.id}
-            className="glass-panel rounded-2xl p-3 text-left"
-          >
+          <div key={t.id} className="glass-panel rounded-2xl p-3 text-left">
             <div className="w-full aspect-square bg-surface-container rounded-xl flex items-center justify-center">
               {t.thumbnailUrl ? (
                 <img

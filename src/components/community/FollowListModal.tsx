@@ -18,7 +18,12 @@ interface FollowListModalProps {
   readonly onClose: () => void;
 }
 
-export function FollowListModal({ username, tab: initialTab, isOpen, onClose }: FollowListModalProps) {
+export function FollowListModal({
+  username,
+  tab: initialTab,
+  isOpen,
+  onClose,
+}: FollowListModalProps) {
   const [tab, setTab] = useState(initialTab);
   const [users, setUsers] = useState<FollowUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,7 +86,7 @@ export function FollowListModal({ username, tab: initialTab, isOpen, onClose }: 
                     onClick={() => setTab(t)}
                     className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                       tab === t
-                        ? 'bg-surface shadow-sm text-on-surface'
+                        ? 'bg-surface shadow-elevation-1 text-on-surface'
                         : 'text-secondary hover:text-on-surface'
                     }`}
                   >

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Star Bright: 4×4 grid (75px). Pinwheel star made from triangle-in-square
+       units with scrappy medium HST corners. 4 dark kite shapes create star points. -->
+  <!-- Center: 4 HST units forming a pinwheel (medium/bg) -->
+  <!-- Center top-left HST -->
+  <polygon points="75,75 150,75 75,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="150,75 150,150 75,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Center top-right HST -->
+  <polygon points="150,75 225,75 225,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,75 225,150 150,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Center bottom-left HST -->
+  <polygon points="75,150 150,150 150,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="75,150 150,225 75,225" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Center bottom-right HST -->
+  <polygon points="150,150 225,150 150,225" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="225,150 225,225 150,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Star points: 4 dark flying geese pointing outward -->
+  <!-- Top: dark triangle up -->
+  <polygon points="75,75 225,75 150,0" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="75,0 150,0 75,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,0 225,0 225,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Right: dark triangle right -->
+  <polygon points="225,75 225,225 300,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="225,75 300,75 300,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="300,150 300,225 225,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom: dark triangle down -->
+  <polygon points="75,225 225,225 150,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="75,225 75,300 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,300 225,300 225,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Left: dark triangle left -->
+  <polygon points="75,75 75,225 0,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,75 75,75 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,150 75,225 0,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Corner squares (background) -->
+  <rect x="0" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="225" y="0" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="225" y="225" width="75" height="75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

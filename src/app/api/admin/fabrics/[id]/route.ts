@@ -3,13 +3,12 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
 import {
-  getRequiredSession,
+  requireAdminSession,
   unauthorizedResponse,
   errorResponse,
   notFoundResponse,
   validationErrorResponse,
 } from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -24,13 +23,9 @@ const patchFabricSchema = z.object({
 
 // PATCH - Update shop fields for a fabric
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;
@@ -81,13 +76,9 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { id } = await params;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 3×3 grid (100px cells). Center square + 4 flying geese spiraling clockwise.
+       Each goose is 2:1 ratio (200×100 or 100×200), spanning 2 cells. -->
+  <!-- Center square -->
+  <rect x="100" y="100" width="100" height="100" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Goose 4: top (0,0)-(200,100), dark triangle points RIGHT -->
+  <polygon points="0,0 0,100 200,50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,0 200,0 200,50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,100 200,50 200,100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Goose 3: right (200,0)-(300,200), dark triangle points DOWN -->
+  <polygon points="200,0 300,0 250,200" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="200,0 250,200 200,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="300,0 300,200 250,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Goose 2: bottom (100,200)-(300,300), dark triangle points LEFT -->
+  <polygon points="300,200 300,300 100,250" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="100,200 300,200 100,250" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="100,250 300,300 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Goose 1: left (0,100)-(100,300), dark triangle points UP -->
+  <polygon points="0,300 100,300 50,100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,100 50,100 0,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="50,100 100,100 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

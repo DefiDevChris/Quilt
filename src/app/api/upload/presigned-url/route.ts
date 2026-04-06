@@ -20,10 +20,6 @@ export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(`upload:${session.user.id}`, API_RATE_LIMITS.upload);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
-  if (!isPro(session.user.role as UserRole)) {
-    return errorResponse('File upload requires a Pro subscription.', 'PRO_REQUIRED', 403);
-  }
-
   try {
     const body = await request.json();
     const parsed = presignedUrlSchema.safeParse(body);
@@ -32,6 +28,12 @@ export async function POST(request: NextRequest) {
     }
 
     const { filename, contentType, purpose } = parsed.data;
+
+    // Mobile uploads are allowed for all authenticated users.
+    // All other upload purposes require Pro.
+    if (purpose !== 'mobile-upload' && !isPro(session.user.role as UserRole)) {
+      return errorResponse('File upload requires a Pro subscription.', 'PRO_REQUIRED', 403);
+    }
 
     const result = await generatePresignedUrl({
       userId: session.user.id,

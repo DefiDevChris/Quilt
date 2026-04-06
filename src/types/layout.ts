@@ -8,7 +8,13 @@
 
 export type LayoutCategory = 'straight' | 'sashing' | 'on-point' | 'medallion' | 'strippy';
 
-export type LayoutAreaRole = 'block-cell' | 'sashing' | 'cornerstone' | 'border' | 'binding';
+export type LayoutAreaRole =
+  | 'block-cell'
+  | 'sashing'
+  | 'cornerstone'
+  | 'border'
+  | 'binding'
+  | 'edging';
 
 export interface TemplateBorderConfig {
   width: number; // inches

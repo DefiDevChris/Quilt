@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Homestead: layered star with inner and outer flying geese.
+       5×5 grid (60px cells). Center square + 4 inner geese + 4 outer geese + 4 corners. -->
+  <!-- Center square -->
+  <rect x="120" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Inner flying geese (medium-light) pointing outward from center -->
+  <!-- Top inner -->
+  <polygon points="120,120 180,120 150,60" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="120,60 150,60 120,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,60 180,60 180,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Right inner -->
+  <polygon points="180,120 180,180 240,150" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="180,120 240,120 240,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="240,150 240,180 180,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom inner -->
+  <polygon points="120,180 180,180 150,240" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="120,180 120,240 150,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,240 180,240 180,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Left inner -->
+  <polygon points="120,120 120,180 60,150" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="60,120 120,120 60,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="60,150 120,180 60,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Outer flying geese (dark) pointing outward -->
+  <!-- Top outer -->
+  <polygon points="120,60 180,60 150,0" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="120,0 150,0 120,60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,0 180,0 180,60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Right outer -->
+  <polygon points="240,120 240,180 300,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="240,120 300,120 300,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="300,150 300,180 240,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom outer -->
+  <polygon points="120,240 180,240 150,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="120,240 120,300 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,300 180,300 180,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Left outer -->
+  <polygon points="60,120 60,180 0,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,120 60,120 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,150 60,180 0,180" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Corner squares (background) -->
+  <rect x="0" y="0" width="120" height="120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="0" width="120" height="120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="180" width="120" height="120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="180" width="120" height="120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

@@ -71,8 +71,8 @@ function extractVertices(svgData: string): Point[] {
   if (polygonMatch) {
     const pairs = polygonMatch[1].trim().split(/\s+/);
     return pairs.map((pair) => {
-      const [x, y] = pair.split(',').map(Number);
-      return { x, y };
+      const coords = pair.split(',').map(Number);
+      return { x: coords[0] ?? 0, y: coords[1] ?? 0 };
     });
   }
 

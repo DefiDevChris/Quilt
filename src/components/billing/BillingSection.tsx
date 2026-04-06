@@ -214,7 +214,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isCheckoutLoading ? 'Loading...' : 'Start Pro'}
           </button>

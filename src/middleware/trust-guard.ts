@@ -1,7 +1,8 @@
 import { eq, and, count, gte } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { users, comments, socialPosts, userProfiles } from '@/db/schema';
-import { getRolePermissions, getRateLimit, type UserRole } from '@/lib/trust-utils';
+import type { UserRole } from '@/lib/role-utils';
+import { getRolePermissions, getRateLimit } from '@/lib/trust-utils';
 import { errorResponse } from '@/lib/api-responses';
 
 type RequiredPermission = 'canLike' | 'canComment' | 'canPost' | 'canModerate';

@@ -39,7 +39,7 @@ export function ToolIcon({
       onClick={disabled ? undefined : onClick}
       className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-all duration-150 py-2 ${
         disabled
-          ? 'text-outline-variant/30 cursor-default'
+          ? 'text-on-surface/25 cursor-default'
           : isActive
             ? 'text-primary'
             : 'text-on-surface/60 hover:text-on-surface'

@@ -92,7 +92,7 @@ function StudioMockup() {
           <span className="font-bold text-warm-text hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 bg-warm-peach/20 text-warm-text rounded-full font-bold text-[9px]">
+          <div className="px-3 py-1 bg-gradient-to-r from-orange-500/20 to-rose-500/20 text-warm-text rounded-full font-bold text-[9px]">
             Main
           </div>
           <div className="w-4 h-4 rounded text-warm-text-muted flex items-center justify-center text-[10px]">
@@ -108,13 +108,13 @@ function StudioMockup() {
           <span className="text-warm-text-muted hidden sm:inline">Share</span>
           <span className="text-warm-text-muted hidden sm:inline">View</span>
           <span className="text-warm-text-muted hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 bg-warm-text text-white rounded-md font-bold text-[9px]">
+          <div className="px-3 py-1 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-md font-bold text-[9px]">
             Export
           </div>
         </div>
       </div>
 
-      <div className="flex bg-[#FEFCFA] relative">
+      <div className="flex bg-warm-bg relative">
         {/* Left Toolbar with labels */}
         <div className="w-14 bg-white border-r border-warm-border py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
           {toolItems.map((tool, i) =>
@@ -124,7 +124,7 @@ function StudioMockup() {
               <div
                 key={i}
                 className={`w-12 py-1 flex flex-col items-center gap-0.5 ${
-                  tool.active ? 'text-warm-peach' : 'text-warm-text-muted'
+                  tool.active ? 'text-orange-500' : 'text-warm-text-muted'
                 }`}
               >
                 <svg
@@ -155,16 +155,16 @@ function StudioMockup() {
               opacity: 0.3,
             }}
           />
-          <div className="relative grid grid-cols-3 gap-2 bg-warm-peach-light p-2 border-[3px] border-warm-terracotta/60 mx-auto max-w-[260px]">
+          <div className="relative grid grid-cols-3 gap-2 bg-orange-50 p-2 border-[3px] border-rose-400/60 mx-auto max-w-[260px]">
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
                 className="aspect-square bg-white flex items-center justify-center border border-warm-border/30 overflow-hidden"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <polygon points="0,0 50,50 0,100" fill="#ffdfc4" />
-                  <polygon points="0,0 100,0 50,50" fill="#FFB085" />
-                  <polygon points="100,0 100,100 50,50" fill="#C67B5C" opacity="0.8" />
+                  <polygon points="0,0 50,50 0,100" fill="#fed7aa" />
+                  <polygon points="0,0 100,0 50,50" fill="#f97316" />
+                  <polygon points="100,0 100,100 50,50" fill="#f43f5e" opacity="0.85" />
                   <polygon points="0,100 100,100 50,50" fill="white" />
                 </svg>
               </div>
@@ -203,7 +203,7 @@ function StudioMockup() {
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-warm-peach/15 text-warm-peach' : 'text-warm-text-muted'}`}
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-orange-500/15 text-orange-500' : 'text-warm-text-muted'}`}
             >
               <svg
                 width="10"
@@ -265,7 +265,9 @@ export default function HeroSection() {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               From First Stitch
-              <span className="block text-warm-peach">to Finished Quilt</span>
+              <span className="block bg-gradient-to-r from-orange-500 to-rose-400 bg-clip-text text-transparent">
+                to Finished Quilt
+              </span>
             </motion.h1>
 
             <motion.p
@@ -274,9 +276,9 @@ export default function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg md:text-xl text-warm-text-secondary max-w-xl leading-relaxed"
             >
-              Design your quilt, pick your fabrics, calculate your yardage, and export true-scale
-              patterns with seam allowances built in. Four worktables, a growing block library, and a community
-              of quilters who get it.
+              Design your quilt, calculate your yardage, and export true-scale patterns with seam
+              allowances built in. Four worktables, a growing block library, and a community of
+              quilters who get it.
             </motion.p>
 
             <motion.div
@@ -287,7 +289,7 @@ export default function HeroSection() {
             >
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-warm-peach text-warm-text rounded-full font-bold text-lg hover:bg-warm-peach-dark transition-all shadow-elevation-3 text-center"
+                className="px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3 text-center"
               >
                 Start Designing Free
               </Link>

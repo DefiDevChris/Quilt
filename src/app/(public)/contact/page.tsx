@@ -34,10 +34,7 @@ export default function ContactPage() {
             </p>
           </a>
 
-          <div className="flex-1 p-8 rounded-xl glass-card opacity-60 cursor-default relative">
-            <span className="absolute top-3 right-3 text-xs font-medium bg-on-surface/10 text-secondary px-2 py-0.5 rounded-full">
-              Coming Soon
-            </span>
+          <div className="flex-1 p-8 rounded-xl glass-card opacity-60 cursor-default">
             <div className="w-12 h-12 rounded-full bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-6 h-6" />
             </div>

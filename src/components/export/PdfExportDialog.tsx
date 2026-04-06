@@ -12,6 +12,7 @@ import { generateFppPdf } from '@/lib/fpp-pdf-engine';
 import { parseSvgToPatches, computeSewingOrder, mirrorPatches } from '@/lib/fpp-generator';
 import { captureCanvasPng, extractBlocksFromCanvas } from '@/lib/canvas-snapshot';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
+import { sanitizeFilename } from '@/lib/string-utils';
 
 type ExportMode = 'pattern-pieces' | 'cut-list' | 'print-project' | 'fpp-template';
 
@@ -69,10 +70,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     }
   }, [isOpen]);
 
-  const safeName = (projectName ?? 'quilt')
-    .replace(/[^a-zA-Z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  const safeName = sanitizeFilename(projectName ?? 'quilt');
 
   const handleGenerate = useCallback(async () => {
     setIsGenerating(true);
@@ -220,7 +218,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
                 onClick={() => setExportMode(mode)}
                 className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                   exportMode === mode
-                    ? 'border-primary bg-primary text-white'
+                    ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                     : 'border-outline-variant bg-white text-on-surface hover:bg-background'
                 }`}
               >
@@ -313,7 +311,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
             type="button"
             onClick={handleGenerate}
             disabled={isDisabled}
-            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-2 rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isGenerating ? (
               <>

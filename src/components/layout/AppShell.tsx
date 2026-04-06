@@ -12,10 +12,10 @@ import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from '@/components/shop/CartDrawer';
 import { Sparkles, ShoppingBag } from 'lucide-react';
+import { logout } from '@/lib/logout';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
-  const setUser = useAuthStore((s) => s.setUser);
   const shopEnabled = useShopEnabled();
   const cartItems = useCartStore((s) => s.items);
   const toggleCartDrawer = useCartStore((s) => s.toggleDrawer);
@@ -124,7 +124,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {user?.role === 'free' && (
                 <button
                   onClick={() => setShowProUpgrade(true)}
-                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
                 >
                   <Sparkles size={14} className="text-white" />
                   Upgrade
@@ -139,9 +139,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   aria-label="Shopping cart"
                 >
                   <ShoppingBag size={20} />
-                  <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
-                    {cartItems.length}
-                  </span>
                 </button>
               )}
 
@@ -195,8 +192,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <button
                     type="button"
                     onClick={async () => {
-                      await fetch('/api/auth/cognito/signout', { method: 'POST' });
-                      setUser(null);
+                      await logout();
                       router.push('/');
                       router.refresh();
                     }}
@@ -217,7 +213,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
               <Link
                 href="/auth/signup"
-                className="bg-primary text-primary-on px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-colors"
+                className="bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
               >
                 Start Designing
               </Link>

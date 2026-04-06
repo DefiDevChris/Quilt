@@ -467,28 +467,6 @@ export function drawPolylinePoints(
 }
 
 /**
- * Draw a dashed line between two points.
- */
-export function drawDashedLine(
-  page: PDFPage,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-  dashLength: number = 3
-): void {
-  page.drawLine({
-    start: { x: x1, y: y1 },
-    end: { x: x2, y: y2 },
-    thickness: 0.5,
-    color: rgb(0.5, 0.5, 0.5),
-    dashArray: [dashLength, dashLength],
-    dashPhase: 0,
-    lineCap: LineCapStyle.Round,
-  });
-}
-
-/**
  * Draw a 1" x 1" validation square with instructions.
  * The square lets quilters verify their printer is printing at 100% (no scaling).
  */

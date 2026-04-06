@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Mascot from './Mascot';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -9,7 +9,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <Mascot pose="standing" size="sm" />
+              <Image
+                src="/logo.png"
+                alt="QuiltCorgi Logo"
+                width={40}
+                height={40}
+                unoptimized
+                className="object-contain"
+              />
               <span
                 className="text-xl font-bold text-on-surface"
                 style={{ fontFamily: 'var(--font-display)' }}
@@ -19,7 +26,8 @@ export default function Footer() {
             </div>
             <p className="text-secondary text-sm leading-relaxed max-w-xs">
               Design your quilts, calculate your yardage, and print patterns ready for the sewing
-              room. Four worktables, a growing block library, and a community of quilters who get it.
+              room. Four worktables, a growing block library, and a community of quilters who get
+              it.
             </p>
           </div>
 
@@ -101,9 +109,7 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-tertiary">
-            &copy; 2026 QuiltCorgi. All rights reserved.
-          </p>
+          <p className="text-sm text-tertiary">&copy; 2026 QuiltCorgi. All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm text-tertiary">
             <Link href="/privacy" className="hover:text-primary transition-colors">
               Privacy

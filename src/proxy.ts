@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify, createRemoteJWKSet } from 'jose';
 import { COGNITO_CLIENT_ID } from './lib/cognito';
+import { csrfGuard } from './lib/csrf';
 
 const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
 
@@ -69,6 +70,16 @@ export async function proxy(req: NextRequest) {
   }
 
   const { pathname } = req.nextUrl;
+
+  // CSRF protection for state-changing API requests
+  if (pathname.startsWith('/api/')) {
+    const csrfResponse = csrfGuard(req);
+    if (csrfResponse) {
+      logAudit('CSRF_REJECTED', { path: pathname, method: req.method });
+      return csrfResponse;
+    }
+  }
+
   const idToken = req.cookies.get('qc_id_token')?.value;
 
   const user = idToken ? await verifyIdToken(idToken) : null;
@@ -104,6 +115,7 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/api/:path*',
     '/dashboard/:path*',
     '/studio/:path*',
     '/profile/:path*',

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- 5×5 grid (60px cells). Center cross with HST corner patches. -->
+  <!-- Center square (dark accent) -->
+  <rect x="120" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Cross arms: 2 squares per arm (medium) -->
+  <rect x="120" y="0" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="120" y="60" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="180" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="240" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="120" y="180" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="120" y="240" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="0" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <rect x="60" y="120" width="60" height="60" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Top-left corner (2×2 = 120×120): 4 cells, inner cell has HST -->
+  <rect x="0" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- TL inner cell HST: light triangle pointing toward center -->
+  <polygon points="60,60 120,60 120,120" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <polygon points="60,60 120,120 60,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Top-right corner -->
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- TR inner cell HST -->
+  <polygon points="180,60 240,60 180,120" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <polygon points="240,60 240,120 180,120" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom-left corner -->
+  <rect x="0" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BL inner cell HST -->
+  <polygon points="60,180 120,180 120,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="60,180 120,240 60,240" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Bottom-right corner -->
+  <rect x="240" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BR inner cell HST -->
+  <polygon points="180,180 240,180 240,240" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="180,180 240,240 180,240" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+</svg>

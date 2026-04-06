@@ -58,6 +58,12 @@ export function useBlockDrop() {
         const fabricJsData = blockData.fabricJsData;
         if (!fabricJsData) return;
 
+        const groupData = fabricJsData as {
+          objects?: Array<Record<string, unknown>>;
+          width?: number;
+          height?: number;
+        };
+
         const fabric = await import('fabric');
 
         // Get drop position relative to canvas
@@ -69,10 +75,34 @@ export function useBlockDrop() {
         let dropX = (e.clientX - rect.left - (vpt?.[4] ?? 0)) / zoom;
         let dropY = (e.clientY - rect.top - (vpt?.[5] ?? 0)) / zoom;
 
-        const cellRotation = 0;
+        let cellRotation = 0;
+        let targetScaleX = (blockSize * PIXELS_PER_INCH) / (groupData.width ?? 100);
+        let targetScaleY = (blockSize * PIXELS_PER_INCH) / (groupData.height ?? 100);
 
-        // Snap to grid if enabled
-        if (gridSettings.snapToGrid && gridSettings.enabled) {
+        // Check if we dropped over a layout area (block-cell)
+        const foundTarget = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
+        if (foundTarget) {
+          const areaObj = foundTarget as Record<string, unknown>;
+          if (areaObj['_layoutRendererElement'] && areaObj['_layoutAreaRole'] === 'block-cell') {
+            const fabricObj = foundTarget as unknown as import('fabric').FabricObject;
+            dropX = fabricObj.left ?? dropX;
+            dropY = fabricObj.top ?? dropY;
+            
+            const cellW = (fabricObj.width ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleX ?? 1);
+            const cellH = (fabricObj.height ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleY ?? 1);
+            
+            targetScaleX = cellW / (groupData.width ?? 100);
+            targetScaleY = cellH / (groupData.height ?? 100);
+            cellRotation = fabricObj.angle ?? 0;
+          } else {
+            // Only snap to grid if NOT dropping on a layout cell
+            if (gridSettings.snapToGrid && gridSettings.enabled) {
+              const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
+              dropX = Math.round(dropX / gridSizePx) * gridSizePx;
+              dropY = Math.round(dropY / gridSizePx) * gridSizePx;
+            }
+          }
+        } else if (gridSettings.snapToGrid && gridSettings.enabled) {
           const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
           dropX = Math.round(dropX / gridSizePx) * gridSizePx;
           dropY = Math.round(dropY / gridSizePx) * gridSizePx;
@@ -82,13 +112,7 @@ export function useBlockDrop() {
         const currentJson = JSON.stringify(canvas.toJSON());
         pushUndoState(currentJson);
 
-        // Build the group from fabricJsData
         const objects: import('fabric').FabricObject[] = [];
-        const groupData = fabricJsData as {
-          objects?: Array<Record<string, unknown>>;
-          width?: number;
-          height?: number;
-        };
 
         if (groupData.objects && Array.isArray(groupData.objects)) {
           for (const obj of groupData.objects) {
@@ -99,14 +123,13 @@ export function useBlockDrop() {
 
         if (objects.length === 0) return;
 
-        // Scale the block to match layout blockSize
-        const targetSize = blockSize * PIXELS_PER_INCH;
         const group = new fabric.Group(objects, {
           left: dropX,
           top: dropY,
-          scaleX: targetSize / (groupData.width ?? 100),
-          scaleY: targetSize / (groupData.height ?? 100),
+          scaleX: targetScaleX,
+          scaleY: targetScaleY,
           angle: cellRotation,
+          subTargetCheck: true,
         });
 
         canvas.add(group);

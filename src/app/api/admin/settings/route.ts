@@ -2,35 +2,15 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { siteSettings } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
-import { z } from 'zod';
+import { requireAdminSession, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { adminUpdateSettingSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
-const updateSettingSchema = z.object({
-  key: z.literal('shop_enabled'),
-  value: z.boolean(),
-  confirm: z.string().optional(),
-});
-
-/**
- * GET /api/admin/settings
- * Returns all site settings. Admin-only.
- */
 export async function GET() {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const rows = await db.select().from(siteSettings);
@@ -46,33 +26,21 @@ export async function GET() {
   }
 }
 
-/**
- * POST /api/admin/settings
- * Update a site setting. Admin-only.
- * Enabling shop requires confirm: 'ENABLE SHOP'.
- */
 export async function POST(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const body = await request.json();
-    const parsed = updateSettingSchema.safeParse(body);
+    const parsed = adminUpdateSettingSchema.safeParse(body);
 
     if (!parsed.success) {
-      return validationErrorResponse(
-        parsed.error.issues[0]?.message ?? 'Invalid setting data'
-      );
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid setting data');
     }
 
     const { key, value, confirm } = parsed.data;
 
-    // Type-to-confirm guard for enabling shop
     if (key === 'shop_enabled' && value === true) {
       if (confirm !== 'ENABLE SHOP') {
         return validationErrorResponse(

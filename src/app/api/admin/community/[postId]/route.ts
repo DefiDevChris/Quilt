@@ -2,13 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { socialPosts } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  notFoundResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { checkTrustLevel } from '@/middleware/trust-guard';
+import { requireAdminSession, notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
@@ -17,14 +11,12 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const rl = await checkRateLimit(`admin:${session.user.id}`, API_RATE_LIMITS.admin);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
-
-  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
-  if (!trustCheck.allowed) return trustCheck.response!;
 
   const { postId } = await params;
 

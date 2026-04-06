@@ -431,7 +431,7 @@ export function ImagePrepStep() {
           onClick={() => setMode('straighten')}
           className={`flex-1 px-3 py-1.5 text-body-md font-medium rounded-md transition-colors ${
             mode === 'straighten'
-              ? 'bg-surface text-on-surface shadow-sm'
+              ? 'bg-surface text-on-surface shadow-elevation-1'
               : 'text-secondary hover:text-on-surface'
           }`}
         >
@@ -442,7 +442,7 @@ export function ImagePrepStep() {
           onClick={() => setMode('perspective')}
           className={`flex-1 px-3 py-1.5 text-body-md font-medium rounded-md transition-colors ${
             mode === 'perspective'
-              ? 'bg-surface text-on-surface shadow-sm'
+              ? 'bg-surface text-on-surface shadow-elevation-1'
               : 'text-secondary hover:text-on-surface'
           }`}
         >

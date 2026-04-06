@@ -42,7 +42,7 @@ const MODE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[]
   },
   {
     mode: 'layout',
-    label: 'Layout Creator',
+    label: 'Layout',
     icon: (
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
         <rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
@@ -558,7 +558,7 @@ export function StudioTopBar({
           {!isPro && (
             <button
               onClick={() => setShowProUpgrade(true)}
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
             >
               <Sparkles size={14} className="text-white" />
               Upgrade to Pro

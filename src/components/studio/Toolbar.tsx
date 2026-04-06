@@ -5,7 +5,12 @@ import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
-import { useQuiltTools, useBlockTools, type ToolbarCallbacks } from './ToolbarConfig';
+import {
+  useQuiltTools,
+  useBlockTools,
+  useLayoutCreatorTools,
+  type ToolbarCallbacks,
+} from './ToolbarConfig';
 
 type ToolbarProps = ToolbarCallbacks;
 
@@ -52,6 +57,7 @@ const GROUP_LABELS: Record<string, string> = {
   drawing: 'Drawing',
   canvas: 'Canvas',
   history: '',
+  actions: '',
   default: '',
 };
 
@@ -72,13 +78,14 @@ function renderToolGroup(
         </div>
       )}
       <div className="grid grid-cols-2 gap-1">
-        {tools.map((tool) => {
+        {tools.map((tool, index) => {
           const isActive = tool.toolType
             ? activeTool === tool.toolType
             : tool.isActive
               ? tool.isActive()
               : false;
-          return (
+          const isOrphan = index === tools.length - 1 && tools.length % 2 !== 0;
+          const icon = (
             <ToolIcon
               key={tool.id}
               tool={tool}
@@ -91,6 +98,13 @@ function renderToolGroup(
                 }
               }}
             />
+          );
+          return isOrphan ? (
+            <div key={tool.id} className="col-span-2 flex justify-center">
+              {icon}
+            </div>
+          ) : (
+            icon
           );
         })}
       </div>
@@ -106,6 +120,8 @@ export function Toolbar({
   onOpenResize,
   onOpenReferenceImage,
   onOpenLayoutOverlay,
+  onSaveBlock,
+  onNewBlock,
 }: ToolbarProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const activeTool = useCanvasStore((s) => s.activeTool);
@@ -120,18 +136,21 @@ export function Toolbar({
     onOpenResize,
     onOpenReferenceImage,
     onOpenLayoutOverlay,
+    onSaveBlock,
+    onNewBlock,
   };
 
   const quiltTools = useQuiltTools(callbacks);
-  const blockTools = useBlockTools();
+  const blockTools = useBlockTools({ onOpenGridDimensions, onSaveBlock, onNewBlock });
+  const layoutTools = useLayoutCreatorTools({ onOpenGridDimensions, onSaveBlock, onNewBlock });
 
-  const TOOLS_MAP: Record<'quilt' | 'block', ToolDef[]> = {
+  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
+
+  const TOOLS_MAP: Record<'quilt' | 'block' | 'layout', ToolDef[]> = {
     quilt: quiltTools,
     block: blockTools,
+    layout: layoutTools,
   };
-
-  if (activeWorktable === 'print' || activeWorktable === 'image' || activeWorktable === 'layout')
-    return null;
 
   const tools = TOOLS_MAP[activeWorktable];
 
@@ -139,7 +158,7 @@ export function Toolbar({
   const hasTiers = tools.some((t) => t.tier);
 
   if (!hasTiers) {
-    // Block worktable: simple flat list
+    // Block worktable: single-column flat list
     const groups: { name: string; items: ToolDef[] }[] = [];
     let currentGroup = '';
     for (const tool of tools) {
@@ -156,12 +175,45 @@ export function Toolbar({
       <nav
         aria-label="Design tools"
         data-tour="toolbar"
-        className="bg-surface border-r border-outline-variant/15 flex items-start py-2 overflow-y-auto"
+        className="bg-surface border-r border-outline-variant/15 flex flex-col py-2 h-full overflow-y-auto min-w-[88px] w-[88px] shrink-0"
       >
-        <div className="flex flex-col items-center gap-1 px-1.5">
-          {groups.map((group, groupIdx) =>
-            renderToolGroup(group.items, activeTool, setActiveTool, groupIdx > 0, group.name)
-          )}
+        <div className="flex flex-col items-center gap-0.5 px-1">
+          {groups.map((group, groupIdx) => {
+            const label = GROUP_LABELS[group.name] ?? '';
+            return (
+              <div key={group.name}>
+                {groupIdx > 0 && <Separator />}
+                {label && (
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5 text-center">
+                    {label}
+                  </div>
+                )}
+                <div className="flex flex-col items-center gap-0.5">
+                  {group.items.map((tool) => {
+                    const isActive = tool.toolType
+                      ? activeTool === tool.toolType
+                      : tool.isActive
+                        ? tool.isActive()
+                        : false;
+                    return (
+                      <ToolIcon
+                        key={tool.id}
+                        tool={tool}
+                        isActive={isActive}
+                        onClick={() => {
+                          if (tool.onClick) {
+                            tool.onClick();
+                          } else if (tool.toolType) {
+                            setActiveTool(tool.toolType);
+                          }
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </nav>
     );
@@ -196,7 +248,7 @@ export function Toolbar({
     <nav
       aria-label="Design tools"
       data-tour="toolbar"
-      className="bg-surface border-r border-outline-variant/15 flex items-start py-2 h-full overflow-y-auto"
+      className="bg-surface border-r border-outline-variant/15 flex items-start py-2 h-full overflow-y-auto min-w-[160px] shrink-0"
     >
       {/* Main tools column - 2 wide grid */}
       <div className="flex flex-col items-center gap-1 h-full px-1.5">

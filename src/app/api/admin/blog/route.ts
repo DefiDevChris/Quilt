@@ -2,14 +2,13 @@ import { NextRequest } from 'next/server';
 import { desc, count, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
-import { getRequiredSession } from '@/lib/auth-helpers';
+import { requireAdminSession } from '@/lib/auth-helpers';
 import {
   errorResponse,
   unauthorizedResponse,
   forbiddenResponse,
   validationErrorResponse,
 } from '@/lib/api-responses';
-import { isAdmin } from '@/lib/trust-utils';
 import { createBlogPostSchema } from '@/lib/validation';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 
@@ -17,13 +16,9 @@ export const dynamic = 'force-dynamic';
 
 // GET - List all blog posts (admin view, includes drafts)
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return forbiddenResponse();
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const url = request.nextUrl;
@@ -73,13 +68,9 @@ export async function GET(request: NextRequest) {
 
 // POST - Create a new blog post
 export async function POST(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return forbiddenResponse();
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const body = await request.json();

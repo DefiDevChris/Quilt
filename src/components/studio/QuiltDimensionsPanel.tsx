@@ -216,7 +216,7 @@ export function QuiltDimensionsPanel({ isOpen, onClose }: QuiltDimensionsPanelPr
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             Done
           </button>

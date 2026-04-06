@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Honey Bee: nine-patch center, lattice borders, corner squares.
+       5×5 grid (60px cells). Center 3×3 = nine-patch, 4 lattice strips, 4 corners. -->
+  <!-- Nine-patch center (alternating dark/bg with dark center) -->
+  <rect x="60" y="60" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="120" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="60" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="60" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="180" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="180" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="120" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="180" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Lattice borders (light) -->
+  <rect x="60" y="0" width="180" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <rect x="60" y="240" width="180" height="60" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <rect x="0" y="60" width="60" height="180" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <rect x="240" y="60" width="60" height="180" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Corner squares (background) -->
+  <rect x="0" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

@@ -33,3 +33,18 @@ export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
   'hero-cover',
   'staggered-media',
 ]);
+
+// Mobile uploads
+export const mobileUploadStatusEnum = pgEnum('mobile_upload_status', [
+  'pending',
+  'processing',
+  'completed',
+  'failed',
+]);
+
+export const mobileUploadTypeEnum = pgEnum('mobile_upload_type', [
+  'unassigned',
+  'fabric',
+  'block',
+  'quilt',
+]);

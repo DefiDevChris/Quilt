@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <circle cx="100" cy="100" r="30" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="85" y="40" width="30" height="30" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="85" y="130" width="30" height="30" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="40" y="85" width="30" height="30" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="130" y="85" width="30" height="30" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="70,70 100,40 130,70 130,100 100,100" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="70,130 100,160 130,130 130,100 100,100" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="40,70 70,100 70,130 100,100 100,70" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="160,70 130,100 130,130 100,100 100,70" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+</svg>

@@ -4,6 +4,8 @@ export {
   paperSizeEnum,
   blogPostStatusEnum,
   blogPostCategoryEnum,
+  mobileUploadStatusEnum,
+  mobileUploadTypeEnum,
 } from './enums';
 export { users } from './users';
 export { projects } from './projects';
@@ -25,3 +27,4 @@ export { reports } from './reports';
 export { bookmarks } from './bookmarks';
 export { userFabrics } from './userFabrics';
 export { siteSettings } from './siteSettings';
+export { mobileUploads } from './mobileUploads';

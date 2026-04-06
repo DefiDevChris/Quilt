@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Indian Meadow: 4×4 grid (75px). Center flying geese cross pattern
+       with two dark colors and HST corner patches. -->
+  <!-- Center square (dark #1) -->
+  <rect x="75" y="75" width="150" height="150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Flying geese around center (medium, pointing outward) -->
+  <!-- Top -->
+  <polygon points="75,75 225,75 150,0" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="75,0 150,0 75,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,0 225,0 225,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Right -->
+  <polygon points="225,75 225,225 300,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="225,75 300,75 300,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="300,150 300,225 225,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom -->
+  <polygon points="75,225 225,225 150,300" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="75,225 75,300 150,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="150,300 225,300 225,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Left -->
+  <polygon points="75,75 75,225 0,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="0,75 75,75 0,150" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,150 75,225 0,225" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Corner HSTs (dark #2 diagonal toward center) -->
+  <polygon points="0,0 75,0 75,75" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="0,0 75,75 0,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="225,0 300,0 225,75" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="300,0 300,75 225,75" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="225,225 300,300 225,300" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="225,225 300,225 300,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="0,225 75,300 0,300" fill="#D0D0D0" stroke="#333" stroke-width="1" data-shade="med-light" data-role="patch"/>
+  <polygon points="0,225 75,225 75,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+</svg>

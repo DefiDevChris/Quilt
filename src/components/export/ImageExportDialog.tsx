@@ -76,7 +76,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               onClick={() => setFormat('png')}
               className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                 format === 'png'
-                  ? 'border-primary bg-primary text-white'
+                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
               }`}
             >
@@ -87,7 +87,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               onClick={() => setFormat('jpeg')}
               className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                 format === 'jpeg'
-                  ? 'border-primary bg-primary text-white'
+                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
               }`}
             >
@@ -98,7 +98,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               onClick={() => setFormat('svg')}
               className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                 format === 'svg'
-                  ? 'border-primary bg-primary text-white'
+                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
               }`}
             >
@@ -121,7 +121,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                   onClick={() => setDpi(opt)}
                   className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
                     dpi === opt
-                      ? 'border-primary bg-primary text-white'
+                      ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                       : 'border-outline-variant bg-white text-on-surface hover:bg-background'
                   }`}
                 >
@@ -155,7 +155,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
             type="button"
             onClick={handleExport}
             disabled={isExporting || !fabricCanvas}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isExporting ? (
               <>

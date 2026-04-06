@@ -1,4 +1,6 @@
 import { getSession } from '@/lib/cognito-session';
+import { isAdmin } from '@/lib/role-utils';
+import { unauthorizedResponse, forbiddenResponse } from '@/lib/api-responses';
 
 export {
   unauthorizedResponse,
@@ -14,6 +16,19 @@ export async function getRequiredSession() {
     return null;
   }
   return session;
+}
+
+/**
+ * Require an authenticated admin session. Returns the session if valid,
+ * or an appropriate error response (401/403) if not.
+ */
+export async function requireAdminSession(): Promise<
+  { session: NonNullable<Awaited<ReturnType<typeof getRequiredSession>>> } | Response
+> {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
+  if (!isAdmin(session.user.role)) return forbiddenResponse();
+  return { session };
 }
 
 export async function signOut() {

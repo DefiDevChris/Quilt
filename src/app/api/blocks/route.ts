@@ -83,6 +83,7 @@ export async function GET(request: NextRequest) {
           subcategory: blocks.subcategory,
           tags: blocks.tags,
           thumbnailUrl: blocks.thumbnailUrl,
+          svgData: blocks.svgData,
           isDefault: blocks.isDefault,
           fabricJsData: blocks.fabricJsData,
         })
@@ -114,6 +115,7 @@ export async function GET(request: NextRequest) {
       const fjd = block.fabricJsData as Record<string, unknown> | null;
       const isPhoto = fjd !== null && typeof fjd === 'object' && fjd.type === 'photo-block';
       const blockType = block.isDefault ? 'svg' : isPhoto ? 'photo' : 'custom';
+      const photoUrl = isPhoto && fjd && typeof fjd.imageUrl === 'string' ? fjd.imageUrl : null;
 
       return {
         id: block.id,
@@ -122,6 +124,8 @@ export async function GET(request: NextRequest) {
         subcategory: block.subcategory,
         tags: block.tags ?? [],
         thumbnailUrl: block.thumbnailUrl,
+        svgData: isPhoto ? null : (block.svgData ?? null),
+        photoUrl,
         isDefault: block.isDefault,
         isLocked:
           !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),

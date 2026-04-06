@@ -65,6 +65,9 @@ interface CartState {
    * Creates a new cart or updates existing one
    */
   syncWithShopify: () => Promise<void>;
+
+  /** Reset cart to initial state */
+  reset: () => void;
 }
 
 const INITIAL_STATE = {
@@ -199,6 +202,8 @@ export const useCartStore = create<CartState>((set, get) => ({
       });
     }
   },
+
+  reset: () => set(INITIAL_STATE),
 
   syncWithShopify: async () => {
     const state = get();

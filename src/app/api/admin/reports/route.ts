@@ -2,11 +2,8 @@ import { NextRequest } from 'next/server';
 import { desc, eq, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { reports, users } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import { forbiddenResponse, errorResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,19 +11,22 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 50;
 
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  if (session.user.role !== 'admin') {
-    return Response.json(
-      { success: false, error: 'Forbidden', code: 'FORBIDDEN' },
-      { status: 403 }
-    );
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const url = request.nextUrl;
-  const page = Math.max(1, parseInt(url.searchParams.get('page') ?? String(DEFAULT_PAGE), 10) || DEFAULT_PAGE);
-  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
+  const page = Math.max(
+    1,
+    parseInt(url.searchParams.get('page') ?? String(DEFAULT_PAGE), 10) || DEFAULT_PAGE
+  );
+  const limit = Math.min(
+    100,
+    Math.max(
+      1,
+      parseInt(url.searchParams.get('limit') ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT
+    )
+  );
   const offset = (page - 1) * limit;
 
   try {
@@ -70,15 +70,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  if (session.user.role !== 'admin') {
-    return Response.json(
-      { success: false, error: 'Forbidden', code: 'FORBIDDEN' },
-      { status: 403 }
-    );
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const id = request.nextUrl.searchParams.get('id');
 

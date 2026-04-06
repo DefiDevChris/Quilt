@@ -3,13 +3,11 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { users, userProfiles } from '@/db/schema';
 import {
-  getRequiredSession,
-  unauthorizedResponse,
+  requireAdminSession,
   validationErrorResponse,
   errorResponse,
   notFoundResponse,
 } from '@/lib/auth-helpers';
-import { checkTrustLevel } from '@/middleware/trust-guard';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -26,11 +24,9 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
-  if (!trustCheck.allowed) return trustCheck.response!;
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { userId } = await params;
@@ -65,13 +61,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  // Only admins can modify user roles
-  if (session.user.role !== 'admin') {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { userId } = await params;
@@ -93,10 +85,7 @@ export async function PUT(
       return notFoundResponse('User not found');
     }
 
-    // Prevent modifying admin accounts unless caller is admin
-    if (existingUser.role === 'admin' && session.user.role !== 'admin') {
-      return errorResponse('Cannot modify admin account', 'FORBIDDEN', 403);
-    }
+    // Note: Admins can modify other admin accounts (since caller is already admin)
 
     const updateData: Record<string, unknown> = {};
 
@@ -132,13 +121,9 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  // Only admins can delete users
-  if (session.user.role !== 'admin') {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const { userId } = await params;

@@ -47,7 +47,3 @@ export async function loadOpenCv(): Promise<OpenCV> {
 
   return loadPromise;
 }
-
-export function isOpenCvLoaded(): boolean {
-  return cvInstance !== null;
-}

@@ -21,7 +21,7 @@ export function BlockBuilderOptions() {
           onClick={() => setBlockBuilderMode('straight')}
           className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
             blockBuilderMode === 'straight'
-              ? 'bg-primary text-white'
+              ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
               : 'bg-surface-container text-on-surface/60 hover:text-on-surface'
           }`}
         >
@@ -32,7 +32,7 @@ export function BlockBuilderOptions() {
           onClick={() => setBlockBuilderMode('smooth')}
           className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
             blockBuilderMode === 'smooth'
-              ? 'bg-primary text-white'
+              ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
               : 'bg-surface-container text-on-surface/60 hover:text-on-surface'
           }`}
         >

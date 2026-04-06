@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,13 +12,19 @@ import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
 import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
 import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
+import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 
 const TemplateLibrary = dynamic(
   () => import('@/components/templates/TemplateLibrary').then((m) => m.TemplateLibrary),
   { ssr: false }
 );
 
-type DashboardTab = 'my-quilts' | 'templates';
+const MobileUploadsPanel = dynamic(
+  () => import('@/components/uploads/MobileUploadsPanel').then((m) => m.MobileUploadsPanel),
+  { ssr: false }
+);
+
+type DashboardTab = 'my-quilts' | 'templates' | 'mobile-uploads';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -49,6 +55,9 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
   const [showProUpgrade, setShowProUpgrade] = useState(false);
   const [showPhotoPromo, setShowPhotoPromo] = useState(false);
+  const uploads = useMobileUploadStore((s) => s.uploads);
+  const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
+  const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -65,11 +74,46 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isLoadingAuth && user) {
       fetchProjects();
+      fetchMobileUploads('pending');
     }
-  }, [isLoadingAuth, user, fetchProjects]);
+  }, [isLoadingAuth, user, fetchProjects, fetchMobileUploads]);
 
   const displayName = user?.name?.split(' ')[0] ?? 'there';
   const greeting = getGreeting();
+
+  /* ── Mobile Uploads view ─────────────────────────────────────────── */
+  if (activeTab === 'mobile-uploads') {
+    return (
+      <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
+        <div
+          className="flex items-center gap-3 px-6 py-2.5 flex-shrink-0"
+          style={{
+            borderBottom: '1px solid var(--color-outline-variant)',
+            backgroundColor: 'var(--color-surface-container-lowest)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setActiveTab('my-quilts')}
+            className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer"
+            style={{ color: 'var(--color-secondary)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-container)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            <ArrowLeft size={14} strokeWidth={2.5} />
+            Back to Dashboard
+          </button>
+        </div>
+        <div className="flex-1 overflow-auto px-6 py-5">
+          <MobileUploadsPanel />
+        </div>
+      </div>
+    );
+  }
 
   /* ── Template Library view ────────────────────────────────────────── */
   if (activeTab === 'templates') {
@@ -122,7 +166,7 @@ export default function DashboardPage() {
         {!isPro && !isLoadingAuth && user && (
           <button
             onClick={() => setShowProUpgrade(true)}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-orange-500 to-rose-400 p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
           >
             <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
               <Sparkles size={20} className="text-primary-dark" />
@@ -147,7 +191,7 @@ export default function DashboardPage() {
         isPro={isPro}
       />
 
-      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[200px_110px] gap-4 pb-20 relative z-10">
+      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[200px_200px_110px] gap-4 pb-20 relative z-10">
         {/* ── Quiltbook ──────────────────────────────────────────────── */}
         <Link
           href="/projects"
@@ -164,7 +208,7 @@ export default function DashboardPage() {
             <svg
               viewBox="0 0 48 48"
               fill="none"
-              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              className="w-11 h-11 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
             >
               <path
                 d="M6 10C6 10 10 6 24 6C38 6 42 10 42 10V40C42 40 38 36 24 36C10 36 6 40 6 40V10Z"
@@ -221,7 +265,7 @@ export default function DashboardPage() {
                 {projects.slice(0, 3).map((p) => (
                   <div
                     key={p.id}
-                    className="w-12 h-12 rounded-lg bg-white overflow-hidden border border-outline-variant shadow-sm"
+                    className="w-12 h-12 rounded-lg bg-white overflow-hidden border border-outline-variant shadow-elevation-1"
                   >
                     {p.thumbnailUrl ? (
                       <Image
@@ -232,8 +276,8 @@ export default function DashboardPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#FFF5EE]">
-                        <span className="text-[#C67B5C]/50 text-xs font-bold">
+                      <div className="w-full h-full flex items-center justify-center bg-primary-container">
+                        <span className="text-warm-terracotta/50 text-xs font-bold">
                           {p.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
@@ -271,7 +315,7 @@ export default function DashboardPage() {
             <svg
               viewBox="0 0 48 48"
               fill="none"
-              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              className="w-11 h-11 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
             >
               <rect
                 x="5"
@@ -327,6 +371,55 @@ export default function DashboardPage() {
           </div>
         </button>
 
+        {/* ── Mobile Uploads ──────────────────────────────────────── */}
+        {user && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('mobile-uploads')}
+            className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 text-left bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] group flex flex-col justify-between"
+          >
+            <div className="flex justify-between items-start">
+              <div />
+              {/* Phone + camera icon */}
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                className="w-11 h-11 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              >
+                <rect
+                  x="12"
+                  y="4"
+                  width="24"
+                  height="40"
+                  rx="4"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                />
+                <line
+                  x1="20"
+                  y1="8"
+                  x2="28"
+                  y2="8"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.4"
+                />
+                <circle cx="24" cy="26" r="6" stroke="currentColor" strokeWidth="2" opacity="0.5" />
+                <circle cx="24" cy="26" r="2.5" fill="currentColor" opacity="0.3" />
+              </svg>
+            </div>
+            <div className="mt-auto">
+              <p className="text-on-surface font-extrabold text-xl">Mobile Uploads</p>
+              <p className="text-secondary text-sm mt-0.5">
+                {pendingUploads.length > 0
+                  ? `${pendingUploads.length} photo${pendingUploads.length !== 1 ? 's' : ''} waiting`
+                  : 'Photos from your phone'}
+              </p>
+            </div>
+          </button>
+        )}
+
         {/* ── Community Threads ──────────────────────────────────────── */}
         <Link
           href="/socialthreads"
@@ -338,7 +431,7 @@ export default function DashboardPage() {
             <svg
               viewBox="0 0 48 48"
               fill="none"
-              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              className="w-11 h-11 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
             >
               <path
                 d="M24 38C24 38 8 28 8 18C8 10 14 6 20 10C22 11.5 23.5 13.5 24 15C24.5 13.5 26 11.5 28 10C34 6 40 10 40 18C40 28 24 38 24 38Z"
@@ -383,7 +476,7 @@ export default function DashboardPage() {
           <svg
             viewBox="0 0 44 44"
             fill="none"
-            className="w-10 h-10 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+            className="w-10 h-10 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
           >
             <circle cx="22" cy="14" r="8" stroke="currentColor" strokeWidth="2.5" />
             <path
@@ -408,7 +501,7 @@ export default function DashboardPage() {
           <svg
             viewBox="0 0 44 44"
             fill="none"
-            className="w-10 h-10 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+            className="w-10 h-10 text-warm-terracotta shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
           >
             <circle cx="22" cy="22" r="7" stroke="currentColor" strokeWidth="2.5" />
             <path

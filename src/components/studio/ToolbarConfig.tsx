@@ -16,6 +16,8 @@ export interface ToolbarCallbacks {
   onOpenResize?: () => void;
   onOpenReferenceImage?: () => void;
   onOpenLayoutOverlay?: () => void;
+  onSaveBlock?: () => void;
+  onNewBlock?: () => void;
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
@@ -742,7 +744,12 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   ];
 }
 
-export function useBlockTools(): ToolDef[] {
+export function useBlockTools(
+  callbacks?: Pick<ToolbarCallbacks, 'onOpenGridDimensions' | 'onSaveBlock' | 'onNewBlock'>
+): ToolDef[] {
+  const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
+  const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
+
   return [
     {
       id: 'select',
@@ -823,6 +830,334 @@ export function useBlockTools(): ToolDef[] {
             strokeLinejoin="round"
           />
           <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+    },
+    {
+      id: 'grid-dimensions',
+      label: 'Grid & Dims',
+      description: 'Set block size and grid spacing',
+      group: 'canvas',
+      onClick: callbacks?.onOpenGridDimensions,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path
+            d="M1 3V1H3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M17 1H19V3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    // ── History ──
+    {
+      id: 'undo',
+      label: 'Undo',
+      shortcut: 'Ctrl+Z',
+      description: 'Undo the last action',
+      group: 'history',
+      isDisabled: !canUndo,
+      onClick: () => {
+        if (canUndo) performUndo();
+      },
+      isActive: () => false,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M5 8H13C14.6569 8 16 9.34315 16 11C16 12.6569 14.6569 14 13 14H10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8 5L5 8L8 11"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'redo',
+      label: 'Redo',
+      shortcut: 'Ctrl+Shift+Z',
+      description: 'Redo the last undone action',
+      group: 'history',
+      isDisabled: !canRedo,
+      onClick: () => {
+        if (canRedo) performRedo();
+      },
+      isActive: () => false,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M15 8H7C5.34315 8 4 9.34315 4 11C4 12.6569 5.34315 14 7 14H10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M12 5L15 8L12 11"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    // ── Block actions ──
+    {
+      id: 'save-block',
+      label: 'Save Block',
+      description: 'Save current work as a block to My Blocks',
+      group: 'actions',
+      onClick: callbacks?.onSaveBlock,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M5 3H13L17 7V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V5C3 3.89543 3.89543 3 5 3Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+          <path d="M7 3V8H12V3" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M7 14H13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      id: 'new-block',
+      label: 'New Block',
+      description: 'Clear canvas and start a fresh block',
+      group: 'actions',
+      onClick: callbacks?.onNewBlock,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M10 7V13M7 10H13"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      ),
+    },
+  ];
+}
+
+export function useLayoutCreatorTools(
+  callbacks?: Pick<ToolbarCallbacks, 'onOpenGridDimensions' | 'onSaveBlock' | 'onNewBlock'>
+): ToolDef[] {
+  const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
+  const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
+
+  return [
+    {
+      id: 'select',
+      label: 'Select',
+      shortcut: 'V',
+      description: 'Select a piece to assign its role',
+      toolType: 'select',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M5 3L5 15L8.5 11.5L12 17L14 16L10.5 10L15 10L5 3Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'rectangle',
+      label: 'Rectangle',
+      shortcut: 'R',
+      description: 'Draw a rectangle — the main shape for layout pieces',
+      toolType: 'rectangle',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'line',
+      label: 'Line',
+      shortcut: 'L',
+      description: 'Draw a dividing line to split areas',
+      toolType: 'line',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      id: 'blockbuilder',
+      label: 'Easy Draw',
+      shortcut: 'E',
+      description: 'Draw freehand paths that snap to grid',
+      toolType: 'blockbuilder',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M12.5 3.5L16.5 7.5L7 17H3V13L12.5 3.5Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+    },
+    {
+      id: 'grid-dimensions',
+      label: 'Grid & Dims',
+      description: 'Set layout dimensions and grid spacing',
+      group: 'canvas',
+      onClick: callbacks?.onOpenGridDimensions,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+          <path
+            d="M1 3V1H3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M17 1H19V3"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    // ── History ──
+    {
+      id: 'undo',
+      label: 'Undo',
+      shortcut: 'Ctrl+Z',
+      description: 'Undo the last action',
+      group: 'history',
+      isDisabled: !canUndo,
+      onClick: () => {
+        if (canUndo) performUndo();
+      },
+      isActive: () => false,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M5 8H13C14.6569 8 16 9.34315 16 11C16 12.6569 14.6569 14 13 14H10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8 5L5 8L8 11"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'redo',
+      label: 'Redo',
+      shortcut: 'Ctrl+Shift+Z',
+      description: 'Redo the last undone action',
+      group: 'history',
+      isDisabled: !canRedo,
+      onClick: () => {
+        if (canRedo) performRedo();
+      },
+      isActive: () => false,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M15 8H7C5.34315 8 4 9.34315 4 11C4 12.6569 5.34315 14 7 14H10"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M12 5L15 8L12 11"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    // ── Layout actions ──
+    {
+      id: 'save-layout',
+      label: 'Save Layout',
+      description: 'Save current layout as a template',
+      group: 'actions',
+      onClick: callbacks?.onSaveBlock,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M5 3H13L17 7V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V5C3 3.89543 3.89543 3 5 3Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+          <path d="M7 3V8H12V3" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M7 14H13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      id: 'new-layout',
+      label: 'New Layout',
+      description: 'Clear canvas and start a fresh layout',
+      group: 'actions',
+      onClick: callbacks?.onNewBlock,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M10 7V13M7 10H13"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
         </svg>
       ),
     },
