@@ -143,7 +143,7 @@ function PrintOptionsPanel({
               onChange={(e) => setPrintScale(parseFloat(e.target.value))}
               className="w-full"
             />
-            <div className="flex justify-between text-caption text-secondary mt-0.5">
+            <div className="flex justify-between text-[10px] text-secondary mt-0.5">
               <span>50%</span>
               <span>1:1</span>
               <span>200%</span>
@@ -454,7 +454,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
           {showReferencePanel && referenceImageUrl && (
             <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
-                <span className="text-body-sm font-semibold text-on-surface/60 uppercase tracking-wider">
+                <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
                   Reference Photo
                 </span>
                 <button

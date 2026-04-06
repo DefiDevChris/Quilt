@@ -1,34 +1,32 @@
 # Quilt
 
-Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, 105+ quilt blocks (always growing), and a community of quilters who get it — all in your browser. Sign up for free.
+Design your quilts, calculate your yardage, and print true-scale patterns with seam allowances built in. Multiple worktables, a growing quilt block library, and a community of quilters who get it — all in your browser, free to start.
 
 ## What You Can Do
 
 - **Design Studio** — Multiple worktables for laying out quilts, drafting blocks, calibrating fabrics, and exporting patterns
-- **105+ Block Library** — Browse by category, draw your own with simple shape tools, or upload a photo of a physical block
+- **Block Library** — Browse by category or draft your own with EasyDraw, Applique, and Freeform tools
+- **Block Overlay Templates** — 20 traditional quilt block SVGs + 10 full-pattern overlays with recommended dimensions, aspect-ratio-locked scaling, and opacity controls for tracing
 - **Project Management** — All Projects view with search, project templates for reusable settings
 - **Yardage & Cutting** — Automatic fabric calculations, sub-cutting charts, and rotary cutting guides
-- **Print-Ready Patterns** — True 1:1 scale PDFs with seam allowances, FPP templates, and cutting instructions
-- **Creative Tools** — Photo Patchwork (AI-powered photo-to-quilt), fabric calibration
+- **Print-Ready Patterns** — Three PDF export modes: Pattern Pieces (bin-packed at scale), Cut List (one template page per shape with per-edge dimensions, grain line, key block diagram), and Print Project (full pattern document with quilt overview, fabric requirements, cutting instructions, block diagrams, and totals table)
+- **Creative Tools** — Photo-to-Pattern with structure detection (grid, sashing, borders), fabric calibration
 - **Community** — Share designs, discover inspiration, threaded comments, and a blog
-- **Fabric Shop** — Browse and purchase fabrics via headless Shopify integration (feature-flagged behind `NEXT_PUBLIC_ENABLE_SHOP`)
-- **Admin Dashboard** — Manage system libraries (fabrics, blocks, templates), moderate community posts/comments, and control user status
-- **Pro Features** — Photo-to-Pattern (snap a quilt photo, correct perspective distortion, extract pieces), fabric calibration, unlimited projects
+- **Pro Features** — Snap a photo of a quilt and recreate it digitally, fabric calibration, unlimited projects
 
 ## Tech Stack
 
 | Layer     | Technology                                           |
 | --------- | ---------------------------------------------------- |
-| Framework | Next.js 16.2.1 (App Router) + TypeScript + React 19  |
+| Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand stores                                       |
+| State     | Zustand (17 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (18 tables)            |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (17 tables)            |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
-| Commerce  | Shopify Storefront API (headless, feature-flagged)    |
 | Payments  | Stripe (checkout, webhooks, subscription management) |
 | Testing   | Vitest + Playwright E2E                              |
 
@@ -68,7 +66,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Pattern (with perspective correction), FPP templates, cutting charts, yardage estimator, community posting
+- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Pattern, FPP templates, cutting charts, yardage estimator, community posting
 
 ## Roles
 
@@ -76,7 +74,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 - Free: like, save, comment — cannot post
 - Pro: like, save, comment, post
-- Admin: all permissions + moderation + system library management + user status control
+- Admin: all permissions + moderation
 
 ## Getting Started
 
@@ -117,11 +115,10 @@ src/
       projects/           # All Projects view with search
       templates/          # Project template management
       settings/           # Profile settings with delete account
-    (public)/             # Public marketing pages (includes /shop)
+    (public)/             # Public marketing pages
+    admin/                # Admin moderation tools
     api/                  # API route handlers
-      admin/              # Admin APIs (blog, blocks, fabrics, templates, comments, users, reports)
-      shop/               # Shopify cart API (feature-flagged)
-      blog/               # Blog CRUD endpoints
+      blog/               # Blog CRUD and admin endpoints
       project-templates/  # Template CRUD operations
     auth/                 # Sign in/up/verify/forgot-password pages
     blog/                 # Blog list and individual post pages
@@ -135,21 +132,20 @@ src/
     social/               # FeedContent, SavedContent, TrendingContent, SocialLayout, BlogContent
     mobile/               # MobileShell, MobileBottomNav (3-item: Home, Upload FAB, Profile/SignIn)
     editor/               # TiptapRenderer for blog content
-    studio/               # HistoryPanel, ProjectTemplates, SaveAsTemplateButton
-    blocks/               # BlockDraftingShell, PhotoBlockUpload, SimplePhotoBlockUpload, BlockLibrary
+    studio/               # HistoryPanel, ReferenceImageDialog, ProjectTemplates, SaveAsTemplateButton
+    blocks/               # BlockDraftingShell, BlockBuilderTab, BlockOverlaySelector, RecommendedDimensionsModal
     settings/             # DeleteAccountSection
   hooks/                  # Custom React hooks (canvas, drawing, patterns, auth, etc.)
-  stores/                 # Zustand stores (18 total, includes cartStore for Shopify)
+  stores/                 # Zustand stores (17 total)
   lib/                    # Pure utility modules and engines
     *-engine.ts           # Pure computation — zero React/Fabric/DOM deps, fully testable
-    quilt-overlay-registry.ts  # Block SVG registry (105 blocks) with metadata and dimension helpers
-    shopify.ts            # Shopify Storefront API GraphQL client (feature-flagged)
+    quilt-overlay-registry.ts  # Block/pattern SVG registry with metadata and dimension helpers
     trust-engine.ts       # 3-role system: free/pro/admin
     *-utils.ts            # Domain-specific utility modules (canvas, geometry, math, pattern, etc.)
   types/                  # Shared TypeScript type definitions
   data/                   # Static data files (pattern definitions, etc.)
   db/
-    schema/               # Drizzle table definitions (18 tables)
+    schema/               # Drizzle table definitions (17 tables)
     migrations/           # Generated SQL migrations
     seed/                 # Seed scripts
   content/
@@ -180,6 +176,7 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Canvas Enhancements
 
+- **Reference Image Tool** — Import, adjust opacity, lock/unlock
 - **Seam Allowance Toggle** — Show/hide seam allowances in print preview
 - **Print Scale Preview** — 0.5x to 2.0x scale adjustment
 - **Pattern Overlay** — Show layout cell boundaries with auto-align to cells (Grid, Sashing, On-Point)
@@ -195,54 +192,40 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 ### Studio Tools
 
-- Select, Pan, Rectangle, Circle, Triangle, Easy Draw, Curved Edge
-- **Sashing Tool** — Draw custom sashing strips (No Layout mode only)
-- **Border Tool** — Draw custom border strips (No Layout mode only)
-- **Spraycan** — Recolor all matching patches at once
+- Circle, Polygon
 - Block Grid, Alignment helpers
 - Group/Ungroup operations
 - Grid/Snap toggles
-- **Background Fill** — Set canvas background color with presets or custom colors (No Layout mode only)
-- **Undo/Redo** — Standard Ctrl+Z/Ctrl+Shift+Z with 20-state history
+- **Undo/Redo** — Standard Ctrl+Z/Ctrl+Shift+Z with 50-state history
 
-### Block Creation
+### PDF Export (3 Modes)
 
-- **Drawing Tools** — Rectangle, Triangle tools in drafting canvas with grid snap
-- **Photo Upload** — 3-step workflow (Upload → Image Prep → Crop) for digitizing physical blocks
-- **Image Prep Tools** — Straighten (rotation/flip) and perspective correction without OpenCV
-- **Block Library** — Browse system blocks, upload custom blocks, manage user collection
+- **Pattern Pieces** — Bin-packed shapes at scale with 1" validation square
+- **Cut List** — Key block diagram (page 2) + one template per shape. Solid line = cut (outer), dashed = sew (inner). Per-edge dimensions, seam allowance annotations, grain line with "GRAIN" text. Branded headers/footers on every page
+- **Print Project** — Complete pattern document: quilt overview image, fabric requirements with yardage table, rotary cutting instructions grouped by fabric, strip cutting plan, block diagrams with labeled pieces, totals summary table
 
-### Layout System
+### Photo-to-Pattern
 
-- **No Layout** — Freeform placement with dedicated sashing/border drawing tools and background fill
-- **Select Layout** — 9 predefined templates (Grid 3×3–5×5, Sashing 3×3–5×5, On-Point 3×3–5×5)
-- Templates instantly apply all settings (rows, cols, block size, sashing, borders)
+7-step wizard using OpenCV.js in a Web Worker:
+1. Upload photo of a quilt
+2. Adjust rotation/flip
+3. Set scan priors (curved piecing, applique, piece scale)
+4. Correct perspective with draggable corners
+5. CV pipeline detects pieces (15 objectives including watershed, CLAHE, bilateral filtering)
+6. Review results with sensitivity slider
+7. Set dimensions and seam allowance
+
+Post-processing detects quilt structure: block grid, sashing, borders, cornerstones, and piece roles.
 
 ### Community & Social
 
 - **Social Threads** — Discover (all posts), Saved (bookmarked)
 - **Trending** — "Most Saved" with month/all-time toggle
-- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API with Zod validation and slug conflict retry logic, Tiptap JSON rendering
-
-### Admin Dashboard
-
-- **System Libraries** — CRUD management for system fabrics, blocks, and pattern templates (available to all users)
-- **Community Moderation** — View/manage social posts, suspend or ban users
-- **Blog Management** — Create, edit, and publish blog posts with slug auto-generation
-- **User Status** — `active | suspended | banned` status enum with admin-only update API
-- **Trust-Level Gating** — All admin endpoints validate session + role via `getRequiredSession()` and `isAdmin()`
-
-### Shopify Integration (Feature-Flagged)
-
-- **Headless Storefront** — GraphQL client for Shopify Storefront API (cart create, add items, fetch)
-- **Shop Page** — `/shop` displays purchasable fabrics from the database (filterable by `isPurchasable`)
-- **Cart Drawer** — Slide-out cart with quantity controls, price totals, and Shopify checkout redirect
-- **Yardage-to-Cart** — Add calculated fabric yardage directly to Shopify cart from the Yardage Panel
-- **Feature Flag** — All Shopify code gated behind `NEXT_PUBLIC_ENABLE_SHOP=true`; disabled by default
+- **Blog** — Standalone `/blog` route with SEO-optimized pages, admin-only posts via API, Tiptap JSON rendering
 
 ## Database Schema
 
-18 tables across 20 schema files, 10 enums. Key tables: `users` (with `user_status` enum), `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics` (with Shopify fields: `isPurchasable`, `shopifyProductId`, `shopifyVariantId`, `pricePerYard`, `inStock`), `user_fabrics`, `patternTemplates`, `socialPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`
+17 tables: `users`, `userProfiles`, `projects`, `projectTemplates`, `blocks`, `fabrics`, `patternTemplates`, `communityPosts`, `comments`, `likes`, `savedPosts`, `notifications`, `printlists`, `subscriptions`, `blogPosts`, `enums`
 
 ## Mobile
 

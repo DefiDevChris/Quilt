@@ -227,7 +227,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
               </button>
             ))}
           </div>
-          <p className="mt-1 text-caption text-secondary">{MODE_INFO[exportMode].description}</p>
+          <p className="mt-1 text-[10px] text-secondary">{MODE_INFO[exportMode].description}</p>
         </div>
 
         {/* Printlist summary — for pattern-pieces and cut-list modes */}
@@ -258,7 +258,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
         {/* Mode-specific options */}
         {exportMode === 'pattern-pieces' && (
           <div className="mb-4 rounded-lg bg-background p-3">
-            <p className="text-label-sm leading-relaxed text-secondary">
+            <p className="text-[11px] leading-relaxed text-secondary">
               Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
               included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
               &quot;Fit to Page&quot;.
@@ -268,7 +268,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
         {exportMode === 'cut-list' && (
           <div className="mb-4 rounded-lg bg-background p-3">
-            <p className="text-label-sm leading-relaxed text-secondary">
+            <p className="text-[11px] leading-relaxed text-secondary">
               One page per shape with edge dimensions in{' '}
               {unitSystem === 'imperial' ? 'inches (fractions)' : 'millimeters'}. Includes finished
               piece line, seam allowance, and grain line.
@@ -278,7 +278,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
         {exportMode === 'print-project' && (
           <div className="mb-4 rounded-lg bg-background p-3">
-            <p className="text-label-sm leading-relaxed text-secondary">
+            <p className="text-[11px] leading-relaxed text-secondary">
               Generates a complete pattern document: quilt overview image, block diagrams with piece
               labels, and a totals summary table.
             </p>
@@ -287,7 +287,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
         {exportMode === 'fpp-template' && (
           <div className="mb-4 rounded-lg bg-background p-3">
-            <p className="text-label-sm leading-relaxed text-secondary">
+            <p className="text-[11px] leading-relaxed text-secondary">
               Generates a mirrored FPP template with numbered sewing order. Sew patches in order —
               each piece is sewn to the growing unit. Template includes seam allowance lines and a
               sewing order reference page.

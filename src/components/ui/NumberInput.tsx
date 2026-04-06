@@ -42,7 +42,7 @@ export function NumberInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-label-sm font-medium text-on-surface/80 uppercase tracking-wider">
+      <label className="text-[11px] font-medium text-on-surface/80 uppercase tracking-wider">
         {label}
       </label>
       <div className="flex items-center bg-surface-container rounded-md h-[34px] focus-within:ring-1 focus-within:ring-primary/40 transition-colors">
@@ -54,9 +54,9 @@ export function NumberInput({
           onKeyDown={(e) => {
             if (e.key === 'Enter') commit(localValue);
           }}
-          className="flex-1 bg-transparent font-mono text-body-md text-on-surface px-2.5 outline-none min-w-0"
+          className="flex-1 bg-transparent font-mono text-[13px] text-on-surface px-2.5 outline-none min-w-0"
         />
-        {suffix && <span className="text-label-sm text-on-surface/55 pr-2 font-mono">{suffix}</span>}
+        {suffix && <span className="text-[11px] text-on-surface/55 pr-2 font-mono">{suffix}</span>}
         <div className="flex flex-col">
           <button
             type="button"

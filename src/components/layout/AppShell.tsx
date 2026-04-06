@@ -108,7 +108,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {user?.role === 'free' && (
                 <button
                   onClick={() => setShowProUpgrade(true)}
-                  className="btn-primary-xs gap-1.5 mr-2"
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
                 >
                   <Sparkles size={14} className="text-white" />
                   Upgrade

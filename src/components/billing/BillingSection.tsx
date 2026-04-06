@@ -141,9 +141,9 @@ export function BillingSection() {
               {isPro ? 'Pro' : 'Free'}
             </span>
             {isLoading ? (
-              <span className="text-caption text-secondary animate-pulse">Checking...</span>
+              <span className="text-[10px] text-secondary animate-pulse">Checking...</span>
             ) : isPro && subscription && subscription.plan === 'pro' ? (
-              <span className="text-caption text-secondary/80">
+              <span className="text-[10px] text-secondary/80">
                 {isCanceling
                   ? `Cancels ${new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString()}`
                   : subscription.status === 'active'
@@ -151,7 +151,7 @@ export function BillingSection() {
                     : subscription.status.replace('_', ' ')}
               </span>
             ) : isPro ? (
-              <span className="text-caption text-secondary/80">Active</span>
+              <span className="text-[10px] text-secondary/80">Active</span>
             ) : null}
           </div>
 
@@ -205,7 +205,7 @@ export function BillingSection() {
               }`}
             >
               Yearly
-              <span className="ml-1 text-caption text-primary-dark font-semibold">
+              <span className="ml-1 text-[10px] text-primary-dark font-semibold">
                 Save {PRO_YEARLY_SAVINGS_PERCENT}%
               </span>
             </button>
@@ -220,7 +220,7 @@ export function BillingSection() {
               /{billingInterval === 'monthly' ? 'month' : 'year'}
             </span>
             {billingInterval === 'yearly' && (
-              <span className="block text-caption text-secondary/80 mt-0.5">
+              <span className="block text-[10px] text-secondary/80 mt-0.5">
                 ${(PRO_PRICE_YEARLY / 12).toFixed(0)}/month, billed annually
               </span>
             )}
@@ -243,7 +243,7 @@ export function BillingSection() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <h4 className="text-xs font-semibold text-on-surface mb-2">Free</h4>
-            <ul className="space-y-1.5 text-label-sm text-secondary/80">
+            <ul className="space-y-1.5 text-[11px] text-secondary/80">
               <li>All design tools</li>
               <li>20 starter blocks</li>
               <li>10 basic fabrics</li>
@@ -256,7 +256,7 @@ export function BillingSection() {
           </div>
           <div>
             <h4 className="text-xs font-semibold text-primary-dark mb-2">Pro</h4>
-            <ul className="space-y-1.5 text-label-sm text-secondary">
+            <ul className="space-y-1.5 text-[11px] text-secondary">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
               <li>Full block library</li>

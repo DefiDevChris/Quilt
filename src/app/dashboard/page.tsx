@@ -85,7 +85,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="inline-flex items-center gap-1.5 text-body-sm font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer"
             style={{ color: 'var(--color-secondary)' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'var(--color-surface-container)';

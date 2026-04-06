@@ -10,9 +10,9 @@ function CheckItem({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="flex items-start gap-4 text-secondary font-medium"
+      className="flex items-start gap-4 text-warm-text-secondary font-medium"
     >
-      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5 flex-shrink-0">
+      <div className="w-6 h-6 rounded-full bg-warm-peach/10 flex items-center justify-center text-warm-peach mt-0.5 flex-shrink-0">
         <svg
           width="14"
           height="14"
@@ -50,11 +50,11 @@ function StudioPreviewMockup() {
 
   return (
     <div className="relative group">
-      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(74,59,50,0.12)] w-full border border-outline-variant overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(74,59,50,0.12)] w-full border border-warm-border overflow-hidden flex flex-col">
         {/* Top Bar — matches real studio */}
-        <div className="h-9 border-b border-outline-variant flex items-center px-3 gap-2 bg-white shrink-0 text-[9px]">
+        <div className="h-9 border-b border-warm-border flex items-center px-3 gap-2 bg-white shrink-0 text-[9px]">
           <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 rounded bg-surface-container flex items-center justify-center text-tertiary">
+            <div className="w-3.5 h-3.5 rounded bg-warm-surface flex items-center justify-center text-warm-text-muted">
               <svg
                 width="8"
                 height="8"
@@ -68,24 +68,24 @@ function StudioPreviewMockup() {
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
             </div>
-            <span className="font-bold text-on-surface hidden sm:inline">QuiltCorgi</span>
+            <span className="font-bold text-warm-text hidden sm:inline">QuiltCorgi</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="px-2 py-0.5 bg-primary/20 text-on-surface rounded-full font-bold text-[8px]">
+            <div className="px-2 py-0.5 bg-warm-peach/20 text-warm-text rounded-full font-bold text-[8px]">
               Main
             </div>
-            <span className="text-tertiary text-caption">+</span>
+            <span className="text-warm-text-muted text-[10px]">+</span>
           </div>
-          <div className="flex-1 text-center text-tertiary truncate hidden sm:block">
-            <span className="font-medium text-on-surface">Ohio Star Throw</span>
+          <div className="flex-1 text-center text-warm-text-muted truncate hidden sm:block">
+            <span className="font-medium text-warm-text">Ohio Star Throw</span>
             <span className="mx-1">·</span>
             <span>Quilt Canvas</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
-            <span className="text-tertiary hidden sm:inline">Share</span>
-            <span className="text-tertiary hidden sm:inline">View</span>
-            <span className="text-tertiary hidden sm:inline">Tools</span>
-            <div className="px-2 py-0.5 bg-on-surface text-white rounded font-bold text-[8px]">
+            <span className="text-warm-text-muted hidden sm:inline">Share</span>
+            <span className="text-warm-text-muted hidden sm:inline">View</span>
+            <span className="text-warm-text-muted hidden sm:inline">Tools</span>
+            <div className="px-2 py-0.5 bg-warm-text text-white rounded font-bold text-[8px]">
               Export
             </div>
           </div>
@@ -93,7 +93,7 @@ function StudioPreviewMockup() {
 
         <div className="flex" style={{ minHeight: '280px' }}>
           {/* Left Toolbar with labels */}
-          <div className="w-12 border-r border-outline-variant bg-white py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+          <div className="w-12 border-r border-warm-border bg-white py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
             {[
               { label: 'Select', icon: <path d="M5 3l14 9-6 2-4 7-4-18z" />, active: true },
               { label: 'Curved', icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4" /> },
@@ -127,12 +127,12 @@ function StudioPreviewMockup() {
               { label: 'Triangle', icon: <polygon points="12 2 22 20 2 20" /> },
             ].map((tool, i) =>
               tool.divider ? (
-                <div key={i} className="w-7 h-px bg-outline-variant my-0.5" />
+                <div key={i} className="w-7 h-px bg-warm-border my-0.5" />
               ) : (
                 <div
                   key={i}
                   className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${
-                    tool.active ? 'text-primary' : 'text-tertiary'
+                    tool.active ? 'text-warm-peach' : 'text-warm-text-muted'
                   }`}
                 >
                   <svg
@@ -163,7 +163,7 @@ function StudioPreviewMockup() {
                 opacity: 0.3,
               }}
             />
-            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-on-surface/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
+            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-warm-text/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
               {QUILT_GRID.flat().map((color, i) => (
                 <motion.div
                   key={i}
@@ -177,11 +177,11 @@ function StudioPreviewMockup() {
               ))}
             </div>
             {/* Floating toolbar */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-elevation-4 border border-outline-variant px-2 py-1 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-elevation-4 border border-warm-border px-2 py-1 flex items-center gap-1.5 z-10">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-primary/15 text-primary' : 'text-tertiary'}`}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-warm-peach/15 text-warm-peach' : 'text-warm-text-muted'}`}
                 >
                   <svg
                     width="8"
@@ -198,17 +198,17 @@ function StudioPreviewMockup() {
                   </svg>
                 </div>
               ))}
-              <div className="w-px h-3 bg-outline-variant" />
-              <span className="text-[7px] text-tertiary font-mono">54%</span>
+              <div className="w-px h-3 bg-warm-border" />
+              <span className="text-[7px] text-warm-text-muted font-mono">54%</span>
             </div>
           </div>
 
           {/* Right panel — accordion sections */}
-          <div className="w-[120px] border-l border-outline-variant bg-white hidden md:flex flex-col shrink-0 overflow-hidden">
+          <div className="w-[120px] border-l border-warm-border bg-white hidden md:flex flex-col shrink-0 overflow-hidden">
             {panelSections.map((section, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between px-2 py-1.5 border-b border-outline-variant text-[7px] font-bold text-on-surface tracking-wide"
+                className="flex items-center justify-between px-2 py-1.5 border-b border-warm-border text-[7px] font-bold text-warm-text tracking-wide"
               >
                 <span>{section.label}</span>
                 <svg
@@ -231,7 +231,7 @@ function StudioPreviewMockup() {
         </div>
 
         {/* Status bar */}
-        <div className="h-5 bg-surface-container/60 border-t border-outline-variant flex items-center justify-between px-3 text-[7px] font-mono text-tertiary shrink-0">
+        <div className="h-5 bg-warm-surface/60 border-t border-warm-border flex items-center justify-between px-3 text-[7px] font-mono text-warm-text-muted shrink-0">
           <span>Mouse H: 27.00&quot; V: 27.00&quot;</span>
           <div className="flex gap-3">
             <span>Snap to Grid: ON</span>
@@ -244,9 +244,9 @@ function StudioPreviewMockup() {
 
 export default function CoreCapabilities() {
   return (
-    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-background overflow-x-clip">
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[80px] pointer-events-none translate-y-1/2 -translate-x-1/3" />
+    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-warm-bg overflow-x-clip">
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-warm-peach/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warm-text-secondary/5 rounded-full blur-[80px] pointer-events-none translate-y-1/2 -translate-x-1/3" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -259,16 +259,16 @@ export default function CoreCapabilities() {
             <div className="flex items-center gap-4 mb-6">
               <Mascot pose="sitting" size="lg" />
               <h2
-                className="text-3xl md:text-4xl font-bold text-on-surface leading-tight"
+                className="text-3xl md:text-4xl font-bold text-warm-text leading-tight"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Tools quilters actually need.
                 <br />
-                <span className="text-primary">Built by quilters who care.</span>
+                <span className="text-warm-peach">Built by quilters who care.</span>
               </h2>
             </div>
 
-            <p className="text-lg text-secondary mb-8">
+            <p className="text-lg text-warm-text-secondary mb-8">
               Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
               positioning fabric motifs with precision, or exploring unexpected color combinations
               with ColorTheme — every tool is made to help you create something you&apos;ll be proud
@@ -288,7 +288,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-primary text-on-surface font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-primary-dark transition-all duration-300 transform"
+              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform"
             >
               See What You Can Create
             </Link>

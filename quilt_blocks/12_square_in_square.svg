@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Center diamond (rotated 45° square) -->
+  <polygon points="150,0 300,150 150,300 0,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Top-left corner triangle -->
+  <polygon points="0,0 150,0 0,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Top-right corner triangle -->
+  <polygon points="150,0 300,0 300,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Bottom-right corner triangle -->
+  <polygon points="300,150 300,300 150,300" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Bottom-left corner triangle -->
+  <polygon points="0,150 150,300 0,300" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+</svg>
