@@ -67,7 +67,7 @@ function renderToolGroup(
     <div>
       {showSeparatorBefore && <Separator />}
       {label && (
-        <div className="text-caption font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5">
           {label}
         </div>
       )}

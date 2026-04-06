@@ -110,7 +110,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   <BlockSearch />
 
                   {/* Block count */}
-                  <div className="px-3 py-1 text-caption text-secondary">{total} blocks</div>
+                  <div className="px-3 py-1 text-[10px] text-secondary">{total} blocks</div>
 
                   {/* Block Grid */}
                   <div className="flex-1 overflow-y-auto px-3 py-1">
@@ -162,7 +162,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                       >
                         ← Prev
                       </button>
-                      <span className="text-caption text-on-surface/50">
+                      <span className="text-[10px] text-on-surface/50">
                         {page} / {totalPages}
                       </span>
                       <button
@@ -232,7 +232,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                                   ? 'Click again to confirm delete'
                                   : 'Delete block'
                               }
-                              className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                              className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
                                 confirmDeleteId === block.id
                                   ? 'bg-error ring-2 ring-error/50 !opacity-100'
                                   : 'bg-error'

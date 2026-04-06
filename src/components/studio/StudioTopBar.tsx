@@ -130,7 +130,7 @@ function ModeTabs() {
             key={tab.mode}
             type="button"
             onClick={() => setActiveWorktable(tab.mode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-body-md font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all ${
               isActive
                 ? 'bg-surface shadow-elevation-1 text-on-surface'
                 : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
@@ -322,7 +322,7 @@ function ViewMenu({ onOpenGridDimensions }: { onOpenGridDimensions?: () => void 
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-body-md font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
       >
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
           <path
@@ -350,7 +350,7 @@ function ViewMenu({ onOpenGridDimensions }: { onOpenGridDimensions?: () => void 
               key={item.label}
               type="button"
               onClick={item.action}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-body-md text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
             >
               <span className="text-on-surface/50 flex-shrink-0">{item.icon}</span>
               {item.label}
@@ -436,7 +436,7 @@ function ToolsMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-body-md font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
       >
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
@@ -466,8 +466,8 @@ function ToolsMenu({
             >
               <span className="text-on-surface/50 flex-shrink-0 mt-0.5">{item.icon}</span>
               <div>
-                <div className="text-body-md font-medium text-on-surface">{item.label}</div>
-                <div className="text-label-sm text-on-surface/50">{item.description}</div>
+                <div className="text-[13px] font-medium text-on-surface">{item.label}</div>
+                <div className="text-[11px] text-on-surface/50">{item.description}</div>
               </div>
             </button>
           ))}
@@ -558,7 +558,7 @@ export function StudioTopBar({
           {!isPro && (
             <button
               onClick={() => setShowProUpgrade(true)}
-              className="btn-primary-xs gap-1.5"
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
             >
               <Sparkles size={14} className="text-white" />
               Upgrade to Pro
@@ -653,14 +653,14 @@ export function StudioTopBar({
 
           <div className="text-right">
             <div className="flex items-center justify-end gap-2">
-              <div className="text-body-md font-medium text-on-surface truncate max-w-48">
+              <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
                 {projectName}
               </div>
               {isDirty && (
                 <div className="w-1.5 h-1.5 rounded-full bg-warning" title="Unsaved changes" />
               )}
             </div>
-            <div className="text-label-sm text-on-surface/45">
+            <div className="text-[11px] text-on-surface/45">
               {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
             </div>
           </div>
@@ -687,7 +687,7 @@ export function StudioTopBar({
                 }
                 onOpenImageExport?.();
               }}
-              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-body-md font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
+              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
               Export
               {!isPro && <Sparkles size={12} className="text-primary" />}

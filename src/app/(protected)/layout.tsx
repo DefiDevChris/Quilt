@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
-
+import { ProtectedPageShell } from '@/components/layout/ProtectedPageShell';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   if (process.env.DEV_AUTH_BYPASS !== 'true') {
@@ -17,7 +17,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   return (
     <ResponsiveShell>
-      {children}
+      <ProtectedPageShell>{children}</ProtectedPageShell>
     </ResponsiveShell>
   );
 }

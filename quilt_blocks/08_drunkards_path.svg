@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Top-left quadrant: dark pie at center corner, light background -->
+  <path d="M 0,0 L 150,0 L 150,40 A 110,110 0 0,1 40,150 L 0,150 Z" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <path d="M 150,150 L 150,40 A 110,110 0 0,0 40,150 Z" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Top-right quadrant: light pie, dark background -->
+  <path d="M 150,0 L 300,0 L 300,150 L 260,150 A 110,110 0 0,0 150,40 Z" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <path d="M 150,150 L 260,150 A 110,110 0 0,1 150,40 Z" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom-left quadrant: light pie, dark background -->
+  <path d="M 0,150 L 40,150 A 110,110 0 0,0 150,260 L 150,300 L 0,300 Z" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <path d="M 150,150 L 40,150 A 110,110 0 0,1 150,260 Z" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Bottom-right quadrant: dark pie, light background -->
+  <path d="M 260,150 L 300,150 L 300,300 L 150,300 L 150,260 A 110,110 0 0,0 260,150 Z" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <path d="M 150,150 L 150,260 A 110,110 0 0,1 260,150 Z" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+</svg>

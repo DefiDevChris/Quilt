@@ -127,7 +127,7 @@ export function FeedContent({ sort = 'newest', search = '', category }: FeedCont
               {user && (
                 <Link
                   href="/dashboard"
-                  className="btn-primary-sm gap-2"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-golden text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
                 >
                   Share Your Design
                 </Link>
@@ -223,7 +223,7 @@ function PostCard({ post }: { post: CommunityPost }) {
           >
             {post.creatorName}
           </Link>
-          <p className="text-label-sm text-secondary">
+          <p className="text-[11px] text-secondary">
             {post.creatorUsername && <span className="mr-1.5">@{post.creatorUsername}</span>}
             <span>{formatRelativeTime(post.createdAt)}</span>
           </p>

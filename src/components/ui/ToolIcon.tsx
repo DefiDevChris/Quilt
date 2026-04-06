@@ -48,7 +48,7 @@ export function ToolIcon({
       <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
         {tool.icon}
       </span>
-      <span className="text-label-sm leading-tight text-center truncate w-full px-1 font-medium">
+      <span className="text-[11px] leading-tight text-center truncate w-full px-1 font-medium">
         {tool.label}
       </span>
     </button>

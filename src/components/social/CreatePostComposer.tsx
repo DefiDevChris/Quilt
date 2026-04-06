@@ -364,7 +364,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'image' && !imageUrl && !uploadedImage) ||
                   (mode === 'project' && !selectedProject)
                 }
-                className="btn-primary-sm gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden text-white text-sm font-semibold shadow-elevation-1 hover:shadow-elevation-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 Post

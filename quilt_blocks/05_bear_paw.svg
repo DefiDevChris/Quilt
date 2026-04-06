@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Bear Paw: 7x7 grid, cell≈42.86px. 4 paw units + sashing cross -->
+  <!-- Grid: 0, 42.86, 85.71, 128.57, 171.43, 214.29, 257.14, 300 -->
+
+  <!-- === TOP-LEFT PAW (rows 0-2, cols 0-2) === -->
+  <!-- HST (0,0): dark upper-left -->
+  <polygon points="0,0 42.86,0 0,42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,0 42.86,42.86 0,42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (0,1): dark upper-right -->
+  <polygon points="42.86,0 85.71,0 85.71,42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,0 42.86,42.86 85.71,42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (1,0): dark lower-left -->
+  <polygon points="0,42.86 0,85.71 42.86,85.71" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,42.86 42.86,42.86 42.86,85.71" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (1,1): dark lower-right -->
+  <polygon points="85.71,42.86 85.71,85.71 42.86,85.71" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,42.86 85.71,42.86 42.86,85.71" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BG squares -->
+  <rect x="85.71" y="0" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="85.71" y="42.86" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="85.71" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="42.86" y="85.71" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Pad (dark) -->
+  <rect x="85.71" y="85.71" width="42.86" height="42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+
+  <!-- === TOP-RIGHT PAW (rows 0-2, cols 4-6) === -->
+  <!-- HST (0,5): dark upper-left -->
+  <polygon points="214.29,0 257.14,0 214.29,42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,0 257.14,42.86 214.29,42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (0,6): dark upper-right -->
+  <polygon points="257.14,0 300,0 300,42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,0 257.14,42.86 300,42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (1,5): dark lower-left -->
+  <polygon points="214.29,42.86 214.29,85.71 257.14,85.71" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="214.29,42.86 257.14,42.86 257.14,85.71" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (1,6): dark lower-right -->
+  <polygon points="300,42.86 300,85.71 257.14,85.71" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,42.86 300,42.86 257.14,85.71" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BG squares -->
+  <rect x="171.43" y="0" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="171.43" y="42.86" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="214.29" y="85.71" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="257.14" y="85.71" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Pad (dark) -->
+  <rect x="171.43" y="85.71" width="42.86" height="42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+
+  <!-- === BOTTOM-LEFT PAW (rows 4-6, cols 0-2) === -->
+  <!-- HST (5,0): dark upper-left -->
+  <polygon points="0,214.29 42.86,214.29 0,257.14" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,214.29 42.86,257.14 0,257.14" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (5,1): dark upper-right -->
+  <polygon points="42.86,214.29 85.71,214.29 85.71,257.14" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,214.29 42.86,257.14 85.71,257.14" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (6,0): dark lower-left -->
+  <polygon points="0,257.14 0,300 42.86,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,257.14 42.86,257.14 42.86,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (6,1): dark lower-right -->
+  <polygon points="85.71,257.14 85.71,300 42.86,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="42.86,257.14 85.71,257.14 42.86,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BG squares -->
+  <rect x="0" y="171.43" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="42.86" y="171.43" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="85.71" y="214.29" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="85.71" y="257.14" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Pad (dark) -->
+  <rect x="85.71" y="171.43" width="42.86" height="42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+
+  <!-- === BOTTOM-RIGHT PAW (rows 4-6, cols 4-6) === -->
+  <!-- HST (5,5): dark upper-left -->
+  <polygon points="214.29,214.29 257.14,214.29 214.29,257.14" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,214.29 257.14,257.14 214.29,257.14" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (5,6): dark upper-right -->
+  <polygon points="257.14,214.29 300,214.29 300,257.14" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,214.29 257.14,257.14 300,257.14" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (6,5): dark lower-left -->
+  <polygon points="214.29,257.14 214.29,300 257.14,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="214.29,257.14 257.14,257.14 257.14,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- HST (6,6): dark lower-right -->
+  <polygon points="300,257.14 300,300 257.14,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="257.14,257.14 300,257.14 257.14,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- BG squares -->
+  <rect x="214.29" y="171.43" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="257.14" y="171.43" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="171.43" y="214.29" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="171.43" y="257.14" width="42.86" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Pad (dark) -->
+  <rect x="171.43" y="171.43" width="42.86" height="42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+
+  <!-- === SASHING CROSS === -->
+  <!-- Vertical sashing: col 3, rows 0-2 -->
+  <rect x="128.57" y="0" width="42.86" height="128.57" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Vertical sashing: col 3, rows 4-6 -->
+  <rect x="128.57" y="171.43" width="42.86" height="128.57" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Horizontal sashing: row 3, cols 0-2 -->
+  <rect x="0" y="128.57" width="128.57" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Horizontal sashing: row 3, cols 4-6 -->
+  <rect x="171.43" y="128.57" width="128.57" height="42.86" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Center square (dark) -->
+  <rect x="128.57" y="128.57" width="42.86" height="42.86" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+</svg>

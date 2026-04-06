@@ -40,7 +40,10 @@ npm run db:migrate                   # Run pending migrations
 npm run db:push                      # Push schema directly (no migration file)
 npm run db:studio                    # Open Drizzle Studio web UI
 npm run db:seed:blog                 # Seed blog posts
+DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts  # Seed fabric library (2,764 solids)
 npm run db:local:down                # Stop PostgreSQL container
+# Direct SQL queries (psql not installed locally):
+# docker exec -i $(docker ps --filter ancestor=postgres -q | head -1) psql -U quiltcorgi -d quiltcorgi -c "SELECT ..."
 ```
 
 Set `AWS_SECRET_NAME=skip` in `.env.local` for local development (secrets loaded from `.env.local` instead of Secrets Manager).
@@ -51,18 +54,21 @@ Set `AWS_SECRET_NAME=skip` in `.env.local` for local development (secrets loaded
 src/
   app/              # Next.js App Router — pages and API routes
     (protected)/    # Auth-gated routes (layout redirects guests)
-    (public)/       # Public marketing pages
+    (public)/       # Public marketing pages (about, contact, privacy, terms)
+    admin/          # Admin panel (role-gated)
     api/            # API route handlers
-      admin/        # Admin APIs (blog, blocks, fabrics, templates, comments, users, reports)
-      shop/         # Shopify cart API (feature-flagged)
+    blog/           # Blog/tutorial pages
+    onboarding/     # New user onboarding flow
+    socialthreads/  # Community social feed
     studio/[projectId]/  # Design canvas (desktop only)
+    templates/      # Project templates and sharing
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
   stores/           # Zustand stores
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
-  db/schema/        # Drizzle table definitions (18 tables, 10 enums)
+  db/schema/        # Drizzle table definitions
   types/            # Shared TypeScript type definitions
 ```
 
@@ -70,17 +76,16 @@ src/
 
 **Path alias**: `@/*` maps to `./src/*` (configured in tsconfig.json and vitest.config.ts).
 
-**Auth flow**: Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role.
+**Auth flow**: Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `src/proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role.
 
 **Route protection**:
-
 - `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
 - `/admin/*` — cookie + role check (`admin` role only)
 - `/dashboard` — public, but protected actions trigger `AuthGateModal`
 
 **Pro gating**: Check `useAuthStore.isPro` client-side. API routes check `session.user.role` and return 403 `PRO_REQUIRED`.
 
-**Roles**: `free | pro | admin` — defined in `src/lib/trust-engine.ts`.
+**Roles**: `free | pro | admin` — defined in `src/lib/role-utils.ts`, permissions in `src/lib/trust-utils.ts`.
 
 ## Critical Conventions
 
@@ -99,103 +104,42 @@ src/
 - No `any` — use `unknown` with proper casts
 - Type assertions at boundaries only (Fabric.js interop)
 
-### Design System
+### Styling & Design System
 
-Tailwind CSS v4 with a unified warm cream + orange-rose gradient system. Everything derives from the hero button's DNA: warm gradients, pill shapes, elevation shadows, scale-on-hover.
+Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All components use the same token set — no hardcoded grays, slates, or hex borders.**
 
-#### Color Tokens
+**Text tokens:**
+- `text-on-surface` — primary text (headings, names, labels)
+- `text-secondary` — muted text (captions, timestamps, meta)
+- `text-primary` — accent text (links, highlights)
+- `text-primary-dark` — avatar initials, emphasis
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `text-on-surface` | #4a3b32 | Primary text (dark warm brown) |
-| `text-secondary` | #6b5a4d | Supporting text |
-| `text-tertiary` | #8a7a6d | Muted/placeholder text |
-| `bg-surface` | #ffffff | Page background |
-| `bg-surface-container` | #fdfaf7 | Card/input backgrounds |
-| `bg-surface-container-high` | #faf6f2 | Elevated containers |
-| `bg-surface-container-highest` | #f7f2ed | Badges, tags |
-| `border-outline-variant` | #f0e8df | All borders |
-| `text-primary` / `bg-primary` | #ffb085 | Brand peach (surfaces) |
-| `text-primary-dark` | #c67b5c | Terracotta accent |
-| `text-accent` | #ffd166 | Golden highlight |
+**Card surfaces:**
+- `glass-panel` — standard card (white/blur + subtle border)
+- `glass-elevated` — raised card with more shadow
+- `glass-panel-social` — blog/social variant
+- Cards use `rounded-2xl` corners
 
-**Accent colors** (Tailwind built-ins, not CSS vars):
-- `orange-400`, `orange-500` — interactive accent
-- `rose-400` — gradient endpoint
-- `orange-100` — light accent backgrounds
-- `from-orange-400 to-rose-400` — THE primary gradient
+**Buttons:**
+- Primary: `bg-primary text-white rounded-full` or `bg-gradient-to-r from-primary to-primary-golden text-white rounded-full`
+- Secondary: `bg-white/50 text-secondary rounded-full`
+- Active chips: `bg-primary text-white shadow-elevation-1`, inactive: `bg-white/50 text-secondary`
 
-**Never use**: `text-slate-*`, `bg-slate-*`, `text-gray-*`, `bg-gray-*`, hardcoded hex colors, or the removed `warm-*`/`pattern-*` tokens.
+**Borders:** `border-white/40`, `border-white/60`, or `border-outline-variant` — never hardcoded hex/gray
 
-#### Button System (CSS utility classes in globals.css)
+**Shadows:** `shadow-elevation-1` through `shadow-elevation-4`
 
-All buttons are gradient pills built around the hero CTA style:
+**Avatars:** `bg-primary-container` circle with `text-primary-dark` initial
 
-| Class | Size | Usage |
-|-------|------|-------|
-| `btn-primary` | `px-8 py-4 text-lg` | Hero CTAs, page-level actions |
-| `btn-primary-sm` | `px-6 py-3 text-base` | Inline actions, form submits |
-| `btn-primary-xs` | `px-4 py-2 text-sm` | Compact/tight spaces |
-| `btn-secondary` | `px-6 py-3 text-base` | Outlined pill, secondary actions |
-| `btn-ghost` | `px-4 py-2 text-sm` | Text-only actions |
+**Skeletons:** `bg-primary-container/40`, `bg-primary-container/20`
 
-```tsx
-// Hero CTA
-<a className="btn-primary" href="/studio">Start Designing</a>
+**Sidebars:** `bg-white/60 backdrop-blur-xl border-r border-white/40` — fixed, glassmorphic
 
-// Form submit
-<button className="btn-primary-sm w-full disabled:opacity-50" disabled={loading}>Submit</button>
-
-// Small action
-<button className="btn-primary-xs">Follow</button>
-```
-
-Never write gradient button classes inline — always use `btn-primary` variants.
-
-#### Font Size Tokens
-
-| Token | Size | Usage |
-|-------|------|-------|
-| `text-display-lg` | 3.5rem | Hero headlines |
-| `text-display-md` | 2.5rem | Section headlines |
-| `text-headline-md` | 1.5rem | Page titles |
-| `text-headline-sm` | 1.25rem | Card titles |
-| `text-body-lg` | 1rem (16px) | Large body text |
-| `text-body-md` | 0.875rem (14px) | Default body/input text |
-| `text-body-sm` | 0.75rem (12px) | Small body, labels |
-| `text-label-sm` | 0.6875rem (11px) | Section titles, small labels |
-| `text-caption` | 0.625rem (10px) | Captions, metadata, badges |
-
-Never use arbitrary `text-[Xpx]` — map to the nearest token. Standard Tailwind sizes (`text-sm`, `text-xs`, `text-base`, `text-lg`, etc.) are also acceptable.
-
-#### Glass / Elevation
-
-| Class | Usage |
-|-------|-------|
-| `glass-card` | Base glass cards |
-| `glass-elevated` | Floating panels, modals, dropdowns |
-| `glass-panel` | Landing/marketing cards |
-| `glass-panel-social` | Social thread cards (peach glow accent) |
-| `glass-inset` | Recessed input wells |
-| `shadow-elevation-1` through `shadow-elevation-4` | Depth hierarchy |
-
-#### Input Fields
-
-Use `className="input-standard"` for all standard inputs (defined in globals.css):
-```
-w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30
-```
-
-Auth forms use a variant with `border-b` underline style — that's the one exception.
-
-#### Border Radius Rules
-
-| Shape | Radius | Components |
-|-------|--------|------------|
-| `rounded-full` | Pill | All buttons |
-| `rounded-xl` | 24px | Modals, large cards |
-| `rounded-lg` | 16px | Cards, inputs, containers |
-| `rounded-md` | 10px | Small elements, badges |
+**Banned patterns — do NOT use:**
+- `text-gray-*`, `text-slate-*`, `bg-gray-*`, `bg-slate-*`, `border-gray-*`, `border-slate-*`
+- `border-[#e5e5e5]`, `bg-[#f5f5f5]`
+- `bg-white border border-gray-100` flat cards
+- `bg-gray-900 text-white` dark buttons
 
 ### State Management
 
@@ -209,110 +153,85 @@ Auth forms use a variant with `border-b` underline style — that's the one exce
 - Return 403 `PRO_REQUIRED` for pro-gated endpoints
 - Rate limit all auth endpoints
 
+### Community API (`GET /api/community`)
+
+- Supports server-side: `sort` (newest|popular), `search` (ilike on title), `category` (enum), `creatorId`, `page`, `limit`
+- Category enum values: `show-and-tell` | `wip` | `help` | `inspiration` | `general` (defined in `src/db/schema/enums.ts`)
+- Social action buttons update state on server success, ignore on failure — no optimistic+rollback needed
+- Toggle endpoints (bookmark, follow) use single POST: inserts if not exists, deletes if exists
+
 ### Git
 
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
 
+## PDF Export System
+
+Four modes in `PdfExportDialog.tsx`, all client-side via pdf-lib:
+
+- **Pattern Pieces** — `pdf-generator.ts`. Bin-packed shapes at scale
+- **Cut List** — `cutlist-pdf-engine.ts`. Key block page + one template per shape. Solid line = CUT (outer), dashed = SEW (inner). Per-edge dimensions via `edge-dimension-utils.ts`
+- **Print Project** — `project-pdf-engine.ts`. Overview + fabric requirements (yardage from `yardage-utils.ts`) + cutting instructions (from `cutting-chart-generator.ts`) + block pages + totals
+- **Foundation Paper Piecing (FPP)** — `fpp-pdf-engine.ts`. Generates FPP templates with numbered sewing order, mirror-image pieces, and trim lines
+
+Shared infrastructure: `pdf-drawing-utils.ts` (branding, tables, polylines, grain lines, validation square). Logo fetched from `/logo.png` at runtime, embedded via `pdfDoc.embedPng()`.
+
+**Line convention**: Solid = cut line (outer, what quilters cut on). Dashed = sew line (inner, finished piece). This matches EQ8 and published patterns.
+
+## Photo-to-Pattern Pipeline
+
+7-step wizard. OpenCV.js runs in Web Worker (`piece-detection.worker.ts`). 15-objective CV pipeline. Post-processing structure detection:
+
+- `grid-detection-engine.ts` — Block repeat grid from centroid clustering
+- `sashing-detection-engine.ts` — Sashing strips + cornerstones between blocks
+- `border-detection-engine.ts` — Border layers around the quilt
+- `structure-detection-engine.ts` — Orchestrator, assigns piece roles
+
+Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
+
+## Fabric Library
+
+2,764 solid fabric swatches from 16 manufacturers. Data source: QuiltySolid open-source dataset (MIT license, `src/db/seed/fabricSwatches.json`).
+
+- Definitions in `src/db/seed/fabricDefinitions.ts` — loads JSON, classifies `colorFamily` (from hue) and `value` (Light/Medium/Dark from lightness)
+- Seed script: `src/db/seed/seedFabrics.ts` — clears system fabrics, inserts with SVG placeholder images colored by hex
+- DB columns: `hex` (actual color), `value` (Light/Medium/Dark), `colorFamily`, `manufacturer`, `collection`
+- API supports filtering by manufacturer, colorFamily, value + sorting by name/manufacturer/colorFamily/value
+- System fabrics: `isDefault=true, userId=null`. User uploads: `isDefault=false, userId=<user>`
+- Excludes thread lines (DMC, Glide, Aurifil, WonderFil) and Pantone reference colors
+
 ## Product Context
 
 - **Photo-to-Pattern** is the key differentiator — never scale it back
-  - 7-step wizard: Upload → Image Prep (straighten/flip/perspective) → Scan Settings → Processing → Results → Dimensions → Export
-  - **Perspective tool** in Image Prep: Manual corner-dragging to correct photos taken at an angle (uses OpenCV warpPerspective)
-  - OpenCV runs AFTER perspective correction in the processing step
 - Studio is desktop-only (`StudioGate` redirects mobile users)
 - Mobile shell: Home, Upload FAB, Profile/Sign In — 3 items only
-- SVG overlays live in `/quilt_blocks/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
+- SVG overlays live in `/quilt_blocks/` and `/quilt_layouts/` (root level), registry in `src/lib/quilt-overlay-registry.ts`
+- 100 block SVGs (`01_nine_patch.svg` – `100_snowflake.svg`, 300×300 viewBox, grayscale palette) and 10 layout SVGs (proportional viewBox at 10px/inch, structural `data-role` attributes)
+- Layouts are the structural worktable: binding, borders, sashing, cornerstones, block-cells. Each area is separately selectable. Layouts resize in fixed aspect ratio only.
+- Block name → SVG lookup: `src/lib/block-svg-lookup.ts` (`findBlockSvgPath()`) — used by TemplateCard thumbnails and TemplateDetailDialog previews
+- Pattern library shows only admin-published patterns (`isPublished=true`); no client-side filtering needed — if it's in the DB, it should display
 - Onboarding uses simple localStorage flags (no complex tour system)
+- Project templates live at `/templates` — users can browse, preview, and clone starter projects
+- Social DB tables: `community_posts`, `likes`, `comments`, `bookmarks`, `follows`
+- See `docs/FEATURES.md` for comprehensive feature documentation
 
-### Block Creation
+## Template Library
 
-- **Simple Drawing**: 4 basic tools (Select, Rectangle, Triangle, Line) on a 12×12 grid canvas
-- **Photo Upload**: Upload a photo of a physical block with crop/straighten tools (rotate, draggable corner handles, optional auto-detect)
-- **No Complex Features**: Removed tabs, overlays, symmetry tools — just draw or photograph
-- **Block Library**: Browse 105 system blocks (SVGs in `/quilt_blocks/`), create custom blocks (draw or photo), manage user collection
-- **Mode Switcher**: "Draw | Upload Photo" toggle in BlockDraftingShell — photo mode delegates to SimplePhotoBlockUpload
-- **Photo blocks**: Saved with `photoUrl` field, no shape detection or cutting instructions (just the cropped image)
+Quilt templates stored in `pattern_templates` DB table (`patternData` JSONB column). Templates contain layouts with blocks, or just bare layouts. API at `/api/templates`. Extracts `blockNames` from JSONB for list view.
 
-### Fabric.js Block Builder Patterns
+- Card thumbnails: `TemplateCard.tsx` renders actual block SVGs from `/quilt_blocks/` matched via `findBlockSvgPath()`
+- Detail modal: `TemplateDetailDialog.tsx` — wide (max-w-3xl), shows design preview grid, blocks with SVG thumbnails, layout info, fabric summary. No cutting chart in modal.
+- Store: `templateStore.ts` — `fetchTemplates()` for list, `fetchTemplateDetail()` for modal, `importTemplate()` to create project
+- No badges/chips on cards — keep info text-only (name, dimensions, block/fabric counts)
 
-```typescript
-// Grid lines to filter out
-const userObjects = canvas.getObjects().filter((o) => o.stroke !== '#E5E2DD');
+### SVG Block/Layout Conventions
 
-// Drawing tool interaction
-if (activeTool === 'rectangle') {
-  previewShape = new fabric.Rect({
-    left: startX,
-    top: startY,
-    width: 0,
-    height: 0,
-    fill: 'transparent',
-    stroke: strokeColor,
-    strokeWidth: 1,
-    strokeDashArray: [5, 5],
-    selectable: false,
-    evented: false,
-  });
-}
-
-// Save block to API
-const res = await fetch('/api/blocks', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    name: blockName.trim(),
-    category: category.trim() || 'Custom',
-    svgData,
-    fabricJsData,
-    tags: tags
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean),
-    photoUrl: imageUrl, // Only for photo blocks
-  }),
-});
-```
-
-### Layout System
-
-- **No Layout** mode: Freeform placement with dedicated Sashing Tool (S) and Border Tool (B) for drawing custom strips, plus background fill color control
-- **Select Layout** mode: 9 predefined templates (Grid 3×3–5×5, Sashing 3×3–5×5, On-Point 3×3–5×5) that instantly apply all settings
-- Layout library in `src/lib/layout-library.ts`
-- Sashing/border shapes tagged with metadata: `data: { type: 'sashing' | 'border' }`
-- Background color stored in canvas store, defaults to `#F5F5F0` (neutral cream)
-
-### Database: User Fabrics
-
-- User-uploaded fabrics live in a separate `user_fabrics` table (not the system `fabrics` table)
-- `userId` is required (not nullable) with cascade delete
-- API routes: `scope=user` queries `user_fabrics`, `scope=system` queries `fabrics`
-- Pro-only feature — free users only see system fabrics
-
-### Admin Dashboard
-
-- Admin pages at `src/app/(protected)/admin/` — blog, community, libraries, moderation
-- Admin API routes at `src/app/api/admin/` — blocks, blog, comments, community, fabrics, libraries, pattern-templates, reports, users
-- All admin endpoints validate session + admin role via `getRequiredSession()` and `isAdmin()`
-- User status: `active | suspended | banned` enum on users table
-- Blog POST uses Zod validation (`createBlogPostSchema`) with slug conflict retry logic (up to 3 attempts)
-
-### Shopify Integration (Feature-Flagged)
-
-- **Feature flag**: `NEXT_PUBLIC_ENABLE_SHOP=true` enables all Shopify features; disabled by default
-- **Client**: `src/lib/shopify.ts` — Shopify Storefront API GraphQL client (cart create, add items, fetch)
-- **Store**: `src/stores/cartStore.ts` — Zustand cart state with Shopify sync
-- **UI**: `src/components/shop/CartDrawer.tsx` — slide-out cart drawer with quantity controls
-- **Shop page**: `src/app/(public)/shop/page.tsx` — displays purchasable fabrics from DB
-- **API**: `src/app/api/shop/cart/route.ts` — server-side cart operations
-- **Schema**: `fabrics` table has Shopify fields: `isPurchasable`, `shopifyProductId`, `shopifyVariantId`, `pricePerYard` (cents), `inStock`
-- **Env vars**: `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN`, `NEXT_PUBLIC_ENABLE_SHOP`
-- Check `isShopifyEnabled()` from `@/lib/shopify` before rendering shop features
+- Blocks: `viewBox="0 0 300 300"`, grayscale palette (`#F8F8F8` BG, `#E0E0E0` light, `#D0D0D0` med-light, `#B0B0B0` med, `#505050` dark), `stroke="#333" stroke-width="1"`
+- Layouts: proportional viewBox at 10px/inch. Every element has `data-shade` and `data-role` attributes. Roles: `block-cell`, `sashing`, `cornerstone`, `border`, `binding`, `patch`. Stroke widths: `0.5` inner, `1` borders, `1.5` binding.
+- Generator scripts in `scripts/gen_blocks_*.py` and `scripts/gen_layouts.py`
+- Each block must accurately represent real traditional quilting geometry — research before generating
+- Hierarchy: Layout (worktable) → Binding → Borders → Sashing/Cornerstones → Block Cells → Blocks → Pieces
 
 ### Removed Features
 
 These were intentionally removed — do not reintroduce:
-
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour
-- Block builder tabs (Freeform/BlockBuilder/Applique), block overlays, complex drafting modes
-- Studio tools: Line, Polygon, Text, Eyedropper — removed for UX simplicity
-- Reference Image dialog and `referenceImageOpacity` canvas state

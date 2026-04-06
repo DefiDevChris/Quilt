@@ -8,20 +8,6 @@
       "when": 1775320746947,
       "tag": "0000_tearful_zombie",
       "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1775368073853,
-      "tag": "0001_moaning_newton_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1775368200000,
-      "tag": "0002_shopify_fields",
-      "breakpoints": true
     }
   ]
 }
