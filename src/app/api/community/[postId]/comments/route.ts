@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and, isNull, desc, count, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { comments, socialPosts, users, userProfiles } from '@/db/schema';
+import { comments, communityPosts, users, userProfiles } from '@/db/schema';
 import { createCommentSchema, commentsPaginationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
@@ -11,11 +11,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { getSession } from '@/lib/cognito-session';
-import {
-  checkTrustLevel,
-  checkPrivacyPermission,
-  checkCommunityRateLimit,
-} from '@/middleware/trust-guard';
+import { checkTrustLevel, checkPrivacyPermission, checkRateLimit } from '@/middleware/trust-guard';
 import { createNotification } from '@/lib/create-notification';
 import { NOTIFICATION_TYPES } from '@/lib/notification-types';
 
@@ -31,6 +27,7 @@ interface CommentRow {
   authorId: string;
   content: string;
   replyToId: string | null;
+  likeCount: number;
   status: 'visible' | 'hidden' | 'deleted';
   createdAt: Date;
   authorName: string | null;
@@ -38,7 +35,7 @@ interface CommentRow {
   authorAvatarUrl: string | null;
 }
 
-function formatComment(row: CommentRow) {
+function formatComment(row: CommentRow, isLikedByUser: boolean) {
   const displayContent =
     row.status === 'hidden'
       ? HIDDEN_CONTENT_PLACEHOLDER
@@ -52,11 +49,13 @@ function formatComment(row: CommentRow) {
     authorId: row.authorId,
     content: displayContent,
     replyToId: row.replyToId,
+    likeCount: row.likeCount,
     status: row.status,
     createdAt: row.createdAt,
     authorName: row.authorName ?? 'Anonymous',
     authorUsername: row.authorUsername ?? null,
     authorAvatarUrl: row.authorAvatarUrl ?? null,
+    isLikedByUser,
   };
 }
 
@@ -64,7 +63,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ postId: string }> }
 ) {
-  void (await getSession());
+  const session = await getSession();
   const { postId } = await params;
 
   const url = request.nextUrl;
@@ -82,9 +81,9 @@ export async function GET(
 
   try {
     const [post] = await db
-      .select({ id: socialPosts.id })
-      .from(socialPosts)
-      .where(eq(socialPosts.id, postId))
+      .select({ id: communityPosts.id })
+      .from(communityPosts)
+      .where(eq(communityPosts.id, postId))
       .limit(1);
 
     if (!post) {
@@ -99,6 +98,7 @@ export async function GET(
           authorId: comments.authorId,
           content: comments.content,
           replyToId: comments.replyToId,
+          likeCount: sql<number>`0`.as('likeCount'),
           status: comments.status,
           createdAt: comments.createdAt,
           authorName: users.name,
@@ -134,6 +134,7 @@ export async function GET(
             authorId: comments.authorId,
             content: comments.content,
             replyToId: comments.replyToId,
+            likeCount: sql<number>`0`.as('likeCount'),
             status: comments.status,
             createdAt: comments.createdAt,
             authorName: users.name,
@@ -160,6 +161,10 @@ export async function GET(
       replyCountRows = replyCounts;
     }
 
+    const likedCommentIds = new Set<string>();
+    // TODO: Populate likedCommentIds for authenticated users once a commentLikes DB table exists.
+    // likeCount is currently hardcoded to 0, so comment liking is not yet fully implemented.
+
     const replyCountMap = new Map(replyCountRows.map((r) => [r.replyToId, r.count]));
 
     const repliesByParent = new Map<string, CommentRow[]>();
@@ -176,8 +181,8 @@ export async function GET(
         .slice(0, MAX_INLINE_REPLIES);
 
       return {
-        ...formatComment(topComment as CommentRow),
-        replies: sortedReplies.map((r) => formatComment(r)),
+        ...formatComment(topComment as CommentRow, likedCommentIds.has(topComment.id)),
+        replies: sortedReplies.map((r) => formatComment(r, likedCommentIds.has(r.id))),
         totalReplyCount: replyCountMap.get(topComment.id) ?? 0,
       };
     });
@@ -214,7 +219,7 @@ export async function POST(
   const privacyCheck = await checkPrivacyPermission(session.user.id, 'canComment');
   if (!privacyCheck.allowed) return privacyCheck.response!;
 
-  const rateCheck = await checkCommunityRateLimit(session.user.id, trustCheck.role, 'comments');
+  const rateCheck = await checkRateLimit(session.user.id, trustCheck.role, 'comments');
   if (!rateCheck.allowed) return rateCheck.response!;
 
   try {
@@ -227,9 +232,9 @@ export async function POST(
     const { content, replyToId } = parsed.data;
 
     const [post] = await db
-      .select({ id: socialPosts.id, userId: socialPosts.userId, title: socialPosts.title })
-      .from(socialPosts)
-      .where(eq(socialPosts.id, postId))
+      .select({ id: communityPosts.id, userId: communityPosts.userId, title: communityPosts.title })
+      .from(communityPosts)
+      .where(eq(communityPosts.id, postId))
       .limit(1);
 
     if (!post) {
@@ -276,9 +281,9 @@ export async function POST(
         .returning();
 
       await tx
-        .update(socialPosts)
-        .set({ commentCount: sql`${socialPosts.commentCount} + 1` })
-        .where(eq(socialPosts.id, postId));
+        .update(communityPosts)
+        .set({ commentCount: sql`${communityPosts.commentCount} + 1` })
+        .where(eq(communityPosts.id, postId));
 
       return [comment];
     });

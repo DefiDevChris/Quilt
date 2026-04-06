@@ -50,6 +50,13 @@ import {
   PHOTO_PATTERN_PIECE_MAX_AREA_RATIO,
   DEFAULT_SEAM_ALLOWANCE_INCHES,
 } from './constants';
+import {
+  applyQuiltConfigToOptions,
+  getMinAreaRatioForPieceScale,
+  median,
+  mean,
+  dynamicKernelSize,
+} from './piece-detection-shared';
 import * as ClipperLib from 'clipper-lib';
 import type { OpenCV, OpenCVMat, OpenCVMatVector } from '../types/opencv-js';
 import {
@@ -158,7 +165,7 @@ export function formatFraction(value: number, separator: string = ' '): string {
 }
 
 // ============================================================================
-// PHASE 2: OPENCV PIPELINE OVERHAUL (TEXTILE PHYSICS)
+// BACKWARD COMPATIBILITY EXPORTS
 // ============================================================================
 
 /**

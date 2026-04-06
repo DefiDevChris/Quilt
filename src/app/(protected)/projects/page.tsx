@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Grid, List, Calendar } from 'lucide-react';
+import { Search, Grid, List, Calendar, Plus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
@@ -33,8 +33,8 @@ export default function AllProjectsPage() {
         const data = await res.json();
         setProjects(data.data.projects);
         setFilteredProjects(data.data.projects);
-      } catch {
-        // Silently handle fetch failure — user sees empty state
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
       } finally {
         setLoading(false);
       }
@@ -60,13 +60,13 @@ export default function AllProjectsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-surface-container rounded w-48" />
-          <div className="h-12 bg-surface-container rounded-xl" />
+          <div className="h-8 bg-surface-container rounded w-48"></div>
+          <div className="h-12 bg-surface-container rounded"></div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-48 bg-surface-container rounded-xl" />
+              <div key={i} className="h-48 bg-surface-container rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -75,37 +75,55 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Header with gradient accent */}
+      <div className="flex items-end justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">My Quiltbook</h1>
-          <p className="text-secondary mt-1">{filteredProjects.length} saved designs</p>
+          <h1
+            className="text-4xl font-extrabold text-on-surface tracking-tight"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            My Quiltbook
+          </h1>
+          <p className="text-secondary mt-1 text-lg">
+            {filteredProjects.length} {filteredProjects.length === 1 ? 'design' : 'designs'}
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'grid'
-                ? 'bg-primary text-white'
-                : 'bg-surface-container text-secondary hover:text-on-surface'
-            }`}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
           >
-            <Grid size={20} />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'list'
-                ? 'bg-primary text-white'
-                : 'bg-surface-container text-secondary hover:text-on-surface'
-            }`}
-          >
-            <List size={20} />
-          </button>
+            <Plus size={18} />
+            New Project
+          </Link>
+          <div className="flex items-center bg-surface-container-high rounded-full p-1 ml-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-full transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-primary text-on-surface shadow-elevation-1'
+                  : 'text-secondary hover:text-on-surface'
+              }`}
+            >
+              <Grid size={18} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-full transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-primary text-on-surface shadow-elevation-1'
+                  : 'text-secondary hover:text-on-surface'
+              }`}
+            >
+              <List size={18} />
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Search bar with depth */}
       <div className="relative mb-8">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary" size={20} />
         <input
@@ -113,26 +131,50 @@ export default function AllProjectsPage() {
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="w-full pl-12 pr-4 py-3.5 bg-surface-container-lowest border border-outline-variant rounded-full text-on-surface placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-elevation-1 transition-shadow focus:shadow-elevation-2"
         />
       </div>
 
       {filteredProjects.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-surface-container flex items-center justify-center">
-            <Grid size={32} className="text-secondary" />
+        <div className="flex flex-col items-center py-20">
+          {/* Decorative illustration */}
+          <div className="relative mb-8">
+            <div className="w-32 h-32 rounded-3xl bg-primary-container/40 flex items-center justify-center rotate-6 shadow-elevation-2">
+              <div className="w-28 h-28 rounded-2xl bg-surface-container-lowest -rotate-6 flex items-center justify-center shadow-elevation-1 border border-outline-variant">
+                <Grid size={36} className="text-primary" />
+              </div>
+            </div>
+            <div className="absolute -bottom-2 -right-3">
+              <Image
+                src="/mascots&avatars/corgi12.png"
+                alt=""
+                width={56}
+                height={56}
+                className="drop-shadow-lg"
+              />
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-on-surface mb-2">
-            {searchQuery ? 'No matching projects' : 'No projects yet'}
+
+          <h3
+            className="text-2xl font-bold text-on-surface mb-2"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            {searchQuery ? 'No matching projects' : 'Your quiltbook is empty'}
           </h3>
-          <p className="text-secondary mb-6">
+          <p className="text-secondary mb-8 max-w-sm text-center">
             {searchQuery
               ? 'Try a different search term'
-              : 'Create your first quilt design to get started'}
+              : 'Start a new project from a blank canvas, a template, or a photo of a quilt you love.'}
           </p>
-          <Link href="/dashboard" className="btn-primary-sm gap-2">
-            Start Designing
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+            >
+              <Sparkles size={18} />
+              Start Your First Quilt
+            </Link>
+          </div>
         </div>
       ) : (
         <div
@@ -148,8 +190,8 @@ export default function AllProjectsPage() {
               href={`/studio/${project.id}`}
               className={`group block ${
                 viewMode === 'grid'
-                  ? 'glass-card border border-white/40 rounded-xl p-4 hover:shadow-elevation-2 transition-all'
-                  : 'glass-card border border-white/40 rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
+                  ? 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all'
+                  : 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
               }`}
             >
               <div

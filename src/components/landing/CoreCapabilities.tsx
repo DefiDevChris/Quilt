@@ -40,111 +40,130 @@ const QUILT_GRID: string[][] = [
 ];
 
 function StudioPreviewMockup() {
+  const panelSections = [
+    { label: 'SELECTION', open: true },
+    { label: 'PRECISION' },
+    { label: 'ROTATE & SHEAR' },
+    { label: 'COLOR THEME' },
+    { label: 'BLOCK BUILDER' },
+  ];
+
   return (
     <div className="relative group">
-      {/* Studio window — sits directly on the page background, no outer container */}
       <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(74,59,50,0.12)] w-full border border-outline-variant overflow-hidden flex flex-col">
-        {/* Studio Top Bar */}
-        <div className="h-10 border-b border-outline-variant flex items-center px-3 justify-between bg-surface-container shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-300" />
-            </div>
-            <span className="text-caption font-bold text-tertiary ml-2">Ohio Star Throw</span>
-          </div>
+        {/* Top Bar — matches real studio */}
+        <div className="h-9 border-b border-outline-variant flex items-center px-3 gap-2 bg-white shrink-0 text-[9px]">
           <div className="flex items-center gap-1.5">
-            {['Quilt', 'Block', 'Print'].map((tab, i) => (
-              <div
-                key={tab}
-                className={`text-caption font-bold px-2 py-0.5 rounded ${
-                  i === 0 ? 'bg-primary/15 text-primary' : 'text-tertiary'
-                }`}
+            <div className="w-3.5 h-3.5 rounded bg-surface-container flex items-center justify-center text-tertiary">
+              <svg
+                width="8"
+                height="8"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
               >
-                {tab}
-              </div>
-            ))}
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </div>
+            <span className="font-bold text-on-surface hidden sm:inline">QuiltCorgi</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="px-2 py-0.5 bg-primary/20 text-on-surface rounded-full font-bold text-[8px]">
+              Main
+            </div>
+            <span className="text-tertiary text-caption">+</span>
+          </div>
+          <div className="flex-1 text-center text-tertiary truncate hidden sm:block">
+            <span className="font-medium text-on-surface">Ohio Star Throw</span>
+            <span className="mx-1">·</span>
+            <span>Quilt Canvas</span>
+          </div>
+          <div className="flex items-center gap-1.5 ml-auto">
+            <span className="text-tertiary hidden sm:inline">Share</span>
+            <span className="text-tertiary hidden sm:inline">View</span>
+            <span className="text-tertiary hidden sm:inline">Tools</span>
+            <div className="px-2 py-0.5 bg-on-surface text-white rounded font-bold text-[8px]">
+              Export
+            </div>
           </div>
         </div>
 
         <div className="flex" style={{ minHeight: '280px' }}>
-          {/* Mini Tool Rail */}
-          <div className="w-9 border-r border-outline-variant bg-white py-2 hidden sm:flex flex-col items-center gap-2 shrink-0">
-            <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M5 3l14 9-6 2-4 7-4-18z" />
-              </svg>
-            </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg>
-            </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="2" y="2" width="20" height="20" rx="3" />
-                <path d="M2 12h20M12 2v20" />
-              </svg>
-            </div>
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M21 3H3v18h18V3zM9 3v18M15 3v18M3 9h18M3 15h18" />
-              </svg>
-            </div>
-            <div className="w-5 border-t border-outline-variant mt-1 mb-1" />
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-tertiary/50">
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M3 10h13a4 4 0 010 8H9" />
-                <path d="M7 6l-4 4 4 4" />
-              </svg>
-            </div>
+          {/* Left Toolbar with labels */}
+          <div className="w-12 border-r border-outline-variant bg-white py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+            {[
+              { label: 'Select', icon: <path d="M5 3l14 9-6 2-4 7-4-18z" />, active: true },
+              { label: 'Curved', icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4" /> },
+              { divider: true },
+              {
+                label: 'Block Li...',
+                icon: (
+                  <>
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                  </>
+                ),
+              },
+              {
+                label: 'Layout',
+                icon: (
+                  <>
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                  </>
+                ),
+              },
+              {
+                label: 'Rectan...',
+                icon: <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />,
+              },
+              { label: 'Triangle', icon: <polygon points="12 2 22 20 2 20" /> },
+            ].map((tool, i) =>
+              tool.divider ? (
+                <div key={i} className="w-7 h-px bg-outline-variant my-0.5" />
+              ) : (
+                <div
+                  key={i}
+                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${
+                    tool.active ? 'text-primary' : 'text-tertiary'
+                  }`}
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    {tool.icon}
+                  </svg>
+                  <span className="text-[5px] leading-[1.1] w-full text-center whitespace-pre-line">
+                    {tool.label?.replace(/\s+/g, '\n').replace(/\.\.\./g, '...')}
+                  </span>
+                </div>
+              )
+            )}
           </div>
 
           {/* Canvas area */}
-          <div className="flex-1 flex items-center justify-center p-5 bg-gradient-to-br from-surface-container/30 to-white/20 relative">
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-caption font-mono text-tertiary/60">
-              54&quot; × 54&quot;
-            </div>
-            <div className="grid grid-cols-6 gap-[2px] p-[2px] bg-on-surface/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
+          <div className="flex-1 flex items-center justify-center p-5 bg-[#FEFCFA] relative">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: 'radial-gradient(#E8DCCB 1px, transparent 1px)',
+                backgroundSize: '16px 16px',
+                opacity: 0.3,
+              }}
+            />
+            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-on-surface/10 rounded-sm shadow-elevation-2 w-full max-w-[220px] aspect-square">
               {QUILT_GRID.flat().map((color, i) => (
                 <motion.div
                   key={i}
@@ -157,41 +176,65 @@ function StudioPreviewMockup() {
                 />
               ))}
             </div>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-caption font-bold text-tertiary/50 uppercase tracking-widest">
-              Grid Layout • 9&quot; blocks
+            {/* Floating toolbar */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-elevation-4 border border-outline-variant px-2 py-1 flex items-center gap-1.5 z-10">
+              {[0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-primary/15 text-primary' : 'text-tertiary'}`}
+                >
+                  <svg
+                    width="8"
+                    height="8"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    {i === 0 && <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />}
+                    {i === 1 && <rect x="3" y="3" width="18" height="18" rx="2" />}
+                    {i === 2 && <polygon points="12 2 22 20 2 20" />}
+                    {i === 3 && <line x1="5" y1="12" x2="19" y2="12" />}
+                  </svg>
+                </div>
+              ))}
+              <div className="w-px h-3 bg-outline-variant" />
+              <span className="text-[7px] text-tertiary font-mono">54%</span>
             </div>
           </div>
 
-          {/* Right context panel */}
-          <div className="w-[120px] border-l border-outline-variant bg-surface-container/40 p-2.5 hidden md:flex flex-col gap-2 shrink-0 overflow-hidden">
-            <div className="text-caption font-bold text-tertiary uppercase tracking-wider">
-              Fabrics
-            </div>
-            {[
-              { fabric: 'Warm Peach', color: '#FFB085', pieces: 12 },
-              { fabric: 'Rust', color: '#C67B5C', pieces: 12 },
-              { fabric: 'Cream', color: '#FFF5E6', pieces: 12 },
-            ].map((item) => (
-              <div key={item.fabric} className="flex items-center gap-1.5">
-                <div
-                  className="w-4 h-4 rounded-sm border border-outline-variant shrink-0"
-                  style={{ backgroundColor: item.color }}
-                />
-                <div className="min-w-0">
-                  <div className="text-caption font-medium text-on-surface truncate">
-                    {item.fabric}
-                  </div>
-                  <div className="text-caption text-tertiary">{item.pieces} pcs</div>
-                </div>
+          {/* Right panel — accordion sections */}
+          <div className="w-[120px] border-l border-outline-variant bg-white hidden md:flex flex-col shrink-0 overflow-hidden">
+            {panelSections.map((section, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between px-2 py-1.5 border-b border-outline-variant text-[7px] font-bold text-on-surface tracking-wide"
+              >
+                <span>{section.label}</span>
+                <svg
+                  width="7"
+                  height="7"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  {section.open ? (
+                    <polyline points="18 15 12 9 6 15" />
+                  ) : (
+                    <polyline points="6 9 12 15 18 9" />
+                  )}
+                </svg>
               </div>
             ))}
-            <div className="border-t border-outline-variant pt-1.5 mt-1">
-              <div className="text-caption font-bold text-tertiary uppercase tracking-wider mb-1">
-                Layout
-              </div>
-              <div className="text-caption text-on-surface">6 × 6 grid</div>
-              <div className="text-caption text-tertiary">½&quot; seam allowance</div>
-            </div>
+          </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="h-5 bg-surface-container/60 border-t border-outline-variant flex items-center justify-between px-3 text-[7px] font-mono text-tertiary shrink-0">
+          <span>Mouse H: 27.00&quot; V: 27.00&quot;</span>
+          <div className="flex gap-3">
+            <span>Snap to Grid: ON</span>
           </div>
         </div>
       </div>
@@ -221,30 +264,32 @@ export default function CoreCapabilities() {
               >
                 Tools quilters actually need.
                 <br />
-                <span className="text-primary">
-                  Say goodbye to guesswork and expensive software.
-                </span>
+                <span className="text-primary">Built by quilters who care.</span>
               </h2>
             </div>
 
             <p className="text-lg text-secondary mb-8">
-              Whether you&apos;re turning photos into quilt patterns with a click, drafting custom
-              blocks with snap-to-grid precision, or exploring unexpected color combinations — every
-              tool is made to help you create something you&apos;ll be proud of.
+              Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
+              positioning fabric motifs with precision, or exploring unexpected color combinations
+              with ColorTheme — every tool is made to help you create something you&apos;ll be proud
+              of.
             </p>
 
             <ul className="space-y-4 mb-10">
-              <CheckItem>Turn any photo into a block-by-block quilt pattern (Pro)</CheckItem>
-              <CheckItem>105+ quilt blocks to browse, customize, and use</CheckItem>
               <CheckItem>Yardage calculations and sub-cutting charts — done for you</CheckItem>
+              <CheckItem>Fussy Cut previewing and precision fabric positioning</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
-              <CheckItem>Block drafting with snap-to-grid precision</CheckItem>
-              <CheckItem>Six layout modes on an infinite canvas</CheckItem>
-              <CheckItem>Fabric pattern adjustments and real-world calibration</CheckItem>
+              <CheckItem>BlockBuilder for drafting custom blocks by seam line</CheckItem>
+              <CheckItem>Applique layering and one-click ColorTheme recoloring</CheckItem>
               <CheckItem>Foundation Paper Piecing templates and rotary charts</CheckItem>
+              <CheckItem>Snap a photo of a quilt and recreate it digitally (Pro)</CheckItem>
+              <CheckItem>Six layout modes on an infinite canvas</CheckItem>
             </ul>
 
-            <Link href="/auth/signup" className="btn-primary">
+            <Link
+              href="/auth/signup"
+              className="inline-flex items-center justify-center bg-primary text-on-surface font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-primary-dark transition-all duration-300 transform"
+            >
               See What You Can Create
             </Link>
           </motion.div>
@@ -254,7 +299,7 @@ export default function CoreCapabilities() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className={'relative'}
+            className="relative"
           >
             <StudioPreviewMockup />
           </motion.div>

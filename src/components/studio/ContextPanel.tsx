@@ -4,10 +4,11 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { WHITE_FILL } from '@/lib/constants';
+import { TextToolOptions } from '@/components/studio/TextToolOptions';
 import { BlockBuilderOptions } from '@/components/studio/BlockBuilderOptions';
 import { ColorThemeTools } from '@/components/studio/ColorThemeTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
-import { BackgroundColorControl } from '@/components/studio/BackgroundColorControl';
 
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
@@ -24,11 +25,11 @@ function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-outline-variant/10 last:border-b-0">
+    <div>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between py-2.5 px-1 text-label-sm font-semibold uppercase tracking-[0.06em] text-on-surface/70 transition-shadow shadow-elevation-1 hover:shadow-elevation-2 rounded-md"
+        className="w-full flex items-center justify-between py-2.5 px-1 text-label-sm font-semibold uppercase tracking-[0.06em] text-on-surface/70 hover:text-on-surface transition-colors"
       >
         {title}
         <svg
@@ -204,11 +205,11 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
   const [shearH, setShearH] = useState('0');
   const [shearV, setShearV] = useState('0');
   const [canvasColor, setCanvasColor] = useState(() => {
-    if (!fabricCanvas) return '#ffffff';
+    if (!fabricCanvas) return WHITE_FILL;
     const canvas = fabricCanvas as { backgroundColor?: string };
     return canvas.backgroundColor && typeof canvas.backgroundColor === 'string'
       ? canvas.backgroundColor
-      : '#ffffff';
+      : WHITE_FILL;
   });
   const colorInputRef = useRef<HTMLInputElement>(null);
   // Refs track the latest typed value so applyFn reads current data even before
@@ -361,7 +362,7 @@ function RotateAndShear({ includeCanvasColor = true }: { includeCanvasColor?: bo
             active.set({ skewX: 0, skewY: 0 });
           })
         }
-        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4 border border-outline-variant/10"
+        className="w-full bg-surface-container text-on-surface/80 rounded-md py-2 text-body-sm font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors mb-4"
       >
         Reset Transform
       </button>
@@ -395,9 +396,6 @@ function QuiltPanel() {
       <CollapsibleSection title="Selection" defaultOpen={true}>
         <SelectionPanel />
       </CollapsibleSection>
-      <CollapsibleSection title="Background">
-        <BackgroundColorControl />
-      </CollapsibleSection>
       <CollapsibleSection title="Precision">
         <PrecisionBar />
       </CollapsibleSection>
@@ -406,6 +404,9 @@ function QuiltPanel() {
       </CollapsibleSection>
       <CollapsibleSection title="Color Theme">
         <ColorThemeTools />
+      </CollapsibleSection>
+      <CollapsibleSection title="Text">
+        <TextToolOptions />
       </CollapsibleSection>
       <CollapsibleSection title="Block Builder">
         <BlockBuilderOptions />
@@ -435,7 +436,8 @@ const PANELS: Record<'quilt' | 'block', React.FC> = {
 export function ContextPanel() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
 
-  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
+  if (activeWorktable === 'print' || activeWorktable === 'image' || activeWorktable === 'pattern')
+    return null;
 
   const PanelContent = PANELS[activeWorktable];
 

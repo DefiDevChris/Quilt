@@ -146,16 +146,9 @@ export function PostDetail({ postId }: PostDetailProps) {
 
         {/* Title & Description */}
         <h1 className="text-2xl font-bold text-on-surface mb-2">{post.title}</h1>
-        <p className="text-on-surface/80 mb-4 text-body-lg leading-relaxed">
+        <p className="text-on-surface/80 mb-4 text-[15px] leading-relaxed">
           {post.description || post.title}
         </p>
-
-        {/* Category badge */}
-        {post.category && (
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary mb-3">
-            {post.category.replace('-', ' ')}
-          </span>
-        )}
 
         {/* Image */}
         {post.thumbnailUrl && (
@@ -170,30 +163,26 @@ export function PostDetail({ postId }: PostDetailProps) {
 
         {/* Linked Project */}
         {post.projectId && post.projectName && (
-          <div className="mb-4">
-            <p className="text-xs font-bold text-secondary mb-2 uppercase tracking-wider">
-              Attached Project
-            </p>
-            <Link
-              href={`/studio/${post.projectId}`}
-              className="block w-full max-w-sm rounded-xl overflow-hidden border border-white/50 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
-            >
-              <div className="aspect-video bg-background flex items-center justify-center overflow-hidden">
-                {post.projectThumbnailUrl ? (
-                  <img
-                    src={post.projectThumbnailUrl}
-                    alt={post.projectName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-secondary text-sm">No preview</span>
-                )}
+          <Link
+            href={`/studio/${post.projectId}`}
+            className="flex items-center gap-3 p-3 rounded-xl bg-white/40 border border-white/50 mb-4 hover:bg-white/60 transition-colors"
+          >
+            {post.projectThumbnailUrl ? (
+              <img
+                src={post.projectThumbnailUrl}
+                alt={post.projectName}
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+                <span className="text-xl">🧵</span>
               </div>
-              <div className="px-3 py-2 bg-surface-container">
-                <p className="text-sm font-medium text-on-surface truncate">{post.projectName}</p>
-              </div>
-            </Link>
-          </div>
+            )}
+            <div>
+              <p className="text-xs text-secondary font-medium">Project</p>
+              <p className="font-bold text-on-surface">{post.projectName}</p>
+            </div>
+          </Link>
         )}
 
         {/* Actions */}
@@ -261,14 +250,17 @@ function PostNotFound() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="glass-panel rounded-[2rem] p-10 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surface-container-high flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-container/30 flex items-center justify-center">
           <span className="text-2xl">🔍</span>
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Post Not Found</h2>
         <p className="text-secondary mb-6">
           This post may have been removed or is pending approval.
         </p>
-        <Link href="/socialthreads" className="btn-primary-sm inline-flex items-center gap-2">
+        <Link
+          href="/socialthreads"
+          className="btn-primary-sm gap-2"
+        >
           <ArrowLeft size={18} />
           Back to Feed
         </Link>
@@ -286,7 +278,10 @@ function PostLoadError({ onRetry }: { onRetry: () => void }) {
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Failed to Load</h2>
         <p className="text-secondary mb-6">Something went wrong loading this post.</p>
-        <button onClick={onRetry} className="btn-primary-sm">
+        <button
+          onClick={onRetry}
+          className="btn-primary-sm"
+        >
           Try Again
         </button>
       </div>

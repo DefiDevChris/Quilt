@@ -4,17 +4,7 @@ import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useColorThemeTool } from '@/hooks/useColorThemeTool';
 import { generateColorScheme, type ColorSchemeType } from '@/lib/colortheme-utils';
-
-const DEFAULT_PALETTE = [
-  '#D4883C',
-  '#8B4513',
-  '#F5DEB3',
-  '#2E4057',
-  '#7B3F00',
-  '#A0522D',
-  '#DEB887',
-  '#C9B896',
-];
+import { DEFAULT_QUILT_PALETTE } from '@/lib/constants';
 
 const COLOR_SCHEMES: Array<{ id: ColorSchemeType; label: string }> = [
   { id: 'monochromatic', label: 'Monochromatic' },
@@ -29,7 +19,7 @@ export function ColorThemeTools() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [swapColorA, setSwapColorA] = useState('#D4883C');
   const [swapColorB, setSwapColorB] = useState('#2E4057');
-  const [palette, setPalette] = useState(DEFAULT_PALETTE);
+  const [palette, setPalette] = useState<string[]>([...DEFAULT_QUILT_PALETTE].slice(0, 8));
   const [selectedScheme, setSelectedScheme] = useState<ColorSchemeType>('analogous');
   const [baseColor, setBaseColor] = useState('#D4883C');
   const activeTool = useCanvasStore((s) => s.activeTool);

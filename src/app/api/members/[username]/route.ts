@@ -1,12 +1,10 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, count, and, sql, isNull } from 'drizzle-orm';
+import { eq, desc, count, and, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { userProfiles, users, socialPosts, likes, follows } from '@/db/schema';
+import { userProfiles, users, communityPosts, likes, follows } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { getSession } from '@/lib/cognito-session';
-import { isPro as checkIsPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,50 +62,49 @@ export async function GET(
     );
     const offset = (page - 1) * limit;
 
-    // Filter out soft-deleted posts
-    const [postRows, [totalRow]] = await Promise.all([
-      db
-        .select({
-          id: socialPosts.id,
-          title: socialPosts.title,
-          description: socialPosts.description,
-          thumbnailUrl: socialPosts.thumbnailUrl,
-          likeCount: socialPosts.likeCount,
-          commentCount: socialPosts.commentCount,
-          category: socialPosts.category,
-          createdAt: socialPosts.createdAt,
-        })
-        .from(socialPosts)
-        .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt)))
-        .orderBy(desc(socialPosts.createdAt))
-        .limit(limit)
-        .offset(offset),
-      db
-        .select({ count: count() })
-        .from(socialPosts)
-        .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt))),
-    ]);
+    const [postRows, [totalRow], followerCountRow, followingCountRow, isFollowedRow] =
+      await Promise.all([
+        db
+          .select({
+            id: communityPosts.id,
+            title: communityPosts.title,
+            description: communityPosts.description,
+            thumbnailUrl: communityPosts.thumbnailUrl,
+            likeCount: communityPosts.likeCount,
+            commentCount: communityPosts.commentCount,
+            category: communityPosts.category,
+            createdAt: communityPosts.createdAt,
+          })
+          .from(communityPosts)
+          .where(
+            and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
+          )
+          .orderBy(desc(communityPosts.createdAt))
+          .limit(limit)
+          .offset(offset),
+        db
+          .select({ count: count() })
+          .from(communityPosts)
+          .where(
+            and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
+          ),
+        db.select({ count: count() }).from(follows).where(eq(follows.followingId, profile.userId)),
+        db.select({ count: count() }).from(follows).where(eq(follows.followerId, profile.userId)),
+        currentUserId
+          ? db
+              .select({ followerId: follows.followerId })
+              .from(follows)
+              .where(
+                and(eq(follows.followerId, currentUserId), eq(follows.followingId, profile.userId))
+              )
+              .limit(1)
+          : Promise.resolve([]),
+      ]);
 
     const total = totalRow?.count ?? 0;
-
-    // Follow counts + isFollowedByCurrentUser
-    const [followerCountRows, followingCountRows, isFollowedRows] = await Promise.all([
-      db.select({ count: count() }).from(follows).where(eq(follows.followingId, profile.userId)),
-      db.select({ count: count() }).from(follows).where(eq(follows.followerId, profile.userId)),
-      currentUserId && currentUserId !== profile.userId
-        ? db
-            .select({ followerId: follows.followerId })
-            .from(follows)
-            .where(
-              and(eq(follows.followerId, currentUserId), eq(follows.followingId, profile.userId))
-            )
-            .limit(1)
-        : Promise.resolve([]),
-    ]);
-
-    const followerCount = followerCountRows[0]?.count ?? 0;
-    const followingCount = followingCountRows[0]?.count ?? 0;
-    const isFollowedByCurrentUser = isFollowedRows.length > 0;
+    const followerCount = followerCountRow[0]?.count ?? 0;
+    const followingCount = followingCountRow[0]?.count ?? 0;
+    const isFollowedByCurrentUser = isFollowedRow.length > 0;
 
     let likedPostIds = new Set<string>();
     if (currentUserId && postRows.length > 0) {
@@ -126,6 +123,8 @@ export async function GET(
       isLikedByUser: likedPostIds.has(p.id),
     }));
 
+    const isPro = profile.role === 'pro' || profile.role === 'admin';
+
     return Response.json({
       success: true,
       data: {
@@ -142,7 +141,7 @@ export async function GET(
           youtubeHandle: profile.youtubeHandle,
           tiktokHandle: profile.tiktokHandle,
           publicEmail: profile.publicEmail,
-          isPro: checkIsPro((profile.role ?? 'free') as UserRole),
+          isPro,
           privacyMode: profile.privacyMode ?? 'public',
           createdAt: profile.createdAt,
           followerCount,

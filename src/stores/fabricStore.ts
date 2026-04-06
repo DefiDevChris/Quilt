@@ -9,6 +9,8 @@ interface FabricStoreState {
   search: string;
   manufacturer: string;
   colorFamily: string;
+  value: string;
+  sortBy: string;
   page: number;
   totalPages: number;
   total: number;
@@ -24,6 +26,8 @@ interface FabricStoreState {
   setSearch: (search: string) => void;
   setManufacturer: (manufacturer: string) => void;
   setColorFamily: (colorFamily: string) => void;
+  setValue: (value: string) => void;
+  setSortBy: (sortBy: string) => void;
   setPage: (page: number) => void;
   setPanelOpen: (open: boolean) => void;
   togglePanel: () => void;
@@ -44,6 +48,8 @@ const INITIAL_STATE = {
   search: '',
   manufacturer: '',
   colorFamily: '',
+  value: '',
+  sortBy: 'name',
   page: 1,
   totalPages: 1,
   total: 0,
@@ -75,6 +81,16 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
     get().fetchFabrics();
   },
 
+  setValue: (value) => {
+    set({ value, page: 1 });
+    get().fetchFabrics();
+  },
+
+  setSortBy: (sortBy) => {
+    set({ sortBy, page: 1 });
+    get().fetchFabrics();
+  },
+
   setPage: (page) => {
     set({ page });
     get().fetchFabrics();
@@ -98,7 +114,7 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   fetchFabrics: async () => {
     fabricAbortController?.abort();
     fabricAbortController = new AbortController();
-    const { search, manufacturer, colorFamily, page } = get();
+    const { search, manufacturer, colorFamily, value, sortBy, page } = get();
     set({ isLoading: true, error: null });
 
     try {
@@ -106,6 +122,8 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
       if (search) params.set('search', search);
       if (manufacturer) params.set('manufacturer', manufacturer);
       if (colorFamily) params.set('colorFamily', colorFamily);
+      if (value) params.set('value', value);
+      if (sortBy && sortBy !== 'name') params.set('sortBy', sortBy);
       params.set('page', String(page));
       params.set('limit', '50');
       params.set('scope', 'all');

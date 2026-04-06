@@ -6,7 +6,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useFabricPattern } from '@/hooks/useFabricPattern';
-import { PIXELS_PER_INCH } from '@/lib/constants';
+import { PIXELS_PER_INCH, DEFAULT_QUILT_PALETTE } from '@/lib/constants';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { saveRecentFabric, getRecentFabrics, type RecentFabric } from '@/lib/recent-fabrics';
 
@@ -30,21 +30,6 @@ interface RecentColor {
 // ── Constants ──
 
 const MAX_RECENT_COLORS = 12;
-
-const PRESET_COLORS = [
-  '#D4883C',
-  '#8B4513',
-  '#F5DEB3',
-  '#2E4057',
-  '#7B3F00',
-  '#A0522D',
-  '#DEB887',
-  '#C9B896',
-  '#FFFFFF',
-  '#1A1A2E',
-  '#E07B67',
-  '#4A7C59',
-];
 
 // ── Helpers ──
 
@@ -408,7 +393,7 @@ export function SelectionPanel() {
         <div>
           <span className="text-body-sm text-secondary mb-1 block">Presets</span>
           <div className="flex gap-1.5 flex-wrap">
-            {PRESET_COLORS.map((hex) => (
+            {DEFAULT_QUILT_PALETTE.map((hex) => (
               <button
                 key={hex}
                 type="button"

@@ -1,7 +1,12 @@
 'use client';
 
 import { create } from 'zustand';
-import type { WOF, YardageResult } from '@/lib/yardage-utils';
+import type {
+  WOF,
+  YardageResult,
+  BackingYardageResult,
+  BindingYardageResult,
+} from '@/lib/yardage-utils';
 import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
 
@@ -10,12 +15,16 @@ interface YardageStoreState {
   wof: WOF;
   wasteMargin: number;
   results: YardageResult[];
+  backingResult: BackingYardageResult | null;
+  bindingResult: BindingYardageResult | null;
 
   togglePanel: () => void;
   setPanelOpen: (open: boolean) => void;
   setWof: (wof: WOF) => void;
   setWasteMargin: (margin: number) => void;
   setResults: (results: YardageResult[]) => void;
+  setBackingResult: (result: BackingYardageResult | null) => void;
+  setBindingResult: (result: BindingYardageResult | null) => void;
   reset: () => void;
 }
 
@@ -24,6 +33,8 @@ const INITIAL_STATE = {
   wof: DEFAULT_WOF,
   wasteMargin: DEFAULT_WASTE_MARGIN,
   results: [] as YardageResult[],
+  backingResult: null as BackingYardageResult | null,
+  bindingResult: null as BindingYardageResult | null,
 };
 
 export const useYardageStore = create<YardageStoreState>((set) => ({
@@ -34,5 +45,7 @@ export const useYardageStore = create<YardageStoreState>((set) => ({
   setWof: (wof) => set({ wof }),
   setWasteMargin: (wasteMargin) => set({ wasteMargin: clamp(wasteMargin, 0.05, 0.25) }),
   setResults: (results) => set({ results }),
+  setBackingResult: (backingResult) => set({ backingResult }),
+  setBindingResult: (bindingResult) => set({ bindingResult }),
   reset: () => set({ ...INITIAL_STATE }),
 }));

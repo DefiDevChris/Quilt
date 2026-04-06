@@ -8,6 +8,8 @@ export interface Fabric {
   sku: string | null;
   collection: string | null;
   colorFamily: string | null;
+  value: string | null;
+  hex: string | null;
   scaleX: number;
   scaleY: number;
   rotation: number;
@@ -30,6 +32,8 @@ export interface FabricListItem {
   sku: string | null;
   collection: string | null;
   colorFamily: string | null;
+  value: string | null;
+  hex: string | null;
   isDefault: boolean;
   // Shopify Integration Fields (feature-flagged)
   isPurchasable: boolean;

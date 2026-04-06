@@ -18,6 +18,7 @@ export function ResultsStep() {
   const setSensitivity = usePhotoPatternStore((s) => s.setSensitivity);
   const setStep = usePhotoPatternStore((s) => s.setStep);
   const setPipelineSteps = usePhotoPatternStore((s) => s.setPipelineSteps);
+  const quiltStructure = usePhotoPatternStore((s) => s.quiltStructure);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,8 +118,8 @@ export function ResultsStep() {
   }, [setPipelineSteps, setStep]);
 
   const handleAddToProject = useCallback(() => {
-    setStep('dimensions');
-  }, [setStep]);
+    setStep(quiltStructure !== null ? 'structureReview' : 'dimensions');
+  }, [setStep, quiltStructure]);
 
   const pieceCount = detectedPieces.length;
 

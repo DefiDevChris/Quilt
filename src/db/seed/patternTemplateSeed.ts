@@ -1,9 +1,9 @@
 /**
- * Pattern Template Seed Data
+ * Quilt Template Seed Data
  *
  * Reads all parsed pattern JSON files from src/data/patterns/,
  * filters to quilts only, and builds seed records matching the
- * `patternTemplates` table schema.
+ * `quiltTemplates` table schema.
  */
 
 import * as fs from 'fs';
@@ -11,7 +11,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import type { ParsedPattern } from '../../lib/pattern-parser-types';
 
-export interface PatternTemplateSeed {
+export interface QuiltTemplateSeed {
   slug: string;
   name: string;
   description: string;
@@ -21,7 +21,7 @@ export interface PatternTemplateSeed {
   blockCount: number;
   fabricCount: number;
   thumbnailUrl: string | null;
-  patternData: ParsedPattern;
+  templateData: ParsedPattern;
   tags: string[];
   importCount: number;
   isPublished: boolean;
@@ -114,7 +114,7 @@ function generateTags(pattern: ParsedPattern): string[] {
 /**
  * Build a seed record from a parsed pattern.
  */
-function buildSeedRecord(pattern: ParsedPattern): PatternTemplateSeed {
+function buildSeedRecord(pattern: ParsedPattern): QuiltTemplateSeed {
   const blockCount = pattern.blocks.reduce((sum, block) => sum + block.quantity, 0);
   const fabricCount = pattern.fabrics.filter((f) => f.role !== 'backing').length;
 
@@ -128,7 +128,7 @@ function buildSeedRecord(pattern: ParsedPattern): PatternTemplateSeed {
     blockCount,
     fabricCount,
     thumbnailUrl: null,
-    patternData: pattern,
+    templateData: pattern,
     tags: generateTags(pattern),
     importCount: 0,
     isPublished: pattern.parseConfidence >= 0.7,
@@ -136,10 +136,10 @@ function buildSeedRecord(pattern: ParsedPattern): PatternTemplateSeed {
 }
 
 /**
- * Returns an array of seed records for the patternTemplates table.
+ * Returns an array of seed records for the quiltTemplates table.
  * Only includes patterns where `isQuilt` is true.
  */
-export function getPatternTemplateSeeds(): PatternTemplateSeed[] {
+export function getQuiltTemplateSeeds(): QuiltTemplateSeed[] {
   const allPatterns = loadPatternFiles();
   const quilts = allPatterns.filter((p) => p.isQuilt);
 

@@ -14,8 +14,8 @@ export const dynamic = 'force-dynamic';
 async function sendSafeNotification(params: Parameters<typeof createNotification>[0]) {
   try {
     await createNotification(params);
-  } catch {
-    // Silently fail - webhook should not fail due to notification errors
+  } catch (error) {
+    console.error('Failed to send notification:', error);
   }
 }
 
@@ -141,12 +141,14 @@ async function handleCheckoutCompleted(checkoutSession: Stripe.Checkout.Session)
   const subscriptionId = checkoutSession.subscription as string;
 
   if (!userId) {
-    return; // Missing userId - cannot process
+    console.error('Checkout session missing userId metadata');
+    return;
   }
 
   // Retrieve the full subscription
   const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);
 
+  // upsertSubscription uses ON CONFLICT (idempotent), syncUserRole is a simple UPDATE
   await upsertSubscription(userId, customerId, stripeSubscription);
   await syncUserRole(userId, 'pro');
 
@@ -167,12 +169,9 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
 
   if (sub.status === 'active' && !sub.cancel_at_period_end) {
     await syncUserRole(userId, 'pro');
-  } else if (sub.cancel_at_period_end && sub.status === 'active') {
+  } else if (sub.cancel_at_period_end) {
     // User canceled but still has access until period end — keep Pro
     await syncUserRole(userId, 'pro');
-  } else if (sub.status === 'past_due' || sub.status === 'unpaid' || sub.status === 'incomplete') {
-    // Payment failed or subscription incomplete — downgrade immediately
-    await syncUserRole(userId, 'free');
   }
 
   if (sub.cancel_at_period_end && updated.status === 'active') {
@@ -219,10 +218,8 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const userId = await getUserIdFromCustomerId(customerId);
   if (!userId) return;
 
-  // invoice.subscription may be string | Subscription | null depending on Stripe SDK version
-  const rawSub = (invoice as unknown as { subscription?: string | { id: string } | null })
-    .subscription;
-  const subscriptionId = typeof rawSub === 'string' ? rawSub : rawSub?.id;
+  // Re-activate subscription after successful payment (e.g. past_due recovery)
+  const subscriptionId = invoice.subscription as string;
   if (!subscriptionId) return;
 
   const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);
@@ -287,7 +284,8 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event;
   try {
     event = Stripe.webhooks.constructEvent(body, signature, getWebhookSecret());
-  } catch {
+  } catch (error) {
+    console.error('Webhook signature verification failed:', error);
     return Response.json({ success: false, error: 'Invalid signature' }, { status: 401 });
   }
 
@@ -319,7 +317,8 @@ export async function POST(request: NextRequest) {
         // Unhandled event type — acknowledge receipt
         break;
     }
-  } catch {
+  } catch (error) {
+    console.error(`Webhook handler error for ${event.type}:`, error);
     return Response.json({ success: false, error: 'Webhook handler failed' }, { status: 500 });
   }
 

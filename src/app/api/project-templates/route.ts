@@ -8,7 +8,6 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 import { z } from 'zod';
 
 const createTemplateSchema = z.object({
@@ -28,9 +27,6 @@ export async function GET() {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
 
-  const rl = await checkRateLimit(`project-tpl:${session.user.id}`, API_RATE_LIMITS.templates);
-  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
-
   try {
     const templates = await db
       .select()
@@ -39,7 +35,8 @@ export async function GET() {
       .orderBy(desc(projectTemplates.updatedAt));
 
     return Response.json({ success: true, data: templates });
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch templates:', error);
     return errorResponse('Failed to fetch templates', 'INTERNAL_ERROR', 500);
   }
 }
@@ -47,12 +44,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
-
-  const rl = await checkRateLimit(
-    `project-tpl-create:${session.user.id}`,
-    API_RATE_LIMITS.templates
-  );
-  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   try {
     const body = await request.json();
@@ -71,7 +62,8 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return Response.json({ success: true, data: template[0] }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error('Failed to create template:', error);
     return errorResponse('Failed to create template', 'INTERNAL_ERROR', 500);
   }
 }

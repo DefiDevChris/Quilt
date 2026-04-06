@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect x="0" y="0" width="300" height="300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="90.0" y="90.0" width="120.0" height="120.0" fill="#505050" stroke="#333" stroke-width="1"/>
-  <polygon points="90.0,90.0 210.0,90.0 150.0,0" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
-  <polygon points="210.0,90.0 210.0,210.0 300,150.0" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
-  <polygon points="90.0,210.0 210.0,210.0 150.0,300" fill="#D0D0D0" stroke="#333" stroke-width="1"/>
-  <polygon points="90.0,90.0 90.0,210.0 0,150.0" fill="#B0B0B0" stroke="#333" stroke-width="1"/>
+  <!-- Center diamond (rotated 45° square) -->
+  <polygon points="150,0 300,150 150,300 0,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Top-left corner triangle -->
+  <polygon points="0,0 150,0 0,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Top-right corner triangle -->
+  <polygon points="150,0 300,0 300,150" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Bottom-right corner triangle -->
+  <polygon points="300,150 300,300 150,300" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <!-- Bottom-left corner triangle -->
+  <polygon points="0,150 150,300 0,300" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
 </svg>

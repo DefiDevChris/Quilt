@@ -280,6 +280,14 @@ body {
   .animate-expand-social {
     animation: expandInSocial 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes expandInSocial {

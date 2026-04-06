@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
-import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
-import { WorktableSwitcher } from '@/components/studio/WorktableSwitcher';
+import { ON_SURFACE_COLOR } from '@/lib/constants';
+
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { ShareMenu } from '@/components/studio/ShareMenu';
 import { TooltipHint } from '@/components/ui/TooltipHint';
@@ -24,6 +25,179 @@ function formatTimestamp(date: Date | null): string {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();
+}
+
+const MODE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
+  {
+    mode: 'quilt',
+    label: 'Worktable',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="11" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="2" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="11" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+      </svg>
+    ),
+  },
+  {
+    mode: 'pattern',
+    label: 'Pattern Creator',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+        <line
+          x1="2"
+          y1="6"
+          x2="18"
+          y2="6"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.5"
+        />
+        <line
+          x1="2"
+          y1="14"
+          x2="18"
+          y2="14"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.5"
+        />
+        <line
+          x1="6"
+          y1="2"
+          x2="6"
+          y2="18"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.5"
+        />
+        <line
+          x1="14"
+          y1="2"
+          x2="14"
+          y2="18"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.5"
+        />
+        <rect
+          x="7"
+          y="7"
+          width="6"
+          height="6"
+          rx="0.5"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeDasharray="2 1"
+        />
+      </svg>
+    ),
+  },
+  {
+    mode: 'block',
+    label: 'Block Builder',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <path
+          d="M10 2L18 7V13L10 18L2 13V7L10 2Z"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M10 8L18 13M10 8L2 13M10 8V18"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.4"
+        />
+      </svg>
+    ),
+  },
+];
+
+function ModeTabs() {
+  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
+
+  return (
+    <div className="flex items-center gap-0.5 bg-surface-container/60 rounded-lg px-1 py-0.5">
+      {MODE_TABS.map((tab) => {
+        const isActive = activeWorktable === tab.mode;
+        return (
+          <button
+            key={tab.mode}
+            type="button"
+            onClick={() => setActiveWorktable(tab.mode)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-body-md font-medium transition-all ${
+              isActive
+                ? 'bg-surface shadow-elevation-1 text-on-surface'
+                : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
+            }`}
+          >
+            <span className={isActive ? 'text-primary' : 'text-on-surface/40'}>{tab.icon}</span>
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ReferenceImageToggle() {
+  const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
+  const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
+  const toggleReferencePanel = useCanvasStore((s) => s.toggleReferencePanel);
+
+  if (!referenceImageUrl) return null;
+
+  return (
+    <TooltipHint
+      name={showReferencePanel ? 'Hide Reference Photo' : 'Show Reference Photo'}
+      description="Side-by-side view of the original photo used in Photo to Pattern"
+    >
+      <button
+        type="button"
+        onClick={toggleReferencePanel}
+        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+          showReferencePanel
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+            : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
+        }`}
+        aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
+        aria-pressed={showReferencePanel}
+      >
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <rect
+            x="1"
+            y="3"
+            width="8"
+            height="14"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <rect
+            x="11"
+            y="3"
+            width="8"
+            height="14"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <circle cx="15" cy="8" r="1.5" stroke="currentColor" strokeWidth="1" />
+          <path
+            d="M11 14L13 11L15 13L17 10L19 12"
+            stroke="currentColor"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </TooltipHint>
+  );
 }
 
 function ViewMenu({ onOpenGridDimensions }: { onOpenGridDimensions?: () => void }) {
@@ -369,14 +543,14 @@ export function StudioTopBar({
           </TooltipHint>
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="QuiltCorgi Logo" className="h-6 w-auto" />
-            <span className="font-semibold text-body-lg text-on-surface tracking-[-0.01em]">
+            <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
               QuiltCorgi
             </span>
           </div>
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
-          <WorktableSwitcher />
+          <ModeTabs />
         </div>
 
         {/* Right: Viewport controls + Project info + Export + Upgrade */}
@@ -384,7 +558,7 @@ export function StudioTopBar({
           {!isPro && (
             <button
               onClick={() => setShowProUpgrade(true)}
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+              className="btn-primary-xs gap-1.5"
             >
               <Sparkles size={14} className="text-white" />
               Upgrade to Pro
@@ -418,7 +592,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke="#4a3b32"
+                    stroke={ON_SURFACE_COLOR}
                     strokeWidth="1.4"
                   >
                     <rect x="4" y="9" width="12" height="8" rx="2" />
@@ -433,7 +607,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke="#4a3b32"
+                    stroke={ON_SURFACE_COLOR}
                     strokeWidth="1.4"
                   >
                     <rect x="4" y="9" width="12" height="8" rx="2" />
@@ -464,7 +638,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke="#4a3b32"
+                    stroke={ON_SURFACE_COLOR}
                     strokeWidth="1.4"
                   >
                     <circle cx="10" cy="10" r="3" />
@@ -474,6 +648,8 @@ export function StudioTopBar({
               </TooltipHint>
             )}
           </div>
+
+          <ReferenceImageToggle />
 
           <div className="text-right">
             <div className="flex items-center justify-end gap-2">

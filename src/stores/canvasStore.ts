@@ -13,6 +13,7 @@ import {
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
+  REFERENCE_IMAGE_DEFAULT_OPACITY,
   DEFAULT_FILL_COLOR,
   DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
@@ -25,23 +26,21 @@ export type ToolType =
   | 'rectangle'
   | 'circle'
   | 'triangle'
+  | 'polygon'
+  | 'line'
   | 'blockbuilder'
   | 'easydraw'
+  | 'text'
   | 'spraycan'
   | 'bend'
   | 'curve'
-  | 'sashing'
-  | 'border'
-  | 'text'
-  | 'eyedropper'
-  | 'polygon'
-  | 'line';
+  | 'eyedropper';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
 
 export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
 
-export type WorktableType = 'quilt' | 'block' | 'image' | 'print';
+export type WorktableType = 'quilt' | 'pattern' | 'block' | 'image' | 'print';
 
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
@@ -56,10 +55,10 @@ interface CanvasStoreState {
   fillColor: string;
   strokeColor: string;
   strokeWidth: number;
-  backgroundColor: string;
   undoStack: string[];
   redoStack: string[];
   blockDraftingMode: BlockDraftingMode;
+  referenceImageOpacity: number;
   activeColorwayTool: ColorThemeTool | null;
 
   isViewportLocked: boolean;
@@ -72,7 +71,10 @@ interface CanvasStoreState {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >;
   clipboard: unknown[];
-  referenceImageOpacity: number;
+  showLayoutOverlay: boolean;
+  autoAlignToPattern: boolean;
+  referenceImageUrl: string;
+  showReferencePanel: boolean;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -86,7 +88,6 @@ interface CanvasStoreState {
   setFillColor: (color: string) => void;
   setStrokeColor: (color: string) => void;
   setStrokeWidth: (width: number) => void;
-  setBackgroundColor: (color: string) => void;
   pushUndoState: (json: string) => boolean;
   popUndo: (currentJson: string) => string | null;
   popRedo: (currentJson: string) => string | null;
@@ -94,6 +95,7 @@ interface CanvasStoreState {
   canRedo: () => boolean;
   resetHistory: () => void;
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
+  setReferenceImageOpacity: (opacity: number) => void;
   setActiveColorwayTool: (tool: ColorThemeTool | null) => void;
 
   setViewportLocked: (locked: boolean) => void;
@@ -102,10 +104,15 @@ interface CanvasStoreState {
   setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
   setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: () => void;
+  zoomAndCenter: (newZoom: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
-  setReferenceImageOpacity: (opacity: number) => void;
+  setShowLayoutOverlay: (show: boolean) => void;
+  setAutoAlignToPattern: (auto: boolean) => void;
+  setReferenceImageUrl: (url: string) => void;
+  setShowReferencePanel: (show: boolean) => void;
+  toggleReferencePanel: () => void;
   reset: () => void;
 }
 
@@ -130,10 +137,10 @@ const INITIAL_STATE = {
   fillColor: DEFAULT_FILL_COLOR,
   strokeColor: DEFAULT_STROKE_COLOR,
   strokeWidth: 1,
-  backgroundColor: '#F5F5F0',
   undoStack: [] as string[],
   redoStack: [] as string[],
   blockDraftingMode: 'freeform' as BlockDraftingMode,
+  referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
   activeColorwayTool: null as ColorThemeTool | null,
 
   isViewportLocked: true,
@@ -146,7 +153,10 @@ const INITIAL_STATE = {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >,
   clipboard: [] as unknown[],
-  referenceImageOpacity: 0.5,
+  showLayoutOverlay: true,
+  autoAlignToPattern: true,
+  referenceImageUrl: '',
+  showReferencePanel: false,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -176,18 +186,14 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setFillColor: (color) => set({ fillColor: color }),
   setStrokeColor: (color) => set({ strokeColor: color }),
   setStrokeWidth: (width) => set({ strokeWidth: width }),
-  setBackgroundColor: (color) => {
-    set({ backgroundColor: color });
-    const canvas = get().fabricCanvas;
-    if (canvas) {
-      canvas.backgroundColor = color;
-      canvas.renderAll();
-    }
-  },
 
   pushUndoState: (json) => {
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
-      // Snapshot too large - skip undo for this action
+      console.warn(
+        `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
+          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+          'Undo disabled for this action. Consider reducing canvas complexity.'
+      );
       return false;
     }
     set((state) => ({
@@ -224,6 +230,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   resetHistory: () => set({ undoStack: [], redoStack: [] }),
 
   setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
+
+  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
   setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
@@ -266,6 +274,29 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     fabricCanvas.renderAll();
   },
 
+  zoomAndCenter: (newZoom: number) => {
+    const { fabricCanvas, unitSystem } = get();
+    if (!fabricCanvas) return;
+    const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
+    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    if (!el) return;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { useProjectStore } = require('@/stores/projectStore') as {
+      useProjectStore: { getState: () => { canvasWidth: number; canvasHeight: number } };
+    };
+    const { canvasWidth, canvasHeight } = useProjectStore.getState();
+    const pxPerUnit = getPixelsPerUnit(unitSystem);
+    const containerW = el.clientWidth;
+    const containerH = el.clientHeight;
+    const quiltWPx = canvasWidth * pxPerUnit;
+    const quiltHPx = canvasHeight * pxPerUnit;
+    const panX = (containerW - quiltWPx * clamped) / 2;
+    const panY = (containerH - quiltHPx * clamped) / 2;
+    fabricCanvas.setViewportTransform([clamped, 0, 0, clamped, panX, panY]);
+    set({ zoom: clamped });
+    fabricCanvas.renderAll();
+  },
+
   saveToolSettings: (tool) => {
     const { fillColor, strokeColor, strokeWidth, toolSettings } = get();
     set({
@@ -290,7 +321,13 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setClipboard: (clipboard) => set({ clipboard }),
 
-  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
+  setShowLayoutOverlay: (showLayoutOverlay) => set({ showLayoutOverlay }),
+
+  setAutoAlignToPattern: (autoAlignToPattern) => set({ autoAlignToPattern }),
+
+  setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
+  setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
+  toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

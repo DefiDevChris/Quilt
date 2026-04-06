@@ -11,14 +11,8 @@ import type { Point } from '@/types/geometry';
 
 export type { Point };
 
-const CLIPPER_SCALE = 1000;
-const CLIPPER_MITER_LIMIT = 0.25 * CLIPPER_SCALE;
-const CURVE_SAMPLES = 16;
-
-/**
- * Miter limit controls how sharp corners can get before they're clipped.
- * 0.25 * CLIPPER_SCALE = 250 units; higher = sharper corners allowed.
- */
+const CLIPPER_SCALE = 1000; // Scale factor for integer precision
+const CURVE_SAMPLES = 16; // Points per bezier curve segment
 
 export interface SeamResult {
   /** Original shape polyline points */
@@ -284,8 +278,8 @@ export function computeSeamOffset(points: Point[], seamAllowance: number): Point
   }
 
   const clipperPath = pointsToClipperPath(points);
-  const co = new ClipperLib.ClipperOffset(2, CLIPPER_MITER_LIMIT);
-  co.AddPath(clipperPath, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
+  const co = new ClipperLib.ClipperOffset(2, 0.25 * CLIPPER_SCALE);
+  co.AddPath(clipperPath, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
 
   const solution: ClipperLib.Paths = [];
   co.Execute(solution, seamAllowance * CLIPPER_SCALE);

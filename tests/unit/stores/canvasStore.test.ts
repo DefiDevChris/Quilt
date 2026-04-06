@@ -4,6 +4,7 @@ import type { ToolType } from '@/stores/canvasStore';
 import {
   ZOOM_MIN,
   ZOOM_MAX,
+  ZOOM_DEFAULT,
   UNDO_HISTORY_MAX,
   UNDO_SNAPSHOT_SIZE_LIMIT,
   DEFAULT_FILL_COLOR,
@@ -17,8 +18,8 @@ describe('canvasStore', () => {
 
   describe('zoom', () => {
     it('sets zoom within bounds', () => {
-      useCanvasStore.getState().setZoom(2);
-      expect(useCanvasStore.getState().zoom).toBe(2);
+      useCanvasStore.getState().setZoom(0.15);
+      expect(useCanvasStore.getState().zoom).toBe(0.15);
     });
 
     it('clamps zoom to min', () => {
@@ -337,7 +338,7 @@ describe('canvasStore', () => {
 
     it('reset restores initial state', () => {
       useCanvasStore.getState().setActiveTool('rectangle');
-      useCanvasStore.getState().setZoom(2);
+      useCanvasStore.getState().setZoom(0.18);
       useCanvasStore.getState().setFillColor('#FF0000');
       useCanvasStore.getState().pushUndoState('test');
 
@@ -345,7 +346,7 @@ describe('canvasStore', () => {
 
       const state = useCanvasStore.getState();
       expect(state.activeTool).toBe('select');
-      expect(state.zoom).toBe(1);
+      expect(state.zoom).toBe(ZOOM_DEFAULT);
       expect(state.fillColor).toBe(DEFAULT_FILL_COLOR);
       expect(state.undoStack).toEqual([]);
     });

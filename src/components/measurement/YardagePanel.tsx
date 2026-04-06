@@ -16,6 +16,8 @@ export function YardagePanel() {
   const wasteMargin = useYardageStore((s) => s.wasteMargin);
   const setWasteMargin = useYardageStore((s) => s.setWasteMargin);
   const results = useYardageStore((s) => s.results);
+  const backingResult = useYardageStore((s) => s.backingResult);
+  const bindingResult = useYardageStore((s) => s.bindingResult);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   
   // Cart integration
@@ -155,13 +157,86 @@ export function YardagePanel() {
               )}
             </div>
 
+            {/* Backing & Binding */}
+            {(backingResult || bindingResult) && (
+              <div className="px-4 py-3 border-t border-outline-variant">
+                <h4 className="text-caption font-semibold uppercase tracking-wider text-on-surface/50 mb-2">
+                  Finishing
+                </h4>
+                <div className="space-y-2">
+                  {backingResult && (
+                    <div className="rounded-lg border border-outline-variant p-3 bg-background">
+                      <div className="text-xs font-medium text-on-surface mb-1">Backing</div>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        <div className="text-secondary">Yardage</div>
+                        <div className="text-on-surface font-mono text-right font-semibold">
+                          {backingResult.yardsRequired.toFixed(3)} yd
+                        </div>
+                        <div className="text-secondary">Panels</div>
+                        <div className="text-on-surface font-mono text-right">
+                          {backingResult.panelsNeeded}
+                        </div>
+                        <div className="text-secondary">Panel length</div>
+                        <div className="text-on-surface font-mono text-right">
+                          {backingResult.panelLengthInches.toFixed(1)}&quot;
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {bindingResult && (
+                    <div className="rounded-lg border border-outline-variant p-3 bg-background">
+                      <div className="text-xs font-medium text-on-surface mb-1">Binding</div>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        <div className="text-secondary">Yardage</div>
+                        <div className="text-on-surface font-mono text-right font-semibold">
+                          {bindingResult.yardsRequired.toFixed(3)} yd
+                        </div>
+                        <div className="text-secondary">
+                          Strips ({bindingResult.stripWidthInches}&quot;)
+                        </div>
+                        <div className="text-on-surface font-mono text-right">
+                          {bindingResult.stripCount}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Footer Totals */}
             {results.length > 0 && (
               <div className="px-4 py-3 border-t border-outline-variant bg-background">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                  <div className="font-medium text-on-surface">Total Yardage</div>
+                  <div className="font-medium text-on-surface">Quilt Top</div>
                   <div className="text-on-surface font-mono text-right font-semibold">
                     {totalYards.toFixed(3)} yd
+                  </div>
+                  {backingResult && (
+                    <>
+                      <div className="font-medium text-on-surface">+ Backing</div>
+                      <div className="text-on-surface font-mono text-right font-semibold">
+                        {backingResult.yardsRequired.toFixed(3)} yd
+                      </div>
+                    </>
+                  )}
+                  {bindingResult && (
+                    <>
+                      <div className="font-medium text-on-surface">+ Binding</div>
+                      <div className="text-on-surface font-mono text-right font-semibold">
+                        {bindingResult.yardsRequired.toFixed(3)} yd
+                      </div>
+                    </>
+                  )}
+                  <div className="col-span-2 border-t border-outline-variant/30 my-1" />
+                  <div className="font-medium text-on-surface">Grand Total</div>
+                  <div className="text-on-surface font-mono text-right font-semibold">
+                    {(
+                      totalYards +
+                      (backingResult?.yardsRequired ?? 0) +
+                      (bindingResult?.yardsRequired ?? 0)
+                    ).toFixed(3)}{' '}
+                    yd
                   </div>
                   <div className="font-medium text-on-surface">Total Fat Quarters</div>
                   <div className="text-on-surface font-mono text-right font-semibold">

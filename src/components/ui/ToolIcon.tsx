@@ -37,18 +37,18 @@ export function ToolIcon({
       aria-pressed={isActive}
       aria-disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      className={`w-11 flex flex-col items-center justify-center gap-0.5 rounded-lg transition-all duration-150 py-1 ${
+      className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-all duration-150 py-2 ${
         disabled
           ? 'text-outline-variant/30 cursor-default'
           : isActive
-            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-            : 'text-on-surface/60 shadow-elevation-1 hover:shadow-elevation-2'
+            ? 'text-primary'
+            : 'text-on-surface/60 hover:text-on-surface'
       }`}
     >
-      <span aria-hidden="true" className="[&>svg]:w-5 [&>svg]:h-5">
+      <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
         {tool.icon}
       </span>
-      <span className="text-[9px] leading-tight text-center truncate w-full px-0.5">
+      <span className="text-label-sm leading-tight text-center truncate w-full px-1 font-medium">
         {tool.label}
       </span>
     </button>

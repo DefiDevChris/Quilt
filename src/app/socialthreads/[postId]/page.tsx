@@ -4,18 +4,17 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { socialPosts, users } from '@/db/schema';
 import { PostDetail } from '@/components/social/PostDetail';
-import { SocialLayout } from '@/components/social/SocialLayout';
 
 function PostDetailSkeleton() {
   return (
-    <div className="glass-panel-social rounded-[2rem] p-6 animate-pulse space-y-4">
-      <div className="h-8 w-3/4 bg-surface-container-high rounded" />
-      <div className="h-4 w-1/2 bg-surface-container-high rounded" />
-      <div className="aspect-video bg-surface-container-high rounded-xl" />
+    <div className="glass-panel rounded-2xl p-6 animate-pulse space-y-4">
+      <div className="h-8 w-3/4 bg-primary-container/30 rounded" />
+      <div className="h-4 w-1/2 bg-primary-container/20 rounded" />
+      <div className="aspect-video bg-primary-container/20 rounded-xl" />
       <div className="space-y-2">
-        <div className="h-4 w-full bg-surface-container-high rounded" />
-        <div className="h-4 w-5/6 bg-surface-container-high rounded" />
-        <div className="h-4 w-4/6 bg-surface-container-high rounded" />
+        <div className="h-4 w-full bg-primary-container/30 rounded" />
+        <div className="h-4 w-5/6 bg-primary-container/20 rounded" />
+        <div className="h-4 w-4/6 bg-primary-container/20 rounded" />
       </div>
     </div>
   );
@@ -73,10 +72,10 @@ export default async function PostDetailPage({ params }: PageProps) {
   const { postId } = await params;
 
   return (
-    <SocialLayout activeSection="feed" contentClassName="pb-10">
+    <div className="max-w-2xl mx-auto py-4">
       <Suspense fallback={<PostDetailSkeleton />}>
         <PostDetail postId={postId} />
       </Suspense>
-    </SocialLayout>
+    </div>
   );
 }

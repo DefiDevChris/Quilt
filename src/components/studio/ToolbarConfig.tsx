@@ -1,4 +1,5 @@
 import { useCanvasStore } from '@/stores/canvasStore';
+import { usePatternBuilderStore } from '@/stores/patternBuilderStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -14,6 +15,8 @@ export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
   onOpenPhotoToPattern?: () => void;
   onOpenResize?: () => void;
+  onOpenReferenceImage?: () => void;
+  onOpenLayoutOverlay?: () => void;
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
@@ -22,6 +25,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const isFabricPanelOpen = useFabricStore((s) => s.isPanelOpen);
   const toggleFabricPanel = useFabricStore((s) => s.togglePanel);
   const layoutType = useLayoutStore((s) => s.layoutType);
+  const activePatternPanel = usePatternBuilderStore((s) => s.activePanel);
+  const togglePatternPanel = usePatternBuilderStore((s) => s.togglePanel);
   const isYardagePanelOpen = useYardageStore((s) => s.isPanelOpen);
   const toggleYardagePanel = useYardageStore((s) => s.togglePanel);
   const isPrintlistPanelOpen = usePrintlistStore((s) => s.isPanelOpen);
@@ -167,7 +172,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       group: 'layout',
       tier: 'primary',
       onClick: callbacks.onOpenLayoutSettings,
-      isActive: () => layoutType !== 'none',
+      isActive: () => layoutType !== 'free-form',
       dataTour: 'layout-settings',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -178,117 +183,191 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         </svg>
       ),
     },
-    // ── Sashing & Border Tools (No Layout mode only) ──
+    // ── PRIMARY: Pattern building ──
     {
-      id: 'sashing',
-      label: 'Sashing',
-      shortcut: 'S',
-      description: 'Draw sashing strips between blocks',
-      mascot: '/mascots&avatars/corgi14.png',
-      toolType: 'sashing',
-      group: 'layout',
-      tier: 'primary',
-      isActive: () => layoutType === 'none',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="8" width="14" height="4" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    {
-      id: 'border',
-      label: 'Border',
+      id: 'pattern-block',
+      label: 'Blocks',
       shortcut: 'B',
-      description: 'Draw border strips around your quilt',
-      mascot: '/mascots&avatars/corgi16.png',
-      toolType: 'border',
-      group: 'layout',
+      description: 'Place block slots on your pattern — assign quilt blocks or fabric to each slot',
+      mascot: '/mascots&avatars/corgi14.png',
+      group: 'pattern',
+      onClick: () => togglePatternPanel('block-placement'),
+      isActive: () => activePatternPanel === 'block-placement',
       tier: 'primary',
-      isActive: () => layoutType === 'none',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect
             x="3"
             y="3"
-            width="14"
-            height="14"
+            width="6"
+            height="6"
+            rx="0.5"
             stroke="currentColor"
-            strokeWidth="2.5"
-            fill="none"
+            strokeWidth="1.4"
+            strokeDasharray="3 2"
+          />
+          <rect
+            x="11"
+            y="3"
+            width="6"
+            height="6"
+            rx="0.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeDasharray="3 2"
+          />
+          <rect
+            x="3"
+            y="11"
+            width="6"
+            height="6"
+            rx="0.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeDasharray="3 2"
+          />
+          <rect
+            x="11"
+            y="11"
+            width="6"
+            height="6"
+            rx="0.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeDasharray="3 2"
           />
         </svg>
       ),
     },
-    // ── PRIMARY: Drawing shapes ──
     {
-      id: 'rectangle',
-      label: 'Rectangle',
-      shortcut: 'R',
-      description: 'Draw a rectangle — hold Shift for a perfect square',
-      mascot: '/mascots&avatars/corgi14.png',
-      toolType: 'rectangle',
-      group: 'shapes',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    {
-      id: 'circle',
-      label: 'Circle',
-      shortcut: 'O',
-      description: 'Draw a circle — hold Shift for a perfect circle',
+      id: 'pattern-border',
+      label: 'Borders',
+      description: 'Add border strips around your quilt edges',
       mascot: '/mascots&avatars/corgi16.png',
-      toolType: 'circle',
-      group: 'shapes',
+      group: 'pattern',
+      onClick: () => togglePatternPanel('border'),
+      isActive: () => activePatternPanel === 'border',
       tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4" />
+          <rect x="2" y="2" width="16" height="16" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <rect
+            x="5"
+            y="5"
+            width="10"
+            height="10"
+            rx="0.5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeOpacity="0.5"
+          />
+          <path
+            d="M2 5H5M15 5H18M2 15H5M15 15H18"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeOpacity="0.4"
+          />
+          <path
+            d="M5 2V5M5 15V18M15 2V5M15 15V18"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeOpacity="0.4"
+          />
         </svg>
       ),
     },
     {
-      id: 'triangle',
-      label: 'Triangle',
-      shortcut: 'T',
-      description: 'Draw a triangle patch',
+      id: 'pattern-hedging',
+      label: 'Hedging',
+      description: 'Add inner hedging strips to divide sections of your quilt',
       mascot: '/mascots&avatars/corgi18.png',
-      toolType: 'triangle',
-      group: 'shapes',
+      group: 'pattern',
+      onClick: () => togglePatternPanel('hedging'),
+      isActive: () => activePatternPanel === 'hedging',
       tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 4L17 16H3L10 4Z"
+          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          <rect
+            x="3"
+            y="8.5"
+            width="14"
+            height="3"
+            fill="currentColor"
+            fillOpacity="0.15"
             stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
+            strokeWidth="1"
           />
         </svg>
       ),
     },
     {
-      id: 'blockbuilder',
-      label: 'Easy Draw',
-      shortcut: 'E',
-      description: 'Draw freehand shapes that snap to grid and auto-close into patches',
-      mascot: '/mascots&avatars/corgi2.png',
-      toolType: 'blockbuilder',
-      group: 'shapes',
+      id: 'pattern-sashing',
+      label: 'Sashing',
+      description: 'Add sashing strips between blocks — define width and assign fabric',
+      mascot: '/mascots&avatars/corgi20.png',
+      group: 'pattern',
+      onClick: () => togglePatternPanel('sashing'),
+      isActive: () => activePatternPanel === 'sashing',
       tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M12.5 3.5L16.5 7.5L7 17H3V13L12.5 3.5Z"
+          <rect
+            x="2"
+            y="2"
+            width="6"
+            height="6"
             stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
           />
-          <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
+          <rect
+            x="12"
+            y="2"
+            width="6"
+            height="6"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="2"
+            y="12"
+            width="6"
+            height="6"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="12"
+            y="12"
+            width="6"
+            height="6"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="8"
+            y="2"
+            width="4"
+            height="16"
+            fill="currentColor"
+            fillOpacity="0.15"
+            stroke="currentColor"
+            strokeWidth="0.8"
+          />
+          <rect
+            x="2"
+            y="8"
+            width="16"
+            height="4"
+            fill="currentColor"
+            fillOpacity="0.15"
+            stroke="currentColor"
+            strokeWidth="0.8"
+          />
         </svg>
       ),
     },
@@ -379,6 +458,26 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
+      id: 'reference-image',
+      label: 'Reference Image',
+      description: 'Import a photo to trace over — adjust opacity and lock in place',
+      mascot: '/mascots&avatars/corgi9.png',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: callbacks.onOpenReferenceImage,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <circle cx="7" cy="7" r="1.5" fill="currentColor" opacity="0.5" />
+          <path
+            d="M3 14L7 10L10 13L14 9L17 12V15C17 15.5 16.5 16 16 16H4C3.5 16 3 15.5 3 15V14Z"
+            fill="currentColor"
+            opacity="0.3"
+          />
+        </svg>
+      ),
+    },
+    {
       id: 'snap-toggle',
       label: 'Toggle Snap',
       shortcut: 'Shift+G',
@@ -395,6 +494,92 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <circle cx="6" cy="14" r="1.5" fill="currentColor" />
           <circle cx="14" cy="14" r="1.5" fill="currentColor" />
           <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
+        </svg>
+      ),
+    },
+    {
+      id: 'pattern-overlay',
+      label: 'Pattern Overlay',
+      description: 'Show layout cell boundaries and enable auto-align to cells',
+      mascot: '/mascots&avatars/corgi17.png',
+      group: 'view-adv',
+      tier: 'advanced',
+      onClick: callbacks.onOpenLayoutOverlay,
+      isActive: () => useCanvasStore.getState().showLayoutOverlay,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect
+            x="3"
+            y="3"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="3"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="15"
+            y="3"
+            width="2"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="3"
+            y="9"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="9"
+            width="5"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="15"
+            y="9"
+            width="2"
+            height="5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="3"
+            y="15"
+            width="5"
+            height="2"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
+          <rect
+            x="9"
+            y="15"
+            width="5"
+            height="2"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeDasharray="2 2"
+          />
         </svg>
       ),
     },
@@ -577,6 +762,19 @@ export function useBlockTools(): ToolDef[] {
       ),
     },
     {
+      id: 'line',
+      label: 'Line',
+      shortcut: 'L',
+      description: 'Draw a seam line between two points',
+      toolType: 'line',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 16L16 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
       id: 'rectangle',
       label: 'Rectangle',
       shortcut: 'R',
@@ -586,6 +784,24 @@ export function useBlockTools(): ToolDef[] {
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'polygon',
+      label: 'Polygon',
+      shortcut: 'P',
+      description: 'Draw a polygon — adjust sides after placing',
+      toolType: 'polygon',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M10 3L16.5 7.5L14.5 15H5.5L3.5 7.5L10 3Z"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
     },

@@ -23,6 +23,13 @@ import {
   PAPER_A4,
   type PaperConfig,
 } from '@/lib/bin-packer';
+import {
+  embedLogo,
+  drawCoverBranding,
+  drawPageHeader,
+  drawBrandedFooter,
+  type PdfBranding,
+} from '@/lib/pdf-drawing-utils';
 
 export type PaperSize = 'letter' | 'a4';
 
@@ -181,7 +188,8 @@ function drawValidationSquare(
 export async function generatePatternPdf(
   items: PrintlistItem[],
   paperSize: PaperSize,
-  scale: number = 1.0
+  scale: number = 1.0,
+  logoPngBytes?: Uint8Array | null
 ): Promise<Uint8Array> {
   const pageDims = PAGE_SIZES[paperSize];
   const paper: PaperConfig = paperSize === 'letter' ? PAPER_LETTER : PAPER_A4;
@@ -189,6 +197,10 @@ export async function generatePatternPdf(
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  // Embed logo for branding
+  const logoImage = await embedLogo(pdfDoc, logoPngBytes ?? null);
+  const branding: PdfBranding = { logoImage };
 
   // Process all shapes
   const shapes: ShapeData[] = [];
@@ -216,7 +228,9 @@ export async function generatePatternPdf(
       pageDims.width * PDF_POINTS_PER_INCH,
       pageDims.height * PDF_POINTS_PER_INCH,
     ]);
+    drawCoverBranding(page, branding, boldFont, pageDims.margin);
     drawValidationSquare(page, font, pageDims.margin);
+    drawBrandedFooter(page, font, 1, 1, pageDims.margin);
     return pdfDoc.save();
   }
 
@@ -238,8 +252,12 @@ export async function generatePatternPdf(
     );
   }
 
-  // Draw validation square on page 1
+  // Page 1: cover branding + validation square. Other pages: small header.
+  drawCoverBranding(pages[0], branding, boldFont, pageDims.margin);
   drawValidationSquare(pages[0], font, pageDims.margin);
+  for (let p = 1; p < pages.length; p++) {
+    drawPageHeader(pages[p], branding, boldFont, pageDims.margin);
+  }
 
   // Draw each packed item
   for (const packedItem of packed.items) {
@@ -308,18 +326,9 @@ export async function generatePatternPdf(
     });
   }
 
-  // Add page numbers
+  // Branded footers: website URL + page numbers
   for (let p = 0; p < pages.length; p++) {
-    const page = pages[p];
-    const pageText = `Page ${p + 1} of ${pages.length}`;
-    const textWidth = font.widthOfTextAtSize(pageText, 8);
-    page.drawText(pageText, {
-      x: page.getWidth() - pageDims.margin * PDF_POINTS_PER_INCH - textWidth,
-      y: 18,
-      size: 8,
-      font,
-      color: rgb(0.5, 0.5, 0.5),
-    });
+    drawBrandedFooter(pages[p], font, p + 1, pages.length, pageDims.margin);
   }
 
   return pdfDoc.save();

@@ -11,7 +11,7 @@ import {
   fitToScreenZoom,
   maybeSnap,
 } from '@/lib/canvas-utils';
-import { PIXELS_PER_INCH, PIXELS_PER_CM } from '@/lib/constants';
+import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants';
 
 describe('getPixelsPerUnit', () => {
   it('returns 96 for imperial', () => {
@@ -106,12 +106,12 @@ describe('fitToScreenZoom', () => {
   it('calculates zoom to fit quilt in container', () => {
     const zoom = fitToScreenZoom(1200, 800, 48, 48, 'imperial');
     expect(zoom).toBeGreaterThan(0);
-    expect(zoom).toBeLessThanOrEqual(1);
+    expect(zoom).toBeLessThanOrEqual(ZOOM_MAX);
   });
 
-  it('does not exceed 1.0 (100%)', () => {
+  it('does not exceed ZOOM_MAX', () => {
     const zoom = fitToScreenZoom(10000, 10000, 1, 1, 'imperial');
-    expect(zoom).toBe(1);
+    expect(zoom).toBe(ZOOM_MAX);
   });
 
   it('scales smaller for larger quilts', () => {

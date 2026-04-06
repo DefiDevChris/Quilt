@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
-import PublicNav from '@/components/landing/PublicNav';
-import Footer from '@/components/landing/Footer';
+import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
+
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   if (process.env.DEV_AUTH_BYPASS !== 'true') {
@@ -16,14 +16,8 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   }
 
   return (
-    <>
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/background.png')" }}
-      />
-      <PublicNav />
-      <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
-      <Footer />
-    </>
+    <ResponsiveShell>
+      {children}
+    </ResponsiveShell>
   );
 }

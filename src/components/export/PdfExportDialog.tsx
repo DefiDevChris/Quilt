@@ -1,67 +1,250 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { generatePatternPdf, type PaperSize } from '@/lib/pdf-generator';
-import { downloadPdf } from '@/lib/dom-utils';
+import { generatePatternPdf, downloadPdf, type PaperSize } from '@/lib/pdf-generator';
+import { generateCutListPdf } from '@/lib/cutlist-pdf-engine';
+import { generateProjectPdf, type ProjectPdfConfig } from '@/lib/project-pdf-engine';
+import { generateFppPdf } from '@/lib/fpp-pdf-engine';
+import { parseSvgToPatches, computeSewingOrder, mirrorPatches } from '@/lib/fpp-generator';
+import { captureCanvasPng, extractBlocksFromCanvas } from '@/lib/canvas-snapshot';
+import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
+
+type ExportMode = 'pattern-pieces' | 'cut-list' | 'print-project' | 'fpp-template';
 
 interface PdfExportDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const MODE_INFO: Record<ExportMode, { label: string; description: string }> = {
+  'pattern-pieces': {
+    label: 'Pattern Pieces',
+    description: 'Bin-packed shapes at scale for cutting templates.',
+  },
+  'cut-list': {
+    label: 'Cut List',
+    description: 'One page per shape with per-edge dimensions and seam allowance.',
+  },
+  'print-project': {
+    label: 'Print Project',
+    description: 'Full quilt overview, block diagrams, and totals table.',
+  },
+  'fpp-template': {
+    label: 'Paper Piecing',
+    description: 'Foundation paper piecing template with numbered sewing order.',
+  },
+};
+
 export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
   const items = usePrintlistStore((s) => s.items);
   const paperSize = usePrintlistStore((s) => s.paperSize);
   const setPaperSize = usePrintlistStore((s) => s.setPaperSize);
   const projectName = useProjectStore((s) => s.projectName);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const printScale = useCanvasStore((s) => s.printScale);
+  const unitSystem = useCanvasStore((s) => s.unitSystem);
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+
+  const [exportMode, setExportMode] = useState<ExportMode>('pattern-pieces');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
 
-  const handleGenerate = useCallback(async () => {
-    if (items.length === 0) return;
+  // Fetch logo PNG bytes once for PDF branding
+  const logoRef = useRef<Uint8Array | null>(null);
+  useEffect(() => {
+    if (isOpen && !logoRef.current) {
+      fetch('/logo.png')
+        .then((res) => res.arrayBuffer())
+        .then((buf) => {
+          logoRef.current = new Uint8Array(buf);
+        })
+        .catch(() => {
+          logoRef.current = null;
+        });
+    }
+  }, [isOpen]);
 
+  const safeName = (projectName ?? 'quilt')
+    .replace(/[^a-zA-Z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase();
+
+  const handleGenerate = useCallback(async () => {
     setIsGenerating(true);
     setError('');
 
     try {
-      const pdfBytes = await generatePatternPdf(items, paperSize, printScale);
-      const safeName = (projectName ?? 'quilt')
-        .replace(/[^a-zA-Z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .toLowerCase();
-      downloadPdf(pdfBytes, `${safeName}-pattern.pdf`);
+      const logoPng = logoRef.current;
+      let pdfBytes: Uint8Array;
+      let filename: string;
+
+      switch (exportMode) {
+        case 'pattern-pieces': {
+          if (items.length === 0) {
+            setError('Add shapes to the printlist first.');
+            return;
+          }
+          pdfBytes = await generatePatternPdf(items, paperSize, printScale, logoPng);
+          filename = `${safeName}-pattern.pdf`;
+          break;
+        }
+
+        case 'cut-list': {
+          if (items.length === 0) {
+            setError('Add shapes to the printlist first.');
+            return;
+          }
+          // Extract blocks for key block page labels
+          const cutlistBlocks = await extractBlocksFromCanvas(fabricCanvas);
+          pdfBytes = await generateCutListPdf(items, paperSize, unitSystem, logoPng, cutlistBlocks);
+          filename = `${safeName}-cutlist.pdf`;
+          break;
+        }
+
+        case 'print-project': {
+          // Capture canvas overview image
+          const overviewPng = await captureCanvasPng(fabricCanvas);
+
+          // Extract blocks from canvas
+          const blocks = await extractBlocksFromCanvas(fabricCanvas);
+
+          // Collect all pieces from blocks
+          const allPieces = blocks.flatMap((b) => b.pieces);
+
+          const config: ProjectPdfConfig = {
+            projectName: projectName ?? 'Untitled Quilt',
+            quiltWidth: canvasWidth ?? 48,
+            quiltHeight: canvasHeight ?? 48,
+            quiltOverviewPng: overviewPng,
+            blocks,
+            allPieces,
+            unitSystem,
+            paperSize,
+            date: new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }),
+            logoPngBytes: logoPng,
+          };
+
+          pdfBytes = await generateProjectPdf(config);
+          filename = `${safeName}-project.pdf`;
+          break;
+        }
+
+        case 'fpp-template': {
+          const fppBlocks = await extractBlocksFromCanvas(fabricCanvas);
+          if (fppBlocks.length === 0) {
+            setError('No blocks found on canvas. Add a block first.');
+            return;
+          }
+
+          // Use the first block's SVG data
+          const block = fppBlocks[0];
+          const svgData = block.pieces.map((p) => p.svgData).join('');
+          const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${svgData}</svg>`;
+
+          const rawPatches = parseSvgToPatches(svgWrapper);
+          if (rawPatches.length === 0) {
+            setError('Block has no pieceable patches for paper piecing.');
+            return;
+          }
+
+          const ordered = computeSewingOrder(rawPatches);
+          const mirrored = mirrorPatches(ordered, 100);
+
+          pdfBytes = await generateFppPdf({
+            blockName: block.blockName ?? projectName ?? 'Block',
+            patches: mirrored,
+            blockWidth: 100,
+            blockHeight: 100,
+            paperSize,
+            seamAllowance: DEFAULT_SEAM_ALLOWANCE_INCHES,
+            showColors: true,
+            showNumbers: true,
+            logoPngBytes: logoPng,
+          });
+          filename = `${safeName}-fpp.pdf`;
+          break;
+        }
+
+        default:
+          throw new Error('Unknown export mode');
+      }
+
+      downloadPdf(pdfBytes, filename);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate PDF');
     } finally {
       setIsGenerating(false);
     }
-  }, [items, paperSize, projectName, printScale, onClose]);
+  }, [
+    exportMode,
+    items,
+    paperSize,
+    printScale,
+    unitSystem,
+    fabricCanvas,
+    projectName,
+    canvasWidth,
+    canvasHeight,
+    safeName,
+    onClose,
+  ]);
 
   if (!isOpen) return null;
 
+  const needsPrintlist = exportMode === 'pattern-pieces' || exportMode === 'cut-list';
+  const isDisabled = isGenerating || (needsPrintlist && items.length === 0);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[400px] rounded-xl bg-surface p-6 shadow-elevation-3">
-        <h2 className="text-lg font-semibold text-on-surface mb-4">Export PDF Pattern</h2>
+      <div className="w-[440px] rounded-xl bg-surface p-6 shadow-elevation-3">
+        <h2 className="mb-4 text-lg font-semibold text-on-surface">Export PDF</h2>
 
-        {/* Summary */}
-        <div className="rounded-lg border border-outline-variant bg-white p-3 mb-4">
-          <p className="text-xs text-secondary mb-1">
-            {items.length} shape{items.length !== 1 ? 's' : ''} in printlist
-          </p>
-          <p className="text-xs text-secondary">
-            Total pieces: {items.reduce((sum, i) => sum + i.quantity, 0)}
-          </p>
+        {/* Mode selector */}
+        <div className="mb-4">
+          <label className="mb-1 block text-xs font-medium text-on-surface">Export Type</label>
+          <div className="grid grid-cols-4 gap-2">
+            {(Object.keys(MODE_INFO) as ExportMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setExportMode(mode)}
+                className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
+                  exportMode === mode
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                }`}
+              >
+                {MODE_INFO[mode].label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-caption text-secondary">{MODE_INFO[exportMode].description}</p>
         </div>
+
+        {/* Printlist summary — for pattern-pieces and cut-list modes */}
+        {needsPrintlist && (
+          <div className="mb-4 rounded-lg border border-outline-variant bg-white p-3">
+            <p className="mb-1 text-xs text-secondary">
+              {items.length} shape{items.length !== 1 ? 's' : ''} in printlist
+            </p>
+            <p className="text-xs text-secondary">
+              Total pieces: {items.reduce((sum, i) => sum + i.quantity, 0)}
+            </p>
+          </div>
+        )}
 
         {/* Paper size */}
         <div className="mb-4">
-          <label className="text-xs font-medium text-on-surface block mb-1">Paper Size</label>
+          <label className="mb-1 block text-xs font-medium text-on-surface">Paper Size</label>
           <select
             value={paperSize}
             onChange={(e) => setPaperSize(e.target.value as PaperSize)}
@@ -72,20 +255,51 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
           </select>
         </div>
 
-        {/* Info */}
-        <div className="rounded-lg bg-background p-3 mb-4">
-          <p className="text-label-sm text-secondary leading-relaxed">
-            Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
-            included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
-            &quot;Fit to Page&quot;.
-          </p>
-        </div>
+        {/* Mode-specific options */}
+        {exportMode === 'pattern-pieces' && (
+          <div className="mb-4 rounded-lg bg-background p-3">
+            <p className="text-label-sm leading-relaxed text-secondary">
+              Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
+              included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
+              &quot;Fit to Page&quot;.
+            </p>
+          </div>
+        )}
+
+        {exportMode === 'cut-list' && (
+          <div className="mb-4 rounded-lg bg-background p-3">
+            <p className="text-label-sm leading-relaxed text-secondary">
+              One page per shape with edge dimensions in{' '}
+              {unitSystem === 'imperial' ? 'inches (fractions)' : 'millimeters'}. Includes finished
+              piece line, seam allowance, and grain line.
+            </p>
+          </div>
+        )}
+
+        {exportMode === 'print-project' && (
+          <div className="mb-4 rounded-lg bg-background p-3">
+            <p className="text-label-sm leading-relaxed text-secondary">
+              Generates a complete pattern document: quilt overview image, block diagrams with piece
+              labels, and a totals summary table.
+            </p>
+          </div>
+        )}
+
+        {exportMode === 'fpp-template' && (
+          <div className="mb-4 rounded-lg bg-background p-3">
+            <p className="text-label-sm leading-relaxed text-secondary">
+              Generates a mirrored FPP template with numbered sewing order. Sew patches in order —
+              each piece is sewn to the growing unit. Template includes seam allowance lines and a
+              sewing order reference page.
+            </p>
+          </div>
+        )}
 
         {/* Error */}
-        {error && <p className="text-xs text-error mb-3">{error}</p>}
+        {error && <p className="mb-3 text-xs text-error">{error}</p>}
 
         {/* Actions */}
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={onClose}
@@ -97,12 +311,12 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
           <button
             type="button"
             onClick={handleGenerate}
-            disabled={isGenerating || items.length === 0}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+            disabled={isDisabled}
+            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isGenerating ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 Generating...
               </>
             ) : (

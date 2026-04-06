@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SocialLayout } from '@/components/social/SocialLayout';
+import { SocialFeedPage } from '@/components/social/SocialFeedPage';
 
 export const metadata: Metadata = {
   title: 'Social Threads | QuiltCorgi',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SocialThreadsPage() {
-  return <SocialLayout activeSection="feed" splitMode />;
+  return <SocialFeedPage />;
 }

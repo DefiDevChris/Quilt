@@ -7,7 +7,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';
-import { SkeletonGrid } from '@/components/ui/Skeleton';
 import type { BlockListItem } from '@/types/block';
 
 type TabType = 'library' | 'myblocks';
@@ -116,7 +115,11 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   {/* Block Grid */}
                   <div className="flex-1 overflow-y-auto px-3 py-1">
                     {isLoading ? (
-                      <SkeletonGrid count={12} columns={3} />
+                      <div className="grid grid-cols-3 gap-2">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                          <div key={i} className="h-24 animate-pulse rounded-lg bg-background" />
+                        ))}
+                      </div>
                     ) : error ? (
                       <div className="py-8 text-center">
                         <p className="text-sm text-error">{error}</p>
@@ -179,9 +182,6 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   <div className="flex-1 overflow-y-auto px-3 py-2">
                     {!isPro ? (
                       <div className="py-8 text-center">
-                        <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-2">
-                          Pro Feature
-                        </span>
                         <p className="text-sm text-secondary">
                           Upgrade to Pro to create custom blocks
                         </p>
@@ -227,9 +227,15 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                                 }
                               }}
                               onBlur={() => setConfirmDeleteId(null)}
-                              title={confirmDeleteId === block.id ? 'Click again to confirm delete' : 'Delete block'}
+                              title={
+                                confirmDeleteId === block.id
+                                  ? 'Click again to confirm delete'
+                                  : 'Delete block'
+                              }
                               className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
-                                confirmDeleteId === block.id ? 'bg-error ring-2 ring-error/50 !opacity-100' : 'bg-error'
+                                confirmDeleteId === block.id
+                                  ? 'bg-error ring-2 ring-error/50 !opacity-100'
+                                  : 'bg-error'
                               }`}
                             >
                               {confirmDeleteId === block.id ? '✓' : '✕'}

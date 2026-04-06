@@ -6,6 +6,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { renderGrid } from '@/lib/canvas-grid';
 import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-utils';
+import { computeLayout } from '@/lib/layout-utils';
 import type { Project } from '@/types/project';
 
 export function useCanvasInit(
@@ -37,7 +38,7 @@ export function useCanvasInit(
       const canvas = new fabric.Canvas(fabricCanvasRef.current, {
         width: rect.width,
         height: rect.height,
-        backgroundColor: useCanvasStore.getState().backgroundColor,
+        backgroundColor: 'transparent',
         selection: true,
         preserveObjectStacking: true,
       });
@@ -89,10 +90,28 @@ export function useCanvasInit(
         // When viewport is unlocked, always redraw grid (no caching)
         // When locked, cache based on key to avoid unnecessary redraws
         const key = state.isViewportLocked
-          ? `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight},${gridEl.width},${gridEl.height},${layout.layoutType}`
+          ? `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight},${gridEl.width},${gridEl.height},${state.showLayoutOverlay},${layout.layoutType}`
           : '';
         if (key && key === lastGridKey) return;
         lastGridKey = key;
+
+        // Compute layout cells for layout overlay
+        let layoutCells;
+        if (state.showLayoutOverlay && layout.layoutType !== 'free-form') {
+          const pxPerUnit = state.unitSystem === 'imperial' ? 96 : 96 / 2.54;
+          const layoutResult = computeLayout(
+            {
+              type: layout.layoutType,
+              rows: layout.rows,
+              cols: layout.cols,
+              blockSize: layout.blockSize,
+              sashing: layout.sashing,
+              borders: layout.borders,
+            },
+            pxPerUnit
+          );
+          layoutCells = layoutResult.cells;
+        }
 
         renderGrid(
           gridEl,
@@ -102,6 +121,9 @@ export function useCanvasInit(
             unitSystem: state.unitSystem,
             quiltWidth: proj.canvasWidth,
             quiltHeight: proj.canvasHeight,
+            showLayoutOverlay: state.showLayoutOverlay,
+            layoutType: layout.layoutType,
+            layoutCells,
           }
         );
       };
@@ -226,11 +248,8 @@ export function useCanvasInit(
         return;
       }
 
-      // Additional safeguard: ensure canvas is still valid before store mutations
-      if (canvasInstance && !canvasInstance.disposed) {
-        useCanvasStore.getState().setFabricCanvas(canvas);
-        useCanvasStore.getState().setZoom(initZoom);
-      }
+      useCanvasStore.getState().setFabricCanvas(canvas);
+      useCanvasStore.getState().setZoom(initZoom);
     })();
 
     return () => {

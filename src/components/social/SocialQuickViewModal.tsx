@@ -52,7 +52,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
         {item.imageUrl ? (
           <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-tertiary gap-4">
+          <div className="flex flex-col items-center justify-center h-full text-secondary/40 gap-4">
             <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -123,7 +123,7 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
         <div className="px-5 py-3 border-b border-outline-variant shrink-0">
           <Link
             href={`/socialthreads/${item.id}`}
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:text-orange-500 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary-dark transition-colors"
           >
             <ExternalLink size={13} />
             View on profile &amp; full thread
@@ -163,7 +163,9 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
             {item.category}
           </p>
           <h2 className="text-xl font-extrabold text-on-surface leading-snug mb-3">{item.title}</h2>
-          {item.excerpt && <p className="text-secondary leading-relaxed text-sm">{item.excerpt}</p>}
+          {item.excerpt && (
+            <p className="text-secondary leading-relaxed text-sm">{item.excerpt}</p>
+          )}
         </div>
 
         {/* Author row */}
@@ -199,7 +201,10 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
 
         {/* CTA */}
         <div className="p-6 pt-0">
-          <Link href="/socialthreads" className="btn-primary-sm w-full justify-center gap-2">
+          <Link
+            href="/socialthreads"
+            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-primary text-on-surface font-bold text-sm shadow-elevation-1 hover:bg-primary-dark transition-all"
+          >
             View Social
             <ExternalLink size={14} />
           </Link>
@@ -226,7 +231,10 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
         {item.colorFamily && (
           <p className="text-sm text-secondary/80 font-medium mb-8">Color: {item.colorFamily}</p>
         )}
-        <Link href="/dashboard" className="btn-primary-sm w-full justify-center gap-2 mt-auto">
+        <Link
+          href="/dashboard"
+          className="btn-primary-sm mt-auto"
+        >
           View in Fabric Library
           <ExternalLink size={14} />
         </Link>
@@ -269,7 +277,10 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
         {item.category && (
           <p className="text-sm text-secondary/80 font-medium mb-8">Category: {item.category}</p>
         )}
-        <Link href="/dashboard" className="btn-primary-sm w-full justify-center gap-2 mt-auto">
+        <Link
+          href="/dashboard"
+          className="btn-primary-sm mt-auto"
+        >
           Open in Studio
           <ExternalLink size={14} />
         </Link>
@@ -304,8 +315,6 @@ export function SocialQuickViewModal() {
     <div
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-6 bg-black/60 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && close()}
-      role="dialog"
-      aria-modal="true"
     >
       <div
         className="relative w-full sm:max-w-5xl glass-panel-social rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col shadow-elevation-4"

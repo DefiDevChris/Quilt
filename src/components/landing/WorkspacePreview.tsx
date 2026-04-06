@@ -4,61 +4,353 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Mascot from './Mascot';
 
+function MockTopBar({ worktable }: { worktable: string }) {
+  return (
+    <div className="h-8 bg-white border-b border-outline-variant flex items-center px-2 gap-2 text-[8px] shrink-0 z-20">
+      <div className="flex items-center gap-1.5">
+        <div className="w-3.5 h-3.5 rounded bg-surface-container flex items-center justify-center text-tertiary">
+          <svg
+            width="8"
+            height="8"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </div>
+        <span className="font-bold text-on-surface hidden md:inline text-[9px]">QuiltCorgi</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <div className="px-2 py-0.5 bg-primary/20 text-on-surface rounded-full font-bold text-[8px]">
+          {worktable}
+        </div>
+        <span className="text-tertiary text-caption">+</span>
+      </div>
+      <div className="flex-1 text-center text-tertiary truncate hidden md:block">
+        <span className="font-medium text-on-surface text-[9px]">My Quilt</span>
+        <span className="mx-1">·</span>
+        <span>{worktable} Canvas</span>
+      </div>
+      <div className="flex items-center gap-1.5 ml-auto">
+        <span className="text-tertiary hidden md:inline">Share</span>
+        <span className="text-tertiary hidden md:inline">View</span>
+        <span className="text-tertiary hidden md:inline">Tools</span>
+        <div className="px-2 py-0.5 bg-on-surface text-white rounded font-bold text-[8px]">
+          Export
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type ToolItem = { label: string; icon: React.ReactNode; active?: boolean };
+type ToolSection = { header: string; tools: ToolItem[] };
+
+function MockToolbar({ sections }: { sections: ToolSection[] }) {
+  return (
+    <div className="w-[4.5rem] bg-white border-r border-outline-variant py-1.5 px-1 hidden sm:flex flex-col gap-1 shrink-0 z-10 overflow-y-auto">
+      {sections.map((section, si) => (
+        <div key={si}>
+          <div className="text-[5px] font-bold text-tertiary tracking-widest uppercase px-1 mb-0.5">
+            {section.header}
+          </div>
+          <div className="grid grid-cols-2 gap-0.5">
+            {section.tools.map((tool, ti) => (
+              <div
+                key={ti}
+                className={`flex flex-col items-center gap-0.5 py-1 rounded-lg ${
+                  tool.active ? 'bg-primary/10 text-primary' : 'text-tertiary'
+                }`}
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  {tool.icon}
+                </svg>
+                <span className="text-[4.5px] leading-[1.1] w-full text-center whitespace-pre-line">
+                  {tool.label.replace(/\s+/g, '\n').replace(/\.\.\./g, '...')}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MockAccordionPanel({
+  sections,
+}: {
+  sections: { label: string; open?: boolean; expanded?: boolean }[];
+}) {
+  return (
+    <div className="w-44 bg-white border-l border-outline-variant shrink-0 z-10 hidden sm:flex flex-col gap-1 p-1.5 overflow-y-auto">
+      {sections.map((section, i) => (
+        <div key={i} className="rounded-lg border border-outline-variant overflow-hidden">
+          <div className="flex items-center justify-between px-2.5 py-1.5 text-[8px] font-bold text-on-surface tracking-wide bg-white">
+            <span>{section.label}</span>
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              {section.open ? (
+                <polyline points="18 15 12 9 6 15" />
+              ) : (
+                <polyline points="6 9 12 15 18 9" />
+              )}
+            </svg>
+          </div>
+          {section.expanded && (
+            <div className="px-2.5 pb-2 text-[7px] text-tertiary border-t border-outline-variant/50">
+              <div className="mt-1.5 mb-1 text-[7px] font-bold text-on-surface tracking-wide">
+                PRECISION
+              </div>
+              <div className="grid grid-cols-2 gap-1 mb-1.5">
+                <div>
+                  <div className="text-[6px] text-tertiary mb-0.5">BLOCK WIDTH</div>
+                  <div className="h-4 bg-surface-container rounded border border-outline-variant flex items-center px-1 text-[6px] font-mono text-on-surface">
+                    48.000 in
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[6px] text-tertiary mb-0.5">BLOCK HEIGHT</div>
+                  <div className="h-4 bg-surface-container rounded border border-outline-variant flex items-center px-1 text-[6px] font-mono text-on-surface">
+                    48.000 in
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded border border-primary bg-primary flex items-center justify-center text-white">
+                  <svg
+                    width="7"
+                    height="7"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <span className="text-[7px] text-on-surface">Snap to Grid</span>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MockFloatingToolbar() {
+  return (
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-elevation-4 border border-outline-variant px-2.5 py-1 flex items-center gap-1.5 z-20">
+      {[
+        <path key="s" d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
+        <rect key="r" x="3" y="3" width="18" height="18" rx="2" />,
+        <polygon key="t" points="12 2 22 20 2 20" />,
+        <line key="l" x1="5" y1="12" x2="19" y2="12" />,
+      ].map((icon, i) => (
+        <div
+          key={i}
+          className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-primary/15 text-primary' : 'text-tertiary'}`}
+        >
+          <svg
+            width="9"
+            height="9"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            {icon}
+          </svg>
+        </div>
+      ))}
+      <div className="w-px h-3 bg-outline-variant" />
+      <div className="w-5 h-5 rounded-full flex items-center justify-center text-tertiary">
+        <svg
+          width="9"
+          height="9"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <polyline points="1 4 1 10 7 10" />
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+        </svg>
+      </div>
+      <div className="w-px h-3 bg-outline-variant" />
+      <span className="text-[7px] text-tertiary font-mono">48%</span>
+    </div>
+  );
+}
+
+function MockStatusBar() {
+  return (
+    <div className="h-5 bg-surface-container/60 border-t border-outline-variant flex items-center justify-between px-3 text-[7px] font-mono text-tertiary shrink-0">
+      <span>Mouse H: 12.50&quot; V: 8.25&quot;</span>
+      <div className="flex gap-3">
+        <span>Snap to Grid: ON</span>
+        <span>Snap to Nodes: OFF</span>
+      </div>
+    </div>
+  );
+}
+
+const quiltToolSections: ToolSection[] = [
+  {
+    header: 'TOOLS',
+    tools: [
+      {
+        label: 'Select',
+        icon: <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
+        active: true,
+      },
+      {
+        label: 'Curved Ed...',
+        icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8" />,
+      },
+      {
+        label: 'Pan',
+        icon: (
+          <>
+            <path d="M18 11V6a2 2 0 0 0-4 0v1" />
+            <path d="M14 10V4a2 2 0 0 0-4 0v2" />
+            <path d="M10 10.5V6a2 2 0 0 0-4 0v8" />
+            <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-5.7-2.4L3.5 15" />
+          </>
+        ),
+      },
+      {
+        label: 'Block Libra...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+          </>
+        ),
+      },
+      {
+        label: 'Fabric Libr...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="9" />
+          </>
+        ),
+      },
+      {
+        label: 'Photo to P...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </>
+        ),
+      },
+      {
+        label: 'Layout Set...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </>
+        ),
+      },
+    ],
+  },
+  {
+    header: 'PATTERN',
+    tools: [
+      {
+        label: 'Blocks',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 9h18M9 21V9" />
+          </>
+        ),
+      },
+      {
+        label: 'Borders',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <rect x="6" y="6" width="12" height="12" rx="1" />
+          </>
+        ),
+      },
+      {
+        label: 'Hedging',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="12" y1="3" x2="12" y2="21" />
+          </>
+        ),
+      },
+      {
+        label: 'Sashing',
+        icon: (
+          <>
+            <path d="M21 3H3v18h18V3zM9 3v18M15 3v18M3 9h18M3 15h18" />
+          </>
+        ),
+      },
+      {
+        label: 'Grid & Dim...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="3" />
+          </>
+        ),
+      },
+    ],
+  },
+];
+
+const quiltPanelSections = [
+  { label: 'SELECTION', open: true },
+  { label: 'PRECISION', open: true, expanded: true },
+  { label: 'ROTATE & SHEAR' },
+  { label: 'COLOR THEME' },
+  { label: 'TEXT' },
+  { label: 'BLOCK BUILDER' },
+];
+
 function QuiltWorktableMockup() {
   return (
     <div className="w-full h-full bg-surface-container/50 flex flex-col relative overflow-hidden">
-      {/* Top Bar */}
-      <div className="h-10 bg-white border-b border-outline-variant flex items-center px-4 justify-between z-10 shrink-0">
-        <div className="flex gap-4 items-center">
-          <div className="text-[10px] font-bold text-secondary bg-surface-container px-2 py-1 rounded">
-            My_First_Quilt.qc
-          </div>
-        </div>
-      </div>
-
+      <MockTopBar worktable="Main" />
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Left Toolbar */}
-        <div className="w-12 bg-white border-r border-outline-variant py-2 hidden sm:flex flex-col items-center gap-3 shrink-0 z-10">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <polygon points="3 3 21 12 3 21 3 3" />
-            </svg>
-          </div>
-          <div className="w-8 h-8 rounded-lg text-tertiary hover:bg-surface-container flex items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            </svg>
-          </div>
-          <div className="w-8 h-8 rounded-lg text-tertiary hover:bg-surface-container flex items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </div>
-        </div>
+        <MockToolbar sections={quiltToolSections} />
 
         {/* Canvas */}
-        <div className="flex-1 bg-surface-container-lowest relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -74,7 +366,7 @@ function QuiltWorktableMockup() {
             transition={{ duration: 0.5 }}
             className="relative bg-white shadow-elevation-4 border border-outline-variant p-2 flex"
           >
-            <div className="grid grid-cols-3 gap-2 bg-primary/20 p-2 border-[4px] border-primary-dark/60">
+            <div className="grid grid-cols-3 gap-2 bg-primary-container p-2 border-[4px] border-primary-dark/60">
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
@@ -91,110 +383,66 @@ function QuiltWorktableMockup() {
               ))}
             </div>
           </motion.div>
+
+          <MockFloatingToolbar />
         </div>
 
-        {/* Right Panel */}
-        <div className="w-48 bg-white border-l border-outline-variant p-3 shrink-0 z-10 hidden sm:flex flex-col gap-4 text-xs">
-          <div>
-            <div className="font-bold text-on-surface mb-2">Layout Settings</div>
-            <div className="h-6 bg-surface-container rounded mb-2 flex items-center px-2 text-tertiary">
-              Horizontal
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="h-6 bg-surface-container rounded flex items-center justify-center text-tertiary">
-                3 cols
-              </div>
-              <div className="h-6 bg-surface-container rounded flex items-center justify-center text-tertiary">
-                3 rows
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="font-bold text-on-surface mb-2">Sashing</div>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-4 h-4 rounded border border-primary bg-primary flex items-center justify-center text-white">
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </div>
-              <span className="text-tertiary">Include Sashing</span>
-            </div>
-            <div className="h-6 bg-surface-container rounded flex items-center px-2 text-tertiary justify-between">
-              <span>Width</span>
-              <span className="font-mono text-[10px]">2.0&quot;</span>
-            </div>
-          </div>
-          <div className="mt-auto">
-            <button className="w-full bg-primary text-on-surface font-bold py-2 rounded-md hover:bg-orange-500 transition-colors shadow-elevation-1">
-              Calculate Yardage
-            </button>
-          </div>
-        </div>
+        <MockAccordionPanel sections={quiltPanelSections} />
       </div>
+      <MockStatusBar />
     </div>
   );
 }
 
+const blockToolSections: ToolSection[] = [
+  {
+    header: 'TOOLS',
+    tools: [
+      { label: 'Select', icon: <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" /> },
+      {
+        label: 'Curved Ed...',
+        icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8" />,
+      },
+      { label: 'Easy Draw', icon: <path d="M12 19l7-7 3 3-7 7-3-3z" />, active: true },
+    ],
+  },
+  {
+    header: 'SHAPES',
+    tools: [
+      { label: 'Rectangle', icon: <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /> },
+      { label: 'Circle', icon: <circle cx="12" cy="12" r="10" /> },
+      { label: 'Triangle', icon: <polygon points="12 2 22 20 2 20" /> },
+      { label: 'Line', icon: <line x1="5" y1="12" x2="19" y2="12" /> },
+      {
+        label: 'Grid & Dim...',
+        icon: (
+          <>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="3" />
+          </>
+        ),
+      },
+    ],
+  },
+];
+
+const blockPanelSections = [
+  { label: 'SELECTION', open: true },
+  { label: 'PRECISION' },
+  { label: 'ROTATE & SHEAR' },
+  { label: 'COLOR THEME' },
+  { label: 'BLOCK BUILDER', open: true },
+];
+
 function BlockWorktableMockup() {
   return (
     <div className="w-full h-full bg-surface-container/50 flex flex-col relative overflow-hidden">
-      <div className="h-10 bg-white border-b border-outline-variant flex items-center px-4 justify-between z-10 shrink-0">
-        <div className="text-[10px] font-bold text-secondary bg-surface-container px-2 py-1 rounded">
-          Drafting: Custom_Star.qc
-        </div>
-        <div className="flex gap-2">
-          <div className="w-5 h-5 rounded hover:bg-primary/10 flex items-center justify-center text-primary cursor-pointer">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 19V5M5 12h14" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
+      <MockTopBar worktable="Block" />
       <div className="flex flex-1 overflow-hidden relative">
-        <div className="w-12 bg-white border-r border-outline-variant py-2 hidden sm:flex flex-col items-center gap-3 shrink-0 z-10">
-          <div className="w-8 h-8 rounded-lg hover:bg-surface-container text-tertiary flex items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <polygon points="3 3 21 12 3 21 3 3" />
-            </svg>
-          </div>
-          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 19l7-7 3 3-7 7-3-3z" />
-              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
-            </svg>
-          </div>
-        </div>
+        <MockToolbar sections={blockToolSections} />
 
-        <div className="flex-1 bg-surface-container-lowest relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -226,29 +474,68 @@ function BlockWorktableMockup() {
               <circle cx="50" cy="0" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
               <circle cx="50" cy="50" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
             </svg>
-            <div className="absolute top-2 left-2 bg-on-surface text-white text-[8px] px-1.5 py-0.5 rounded shadow-elevation-4">
+            <div className="absolute top-2 left-2 bg-surface-container900 text-white text-[8px] px-1.5 py-0.5 rounded shadow-elevation-4">
               Snap to Grid (Intersect)
             </div>
           </motion.div>
+
+          <MockFloatingToolbar />
         </div>
+
+        <MockAccordionPanel sections={blockPanelSections} />
       </div>
+      <MockStatusBar />
     </div>
   );
 }
 
+const imagePanelSections = [
+  { label: 'CALIBRATION', open: true },
+  { label: 'ADJUSTMENTS', open: true },
+  { label: 'CROP' },
+  { label: 'COLOR THEME' },
+];
+
 function ImageWorktableMockup() {
   return (
     <div className="w-full h-full bg-surface-container/50 flex flex-col relative overflow-hidden">
-      <div className="h-10 bg-white border-b border-outline-variant flex items-center px-4 justify-between z-10 shrink-0">
-        <div className="text-[10px] font-bold text-secondary bg-surface-container px-2 py-1 rounded">
-          Fabric: Vintage_Floral.jpg
-        </div>
-        <div className="px-2 py-1 bg-primary text-on-surface text-[10px] font-bold rounded cursor-pointer shadow-elevation-1">
-          Save Fabric
-        </div>
-      </div>
-
+      <MockTopBar worktable="Image" />
       <div className="flex flex-1 overflow-hidden relative">
+        <MockToolbar
+          sections={[
+            {
+              header: 'TOOLS',
+              tools: [
+                {
+                  label: 'Select',
+                  icon: <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
+                  active: true,
+                },
+                {
+                  label: 'Crop',
+                  icon: (
+                    <>
+                      <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                      <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                    </>
+                  ),
+                },
+              ],
+            },
+            {
+              header: 'SHAPES',
+              tools: [
+                {
+                  label: 'Rectangle',
+                  icon: <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />,
+                },
+                { label: 'Circle', icon: <circle cx="12" cy="12" r="10" /> },
+                { label: 'Line', icon: <line x1="5" y1="12" x2="19" y2="12" /> },
+              ],
+            },
+          ]}
+        />
+
         <div className="flex-1 bg-surface-container relative flex items-center justify-center overflow-hidden">
           <motion.div
             initial={{ opacity: 0 }}
@@ -278,70 +565,70 @@ function ImageWorktableMockup() {
                   backgroundSize: '33.33% 33.33%',
                 }}
               />
-              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-outline-variant" />
-              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-outline-variant" />
-              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-outline-variant" />
-              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-outline-variant" />
+              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-gray-300" />
+              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
+              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-gray-300" />
             </div>
           </motion.div>
+
+          <MockFloatingToolbar />
         </div>
 
-        <div className="w-48 bg-white border-l border-outline-variant p-3 shrink-0 z-10 hidden sm:flex flex-col gap-4 text-xs">
-          <div>
-            <div className="font-bold text-on-surface mb-2">Real Width Calibration</div>
-            <p className="text-[9px] text-tertiary mb-2 leading-tight">
-              Drag the crop box to cover exactly 1 inch of physical fabric.
-            </p>
-            <div className="h-7 bg-surface-container rounded border border-outline-variant flex items-center px-2 text-on-surface font-mono justify-between">
-              <span>Width</span>
-              <span>1.0&quot;</span>
-            </div>
-          </div>
-          <div>
-            <div className="font-bold text-on-surface mb-2">Adjustments</div>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-[10px] text-tertiary mb-1">
-                  <span>Brightness</span>
-                  <span>+12</span>
-                </div>
-                <div className="h-1 bg-surface-container rounded overflow-hidden">
-                  <div className="w-[60%] h-full bg-primary" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-[10px] text-tertiary mb-1">
-                  <span>Contrast</span>
-                  <span>-5</span>
-                </div>
-                <div className="h-1 bg-surface-container rounded overflow-hidden">
-                  <div className="w-[45%] h-full bg-primary" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MockAccordionPanel sections={imagePanelSections} />
       </div>
+      <MockStatusBar />
     </div>
   );
 }
 
+const printPanelSections = [
+  { label: 'EXPORT SETTINGS', open: true },
+  { label: 'PAGE LAYOUT' },
+  { label: 'INCLUDES', open: true },
+  { label: 'CUTTING CHARTS' },
+];
+
 function PrintWorktableMockup() {
   return (
     <div className="w-full h-full bg-surface-container/50 flex flex-col relative overflow-hidden">
-      <div className="h-10 bg-white border-b border-outline-variant flex items-center px-4 justify-between z-10 shrink-0">
-        <div className="text-[10px] font-bold text-secondary bg-surface-container px-2 py-1 rounded">
-          Print: Star_Pattern_Export.pdf
-        </div>
-        <div className="px-2 py-1 bg-primary text-on-surface text-[10px] font-bold rounded cursor-pointer shadow-elevation-1">
-          Export PDF
-        </div>
-      </div>
-
+      <MockTopBar worktable="Print" />
       <div className="flex flex-1 overflow-hidden relative">
-        <div className="flex-1 bg-surface-container-low relative flex items-center justify-center overflow-hidden p-6">
-          {/* PDF page mockup */}
-          <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-outline-variant p-4 flex flex-col">
+        <MockToolbar
+          sections={[
+            {
+              header: 'TOOLS',
+              tools: [
+                {
+                  label: 'Select',
+                  icon: <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
+                  active: true,
+                },
+                {
+                  label: 'Zoom',
+                  icon: (
+                    <>
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </>
+                  ),
+                },
+                {
+                  label: 'Page...',
+                  icon: (
+                    <>
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </>
+                  ),
+                },
+              ],
+            },
+          ]}
+        />
+
+        <div className="flex-1 bg-[#f0f0f0] relative flex items-center justify-center overflow-hidden p-6">
+          <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-gray-200 p-4 flex flex-col">
             <div
               className="text-[8px] font-bold text-on-surface mb-2"
               style={{ fontFamily: 'var(--font-display)' }}
@@ -397,71 +684,13 @@ function PrintWorktableMockup() {
               <span>Page 1 of 4</span>
             </div>
           </div>
+
+          <MockFloatingToolbar />
         </div>
 
-        <div className="w-48 bg-white border-l border-outline-variant p-3 shrink-0 z-10 hidden sm:flex flex-col gap-4 text-xs">
-          <div>
-            <div className="font-bold text-on-surface mb-2">Export Settings</div>
-            <div className="h-6 bg-surface-container rounded flex items-center px-2 text-tertiary mb-2">
-              PDF (True Scale)
-            </div>
-            <div className="h-6 bg-surface-container rounded flex items-center px-2 text-tertiary justify-between">
-              <span>Seam</span>
-              <span className="font-mono text-[10px]">1/4&quot;</span>
-            </div>
-          </div>
-          <div>
-            <div className="font-bold text-on-surface mb-2">Includes</div>
-            <div className="space-y-1.5 text-[10px] text-tertiary">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded border border-primary bg-primary flex items-center justify-center text-white">
-                  <svg
-                    width="8"
-                    height="8"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                Cutting instructions
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded border border-primary bg-primary flex items-center justify-center text-white">
-                  <svg
-                    width="8"
-                    height="8"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                Yardage summary
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded border border-primary bg-primary flex items-center justify-center text-white">
-                  <svg
-                    width="8"
-                    height="8"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                Seam allowances
-              </div>
-            </div>
-          </div>
-        </div>
+        <MockAccordionPanel sections={printPanelSections} />
       </div>
+      <MockStatusBar />
     </div>
   );
 }
@@ -528,7 +757,7 @@ export default function WorkspacePreview() {
           </p>
         </motion.div>
 
-        <div className="glass-panel rounded-[2rem] p-4 md:p-6 shadow-elevation-4 mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl">
           {/* Tab Controls */}
           <div className="flex flex-wrap items-center justify-center gap-2 pb-6">
             {tabs.map((tab, idx) => (
@@ -557,21 +786,7 @@ export default function WorkspacePreview() {
           {/* Mockup Container */}
           <div className="relative">
             <motion.div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] rounded-xl overflow-hidden border border-outline-variant shadow-elevation-4 bg-white">
-              {/* Browser Chrome */}
-              <div className="absolute top-0 left-0 right-0 h-8 bg-surface-container border-b border-outline-variant flex items-center px-3 gap-2 z-50">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary-dark" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-accent" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-                </div>
-                <div className="flex-1 text-center">
-                  <div className="mx-auto w-48 h-5 bg-white/50 rounded-md text-[9px] font-mono text-tertiary flex items-center justify-center border border-outline-variant">
-                    app.quiltcorgi.com/{tabs[activeTab].id}
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute inset-x-0 bottom-0 top-8 bg-surface-container/50">
+              <div className="absolute inset-0 bg-surface-container/50">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

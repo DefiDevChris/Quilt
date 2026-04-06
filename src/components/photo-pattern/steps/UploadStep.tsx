@@ -109,12 +109,21 @@ export function UploadStep() {
 
   return (
     <div className="flex flex-col gap-4 h-full">
-      {/* Drop zone — uses native <label> for reliable file dialog trigger */}
-      <label
+      {/* Drop zone */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full rounded-lg border-2 border-dashed p-10 text-center transition-colors cursor-pointer block ${
+        className={`w-full rounded-lg border-2 border-dashed p-10 text-center transition-colors cursor-pointer ${
           isDragOver
             ? 'border-primary bg-primary/5'
             : 'border-outline-variant/30 hover:border-primary/50'
@@ -125,7 +134,7 @@ export function UploadStep() {
           type="file"
           accept={ACCEPTED_IMAGE_TYPES.join(',')}
           onChange={handleFileChange}
-          className="sr-only"
+          className="hidden"
         />
         {loading ? (
           <p className="text-body-md text-secondary">Processing image...</p>
@@ -158,7 +167,7 @@ export function UploadStep() {
             <p className="mt-2 text-label-sm text-secondary">PNG, JPEG, or WebP up to 20 MB</p>
           </>
         )}
-      </label>
+      </div>
 
       {/* Error */}
       {error && <p className="text-body-sm text-error">{error}</p>}

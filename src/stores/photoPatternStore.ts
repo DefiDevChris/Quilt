@@ -8,6 +8,7 @@ import type {
   PipelineStep,
   Point2D,
   QuiltDetectionConfig,
+  QuiltStructure,
 } from '@/lib/photo-pattern-types';
 import { DEFAULT_QUILT_DETECTION_CONFIG } from '@/lib/photo-pattern-types';
 import {
@@ -33,7 +34,6 @@ interface CorrectedImageRef {
 
 interface PhotoPatternState {
   step: PhotoPatternStep;
-  isModalOpen: boolean;
   originalImage: HTMLImageElement | null;
   originalImageUrl: string;
   /**
@@ -51,9 +51,8 @@ interface PhotoPatternState {
   lockAspectRatio: boolean;
   scaledPieces: readonly ScaledPiece[];
   scanConfig: QuiltDetectionConfig;
+  quiltStructure: QuiltStructure | null;
 
-  openModal: () => void;
-  closeModal: () => void;
   setStep: (step: PhotoPatternStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
   setCorrectedImageRef: (ref: CorrectedImageRef) => void;
@@ -66,12 +65,12 @@ interface PhotoPatternState {
   setLockAspectRatio: (locked: boolean) => void;
   setScaledPieces: (pieces: readonly ScaledPiece[]) => void;
   setScanConfig: (config: QuiltDetectionConfig) => void;
+  setQuiltStructure: (structure: QuiltStructure | null) => void;
   reset: () => void;
 }
 
 const initialState = {
   step: 'upload' as PhotoPatternStep,
-  isModalOpen: false,
   originalImage: null as HTMLImageElement | null,
   originalImageUrl: '',
   correctedImageRef: null as CorrectedImageRef | null,
@@ -85,6 +84,7 @@ const initialState = {
   lockAspectRatio: true,
   scaledPieces: [] as readonly ScaledPiece[],
   scanConfig: DEFAULT_QUILT_DETECTION_CONFIG,
+  quiltStructure: null as QuiltStructure | null,
 };
 
 /**
@@ -98,15 +98,6 @@ function revokeUrl(url: string | undefined | null): void {
 
 export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
   ...initialState,
-
-  openModal: () => set({ isModalOpen: true }),
-
-  closeModal: () => {
-    const { originalImageUrl, correctedImageRef } = get();
-    revokeUrl(originalImageUrl);
-    revokeUrl(correctedImageRef?.url);
-    set({ ...initialState, isModalOpen: false });
-  },
 
   setStep: (step) => set({ step }),
 
@@ -140,6 +131,8 @@ export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
 
   setScanConfig: (config) => set({ scanConfig: config }),
 
+  setQuiltStructure: (structure) => set({ quiltStructure: structure }),
+
   reset: () => {
     const { originalImageUrl, correctedImageRef } = get();
     revokeUrl(originalImageUrl);
@@ -148,3 +141,8 @@ export const usePhotoPatternStore = create<PhotoPatternState>((set, get) => ({
     set({ ...initialState });
   },
 }));
+
+// Expose store for E2E testing in development
+if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+  (window as unknown as Record<string, unknown>).__photoPatternStore = usePhotoPatternStore;
+}
