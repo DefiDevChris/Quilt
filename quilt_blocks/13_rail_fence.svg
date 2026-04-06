@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect x="0" y="0" width="300" height="100" fill="#E0E0E0" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
-  <rect x="0" y="100" width="300" height="100" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
-  <rect x="0" y="200" width="300" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
-</svg>
