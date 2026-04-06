@@ -9,9 +9,8 @@
 
 import { svgPathToPolyline, extractPathFromSvg, type Point } from '@/lib/seam-allowance';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { decimalToFraction as _dtf, toMixedNumberString as _tmns } from '@/lib/fraction-math';
-import { gcd as _gcd } from '@/lib/math-utils';
-import { formatFraction } from '@/lib/piece-detection-utils';
+import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
+import { formatFraction } from '@/lib/piece-detection-shared';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -171,7 +170,7 @@ export function classifyPatchShape(svgData: string, seamAllowance: number): Patc
         finishedHeight: finishedSize,
         cutWidth: cutSize,
         cutHeight: cutSize,
-        specialInstructions: `Cut ${formatFraction(cutSize, '-')}" square, then cut once diagonally`,
+        specialInstructions: `Cut ${toMixedNumberString(decimalToFraction(cutSize)).replace(' ', '-')}" square, then cut once diagonally`,
       };
     } else {
       // Irregular triangle - template cut
@@ -373,3 +372,5 @@ export function optimizeStripCutting(
 
   return plans;
 }
+
+export { formatFraction } from '@/lib/piece-detection-shared';

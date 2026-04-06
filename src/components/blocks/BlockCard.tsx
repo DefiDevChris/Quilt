@@ -73,12 +73,6 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
       <span className="mt-1 text-center text-caption leading-tight text-secondary line-clamp-2">
         {block.name}
       </span>
-
-      {block.isLocked && (
-        <span className="mt-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[8px] font-medium text-primary">
-          Pro
-        </span>
-      )}
     </div>
   );
 }

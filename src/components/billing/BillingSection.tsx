@@ -15,6 +15,7 @@ type SubscriptionInfo = {
 
 export function BillingSection() {
   const user = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
   const searchParams = useSearchParams();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,11 +46,10 @@ export function BillingSection() {
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
       setSuccessMessage('Welcome to Pro! Your subscription is now active.');
-      // Refetch subscription to get actual server-side role instead of optimistic promotion
-      fetchSubscription();
+      if (user) setUser({ ...user, role: 'pro' });
       window.history.replaceState({}, '', '/settings');
     }
-  }, [searchParams, fetchSubscription]);
+  }, [searchParams, user, setUser]);
 
   async function handleUpgrade() {
     setIsCheckoutLoading(true);
@@ -141,9 +141,9 @@ export function BillingSection() {
               {isPro ? 'Pro' : 'Free'}
             </span>
             {isLoading ? (
-              <span className="text-caption text-tertiary animate-pulse">Checking...</span>
+              <span className="text-caption text-secondary animate-pulse">Checking...</span>
             ) : isPro && subscription && subscription.plan === 'pro' ? (
-              <span className="text-caption text-tertiary">
+              <span className="text-caption text-secondary/80">
                 {isCanceling
                   ? `Cancels ${new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString()}`
                   : subscription.status === 'active'
@@ -151,7 +151,7 @@ export function BillingSection() {
                     : subscription.status.replace('_', ' ')}
               </span>
             ) : isPro ? (
-              <span className="text-caption text-tertiary">Active</span>
+              <span className="text-caption text-secondary/80">Active</span>
             ) : null}
           </div>
 
@@ -160,7 +160,7 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-lg border border-outline-variant/30 text-on-surface px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
+              className="rounded-lg glass-inset text-on-surface px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
             >
               {isPortalLoading ? 'Loading...' : 'Manage'}
             </button>
@@ -168,7 +168,7 @@ export function BillingSection() {
         </div>
 
         {isPro && subscription?.currentPeriodEnd && (
-          <p className="text-xs text-tertiary">
+          <p className="text-xs text-secondary/80">
             {isCanceling ? 'Access until' : 'Next billing date'}:{' '}
             <span className="font-medium text-on-surface">
               {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
@@ -216,11 +216,11 @@ export function BillingSection() {
             <span className="text-2xl font-bold text-on-surface">
               ${billingInterval === 'monthly' ? PRO_PRICE_MONTHLY : PRO_PRICE_YEARLY}
             </span>
-            <span className="text-xs text-tertiary">
+            <span className="text-xs text-secondary/80">
               /{billingInterval === 'monthly' ? 'month' : 'year'}
             </span>
             {billingInterval === 'yearly' && (
-              <span className="block text-caption text-tertiary mt-0.5">
+              <span className="block text-caption text-secondary/80 mt-0.5">
                 ${(PRO_PRICE_YEARLY / 12).toFixed(0)}/month, billed annually
               </span>
             )}
@@ -230,7 +230,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="btn-primary-xs disabled:opacity-50"
+            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isCheckoutLoading ? 'Loading...' : 'Start Pro'}
           </button>
@@ -243,15 +243,15 @@ export function BillingSection() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <h4 className="text-xs font-semibold text-on-surface mb-2">Free</h4>
-            <ul className="space-y-1.5 text-label-sm text-tertiary">
+            <ul className="space-y-1.5 text-label-sm text-secondary/80">
               <li>All design tools</li>
               <li>20 starter blocks</li>
               <li>10 basic fabrics</li>
               <li>Browse community</li>
               <li>All tutorials</li>
-              <li className="text-tertiary line-through">Save projects</li>
-              <li className="text-tertiary line-through">Export (PDF, PNG, SVG)</li>
-              <li className="text-tertiary line-through">Full block library</li>
+              <li className="text-secondary/40 line-through">Save projects</li>
+              <li className="text-secondary/40 line-through">Export (PDF, PNG, SVG)</li>
+              <li className="text-secondary/40 line-through">Full block library</li>
             </ul>
           </div>
           <div>
@@ -259,7 +259,7 @@ export function BillingSection() {
             <ul className="space-y-1.5 text-label-sm text-secondary">
               <li>Everything in Free, plus:</li>
               <li>Save unlimited projects</li>
-              <li>Full block library (always growing)</li>
+              <li>Full block library</li>
               <li>Full fabric library + upload</li>
               <li>Export all formats</li>
               <li>Photo-to-quilt OCR</li>

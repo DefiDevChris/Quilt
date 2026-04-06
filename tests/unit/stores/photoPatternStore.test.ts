@@ -17,24 +17,10 @@ describe('photoPatternStore', () => {
     usePhotoPatternStore.getState().reset();
   });
 
-  it('initializes with step=upload, isModalOpen=false, sensitivity=1.0', () => {
+  it('initializes with step=upload and default sensitivity', () => {
     const state = usePhotoPatternStore.getState();
     expect(state.step).toBe('upload');
-    expect(state.isModalOpen).toBe(false);
     expect(state.sensitivity).toBe(PHOTO_PATTERN_SENSITIVITY_DEFAULT);
-  });
-
-  it('openModal() sets isModalOpen=true', () => {
-    usePhotoPatternStore.getState().openModal();
-    expect(usePhotoPatternStore.getState().isModalOpen).toBe(true);
-  });
-
-  it('closeModal() sets isModalOpen=false', () => {
-    usePhotoPatternStore.getState().openModal();
-    expect(usePhotoPatternStore.getState().isModalOpen).toBe(true);
-
-    usePhotoPatternStore.getState().closeModal();
-    expect(usePhotoPatternStore.getState().isModalOpen).toBe(false);
   });
 
   it('setStep(correction) changes step', () => {
@@ -60,7 +46,6 @@ describe('photoPatternStore', () => {
   });
 
   it('reset() restores all state to initial values', () => {
-    usePhotoPatternStore.getState().openModal();
     usePhotoPatternStore.getState().setStep('results');
     usePhotoPatternStore.getState().setSensitivity(1.8);
     usePhotoPatternStore.getState().setTargetDimensions(90, 108);
@@ -71,7 +56,6 @@ describe('photoPatternStore', () => {
 
     const state = usePhotoPatternStore.getState();
     expect(state.step).toBe('upload');
-    expect(state.isModalOpen).toBe(false);
     expect(state.sensitivity).toBe(PHOTO_PATTERN_SENSITIVITY_DEFAULT);
     expect(state.targetWidth).toBe(DEFAULT_CANVAS_WIDTH);
     expect(state.targetHeight).toBe(DEFAULT_CANVAS_HEIGHT);

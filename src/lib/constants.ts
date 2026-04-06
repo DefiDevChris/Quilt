@@ -1,7 +1,8 @@
 export const ZOOM_MIN = 0.1;
-export const ZOOM_MAX = 5.0;
-export const ZOOM_DEFAULT = 1.0;
+export const ZOOM_MAX = 0.2;
+export const ZOOM_DEFAULT = 0.15;
 export const ZOOM_STEP = 0.1;
+export const ZOOM_FACTOR = 1.05;
 
 export const GRID_DEFAULT_SIZE = 1;
 export const GRID_DEFAULT_ENABLED = true;
@@ -16,7 +17,7 @@ export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as
 
 export const FREE_BLOCK_LIMIT = 20;
 export const FREE_FABRIC_LIMIT = 10;
-export const FREE_PATTERN_LIST_LIMIT = 6;
+export const FREE_TEMPLATE_LIST_LIMIT = 6;
 
 // Pricing
 export const PRO_PRICE_MONTHLY = 8;
@@ -48,6 +49,33 @@ export const FABRIC_IMAGE_MAX_SIZE = 2048;
 
 export const S3_UPLOAD_EXPIRY_SECONDS = 300;
 
+// ── UI Colors & Design System ──
+
+export const GRID_LINE_COLOR = '#E5E2DD';
+
+export const DEFAULT_QUILT_PALETTE = [
+  '#D4883C',
+  '#8B4513',
+  '#F5DEB3',
+  '#2E4057',
+  '#7B3F00',
+  '#A0522D',
+  '#DEB887',
+  '#C9B896',
+  '#FFFFFF',
+  '#1A1A2E',
+  '#E07B67',
+  '#4A7C59',
+] as const;
+
+export const PATTERN_PREVIEW_FILL = '#e5e2dd';
+export const PATTERN_PREVIEW_STROKE = '#c0b8ae';
+export const PATTERN_PREVIEW_ACCENT = '#8B7355';
+
+export const WHITE_FILL = '#ffffff';
+export const DEFAULT_TEXT_COLOR = '#383831';
+export const ON_SURFACE_COLOR = '#4a3b32';
+
 export const REFERENCE_IMAGE_DEFAULT_OPACITY = 0.5;
 
 export const TEXT_DEFAULT_FONT_SIZE = 24;
@@ -77,6 +105,33 @@ export const COLOR_FAMILIES = [
   'Gray',
   'Neutral',
   'Multi',
+] as const;
+
+export const FABRIC_MANUFACTURERS = [
+  'Andover Fabrics',
+  'Art Gallery Fabrics',
+  'Basics',
+  'Benartex',
+  'Clothworks',
+  'Free Spirit',
+  'Michael Miller Fabrics',
+  'Moda Fabrics',
+  'Northcott',
+  'Paintbrush Studio Fabrics',
+  'Riley Blake Designs',
+  'RJR Fabrics',
+  'Robert Kaufman',
+  'Spoonflower',
+  'Windham Fabrics',
+] as const;
+
+export const FABRIC_VALUES = ['Light', 'Medium', 'Dark'] as const;
+
+export const FABRIC_SORT_OPTIONS = [
+  { value: 'name', label: 'Name A-Z' },
+  { value: 'manufacturer', label: 'Brand' },
+  { value: 'colorFamily', label: 'Color' },
+  { value: 'value', label: 'Value' },
 ] as const;
 
 // Phase 16: Onboarding & Photo features
@@ -112,8 +167,8 @@ export const COMMUNITY_CATEGORIES = [
   'general',
 ] as const;
 
-export const PATTERN_PAGINATION_DEFAULT_LIMIT = 24;
-export const PATTERN_PAGINATION_MAX_LIMIT = 50;
+export const TEMPLATE_PAGINATION_DEFAULT_LIMIT = 24;
+export const TEMPLATE_PAGINATION_MAX_LIMIT = 50;
 export const SKILL_LEVELS = ['beginner', 'confident-beginner', 'intermediate', 'advanced'] as const;
 export const SKILL_LEVEL_LABELS: Record<string, string> = {
   beginner: 'Beginner',

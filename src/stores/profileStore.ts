@@ -30,6 +30,9 @@ interface MemberProfile {
   isPro: boolean;
   privacyMode: 'public' | 'private';
   createdAt: string;
+  followerCount: number;
+  followingCount: number;
+  isFollowedByCurrentUser: boolean;
 }
 
 interface PaginationInfo {

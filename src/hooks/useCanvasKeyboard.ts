@@ -9,6 +9,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
+import { ZOOM_FACTOR } from '@/lib/constants';
 
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -61,6 +62,20 @@ export function useCanvasKeyboard() {
                 // Error handling is done in saveProject
               });
           }
+          return;
+        }
+
+        if (isCtrl && (e.key === '=' || e.key === '+')) {
+          e.preventDefault();
+          const { zoom, zoomAndCenter } = useCanvasStore.getState();
+          zoomAndCenter(zoom * ZOOM_FACTOR);
+          return;
+        }
+
+        if (isCtrl && e.key === '-') {
+          e.preventDefault();
+          const { zoom, zoomAndCenter } = useCanvasStore.getState();
+          zoomAndCenter(zoom / ZOOM_FACTOR);
           return;
         }
 

@@ -2,160 +2,158 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { useCommunityStore } from '@/stores/communityStore';
-import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
-import { Heart, MessageCircle, Share2, Loader2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
 import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
-import { ReportModal } from './ReportModal';
 
-// We now import CommunityPost from the store to ensure type matching
-import type { CommunityPost } from '@/stores/communityStore';
+interface CommunityPost {
+  id: string;
+  title: string;
+  description: string | null;
+  thumbnailUrl: string;
+  likeCount: number;
+  commentCount: number;
+  category: string;
+  createdAt: string;
+  creatorName: string;
+  creatorUsername: string | null;
+  creatorAvatarUrl: string | null;
+  isLikedByUser: boolean;
+  isBookmarkedByUser: boolean;
+  templateId: string | null;
+}
 
-export function FeedContent() {
+interface FeedContentProps {
+  sort?: 'newest' | 'popular';
+  search?: string;
+  category?: string;
+}
+
+export function FeedContent({ sort = 'newest', search = '', category }: FeedContentProps) {
   const user = useAuthStore((s) => s.user);
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Use community store for state
-  const { posts, isLoading, error, fetchPosts, loadMore, hasNextPage, reset } = useCommunityStore();
+  const fetchPosts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      params.set('tab', 'discover');
+      params.set('sort', sort);
+      params.set('page', '1');
+      params.set('limit', '24');
+      if (search) params.set('search', search);
+      if (category) params.set('category', category);
 
-  // Setup intersection observer for infinite scroll
-  const { ref, inView } = useInView({
-    threshold: 0,
-    rootMargin: '400px',
-  });
+      const res = await fetch(`/api/community?${params.toString()}`);
+      const json = await res.json();
 
-  useEffect(() => {
-    // Initial fetch
-    fetchPosts();
-    return () => reset();
-  }, [fetchPosts, reset]);
+      if (!res.ok) {
+        throw new Error(json.error || 'Failed to load posts');
+      }
 
-  useEffect(() => {
-    // Load more when scrolled to bottom
-    if (inView && !isLoading && hasNextPage) {
-      loadMore();
+      setPosts(json.data?.posts || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load community feed');
+    } finally {
+      setLoading(false);
     }
-  }, [inView, isLoading, hasNextPage, loadMore]);
+  }, [sort, search, category]);
 
-  const handlePostCreated = useCallback(() => {
-    // Refresh feed when a new post is created
-    reset();
+  useEffect(() => {
     fetchPosts();
-  }, [reset, fetchPosts]);
+  }, [fetchPosts]);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
-      {/* Create Post Composer */}
-      <CreatePostComposer onSuccess={handlePostCreated} />
+    <div className="space-y-5">
+      <CreatePostComposer onSuccess={fetchPosts} />
 
-      {/* Initial Loading State */}
-      {isLoading && posts.length === 0 && (
-        <div className="space-y-8">
+      {/* Loading */}
+      {loading && (
+        <div className="space-y-5">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-panel rounded-[2rem] p-6 animate-pulse">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-white/50" />
-                <div className="space-y-2">
-                  <div className="h-4 bg-white/50 rounded-full w-32" />
-                  <div className="h-3 bg-white/50 rounded-full w-20" />
+            <div key={i} className="glass-panel rounded-2xl overflow-hidden animate-pulse">
+              <div className="flex items-center gap-3 p-4">
+                <div className="w-10 h-10 rounded-full bg-primary-container/40" />
+                <div className="space-y-1.5">
+                  <div className="h-3.5 bg-primary-container/30 rounded w-28" />
+                  <div className="h-3 bg-primary-container/20 rounded w-16" />
                 </div>
               </div>
-              <div className="h-64 bg-white/50 rounded-2xl mb-4" />
+              <div className="h-72 bg-primary-container/20" />
+              <div className="p-4 space-y-2">
+                <div className="h-4 bg-primary-container/30 rounded w-24" />
+                <div className="h-3 bg-primary-container/20 rounded w-48" />
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Error State */}
-      {!isLoading && error && posts.length === 0 && (
-        <div className="glass-panel rounded-[2rem] p-10 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-              />
-            </svg>
-          </div>
-          <p className="text-secondary mb-4 font-medium">{error}</p>
-          <button onClick={() => fetchPosts()} className="btn-primary-sm">
+      {/* Error */}
+      {!loading && error && (
+        <div className="glass-panel rounded-2xl p-10 text-center">
+          <p className="text-secondary text-sm mb-4">{error}</p>
+          <button
+            onClick={fetchPosts}
+            className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-elevation-1"
+          >
             Retry
           </button>
         </div>
       )}
 
-      {/* Empty State */}
-      {!isLoading && !error && posts.length === 0 && (
-        <div className="glass-panel rounded-[2rem] p-10 text-center">
-          <div className="w-24 h-24 mx-auto mb-6">
+      {/* Empty */}
+      {!loading && !error && posts.length === 0 && (
+        <div className="glass-panel rounded-2xl p-10 text-center">
+          <div className="w-16 h-16 mx-auto mb-4">
             <Mascot pose="sitting" size="lg" />
           </div>
-          <p className="text-xl font-bold text-on-surface mb-2">No designs yet</p>
-          <p className="text-secondary mb-6 font-medium">Be the first to share your quilt!</p>
-          {user && (
-            <Link href="/dashboard" className="btn-primary-sm inline-flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              Share Your Design
-            </Link>
+          {search || category ? (
+            <>
+              <p className="text-base font-semibold text-on-surface mb-1">No matching posts</p>
+              <p className="text-secondary text-sm">Try a different search or category</p>
+            </>
+          ) : (
+            <>
+              <p className="text-base font-semibold text-on-surface mb-1">No designs yet</p>
+              <p className="text-secondary text-sm mb-6">Be the first to share your quilt!</p>
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="btn-primary-sm gap-2"
+                >
+                  Share Your Design
+                </Link>
+              )}
+            </>
           )}
         </div>
       )}
 
       {/* Posts */}
-      {posts.length > 0 && (
-        <div className="space-y-6">
+      {!loading && !error && posts.length > 0 && (
+        <div className="space-y-5">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
-
-          {/* Infinite Scroll trigger and Loading indicator */}
-          {hasNextPage && (
-            <div ref={ref} className="py-8 flex justify-center">
-              {isLoading && (
-                <div className="flex items-center gap-2 text-secondary">
-                  <Loader2 className="animate-spin" size={20} />
-                  <span className="font-medium text-sm">Loading more designs...</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {!isLoading && !hasNextPage && posts.length > 0 && (
-            <div className="py-8 text-center text-secondary font-medium">
-              You&apos;ve reached the end of the feed!
-            </div>
-          )}
         </div>
       )}
     </div>
   );
 }
 
-function PostCard({ post }: { post: CommunityPost & { templateId?: string | null } }) {
+function PostCard({ post }: { post: CommunityPost }) {
   const { open } = useSocialQuickView();
-  const user = useAuthStore((s) => s.user);
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [showReport, setShowReport] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -175,7 +173,6 @@ function PostCard({ post }: { post: CommunityPost & { templateId?: string | null
     e.preventDefault();
     e.stopPropagation();
 
-    // If post has a template, open template modal instead
     if (post.templateId) {
       setShowTemplateModal(true);
       return;
@@ -197,114 +194,88 @@ function PostCard({ post }: { post: CommunityPost & { templateId?: string | null
     });
   };
 
-  const timeAgo = (date: string) => formatRelativeTime(date);
-
-  const authorHandle =
-    post.creatorUsername || `@${post.creatorName.toLowerCase().replace(/\s/g, '')}`;
-
   return (
-    <article className="glass-panel feed-post-hover rounded-[1.5rem] p-6">
-      <div className="flex items-center justify-between mb-3">
-        <Link href={`/socialthreads/${post.id}`} className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-full border-2 border-white bg-primary-golden/10 flex items-center justify-center shadow-elevation-1">
-            <span className="text-sm font-bold text-primary-golden">
+    <article className="glass-panel rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        <Link
+          href={
+            post.creatorUsername ? `/members/${post.creatorUsername}` : `/socialthreads/${post.id}`
+          }
+          className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0 overflow-hidden"
+        >
+          {post.creatorAvatarUrl ? (
+            <img
+              src={post.creatorAvatarUrl}
+              alt={post.creatorName}
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <span className="text-sm font-bold text-primary-dark">
               {post.creatorName.charAt(0).toUpperCase()}
             </span>
-          </div>
-          <div>
-            <h4 className="font-bold text-on-surface text-base group-hover:text-primary transition-colors">
-              {post.creatorName}
-            </h4>
-            <p className="text-xs text-secondary font-medium">
-              {authorHandle} • {timeAgo(post.createdAt)}
-            </p>
-          </div>
+          )}
         </Link>
-        {user && (
-          <button
-            type="button"
-            onClick={() => setShowReport(true)}
-            className="p-1.5 text-secondary hover:text-on-surface transition-colors rounded-lg"
-            title="Report post"
+        <div className="min-w-0 flex-1">
+          <Link
+            href={`/socialthreads/${post.id}`}
+            className="text-sm font-semibold text-on-surface hover:text-primary transition-colors truncate block"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-4 h-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-              />
-            </svg>
-          </button>
-        )}
+            {post.creatorName}
+          </Link>
+          <p className="text-label-sm text-secondary">
+            {post.creatorUsername && <span className="mr-1.5">@{post.creatorUsername}</span>}
+            <span>{formatRelativeTime(post.createdAt)}</span>
+          </p>
+        </div>
       </div>
 
-      <p className="text-on-surface/80 mb-3 text-body-lg leading-relaxed">
-        {post.description || post.title}
-      </p>
+      {/* Description above image */}
+      {(post.description || post.title) && (
+        <div className="px-4 pb-3">
+          <p className="text-sm text-on-surface">{post.description || post.title}</p>
+        </div>
+      )}
 
-      {/* Clicking the image opens the quick-view modal */}
-      {post.thumbnailUrl && !post.projectId && (
-        <button
-          onClick={openModal}
-          className="w-full rounded-2xl overflow-hidden shadow-elevation-1 border border-white/50 mb-3 block cursor-zoom-in"
-        >
+      {/* Image */}
+      {post.thumbnailUrl && (
+        <button onClick={openModal} className="w-full cursor-pointer block">
           <img
             src={post.thumbnailUrl}
             alt={post.title}
-            className="w-full h-auto max-h-96 object-cover"
+            className="w-full h-auto max-h-[500px] object-cover"
           />
         </button>
       )}
 
-      {/* Attached project read-only preview */}
-      {post.projectId && post.projectName && (
-        <Link
-          href={`/studio/${post.projectId}`}
-          className="block mb-4 rounded-xl overflow-hidden border border-white/50 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow"
-        >
-          <div className="aspect-video bg-background flex items-center justify-center overflow-hidden">
-            {post.projectThumbnailUrl || post.thumbnailUrl ? (
-              <img
-                src={post.projectThumbnailUrl || post.thumbnailUrl}
-                alt={post.projectName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-secondary text-sm">No preview</span>
-            )}
-          </div>
-          <div className="px-3 py-2 bg-surface-container">
-            <p className="text-sm font-medium text-on-surface truncate">{post.projectName}</p>
-          </div>
-        </Link>
-      )}
-
-      <div className="flex gap-2 border-t border-white/40 pt-4">
+      {/* Actions row — evenly spaced like reference */}
+      <div className="px-4 py-3 flex items-center border-t border-white/40">
         <button
           onClick={handleLike}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${liked ? 'text-primary bg-primary/10' : 'text-secondary hover:bg-white/50'}`}
+          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${
+            liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
+          }`}
         >
-          <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
-          {likeCount}
+          <Heart size={18} fill={liked ? 'currentColor' : 'none'} strokeWidth={1.5} />
+          {likeCount > 0 && <span className="text-sm font-medium">{likeCount}</span>}
         </button>
+
         <button
           onClick={openModal}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
+          className="flex items-center gap-1.5 flex-1 justify-center text-secondary hover:text-on-surface transition-colors"
         >
-          <MessageCircle size={20} /> {post.commentCount}
+          <MessageCircle size={18} strokeWidth={1.5} />
+          {post.commentCount > 0 && (
+            <span className="text-sm font-medium">{post.commentCount}</span>
+          )}
         </button>
+
         <Link
           href={`/socialthreads/${post.id}`}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
+          className="flex items-center gap-1.5 flex-1 justify-center text-secondary hover:text-on-surface transition-colors"
         >
-          <Share2 size={20} /> Full Post
+          <Share2 size={18} strokeWidth={1.5} />
+          <span className="text-sm font-medium">Share</span>
         </Link>
       </div>
 
@@ -314,7 +285,6 @@ function PostCard({ post }: { post: CommunityPost & { templateId?: string | null
           onClose={() => setShowTemplateModal(false)}
         />
       )}
-      {showReport && <ReportModal postId={post.id} onClose={() => setShowReport(false)} />}
     </article>
   );
 }

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: `%s | ${APP_NAME}`,
   },
   description:
-    'A modern, browser-based quilt design studio with a growing block library, fabric visualization, and 1:1 PDF pattern export. Sign up for free.',
+    'A modern, browser-based quilt design studio with a growing block library, fabric visualization, and 1:1 PDF pattern export. Free to start.',
   metadataBase: new URL(APP_URL),
   openGraph: {
     title: `${APP_NAME} — Design Quilts in Your Browser`,

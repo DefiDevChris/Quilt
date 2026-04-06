@@ -2,7 +2,7 @@
 
 import { useCanvasStore, type WorktableType, type ToolType } from '@/stores/canvasStore';
 import { performUndo, performRedo } from '@/lib/canvas-history';
-import { ZOOM_STEP } from '@/lib/constants';
+import { ZOOM_FACTOR } from '@/lib/constants';
 
 interface FloatingTool {
   id: string;
@@ -157,24 +157,15 @@ export function FloatingToolbar() {
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const undoDepth = useCanvasStore((s) => s.undoStack.length);
   const zoom = useCanvasStore((s) => s.zoom);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
   const quiltTools = useQuiltFloatingTools();
 
-  const applyZoom = (newZoom: number) => {
-    useCanvasStore.getState().setZoom(newZoom);
-    if (!fabricCanvas) return;
-    const centerX = fabricCanvas.width! / 2;
-    const centerY = fabricCanvas.height! / 2;
-    fabricCanvas.zoomToPoint({ x: centerX, y: centerY } as never, newZoom);
-    fabricCanvas.renderAll();
-  };
-
-  const handleZoomIn = () => applyZoom(zoom + ZOOM_STEP);
-  const handleZoomOut = () => applyZoom(zoom - ZOOM_STEP);
+  const handleZoomIn = () => useCanvasStore.getState().zoomAndCenter(zoom * ZOOM_FACTOR);
+  const handleZoomOut = () => useCanvasStore.getState().zoomAndCenter(zoom / ZOOM_FACTOR);
 
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
+    pattern: [],
     block: BLOCK_TOOLS,
     image: [],
     print: [],

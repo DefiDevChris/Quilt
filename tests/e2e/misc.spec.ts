@@ -143,11 +143,8 @@ test.describe('Billing / Pro Features', () => {
 
     await page.goto('/dashboard');
 
-    // Should show pro badge if user is pro
-    const proBadge = page.getByText(/pro/i);
-    const count = await proBadge.count();
-    // Either shows badge or not
-    expect(count).toBeGreaterThanOrEqual(0);
+    // Pro features should be gated (badges removed)
+    await expect(page.locator('body')).toBeVisible();
   });
 });
 

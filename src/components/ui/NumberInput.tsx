@@ -45,7 +45,7 @@ export function NumberInput({
       <label className="text-label-sm font-medium text-on-surface/80 uppercase tracking-wider">
         {label}
       </label>
-      <div className="flex items-center bg-surface-container rounded-md h-[34px] border border-outline-variant/20 focus-within:border-primary/40 transition-colors">
+      <div className="flex items-center bg-surface-container rounded-md h-[34px] focus-within:ring-1 focus-within:ring-primary/40 transition-colors">
         <input
           type="text"
           value={localValue}
@@ -56,10 +56,8 @@ export function NumberInput({
           }}
           className="flex-1 bg-transparent font-mono text-body-md text-on-surface px-2.5 outline-none min-w-0"
         />
-        {suffix && (
-          <span className="text-label-sm text-on-surface/55 pr-2 font-mono">{suffix}</span>
-        )}
-        <div className="flex flex-col border-l border-outline-variant/20">
+        {suffix && <span className="text-label-sm text-on-surface/55 pr-2 font-mono">{suffix}</span>}
+        <div className="flex flex-col">
           <button
             type="button"
             onClick={increment}

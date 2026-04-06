@@ -11,8 +11,8 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 
-export const patternTemplates = pgTable(
-  'pattern_templates',
+export const quiltTemplates = pgTable(
+  'quilt_templates',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     slug: varchar('slug', { length: 255 }).notNull().unique(),
@@ -24,7 +24,7 @@ export const patternTemplates = pgTable(
     blockCount: integer('blockCount'),
     fabricCount: integer('fabricCount'),
     thumbnailUrl: text('thumbnailUrl'),
-    patternData: jsonb('patternData').notNull(),
+    templateData: jsonb('templateData').notNull(),
     tags: text('tags').array().notNull().default([]),
     importCount: integer('importCount').notNull().default(0),
     isPublished: boolean('isPublished').notNull().default(true),
@@ -35,7 +35,7 @@ export const patternTemplates = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
-    index('idx_pattern_templates_skillLevel').on(table.skillLevel),
-    index('idx_pattern_templates_isPublished').on(table.isPublished),
+    index('idx_quilt_templates_skillLevel').on(table.skillLevel),
+    index('idx_quilt_templates_isPublished').on(table.isPublished),
   ]
 );

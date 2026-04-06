@@ -1,100 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect x="0.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="0.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="20.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="40.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="60.0" y="0.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="120.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="0.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="20.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="40.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="180.0" y="0.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="240.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="0.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="0.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="20.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="20.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="40.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="40.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="60.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="60.0" y="60.0" width="60.0" height="60.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="120.0" y="60.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="180.0" y="60.0" width="60.0" height="60.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="240.0" y="60.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="0.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="120.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="140.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="160.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="60.0" y="120.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="120.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="120.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="140.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="160.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="180.0" y="120.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="240.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="120.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="120.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="140.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="140.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="160.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="160.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="180.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="60.0" y="180.0" width="60.0" height="60.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="120.0" y="180.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="180.0" y="180.0" width="60.0" height="60.0" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="240.0" y="180.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="0.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="240.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="260.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="0.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="20.0" y="280.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="40.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="60.0" y="240.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="120.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="240.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="260.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="120.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="140.0" y="280.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="160.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="180.0" y="240.0" width="60.0" height="60.0" fill="#E0E0E0" stroke="#333" stroke-width="1"/>
-  <rect x="240.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="240.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="240.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="260.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="260.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="240.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
-  <rect x="260.0" y="280.0" width="20.0" height="20.0" fill="#B0B0B0" stroke="#333" stroke-width="0.5"/>
-  <rect x="280.0" y="280.0" width="20.0" height="20.0" fill="#D0D0D0" stroke="#333" stroke-width="0.5"/>
+  <!-- Row 0: D L D L D -->
+  <rect x="0" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="60" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="0" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Row 1: L L L L L -->
+  <rect x="0" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="60" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Row 2: D L D L D -->
+  <rect x="0" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="60" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="180" y="120" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="120" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Row 3: L L L L L -->
+  <rect x="0" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="60" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="180" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="180" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Row 4: D L D L D -->
+  <rect x="0" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="60" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="120" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="180" y="240" width="60" height="60" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="240" y="240" width="60" height="60" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
 </svg>

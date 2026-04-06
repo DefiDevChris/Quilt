@@ -3,36 +3,27 @@ import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { projectTemplates } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  notFoundResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
+import { getRequiredSession, unauthorizedResponse, notFoundResponse, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 
 const updateTemplateSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   description: z.string().optional(),
   unitSystem: z.enum(['imperial', 'metric']).optional(),
-  gridSettings: z
-    .object({
-      enabled: z.boolean(),
-      size: z.number(),
-      snapToGrid: z.boolean(),
-    })
-    .optional(),
+  gridSettings: z.object({
+    enabled: z.boolean(),
+    size: z.number(),
+    snapToGrid: z.boolean(),
+  }).optional(),
   canvasWidth: z.number().positive().optional(),
   canvasHeight: z.number().positive().optional(),
 });
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
-
-  const rl = await checkRateLimit(`project-tpl:${session.user.id}`, API_RATE_LIMITS.templates);
-  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const { id } = await params;
 
@@ -53,15 +44,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
-
-  const rl = await checkRateLimit(
-    `project-tpl-update:${session.user.id}`,
-    API_RATE_LIMITS.templates
-  );
-  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const { id } = await params;
 
@@ -95,12 +83,6 @@ export async function DELETE(
 ) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
-
-  const rl = await checkRateLimit(
-    `project-tpl-delete:${session.user.id}`,
-    API_RATE_LIMITS.templates
-  );
-  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const { id } = await params;
 

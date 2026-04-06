@@ -45,63 +45,56 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Ambient background orbs for glassmorphism depth */}
-      <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
-        <div className="absolute top-[-15%] right-[-10%] w-[45vw] h-[45vw] bg-primary-container/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[35vw] h-[35vw] bg-primary/20 rounded-full blur-[100px]" />
-        <div className="absolute top-[40%] left-[20%] w-[25vw] h-[25vw] bg-white/50 rounded-full blur-[80px]" />
-      </div>
+    <div
+      className="min-h-screen relative"
+      style={{ background: "url('/background.png') center top / cover no-repeat fixed, #fafafa" }}
+    >
       <nav
         aria-label="Main navigation"
-        className={`sticky top-0 z-40 h-14 backdrop-blur-[28px] px-4 flex items-center justify-between transition-all duration-300 border-b ${
-          scrolled ? 'glass-card' : 'bg-surface/80 border-transparent'
+        className={`sticky top-0 z-40 backdrop-blur-xl px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${
+          scrolled
+            ? 'bg-white/95 border-outline-variant shadow-elevation-1'
+            : 'bg-white/95 border-transparent'
         }`}
       >
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
           <Image
             src="/logo.png"
             alt="QuiltCorgi Logo"
-            width={32}
-            height={32}
-            className="object-contain drop-shadow-elevation-1"
+            width={52}
+            height={52}
+            className="object-contain w-[52px] h-[52px]"
           />
           <span
-            className="text-xl font-extrabold text-on-surface"
+            className="text-[28px] font-bold text-on-surface tracking-tight"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             QuiltCorgi
           </span>
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6">
           <Link
             href="/dashboard"
-            className={`text-label-lg transition-colors ${
-              isActive('/dashboard')
-                ? 'text-on-surface font-semibold'
-                : 'text-secondary hover:text-on-surface'
+            className={`font-medium transition-colors ${
+              isActive('/dashboard') ? 'text-on-surface' : 'text-secondary hover:text-primary'
             }`}
           >
             Dashboard
           </Link>
           <Link
             href="/socialthreads"
-            className={`text-label-lg transition-colors ${
-              isActive('/socialthreads')
-                ? 'text-on-surface font-semibold'
-                : 'text-secondary hover:text-on-surface'
+            className={`font-medium transition-colors ${
+              isActive('/socialthreads') ? 'text-on-surface' : 'text-secondary hover:text-primary'
             }`}
           >
             Social Threads
           </Link>
           {isAuthenticated && (
             <Link
-              href="/socialthreads"
-              className={`text-label-lg transition-colors ${
-                isActive('/socialthreads')
-                  ? 'text-on-surface font-semibold'
-                  : 'text-secondary hover:text-on-surface'
+              href="/profile"
+              className={`font-medium transition-colors ${
+                isActive('/profile') ? 'text-on-surface' : 'text-secondary hover:text-primary'
               }`}
             >
               Profile
@@ -113,23 +106,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isAuthenticated ? (
             <>
               {user?.role === 'free' && (
-                <div className="flex items-center gap-2 mr-2">
-                  <span className="text-xs font-medium text-primary border border-primary/30 rounded-full px-2.5 py-0.5 hidden sm:inline-block">
-                    Free
-                  </span>
-                  <button
-                    onClick={() => setShowProUpgrade(true)}
-                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-golden px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
-                  >
-                    <Sparkles size={14} className="text-white" />
-                    Upgrade
-                  </button>
-                </div>
-              )}
-              {(user?.role === 'pro' || user?.role === 'admin') && (
-                <span className="text-xs font-medium text-primary bg-primary-container rounded-full px-2.5 py-0.5 hidden sm:inline-block">
-                  Pro
-                </span>
+                <button
+                  onClick={() => setShowProUpgrade(true)}
+                  className="btn-primary-xs gap-1.5 mr-2"
+                >
+                  <Sparkles size={14} className="text-white" />
+                  Upgrade
+                </button>
               )}
 
               <div className="relative">
@@ -151,10 +134,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     alt={user.name}
                     width={32}
                     height={32}
-                    className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-orange-300 transition-all"
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary transition-all"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-orange-300 transition-all">
+                  <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-primary transition-all">
                     <Image
                       src="/mascots&avatars/corgi1.png"
                       alt="Default Avatar"
@@ -202,15 +185,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               >
                 Sign In
               </Link>
-              <Link href="/auth/signup" className="btn-primary-xs">
-                Sign Up
+              <Link
+                href="/auth/signup"
+                className="bg-primary text-primary-on px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-colors"
+              >
+                Start Designing
               </Link>
             </div>
           )}
         </div>
       </nav>
 
-      <main id="main-content" className="relative z-10 p-6">
+      <main id="main-content" className="relative z-10 p-6 max-w-7xl mx-auto">
         {children}
       </main>
 

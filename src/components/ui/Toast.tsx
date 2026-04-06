@@ -78,7 +78,7 @@ function getTypeColor(type: ToastType): string {
     case 'error':
       return 'text-error';
     case 'warning':
-      return 'text-amber-500';
+      return 'text-warning';
     case 'info':
       return 'text-primary';
   }

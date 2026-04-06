@@ -137,21 +137,6 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
               <span className="text-on-surface">{block.subcategory}</span>
             </div>
           )}
-          {block.tags.length > 0 && (
-            <div className="pt-1">
-              <span className="text-secondary text-xs">Tags</span>
-              <div className="mt-1 flex flex-wrap gap-1">
-                {block.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-background px-2 py-0.5 text-caption text-secondary"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

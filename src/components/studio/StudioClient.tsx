@@ -21,12 +21,14 @@ import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
+import { LayoutOverlayPanel } from '@/components/studio/LayoutOverlayPanel';
+import { PatternCreatorPanel } from '@/components/studio/PatternCreatorPanel';
 
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
-import { ExportOptionsDialog } from '@/components/export/ExportOptionsDialog';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
+import { PhotoToPatternPromo } from '@/components/photo-pattern/PhotoToPatternPromo';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useFabricDrop } from '@/hooks/useFabricPattern';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
@@ -34,23 +36,25 @@ import { usePhotoPatternImport } from '@/hooks/usePhotoPatternImport';
 import { saveProject } from '@/lib/save-project';
 
 import { HelpPanel } from '@/components/studio/HelpPanel';
-import { KeyboardShortcutsModal } from '@/components/studio/KeyboardShortcutsModal';
-import { TourOverlay } from '@/components/onboarding/TourOverlay';
-import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { PieceInspectorPanel } from '@/components/studio/PieceInspectorPanel';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { QuiltDimensionsPanel } from '@/components/studio/QuiltDimensionsPanel';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
 
+import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
+
+import { BlockPlacementPanel } from '@/components/studio/panels/BlockPlacementPanel';
+import { BorderPanel } from '@/components/studio/panels/BorderPanel';
+import { HedgingPanel } from '@/components/studio/panels/HedgingPanel';
+import { SashingPanel } from '@/components/studio/panels/SashingPanel';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
@@ -193,15 +197,16 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [isDraftingOpen, setIsDraftingOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
+  const [isLayoutOverlayOpen, setIsLayoutOverlayOpen] = useState(false);
 
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
-  const [isExportOptionsOpen, setIsExportOptionsOpen] = useState(false);
+  const [isPhotoPromoOpen, setIsPhotoPromoOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isGridDimensionsOpen, setIsGridDimensionsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
+  const [isReferenceImageOpen, setIsReferenceImageOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
   const isPro = useAuthStore((s) => s.isPro);
   const { handleDragStart, handleDragOver, handleDrop } = useBlockDrop();
@@ -212,21 +217,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
   // Cleanup expired temp projects on mount
   useEffect(() => {
     cleanupExpiredProjects();
-  }, []);
-
-  // ? key opens keyboard shortcuts modal
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (
-        e.key === '?' &&
-        !['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)
-      ) {
-        e.preventDefault();
-        setIsShortcutsOpen((prev) => !prev);
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Migrate temp project to server when user upgrades to Pro
@@ -260,11 +250,11 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const isInspectorOpen = usePieceInspectorStore((s) => s.isOpen);
+  const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
+  const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
   useYardageCalculation();
   usePhotoPatternImport();
-
-  const { shouldShowTour, tourActive, startTour, completeTour, dismissTour } = useOnboardingTour();
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
@@ -384,12 +374,14 @@ export function StudioClient({ projectId }: StudioClientProps) {
       />
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Left side: PRINT shows options panel, others show tool rail */}
+        {/* Left side: mode-dependent panels */}
         {activeWorktable === 'print' ? (
           <PrintOptionsPanel
             onOpenPdfExport={() => setIsPdfExportOpen(true)}
             onOpenImageExport={() => setIsImageExportOpen(true)}
           />
+        ) : activeWorktable === 'pattern' ? (
+          <PatternCreatorPanel />
         ) : (
           <Toolbar
             onOpenLayoutSettings={() => setIsLayoutSettingsOpen(true)}
@@ -397,52 +389,100 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenImageExport={() =>
               isPro ? setIsImageExportOpen(true) : setProUpgradeFeature('Image Export')
             }
-            onOpenPhotoToPattern={() =>
-              isPro
-                ? usePhotoPatternStore.getState().openModal()
-                : setProUpgradeFeature('Photo to Pattern')
-            }
+            onOpenPhotoToPattern={() => setIsPhotoPromoOpen(true)}
             onOpenResize={() => setIsResizeOpen(true)}
+            onOpenReferenceImage={() => setIsReferenceImageOpen(true)}
+            onOpenLayoutOverlay={() => setIsLayoutOverlayOpen(true)}
           />
         )}
 
-        <BlockLibrary
-          onBlockDragStart={handleDragStart}
-          onOpenDrafting={() => setIsDraftingOpen(true)}
-        />
+        {/* Block & Fabric Libraries — visible on worktable and block builder */}
+        {(activeWorktable === 'quilt' || activeWorktable === 'block') && (
+          <>
+            <BlockLibrary
+              onBlockDragStart={handleDragStart}
+              onOpenDrafting={() => setIsDraftingOpen(true)}
+            />
 
-        {/* Fabric Library — visible to all, upload gated to pro */}
-        <FabricLibrary
-          onFabricDragStart={handleFabricDragStart}
-          onOpenUpload={() =>
-            isPro ? setIsFabricUploadOpen(true) : setProUpgradeFeature('Fabric Upload')
-          }
-        />
+            <FabricLibrary
+              onFabricDragStart={handleFabricDragStart}
+              onOpenUpload={() =>
+                isPro ? setIsFabricUploadOpen(true) : setProUpgradeFeature('Fabric Upload')
+              }
+            />
+          </>
+        )}
 
-        {/* Canvas area */}
-        <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
-          <CanvasErrorBoundary>
-            <div
-              className="flex-1 flex overflow-hidden relative"
-              onDragOver={combinedDragOver}
-              onDrop={combinedDrop}
-            >
-              <CanvasWorkspace project={project} />
+        {/* Pattern builder panels — visible on quilt worktable */}
+        {activeWorktable === 'quilt' && (
+          <>
+            <BlockPlacementPanel />
+            <BorderPanel />
+            <HedgingPanel />
+            <SashingPanel />
+          </>
+        )}
 
-              <FloatingToolbar />
+        {/* Canvas area — splits side-by-side when reference image is shown */}
+        <div className="flex-1 flex overflow-hidden relative" data-tour="canvas">
+          {/* Left: Worktable canvas */}
+          <div
+            className={`flex flex-col overflow-hidden relative ${showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'}`}
+          >
+            <CanvasErrorBoundary>
+              <div
+                className="flex-1 flex overflow-hidden relative"
+                onDragOver={combinedDragOver}
+                onDrop={combinedDrop}
+              >
+                <CanvasWorkspace project={project} />
+                <FloatingToolbar />
+              </div>
+            </CanvasErrorBoundary>
+
+            <ContextMenu />
+            <QuickInfo />
+            <PatternAdjuster />
+
+            <QuiltDimensionsPanel
+              isOpen={isGridDimensionsOpen}
+              onClose={() => setIsGridDimensionsOpen(false)}
+            />
+          </div>
+
+          {/* Right: Reference photo panel */}
+          {showReferencePanel && referenceImageUrl && (
+            <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
+                <span className="text-body-sm font-semibold text-on-surface/60 uppercase tracking-wider">
+                  Reference Photo
+                </span>
+                <button
+                  type="button"
+                  onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
+                  className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
+                  aria-label="Close reference panel"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M3 3L11 11M11 3L3 11"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
+                <img
+                  src={referenceImageUrl}
+                  alt="Original reference photo"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
+                  draggable={false}
+                />
+              </div>
             </div>
-          </CanvasErrorBoundary>
-
-          {/* Context menu & info — available to all */}
-          <ContextMenu />
-          <QuickInfo />
-          <PatternAdjuster />
-
-          {/* Grid & Dimensions Panel (Free tier) */}
-          <QuiltDimensionsPanel
-            isOpen={isGridDimensionsOpen}
-            onClose={() => setIsGridDimensionsOpen(false)}
-          />
+          )}
         </div>
 
         {/* Pro-only production panels — flex siblings so they push the canvas, not cover it */}
@@ -454,8 +494,8 @@ export function StudioClient({ projectId }: StudioClientProps) {
           />
         )}
 
-        {/* Right context panel (hidden for PRINT) */}
-        {activeWorktable !== 'print' && (
+        {/* Right context panel (hidden for PRINT and PATTERN) */}
+        {activeWorktable !== 'print' && activeWorktable !== 'pattern' && (
           <div className="relative">
             <ContextPanel />
             {isInspectorOpen && <PieceInspectorPanel />}
@@ -467,11 +507,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* Block drafting — pro only */}
       {isPro && (
-        <BlockDraftingModal
-          isOpen={isDraftingOpen}
-          onClose={() => setIsDraftingOpen(false)}
-          onSaved={handleBlockSaved}
-        />
+        <CanvasErrorBoundary>
+          <BlockDraftingModal
+            isOpen={isDraftingOpen}
+            onClose={() => setIsDraftingOpen(false)}
+            onSaved={handleBlockSaved}
+          />
+        </CanvasErrorBoundary>
       )}
 
       {/* Pro-only dialogs — only rendered for pro users */}
@@ -485,12 +527,18 @@ export function StudioClient({ projectId }: StudioClientProps) {
           {isLayoutSettingsOpen && (
             <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
           )}
+          {isLayoutOverlayOpen && (
+            <LayoutOverlayPanel onClose={() => setIsLayoutOverlayOpen(false)} />
+          )}
 
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
             isOpen={isImageExportOpen}
             onClose={() => setIsImageExportOpen(false)}
           />
+          {isPhotoPromoOpen && (
+            <PhotoToPatternPromo isPro={isPro} onClose={() => setIsPhotoPromoOpen(false)} />
+          )}
         </>
       )}
 
@@ -550,60 +598,20 @@ export function StudioClient({ projectId }: StudioClientProps) {
       {/* Resize quilt dialog */}
       <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />
 
+      {/* Reference image dialog */}
+      <ReferenceImageDialog
+        isOpen={isReferenceImageOpen}
+        onClose={() => setIsReferenceImageOpen(false)}
+      />
+
       {/* Help panel (opened from top bar) */}
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
-
-      {/* Keyboard shortcuts modal (? key) */}
-      <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
-
-      {/* Unified export options dialog */}
-      <ExportOptionsDialog
-        isOpen={isExportOptionsOpen}
-        onClose={() => setIsExportOptionsOpen(false)}
-        onOpenPdfExport={() => setIsPdfExportOpen(true)}
-        onOpenImageExport={() => setIsImageExportOpen(true)}
-      />
 
       {/* History panel (opened from top bar) */}
       <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
-
-      {/* Onboarding: start prompt for new users */}
-      {shouldShowTour && !tourActive && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <div className="bg-surface rounded-xl shadow-elevation-3 p-4 max-w-xs border border-outline-variant/20">
-            <p className="text-sm font-medium text-on-surface mb-1">New here?</p>
-            <p className="text-xs text-secondary mb-3">
-              Take a quick tour to learn your way around the studio.
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={dismissTour}
-                className="px-3 py-1.5 text-xs text-secondary hover:text-on-surface transition-colors"
-              >
-                No thanks
-              </button>
-              <button
-                type="button"
-                onClick={startTour}
-                className="px-4 py-1.5 text-xs font-semibold rounded-md hover:opacity-90 transition-opacity"
-                style={{
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'var(--color-primary-on)',
-                }}
-              >
-                Show me around
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Onboarding: guided tour overlay */}
-      {tourActive && <TourOverlay onComplete={completeTour} onDismiss={dismissTour} />}
     </div>
   );
 }

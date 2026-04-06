@@ -4,8 +4,14 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { PIXELS_PER_INCH } from '@/lib/constants';
-import { computeYardageEstimates, type CanvasShapeData } from '@/lib/yardage-utils';
+import {
+  computeYardageEstimates,
+  calculateBackingYardage,
+  calculateBindingYardage,
+  type CanvasShapeData,
+} from '@/lib/yardage-utils';
 
 function extractShapesFromCanvas(canvas: unknown): CanvasShapeData[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -130,6 +136,10 @@ export function useYardageCalculation() {
   const wof = useYardageStore((s) => s.wof);
   const wasteMargin = useYardageStore((s) => s.wasteMargin);
   const setResults = useYardageStore((s) => s.setResults);
+  const setBackingResult = useYardageStore((s) => s.setBackingResult);
+  const setBindingResult = useYardageStore((s) => s.setBindingResult);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const borders = useLayoutStore((s) => s.borders);
   const recalcTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -150,6 +160,10 @@ export function useYardageCalculation() {
       const allShapes = [...canvasShapes, ...borderShapes];
       const results = computeYardageEstimates(allShapes, PIXELS_PER_INCH, wof, wasteMargin);
       setResults(results);
+
+      // Backing and binding based on finished quilt dimensions
+      setBackingResult(calculateBackingYardage(canvasWidth, canvasHeight, wof));
+      setBindingResult(calculateBindingYardage(canvasWidth, canvasHeight, wof));
     }
 
     // Initial calculation
@@ -175,5 +189,16 @@ export function useYardageCalculation() {
         clearTimeout(recalcTimerRef.current);
       }
     };
-  }, [fabricCanvas, isPanelOpen, wof, wasteMargin, borders, setResults]);
+  }, [
+    fabricCanvas,
+    isPanelOpen,
+    wof,
+    wasteMargin,
+    borders,
+    canvasWidth,
+    canvasHeight,
+    setResults,
+    setBackingResult,
+    setBindingResult,
+  ]);
 }

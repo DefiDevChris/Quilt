@@ -9,7 +9,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 
-import { ZOOM_STEP } from '@/lib/constants';
+import { ZOOM_FACTOR } from '@/lib/constants';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 
 interface HamburgerDrawerProps {
@@ -102,17 +102,17 @@ export function HamburgerDrawer({
   }, [fabricCanvas]);
 
   const handleZoomIn = useCallback(() => {
-    const { zoom, setZoom } = useCanvasStore.getState();
-    setZoom(zoom + ZOOM_STEP);
+    const { zoom, zoomAndCenter } = useCanvasStore.getState();
+    zoomAndCenter(zoom * ZOOM_FACTOR);
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    const { zoom, setZoom } = useCanvasStore.getState();
-    setZoom(zoom - ZOOM_STEP);
+    const { zoom, zoomAndCenter } = useCanvasStore.getState();
+    zoomAndCenter(zoom / ZOOM_FACTOR);
   }, []);
 
   const handleFitToScreen = useCallback(() => {
-    useCanvasStore.getState().setZoom(1);
+    useCanvasStore.getState().centerAndFitViewport();
   }, []);
 
   const menuGroups: MenuGroup[] = [

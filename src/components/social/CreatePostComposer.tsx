@@ -189,16 +189,17 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
           description="Sign up to share your quilt designs and connect with other quilters."
         />
         <button
+          data-composer-trigger
           onClick={handleOpen}
-          className="w-full glass-panel rounded-[1.5rem] p-4 shadow-elevation-1 hover:shadow-elevation-2 transition-shadow text-left"
+          className="w-full glass-panel rounded-2xl p-4 hover:bg-white/80 transition-all text-left"
         >
-          <div className="flex gap-4 items-center">
-            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1 shrink-0">
-              <span className="text-lg font-bold text-orange-500">
+          <div className="flex gap-3 items-center">
+            <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+              <span className="text-sm font-bold text-primary-dark">
                 {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
               </span>
             </div>
-            <span className="flex-1 bg-white/40 border border-white/50 rounded-2xl px-4 py-3 text-secondary font-medium">
+            <span className="flex-1 text-secondary text-sm">
               Share your latest quilt design...
             </span>
           </div>
@@ -208,10 +209,10 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
   }
 
   return (
-    <div className="glass-panel rounded-[1.5rem] p-4 shadow-elevation-1">
+    <div className="glass-panel rounded-2xl p-4">
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1 shrink-0">
-          <span className="text-sm font-bold text-orange-500">
+        <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+          <span className="text-sm font-bold text-primary-dark">
             {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
           </span>
         </div>
@@ -219,38 +220,21 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
         <div className="flex-1 space-y-3">
           {/* Mode selector */}
           <div className="flex gap-2">
-            <button
-              onClick={() => setMode('text')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                mode === 'text'
-                  ? 'bg-primary text-white'
-                  : 'bg-white/50 text-secondary hover:bg-white/70'
-              }`}
-            >
-              Text
-            </button>
-            <button
-              onClick={() => setMode('image')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                mode === 'image'
-                  ? 'bg-primary text-white'
-                  : 'bg-white/50 text-secondary hover:bg-white/70'
-              }`}
-            >
-              <ImageIcon size={12} className="inline mr-1" />
-              Image
-            </button>
-            <button
-              onClick={() => setMode('project')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                mode === 'project'
-                  ? 'bg-primary text-white'
-                  : 'bg-white/50 text-secondary hover:bg-white/70'
-              }`}
-            >
-              <Link2 size={12} className="inline mr-1" />
-              Project
-            </button>
+            {(['text', 'image', 'project'] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
+                  mode === m
+                    ? 'bg-primary text-white shadow-elevation-1'
+                    : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
+                }`}
+              >
+                {m === 'image' && <ImageIcon size={12} className="inline mr-1" />}
+                {m === 'project' && <Link2 size={12} className="inline mr-1" />}
+                {m}
+              </button>
+            ))}
           </div>
 
           <input
@@ -258,7 +242,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="What's on your mind?"
-            className="w-full bg-transparent border-none text-lg font-bold text-on-surface placeholder:text-secondary focus:outline-none"
+            className="w-full bg-transparent border-none text-base font-semibold text-on-surface placeholder:text-secondary focus:outline-none"
             autoFocus
           />
 
@@ -267,13 +251,12 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Tell us more..."
             rows={3}
-            className="w-full bg-white/30 rounded-xl px-3 py-2 text-on-surface placeholder:text-secondary font-medium resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full bg-white/40 rounded-xl px-3 py-2 text-sm text-on-surface placeholder:text-secondary resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 border border-white/60"
           />
 
           {/* Image mode inputs */}
           {mode === 'image' && (
             <div className="space-y-2">
-              {/* Uploaded image preview */}
               {uploadedImage && (
                 <div className="relative rounded-xl overflow-hidden">
                   <img src={uploadedImage} alt="Uploaded" className="w-full h-48 object-cover" />
@@ -286,51 +269,45 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                 </div>
               )}
 
-              {/* Image URL input */}
               {!uploadedImage && (
-                <div className="flex gap-2">
+                <>
                   <input
                     type="url"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="Or paste an image URL..."
-                    className="flex-1 bg-white/30 rounded-xl px-3 py-2 text-sm text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder="Paste an image URL..."
+                    className="w-full bg-white/40 rounded-xl px-3 py-2 text-sm text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/30 border border-white/60"
                   />
-                </div>
-              )}
-
-              {/* File upload button */}
-              {!uploadedImage && (
-                <div className="flex gap-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    aria-label="Upload images"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 text-sm font-bold text-secondary hover:bg-white/70 transition-colors disabled:opacity-50"
-                  >
-                    {isUploading ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <Upload size={16} />
-                    )}
-                    Upload Image
-                  </button>
-                  <span className="text-xs text-secondary self-center">or paste URL above</span>
-                </div>
+                  <div className="flex gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 text-sm font-semibold text-secondary hover:bg-white/70 transition-colors disabled:opacity-50"
+                    >
+                      {isUploading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Upload size={14} />
+                      )}
+                      Upload
+                    </button>
+                    <span className="text-xs text-secondary self-center">or paste URL above</span>
+                  </div>
+                </>
               )}
             </div>
           )}
 
           {/* Selected project preview */}
           {mode === 'project' && selectedProject && (
-            <div className="flex items-center gap-2 p-2 bg-white/40 rounded-lg">
+            <div className="flex items-center gap-2 p-2 bg-white/40 border border-white/60 rounded-xl">
               {selectedProject.thumbnailUrl ? (
                 <NextImage
                   src={selectedProject.thumbnailUrl}
@@ -340,8 +317,8 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   className="w-10 h-10 rounded object-cover"
                 />
               ) : (
-                <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center">
-                  <span className="text-lg">🧵</span>
+                <div className="w-10 h-10 rounded bg-primary-container/30 flex items-center justify-center">
+                  <span className="text-sm text-secondary">Q</span>
                 </div>
               )}
               <span className="flex-1 text-sm font-medium text-on-surface truncate">
@@ -349,19 +326,19 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
               </span>
               <button
                 onClick={() => setSelectedProject(null)}
-                className="p-1 hover:bg-white/50 rounded"
+                className="p-1 hover:bg-white/50 rounded transition-colors"
               >
-                <X size={16} />
+                <X size={16} className="text-secondary" />
               </button>
             </div>
           )}
 
           {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
-          <div className="flex items-center justify-between pt-2 border-t border-white/30">
+          <div className="flex items-center justify-between pt-3 border-t border-white/40">
             <button
               onClick={handleClose}
-              className="px-4 py-2 text-sm font-bold text-secondary hover:text-on-surface transition-colors"
+              className="px-3 py-1.5 text-sm font-semibold text-secondary hover:text-on-surface transition-colors"
             >
               Cancel
             </button>
@@ -373,9 +350,9 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                     setShowProjectPicker(true);
                     fetchProjects();
                   }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 text-sm font-bold text-secondary hover:bg-white/70 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 text-sm font-semibold text-secondary hover:bg-white/70 transition-colors"
                 >
-                  <Link2 size={16} />
+                  <Link2 size={14} />
                   {selectedProject ? 'Change' : 'Attach Project'}
                 </button>
               )}
@@ -387,10 +364,9 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'image' && !imageUrl && !uploadedImage) ||
                   (mode === 'project' && !selectedProject)
                 }
-                aria-label="Publish post"
-                className="btn-primary-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary-sm gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 Post
               </button>
             </div>
@@ -398,10 +374,10 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
         </div>
       </div>
 
-      {/* Project picker modal */}
+      {/* Project picker */}
       {showProjectPicker && mode === 'project' && (
-        <div className="mt-4 pt-4 border-t border-white/30">
-          <p className="text-sm font-bold text-secondary mb-2">Select a project to share:</p>
+        <div className="mt-4 pt-4 border-t border-white/40">
+          <p className="text-sm font-semibold text-secondary mb-2">Select a project to share:</p>
           {projects.length === 0 ? (
             <p className="text-sm text-secondary">No projects found. Create one in the studio!</p>
           ) : (
@@ -413,9 +389,9 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                     setSelectedProject(project);
                     setShowProjectPicker(false);
                   }}
-                  className={`p-2 rounded-lg text-left transition-colors ${
+                  className={`p-2 rounded-xl text-left transition-colors ${
                     selectedProject?.id === project.id
-                      ? 'bg-primary/20 ring-2 ring-primary'
+                      ? 'bg-primary-container/50 ring-2 ring-primary'
                       : 'bg-white/30 hover:bg-white/50'
                   }`}
                 >
@@ -428,8 +404,8 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                       className="w-full h-16 rounded object-cover mb-1"
                     />
                   ) : (
-                    <div className="w-full h-16 rounded bg-primary/20 flex items-center justify-center mb-1">
-                      <span className="text-xl">🧵</span>
+                    <div className="w-full h-16 rounded bg-primary-container/20 flex items-center justify-center mb-1">
+                      <span className="text-lg text-secondary">Q</span>
                     </div>
                   )}
                   <p className="text-xs font-medium text-on-surface truncate">{project.name}</p>
@@ -439,7 +415,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
           )}
           <button
             onClick={() => setShowProjectPicker(false)}
-            className="mt-2 text-sm text-secondary hover:text-primary"
+            className="mt-2 text-sm text-secondary hover:text-primary transition-colors"
           >
             Close
           </button>

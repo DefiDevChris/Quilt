@@ -128,3 +128,70 @@ export function computeYardageEstimates(
 
   return results.sort((a, b) => b.yardsRequired - a.yardsRequired);
 }
+
+// ── Backing & Binding ─────────────────────────────────────────────
+
+export interface BackingYardageResult {
+  readonly yardsRequired: number;
+  readonly panelsNeeded: number;
+  readonly panelLengthInches: number;
+}
+
+/**
+ * Calculate backing yardage for a quilt.
+ *
+ * Standard practice: backing extends 4" beyond the quilt top on each side (8" total).
+ * For quilts wider than WOF, panels are seamed side-by-side.
+ */
+export function calculateBackingYardage(
+  quiltWidthInches: number,
+  quiltHeightInches: number,
+  wofInches: number,
+  overhangInches: number = 4
+): BackingYardageResult {
+  const backingWidth = quiltWidthInches + overhangInches * 2;
+  const backingHeight = quiltHeightInches + overhangInches * 2;
+
+  // Number of WOF panels needed side-by-side to cover the width
+  const panelsNeeded = Math.ceil(backingWidth / wofInches);
+
+  // Each panel is cut to the backing height
+  const panelLengthInches = backingHeight;
+  const totalLengthInches = panelsNeeded * panelLengthInches;
+  const yardsRequired = Math.ceil((totalLengthInches / INCHES_PER_YARD) * 8) / 8;
+
+  return { yardsRequired, panelsNeeded, panelLengthInches };
+}
+
+export interface BindingYardageResult {
+  readonly yardsRequired: number;
+  readonly stripCount: number;
+  readonly stripWidthInches: number;
+  readonly totalStripLengthInches: number;
+}
+
+/**
+ * Calculate binding yardage from quilt perimeter.
+ *
+ * Standard: 2.5" wide strips cut on grain, joined end-to-end.
+ * Adds 10" for seam joining + mitered corners.
+ */
+export function calculateBindingYardage(
+  quiltWidthInches: number,
+  quiltHeightInches: number,
+  wofInches: number,
+  stripWidthInches: number = 2.5
+): BindingYardageResult {
+  const perimeter = 2 * (quiltWidthInches + quiltHeightInches);
+  const totalStripLengthInches = perimeter + 10; // Extra for joins and corners
+
+  // How many strips from one WOF width
+  const stripsPerWidth = Math.floor(wofInches / stripWidthInches);
+  const stripCount = Math.ceil(totalStripLengthInches / wofInches);
+
+  // Fabric needed: stripCount strips at stripWidth each
+  const fabricLengthInches = Math.ceil(stripCount / stripsPerWidth) * stripWidthInches;
+  const yardsRequired = Math.ceil((fabricLengthInches / INCHES_PER_YARD) * 8) / 8;
+
+  return { yardsRequired, stripCount, stripWidthInches, totalStripLengthInches };
+}

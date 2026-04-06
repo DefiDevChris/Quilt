@@ -4,30 +4,21 @@ import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  Plus,
-  ArrowLeft,
-  BookOpen,
-  LayoutGrid,
-  HeartHandshake,
-  Settings,
-  UserCircle,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { NewProjectDialog } from '@/components/projects/NewProjectDialog';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
-import { PhotoPatternModal } from '@/components/photo-pattern/PhotoPatternModal';
-import { usePhotoPatternStore } from '@/stores/photoPatternStore';
-import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
+import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
+import { PhotoToPatternPromo } from '@/components/photo-pattern/PhotoToPatternPromo';
 
-const PatternLibrary = dynamic(
-  () => import('@/components/patterns/PatternLibrary').then((m) => m.PatternLibrary),
+const TemplateLibrary = dynamic(
+  () => import('@/components/templates/TemplateLibrary').then((m) => m.TemplateLibrary),
   { ssr: false }
 );
 
-type DashboardTab = 'my-quilts' | 'patterns';
+type DashboardTab = 'my-quilts' | 'templates';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -57,47 +48,7 @@ export default function DashboardPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
   const [showProUpgrade, setShowProUpgrade] = useState(false);
-  const { toast } = useToast();
-
-  const openPhotoPattern = usePhotoPatternStore((s) => s.openModal);
-  const photoPatternStep = usePhotoPatternStore((s) => s.step);
-  const isPhotoPatternOpen = usePhotoPatternStore((s) => s.isModalOpen);
-
-  useEffect(() => {
-    if (photoPatternStep !== 'complete' || !isPhotoPatternOpen) return;
-
-    async function createProjectAndNavigate() {
-      try {
-        const date = new Date().toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        });
-        const { targetWidth, targetHeight } = usePhotoPatternStore.getState();
-        const res = await fetch('/api/projects', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: `Photo Import — ${date}`,
-            canvasWidth: targetWidth,
-            canvasHeight: targetHeight,
-          }),
-        });
-        if (!res.ok) throw new Error('Failed to create project');
-        const data = await res.json();
-        window.location.href = `/studio/${data.data.id}`;
-      } catch {
-        toast({
-          type: 'error',
-          title: 'Import failed',
-          description: 'Could not create a project from your photo. Please try again.',
-        });
-        usePhotoPatternStore.getState().setStep('dimensions');
-      }
-    }
-
-    createProjectAndNavigate();
-  }, [photoPatternStep, isPhotoPatternOpen, toast]);
+  const [showPhotoPromo, setShowPhotoPromo] = useState(false);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -120,24 +71,35 @@ export default function DashboardPage() {
   const displayName = user?.name?.split(' ')[0] ?? 'there';
   const greeting = getGreeting();
 
-  /* ── Pattern Library view ────────────────────────────────────────── */
-  if (activeTab === 'patterns') {
+  /* ── Template Library view ────────────────────────────────────────── */
+  if (activeTab === 'templates') {
     return (
       <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
-        <div className="flex items-center gap-4 px-6 py-3.5 border-b border-white/50 bg-white/40 backdrop-blur-xl flex-shrink-0">
+        <div
+          className="flex items-center gap-3 px-6 py-2.5 flex-shrink-0"
+          style={{
+            borderBottom: '1px solid var(--color-outline-variant)',
+            backgroundColor: 'var(--color-surface-container-lowest)',
+          }}
+        >
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="flex items-center gap-2 text-secondary hover:text-on-surface transition-colors"
+            className="inline-flex items-center gap-1.5 text-body-sm font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer"
+            style={{ color: 'var(--color-secondary)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-container)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
           >
-            <ArrowLeft size={16} strokeWidth={2} />
-            <span className="text-sm font-semibold">Dashboard</span>
+            <ArrowLeft size={14} strokeWidth={2.5} />
+            Back to Dashboard
           </button>
-          <div className="w-px h-4 bg-outline-variant/60" />
-          <h1 className="text-on-surface font-bold text-sm">Pattern Library</h1>
         </div>
-        <div className="flex-1 overflow-auto p-6">
-          <PatternLibrary />
+        <div className="flex-1 overflow-auto px-6 py-5">
+          <TemplateLibrary />
         </div>
       </div>
     );
@@ -145,35 +107,30 @@ export default function DashboardPage() {
 
   /* ── Main bento grid ─────────────────────────────────────────────── */
   return (
-    <div className="max-w-6xl mx-auto px-6 relative z-10 w-full h-[calc(100vh-56px)] flex flex-col justify-center overflow-hidden">
-      {/* Greeting */}
-      <div className="mb-3 flex flex-col md:flex-row md:items-end justify-between gap-3 relative z-20 flex-shrink-0">
+    <div className="max-w-5xl mx-auto md:pt-10 md:pb-12 relative z-10 w-full transition-all duration-500">
+      {/* Greeting and Pro Upgrade Button */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-20">
         <div>
-          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-1">
+          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
             {greeting}
           </p>
-          <h1 className="text-on-surface text-3xl font-extrabold tracking-tight flex items-center gap-3">
+          <h1 className="text-on-surface text-4xl font-extrabold tracking-tight">
             Hello, {displayName}
-            {isPro && (
-              <span className="inline-block px-3 py-1 bg-primary/20 text-primary-dark text-xs font-extrabold uppercase tracking-widest rounded-full align-middle">
-                PRO
-              </span>
-            )}
           </h1>
         </div>
 
         {!isPro && !isLoadingAuth && user && (
           <button
             onClick={() => setShowProUpgrade(true)}
-            className="relative overflow-hidden rounded-lg bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-shadow duration-200 hover:shadow-elevation-2"
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-golden p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
           >
-            <div className="flex items-center gap-2.5 rounded-[6px] bg-white/90 px-5 py-2.5 backdrop-blur-sm">
-              <Sparkles size={18} className="text-primary-dark" />
+            <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
+              <Sparkles size={20} className="text-primary-dark" />
               <div className="text-left">
-                <p className="text-sm font-bold text-on-surface leading-none mb-0.5">
+                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">
                   Upgrade to Pro
                 </p>
-                <p className="text-caption font-medium text-secondary leading-none">
+                <p className="text-xs font-medium text-secondary leading-none">
                   Unlock AI & Exports
                 </p>
               </div>
@@ -182,164 +139,304 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-12 auto-rows-min gap-3 relative z-10 flex-1 min-h-0">
-        {/* ── 1. Blank Project — wide left ─────────────────────────── */}
-        <button
-          type="button"
-          onClick={() => setDialogOpen(true)}
-          className="col-span-12 md:col-span-5 rounded-lg p-5 text-left relative overflow-hidden cursor-pointer glass-elevated border-white/60 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
-        >
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm">
-            <Plus size={20} className="text-white" strokeWidth={3} />
-          </div>
-          <div>
-            <p className="text-on-surface font-bold text-lg leading-tight">Blank Project</p>
-            <p className="text-secondary text-body-sm mt-0.5">Start from scratch</p>
-          </div>
-        </button>
+      {/* Quick Start Workflows */}
+      <QuickStartWorkflows
+        onPhotoToPattern={() => setShowPhotoPromo(true)}
+        onStartFromTemplate={() => setActiveTab('templates')}
+        onBlankProject={() => setDialogOpen(true)}
+        isPro={isPro}
+      />
 
-        {/* ── 2. Start from Template — narrow right ───────────────── */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('patterns')}
-          className="col-span-12 md:col-span-3 rounded-lg p-5 text-left glass-card border-white/50 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
-        >
-          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center">
-            <LayoutGrid size={18} className="text-secondary" />
-          </div>
-          <div>
-            <p className="text-on-surface font-bold text-base leading-tight">Templates</p>
-            <p className="text-secondary text-body-sm mt-0.5">Browse patterns</p>
-          </div>
-        </button>
-
-        {/* ── 3. Photo to Pattern — medium right ─────────────────── */}
-        <button
-          type="button"
-          onClick={() => (isPro ? openPhotoPattern() : setShowProUpgrade(true))}
-          className="col-span-12 md:col-span-4 rounded-lg p-5 text-left glass-card border-white/50 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
-        >
-          <span className="inline-block px-2.5 py-0.5 bg-primary/20 text-primary-dark text-caption font-bold uppercase tracking-widest rounded-full w-fit">
-            AI
-          </span>
-          <div>
-            <p className="text-on-surface font-bold text-base leading-tight">Photo to Pattern</p>
-            <p className="text-secondary text-body-sm mt-0.5">Detect patterns from a photo</p>
-          </div>
-        </button>
-
-        {/* ── 4. Quiltbook — wider left ──────────────────────────── */}
+      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[200px_110px] gap-4 pb-20 relative z-10">
+        {/* ── Quiltbook ──────────────────────────────────────────────── */}
         <Link
           href="/projects"
-          className="col-span-12 md:col-span-7 rounded-lg p-5 glass-card border-white/40 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex flex-col justify-between group"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <div>
-              <p className="text-on-surface font-bold text-base leading-tight">My Quiltbook</p>
-              <p className="text-secondary text-body-sm mt-0.5">
+              <p className="text-on-surface font-extrabold text-xl">My Quiltbook</p>
+              <p className="text-secondary text-sm mt-0.5">
                 {projectCount !== null ? `${projectCount} saved designs` : 'Your saved designs'}
               </p>
             </div>
-            <BookOpen size={20} className="text-secondary" />
+            {/* Open book icon */}
+            <svg
+              viewBox="0 0 48 48"
+              fill="none"
+              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+            >
+              <path
+                d="M6 10C6 10 10 6 24 6C38 6 42 10 42 10V40C42 40 38 36 24 36C10 36 6 40 6 40V10Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+              />
+              <line x1="24" y1="6" x2="24" y2="36" stroke="currentColor" strokeWidth="2" />
+              <line
+                x1="12"
+                y1="16"
+                x2="20"
+                y2="16"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.4"
+              />
+              <line
+                x1="12"
+                y1="22"
+                x2="18"
+                y2="22"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.4"
+              />
+              <line
+                x1="28"
+                y1="16"
+                x2="36"
+                y2="16"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.4"
+              />
+              <line
+                x1="28"
+                y1="22"
+                x2="34"
+                y2="22"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.4"
+              />
+            </svg>
           </div>
-
-          {projects.length > 0 ? (
-            <div className="flex gap-2">
-              {projects.slice(0, 3).map((p) => (
-                <div
-                  key={p.id}
-                  className="w-11 h-11 rounded-md bg-surface-container overflow-hidden border border-outline-variant/30"
-                >
-                  {p.thumbnailUrl ? (
-                    <Image
-                      src={p.thumbnailUrl}
-                      alt={p.name}
-                      width={44}
-                      height={44}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-surface-container-low">
-                      <span className="text-secondary/50 text-body-sm font-bold">
-                        {p.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-11 h-11 rounded-md border-2 border-dashed border-outline-variant/50 bg-white/30"
-                />
-              ))}
-            </div>
-          )}
-          <p className="text-caption text-secondary/70 font-bold tracking-wide">
-            {projects.length > 0
-              ? `LAST EDITED ${formatRelativeTime(projects[0].updatedAt).toUpperCase()}`
-              : 'NO PROJECTS YET'}
-          </p>
+          <div>
+            {projects.length > 0 ? (
+              <div className="flex gap-2">
+                {projects.slice(0, 3).map((p) => (
+                  <div
+                    key={p.id}
+                    className="w-12 h-12 rounded-lg bg-white overflow-hidden border border-outline-variant shadow-sm"
+                  >
+                    {p.thumbnailUrl ? (
+                      <Image
+                        src={p.thumbnailUrl}
+                        alt={p.name}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#FFF5EE]">
+                        <span className="text-[#C67B5C]/50 text-xs font-bold">
+                          {p.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-12 h-12 rounded-lg border-2 border-dashed border-outline-variant"
+                  />
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-secondary mt-3 font-medium">
+              {projects.length > 0
+                ? `Last edited ${formatRelativeTime(projects[0].updatedAt)}`
+                : 'No projects yet'}
+            </p>
+          </div>
         </Link>
 
-        {/* ── 5. Community — narrower right ────────────────────────── */}
+        {/* ── Browse Templates ────────────────────────────────────────── */}
+        <button
+          type="button"
+          onClick={() => setActiveTab('templates')}
+          className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 text-left bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] group flex flex-col justify-between"
+        >
+          <div className="flex justify-between items-start">
+            <div />
+            {/* Quilt grid icon */}
+            <svg
+              viewBox="0 0 48 48"
+              fill="none"
+              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+            >
+              <rect
+                x="5"
+                y="5"
+                width="16"
+                height="16"
+                rx="3"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              />
+              <rect
+                x="27"
+                y="5"
+                width="16"
+                height="16"
+                rx="3"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              />
+              <rect
+                x="5"
+                y="27"
+                width="16"
+                height="16"
+                rx="3"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              />
+              <rect
+                x="27"
+                y="27"
+                width="16"
+                height="16"
+                rx="3"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              />
+              <polygon points="9,9 17,13 9,17" fill="currentColor" opacity="0.25" />
+              <rect
+                x="30"
+                y="30"
+                width="10"
+                height="10"
+                rx="1"
+                fill="currentColor"
+                opacity="0.15"
+              />
+            </svg>
+          </div>
+          <div className="mt-auto">
+            <p className="text-on-surface font-extrabold text-xl">Browse Templates</p>
+            <p className="text-secondary text-sm mt-0.5">Explore pre-made designs</p>
+          </div>
+        </button>
+
+        {/* ── Community Threads ──────────────────────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-5 rounded-lg p-5 glass-card border-white/40 flex flex-col gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
+          className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] group flex flex-col justify-between"
         >
-          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center">
-            <HeartHandshake size={18} className="text-primary-dark" />
+          <div className="flex justify-between items-start">
+            <div />
+            {/* Heart hands icon */}
+            <svg
+              viewBox="0 0 48 48"
+              fill="none"
+              className="w-11 h-11 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+            >
+              <path
+                d="M24 38C24 38 8 28 8 18C8 10 14 6 20 10C22 11.5 23.5 13.5 24 15C24.5 13.5 26 11.5 28 10C34 6 40 10 40 18C40 28 24 38 24 38Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M16 24L12 32H20L18 40"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.3"
+              />
+              <path
+                d="M32 24L36 32H28L30 40"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.3"
+              />
+            </svg>
           </div>
-          <div>
-            <p className="text-on-surface font-bold text-base leading-tight">Community</p>
-            <p className="text-secondary text-body-sm mt-0.5">Share blocks &amp; discover</p>
+          <div className="mt-auto">
+            <p className="text-on-surface font-extrabold text-xl">Community Threads</p>
+            <p className="text-secondary text-sm mt-0.5">Share blocks &amp; discover</p>
           </div>
         </Link>
 
-        {/* ── 6. Profile — narrow left ─────────────────────────────── */}
+        {/* ── Profile ────────────────────────────────────────────────── */}
         <Link
           href="/profile"
-          className="col-span-12 md:col-span-4 rounded-lg px-5 py-4 glass-card border-white/40 flex items-center gap-3 transition-shadow duration-200 hover:shadow-elevation-2"
+          className="col-span-12 md:col-span-6 rounded-xl p-5 transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(198,123,92,0.08)] group flex items-center justify-between gap-4"
         >
-          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center shrink-0">
-            <UserCircle size={20} className="text-secondary" />
-          </div>
           <div>
-            <p className="text-on-surface font-bold text-sm leading-tight">My Profile</p>
-            <p className="text-secondary text-body-sm">Public settings</p>
+            <p className="text-on-surface font-extrabold text-xl">My Profile</p>
+            <p className="text-secondary text-sm mt-0.5">Manage details and settings</p>
           </div>
+          {/* Person icon */}
+          <svg
+            viewBox="0 0 44 44"
+            fill="none"
+            className="w-10 h-10 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+          >
+            <circle cx="22" cy="14" r="8" stroke="currentColor" strokeWidth="2.5" />
+            <path
+              d="M6 40C6 32 13 26 22 26C31 26 38 32 38 40"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          </svg>
         </Link>
 
-        {/* ── 7. Settings — wider right ────────────────────────────── */}
+        {/* ── Settings ───────────────────────────────────────────────── */}
         <Link
           href="/settings"
-          className="col-span-12 md:col-span-8 rounded-lg px-5 py-4 glass-card border-white/40 flex items-center gap-3 justify-end text-right transition-shadow duration-200 hover:shadow-elevation-2"
+          className="col-span-12 md:col-span-6 rounded-xl p-5 transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(198,123,92,0.08)] group flex items-center justify-between gap-4"
         >
           <div>
-            <p className="text-on-surface font-bold text-sm leading-tight">System Settings</p>
-            <p className="text-secondary text-body-sm">Units, theme, and defaults</p>
+            <p className="text-on-surface font-extrabold text-xl">System Settings</p>
+            <p className="text-secondary text-sm mt-0.5">Units, theme, and defaults</p>
           </div>
-          <div className="w-10 h-10 rounded-full glass-inset flex items-center justify-center shrink-0">
-            <Settings size={20} className="text-secondary" />
-          </div>
+          {/* Gear icon */}
+          <svg
+            viewBox="0 0 44 44"
+            fill="none"
+            className="w-10 h-10 text-[#C67B5C] shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+          >
+            <circle cx="22" cy="22" r="7" stroke="currentColor" strokeWidth="2.5" />
+            <path
+              d="M22 4V8M22 36V40M4 22H8M36 22H40M9.5 9.5L12.3 12.3M31.7 31.7L34.5 34.5M34.5 9.5L31.7 12.3M12.3 31.7L9.5 34.5"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          </svg>
         </Link>
       </div>
 
-      <PhotoPatternModal />
       <NewProjectDialog
         open={dialogOpen}
         onClose={() => {
           setDialogOpen(false);
           fetchProjects();
         }}
-        onBrowsePatterns={() => setActiveTab('patterns')}
+        onBrowseTemplates={() => setActiveTab('templates')}
       />
 
       {/* Pro upgrade modal */}
       {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
+
+      {/* Photo to Pattern promo */}
+      {showPhotoPromo && (
+        <PhotoToPatternPromo isPro={isPro} onClose={() => setShowPhotoPromo(false)} />
+      )}
     </div>
   );
 }

@@ -113,7 +113,7 @@ export default function CommunityPreview() {
             </div>
             {hasPosts ? (
               <div className="grid grid-cols-3 gap-4">
-                {posts.slice(0, 6).map((post) => (
+                {posts.slice(0, 6).map((post, i) => (
                   <PostCard key={post.id} post={post} />
                 ))}
               </div>
@@ -161,7 +161,7 @@ export default function CommunityPreview() {
                     className="text-2xl font-bold text-primary"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    105+
+                    100+
                   </div>
                   <div className="text-sm text-secondary">Quilt blocks</div>
                 </div>
@@ -222,7 +222,10 @@ export default function CommunityPreview() {
               </div>
             </div>
 
-            <Link href="/socialthreads" className="btn-primary">
+            <Link
+              href="/socialthreads"
+              className="inline-block bg-[var(--color-primary)] text-[var(--color-primary-on)] font-bold px-8 py-4 rounded-full shadow-elevation-3 hover:bg-[var(--color-primary-dark)] transition-all"
+            >
               See the Gallery
             </Link>
           </div>

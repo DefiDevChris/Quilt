@@ -91,6 +91,7 @@ export function ProcessingStep() {
   const setPipelineSteps = usePhotoPatternStore((s) => s.setPipelineSteps);
   const setDetectedPieces = usePhotoPatternStore((s) => s.setDetectedPieces);
   const setCorrectedImageRef = usePhotoPatternStore((s) => s.setCorrectedImageRef);
+  const setQuiltStructure = usePhotoPatternStore((s) => s.setQuiltStructure);
   const setStep = usePhotoPatternStore((s) => s.setStep);
 
   const hasStartedRef = useRef(false);
@@ -116,6 +117,7 @@ export function ProcessingStep() {
         if (result.correctedImageRef) {
           setCorrectedImageRef(result.correctedImageRef);
         }
+        setQuiltStructure(result.quiltStructure);
 
         // Auto-advance after a short delay
         setTimeout(() => {
@@ -134,6 +136,7 @@ export function ProcessingStep() {
     setPipelineSteps,
     setDetectedPieces,
     setCorrectedImageRef,
+    setQuiltStructure,
     setStep,
   ]);
 

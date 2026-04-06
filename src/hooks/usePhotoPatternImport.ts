@@ -5,7 +5,12 @@ import { usePhotoPatternStore } from '@/stores/photoPatternStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { PIXELS_PER_INCH, PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT } from '@/lib/constants';
-import type { ScaledPiece, DetectedPieceWithEdgeInfo } from '@/lib/photo-pattern-types';
+import type {
+  ScaledPiece,
+  DetectedPieceWithEdgeInfo,
+  PieceRole,
+  QuiltStructure,
+} from '@/lib/photo-pattern-types';
 
 /**
  * Groups identical pieces by comparing their contours.
@@ -59,6 +64,50 @@ function contourToSvg(contour: readonly { x: number; y: number }[]): string {
 }
 
 /**
+ * Builds a role-aware print list name for a piece group.
+ *
+ * Priority:
+ * 1. piece.role (already attached by CV pipeline)
+ * 2. quiltStructure.pieceRoles.get(piece.id) (fallback lookup)
+ * 3. quiltStructure.blockTemplate label (for block pieces, if available)
+ * 4. Existing generic naming ("Piece N …")
+ */
+function buildShapeName(
+  representative: ScaledPiece,
+  groupPieces: readonly ScaledPiece[],
+  groupIndex: number,
+  quiltStructure: QuiltStructure | null
+): string {
+  const quantity = groupPieces.length;
+  const quantitySuffix = quantity > 1 ? ` (${quantity} identical)` : '';
+
+  // Resolve the role from piece or the structure map
+  const role: PieceRole | undefined =
+    representative.role ?? quiltStructure?.pieceRoles.get(representative.id) ?? undefined;
+
+  // If a block template exists and the piece is a block piece, use its label
+  if (role === 'block' && quiltStructure?.blockTemplate) {
+    const templatePiece = quiltStructure.blockTemplate.pieces[groupIndex];
+    const label = templatePiece?.label ?? String.fromCharCode(65 + groupIndex); // A, B, C…
+    return `Block Piece ${label}${quantitySuffix}`;
+  }
+
+  switch (role) {
+    case 'block':
+      return `Block Piece ${groupIndex + 1}${quantitySuffix}`;
+    case 'sashing':
+      return `Sashing Strip ${groupIndex + 1}`;
+    case 'border':
+      return `Border Strip ${groupIndex + 1}`;
+    case 'cornerstone':
+      return `Cornerstone ${groupIndex + 1}`;
+    default:
+      // Preserve the original naming when role is unknown/unset
+      return quantity > 1 ? `Piece ${groupIndex + 1}${quantitySuffix}` : `Piece ${groupIndex + 1}`;
+  }
+}
+
+/**
  * On studio mount, if photoPatternStore has scaledPieces:
  * 1. Load them onto the Fabric.js canvas as polygon objects
  * 2. Set reference photo as background
@@ -73,6 +122,7 @@ export function usePhotoPatternImport() {
   const originalImageUrl = usePhotoPatternStore((s) => s.originalImageUrl);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const seamAllowance = usePhotoPatternStore((s) => s.seamAllowance);
+  const quiltStructure = usePhotoPatternStore((s) => s.quiltStructure);
 
   useEffect(() => {
     if (loadingRef.current || !fabricCanvas || scaledPieces.length === 0) return;
@@ -130,11 +180,8 @@ export function usePhotoPatternImport() {
           const edgeInfo = representative as unknown as DetectedPieceWithEdgeInfo;
           const isEdgePiece = edgeInfo.isEdgePiece ?? false;
 
-          // Add to print list with quantity and edge indication
-          let shapeName =
-            groupPieces.length > 1
-              ? `Piece ${groupIndex + 1} (${groupPieces.length} identical)`
-              : `Piece ${groupIndex + 1}`;
+          // Build role-aware name; fall back to generic naming when no structure data
+          let shapeName = buildShapeName(representative, groupPieces, groupIndex, quiltStructure);
 
           // Mark edge pieces clearly in the print list
           if (isEdgePiece) {
@@ -158,17 +205,37 @@ export function usePhotoPatternImport() {
 
       canvas.renderAll();
 
-      // 4. Open print list panel to show imported pieces
+      // 4. Set reference image opacity
+      useCanvasStore.getState().setReferenceImageOpacity(PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT);
+
+      // 5. Persist original photo URL for the reference panel (copy before reset revokes it)
+      if (originalImageUrl) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = originalImageUrl;
+        // Create a durable copy of the image as a blob URL so it survives store reset
+        try {
+          const response = await fetch(originalImageUrl);
+          const blob = await response.blob();
+          const durableUrl = URL.createObjectURL(blob);
+          useCanvasStore.getState().setReferenceImageUrl(durableUrl);
+        } catch {
+          // Fallback: if fetch fails, store the original URL directly
+          useCanvasStore.getState().setReferenceImageUrl(originalImageUrl);
+        }
+      }
+
+      // 6. Open print list panel to show imported pieces
       if (!usePrintlistStore.getState().isPanelOpen) {
         usePrintlistStore.getState().togglePanel();
       }
 
-      // 6. Clean up the store (data has been applied to canvas)
+      // 7. Clean up the store (data has been applied to canvas)
       usePhotoPatternStore.getState().reset();
     }
 
     loadPieces().finally(() => {
       loadingRef.current = false;
     });
-  }, [fabricCanvas, scaledPieces, originalImageUrl, seamAllowance]);
+  }, [fabricCanvas, scaledPieces, originalImageUrl, seamAllowance, quiltStructure]);
 }

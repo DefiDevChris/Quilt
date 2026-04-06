@@ -9,6 +9,19 @@ export interface Rect {
   readonly height: number;
 }
 
+/**
+ * Role of a piece within the quilt structure.
+ * Used in post-processing after grid detection.
+ */
+export type PieceRole =
+  | 'block'
+  | 'sashing'
+  | 'cornerstone'
+  | 'border'
+  | 'binding'
+  | 'setting-triangle'
+  | 'unknown';
+
 export interface DetectedPiece {
   readonly id: string;
   readonly contour: readonly Point2D[];
@@ -27,6 +40,10 @@ export interface DetectedPiece {
    * Luminance value (0-255) used for value classification
    */
   readonly luminance?: number;
+  /** Role of this piece in the quilt structure */
+  readonly role?: PieceRole;
+  /** Grid cell assignment (row/col, 0-indexed) */
+  readonly blockCell?: { readonly row: number; readonly col: number };
 }
 
 export interface ScaledPiece {
@@ -39,6 +56,8 @@ export interface ScaledPiece {
   readonly finishedWidthNum: number;
   readonly finishedHeightNum: number;
   readonly dominantColor: string;
+  /** Role of this piece in the quilt structure */
+  readonly role?: PieceRole;
 }
 
 export type PipelineStepStatus = 'pending' | 'running' | 'complete' | 'error';
@@ -71,9 +90,11 @@ export type PhotoPatternStep =
   | 'upload'
   | 'imagePrep'
   | 'scanSettings'
+  | 'quiltDetails'
   | 'correction'
   | 'processing'
   | 'results'
+  | 'structureReview'
   | 'dimensions'
   | 'complete';
 
@@ -157,6 +178,22 @@ export type WorkerRequestMessage = {
   type: 'DETECT_PIECES';
   imageData: ImageData;
   sensitivity: number;
+  enableShapeClustering?: boolean;
+  detectNestedShapes?: boolean;
+  enableCLAHE?: boolean;
+  claheClipLimit?: number;
+  enableSharpening?: boolean;
+  sharpeningIntensity?: number;
+  removeTopstitching?: boolean;
+  topstitchingKernelFactor?: number;
+  useSobelGradient?: boolean;
+  sobelThresholdMultiplier?: number;
+  enableWatershed?: boolean;
+  watershedDistanceThreshold?: number;
+  minSolidity?: number;
+  maxAspectRatio?: number;
+  seamAllowanceInches?: number;
+  quiltConfig?: QuiltDetectionConfig;
 };
 
 /** Messages sent FROM the detection worker */
@@ -329,4 +366,80 @@ export interface DetectedPieceWithHierarchy extends DetectedPiece {
   readonly hasChildren: boolean;
   /** True if this piece has a parent (is a child/appliqué) */
   readonly isApplique: boolean;
+}
+
+// ============================================================================
+// Quilt Structure Detection Types (Post-processing phase)
+// ============================================================================
+
+export interface BlockCell {
+  readonly row: number;
+  readonly col: number;
+  readonly centerPx: Point2D;
+  readonly pieceIds: readonly string[];
+  readonly rotation: 0 | 90 | 180 | 270;
+  readonly mirrored: boolean;
+}
+
+export interface QuiltGrid {
+  readonly rows: number;
+  readonly cols: number;
+  readonly blockWidthPx: number;
+  readonly blockHeightPx: number;
+  readonly isOnPoint: boolean;
+  readonly cells: readonly BlockCell[];
+  readonly gridOrigin: Point2D;
+}
+
+export interface BlockTemplatePiece {
+  readonly label: string;
+  readonly contourRelative: readonly Point2D[];
+  readonly dominantColor: string;
+  readonly role: 'block';
+  readonly quantityPerBlock: number;
+  readonly quantityTotal: number;
+}
+
+export interface BlockTemplate {
+  readonly name: string;
+  readonly pieces: readonly BlockTemplatePiece[];
+  readonly finishedBlockWidth: number;
+  readonly finishedBlockHeight: number;
+  readonly blockCount: number;
+}
+
+export interface SashingInfo {
+  readonly detected: boolean;
+  readonly widthInches: number;
+  readonly color: string;
+  readonly hasCornerStones: boolean;
+  readonly cornerStoneColor?: string;
+  readonly totalSashingLength: number;
+}
+
+export interface BorderLayer {
+  readonly widthInches: number;
+  readonly color: string;
+  readonly cornerStyle: 'mitered' | 'butted' | 'cornerstones';
+}
+
+export interface BorderInfo {
+  readonly detected: boolean;
+  readonly layers: readonly BorderLayer[];
+}
+
+export interface BindingInfo {
+  readonly detected: boolean;
+  readonly color: string;
+  readonly widthInches: number;
+  readonly perimeterInches: number;
+}
+
+export interface QuiltStructure {
+  readonly grid: QuiltGrid | null;
+  readonly sashing: SashingInfo;
+  readonly borders: BorderInfo;
+  readonly binding: BindingInfo;
+  readonly blockTemplate: BlockTemplate | null;
+  readonly pieceRoles: Map<string, PieceRole>;
 }

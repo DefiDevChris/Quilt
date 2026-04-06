@@ -155,6 +155,8 @@ export const fabricSearchSchema = z.object({
   search: z.string().optional(),
   manufacturer: z.string().optional(),
   colorFamily: z.string().optional(),
+  value: z.enum(['Light', 'Medium', 'Dark']).optional(),
+  sortBy: z.enum(['name', 'manufacturer', 'colorFamily', 'value']).default('name'),
   scope: z.enum(['system', 'user', 'all']).default('system'),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce
@@ -359,7 +361,7 @@ export const blogAdminListSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
-export const patternQuerySchema = z.object({
+export const templateQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),
   skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),

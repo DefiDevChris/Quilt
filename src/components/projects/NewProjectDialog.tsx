@@ -8,7 +8,7 @@ import { LAYOUT_PRESETS, type LayoutPreset } from '@/lib/layout-library';
 interface NewProjectDialogProps {
   open: boolean;
   onClose: () => void;
-  onBrowsePatterns?: () => void;
+  onBrowseTemplates?: () => void;
 }
 
 interface ProjectTemplate {
@@ -26,7 +26,7 @@ interface ProjectTemplate {
   createdAt: string;
 }
 
-export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProjectDialogProps) {
+export function NewProjectDialog({ open, onClose, onBrowseTemplates }: NewProjectDialogProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'blank' | 'template' | 'layout'>('blank');
   const [name, setName] = useState('Untitled Quilt');
@@ -207,12 +207,12 @@ export function NewProjectDialog({ open, onClose, onBrowsePatterns }: NewProject
           </div>
         ) : (
           <>
-            {onBrowsePatterns && (
+            {onBrowseTemplates && (
               <button
                 type="button"
                 onClick={() => {
                   onClose();
-                  onBrowsePatterns();
+                  onBrowseTemplates();
                 }}
                 className="w-full mb-4 flex items-center gap-3 rounded-lg bg-surface-container px-4 py-3.5 text-left transition-colors hover:bg-surface-container-high group"
               >

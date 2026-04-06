@@ -8,25 +8,9 @@ import Image from 'next/image';
 function SocialThreadsScreenshot() {
   return (
     <div className="relative">
-      {/* Browser chrome */}
       <div className="bg-white rounded-2xl shadow-elevation-4 border border-outline-variant overflow-hidden">
-        {/* Window header */}
-        <div className="h-12 bg-gradient-to-r from-orange-50 to-rose-50 border-b border-outline-variant flex items-center px-4 justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-red-400" />
-              <div className="w-3 h-3 rounded-full bg-yellow-400" />
-              <div className="w-3 h-3 rounded-full bg-green-400" />
-            </div>
-            <div className="ml-4 flex items-center gap-2">
-              <Image src="/logo.png" alt="QuiltCorgi" width={24} height={24} className="rounded" />
-              <span className="text-sm font-bold text-on-surface">Social Threads</span>
-            </div>
-          </div>
-        </div>
-
-        {/* App content - matching actual SocialLayout styling */}
-        <div className="bg-surface-container min-h-[420px] relative overflow-hidden">
+        {/* App content */}
+        <div className="bg-[#FDF9F6] min-h-[420px] relative overflow-hidden">
           {/* Background orbs (matching SocialLayout) */}
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-200/50 rounded-full blur-[60px] pointer-events-none" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50 rounded-full blur-[80px] pointer-events-none" />
@@ -62,8 +46,8 @@ function SocialThreadsScreenshot() {
                 </div>
               </div>
               <p className="text-on-surface mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The fabric positioning tools helped me place
-                the center motifs perfectly 🌟
+                Finally finished my Ohio Star quilt! The fussy cut feature helped me position the
+                center motifs perfectly 🌟
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
@@ -330,7 +314,10 @@ export default function SocialThreadsSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/socialthreads" className="btn-primary">
+              <Link
+                href="/socialthreads"
+                className="btn-primary"
+              >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path

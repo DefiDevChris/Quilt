@@ -1,4 +1,4 @@
-import { PIXELS_PER_INCH, PIXELS_PER_CM } from '@/lib/constants';
+import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants';
 import type { UnitSystem } from '@/types/canvas';
 import type { GridSettings } from '@/types/grid';
 
@@ -62,7 +62,7 @@ export function fitToScreenZoom(
   return Math.min(
     (containerWidth - padding) / quiltWidthPx,
     (containerHeight - padding) / quiltHeightPx,
-    1
+    ZOOM_MAX
   );
 }
 
