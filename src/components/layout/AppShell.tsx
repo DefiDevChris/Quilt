@@ -8,11 +8,17 @@ import { useAuthStore } from '@/stores/authStore';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
-import { Sparkles } from 'lucide-react';
+import { useShopEnabled } from '@/hooks/useShopEnabled';
+import { useCartStore } from '@/stores/cartStore';
+import { CartDrawer } from '@/components/shop/CartDrawer';
+import { Sparkles, ShoppingBag } from 'lucide-react';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
+  const shopEnabled = useShopEnabled();
+  const cartItems = useCartStore((s) => s.items);
+  const toggleCartDrawer = useCartStore((s) => s.toggleDrawer);
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -90,6 +96,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             Social Threads
           </Link>
+          {shopEnabled && (
+            <Link
+              href="/shop"
+              className={`font-medium transition-colors ${
+                isActive('/shop') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+              }`}
+            >
+              Shop
+            </Link>
+          )}
           {isAuthenticated && (
             <Link
               href="/profile"
@@ -112,6 +128,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 >
                   <Sparkles size={14} className="text-white" />
                   Upgrade
+                </button>
+              )}
+
+              {shopEnabled && cartItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={toggleCartDrawer}
+                  className="relative p-1.5 text-secondary hover:text-on-surface transition-colors"
+                  aria-label="Shopping cart"
+                >
+                  <ShoppingBag size={20} />
+                  <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
                 </button>
               )}
 
@@ -201,6 +231,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
+      <CartDrawer />
     </div>
   );
 }

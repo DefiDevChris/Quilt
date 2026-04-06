@@ -1,6 +1,6 @@
 'use client';
 
-export type BlockBuilderMode = 'line' | 'arc' | 'select';
+export type BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'curve';
 
 interface BlockBuilderToolbarProps {
   activeMode: BlockBuilderMode;
@@ -11,9 +11,10 @@ interface BlockBuilderToolbarProps {
 }
 
 const TOOLS: { id: BlockBuilderMode; label: string; icon: string }[] = [
-  { id: 'select', label: 'Select', icon: '↖' },
-  { id: 'line', label: 'Line', icon: '╱' },
-  { id: 'arc', label: 'Arc', icon: '◠' },
+  { id: 'freedraw', label: 'Freedraw', icon: '\u270E' },
+  { id: 'rectangle', label: 'Rectangle', icon: '\u25AD' },
+  { id: 'triangle', label: 'Triangle', icon: '\u25E3' },
+  { id: 'curve', label: 'Curve', icon: '\u25E0' },
 ];
 
 export function BlockBuilderToolbar({
@@ -48,7 +49,7 @@ export function BlockBuilderToolbar({
         title="Undo last segment"
         className="h-8 w-8 rounded text-sm text-secondary hover:bg-background disabled:opacity-30"
       >
-        ↩
+        {'\u21A9'}
       </button>
 
       <button
@@ -58,7 +59,7 @@ export function BlockBuilderToolbar({
         title="Clear all segments"
         className="h-8 w-8 rounded text-sm text-secondary hover:bg-background disabled:opacity-30"
       >
-        ✕
+        {'\u2715'}
       </button>
 
       <span className="ml-auto text-xs text-secondary">

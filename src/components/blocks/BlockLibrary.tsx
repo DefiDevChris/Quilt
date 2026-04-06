@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlockStore } from '@/stores/blockStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -10,13 +10,26 @@ import { BlockPreview } from '@/components/blocks/BlockPreview';
 import type { BlockListItem } from '@/types/block';
 
 type TabType = 'library' | 'myblocks';
+type BlockFilter = 'all' | 'svg' | 'custom' | 'photo';
 
 interface BlockLibraryProps {
   onBlockDragStart: (e: React.DragEvent, blockId: string) => void;
   onOpenDrafting?: () => void;
+  onOpenPhotoUpload?: () => void;
 }
 
-export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryProps) {
+const FILTER_LABELS: Record<BlockFilter, string> = {
+  all: 'All',
+  svg: 'SVG Blocks',
+  custom: 'My Blocks',
+  photo: 'Photo Blocks',
+};
+
+export function BlockLibrary({
+  onBlockDragStart,
+  onOpenDrafting,
+  onOpenPhotoUpload,
+}: BlockLibraryProps) {
   const isPanelOpen = useBlockStore((s) => s.isPanelOpen);
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
@@ -36,6 +49,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
 
   const [previewBlock, setPreviewBlock] = useState<BlockListItem | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('library');
+  const [blockFilter, setBlockFilter] = useState<BlockFilter>('all');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,6 +57,13 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
       fetchUserBlocks();
     }
   }, [isPanelOpen, activeTab, isPro, fetchUserBlocks]);
+
+  const filteredUserBlocks = useMemo(() => {
+    if (blockFilter === 'all') return userBlocks;
+    if (blockFilter === 'custom') return userBlocks.filter((b) => b.blockType === 'custom');
+    if (blockFilter === 'photo') return userBlocks.filter((b) => b.blockType === 'photo');
+    return userBlocks;
+  }, [userBlocks, blockFilter]);
 
   const handleDragStart = useCallback(
     (e: React.DragEvent, block: BlockListItem) => {
@@ -74,7 +95,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   className="text-secondary hover:text-on-surface"
                   title="Close panel"
                 >
-                  ✕
+                  {'\u2715'}
                 </button>
               </div>
 
@@ -160,7 +181,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                         onClick={() => setPage(page - 1)}
                         className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
                       >
-                        ← Prev
+                        {'\u2190'} Prev
                       </button>
                       <span className="text-[10px] text-on-surface/50">
                         {page} / {totalPages}
@@ -171,7 +192,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                         onClick={() => setPage(page + 1)}
                         className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
                       >
-                        Next →
+                        Next {'\u2192'}
                       </button>
                     </div>
                   )}
@@ -179,6 +200,27 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
               ) : (
                 <>
                   {/* My Blocks section */}
+                  {isPro && (
+                    <div className="flex gap-1 border-b border-outline-variant px-3 py-1.5">
+                      {(Object.keys(FILTER_LABELS) as BlockFilter[])
+                        .filter((f) => f !== 'svg')
+                        .map((filter) => (
+                          <button
+                            key={filter}
+                            type="button"
+                            onClick={() => setBlockFilter(filter)}
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                              blockFilter === filter
+                                ? 'bg-primary text-white'
+                                : 'bg-background text-secondary hover:text-on-surface'
+                            }`}
+                          >
+                            {FILTER_LABELS[filter]}
+                          </button>
+                        ))}
+                    </div>
+                  )}
+
                   <div className="flex-1 overflow-y-auto px-3 py-2">
                     {!isPro ? (
                       <div className="py-8 text-center">
@@ -192,10 +234,16 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                           <div key={i} className="h-24 animate-pulse rounded-lg bg-background" />
                         ))}
                       </div>
-                    ) : userBlocks.length === 0 ? (
+                    ) : filteredUserBlocks.length === 0 ? (
                       <div className="py-8 text-center">
-                        <p className="text-sm text-secondary mb-2">No custom blocks yet</p>
-                        {onOpenDrafting && (
+                        <p className="mb-2 text-sm text-secondary">
+                          {blockFilter === 'photo'
+                            ? 'No photo blocks yet'
+                            : blockFilter === 'custom'
+                              ? 'No custom blocks yet'
+                              : 'No blocks yet'}
+                        </p>
+                        {blockFilter !== 'photo' && onOpenDrafting && (
                           <button
                             type="button"
                             onClick={onOpenDrafting}
@@ -204,10 +252,19 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                             Draft New Block
                           </button>
                         )}
+                        {blockFilter === 'photo' && onOpenPhotoUpload && (
+                          <button
+                            type="button"
+                            onClick={onOpenPhotoUpload}
+                            className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                          >
+                            Upload Block Photo
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div className="grid grid-cols-3 gap-2">
-                        {userBlocks.map((block) => (
+                        {filteredUserBlocks.map((block) => (
                           <div key={block.id} className="group relative">
                             <BlockCard
                               block={block}
@@ -216,6 +273,11 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                               isSelected={selectedBlockId === block.id}
                               onSelect={setSelectedBlockId}
                             />
+                            {block.blockType === 'photo' && (
+                              <span className="absolute left-0.5 top-0.5 rounded-sm bg-primary/80 px-1 py-px text-[8px] font-medium text-white">
+                                Photo
+                              </span>
+                            )}
                             <button
                               type="button"
                               onClick={() => {
@@ -232,28 +294,39 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                                   ? 'Click again to confirm delete'
                                   : 'Delete block'
                               }
-                              className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                              className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
                                 confirmDeleteId === block.id
                                   ? 'bg-error ring-2 ring-error/50 !opacity-100'
                                   : 'bg-error'
                               }`}
                             >
-                              {confirmDeleteId === block.id ? '✓' : '✕'}
+                              {confirmDeleteId === block.id ? '\u2713' : '\u2715'}
                             </button>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  {isPro && onOpenDrafting && (
-                    <div className="border-t border-outline-variant px-3 py-2">
-                      <button
-                        type="button"
-                        onClick={onOpenDrafting}
-                        className="w-full rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
-                      >
-                        + Draft New Block
-                      </button>
+                  {isPro && (
+                    <div className="flex gap-2 border-t border-outline-variant px-3 py-2">
+                      {onOpenDrafting && (
+                        <button
+                          type="button"
+                          onClick={onOpenDrafting}
+                          className="flex-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                        >
+                          + Draft Block
+                        </button>
+                      )}
+                      {onOpenPhotoUpload && (
+                        <button
+                          type="button"
+                          onClick={onOpenPhotoUpload}
+                          className="flex-1 rounded-md bg-background px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface"
+                        >
+                          + Photo Block
+                        </button>
+                      )}
                     </div>
                   )}
                 </>

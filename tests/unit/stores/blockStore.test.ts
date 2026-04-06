@@ -69,6 +69,7 @@ describe('blockStore', () => {
           thumbnailUrl: null,
           isDefault: false,
           isLocked: false,
+          blockType: 'custom' as const,
         },
         {
           id: 'block-2',
@@ -79,6 +80,7 @@ describe('blockStore', () => {
           thumbnailUrl: null,
           isDefault: false,
           isLocked: false,
+          blockType: 'custom' as const,
         },
       ],
     });
@@ -160,8 +162,32 @@ describe('blockStore', () => {
 
   it('reset aborts controllers and clears state', () => {
     useBlockStore.setState({
-      blocks: [{ id: '1', name: 'Test', category: 'A', subcategory: null, tags: [], thumbnailUrl: null, isDefault: false, isLocked: false }],
-      userBlocks: [{ id: '2', name: 'User', category: 'B', subcategory: null, tags: [], thumbnailUrl: null, isDefault: false, isLocked: false }],
+      blocks: [
+        {
+          id: '1',
+          name: 'Test',
+          category: 'A',
+          subcategory: null,
+          tags: [],
+          thumbnailUrl: null,
+          isDefault: false,
+          isLocked: false,
+          blockType: 'svg' as const,
+        },
+      ],
+      userBlocks: [
+        {
+          id: '2',
+          name: 'User',
+          category: 'B',
+          subcategory: null,
+          tags: [],
+          thumbnailUrl: null,
+          isDefault: false,
+          isLocked: false,
+          blockType: 'custom' as const,
+        },
+      ],
       search: 'test',
       category: 'cat',
       page: 5,

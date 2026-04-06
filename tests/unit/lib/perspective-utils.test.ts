@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { sortCornersClockwise } from '@/lib/perspective-utils';
-import type { Point2D } from '@/lib/photo-pattern-types';
+import type { Point2D } from '@/lib/photo-layout-types';
 
 describe('sortCornersClockwise', () => {
   it('sorts corners into clockwise order: TL, TR, BR, BL', () => {

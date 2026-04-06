@@ -143,36 +143,16 @@ export const useCartStore = create<CartState>((set, get) => ({
       });
 
       // Map yardage results to cart items
-      // Filter out:
-      // - User-uploaded fabrics that are not purchasable (isPurchasable: false)
-      // - Fabrics without a shopifyVariantId
-      const cartItems = yardageData
+      // Filter out non-purchasable, missing variant, out-of-stock
+      const projectItems = yardageData
         .map((yardage): CartItem | null => {
-          if (!yardage.fabricId) {
-            // This is a color fill, not a fabric - skip
-            return null;
-          }
+          if (!yardage.fabricId) return null;
 
           const fabric = fabricMap.get(yardage.fabricId);
-          if (!fabric) {
-            // Fabric not found in available fabrics - skip
-            return null;
-          }
-
-          if (!fabric.isPurchasable) {
-            // Fabric is not marked as purchasable - skip
-            return null;
-          }
-
-          if (!fabric.shopifyVariantId) {
-            // No Shopify variant ID configured - skip
-            return null;
-          }
-
-          if (!fabric.inStock) {
-            // Fabric is out of stock - skip
-            return null;
-          }
+          if (!fabric) return null;
+          if (!fabric.isPurchasable) return null;
+          if (!fabric.shopifyVariantId) return null;
+          if (!fabric.inStock) return null;
 
           return {
             fabricId: fabric.id,
@@ -185,7 +165,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         })
         .filter((item): item is CartItem => item !== null);
 
-      if (cartItems.length === 0) {
+      if (projectItems.length === 0) {
         set({
           error: 'No purchasable fabrics found in your design',
           isLoading: false,
@@ -194,9 +174,14 @@ export const useCartStore = create<CartState>((set, get) => ({
         return;
       }
 
-      // Add items to local cart state
-      cartItems.forEach((item) => {
-        get().addItem(item);
+      // Replace cart with exact project quantities (no excess accumulation).
+      // For each project fabric: set quantity to the project amount,
+      // replacing any previous quantity for that fabric.
+      set((state) => {
+        const existingNonProject = state.items.filter(
+          (item) => !projectItems.some((pi) => pi.fabricId === item.fabricId)
+        );
+        return { items: [...existingNonProject, ...projectItems] };
       });
 
       // Sync with Shopify

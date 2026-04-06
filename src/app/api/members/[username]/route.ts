@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
-import { eq, desc, count, and, sql } from 'drizzle-orm';
+import { eq, desc, count, and, sql, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { userProfiles, users, communityPosts, likes, follows } from '@/db/schema';
+import { userProfiles, users, socialPosts, likes, follows } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { getSession } from '@/lib/cognito-session';
@@ -66,28 +66,24 @@ export async function GET(
       await Promise.all([
         db
           .select({
-            id: communityPosts.id,
-            title: communityPosts.title,
-            description: communityPosts.description,
-            thumbnailUrl: communityPosts.thumbnailUrl,
-            likeCount: communityPosts.likeCount,
-            commentCount: communityPosts.commentCount,
-            category: communityPosts.category,
-            createdAt: communityPosts.createdAt,
+            id: socialPosts.id,
+            title: socialPosts.title,
+            description: socialPosts.description,
+            thumbnailUrl: socialPosts.thumbnailUrl,
+            likeCount: socialPosts.likeCount,
+            commentCount: socialPosts.commentCount,
+            category: socialPosts.category,
+            createdAt: socialPosts.createdAt,
           })
-          .from(communityPosts)
-          .where(
-            and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
-          )
-          .orderBy(desc(communityPosts.createdAt))
+          .from(socialPosts)
+          .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt)))
+          .orderBy(desc(socialPosts.createdAt))
           .limit(limit)
           .offset(offset),
         db
           .select({ count: count() })
-          .from(communityPosts)
-          .where(
-            and(eq(communityPosts.userId, profile.userId), eq(communityPosts.status, 'approved'))
-          ),
+          .from(socialPosts)
+          .where(and(eq(socialPosts.userId, profile.userId), isNull(socialPosts.deletedAt))),
         db.select({ count: count() }).from(follows).where(eq(follows.followingId, profile.userId)),
         db.select({ count: count() }).from(follows).where(eq(follows.followerId, profile.userId)),
         currentUserId

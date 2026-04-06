@@ -41,8 +41,8 @@ const MODE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[]
     ),
   },
   {
-    mode: 'pattern',
-    label: 'Pattern Creator',
+    mode: 'layout',
+    label: 'Layout Creator',
     icon: (
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
         <rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
@@ -155,7 +155,7 @@ function ReferenceImageToggle() {
   return (
     <TooltipHint
       name={showReferencePanel ? 'Hide Reference Photo' : 'Show Reference Photo'}
-      description="Side-by-side view of the original photo used in Photo to Pattern"
+      description="Side-by-side view of the original photo used in Photo to Design"
     >
       <button
         type="button"

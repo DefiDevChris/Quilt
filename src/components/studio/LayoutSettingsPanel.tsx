@@ -23,6 +23,8 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
   const blockSize = useLayoutStore((s) => s.blockSize);
   const sashing = useLayoutStore((s) => s.sashing);
   const borders = useLayoutStore((s) => s.borders);
+  const hasCornerstones = useLayoutStore((s) => s.hasCornerstones);
+  const bindingWidth = useLayoutStore((s) => s.bindingWidth);
   const setLayoutType = useLayoutStore((s) => s.setLayoutType);
   const setRows = useLayoutStore((s) => s.setRows);
   const setCols = useLayoutStore((s) => s.setCols);
@@ -31,6 +33,8 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
   const addBorder = useLayoutStore((s) => s.addBorder);
   const updateBorder = useLayoutStore((s) => s.updateBorder);
   const removeBorder = useLayoutStore((s) => s.removeBorder);
+  const setHasCornerstones = useLayoutStore((s) => s.setHasCornerstones);
+  const setBindingWidth = useLayoutStore((s) => s.setBindingWidth);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const unit = getUnitLabel(unitSystem);
 
@@ -158,6 +162,55 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                     value={sashing.color}
                     onChange={(e) => setSashing({ color: e.target.value })}
                     className="h-9 w-12 cursor-pointer rounded-sm border border-outline-variant"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cornerstones Toggle (sashing only) */}
+        {showSashingControls && (
+          <div className="mb-6">
+            <label className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hasCornerstones}
+                onChange={(e) => setHasCornerstones(e.target.checked)}
+                className="rounded accent-primary"
+              />
+              <span className="text-sm text-on-surface">Show Cornerstones</span>
+            </label>
+            <p className="text-caption text-secondary mt-1 ml-6">
+              Contrasting squares where sashing strips intersect
+            </p>
+          </div>
+        )}
+
+        {/* Binding Width */}
+        {showGridControls && (
+          <div className="space-y-2 mb-6">
+            <div className="border-t border-outline-variant pt-4">
+              <label
+                htmlFor="binding-width"
+                className="block text-xs font-medium text-secondary uppercase tracking-wider mb-2"
+              >
+                Binding
+              </label>
+              <div className="flex items-center gap-3">
+                <div>
+                  <label htmlFor="binding-width" className="block text-xs text-secondary mb-1">
+                    Width ({unit})
+                  </label>
+                  <input
+                    id="binding-width"
+                    type="number"
+                    min={0}
+                    max={2}
+                    step={0.125}
+                    value={bindingWidth}
+                    onChange={(e) => setBindingWidth(parseFloat(e.target.value) || 0)}
+                    className="w-24 rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>
               </div>

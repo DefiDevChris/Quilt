@@ -36,11 +36,11 @@ export type ToolType =
   | 'curve'
   | 'eyedropper';
 
-export type BlockDraftingMode = 'freeform' | 'blockbuilder' | 'applique';
+export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
 export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
 
-export type WorktableType = 'quilt' | 'pattern' | 'block' | 'image' | 'print';
+export type WorktableType = 'quilt' | 'layout' | 'block' | 'image' | 'print';
 
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
@@ -75,6 +75,7 @@ interface CanvasStoreState {
   autoAlignToPattern: boolean;
   referenceImageUrl: string;
   showReferencePanel: boolean;
+  backgroundColor: string;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -110,6 +111,7 @@ interface CanvasStoreState {
   setClipboard: (objects: unknown[]) => void;
   setShowLayoutOverlay: (show: boolean) => void;
   setAutoAlignToPattern: (auto: boolean) => void;
+  setBackgroundColor: (color: string) => void;
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
   toggleReferencePanel: () => void;
@@ -157,6 +159,7 @@ const INITIAL_STATE = {
   autoAlignToPattern: true,
   referenceImageUrl: '',
   showReferencePanel: false,
+  backgroundColor: '#FFFFFF',
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -325,6 +328,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setAutoAlignToPattern: (autoAlignToPattern) => set({ autoAlignToPattern }),
 
+  setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),

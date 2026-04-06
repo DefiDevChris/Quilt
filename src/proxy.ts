@@ -32,7 +32,7 @@ const protectedRoutes = [
   '/profile',
   '/settings',
   '/admin',
-  '/photo-to-pattern',
+  '/photo-to-design',
 ];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
@@ -108,7 +108,7 @@ export const config = {
     '/studio/:path*',
     '/profile/:path*',
     '/settings/:path*',
-    '/photo-to-pattern/:path*',
+    '/photo-to-design/:path*',
     '/admin/:path*',
     '/auth/:path*',
     '/onboarding/:path*',

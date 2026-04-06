@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useFabricPattern } from '@/hooks/useFabricPattern';
+import { useFabricPattern } from '@/hooks/useFabricLayout';
 import { PIXELS_PER_INCH, DEFAULT_QUILT_PALETTE } from '@/lib/constants';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { saveRecentFabric, getRecentFabrics, type RecentFabric } from '@/lib/recent-fabrics';

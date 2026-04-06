@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { Point2D } from '@/lib/photo-pattern-types';
+import type { Point2D } from '@/lib/photo-layout-types';
 
 interface SimplePhotoBlockUploadProps {
   isOpen: boolean;

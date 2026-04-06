@@ -1,5 +1,5 @@
-import type { DetectionOptions, QuiltDetectionConfig, Point2D } from './photo-pattern-types';
-import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-pattern-types';
+import type { DetectionOptions, QuiltDetectionConfig, Point2D } from './photo-layout-types';
+import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-layout-types';
 import { PHOTO_PATTERN_PIECE_MIN_AREA_RATIO } from './constants';
 import type { OpenCV, OpenCVMat } from '../types/opencv-js';
 

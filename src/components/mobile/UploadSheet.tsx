@@ -68,9 +68,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
   function handlePhotoToQuilt() {
     onClose();
     if (isPro) {
-      router.push('/dashboard?action=photo-to-pattern');
+      router.push('/dashboard?action=photo-to-design');
     } else {
-      router.push('/dashboard?upgrade=photo-to-pattern');
+      router.push('/dashboard?upgrade=photo-to-design');
     }
   }
 
@@ -187,8 +187,8 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               <p className="text-sm font-semibold text-on-surface">Photo to Quilt</p>
               <p className="text-xs text-secondary mt-0.5">
                 {isPro
-                  ? 'Turn a photo into a quilt pattern'
-                  : 'Turn a photo into a quilt pattern (Pro)'}
+                  ? 'Turn a photo into a quilt layout'
+                  : 'Turn a photo into a quilt layout (Pro)'}
               </p>
             </div>
           </button>

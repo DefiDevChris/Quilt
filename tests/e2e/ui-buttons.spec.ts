@@ -15,8 +15,8 @@ test.describe('Dashboard Buttons', () => {
     }
   });
 
-  test('photo to pattern button', async ({ page }) => {
-    const photoBtn = page.getByText(/photo to pattern/i);
+  test('photo to design button', async ({ page }) => {
+    const photoBtn = page.getByText(/photo to design/i);
     if (await photoBtn.isVisible()) {
       await photoBtn.click();
     }

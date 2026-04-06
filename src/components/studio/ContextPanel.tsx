@@ -5,7 +5,7 @@ import type { FabricObject, Canvas as FabricCanvas } from 'fabric';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { WHITE_FILL } from '@/lib/constants';
-import { TextToolOptions } from '@/components/studio/TextToolOptions';
+
 import { BlockBuilderOptions } from '@/components/studio/BlockBuilderOptions';
 import { ColorThemeTools } from '@/components/studio/ColorThemeTools';
 import { SelectionPanel } from '@/components/studio/SelectionPanel';
@@ -13,6 +13,9 @@ import { SelectionPanel } from '@/components/studio/SelectionPanel';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { useLayoutStore } from '@/stores/layoutStore';
+import { getLayoutAreaFromObject } from '@/hooks/useLayoutRenderer';
+import type { LayoutAreaRole } from '@/types/layout';
 
 function CollapsibleSection({
   title,
@@ -405,9 +408,6 @@ function QuiltPanel() {
       <CollapsibleSection title="Color Theme">
         <ColorThemeTools />
       </CollapsibleSection>
-      <CollapsibleSection title="Text">
-        <TextToolOptions />
-      </CollapsibleSection>
       <CollapsibleSection title="Block Builder">
         <BlockBuilderOptions />
       </CollapsibleSection>
@@ -428,18 +428,132 @@ function BlockPanel() {
   );
 }
 
-const PANELS: Record<'quilt' | 'block', React.FC> = {
+const ROLE_LABELS: Record<LayoutAreaRole, string> = {
+  'block-cell': 'Block Cell',
+  sashing: 'Sashing',
+  cornerstone: 'Cornerstone',
+  border: 'Border',
+  binding: 'Binding',
+};
+
+const ROLE_DESCRIPTIONS: Record<LayoutAreaRole, string> = {
+  'block-cell': 'Click to assign a block from your library',
+  sashing: 'Click to assign a fabric color',
+  cornerstone: 'Click to assign a fabric color',
+  border: 'Click to assign a fabric color',
+  binding: 'Click to assign a fabric color',
+};
+
+function LayoutAreaInfo() {
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const layoutType = useLayoutStore((s) => s.layoutType);
+  const rows = useLayoutStore((s) => s.rows);
+  const cols = useLayoutStore((s) => s.cols);
+  const [selectedArea, setSelectedArea] = useState<{
+    areaId: string;
+    role: LayoutAreaRole;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
+    const canvas = fabricCanvas as unknown as FabricCanvas;
+    const handleSelection = () => {
+      const active = canvas.getActiveObject() as Record<string, unknown> | undefined;
+      if (active) {
+        const area = getLayoutAreaFromObject(active);
+        setSelectedArea(area);
+      } else {
+        setSelectedArea(null);
+      }
+    };
+
+    const handleDeselection = () => setSelectedArea(null);
+
+    canvas.on('selection:created', handleSelection);
+    canvas.on('selection:updated', handleSelection);
+    canvas.on('selection:cleared', handleDeselection);
+
+    return () => {
+      canvas.off('selection:created', handleSelection);
+      canvas.off('selection:updated', handleDeselection);
+      canvas.off('selection:cleared', handleDeselection);
+    };
+  }, [fabricCanvas]);
+
+  if (layoutType === 'none' || layoutType === 'free-form') {
+    return (
+      <p className="text-xs text-secondary">
+        No layout applied. Use Layout Settings to choose a layout type.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="text-xs text-secondary">
+        <span className="font-medium text-on-surface capitalize">{layoutType}</span>
+        {' layout '}
+        <span className="text-secondary">
+          {rows} x {cols}
+        </span>
+      </div>
+
+      {selectedArea ? (
+        <div className="rounded-lg bg-surface-container p-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-3 h-3 rounded-sm border border-outline-variant/30"
+              style={{
+                backgroundColor:
+                  selectedArea.role === 'block-cell'
+                    ? '#F8F8F8'
+                    : selectedArea.role === 'sashing'
+                      ? '#E8E2D8'
+                      : selectedArea.role === 'cornerstone'
+                        ? '#D5CFC5'
+                        : selectedArea.role === 'border'
+                          ? '#C8D8E8'
+                          : '#505050',
+              }}
+            />
+            <span className="text-sm font-medium text-on-surface">
+              {ROLE_LABELS[selectedArea.role]}
+            </span>
+          </div>
+          <p className="text-xs text-secondary">{ROLE_DESCRIPTIONS[selectedArea.role]}</p>
+          <p className="text-[10px] text-secondary/60 font-mono">{selectedArea.areaId}</p>
+        </div>
+      ) : (
+        <p className="text-xs text-secondary">Select a layout area to assign a block or fabric.</p>
+      )}
+    </div>
+  );
+}
+
+function LayoutPanel() {
+  return (
+    <div className="flex flex-col">
+      <CollapsibleSection title="Layout Area" defaultOpen={true}>
+        <LayoutAreaInfo />
+      </CollapsibleSection>
+    </div>
+  );
+}
+
+const PANELS: Record<'quilt' | 'block' | 'layout', React.FC> = {
   quilt: QuiltPanel,
   block: BlockPanel,
+  layout: LayoutPanel,
 };
 
 export function ContextPanel() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
 
-  if (activeWorktable === 'print' || activeWorktable === 'image' || activeWorktable === 'pattern')
-    return null;
+  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
 
-  const PanelContent = PANELS[activeWorktable];
+  const PanelContent = PANELS[activeWorktable as keyof typeof PANELS];
+  if (!PanelContent) return null;
 
   return (
     <div className="w-[280px] bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15">

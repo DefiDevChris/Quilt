@@ -219,7 +219,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   if (!userId) return;
 
   // Re-activate subscription after successful payment (e.g. past_due recovery)
-  const subscriptionId = invoice.subscription as string;
+  const subscriptionId = (invoice as unknown as Record<string, unknown>).subscription as string;
   if (!subscriptionId) return;
 
   const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);

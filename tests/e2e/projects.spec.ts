@@ -19,7 +19,7 @@ test.describe('Dashboard', () => {
 
     // Check for key sections
     await expect(page.getByText('New Design')).toBeVisible();
-    await expect(page.getByText('Photo to Pattern')).toBeVisible();
+    await expect(page.getByText('Photo to Design')).toBeVisible();
     await expect(page.getByText('My Quiltbook')).toBeVisible();
     await expect(page.getByText('Browse Patterns')).toBeVisible();
     await expect(page.getByText('Community Threads')).toBeVisible();

@@ -12,6 +12,8 @@ export interface Block {
   createdAt: Date;
 }
 
+export type BlockType = 'svg' | 'custom' | 'photo';
+
 export interface BlockListItem {
   id: string;
   name: string;
@@ -21,4 +23,5 @@ export interface BlockListItem {
   thumbnailUrl: string | null;
   isDefault: boolean;
   isLocked: boolean;
+  blockType: BlockType;
 }

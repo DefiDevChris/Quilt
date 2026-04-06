@@ -1,6 +1,6 @@
 /**
  * Lazy-loads and caches the OpenCV.js WASM instance.
- * ~8MB — only imported when the Photo to Pattern flow starts.
+ * ~8MB — only imported when the Photo to Design flow starts.
  */
 
 import type { OpenCV } from '@/types/opencv-js';

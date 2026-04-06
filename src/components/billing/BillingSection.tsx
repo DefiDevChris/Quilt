@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, PRO_YEARLY_SAVINGS_PERCENT } from '@/lib/constants';
+import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { useToast } from '@/components/ui/ToastProvider';
 
 type SubscriptionInfo = {
@@ -53,25 +54,8 @@ export function BillingSection() {
 
   async function handleUpgrade() {
     setIsCheckoutLoading(true);
-    try {
-      const res = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ interval: billingInterval }),
-      });
-      const data = await res.json();
-      if (data.success && data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      }
-    } catch {
-      toast({
-        type: 'error',
-        title: 'Checkout failed',
-        description: 'Unable to start checkout. Please try again.',
-      });
-    } finally {
-      setIsCheckoutLoading(false);
-    }
+    await startStripeCheckout({ interval: billingInterval });
+    setIsCheckoutLoading(false);
   }
 
   async function handleManageSubscription() {

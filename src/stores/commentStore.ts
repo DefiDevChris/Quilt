@@ -59,7 +59,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       params.set('page', String(append ? page : 1));
       params.set('limit', '20');
 
-      const res = await fetch(`/api/community/${postId}/comments?${params.toString()}`, {
+      const res = await fetch(`/api/social/${postId}/comments?${params.toString()}`, {
         signal: commentAbortController.signal,
       });
       const json = await res.json();
@@ -91,7 +91,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     set({ isSubmitting: true, error: null });
 
     try {
-      const res = await fetch(`/api/community/${postId}/comments`, {
+      const res = await fetch(`/api/social/${postId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, replyToId }),
@@ -143,7 +143,7 @@ export const useCommentStore = create<CommentState>((set, get) => ({
 
   deleteComment: async (postId, commentId) => {
     try {
-      const res = await fetch(`/api/community/${postId}/comments/${commentId}`, {
+      const res = await fetch(`/api/social/${postId}/comments/${commentId}`, {
         method: 'DELETE',
       });
 

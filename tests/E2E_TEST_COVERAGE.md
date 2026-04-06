@@ -19,7 +19,7 @@
 
 ### Export & Import
 12. **export-flows.spec.ts** - PDF/PNG/SVG export, FPP templates, yardage, cutting charts
-13. **photo-pattern.spec.ts** - Photo to pattern, pattern import, reference images
+13. **photo-pattern.spec.ts** - Photo to design, pattern import, reference images
 
 ### User Management
 14. **templates.spec.ts** - Project templates CRUD operations

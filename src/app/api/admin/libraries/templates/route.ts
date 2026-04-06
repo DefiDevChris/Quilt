@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
-import { patternTemplates } from '@/db/schema';
+import { layoutTemplates } from '@/db/schema';
 import { getRequiredSession } from '@/lib/auth-helpers';
 import { errorResponse, unauthorizedResponse, forbiddenResponse, validationErrorResponse } from '@/lib/api-responses';
 import { isAdmin } from '@/lib/trust-utils';
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    if (!body.name || !body.patternData || !body.skillLevel) {
+    if (!body.name || !body.layoutData || !body.skillLevel) {
       return validationErrorResponse('Name, Pattern Data, and Skill Level are required');
     }
 
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
 
     // Check for slug conflict
     const conflictRes = await db
-      .select({ id: patternTemplates.id })
-      .from(patternTemplates)
-      .where(eq(patternTemplates.slug, newSlug));
+      .select({ id: layoutTemplates.id })
+      .from(layoutTemplates)
+      .where(eq(layoutTemplates.slug, newSlug));
 
     if (conflictRes.length > 0) {
       newSlug = appendSlugSuffix(newSlug);
@@ -47,19 +47,19 @@ export async function POST(request: NextRequest) {
       blockCount: parseInt(body.blockCount) || 0,
       fabricCount: parseInt(body.fabricCount) || 0,
       thumbnailUrl: body.thumbnailUrl || null,
-      patternData: body.patternData,
+      layoutData: body.layoutData,
       tags: body.tags || [],
       isPublished: true,
     };
 
     const [inserted] = await db
-      .insert(patternTemplates)
+      .insert(layoutTemplates)
       .values(templateData)
       .returning();
 
     return Response.json({ success: true, data: inserted });
   } catch (error) {
-    console.error('Failed to create pattern template', error);
-    return errorResponse('Failed to create pattern template', 'INTERNAL_ERROR', 500);
+    console.error('Failed to create layout template', error);
+    return errorResponse('Failed to create layout template', 'INTERNAL_ERROR', 500);
   }
 }

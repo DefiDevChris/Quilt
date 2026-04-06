@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { TemplateView } from '@/components/templates/TemplateView';
+import { TemplateDetailContent } from '@/components/templates/TemplateDetailContent';
 
 export const metadata: Metadata = {
   title: 'Template | QuiltCorgi',
@@ -11,5 +11,5 @@ export default async function TemplatePage({
   params: Promise<{ templateId: string }>;
 }) {
   const { templateId } = await params;
-  return <TemplateView templateId={templateId} />;
+  return <TemplateDetailContent templateId={templateId} mode="page" />;
 }

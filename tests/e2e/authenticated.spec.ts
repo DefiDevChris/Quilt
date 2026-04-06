@@ -17,9 +17,9 @@ test.describe('Authenticated Dashboard', () => {
     await expect(newDesignCard).toBeVisible({ timeout: 10000 });
   });
 
-  test('photo to pattern card is visible', async ({ page }) => {
+  test('photo to design card is visible', async ({ page }) => {
     await page.goto('/dashboard');
-    const photoCard = page.getByText(/photo to pattern/i);
+    const photoCard = page.getByText(/photo to design/i);
     if (await photoCard.isVisible()) {
       await expect(photoCard).toBeVisible();
     }
@@ -218,14 +218,14 @@ test.describe('Templates', () => {
   });
 });
 
-test.describe('Photo to Pattern', () => {
+test.describe('Photo to Design', () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page, 'pro');
   });
 
-  test('photo to pattern dialog opens', async ({ page }) => {
+  test('photo to design dialog opens', async ({ page }) => {
     await page.goto('/dashboard');
-    const photoButton = page.getByText(/photo to pattern/i);
+    const photoButton = page.getByText(/photo to design/i);
     if (await photoButton.isVisible()) {
       await photoButton.click();
       const upload = page.getByText(/upload/i);

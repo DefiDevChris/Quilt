@@ -84,6 +84,7 @@ export async function GET(request: NextRequest) {
           tags: blocks.tags,
           thumbnailUrl: blocks.thumbnailUrl,
           isDefault: blocks.isDefault,
+          fabricJsData: blocks.fabricJsData,
         })
         .from(blocks)
         .where(whereClause)
@@ -109,17 +110,24 @@ export async function GET(request: NextRequest) {
       freeBlockIds = new Set(freeBlocks.map((b) => b.id));
     }
 
-    const blocksWithLock = blockRows.map((block) => ({
-      id: block.id,
-      name: block.name,
-      category: block.category,
-      subcategory: block.subcategory,
-      tags: block.tags ?? [],
-      thumbnailUrl: block.thumbnailUrl,
-      isDefault: block.isDefault,
-      isLocked:
-        !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
-    }));
+    const blocksWithLock = blockRows.map((block) => {
+      const fjd = block.fabricJsData as Record<string, unknown> | null;
+      const isPhoto = fjd !== null && typeof fjd === 'object' && fjd.type === 'photo-block';
+      const blockType = block.isDefault ? 'svg' : isPhoto ? 'photo' : 'custom';
+
+      return {
+        id: block.id,
+        name: block.name,
+        category: block.category,
+        subcategory: block.subcategory,
+        tags: block.tags ?? [],
+        thumbnailUrl: block.thumbnailUrl,
+        isDefault: block.isDefault,
+        isLocked:
+          !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
+        blockType,
+      };
+    });
 
     return Response.json({
       success: true,

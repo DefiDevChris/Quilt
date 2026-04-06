@@ -165,7 +165,7 @@ export function FloatingToolbar() {
 
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
-    pattern: [],
+    layout: [],
     block: BLOCK_TOOLS,
     image: [],
     print: [],

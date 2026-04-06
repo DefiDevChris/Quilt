@@ -1,4 +1,4 @@
-import type { Point2D } from '@/lib/photo-pattern-types';
+import type { Point2D } from '@/lib/photo-layout-types';
 import type { OpenCV, OpenCVMat } from '@/types/opencv-js';
 
 /**

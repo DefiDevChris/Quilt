@@ -12,6 +12,8 @@ interface LayoutStoreState {
   blockSize: number;
   sashing: SashingConfig;
   borders: BorderConfig[];
+  hasCornerstones: boolean;
+  bindingWidth: number;
 
   setLayoutType: (type: LayoutType) => void;
   setSelectedPreset: (presetId: string | null) => void;
@@ -22,6 +24,8 @@ interface LayoutStoreState {
   addBorder: () => void;
   updateBorder: (index: number, updates: Partial<BorderConfig>) => void;
   removeBorder: (index: number) => void;
+  setHasCornerstones: (value: boolean) => void;
+  setBindingWidth: (width: number) => void;
   reset: () => void;
 }
 
@@ -50,6 +54,8 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
   blockSize: 6,
   sashing: { ...DEFAULT_SASHING },
   borders: [],
+  hasCornerstones: true,
+  bindingWidth: 0.25,
 
   setLayoutType: (layoutType) => set({ layoutType }),
 
@@ -84,6 +90,10 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
       borders: state.borders.filter((_, i) => i !== index),
     })),
 
+  setHasCornerstones: (hasCornerstones) => set({ hasCornerstones }),
+
+  setBindingWidth: (bindingWidth) => set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
+
   reset: () =>
     set({
       layoutType: 'none',
@@ -93,5 +103,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
       blockSize: 6,
       sashing: { ...DEFAULT_SASHING },
       borders: [],
+      hasCornerstones: true,
+      bindingWidth: 0.25,
     }),
 }));

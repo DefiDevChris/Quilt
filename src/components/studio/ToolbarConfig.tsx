@@ -1,5 +1,4 @@
 import { useCanvasStore } from '@/stores/canvasStore';
-import { usePatternBuilderStore } from '@/stores/patternBuilderStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -13,7 +12,7 @@ export interface ToolbarCallbacks {
   onOpenLayoutSettings?: () => void;
   onOpenGridDimensions?: () => void;
   onOpenImageExport?: () => void;
-  onOpenPhotoToPattern?: () => void;
+  onOpenPhotoToDesign?: () => void;
   onOpenResize?: () => void;
   onOpenReferenceImage?: () => void;
   onOpenLayoutOverlay?: () => void;
@@ -25,8 +24,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const isFabricPanelOpen = useFabricStore((s) => s.isPanelOpen);
   const toggleFabricPanel = useFabricStore((s) => s.togglePanel);
   const layoutType = useLayoutStore((s) => s.layoutType);
-  const activePatternPanel = usePatternBuilderStore((s) => s.activePanel);
-  const togglePatternPanel = usePatternBuilderStore((s) => s.togglePanel);
   const isYardagePanelOpen = useYardageStore((s) => s.isPanelOpen);
   const toggleYardagePanel = useYardageStore((s) => s.togglePanel);
   const isPrintlistPanelOpen = usePrintlistStore((s) => s.isPanelOpen);
@@ -36,6 +33,10 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
+
+  // Pattern builder panel state - use block store
+  const activePatternPanel = useBlockStore((s) => s.activePanel);
+  const togglePatternPanel = useBlockStore((s) => s.togglePanel);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -146,15 +147,15 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'photo-to-pattern',
-      label: 'Photo to Pattern',
-      description: 'Turn any photo into a quilt pattern — the fastest way to start a design',
+      id: 'photo-to-design',
+      label: 'Photo to Design',
+      description: 'Turn any photo into a quilt design — the fastest way to start a project',
       mascot: '/mascots&avatars/corgi10.png',
       group: 'create',
       tier: 'primary',
       isProFeature: true,
-      onClick: callbacks.onOpenPhotoToPattern,
-      dataTour: 'photo-to-pattern',
+      onClick: callbacks.onOpenPhotoToDesign,
+      dataTour: 'photo-to-design',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />

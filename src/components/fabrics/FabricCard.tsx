@@ -10,9 +10,10 @@ interface FabricCardProps {
   fabric: FabricListItem;
   onDragStart: (e: React.DragEvent, fabric: FabricListItem) => void;
   onRemove?: () => void;
+  onClick?: () => void;
 }
 
-export function FabricCard({ fabric, onDragStart, onRemove }: FabricCardProps) {
+export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCardProps) {
   const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
   const addFabricPreset = useProjectStore((s) => s.addFabricPreset);
   const setWhereUsedFabric = useFabricStore((s) => s.setWhereUsedFabric);
@@ -83,6 +84,7 @@ export function FabricCard({ fabric, onDragStart, onRemove }: FabricCardProps) {
       <div
         draggable
         onDragStart={(e) => onDragStart(e, fabric)}
+        onClick={onClick}
         onContextMenu={handleContextMenu}
         className="group relative cursor-grab rounded-lg border border-outline-variant bg-background overflow-hidden hover:border-primary transition-colors"
         title={fabric.name}

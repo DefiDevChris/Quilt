@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import Mascot from '@/components/landing/Mascot';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
-import { TemplateDetailModal } from '@/components/studio/TemplateDetailModal';
+import { TemplateDetailModal } from '@/components/templates/TemplateDetailModal';
 
-interface CommunityPost {
+interface SocialPost {
   id: string;
   title: string;
   description: string | null;
@@ -27,52 +27,84 @@ interface CommunityPost {
   templateId: string | null;
 }
 
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 interface FeedContentProps {
   sort?: 'newest' | 'popular';
   search?: string;
   category?: string;
+  tab?: 'discover' | 'saved';
 }
 
-export function FeedContent({ sort = 'newest', search = '', category }: FeedContentProps) {
+export function FeedContent({
+  sort = 'newest',
+  search = '',
+  category,
+  tab = 'discover',
+}: FeedContentProps) {
   const user = useAuthStore((s) => s.user);
-  const [posts, setPosts] = useState<CommunityPost[]>([]);
+  const [posts, setPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      params.set('tab', 'discover');
-      params.set('sort', sort);
-      params.set('page', '1');
-      params.set('limit', '24');
-      if (search) params.set('search', search);
-      if (category) params.set('category', category);
-
-      const res = await fetch(`/api/community?${params.toString()}`);
-      const json = await res.json();
-
-      if (!res.ok) {
-        throw new Error(json.error || 'Failed to load posts');
+  const fetchPosts = useCallback(
+    async (page = 1, append = false) => {
+      if (page === 1) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
       }
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        params.set('tab', tab);
+        params.set('sort', sort);
+        params.set('page', String(page));
+        params.set('limit', '24');
+        if (search) params.set('search', search);
+        if (category) params.set('category', category);
 
-      setPosts(json.data?.posts || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load community feed');
-    } finally {
-      setLoading(false);
-    }
-  }, [sort, search, category]);
+        const res = await fetch(`/api/social?${params.toString()}`);
+        const json = await res.json();
+
+        if (!res.ok) {
+          throw new Error(json.error || 'Failed to load posts');
+        }
+
+        const incoming = json.data?.posts || [];
+        setPosts((prev) => (append ? [...prev, ...incoming] : incoming));
+        setPagination(json.data?.pagination ?? null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load feed');
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [sort, search, category, tab]
+  );
 
   useEffect(() => {
-    fetchPosts();
+    fetchPosts(1, false);
   }, [fetchPosts]);
+
+  const handleLoadMore = () => {
+    if (!pagination || pagination.page >= pagination.totalPages || loadingMore) return;
+    fetchPosts(pagination.page + 1, true);
+  };
+
+  const hasMore = pagination ? pagination.page < pagination.totalPages : false;
 
   return (
     <div className="space-y-5">
-      <CreatePostComposer onSuccess={fetchPosts} />
+      {tab === 'discover' && <CreatePostComposer onSuccess={() => fetchPosts(1, false)} />}
 
       {/* Loading */}
       {loading && (
@@ -101,7 +133,7 @@ export function FeedContent({ sort = 'newest', search = '', category }: FeedCont
         <div className="glass-panel rounded-2xl p-10 text-center">
           <p className="text-secondary text-sm mb-4">{error}</p>
           <button
-            onClick={fetchPosts}
+            onClick={() => fetchPosts(1, false)}
             className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-elevation-1"
           >
             Retry
@@ -115,7 +147,14 @@ export function FeedContent({ sort = 'newest', search = '', category }: FeedCont
           <div className="w-16 h-16 mx-auto mb-4">
             <Mascot pose="sitting" size="lg" />
           </div>
-          {search || category ? (
+          {tab === 'saved' ? (
+            <>
+              <p className="text-base font-semibold text-on-surface mb-1">No saved posts</p>
+              <p className="text-secondary text-sm">
+                Bookmark posts to see them here
+              </p>
+            </>
+          ) : search || category ? (
             <>
               <p className="text-base font-semibold text-on-surface mb-1">No matching posts</p>
               <p className="text-secondary text-sm">Try a different search or category</p>
@@ -143,26 +182,54 @@ export function FeedContent({ sort = 'newest', search = '', category }: FeedCont
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
+
+          {/* Load more */}
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="glass-panel rounded-full px-6 py-2.5 text-sm font-medium text-on-surface hover:shadow-elevation-1 transition-all disabled:opacity-50"
+              >
+                {loadingMore ? 'Loading...' : 'Load More'}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function PostCard({ post }: { post: CommunityPost }) {
+function PostCard({ post }: { post: SocialPost }) {
   const { open } = useSocialQuickView();
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
+  const [bookmarked, setBookmarked] = useState(post.isBookmarkedByUser);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      const response = await fetch(`/api/community/${post.id}/like`, { method: 'POST' });
+      const response = await fetch(`/api/social/${post.id}/like`, { method: 'POST' });
       if (response.ok) {
         setLiked(!liked);
         setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const handleBookmark = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const response = await fetch(`/api/social/${post.id}/bookmark`, { method: 'POST' });
+      if (response.ok) {
+        const json = await response.json();
+        setBookmarked(json.data.bookmarked);
       }
     } catch {
       /* ignore */
@@ -248,7 +315,7 @@ function PostCard({ post }: { post: CommunityPost }) {
         </button>
       )}
 
-      {/* Actions row — evenly spaced like reference */}
+      {/* Actions row */}
       <div className="px-4 py-3 flex items-center border-t border-white/40">
         <button
           onClick={handleLike}
@@ -270,12 +337,20 @@ function PostCard({ post }: { post: CommunityPost }) {
           )}
         </button>
 
+        <button
+          onClick={handleBookmark}
+          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${
+            bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={1.5} />
+        </button>
+
         <Link
           href={`/socialthreads/${post.id}`}
           className="flex items-center gap-1.5 flex-1 justify-center text-secondary hover:text-on-surface transition-colors"
         >
           <Share2 size={18} strokeWidth={1.5} />
-          <span className="text-sm font-medium">Share</span>
         </Link>
       </div>
 

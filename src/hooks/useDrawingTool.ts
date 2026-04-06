@@ -85,7 +85,7 @@ export function useDrawingTool() {
         startX = sx;
         startY = sy;
 
-        if (activeTool === 'rectangle' || activeTool === 'sashing' || activeTool === 'border') {
+        if (activeTool === 'rectangle') {
           previewShape = new fabric.Rect({
             left: sx,
             top: sy,
@@ -133,7 +133,7 @@ export function useDrawingTool() {
         const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
         const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
-        if (activeTool === 'rectangle' || activeTool === 'sashing' || activeTool === 'border') {
+        if (activeTool === 'rectangle') {
           const width = cx - startX;
           const height = cy - startY;
           previewShape.set({
@@ -169,14 +169,6 @@ export function useDrawingTool() {
           canvas.remove(previewShape);
         } else {
           const { fillColor, strokeColor, strokeWidth } = stateRef.current;
-          
-          // Tag sashing and border shapes with metadata
-          const metadata: Record<string, unknown> = {};
-          if (activeTool === 'sashing') {
-            metadata.type = 'sashing';
-          } else if (activeTool === 'border') {
-            metadata.type = 'border';
-          }
 
           previewShape.set({
             fill: fillColor,
@@ -185,7 +177,6 @@ export function useDrawingTool() {
             strokeDashArray: undefined,
             selectable: true,
             evented: true,
-            data: metadata,
           });
 
           const json = JSON.stringify(canvas.toJSON());

@@ -8,16 +8,16 @@ const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}
 
 /**
  * Content Security Policy (CSP) Configuration
- * 
+ *
  * SECURITY NOTE: 'unsafe-inline' is currently required for script-src due to Next.js App Router
  * limitations. Next.js 16.x does not yet support nonce-based CSP for App Router runtime chunks.
- * 
+ *
  * This is a known framework limitation, not a code defect. The risk is mitigated by:
  * - Strict same-origin policy
  * - No user-generated script content
  * - SVG sanitization (DOMPurify)
  * - Input validation on all API routes
- * 
+ *
  * Monitor: https://github.com/vercel/next.js/discussions/54907
  * Action: Migrate to nonce-based CSP when Next.js adds support
  */
@@ -61,7 +61,6 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       fs: { browser: './src/lib/empty-module.ts' },
       path: { browser: './src/lib/empty-module.ts' },
-      crypto: { browser: './src/lib/empty-module.ts' },
     },
   },
   webpack: (config, { isServer }) => {
@@ -70,7 +69,6 @@ const nextConfig: NextConfig = {
         ...config.resolve.fallback,
         fs: false,
         path: false,
-        crypto: false,
       };
     }
     return config;

@@ -118,7 +118,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       if (cursor) params.set('cursor', cursor);
       params.set('limit', '24');
 
-      const res = await fetch(`/api/community?${params.toString()}`, {
+      const res = await fetch(`/api/social?${params.toString()}`, {
         signal: communityAbortController.signal,
       });
       const json = await res.json();
@@ -162,7 +162,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       ),
     });
 
-    fetch(`/api/community/${postId}/like`, { method: 'POST' })
+    fetch(`/api/social/${postId}/like`, { method: 'POST' })
       .then((res) => {
         inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {
@@ -190,7 +190,7 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       ),
     });
 
-    fetch(`/api/community/${postId}/like`, { method: 'DELETE' })
+    fetch(`/api/social/${postId}/like`, { method: 'DELETE' })
       .then((res) => {
         inFlightActions.delete(`like:${postId}`);
         if (!res.ok) {

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCanvasStore, type BlockDraftingMode } from '@/stores/canvasStore';
 import { FreeformDraftingTab } from './FreeformDraftingTab';
 import { BlockBuilderTab } from './BlockBuilderTab';
-import { AppliqueTab } from './AppliqueTab';
+
 import { GRID_LINE_COLOR } from '@/lib/constants';
 
 import { BlockOverlaySelector } from './BlockOverlaySelector';
@@ -17,6 +17,8 @@ export interface DraftTabProps {
   activeOverlay?: string | null;
   overlayOpacity?: number;
   setOverlayOpacity?: (opacity: number) => void;
+  gridUnits?: number;
+  onGridUnitsChange?: (units: number) => void;
 }
 
 interface BlockDraftingShellProps {
@@ -26,12 +28,11 @@ interface BlockDraftingShellProps {
 }
 
 const DRAFT_CANVAS_SIZE = 400;
-const BLOCK_SIZE_UNITS = 12;
+const DEFAULT_gridUnits = 12;
 
 const TAB_LABELS: Record<BlockDraftingMode, string> = {
   freeform: 'Freeform',
   blockbuilder: 'BlockBuilder',
-  applique: 'Applique',
 };
 
 export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingShellProps) {
@@ -40,6 +41,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
   const [tags, setTags] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [gridUnits, setGridUnits] = useState(DEFAULT_gridUnits);
   const [showOverlaySelector, setShowOverlaySelector] = useState(false);
   const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
   const [overlayDimensions, setOverlayDimensions] = useState<{
@@ -74,13 +76,13 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
       });
 
       // Draw grid
-      const gridStep = DRAFT_CANVAS_SIZE / BLOCK_SIZE_UNITS;
-      for (let i = 0; i <= BLOCK_SIZE_UNITS; i++) {
+      const gridStep = DRAFT_CANVAS_SIZE / gridUnits;
+      for (let i = 0; i <= gridUnits; i++) {
         const pos = i * gridStep;
         canvas.add(
           new fabric.Line([pos, 0, pos, DRAFT_CANVAS_SIZE], {
             stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === BLOCK_SIZE_UNITS ? 2 : 0.5,
+            strokeWidth: i === 0 || i === gridUnits ? 2 : 0.5,
             selectable: false,
             evented: false,
           })
@@ -88,7 +90,7 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
         canvas.add(
           new fabric.Line([0, pos, DRAFT_CANVAS_SIZE, pos], {
             stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === BLOCK_SIZE_UNITS ? 2 : 0.5,
+            strokeWidth: i === 0 || i === gridUnits ? 2 : 0.5,
             selectable: false,
             evented: false,
           })
@@ -282,6 +284,8 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
     activeOverlay,
     overlayOpacity,
     setOverlayOpacity,
+    gridUnits,
+    onGridUnitsChange: setGridUnits,
   };
 
   return (
@@ -314,8 +318,9 @@ export function BlockDraftingShell({ isOpen, onClose, onSaved }: BlockDraftingSh
 
         {/* Active tab toolbar */}
         {activeMode === 'freeform' && <FreeformDraftingTab {...tabProps} />}
-        {activeMode === 'blockbuilder' && <BlockBuilderTab {...tabProps} />}
-        {activeMode === 'applique' && <AppliqueTab {...tabProps} />}
+        {activeMode === 'blockbuilder' && (
+          <BlockBuilderTab {...tabProps} gridUnits={gridUnits} onGridUnitsChange={setGridUnits} />
+        )}
 
         {/* Overlay controls */}
         <div className="mb-2 flex items-center gap-2">
