@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import type { Project } from '@/types/project';
 import { CanvasWorkspace } from '@/components/canvas/CanvasWorkspace';
@@ -12,19 +12,16 @@ import { Toolbar } from '@/components/studio/Toolbar';
 import { BottomBar } from '@/components/studio/BottomBar';
 import { ContextPanel } from '@/components/studio/ContextPanel';
 import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
-import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockDraftingModal } from '@/components/blocks/BlockDraftingModal';
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
-import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
-import { PRO_PRICE_MONTHLY } from '@/lib/constants';
+import { PRO_PRICE_MONTHLY, GRID_LINE_COLOR } from '@/lib/constants';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
 import { LayoutOverlayPanel } from '@/components/studio/LayoutOverlayPanel';
-import { PatternCreatorPanel } from '@/components/studio/PatternCreatorPanel';
 
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
@@ -57,9 +54,12 @@ import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
+import { NewBlockSetupModal } from '@/components/studio/NewBlockSetupModal';
+import { NewLayoutSetupModal } from '@/components/studio/NewLayoutSetupModal';
 
 function PrintOptionsPanel({
   onOpenPdfExport,
@@ -124,7 +124,7 @@ function PrintOptionsPanel({
               }`}
             >
               <span
-                className={`inline-block h-4 w-4 mt-0.5 rounded-full bg-white shadow transition-transform ${
+                className={`inline-block h-4 w-4 mt-0.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
                   showSeamAllowance ? 'translate-x-4' : 'translate-x-0.5'
                 }`}
               />
@@ -229,11 +229,51 @@ export function StudioClient({ projectId }: StudioClientProps) {
     setIsUpgrading(false);
   }
 
+  const [showBlockSetup, setShowBlockSetup] = useState(false);
+  const [showLayoutSetup, setShowLayoutSetup] = useState(false);
+  const blockSetupShownRef = useRef(false);
+  const layoutSetupShownRef = useRef(false);
+
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const isInspectorOpen = usePieceInspectorStore((s) => s.isOpen);
   const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
+
+  useEffect(() => {
+    if (activeWorktable === 'block' && !blockSetupShownRef.current) {
+      const canvas = useCanvasStore.getState().fabricCanvas;
+      const hasContent = (canvas?.getObjects() ?? []).some(
+        (o) => (o as { stroke?: string }).stroke !== GRID_LINE_COLOR
+      );
+      if (!hasContent) setShowBlockSetup(true);
+      blockSetupShownRef.current = true;
+    }
+    if (activeWorktable === 'layout' && !layoutSetupShownRef.current) {
+      const { layoutType } = useLayoutStore.getState();
+      const hasContent = layoutType !== 'none';
+      if (!hasContent) setShowLayoutSetup(true);
+      layoutSetupShownRef.current = true;
+    }
+  }, [activeWorktable]);
+
+  const handleBlockSetupConfirm = useCallback((blockSize: number, cellSize: number) => {
+    useProjectStore.getState().setCanvasWidth(blockSize);
+    useProjectStore.getState().setCanvasHeight(blockSize);
+    useCanvasStore.getState().setGridSettings({ size: cellSize, snapToGrid: true });
+    useCanvasStore.getState().fabricCanvas?.renderAll();
+    setShowBlockSetup(false);
+  }, []);
+
+  const handleLayoutSetupConfirm = useCallback(
+    (rows: number, cols: number, blockSize: number, _cellSize: number) => {
+      useLayoutStore.getState().setRows(rows);
+      useLayoutStore.getState().setCols(cols);
+      useLayoutStore.getState().setBlockSize(blockSize);
+      setShowLayoutSetup(false);
+    },
+    []
+  );
 
   useYardageCalculation();
   usePhotoLayoutImport();
@@ -263,7 +303,27 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   const combinedDrop = useCallback(
     (e: React.DragEvent) => {
-      if (e.dataTransfer.getData('application/quiltcorgi-fabric-id')) {
+      e.preventDefault();
+      const layoutPresetId = e.dataTransfer.getData('application/quiltcorgi-layout-preset');
+      const fabricId = e.dataTransfer.getData('application/quiltcorgi-fabric-id');
+
+      if (layoutPresetId) {
+        // Layout drop
+        import('@/stores/layoutStore').then(({ useLayoutStore }) => {
+          import('@/lib/layout-library').then(({ LAYOUT_PRESETS }) => {
+            const preset = LAYOUT_PRESETS.find((p) => p.id === layoutPresetId);
+            if (preset) {
+              const store = useLayoutStore.getState();
+              store.setLayoutType(preset.config.type as any);
+              store.setSelectedPreset(preset.id);
+              store.setRows(preset.config.rows);
+              store.setCols(preset.config.cols);
+              store.setBlockSize(preset.config.blockSize);
+              store.setSashing(preset.config.sashing);
+            }
+          });
+        });
+      } else if (fabricId) {
         handleFabricDrop(e);
       } else {
         handleDrop(e);
@@ -335,7 +395,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
           <p className="text-sm text-error mb-4">{error || 'Failed to load project.'}</p>
           <Link
             href="/dashboard"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
           >
             Return to Dashboard
           </Link>
@@ -362,8 +422,6 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenPdfExport={() => setIsPdfExportOpen(true)}
             onOpenImageExport={() => setIsImageExportOpen(true)}
           />
-        ) : activeWorktable === 'layout' ? (
-          <PatternCreatorPanel />
         ) : (
           <Toolbar
             onOpenLayoutSettings={() => setIsLayoutSettingsOpen(true)}
@@ -375,28 +433,20 @@ export function StudioClient({ projectId }: StudioClientProps) {
             onOpenResize={() => setIsResizeOpen(true)}
             onOpenReferenceImage={() => setIsReferenceImageOpen(true)}
             onOpenLayoutOverlay={() => setIsLayoutOverlayOpen(true)}
+            onSaveBlock={() => setIsDraftingOpen(true)}
+            onNewBlock={() => {
+              const canvas = useCanvasStore.getState().fabricCanvas;
+              if (canvas) {
+                canvas.clear();
+                canvas.backgroundColor = '#FFFFFF';
+                canvas.renderAll();
+              }
+              useCanvasStore.getState().resetHistory();
+            }}
           />
         )}
 
-        {/* Block & Fabric Libraries — visible on worktable and block builder */}
-        {(activeWorktable === 'quilt' || activeWorktable === 'block') && (
-          <>
-            <BlockLibrary
-              onBlockDragStart={handleDragStart}
-              onOpenDrafting={() => setIsDraftingOpen(true)}
-              onOpenPhotoUpload={() =>
-                isPro ? setIsPhotoBlockUploadOpen(true) : setProUpgradeFeature('Photo Block Upload')
-              }
-            />
-
-            <FabricLibrary
-              onFabricDragStart={handleFabricDragStart}
-              onOpenUpload={() =>
-                isPro ? setIsFabricUploadOpen(true) : setProUpgradeFeature('Fabric Upload')
-              }
-            />
-          </>
-        )}
+        {/* Block & Fabric Libraries moved to ContextPanel */}
 
         {/* Pattern builder panels — visible on quilt worktable */}
         {activeWorktable === 'quilt' && (
@@ -479,10 +529,20 @@ export function StudioClient({ projectId }: StudioClientProps) {
           />
         )}
 
-        {/* Right context panel (hidden for PRINT and PATTERN) */}
-        {activeWorktable !== 'print' && activeWorktable !== 'layout' && (
-          <div className="relative">
-            <ContextPanel />
+        {/* Right context panel (hidden for PRINT only) */}
+        {activeWorktable !== 'print' && (
+          <div className="relative h-full">
+            <ContextPanel
+              onBlockDragStart={handleDragStart}
+              onFabricDragStart={handleFabricDragStart}
+              onOpenDrafting={() => setIsDraftingOpen(true)}
+              onOpenPhotoUpload={() =>
+                isPro ? setIsPhotoBlockUploadOpen(true) : setProUpgradeFeature('Photo Block Upload')
+              }
+              onOpenUpload={() =>
+                isPro ? setIsFabricUploadOpen(true) : setProUpgradeFeature('Fabric Upload')
+              }
+            />
             {isInspectorOpen && <PieceInspectorPanel />}
           </div>
         )}
@@ -594,7 +654,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-on hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>
@@ -620,6 +680,20 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
+
+      {/* New block setup modal — shown on first visit to block worktable with no content */}
+      <NewBlockSetupModal
+        isOpen={showBlockSetup}
+        onConfirm={handleBlockSetupConfirm}
+        onDismiss={() => setShowBlockSetup(false)}
+      />
+
+      {/* New layout setup modal — shown on first visit to layout worktable with no content */}
+      <NewLayoutSetupModal
+        isOpen={showLayoutSetup}
+        onConfirm={handleLayoutSetupConfirm}
+        onDismiss={() => setShowLayoutSetup(false)}
+      />
     </div>
   );
 }

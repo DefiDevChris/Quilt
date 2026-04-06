@@ -31,9 +31,6 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
             <div className="absolute bottom-[-20%] right-[-20%] w-64 h-64 bg-primary-golden/20 rounded-full blur-3xl" />
 
             <div className="relative z-10 text-center mb-8">
-              <span className="inline-block px-4 py-1.5 bg-primary/20 text-primary-dark text-sm font-extrabold uppercase tracking-widest rounded-full mb-6">
-                QuiltCorgi Pro
-              </span>
               <h2 className="text-4xl font-extrabold text-on-surface leading-tight mb-4">
                 Unlock Your <br /> Quilt Magic
               </h2>
@@ -92,9 +89,6 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                   onClick={() => handleCheckout({ plan: 'yearly' })}
                   className="flex-1 rounded-2xl border-2 border-primary bg-primary/5 p-4 text-left transition-all hover:bg-primary/10 hover:shadow-elevation-2 group relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 bg-primary text-primary-on text-caption font-extrabold px-2 py-1 rounded-bl-lg uppercase tracking-wider">
-                    Best Value
-                  </div>
                   <div className="font-bold text-lg text-on-surface">Yearly</div>
                   <div className="text-3xl font-extrabold text-on-surface my-1">
                     $60<span className="text-base font-medium text-secondary">/yr</span>

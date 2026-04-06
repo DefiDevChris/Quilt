@@ -5,6 +5,7 @@ import { userProfiles, users, socialPosts, likes, follows } from '@/db/schema';
 import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
 import { COMMUNITY_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { getSession } from '@/lib/cognito-session';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,10 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ username: string }> }
 ) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`member-profile:${ip}`, API_RATE_LIMITS.publicRead);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const { username } = await params;
 
   try {

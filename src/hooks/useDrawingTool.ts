@@ -54,8 +54,19 @@ export function useDrawingTool() {
           // Skip objects that are explicitly marked as non-selectable (like guides)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((obj as any).data?.isGuide || (obj as any).data?.isHelper) return;
+          // Skip layout-generated objects (managed by useLayoutEngine)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((obj as any)._layoutElement) return;
+
           obj.selectable = true;
           obj.evented = true;
+          obj.hasControls = true;
+          obj.hasBorders = true;
+          obj.lockMovementX = false;
+          obj.lockMovementY = false;
+          obj.lockRotation = false;
+          obj.lockScalingX = false;
+          obj.lockScalingY = false;
         });
         canvas.renderAll();
         return;

@@ -45,11 +45,28 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
         }
       }}
     >
-      {/* SVG Thumbnail - we use the block ID to fetch SVG on demand */}
+      {/* Block thumbnail */}
       <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded bg-background">
         {block.thumbnailUrl ? (
           <Image
             src={block.thumbnailUrl}
+            alt={block.name}
+            width={64}
+            height={64}
+            className="h-full w-full object-contain"
+          />
+        ) : block.photoUrl ? (
+          <Image
+            src={block.photoUrl}
+            alt={block.name}
+            width={64}
+            height={64}
+            className="h-full w-full object-cover"
+          />
+        ) : block.svgData ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(block.svgData)}`}
             alt={block.name}
             width={64}
             height={64}

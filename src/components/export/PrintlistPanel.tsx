@@ -148,7 +148,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                               }`}
                             >
                               <span
-                                className={`inline-block h-2.5 w-2.5 mt-[1px] rounded-full bg-white shadow transition-transform ${
+                                className={`inline-block h-2.5 w-2.5 mt-[1px] rounded-full bg-white shadow-elevation-1 transition-transform ${
                                   item.seamAllowanceEnabled ? 'translate-x-3' : 'translate-x-0.5'
                                 }`}
                               />
@@ -162,10 +162,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                             value={item.seamAllowance}
                             disabled={!item.seamAllowanceEnabled}
                             onChange={(e) =>
-                              updateSeamAllowance(
-                                item.shapeId,
-                                parseFloat(e.target.value) || 0.25
-                              )
+                              updateSeamAllowance(item.shapeId, parseFloat(e.target.value) || 0.25)
                             }
                             className="w-full rounded border border-outline-variant bg-white px-2 py-1 text-xs text-on-surface disabled:opacity-40 disabled:cursor-not-allowed"
                           />
@@ -197,7 +194,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                 type="button"
                 onClick={onGeneratePdf}
                 disabled={items.length === 0}
-                className="w-full rounded-md bg-primary px-3 py-2 text-xs font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                className="w-full rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-2 text-xs font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
               >
                 Generate PDF Pattern
               </button>

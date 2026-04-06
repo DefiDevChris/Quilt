@@ -277,7 +277,7 @@ export function TemplateDetailContent({ templateId, mode, onClose }: TemplateDet
               <button
                 onClick={handleAddToQuiltbook}
                 disabled={isAdding}
-                className="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isAdding ? (
                   <>

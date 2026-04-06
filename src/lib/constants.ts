@@ -49,6 +49,12 @@ export const FABRIC_IMAGE_MAX_SIZE = 2048;
 
 export const S3_UPLOAD_EXPIRY_SECONDS = 300;
 
+// ── Mobile Uploads ──
+
+export const MOBILE_UPLOADS_DEFAULT_LIMIT = 24;
+export const MOBILE_UPLOADS_MAX_LIMIT = 50;
+export const MOBILE_UPLOADS_MAX_PENDING = 50;
+
 // ── UI Colors & Design System ──
 
 export const GRID_LINE_COLOR = '#E5E2DD';

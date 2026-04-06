@@ -3,7 +3,7 @@
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
-import type { LayoutType } from '@/lib/layout-utils';
+import type { LayoutType, BorderConfig } from '@/lib/layout-utils';
 
 interface LayoutSettingsPanelProps {
   onClose: () => void;
@@ -243,7 +243,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                 </p>
               )}
 
-              {borders.map((border, i) => (
+              {borders.map((border: BorderConfig, i: number) => (
                 <div
                   key={border.id ?? i}
                   className="flex items-end gap-3 mb-2 rounded-lg border border-outline-variant p-2"
@@ -313,7 +313,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             Done
           </button>

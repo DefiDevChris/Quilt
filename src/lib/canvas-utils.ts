@@ -75,3 +75,23 @@ export function maybeSnap(val: number, gridSettings: GridSettings, unitSystem: U
   const gridPx = gridSettings.size * getPixelsPerUnit(unitSystem);
   return snapToGrid(val, gridPx);
 }
+
+/**
+ * Compute the viewport transform (zoom + pan) to center a quilt in a container.
+ * Pure function — no store or DOM dependencies.
+ */
+export function computeViewportTransform(
+  containerWidth: number,
+  containerHeight: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  zoom: number,
+  unitSystem: UnitSystem
+): { zoom: number; panX: number; panY: number } {
+  const pxPerUnit = getPixelsPerUnit(unitSystem);
+  const quiltWPx = canvasWidth * pxPerUnit;
+  const quiltHPx = canvasHeight * pxPerUnit;
+  const panX = (containerWidth - quiltWPx * zoom) / 2;
+  const panY = (containerHeight - quiltHPx * zoom) / 2;
+  return { zoom, panX, panY };
+}

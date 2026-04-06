@@ -350,7 +350,7 @@ function QuiltWorktableMockup() {
         <MockToolbar sections={quiltToolSections} />
 
         {/* Canvas */}
-        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-warm-bg relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -442,7 +442,7 @@ function BlockWorktableMockup() {
       <div className="flex flex-1 overflow-hidden relative">
         <MockToolbar sections={blockToolSections} />
 
-        <div className="flex-1 bg-[#FEFCFA] relative flex items-center justify-center overflow-hidden">
+        <div className="flex-1 bg-warm-bg relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -474,7 +474,7 @@ function BlockWorktableMockup() {
               <circle cx="50" cy="0" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
               <circle cx="50" cy="50" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
             </svg>
-            <div className="absolute top-2 left-2 bg-gray-900 text-white text-[8px] px-1.5 py-0.5 rounded shadow-elevation-4">
+            <div className="absolute top-2 left-2 bg-on-surface text-white text-[8px] px-1.5 py-0.5 rounded shadow-elevation-4">
               Snap to Grid (Intersect)
             </div>
           </motion.div>
@@ -565,10 +565,10 @@ function ImageWorktableMockup() {
                   backgroundSize: '33.33% 33.33%',
                 }}
               />
-              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-gray-300" />
-              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
-              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-gray-300" />
-              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-gray-300" />
+              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-outline-variant" />
+              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-outline-variant" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-outline-variant" />
+              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-outline-variant" />
             </div>
           </motion.div>
 
@@ -627,8 +627,8 @@ function PrintWorktableMockup() {
           ]}
         />
 
-        <div className="flex-1 bg-[#f0f0f0] relative flex items-center justify-center overflow-hidden p-6">
-          <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-gray-200 p-4 flex flex-col">
+        <div className="flex-1 bg-surface-container-high relative flex items-center justify-center overflow-hidden p-6">
+          <div className="bg-white shadow-elevation-4 aspect-[8.5/11] h-full max-h-[300px] border border-outline-variant p-4 flex flex-col">
             <div
               className="text-[8px] font-bold text-warm-text mb-2"
               style={{ fontFamily: 'var(--font-display)' }}

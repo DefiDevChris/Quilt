@@ -11,13 +11,15 @@ import {
 import { notFoundResponse } from '@/lib/api-responses';
 import { updateBlogPostSchema, BLOG_POST_CATEGORIES } from '@/lib/validation';
 import { calculateReadTime } from '@/lib/read-time';
+import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  const ip = getClientIp(request);
+  const rl = await checkRateLimit(`blog-slug:${ip}`, API_RATE_LIMITS.publicRead);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
+
   const { slug } = await params;
 
   try {

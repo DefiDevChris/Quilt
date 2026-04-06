@@ -2,13 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
+import { requireAdminSession, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -24,22 +18,16 @@ const bulkToggleSchema = z.object({
  * Admin-only.
  */
 export async function POST(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const body = await request.json();
     const parsed = bulkToggleSchema.safeParse(body);
 
     if (!parsed.success) {
-      return validationErrorResponse(
-        parsed.error.issues[0]?.message ?? 'Invalid data'
-      );
+      return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid data');
     }
 
     const { manufacturer, isPurchasable } = parsed.data;

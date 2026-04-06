@@ -111,7 +111,7 @@ export default function FabricsPage() {
               }}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 scope === s
-                  ? 'bg-surface shadow-sm text-on-surface'
+                  ? 'bg-surface shadow-elevation-1 text-on-surface'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >

@@ -108,7 +108,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
               onClick={() => setIsPublic(true)}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition-colors ${
                 isPublic
-                  ? 'bg-primary text-white'
+                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'bg-surface-container-high text-on-surface/60 hover:text-on-surface'
               }`}
             >
@@ -119,7 +119,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
               onClick={() => setIsPublic(false)}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition-colors ${
                 !isPublic
-                  ? 'bg-primary text-white'
+                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                   : 'bg-surface-container-high text-on-surface/60 hover:text-on-surface'
               }`}
             >
@@ -145,7 +145,7 @@ export function PublishModal({ onClose, onPublished }: PublishModalProps) {
             <button
               onClick={handlePublish}
               disabled={isSubmitting || !title.trim()}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

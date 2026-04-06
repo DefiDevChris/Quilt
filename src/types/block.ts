@@ -21,6 +21,8 @@ export interface BlockListItem {
   subcategory: string | null;
   tags: string[];
   thumbnailUrl: string | null;
+  svgData: string | null;
+  photoUrl: string | null;
   isDefault: boolean;
   isLocked: boolean;
   blockType: BlockType;

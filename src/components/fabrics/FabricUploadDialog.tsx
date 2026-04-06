@@ -249,7 +249,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
             <p className="text-sm text-secondary mb-4">
               Select a fabric image (JPEG, PNG, or WebP, max 10MB)
             </p>
-            <label className="inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 cursor-pointer">
+            <label className="inline-block rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 cursor-pointer">
               Choose File
               <input
                 type="file"
@@ -333,7 +333,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     onClick={() => setCrop(null)}
                     className={`rounded-md px-3 py-1 text-xs ${
                       crop === null
-                        ? 'bg-primary text-white'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                         : 'bg-background text-secondary hover:bg-outline-variant'
                     }`}
                   >
@@ -351,7 +351,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     }}
                     className={`rounded-md px-3 py-1 text-xs ${
                       crop !== null
-                        ? 'bg-primary text-white'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                         : 'bg-background text-secondary hover:bg-outline-variant'
                     }`}
                   >
@@ -374,7 +374,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                 type="button"
                 onClick={() => setStep('calibrate')}
                 disabled={!fabricName.trim()}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Next: Calibrate
               </button>
@@ -511,7 +511,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     setError('Invalid calibration input. Check your values.');
                   }
                 }}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
               >
                 Calibrate & Upload
               </button>

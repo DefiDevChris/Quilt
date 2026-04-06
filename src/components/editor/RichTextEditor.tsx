@@ -381,6 +381,29 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
   );
 }
 
+// Escape HTML entities to prevent XSS in rendered content
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Validate href to block javascript: and data: protocols
+function sanitizeHref(href: string): string {
+  const trimmed = href.trim().toLowerCase();
+  if (
+    trimmed.startsWith('javascript:') ||
+    trimmed.startsWith('data:') ||
+    trimmed.startsWith('vbscript:')
+  ) {
+    return '#';
+  }
+  return escapeHtml(href);
+}
+
 // Simple Tiptap JSON to HTML converter for display
 function tiptapToHtml(doc: TiptapDoc): string {
   if (!doc.content || doc.content.length === 0) {
@@ -392,7 +415,7 @@ function tiptapToHtml(doc: TiptapDoc): string {
 
 function nodeToHtml(node: TiptapNode): string {
   if (node.type === 'text') {
-    let text = node.text || '';
+    let text = escapeHtml(node.text || '');
     if (node.marks) {
       for (const mark of node.marks) {
         switch (mark.type) {
@@ -408,10 +431,11 @@ function nodeToHtml(node: TiptapNode): string {
           case 'strike':
             text = `<s>${text}</s>`;
             break;
-          case 'link':
-            const href = (mark.attrs?.href as string) || '#';
+          case 'link': {
+            const href = sanitizeHref((mark.attrs?.href as string) || '#');
             text = `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             break;
+          }
           case 'code':
             text = `<code>${text}</code>`;
             break;
@@ -439,11 +463,12 @@ function nodeToHtml(node: TiptapNode): string {
       return `<blockquote>${children}</blockquote>`;
     case 'codeBlock':
       return `<pre><code>${children}</code></pre>`;
-    case 'image':
-      const src = (node.attrs?.src as string) || '';
-      const alt = (node.attrs?.alt as string) || '';
-      const align = (node.attrs?.align as string) || 'center';
+    case 'image': {
+      const src = escapeHtml((node.attrs?.src as string) || '');
+      const alt = escapeHtml((node.attrs?.alt as string) || '');
+      const align = escapeHtml((node.attrs?.align as string) || 'center');
       return `<img src="${src}" alt="${alt}" data-align="${align}" />`;
+    }
     case 'horizontalRule':
       return `<hr />`;
     default:

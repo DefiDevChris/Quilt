@@ -126,6 +126,70 @@ function ShapePreview({ shapeInfo }: { shapeInfo: ShapeInfo }) {
   );
 }
 
+// ── Inline Dimension Input ──
+
+function DimensionInput({
+  label,
+  value,
+  suffix,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  suffix: string;
+  onChange: (value: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const formatted = value < 0.01 && value >= 0 ? '0' : value.toFixed(3).replace(/\.?0+$/, '');
+
+  const startEdit = () => {
+    setEditValue(formatted);
+    setEditing(true);
+    setTimeout(() => inputRef.current?.select(), 0);
+  };
+
+  const commit = () => {
+    setEditing(false);
+    if (editValue !== formatted) {
+      onChange(editValue);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1.5 bg-surface-container rounded-md px-2 py-1.5">
+      <span className="text-[10px] font-semibold text-secondary uppercase w-3 flex-shrink-0">
+        {label}
+      </span>
+      {editing ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commit();
+            if (e.key === 'Escape') setEditing(false);
+          }}
+          className="flex-1 min-w-0 bg-transparent font-mono text-[11px] text-on-surface outline-none border-b border-primary"
+          autoFocus
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={startEdit}
+          className="flex-1 text-left font-mono text-[11px] text-on-surface font-medium hover:text-primary transition-colors cursor-text min-w-0 truncate"
+        >
+          {formatted}{suffix}
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ── Main Component ──
 
 export function SelectionPanel() {
@@ -140,6 +204,7 @@ export function SelectionPanel() {
   const colorInputRef = useRef<HTMLInputElement>(null);
   const toggleFabricPanel = useFabricStore((s) => s.togglePanel);
   const { applyFabricToObject } = useFabricPattern();
+  const [lockAspectRatio, setLockAspectRatio] = useState(false);
 
   const handleRecentFabricClick = useCallback(
     (fabric: RecentFabric) => {
@@ -245,6 +310,57 @@ export function SelectionPanel() {
     };
   }, [fabricCanvas, updateShapeInfo]);
 
+  // Apply a property change to the selected object
+  const applyProperty = useCallback(
+    async (prop: 'width' | 'height' | 'left' | 'top' | 'angle', rawValue: string) => {
+      if (!fabricCanvas) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      const active = canvas.getActiveObject();
+      if (!active) return;
+
+      const num = parseFloat(rawValue);
+      if (isNaN(num)) return;
+
+      const json = JSON.stringify(canvas.toJSON());
+      useCanvasStore.getState().pushUndoState(json);
+
+      if (prop === 'width') {
+        const targetPx = num * PIXELS_PER_INCH;
+        const baseW = active.width ?? 1;
+        const newScaleX = targetPx / baseW;
+        if (lockAspectRatio) {
+          const ratio = newScaleX / (active.scaleX ?? 1);
+          active.set({ scaleX: newScaleX, scaleY: (active.scaleY ?? 1) * ratio });
+        } else {
+          active.set({ scaleX: newScaleX });
+        }
+      } else if (prop === 'height') {
+        const targetPx = num * PIXELS_PER_INCH;
+        const baseH = active.height ?? 1;
+        const newScaleY = targetPx / baseH;
+        if (lockAspectRatio) {
+          const ratio = newScaleY / (active.scaleY ?? 1);
+          active.set({ scaleY: newScaleY, scaleX: (active.scaleX ?? 1) * ratio });
+        } else {
+          active.set({ scaleY: newScaleY });
+        }
+      } else if (prop === 'left') {
+        active.set({ left: num * PIXELS_PER_INCH });
+      } else if (prop === 'top') {
+        active.set({ top: num * PIXELS_PER_INCH });
+      } else if (prop === 'angle') {
+        active.rotate(num);
+      }
+
+      active.setCoords();
+      canvas.renderAll();
+      useProjectStore.getState().setDirty(true);
+      updateShapeInfo();
+    },
+    [fabricCanvas, lockAspectRatio, updateShapeInfo]
+  );
+
   // Apply a color to the selected object
   const applyColor = useCallback(
     async (hex: string) => {
@@ -280,26 +396,74 @@ export function SelectionPanel() {
           <span className="text-label-sm uppercase text-secondary tracking-wide font-medium">
             {getShapeLabel(shapeInfo.type)}
           </span>
-          {shapeInfo.rotation !== 0 && (
-            <span className="text-body-sm text-secondary">{Math.round(shapeInfo.rotation)}°</span>
-          )}
         </div>
 
         <ShapePreview shapeInfo={shapeInfo} />
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3">
-          <div className="flex justify-between">
-            <span className="text-body-sm text-secondary">W</span>
-            <span className="font-mono text-body-sm text-on-surface font-medium">
-              {formatDimension(shapeInfo.widthIn)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-body-sm text-secondary">H</span>
-            <span className="font-mono text-body-sm text-on-surface font-medium">
-              {formatDimension(shapeInfo.heightIn)}
-            </span>
-          </div>
+        {/* ── Editable Dimensions ── */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <DimensionInput
+            label="W"
+            value={shapeInfo.widthIn}
+            suffix='"'
+            onChange={(v) => applyProperty('width', v)}
+          />
+          <DimensionInput
+            label="H"
+            value={shapeInfo.heightIn}
+            suffix='"'
+            onChange={(v) => applyProperty('height', v)}
+          />
+        </div>
+
+        {/* Lock aspect ratio */}
+        <button
+          type="button"
+          onClick={() => setLockAspectRatio((v) => !v)}
+          className={`mt-1.5 flex items-center gap-1.5 text-[10px] font-medium transition-colors ${
+            lockAspectRatio ? 'text-primary' : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            {lockAspectRatio ? (
+              <>
+                <rect x="3" y="5" width="6" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                <path d="M4.5 5V3.5a1.5 1.5 0 0 1 3 0V5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </>
+            ) : (
+              <>
+                <rect x="3" y="5" width="6" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                <path d="M4.5 5V3.5a1.5 1.5 0 0 1 3 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </>
+            )}
+          </svg>
+          {lockAspectRatio ? 'Locked' : 'Lock ratio'}
+        </button>
+
+        {/* ── Position ── */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <DimensionInput
+            label="X"
+            value={shapeInfo.x / PIXELS_PER_INCH}
+            suffix='"'
+            onChange={(v) => applyProperty('left', v)}
+          />
+          <DimensionInput
+            label="Y"
+            value={shapeInfo.y / PIXELS_PER_INCH}
+            suffix='"'
+            onChange={(v) => applyProperty('top', v)}
+          />
+        </div>
+
+        {/* ── Rotation ── */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <DimensionInput
+            label="R"
+            value={shapeInfo.rotation}
+            suffix="°"
+            onChange={(v) => applyProperty('angle', v)}
+          />
         </div>
       </div>
 

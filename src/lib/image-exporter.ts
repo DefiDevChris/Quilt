@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PIXELS_PER_INCH } from '@/lib/constants';
+import { sanitizeFilename } from '@/lib/string-utils';
 
 export type ImageFormat = 'png' | 'jpeg';
 export type DpiOption = 72 | 150 | 300 | 600;
@@ -82,10 +83,7 @@ export function generateImageFilename(
   dpi: DpiOption,
   format: ImageFormat
 ): string {
-  const safeName = projectName
-    .replace(/[^a-zA-Z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  const safeName = sanitizeFilename(projectName);
   return `${safeName}-${dpi}dpi.${format}`;
 }
 

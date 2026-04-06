@@ -2,49 +2,18 @@ import { NextRequest } from 'next/server';
 import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/trust-utils';
-import { z } from 'zod';
+import { requireAdminSession, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { adminCreateLayoutTemplateSchema, adminPaginationSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
-const createPatternTemplateSchema = z.object({
-  slug: z.string().min(1).max(255),
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  skillLevel: z.string().min(1).max(50),
-  finishedWidth: z.number().positive(),
-  finishedHeight: z.number().positive(),
-  blockCount: z.number().int().nonnegative().optional(),
-  fabricCount: z.number().int().nonnegative().optional(),
-  thumbnailUrl: z.string().url().optional(),
-  layoutData: z.record(z.string(), z.unknown()),
-  tags: z.array(z.string()).default([]),
-  isPublished: z.boolean().default(true),
-});
-
-const paginationSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
-});
-
-// GET - List all layout templates
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const url = request.nextUrl;
-  const parsed = paginationSchema.safeParse({
+  const parsed = adminPaginationSchema.safeParse({
     page: url.searchParams.get('page') ?? undefined,
     limit: url.searchParams.get('limit') ?? undefined,
   });
@@ -73,12 +42,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         templates: templateRows,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-        },
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       },
     });
   } catch {
@@ -86,19 +50,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create a new layout template
 export async function POST(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role as string;
-  if (!isAdmin(userRole)) {
-    return errorResponse('Forbidden', 'FORBIDDEN', 403);
-  }
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   try {
     const body = await request.json();
-    const parsed = createPatternTemplateSchema.safeParse(body);
+    const parsed = adminCreateLayoutTemplateSchema.safeParse(body);
 
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid template data');

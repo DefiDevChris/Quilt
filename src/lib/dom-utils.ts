@@ -29,7 +29,9 @@ export function isInputElement(target: EventTarget | null): boolean {
  * @param root - The root element to search from (default: document)
  * @returns The active element, or null if none
  */
-export function getActiveElement(root: Document | ShadowRoot = document): Element | null {
+export function getActiveElement(root?: Document | ShadowRoot): Element | null {
+  if (typeof window === 'undefined') return null;
+  if (!root) root = document;
   const activeElement = root.activeElement;
 
   if (!activeElement) {
@@ -73,6 +75,8 @@ export function isActiveElementInput(): boolean {
  * @param filename - The name for the downloaded file
  */
 export function downloadPdf(pdfBytes: Uint8Array, filename: string): void {
+  if (typeof window === 'undefined') return;
+
   const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

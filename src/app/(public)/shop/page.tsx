@@ -114,8 +114,7 @@ export default function ShopPage() {
     setPage(1);
   };
 
-  const hasActiveFilters =
-    manufacturer || colorFamily || valueFilter || inStockOnly || search;
+  const hasActiveFilters = manufacturer || colorFamily || valueFilter || inStockOnly || search;
 
   // Loading shop settings
   if (shopEnabled === null) {
@@ -158,9 +157,7 @@ export default function ShopPage() {
           >
             Fabric Shop
           </h1>
-          <p className="mt-2 text-secondary">
-            Browse our curated collection of quilting fabrics
-          </p>
+          <p className="mt-2 text-secondary">Browse our curated collection of quilting fabrics</p>
         </div>
       </div>
 
@@ -168,10 +165,7 @@ export default function ShopPage() {
         {/* Search + Filter Bar */}
         <div className="flex items-center gap-3 mb-6">
           <form onSubmit={handleSearch} className="flex-1 relative">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary"
-            />
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
             <input
               type="text"
               value={search}
@@ -186,15 +180,13 @@ export default function ShopPage() {
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
               showFilters || hasActiveFilters
-                ? 'bg-primary text-white shadow-elevation-1'
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
                 : 'bg-white/50 text-secondary hover:bg-white/70'
             }`}
           >
             <SlidersHorizontal size={16} />
             Filters
-            {hasActiveFilters && (
-              <span className="ml-1 w-2 h-2 rounded-full bg-white" />
-            )}
+            {hasActiveFilters && <span className="ml-1 w-2 h-2 rounded-full bg-white" />}
           </button>
 
           {/* Sort */}
@@ -322,10 +314,7 @@ export default function ShopPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div
-                key={i}
-                className="glass-panel rounded-2xl overflow-hidden animate-pulse"
-              >
+              <div key={i} className="glass-panel rounded-2xl overflow-hidden animate-pulse">
                 <div className="aspect-square bg-primary-container/20" />
                 <div className="p-3 space-y-2">
                   <div className="h-4 bg-primary-container/40 rounded w-3/4" />
@@ -347,11 +336,7 @@ export default function ShopPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {fabrics.map((fabric) => (
-              <ShopFabricCard
-                key={fabric.id}
-                fabric={fabric}
-                onAddToCart={handleAddToCart}
-              />
+              <ShopFabricCard key={fabric.id} fabric={fabric} onAddToCart={handleAddToCart} />
             ))}
           </div>
         )}
@@ -392,19 +377,14 @@ function ShopFabricCard({
   fabric: ShopFabric;
   onAddToCart: (f: ShopFabric) => void;
 }) {
-  const price = fabric.pricePerYard
-    ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd`
-    : 'Price TBD';
+  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
     <div className="group glass-panel rounded-2xl overflow-hidden hover:shadow-elevation-2 transition-all">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (
-          <div
-            className="w-full h-full"
-            style={{ backgroundColor: fabric.hex }}
-          />
+          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
         ) : (
           <img
             src={fabric.thumbnailUrl ?? fabric.imageUrl}
@@ -413,19 +393,6 @@ function ShopFabricCard({
             loading="lazy"
           />
         )}
-
-        {/* Stock badge */}
-        <div className="absolute top-2 right-2">
-          {fabric.inStock ? (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-100/90 text-green-800 backdrop-blur-sm">
-              In Stock
-            </span>
-          ) : (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-50/90 text-red-700 backdrop-blur-sm">
-              Out of Stock
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Info */}
@@ -447,9 +414,13 @@ function ShopFabricCard({
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-primary text-white hover:bg-primary-dark shadow-elevation-1 hover:shadow-elevation-2"
+          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-orange-500 to-rose-400 text-white hover:opacity-90 shadow-elevation-1 hover:shadow-elevation-2"
         >
-          {!fabric.shopifyVariantId ? 'Not Available' : !fabric.inStock ? 'Out of Stock' : 'Add to Cart'}
+          {!fabric.shopifyVariantId
+            ? 'Not Available'
+            : !fabric.inStock
+              ? 'Out of Stock'
+              : 'Add to Cart'}
         </button>
       </div>
     </div>

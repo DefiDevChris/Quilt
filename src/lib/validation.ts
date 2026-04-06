@@ -8,6 +8,8 @@ import {
   FABRICS_PAGINATION_MAX_LIMIT,
   COMMUNITY_PAGINATION_DEFAULT_LIMIT,
   ACCEPTED_IMAGE_TYPES,
+  MOBILE_UPLOADS_DEFAULT_LIMIT,
+  MOBILE_UPLOADS_MAX_LIMIT,
 } from '@/lib/constants';
 
 /**
@@ -192,7 +194,7 @@ export const calibrationInputSchema = z.discriminatedUnion('method', [
 export const presignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
   contentType: z.enum(ACCEPTED_IMAGE_TYPES),
-  purpose: z.enum(['fabric', 'thumbnail', 'export', 'block']),
+  purpose: z.enum(['fabric', 'thumbnail', 'export', 'block', 'mobile-upload']),
 });
 
 export const communitySearchSchema = z.object({
@@ -331,4 +333,89 @@ export const updateProfileSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Username must be lowercase alphanumeric with hyphens only')
     .optional(),
   privacyMode: z.enum(['public', 'private']).default('public'),
+});
+
+// --- Admin Schemas ---
+
+export const adminPaginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+});
+
+export const adminCreateBlockSchema = z.object({
+  name: z.string().min(1).max(255),
+  category: z.string().min(1).max(100),
+  subcategory: z.string().max(100).optional(),
+  svgData: z.string(),
+  fabricJsData: z.record(z.string(), z.unknown()).optional(),
+  tags: z.array(z.string()).default([]),
+  isDefault: z.boolean().default(false),
+  thumbnailUrl: z.string().url().optional(),
+});
+
+export const adminCreateFabricSchema = z.object({
+  name: z.string().min(1).max(255),
+  imageUrl: z.string().url(),
+  thumbnailUrl: z.string().url().optional(),
+  manufacturer: z.string().max(255).optional(),
+  sku: z.string().max(100).optional(),
+  collection: z.string().max(255).optional(),
+  colorFamily: z.string().max(50).optional(),
+  scaleX: z.number().min(0.1).max(10).default(1.0),
+  scaleY: z.number().min(0.1).max(10).default(1.0),
+  rotation: z.number().min(-360).max(360).default(0.0),
+  isDefault: z.boolean().default(false),
+});
+
+export const adminCreateLayoutTemplateSchema = z.object({
+  slug: z.string().min(1).max(255),
+  name: z.string().min(1).max(255),
+  description: z.string().optional(),
+  skillLevel: z.string().min(1).max(50),
+  finishedWidth: z.number().positive(),
+  finishedHeight: z.number().positive(),
+  blockCount: z.number().int().nonnegative().optional(),
+  fabricCount: z.number().int().nonnegative().optional(),
+  thumbnailUrl: z.string().url().optional(),
+  layoutData: z.record(z.string(), z.unknown()),
+  tags: z.array(z.string()).default([]),
+  isPublished: z.boolean().default(true),
+});
+
+export const adminUpdateSettingSchema = z.object({
+  key: z.literal('shop_enabled'),
+  value: z.boolean(),
+  confirm: z.string().optional(),
+});
+
+// --- Mobile Upload Schemas ---
+
+export const mobileUploadCreateSchema = z.object({
+  imageUrl: z.string().url(),
+  originalFilename: z.string().max(255).optional(),
+  fileSizeBytes: z.number().int().min(0).optional(),
+});
+
+export const mobileUploadUpdateSchema = z.object({
+  assignedType: z.enum(['unassigned', 'fabric', 'block', 'quilt']).optional(),
+});
+
+export const mobileUploadListSchema = z.object({
+  status: z.enum(['pending', 'processing', 'completed', 'failed']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(MOBILE_UPLOADS_MAX_LIMIT)
+    .default(MOBILE_UPLOADS_DEFAULT_LIMIT),
+});
+
+export const mobileUploadProcessSchema = z.object({
+  assignedType: z.enum(['fabric', 'block', 'quilt']),
+});
+
+export const mobileUploadCompleteSchema = z.object({
+  processedEntityId: z.string().uuid(),
+  processedEntityType: z.enum(['fabric', 'block', 'project']),
 });

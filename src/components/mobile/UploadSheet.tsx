@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { compressImageForUpload } from '@/lib/image-compression';
 import { uploadToS3 } from '@/lib/image-processing';
-import { useAuthStore } from '@/stores/authStore';
+import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 
 interface UploadSheetProps {
   isOpen: boolean;
@@ -16,7 +16,9 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const isPro = useAuthStore((s) => s.isPro);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const createUpload = useMobileUploadStore((s) => s.createUpload);
+  const pendingCount = useMobileUploadStore((s) => s.uploads.filter((u) => u.status === 'pending').length);
 
   if (!isOpen) return null;
 
@@ -26,9 +28,10 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
     setUploading(true);
     setUploadError(null);
+    setUploadSuccess(false);
 
     try {
-      const { blob, contentType } = await compressImageForUpload(file);
+      const { blob, contentType, compressedSize } = await compressImageForUpload(file);
 
       const presignedRes = await fetch('/api/upload/presigned-url', {
         method: 'POST',
@@ -36,7 +39,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
         body: JSON.stringify({
           filename: file.name.replace(/\.[^.]+$/, '') + '.webp',
           contentType,
-          purpose: 'fabric',
+          purpose: 'mobile-upload',
         }),
       });
 
@@ -50,27 +53,17 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
       await uploadToS3(uploadUrl, blob, contentType);
 
-      onClose();
-      router.push(`/dashboard?tab=fabrics&uploaded=${encodeURIComponent(publicUrl)}`);
+      await createUpload(publicUrl, file.name, compressedSize);
+
+      setUploadSuccess(true);
+      setTimeout(() => {
+        setUploadSuccess(false);
+      }, 3000);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  }
-
-  function handleUploadBlock() {
-    onClose();
-    router.push('/dashboard?tab=blocks&upload=true');
-  }
-
-  function handlePhotoToQuilt() {
-    onClose();
-    if (isPro) {
-      router.push('/dashboard?action=photo-to-design');
-    } else {
-      router.push('/dashboard?upgrade=photo-to-design');
     }
   }
 
@@ -91,107 +84,79 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface rounded-t-2xl pb-10 pt-3 shadow-elevation-4">
         <div className="w-10 h-1 rounded-full bg-outline-variant mx-auto mb-6" />
         <div className="px-6 space-y-3">
-          {/* Upload Fabric */}
+          {/* Upload Photo — primary action */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-primary-golden/10 border border-primary/20 transition-colors text-left disabled:opacity-50"
           >
             <div
-              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
               style={{ background: 'var(--color-primary-golden-glow)' }}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--color-primary-golden)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <path d="M21 15l-5-5L5 21" />
-              </svg>
+              {uploading ? (
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  className="animate-spin text-primary"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="40 20"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--color-primary-golden)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              )}
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-on-surface">
-                {uploading ? 'Uploading…' : 'Upload Fabric'}
+                {uploading ? 'Uploading...' : 'Upload Photo'}
               </p>
-              <p className="text-xs text-secondary mt-0.5">Add a fabric photo to your library</p>
-            </div>
-          </button>
-
-          {/* Upload Block */}
-          <button
-            type="button"
-            onClick={handleUploadBlock}
-            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
-          >
-            <div
-              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: 'var(--color-primary-golden-glow)' }}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--color-primary-golden)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="8" height="8" rx="1" />
-                <rect x="13" y="3" width="8" height="8" rx="1" />
-                <rect x="3" y="13" width="8" height="8" rx="1" />
-                <rect x="13" y="13" width="8" height="8" rx="1" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-on-surface">Upload Block</p>
               <p className="text-xs text-secondary mt-0.5">
-                Photograph a quilt block to add to your collection
+                Take or pick a photo — assign it on desktop
               </p>
             </div>
           </button>
 
-          {/* Photo to Quilt */}
-          <button
-            type="button"
-            onClick={handlePhotoToQuilt}
-            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
-          >
-            <div
-              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: 'var(--color-primary-golden-glow)' }}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--color-primary-golden)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                <circle cx="12" cy="13" r="4" />
+          {/* Success feedback */}
+          {uploadSuccess && (
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-success/10 border border-success/20">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="text-success shrink-0">
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M6 10L9 13L14 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-on-surface">Photo to Quilt</p>
-              <p className="text-xs text-secondary mt-0.5">
-                {isPro
-                  ? 'Turn a photo into a quilt layout'
-                  : 'Turn a photo into a quilt layout (Pro)'}
+              <p className="text-xs font-medium text-success">
+                Uploaded! Open on desktop to assign and process.
               </p>
             </div>
-          </button>
+          )}
+
+          {/* Pending count */}
+          {pendingCount > 0 && !uploadSuccess && (
+            <p className="text-xs text-secondary text-center">
+              {pendingCount} photo{pendingCount !== 1 ? 's' : ''} waiting on desktop
+            </p>
+          )}
 
           {/* Share to Social */}
           <button
@@ -230,7 +195,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
           </div>
         )}
 
-        {/* Hidden file input for fabric photos */}
+        {/* Hidden file input for photo capture */}
         <input
           ref={fileInputRef}
           type="file"
@@ -238,7 +203,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
           capture="environment"
           className="hidden"
           onChange={handleFileSelect}
-          aria-label="Upload fabric photo"
+          aria-label="Upload photo"
         />
       </div>
     </>

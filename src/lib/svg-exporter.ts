@@ -5,6 +5,7 @@
  */
 
 import { sanitizeSvg } from '@/lib/sanitize-svg';
+import { sanitizeFilename } from '@/lib/string-utils';
 
 export interface SvgExportOptions {
   projectName: string;
@@ -65,10 +66,7 @@ export async function exportCanvasSvg(
  * Generate a filename for SVG export.
  */
 export function generateSvgFilename(projectName: string): string {
-  const safeName = projectName
-    .replace(/[^a-zA-Z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  const safeName = sanitizeFilename(projectName);
   return `${safeName}.svg`;
 }
 
@@ -76,6 +74,8 @@ export function generateSvgFilename(projectName: string): string {
  * Download an SVG string as a file.
  */
 export function downloadSvg(svgString: string, filename: string) {
+  if (typeof window === 'undefined') return;
+
   const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

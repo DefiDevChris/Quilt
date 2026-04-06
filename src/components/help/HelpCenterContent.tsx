@@ -36,9 +36,7 @@ function FaqSection({
   ];
 
   const filtered =
-    selectedCategory === 'all'
-      ? entries
-      : entries.filter((e) => e.category === selectedCategory);
+    selectedCategory === 'all' ? entries : entries.filter((e) => e.category === selectedCategory);
 
   return (
     <div>
@@ -51,7 +49,7 @@ function FaqSection({
             onClick={() => onCategoryChange(cat)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               selectedCategory === cat
-                ? 'bg-primary text-white'
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                 : 'bg-surface-container text-secondary hover:text-on-surface'
             }`}
           >
@@ -159,11 +157,7 @@ function ContactSection() {
       </p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90"
-        style={{
-          backgroundColor: 'var(--color-primary)',
-          color: 'var(--color-primary-on)',
-        }}
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 bg-gradient-to-r from-orange-500 to-rose-400 text-white"
       >
         <svg
           width="16"
@@ -218,12 +212,7 @@ export function HelpCenterContent() {
           className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary"
         >
           <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.4" />
-          <path
-            d="M13 13L18 18"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
+          <path d="M13 13L18 18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
         </svg>
         <input
           type="text"

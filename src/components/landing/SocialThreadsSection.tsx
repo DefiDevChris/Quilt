@@ -10,34 +10,16 @@ function SocialThreadsScreenshot() {
     <div className="relative">
       <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
         {/* App content */}
-        <div className="bg-[#FDF9F6] min-h-[420px] relative overflow-hidden">
+        <div className="bg-warm-surface min-h-[420px] relative overflow-hidden">
           {/* Background orbs (matching SocialLayout) */}
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-200/50 rounded-full blur-[60px] pointer-events-none" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50 rounded-full blur-[80px] pointer-events-none" />
 
           <div className="relative z-10 p-4 space-y-4 max-w-lg mx-auto">
-            {/* Create post card */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-4 border border-white/60 shadow-elevation-1">
-              <div className="flex gap-3 items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-white shadow-elevation-1 shrink-0 overflow-hidden">
-                  <Image
-                    src="/logo.png"
-                    alt="QuiltCorgi"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 bg-white/60 border border-white/50 rounded-2xl px-4 py-2.5 text-sm text-secondary/80">
-                  Share your latest quilt design...
-                </div>
-              </div>
-            </div>
-
-            {/* Post 1 - Using actual quilt image */}
+            {/* Post 1 */}
             <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-orange-500 to-rose-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   S
                 </div>
                 <div>
@@ -45,13 +27,13 @@ function SocialThreadsScreenshot() {
                   <p className="text-xs text-secondary/80">@sarah_quilts • 2h ago</p>
                 </div>
               </div>
-              <p className="text-slate-700 mb-3 text-sm leading-relaxed">
+              <p className="text-on-surface mb-3 text-sm leading-relaxed">
                 Finally finished my Ohio Star quilt! The fussy cut feature helped me position the
                 center motifs perfectly 🌟
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
-                  src="/images/quilts/quilt_10_closeup_star.png"
+                  src="/images/quilts/gallery_quilt_one_1775440540412.png"
                   alt="Ohio Star Quilt"
                   width={500}
                   height={300}
@@ -109,13 +91,13 @@ function SocialThreadsScreenshot() {
                   <p className="text-xs text-secondary/80">@modern_q • 5h ago</p>
                 </div>
               </div>
-              <p className="text-slate-700 mb-3 text-sm leading-relaxed">
+              <p className="text-on-surface mb-3 text-sm leading-relaxed">
                 Playing with improv piecing on this one. Love how the layout tool lets me visualize
                 different arrangements!
               </p>
               <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
                 <Image
-                  src="/images/quilts/quilt_25_floor_improv.png"
+                  src="/images/quilts/gallery_quilt_five_1775440598069.png"
                   alt="Improv Quilt"
                   width={500}
                   height={300}
@@ -227,7 +209,7 @@ export default function SocialThreadsSection() {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
-              <span className="block bg-gradient-to-r from-orange-400 to-rose-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-orange-500 to-rose-400 bg-clip-text text-transparent">
                 Who Get It
               </span>
             </h2>
@@ -316,7 +298,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -30,5 +30,6 @@ export const socialPosts = pgTable(
     index('idx_community_posts_projectId').on(table.projectId),
     index('idx_community_posts_templateId').on(table.templateId),
     index('idx_community_posts_deletedAt').on(table.deletedAt),
+    index('idx_community_posts_createdAt').on(table.createdAt),
   ]
 );

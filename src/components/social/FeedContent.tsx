@@ -134,7 +134,7 @@ export function FeedContent({
           <p className="text-secondary text-sm mb-4">{error}</p>
           <button
             onClick={() => fetchPosts(1, false)}
-            className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-elevation-1"
+            className="bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
           >
             Retry
           </button>
@@ -150,9 +150,7 @@ export function FeedContent({
           {tab === 'saved' ? (
             <>
               <p className="text-base font-semibold text-on-surface mb-1">No saved posts</p>
-              <p className="text-secondary text-sm">
-                Bookmark posts to see them here
-              </p>
+              <p className="text-secondary text-sm">Bookmark posts to see them here</p>
             </>
           ) : search || category ? (
             <>
@@ -166,7 +164,7 @@ export function FeedContent({
               {user && (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-golden text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
                 >
                   Share Your Design
                 </Link>

@@ -66,7 +66,7 @@ export function BlockOverlaySelector({
             onClick={() => setActiveType('block')}
             className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               activeType === 'block'
-                ? 'bg-primary text-white'
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
@@ -77,7 +77,7 @@ export function BlockOverlaySelector({
             onClick={() => setActiveType('layout')}
             className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               activeType === 'layout'
-                ? 'bg-primary text-white'
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                 : 'text-secondary hover:text-on-surface'
             }`}
           >
@@ -104,7 +104,7 @@ export function BlockOverlaySelector({
                 onClick={() => setDifficultyFilter(d)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   difficultyFilter === d
-                    ? 'bg-primary text-white'
+                    ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                     : 'bg-background text-secondary hover:text-on-surface'
                 }`}
               >

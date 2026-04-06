@@ -154,7 +154,7 @@ function StudioPreviewMockup() {
           </div>
 
           {/* Canvas area */}
-          <div className="flex-1 flex items-center justify-center p-5 bg-[#FEFCFA] relative">
+          <div className="flex-1 flex items-center justify-center p-5 bg-warm-bg relative">
             <div
               className="absolute inset-0"
               style={{
@@ -288,7 +288,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-warm-peach text-warm-text font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:bg-warm-peach-dark transition-all duration-300 transform"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-orange-500 to-rose-400 text-white font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:opacity-90 transition-all duration-300 transform"
             >
               See What You Can Create
             </Link>

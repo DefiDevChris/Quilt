@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
+import { logout } from '@/lib/logout';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -14,7 +15,6 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const router = useRouter();
   const drawerRef = useRef<HTMLDivElement>(null);
   const user = useAuthStore((s) => s.user);
-  const setUser = useAuthStore((s) => s.setUser);
   const isAuthenticated = !!user;
 
   useEffect(() => {
@@ -36,8 +36,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   if (!isOpen) return null;
 
   async function handleSignOut() {
-    await fetch('/api/auth/cognito/signout', { method: 'POST' });
-    setUser(null);
+    await logout();
     onClose();
     router.push('/');
     router.refresh();

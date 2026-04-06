@@ -233,11 +233,6 @@ export function FloatingToolbar() {
                   }`}
                 >
                   {tool.icon}
-                  {showDepth && (
-                    <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-primary text-white text-[9px] font-semibold rounded-full flex items-center justify-center px-[3px] leading-none">
-                      {undoDepth > 9 ? '9+' : undoDepth}
-                    </span>
-                  )}
                 </button>
               );
             })}

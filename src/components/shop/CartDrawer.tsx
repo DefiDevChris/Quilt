@@ -46,10 +46,7 @@ export function CartDrawer() {
     }
   }, [items]);
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.pricePerYard * item.quantityInYards,
-    0
-  );
+  const subtotal = items.reduce((sum, item) => sum + item.pricePerYard * item.quantityInYards, 0);
 
   const handleQuantityChange = (fabricId: string, delta: number) => {
     const item = items.find((i) => i.fabricId === fabricId);
@@ -133,9 +130,7 @@ export function CartDrawer() {
           <div className="border-t border-white/40 px-5 py-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-secondary">Subtotal</span>
-              <span className="text-lg font-bold text-on-surface">
-                ${subtotal.toFixed(2)}
-              </span>
+              <span className="text-lg font-bold text-on-surface">${subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex gap-2">
@@ -152,7 +147,7 @@ export function CartDrawer() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
                 >
                   {isLoading ? 'Loading...' : 'Checkout'}
                 </a>
@@ -160,7 +155,7 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={handleCopyList}
-                  className="flex-1 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+                  className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
                 >
                   Copy Shopping List
                 </button>
@@ -212,9 +207,7 @@ function CartItemRow({
       {/* Details */}
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-medium text-on-surface truncate">{item.fabricName}</h4>
-        <p className="text-xs text-secondary">
-          ${item.pricePerYard.toFixed(2)}/yd
-        </p>
+        <p className="text-xs text-secondary">${item.pricePerYard.toFixed(2)}/yd</p>
 
         {/* Quantity controls */}
         <div className="flex items-center gap-2 mt-1.5">
@@ -241,9 +234,7 @@ function CartItemRow({
 
       {/* Line total + remove */}
       <div className="flex flex-col items-end justify-between">
-        <span className="text-sm font-semibold text-on-surface">
-          ${lineTotal.toFixed(2)}
-        </span>
+        <span className="text-sm font-semibold text-on-surface">${lineTotal.toFixed(2)}</span>
         <button
           type="button"
           onClick={() => onRemove(item.fabricId)}

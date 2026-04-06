@@ -33,7 +33,7 @@ export function BlockBuilderToolbar({
           onClick={() => onModeChange(tool.id)}
           title={tool.label}
           className={`h-8 w-8 rounded text-sm ${
-            activeMode === tool.id ? 'bg-primary text-white' : 'text-secondary hover:bg-background'
+            activeMode === tool.id ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white' : 'text-secondary hover:bg-background'
           }`}
         >
           {tool.icon}

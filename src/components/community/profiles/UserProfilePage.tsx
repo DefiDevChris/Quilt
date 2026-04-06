@@ -71,11 +71,11 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               alt={profile.displayName}
               width={96}
               height={96}
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-elevation-1"
               unoptimized
             />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-primary-container border-4 border-white shadow-sm flex items-center justify-center">
+            <div className="w-24 h-24 rounded-full bg-primary-container border-4 border-white shadow-elevation-1 flex items-center justify-center">
               <span className="text-3xl font-bold text-primary-dark">
                 {getInitials(profile.displayName)}
               </span>
@@ -86,7 +86,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
           {isOwner ? (
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 rounded-full bg-primary text-on-surface px-4 py-2 text-sm font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white px-4 py-2 text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
             >
               <Pencil size={14} />
               Edit Profile
@@ -188,7 +188,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               {isOwner && (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 mt-4 bg-primary hover:bg-primary-dark text-on-surface px-5 py-2 rounded-lg font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-lg font-semibold hover:opacity-90 transition-all"
                 >
                   Create Your First Design
                 </Link>
@@ -255,7 +255,7 @@ function FollowButton({ username, initialFollowing }: FollowButtonProps) {
       className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all shadow-elevation-1 ${
         following
           ? 'bg-surface-container border border-outline-variant text-secondary hover:bg-error/10 hover:text-error hover:border-error/20'
-          : 'bg-primary text-on-surface hover:bg-primary-dark'
+          : 'bg-gradient-to-r from-orange-500 to-rose-400 text-white hover:opacity-90'
       }`}
     >
       {following ? 'Following' : 'Follow'}

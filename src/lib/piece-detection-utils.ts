@@ -737,12 +737,12 @@ function buildHierarchyRelationships(
   // Pieces are filtered, so array indices don't match contour indices.
   const contourIdxToPieceId = new Map<number, string>();
   for (const piece of pieces) {
-    const contourIdx = parseInt(piece.id.split('-')[1], 10);
+    const contourIdx = parseInt(piece.id.split('-')[1] ?? '0', 10);
     contourIdxToPieceId.set(contourIdx, piece.id);
   }
 
   const withHierarchy: DetectedPieceWithHierarchy[] = pieces.map((piece) => {
-    const contourIdx = parseInt(piece.id.split('-')[1], 10);
+    const contourIdx = parseInt(piece.id.split('-')[1] ?? '0', 10);
     const h = parseHierarchy(hierarchy, contourIdx);
     return {
       ...piece,

@@ -1,8 +1,8 @@
 import type { ApiErrorCode } from '@/types/api';
 
-export function unauthorizedResponse() {
+export function unauthorizedResponse(message = 'Authentication required') {
   return Response.json(
-    { success: false, error: 'Authentication required', code: 'UNAUTHORIZED' as ApiErrorCode },
+    { success: false, error: message, code: 'UNAUTHORIZED' as ApiErrorCode },
     { status: 401 }
   );
 }
@@ -25,13 +25,6 @@ export function validationErrorResponse(message: string) {
   return Response.json(
     { success: false, error: message, code: 'VALIDATION_ERROR' as ApiErrorCode },
     { status: 422 }
-  );
-}
-
-export function unauthorizedResponseWithMessage(message: string) {
-  return Response.json(
-    { success: false, error: message, code: 'UNAUTHORIZED' as ApiErrorCode },
-    { status: 401 }
   );
 }
 

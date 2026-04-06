@@ -303,9 +303,12 @@ export function detectPatches(
 // ─── Internal helpers ───────────────────────────────────────────────────────
 
 function parseKey(key: string): { x: number; y: number } {
-  const [rowStr, colStr] = key.split(',');
-  const x = Number(colStr);
-  const y = Number(rowStr);
+  const parts = key.split(',');
+  if (parts.length < 2) {
+    throw new Error(`Invalid grid point key: ${key}`);
+  }
+  const x = Number(parts[1]);
+  const y = Number(parts[0]);
   if (!Number.isFinite(x) || !Number.isFinite(y)) {
     throw new Error(`Invalid grid point key: ${key}`);
   }

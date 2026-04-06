@@ -340,7 +340,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Apply
               </button>

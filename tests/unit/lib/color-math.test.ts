@@ -6,7 +6,6 @@ import {
   rgbToHsl,
   labDistance,
   findClosestColor,
-  averageColor,
 } from '@/lib/color-math';
 import type { RGB, LAB } from '@/lib/color-math';
 
@@ -181,7 +180,7 @@ describe('rgbToLab', () => {
   it('produces known values for blue', () => {
     const lab = rgbToLab({ r: 0, g: 0, b: 255 });
     // sRGB blue: L ~32.30, a ~79.20, b ~-107.86
-    expect(lab.l).toBeCloseTo(32.30, 0);
+    expect(lab.l).toBeCloseTo(32.3, 0);
     expect(lab.a).toBeGreaterThan(0);
     expect(lab.b).toBeLessThan(-100);
   });
@@ -245,9 +244,9 @@ describe('findClosestColor', () => {
   it('finds nearest color in palette', () => {
     const target: RGB = { r: 200, g: 10, b: 10 };
     const palette: RGB[] = [
-      { r: 0, g: 0, b: 255 },   // blue - far
-      { r: 255, g: 0, b: 0 },   // red - closest
-      { r: 0, g: 255, b: 0 },   // green - far
+      { r: 0, g: 0, b: 255 }, // blue - far
+      { r: 255, g: 0, b: 0 }, // red - closest
+      { r: 0, g: 255, b: 0 }, // green - far
     ];
     const result = findClosestColor(target, palette);
     expect(result.index).toBe(1);
@@ -261,54 +260,8 @@ describe('findClosestColor', () => {
   });
 
   it('throws for empty palette', () => {
-    expect(() =>
-      findClosestColor({ r: 0, g: 0, b: 0 }, [])
-    ).toThrow('Palette must contain at least one color');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// averageColor
-// ---------------------------------------------------------------------------
-
-describe('averageColor', () => {
-  it('averages a single pixel', () => {
-    const pixels = new Uint8ClampedArray([100, 150, 200, 255]);
-    const result = averageColor(pixels, 0, 1);
-    expect(result).toEqual({ r: 100, g: 150, b: 200 });
-  });
-
-  it('averages two pixels', () => {
-    const pixels = new Uint8ClampedArray([
-      100, 100, 100, 255,
-      200, 200, 200, 255,
-    ]);
-    const result = averageColor(pixels, 0, 2);
-    expect(result).toEqual({ r: 150, g: 150, b: 150 });
-  });
-
-  it('uses startIndex offset', () => {
-    const pixels = new Uint8ClampedArray([
-      0, 0, 0, 255,         // pixel 0 - skipped
-      100, 150, 200, 255,    // pixel 1 - start
-    ]);
-    const result = averageColor(pixels, 4, 1);
-    expect(result).toEqual({ r: 100, g: 150, b: 200 });
-  });
-
-  it('returns black for 0 count', () => {
-    const pixels = new Uint8ClampedArray([100, 150, 200, 255]);
-    const result = averageColor(pixels, 0, 0);
-    expect(result).toEqual({ r: 0, g: 0, b: 0 });
-  });
-
-  it('averages R/G/B channels independently', () => {
-    const pixels = new Uint8ClampedArray([
-      255, 0, 0, 255,     // red
-      0, 255, 0, 255,     // green
-      0, 0, 255, 255,     // blue
-    ]);
-    const result = averageColor(pixels, 0, 3);
-    expect(result).toEqual({ r: 85, g: 85, b: 85 });
+    expect(() => findClosestColor({ r: 0, g: 0, b: 0 }, [])).toThrow(
+      'Palette must contain at least one color'
+    );
   });
 });

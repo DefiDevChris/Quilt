@@ -162,7 +162,7 @@ export function ShareMenu({ onPublished }: ShareMenuProps) {
                 className={`w-8 h-4.5 rounded-full relative transition-colors ${isPublic ? 'bg-primary' : 'bg-outline-variant'}`}
               >
                 <span
-                  className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow-sm transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0.5'}`}
+                  className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0.5'}`}
                 />
               </span>
             </button>

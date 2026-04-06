@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Merry Go Round: 4 large kite/triangle shapes rotating clockwise.
+       2×2 grid (150px). Each quadrant has a large triangle (dark) and
+       a strip-pieced triangle (medium+bg), creating a windmill effect. -->
+  <!-- Top-left quadrant: dark triangle at upper-left, medium at lower-right -->
+  <polygon points="0,0 150,0 0,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="150,0 150,150 0,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <!-- Top-right quadrant: medium at upper-left, dark at lower-right -->
+  <polygon points="150,0 300,0 150,150" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="300,0 300,150 150,150" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Bottom-left quadrant: medium at lower-right, dark at upper-left -->
+  <polygon points="0,150 150,150 0,300" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+  <polygon points="150,150 150,300 0,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Bottom-right quadrant: dark at upper-left, medium at lower-right -->
+  <polygon points="150,150 300,150 300,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="150,150 300,300 150,300" fill="#B0B0B0" stroke="#333" stroke-width="1" data-shade="medium" data-role="patch"/>
+</svg>

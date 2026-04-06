@@ -17,5 +17,18 @@ export function normalizeString(str: string): string {
  * Strips trailing "quilt"/"block"/"unit" suffixes.
  */
 export function normalizeBlockName(name: string): string {
-  return normalizeString(name).replace(/\b(quilt|block|unit)$/, '').trim();
+  return normalizeString(name)
+    .replace(/\b(quilt|block|unit)$/, '')
+    .trim();
+}
+
+/**
+ * Sanitize a project/file name for use in exported filenames.
+ * Strips special characters, replaces spaces with hyphens, lowercases.
+ */
+export function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase();
 }

@@ -66,7 +66,7 @@ export async function setAuthCookies(tokens: {
   const baseCookieOptions = {
     httpOnly: true,
     secure,
-    sameSite: 'lax' as const,
+    sameSite: 'strict' as const,
     path: '/',
   };
 

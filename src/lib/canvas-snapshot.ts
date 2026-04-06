@@ -58,9 +58,7 @@ function str(obj: Record<string, unknown>, key: string, fallback = ''): string {
  * Capture the current Fabric.js canvas as a PNG image.
  * Returns null if the canvas is unavailable.
  */
-export async function captureCanvasPng(
-  canvas: unknown
-): Promise<Uint8Array | null> {
+export async function captureCanvasPng(canvas: unknown): Promise<Uint8Array | null> {
   if (!canvas) return null;
 
   try {
@@ -77,7 +75,7 @@ export async function captureCanvasPng(
     });
 
     // Convert data URL to Uint8Array
-    const base64 = dataUrl.split(',')[1];
+    const base64 = dataUrl.split(',')[1] ?? '';
     if (!base64) return null;
 
     const binaryString = atob(base64);
@@ -97,9 +95,7 @@ export async function captureCanvasPng(
  * Extract block and piece data from the Fabric.js canvas.
  * Groups objects by their block group (or treats ungrouped shapes as standalone blocks).
  */
-export async function extractBlocksFromCanvas(
-  canvas: unknown
-): Promise<BlockSnapshot[]> {
+export async function extractBlocksFromCanvas(canvas: unknown): Promise<BlockSnapshot[]> {
   if (!canvas) return [];
 
   try {
@@ -121,8 +117,7 @@ export async function extractBlocksFromCanvas(
         const groupObjects =
           typeof obj.getObjects === 'function'
             ? (obj.getObjects as () => Array<Record<string, unknown>>)()
-            : (obj._objects as Array<Record<string, unknown>> | undefined) ??
-              [];
+            : ((obj._objects as Array<Record<string, unknown>> | undefined) ?? []);
 
         const pieces: PieceSnapshot[] = [];
         for (const child of groupObjects) {
@@ -131,8 +126,7 @@ export async function extractBlocksFromCanvas(
           if (piece) pieces.push(piece);
         }
 
-        const blockName =
-          str(obj, 'blockName') || str(obj, 'name') || null;
+        const blockName = str(obj, 'blockName') || str(obj, 'name') || null;
 
         // Get SVG from group if possible
         let svgData = '';

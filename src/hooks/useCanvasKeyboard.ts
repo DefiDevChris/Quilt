@@ -10,6 +10,7 @@ import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
 import { ZOOM_FACTOR } from '@/lib/constants';
+import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 export function useCanvasKeyboard() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -203,6 +204,41 @@ export function useCanvasKeyboard() {
             window.dispatchEvent(new CustomEvent('quiltcorgi:toggle-help'));
             return;
           }
+        }
+
+        // Arrow key nudging for selected objects
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          const active = canvas.getActiveObjects();
+          if (active.length > 0) {
+            e.preventDefault();
+
+            // Determine nudge distance
+            const { gridSettings, unitSystem } = useCanvasStore.getState();
+            const ppu = getPixelsPerUnit(unitSystem);
+            const gridPx = gridSettings.snapToGrid ? gridSettings.size * ppu : 1;
+            const step = e.shiftKey ? gridPx * 10 : gridPx;
+
+            let dx = 0;
+            let dy = 0;
+            if (e.key === 'ArrowLeft') dx = -step;
+            if (e.key === 'ArrowRight') dx = step;
+            if (e.key === 'ArrowUp') dy = -step;
+            if (e.key === 'ArrowDown') dy = step;
+
+            active.forEach((obj) => {
+              obj.set({
+                left: (obj.left ?? 0) + dx,
+                top: (obj.top ?? 0) + dy,
+              });
+              obj.setCoords();
+            });
+
+            canvas.requestRenderAll();
+            const json = JSON.stringify(canvas.toJSON());
+            useCanvasStore.getState().pushUndoState(json);
+            useProjectStore.getState().setDirty(true);
+          }
+          return;
         }
 
         if (e.key === 'Escape') {

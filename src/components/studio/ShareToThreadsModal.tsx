@@ -10,7 +10,11 @@ interface ShareToThreadsModalProps {
   onNeedPublish: () => void;
 }
 
-export function ShareToThreadsModal({ templateId, onClose, onNeedPublish }: ShareToThreadsModalProps) {
+export function ShareToThreadsModal({
+  templateId,
+  onClose,
+  onNeedPublish,
+}: ShareToThreadsModalProps) {
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +109,7 @@ export function ShareToThreadsModal({ templateId, onClose, onNeedPublish }: Shar
             <button
               onClick={handleShare}
               disabled={isSubmitting || !templateId}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

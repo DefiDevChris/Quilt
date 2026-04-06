@@ -67,7 +67,7 @@ export function SocialFeedPage() {
                   onClick={() => setCategory(cat.value)}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                     category === cat.value
-                      ? 'bg-primary text-white shadow-elevation-1'
+                      ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
                       : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
                   }`}
                 >

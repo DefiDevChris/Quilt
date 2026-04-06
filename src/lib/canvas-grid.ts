@@ -133,10 +133,36 @@ export function renderGrid(
   const quiltHeightPx = quiltHeight * pxPerUnit;
   const zoom = fabricCanvas.getZoom();
   const vpt = fabricCanvas.viewportTransform;
+  const panX = vpt[4];
+  const panY = vpt[5];
 
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = '#EDEBE8';
   ctx.fillRect(0, 0, w, h);
+
+  // --- Infinite background grid (always visible, covers full canvas area) ---
+  // Use a fixed dot-grid at a sensible pitch in screen pixels, then clamp
+  // to a minimum pixel spacing so it doesn't become invisible when zoomed out.
+  {
+    const gridSizePx = gridSettings.size * pxPerUnit;
+    const screenPitch = Math.max(gridSizePx * zoom, 8); // never draw tighter than 8px
+    // Align the grid to the viewport pan so it stays stationary as you pan
+    const offsetX = ((panX % screenPitch) + screenPitch) % screenPitch;
+    const offsetY = ((panY % screenPitch) + screenPitch) % screenPitch;
+
+    ctx.strokeStyle = 'rgba(178, 173, 167, 0.45)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    for (let x = offsetX - screenPitch; x <= w + screenPitch; x += screenPitch) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+    }
+    for (let y = offsetY - screenPitch; y <= h + screenPitch; y += screenPitch) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+    }
+    ctx.stroke();
+  }
 
   ctx.save();
   ctx.transform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
@@ -148,9 +174,10 @@ export function renderGrid(
   ctx.lineWidth = 1.5 / zoom;
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 
-  if (gridSettings.enabled && gridSettings.size > 0) {
+  // Grid lines inside the quilt area
+  if (gridSettings.size > 0) {
     const gridSizePx = gridSettings.size * pxPerUnit;
-    ctx.strokeStyle = 'rgba(229, 226, 221, 0.7)';
+    ctx.strokeStyle = 'rgba(229, 226, 221, 0.85)';
     ctx.lineWidth = 1 / zoom;
 
     ctx.beginPath();

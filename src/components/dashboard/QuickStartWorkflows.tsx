@@ -117,15 +117,10 @@ export function QuickStartWorkflows({
           aria-label="Photo to Design workflow"
         >
           <div>
-            {!isPro && (
-              <span className="inline-block px-2 py-0.5 bg-[#C67B5C]/15 text-[#C67B5C] text-[10px] font-bold uppercase tracking-wider rounded mb-2">
-                Pro
-              </span>
-            )}
             <p className="text-on-surface font-extrabold text-xl mb-1">Photo to Design</p>
             <p className="text-secondary text-sm">Extract blocks with AI</p>
           </div>
-          <CameraPatternIcon className="w-12 h-12 text-[#C67B5C] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+          <CameraPatternIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
         </button>
 
         {/* Start from Template */}
@@ -139,7 +134,7 @@ export function QuickStartWorkflows({
             <p className="text-on-surface font-extrabold text-xl mb-1">Start from Template</p>
             <p className="text-secondary text-sm">Patterns and blocks</p>
           </div>
-          <QuiltBlocksIcon className="w-12 h-12 text-[#C67B5C] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+          <QuiltBlocksIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
         </button>
 
         {/* Blank Project */}
@@ -153,7 +148,7 @@ export function QuickStartWorkflows({
             <p className="text-on-surface font-extrabold text-xl mb-1">Blank Project</p>
             <p className="text-secondary text-sm">Design from scratch</p>
           </div>
-          <NewCanvasIcon className="w-12 h-12 text-[#C67B5C] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+          <NewCanvasIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
         </button>
       </div>
     </section>

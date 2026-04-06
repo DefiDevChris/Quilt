@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 208" width="300" height="208">
+  <!-- Country Star layout: 5×3 grid with horizontal lattice strips between rows.
+       Block cells 60×60, lattice strips 14px tall. -->
+  <!-- Row 1 -->
+  <rect x="0" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="60" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="120" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="180" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="240" y="0" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <!-- Lattice 1 -->
+  <rect x="0" y="60" width="300" height="14" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <!-- Row 2 -->
+  <rect x="0" y="74" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="60" y="74" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="120" y="74" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="180" y="74" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="240" y="74" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <!-- Lattice 2 -->
+  <rect x="0" y="134" width="300" height="14" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <!-- Row 3 -->
+  <rect x="0" y="148" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="60" y="148" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="120" y="148" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="180" y="148" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="240" y="148" width="60" height="60" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+</svg>

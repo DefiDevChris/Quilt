@@ -29,7 +29,7 @@ export default function PostError({
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-5 py-2.5 rounded-full bg-primary text-primary-on text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Try Again
           </button>

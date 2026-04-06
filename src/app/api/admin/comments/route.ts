@@ -2,13 +2,8 @@ import { NextRequest } from 'next/server';
 import { desc, eq, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { comments, users, socialPosts, reports } from '@/db/schema';
-import {
-  getRequiredSession,
-  unauthorizedResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/auth-helpers';
-import { checkTrustLevel } from '@/middleware/trust-guard';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import { unauthorizedResponse, validationErrorResponse, errorResponse } from '@/lib/api-responses';
 import { z } from 'zod';
 import { formatCreatorName } from '@/lib/format-utils';
 
@@ -21,11 +16,9 @@ const paginationSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
-  if (!trustCheck.allowed) return trustCheck.response!;
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const url = request.nextUrl;
   const parsed = paginationSchema.safeParse({
@@ -149,11 +142,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await getRequiredSession();
-  if (!session) return unauthorizedResponse();
-
-  const trustCheck = await checkTrustLevel(session.user.id, 'canModerate');
-  if (!trustCheck.allowed) return trustCheck.response!;
+  const result = await requireAdminSession();
+  if (result instanceof Response) return result;
+  const { session } = result;
 
   const id = request.nextUrl.searchParams.get('id');
 

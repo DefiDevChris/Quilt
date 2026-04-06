@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <rect x="80" y="80" width="80" height="80" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="60" y="60" width="120" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="60" y="160" width="120" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="60" y="80" width="20" height="80" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="160" y="80" width="20" height="80" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="40" y="40" width="160" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="40" y="180" width="160" height="20" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="40" y="60" width="20" height="120" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="180" y="60" width="20" height="120" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="sashing" data-shade="sashing" />
+  <rect x="0" y="0" width="40" height="40" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="200" y="0" width="40" height="40" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="0" y="200" width="40" height="40" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <rect x="200" y="200" width="40" height="40" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+</svg>

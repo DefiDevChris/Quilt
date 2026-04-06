@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!-- Garden Gate layout: 2×2 blocks on point with border.
+       Outer border 20px, inner area 200×200, blocks 60×60 on point. -->
+  <!-- Border -->
+  <rect x="0" y="0" width="240" height="240" fill="#B0B0B0" stroke="#333333" stroke-width="1" data-role="border" data-shade="border" />
+  <!-- Inner background -->
+  <rect x="20" y="20" width="200" height="200" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="background" />
+  <!-- Setting triangles (edges) -->
+  <polygon points="120,20 170,70 120,120 70,70" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="70,70 120,120 70,170 20,120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="120,120 170,70 220,120 170,170" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <polygon points="120,120 170,170 120,220 70,170" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
+  <!-- Corner setting triangles -->
+  <polygon points="20,20 120,20 70,70" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="120,20 220,20 170,70" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="20,20 70,70 20,120" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="220,20 220,120 170,70" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="20,120 70,170 20,220" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="220,120 220,220 170,170" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="20,220 70,170 120,220" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+  <polygon points="120,220 170,170 220,220" fill="#ECECEC" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="setting-triangle" />
+</svg>

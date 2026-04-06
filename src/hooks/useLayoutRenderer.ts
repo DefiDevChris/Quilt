@@ -41,6 +41,7 @@ const ROLE_FILLS: Record<LayoutAreaRole, string> = {
   cornerstone: '#D5CFC5',
   border: '#C8D8E8',
   binding: '#505050',
+  edging: '#3D3D3D',
 };
 
 /** Stroke colors by area role. */
@@ -50,6 +51,7 @@ const ROLE_STROKES: Record<LayoutAreaRole, string> = {
   cornerstone: '#A09888',
   border: '#A0B0C0',
   binding: '#383838',
+  edging: '#2A2A2A',
 };
 
 /**
@@ -120,7 +122,19 @@ export function useLayoutRenderer() {
       const oldObjects = canvas
         .getObjects()
         .filter((obj) => !!(obj as Record<string, unknown>)[RENDERER_MARKER]);
+
+      const preservedFills: Record<string, unknown> = {};
+      const preservedStrokes: Record<string, unknown> = {};
+
       if (oldObjects.length > 0) {
+        for (const obj of oldObjects) {
+          const r = obj as unknown as Record<string, unknown>;
+          const areaId = r[AREA_ID_PROP] as string | undefined;
+          if (areaId) {
+            preservedFills[areaId] = (obj as any).fill;
+            preservedStrokes[areaId] = (obj as any).stroke;
+          }
+        }
         canvas.remove(...oldObjects);
       }
 
@@ -136,16 +150,20 @@ export function useLayoutRenderer() {
 
       // Render each area as a Fabric.js Rect
       for (const area of areas) {
-        const fill = ROLE_FILLS[area.role];
-        const stroke = ROLE_STROKES[area.role];
+        const fill =
+          preservedFills[area.id] !== undefined ? preservedFills[area.id] : ROLE_FILLS[area.role];
+        const stroke =
+          preservedStrokes[area.id] !== undefined
+            ? preservedStrokes[area.id]
+            : ROLE_STROKES[area.role];
 
         const rect = new fabric.Rect({
           left: area.x,
           top: area.y,
           width: area.width,
           height: area.height,
-          fill,
-          stroke,
+          fill: fill as string | undefined,
+          stroke: stroke as string | undefined,
           strokeWidth: area.role === 'binding' ? 1.5 : 0.5,
           angle: area.rotation ?? 0,
           selectable: true,

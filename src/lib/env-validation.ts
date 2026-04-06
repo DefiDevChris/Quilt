@@ -64,6 +64,14 @@ export function validateEnv(): void {
     }
   }
 
+  // Stripe webhook secret — required when Stripe is configured
+  if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_WEBHOOK_SECRET) {
+    errors.push(
+      'STRIPE_WEBHOOK_SECRET must be set when STRIPE_SECRET_KEY is configured. ' +
+        'Without it, webhook signature verification will fail and subscription events will not be processed.'
+    );
+  }
+
   // NEXT_PUBLIC_APP_URL — required for Stripe redirect URLs
   if (!process.env.NEXT_PUBLIC_APP_URL) {
     if (process.env.NODE_ENV === 'production') {

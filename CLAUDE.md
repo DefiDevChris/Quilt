@@ -21,7 +21,7 @@ cp .env.example .env.local          # Configure AWS Cognito, S3, Stripe creds
 npm install
 npm run db:local:up                  # Start PostgreSQL via Docker (port 5432)
 npm run db:push                      # Push schema to local DB
-npm run dev                          # http://localhost:3000
+npm run dev                          # http://localhost:3000 (uses Turbopack)
 
 # Build & check
 npm run build                        # Production build
@@ -42,12 +42,14 @@ npx playwright test tests/e2e/studio.spec.ts                # Single spec
 npx playwright test --project=chromium tests/e2e/auth.spec.ts  # Single browser
 
 # Database (Drizzle + PostgreSQL)
-npm run db:generate                  # Generate migration from schema changes
+npm run db:generate                  # Generate migration from schema changes (requires DATABASE_URL — see below)
+# drizzle-kit needs DATABASE_URL: DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npm run db:generate
 npm run db:migrate                   # Run pending migrations
 npm run db:push                      # Push schema directly (no migration file)
 npm run db:studio                    # Open Drizzle Studio web UI
 npm run db:seed:blog                 # Seed blog posts
 DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts  # Seed fabric library (2,764 solids)
+npm run db:seed:layouts              # Seed 8 default layout templates
 npm run db:local:down                # Stop PostgreSQL container
 # Direct SQL queries (psql not installed locally):
 # docker exec -i $(docker ps --filter ancestor=postgres -q | head -1) psql -U quiltcorgi -d quiltcorgi -c "SELECT ..."
@@ -71,11 +73,11 @@ src/
     templates/      # Project templates and sharing
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
-  stores/           # Zustand stores (18 total)
+  stores/           # Zustand stores (19 total)
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
-  db/schema/        # Drizzle table definitions (22 files)
+  db/schema/        # Drizzle table definitions (23 files)
   types/            # Shared TypeScript type definitions
 ```
 
@@ -132,7 +134,7 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 
 **Buttons:**
 
-- Primary: `bg-primary text-white rounded-full` or `bg-gradient-to-r from-primary to-primary-golden text-white rounded-full`
+- Primary: `bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full hover:opacity-90`
 - Secondary: `bg-white/50 text-secondary rounded-full`
 - Active chips: `bg-primary text-white shadow-elevation-1`, inactive: `bg-white/50 text-secondary`
 
@@ -152,6 +154,7 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 - `border-[#e5e5e5]`, `bg-[#f5f5f5]`
 - `bg-white border border-gray-100` flat cards
 - `bg-gray-900 text-white` dark buttons
+- `bg-primary text-white` on CTA buttons (use gradient instead: `from-orange-500 to-rose-400`)
 
 ### State Management
 
@@ -164,6 +167,17 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 - Check `session.user.role` for auth
 - Return 403 `PRO_REQUIRED` for pro-gated endpoints
 - Rate limit all auth endpoints
+- Dynamic route params are async in Next.js 16: `{ params }: { params: Promise<{ id: string }> }` — must `await params`
+
+### S3 Upload Purposes
+
+Presigned URL API at `/api/upload/presigned-url` — `purpose` field determines S3 prefix and auth:
+- `fabric`, `thumbnail`, `export`, `block` — Pro required
+- `mobile-upload` — all authenticated users (Pro gate applies at processing time)
+
+### Dashboard
+
+Bento grid with 6 cards: My Quiltbook, Browse Templates, Mobile Uploads, Community Threads, My Profile, System Settings. Three have in-page sub-views via `DashboardTab = 'my-quilts' | 'templates' | 'mobile-uploads'` — each renders a full-page panel with "Back to Dashboard" header. The rest are `<Link>` navigations.
 
 ### Git
 
@@ -243,11 +257,11 @@ Existing utilities that support PDF: `yardage-utils.ts`, `cutting-chart-generato
 
 Upload a photo of any quilt → OpenCV extracts the individual pieces → pieces are placed on the worktable as independent objects. Users can then group pieces into blocks, assign fabrics, create a printlist, or do anything the regular design studio supports.
 
-**Current state**: The OpenCV web worker (`src/lib/piece-detection.worker.ts`) and the 7-step wizard UI exist. The post-processing detection engines are **not yet implemented**:
+**Current state**: The full pipeline is implemented — OpenCV web worker (`src/lib/piece-detection.worker.ts`), 7-step wizard UI, and post-processing structure detection:
+- `structure-detection-engine.ts` — Orchestrator: grid → sashing → border → role assignment
 - `grid-detection-engine.ts` — Block repeat grid from centroid clustering
 - `sashing-detection-engine.ts` — Sashing strips + cornerstones between blocks
 - `border-detection-engine.ts` — Border layers around the quilt
-- `structure-detection-engine.ts` — Orchestrator, assigns piece roles
 
 Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
 
@@ -346,6 +360,33 @@ DB tables: `socialPosts`, `likes`, `comments`, `follows`, `reports`, `bookmarks`
 - Admin-only creation, published via `blogPosts` DB table
 - Rendered with `TiptapRenderer`
 
+## Mobile Uploads
+
+Cross-device photo pipeline: mobile captures photos into a holding queue, desktop triages and processes them.
+
+### Mobile Flow
+
+- `UploadSheet` (`src/components/mobile/UploadSheet.tsx`) — single "Upload Photo" button + "Share to Social" shortcut
+- Compresses via `compressImageForUpload` (HEIC→JPEG, downscale to 2048px, WebP)
+- Uploads to S3 with `purpose: 'mobile-upload'` (allowed for all authenticated users, not just Pro)
+- Creates a `mobile_uploads` DB record via `POST /api/mobile-uploads`
+- Max 50 pending uploads per user (`MOBILE_UPLOADS_MAX_PENDING`)
+
+### Desktop Flow
+
+- Dashboard bento card "Mobile Uploads" shows pending count badge
+- `MobileUploadsPanel` (`src/components/uploads/MobileUploadsPanel.tsx`) — grid of pending uploads
+- Each `UploadCard` lets user assign type (Fabric / Block / Quilt), then click "Process"
+- Processing calls `POST /api/mobile-uploads/[id]/process` (Pro required for all types) then redirects to the appropriate existing pipeline with `preloadUrl` query param
+- After pipeline completes, `POST /api/mobile-uploads/[id]/complete` marks the upload as completed
+
+### Architecture
+
+- DB table: `mobile_uploads` (`src/db/schema/mobileUploads.ts`) — status enum: `pending → processing → completed | failed`
+- API: `src/app/api/mobile-uploads/` — CRUD + `/[id]/process` + `/[id]/complete`
+- Store: `src/stores/mobileUploadStore.ts` — Zustand with fetch, create, updateType, process, complete, delete
+- `SimplePhotoBlockUpload` accepts `preloadedImageUrl` prop to skip the upload step
+
 ## Product Context
 
 - **Photo-to-Design** is the key differentiator — never scale it back
@@ -363,14 +404,33 @@ These were intentionally removed — do not reintroduce:
 
 ## Build Health
 
-TypeScript: 0 errors. ESLint: 1 pre-existing error in `dashboard/page.tsx` (setState in effect). Tests: 863/863 pass (1 test file fails due to missing `fabricSwatches.json` seed data — pre-existing).
+TypeScript: 0 errors. ESLint: 1 pre-existing error in `dashboard/page.tsx` (setState in effect). Tests: 857/857 pass (1 test file fails due to missing `fabricSwatches.json` seed data — pre-existing).
 
-Resolved in workstreams 01-07:
-- "community" → "social" rename complete
-- `ProtectedPageShell`, `TemplateLibrary`, `SocialFeedPage`, `BlockBuilderTab` all implemented
-- `canvasStore` has `backgroundColor`/`setBackgroundColor`, `blockStore` has `activePanel`/`togglePanel`
-- Stub modules created for planned PDF engines and detection engines
-- Vitest globals configured in `tsconfig.json`
-- Fabrics schema has shop fields (`pricePerYard`, `inStock`, etc.)
-- Social feed fully wired: API routes, bookmarks, sort/filter, category chips, member profiles
-- Shop system: `siteSettings` table, admin toggle, shop page with filtering, cart drawer, studio integration
+## Key Dependencies
+
+- **Rate limiting**: Upstash Redis + `@upstash/ratelimit` — used on auth endpoints
+- **Geometry**: `clipper-lib` — Clipper.js for seam allowance offset polygons in PDF export
+- **Sanitization**: `isomorphic-dompurify` — HTML sanitization for user content
+- **Photo upload**: `heic2any` — converts iOS HEIC photos to JPEG before upload
+- **Animations**: `framer-motion` — page transitions and UI animations
+- **PDF**: `pdf-lib` — client-side PDF generation at 1:1 scale
+
+## PM2 Services
+
+| Port | Name | Type |
+|------|------|------|
+| 3000 | quilt-3000 | Next.js |
+| 5432 | quiltcorgi-db | PostgreSQL (Docker Compose) |
+
+**Terminal Commands:**
+```bash
+pm2 start ecosystem.config.cjs   # First time
+pm2 start all                    # After first time
+pm2 stop all / pm2 restart all
+pm2 start quilt-3000 / pm2 stop quilt-3000
+pm2 logs / pm2 status / pm2 monit
+pm2 save                         # Save process list
+pm2 resurrect                    # Restore saved list
+```
+
+**Note:** PostgreSQL is managed via Docker Compose (`npm run db:local:up`), not PM2.
