@@ -17,6 +17,10 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   return (
     <>
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/background.png')" }}
+      />
       <PublicNav />
       <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
       <Footer />

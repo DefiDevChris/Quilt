@@ -66,7 +66,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             height={32}
             className="object-contain drop-shadow-elevation-1"
           />
-          <span className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+          <span
+            className="text-xl font-extrabold text-on-surface"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             QuiltCorgi
           </span>
         </Link>

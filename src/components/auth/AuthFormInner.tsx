@@ -101,7 +101,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div>
           <label
             htmlFor={compact ? 'modal-name' : 'name'}
-            className="block text-body-sm font-medium text-secondary mb-1.5"
+            className="block text-body-md font-semibold text-on-surface mb-1.5"
           >
             Name
           </label>
@@ -121,7 +121,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <div>
         <label
           htmlFor={compact ? 'modal-email' : 'email'}
-          className="block text-body-sm font-medium text-secondary mb-1.5"
+          className="block text-body-md font-semibold text-on-surface mb-1.5"
         >
           Email
         </label>
@@ -141,7 +141,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div className="flex items-center justify-between mb-1.5">
           <label
             htmlFor={compact ? 'modal-password' : 'password'}
-            className="block text-body-sm font-medium text-secondary"
+            className="block text-body-md font-semibold text-on-surface"
           >
             Password
           </label>
@@ -201,7 +201,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           </button>
         </div>
         {isSignUp && (
-          <p className="mt-1.5 text-body-sm text-secondary">
+          <p className="mt-1.5 text-body-sm text-on-surface/70">
             Must include uppercase, lowercase, and numbers
           </p>
         )}
