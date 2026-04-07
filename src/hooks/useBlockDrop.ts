@@ -78,22 +78,62 @@ export function useBlockDrop() {
         let cellRotation = 0;
         let targetScaleX = (blockSize * PIXELS_PER_INCH) / (groupData.width ?? 100);
         let targetScaleY = (blockSize * PIXELS_PER_INCH) / (groupData.height ?? 100);
+        let targetCellId: string | null = null;
+        let previousOccupant: import('fabric').FabricObject | null = null;
 
-        // Check if we dropped over a layout area (block-cell)
-        const foundTarget = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
+        // Hit-test the layout overlay UNDER any existing user blocks. We
+        // temporarily disable `evented` on user-block groups so findTarget
+        // returns the cell beneath them — this is what makes "drop a new
+        // block on a cell that already has one" work as overwrite.
+        const allObjects = canvas.getObjects();
+        const userBlocksToRestore: Array<{
+          obj: import('fabric').FabricObject;
+          prev: boolean;
+        }> = [];
+        for (const obj of allObjects) {
+          const r = obj as unknown as Record<string, unknown>;
+          if (!r['_layoutRendererElement']) {
+            userBlocksToRestore.push({ obj, prev: obj.evented ?? true });
+            obj.evented = false;
+          }
+        }
+
+        const foundTarget = canvas.findTarget(
+          e.nativeEvent as unknown as import('fabric').TPointerEvent
+        );
+
+        // Restore evented state immediately
+        for (const { obj, prev } of userBlocksToRestore) {
+          obj.evented = prev;
+        }
+
         if (foundTarget) {
           const areaObj = foundTarget as Record<string, unknown>;
           if (areaObj['_layoutRendererElement'] && areaObj['_layoutAreaRole'] === 'block-cell') {
             const fabricObj = foundTarget as unknown as import('fabric').FabricObject;
             dropX = fabricObj.left ?? dropX;
             dropY = fabricObj.top ?? dropY;
-            
-            const cellW = (fabricObj.width ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleX ?? 1);
-            const cellH = (fabricObj.height ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleY ?? 1);
-            
+
+            const cellW =
+              (fabricObj.width ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleX ?? 1);
+            const cellH =
+              (fabricObj.height ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleY ?? 1);
+
             targetScaleX = cellW / (groupData.width ?? 100);
             targetScaleY = cellH / (groupData.height ?? 100);
             cellRotation = fabricObj.angle ?? 0;
+            targetCellId = (areaObj['_layoutAreaId'] as string | undefined) ?? null;
+
+            // Find existing block in this cell to remove on overwrite
+            if (targetCellId) {
+              for (const obj of allObjects) {
+                const r = obj as unknown as Record<string, unknown>;
+                if (r['_inLayoutCellId'] === targetCellId) {
+                  previousOccupant = obj as unknown as import('fabric').FabricObject;
+                  break;
+                }
+              }
+            }
           } else {
             // Only snap to grid if NOT dropping on a layout cell
             if (gridSettings.snapToGrid && gridSettings.enabled) {
@@ -123,6 +163,11 @@ export function useBlockDrop() {
 
         if (objects.length === 0) return;
 
+        // Overwrite: if a block already occupies this layout cell, remove it
+        if (previousOccupant) {
+          canvas.remove(previousOccupant);
+        }
+
         const group = new fabric.Group(objects, {
           left: dropX,
           top: dropY,
@@ -131,6 +176,12 @@ export function useBlockDrop() {
           angle: cellRotation,
           subTargetCheck: true,
         });
+
+        // Tag the group with its layout-cell association so future drops on
+        // the same cell can find and replace it.
+        if (targetCellId) {
+          (group as unknown as Record<string, unknown>)['_inLayoutCellId'] = targetCellId;
+        }
 
         canvas.add(group);
         canvas.setActiveObject(group);

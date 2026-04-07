@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  /* Surface System — Clean white with subtle warm tints */
   --color-background: #fafafa;
   --color-surface: #fafafa;
   --color-surface-container-lowest: #ffffff;
@@ -12,32 +11,20 @@
   --color-surface-container-highest: #e8e8e8;
   --color-surface-canvas: #ffffff;
   --color-surface-recessed: #f5f5f5;
-
-  /* Primary Palette — Orange to Rose gradient */
   --color-primary: #f97316;
   --color-primary-dark: #ea580c;
   --color-primary-container: #ffedd5;
   --color-primary-on: #ffffff;
   --color-primary-on-container: #7c2d12;
   --gradient-cta: linear-gradient(to right, #f97316, #fb7185);
-
-  /* Text & Content — high contrast warm palette */
   --color-on-surface: #3a2e26;
   --color-secondary: #5c4d42;
-
-  /* Borders & Outlines — visible but subtle */
   --color-outline-variant: #e8dfd5;
-
-  /* Status */
   --color-success: #4a7c59;
   --color-error: #d4726a;
   --color-warning: #c6942e;
-
-  /* Fonts */
-  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-
-  /* Font Sizes */
   --font-size-display-lg: 3.5rem;
   --font-size-display-md: 2.5rem;
   --font-size-headline-lg: 2rem;
@@ -48,8 +35,6 @@
   --font-size-body-sm: 0.75rem;
   --font-size-label-lg: 0.875rem;
   --font-size-label-sm: 0.6875rem;
-
-  /* Custom Spacing */
   --spacing-0_5x: 0.175rem;
   --spacing-1x: 0.35rem;
   --spacing-1_5x: 0.5rem;
@@ -63,36 +48,19 @@
   --spacing-12x: 4.2rem;
   --spacing-16x: 5.5rem;
   --spacing-20x: 7rem;
-
-  /* Border Radii */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
-
-  /* Shadows (Elevation) — Bold multi-layer for depth */
   --shadow-elevation-1: 0 2px 6px rgba(50, 38, 30, 0.10), 0 6px 20px rgba(50, 38, 30, 0.12);
-  --shadow-elevation-2:
-    0 4px 8px rgba(50, 38, 30, 0.10), 0 12px 32px rgba(50, 38, 30, 0.14),
-    0 24px 48px rgba(50, 38, 30, 0.10);
-  --shadow-elevation-3:
-    0 6px 12px rgba(50, 38, 30, 0.12), 0 16px 40px rgba(50, 38, 30, 0.18),
-    0 32px 72px rgba(50, 38, 30, 0.14);
-  --shadow-elevation-4:
-    0 8px 16px rgba(50, 38, 30, 0.14), 0 24px 56px rgba(50, 38, 30, 0.22),
-    0 40px 88px rgba(50, 38, 30, 0.16);
-
-  /* Inset / recessed shadow */
+  --shadow-elevation-2: 0 4px 8px rgba(50, 38, 30, 0.10), 0 12px 32px rgba(50, 38, 30, 0.14), 0 24px 48px rgba(50, 38, 30, 0.10);
+  --shadow-elevation-3: 0 6px 12px rgba(50, 38, 30, 0.12), 0 16px 40px rgba(50, 38, 30, 0.18), 0 32px 72px rgba(50, 38, 30, 0.14);
+  --shadow-elevation-4: 0 8px 16px rgba(50, 38, 30, 0.14), 0 24px 56px rgba(50, 38, 30, 0.22), 0 40px 88px rgba(50, 38, 30, 0.16);
   --shadow-inset: inset 0 2px 8px rgba(60, 46, 38, 0.10), inset 0 1px 3px rgba(60, 46, 38, 0.08);
-  --shadow-inset-lg:
-    inset 0 6px 16px rgba(60, 46, 38, 0.12), inset 0 3px 6px rgba(60, 46, 38, 0.08);
-
-  /* Mobile — Golden Amber Accent */
+  --shadow-inset-lg: inset 0 6px 16px rgba(60, 46, 38, 0.12), inset 0 3px 6px rgba(60, 46, 38, 0.08);
   --color-primary-golden: #c48a28;
   --color-primary-golden-light: #daa545;
   --color-primary-golden-glow: rgba(196, 138, 40, 0.15);
-
-  /* Glassmorphism */
   --glass-surface: rgba(255, 252, 247, 0.72);
   --glass-warm: rgba(252, 249, 243, 0.65);
   --glass-frosted: rgba(255, 255, 255, 0.55);
@@ -102,13 +70,9 @@
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-border-highlight: rgba(255, 255, 255, 0.8);
   --glass-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-  /* Mobile Shadows */
   --shadow-fab: 0 6px 20px rgba(196, 138, 40, 0.3);
   --shadow-fab-hover: 0 8px 28px rgba(196, 138, 40, 0.35);
   --shadow-golden-glow: 0 4px 20px rgba(196, 138, 40, 0.15);
-
-  /* Landing Page Warm Palette (unified with main palette) */
   --font-display: 'Outfit', system-ui, sans-serif;
   --color-warm-bg: #fefefe;
   --color-warm-text: #3a2e26;
@@ -123,8 +87,6 @@
   --color-warm-surface: #fdfaf7;
   --color-warm-card: rgba(255, 255, 255, 0.75);
   --color-warm-glass-border: rgba(255, 255, 255, 0.6);
-
-  /* Social Pattern Colors */
   --color-pattern-bg: #ffffff;
   --color-pattern-peach: #f97316;
   --color-pattern-orange: #f97316;
@@ -133,6 +95,93 @@
   --color-pattern-amber: #fbbf24;
   --color-pattern-amber-dark: #f59e0b;
   --color-pattern-orange-accent: #fb923c;
+}
+
+/* Editorial prose styling for blog posts */
+.prose-blog {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--color-on-surface);
+}
+
+.prose-blog p {
+  margin-bottom: 1.5rem;
+}
+
+.prose-blog h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  color: var(--color-on-surface);
+}
+
+.prose-blog h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  color: var(--color-on-surface);
+}
+
+.prose-blog a {
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-primary);
+  transition: opacity 0.2s;
+}
+
+.prose-blog a:hover {
+  opacity: 0.7;
+}
+
+.prose-blog blockquote {
+  border-left: 2px solid var(--color-primary);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
+.prose-blog img {
+  width: 100%;
+  height: auto;
+  margin: 2.5rem 0;
+  border-radius: 0.125rem;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose-blog li {
+  margin-bottom: 0.5rem;
+}
+
+.prose-blog code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: var(--color-surface-container);
+  padding: 0.2em 0.4em;
+  border-radius: 0.125rem;
+}
+
+.prose-blog pre {
+  background: var(--color-surface-container);
+  padding: 1.5rem;
+  border-radius: 0.125rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.prose-blog pre code {
+  background: none;
+  padding: 0;
 }
 
 body {
@@ -376,4 +425,121 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+/* Editorial prose styling for blog posts - Kinfolk / It's Nice That aesthetic */
+.prose-editorial {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: #3a2e26;
+}
+
+.prose-editorial p {
+  margin-bottom: 1.75rem;
+}
+
+.prose-editorial h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 500;
+  margin-top: 3.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #3a2e26;
+}
+
+.prose-editorial h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: #3a2e26;
+}
+
+.prose-editorial a {
+  color: #c48a28;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.prose-editorial a:hover {
+  border-bottom-color: #c48a28;
+}
+
+.prose-editorial blockquote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.375rem;
+  font-style: italic;
+  border-left: 2px solid #c48a28;
+  padding-left: 2rem;
+  margin: 3rem 0;
+  color: #5c4d42;
+  line-height: 1.6;
+}
+
+.prose-editorial img {
+  width: 100%;
+  height: auto;
+  margin: 3rem 0;
+  border-radius: 2px;
+}
+
+.prose-editorial figure {
+  margin: 3rem 0;
+}
+
+.prose-editorial figcaption {
+  font-size: 0.875rem;
+  color: #7a6c60;
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.prose-editorial ul,
+.prose-editorial ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose-editorial li {
+  margin-bottom: 0.5rem;
+}
+
+.prose-editorial code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 2px;
+}
+
+.prose-editorial pre {
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 2px;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.prose-editorial pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose-editorial hr {
+  border: none;
+  height: 1px;
+  background: #e8dfd5;
+  margin: 4rem 0;
+}
+
+/* Serif utility class */
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
 }

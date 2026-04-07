@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
-import { renderLayoutTemplate } from '@/lib/layout-renderer';
+import { fitLayoutToQuilt } from '@/lib/layout-renderer';
 import type { LayoutTemplate, LayoutArea, LayoutAreaRole } from '@/types/layout';
 
 /** Property name used to tag Fabric.js objects created by this renderer. */
@@ -111,14 +111,23 @@ export function useLayoutRenderer() {
       if (disposed) return;
 
       const template = storeToTemplate();
-      const key = template ? JSON.stringify(template) : 'none';
+      const project = useProjectStore.getState();
+      const quiltWidth = project.canvasWidth;
+      const quiltHeight = project.canvasHeight;
+
+      // Cache key includes quilt dimensions so the layout reflows when the
+      // quilt is resized — but does NOT trigger on unrelated project changes.
+      const key = template
+        ? `${JSON.stringify(template)}|${quiltWidth}x${quiltHeight}|${unitSystem}`
+        : `none|${quiltWidth}x${quiltHeight}|${unitSystem}`;
       if (key === prevKeyRef.current) return;
       prevKeyRef.current = key;
 
       const fabric = await import('fabric');
       const canvas = fabricCanvas as unknown as FabricCanvas;
 
-      // Remove old renderer objects
+      // Remove old renderer objects, preserving any user-applied fabric/color
+      // assignments by area ID so a rerender doesn't blow them away.
       const oldObjects = canvas
         .getObjects()
         .filter((obj) => !!(obj as Record<string, unknown>)[RENDERER_MARKER]);
@@ -145,7 +154,7 @@ export function useLayoutRenderer() {
       }
 
       const pxPerUnit = getPixelsPerUnit(unitSystem);
-      const areas = renderLayoutTemplate(template, pxPerUnit);
+      const areas = fitLayoutToQuilt(template, quiltWidth, quiltHeight, pxPerUnit);
       areasRef.current = areas;
 
       // Render each area as a Fabric.js Rect
@@ -176,6 +185,7 @@ export function useLayoutRenderer() {
           lockScalingX: true,
           lockScalingY: true,
           hoverCursor: 'pointer',
+          objectCaching: false,
         });
 
         const r = rect as unknown as Record<string, unknown>;
@@ -188,24 +198,23 @@ export function useLayoutRenderer() {
       }
 
       canvas.requestRenderAll();
-
-      // Push undo state
-      const json = JSON.stringify(
-        (fabricCanvas as unknown as { toJSON: () => Record<string, unknown> }).toJSON()
-      );
-      useCanvasStore.getState().pushUndoState(json);
       useProjectStore.getState().setDirty(true);
     };
 
     applyLayout();
 
-    const unsub = useLayoutStore.subscribe(() => {
+    const unsubLayout = useLayoutStore.subscribe(() => {
+      applyLayout();
+    });
+    // Subscribe to project store so layout reflows when quilt dimensions change
+    const unsubProject = useProjectStore.subscribe(() => {
       applyLayout();
     });
 
     return () => {
       disposed = true;
-      unsub();
+      unsubLayout();
+      unsubProject();
     };
   }, [fabricCanvas, unitSystem]);
 
