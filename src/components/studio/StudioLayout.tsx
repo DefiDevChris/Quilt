@@ -191,6 +191,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onOpenHelp={dialogs.openHelp}
         onOpenHistory={dialogs.openHistory}
         onOpenGridDimensions={dialogs.openGridDimensions}
+        onOpenBlockBuilder={dialogs.openDrafting}
         onSave={handleSave}
       />
 

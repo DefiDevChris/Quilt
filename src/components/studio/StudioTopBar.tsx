@@ -27,7 +27,7 @@ function formatTimestamp(date: Date | null): string {
   return date.toLocaleDateString();
 }
 
-const MODE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
+const WORKTABLE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
   {
     mode: 'quilt',
     label: 'Worktable',
@@ -95,35 +95,32 @@ const MODE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[]
       </svg>
     ),
   },
-  {
-    mode: 'block',
-    label: 'Block Builder',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <path
-          d="M10 2L18 7V13L10 18L2 13V7L10 2Z"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 8L18 13M10 8L2 13M10 8V18"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.4"
-        />
-      </svg>
-    ),
-  },
 ];
 
-function ModeTabs() {
+const BLOCK_BUILDER_ICON = (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <path
+      d="M10 2L18 7V13L10 18L2 13V7L10 2Z"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10 8L18 13M10 8L2 13M10 8V18"
+      stroke="currentColor"
+      strokeWidth="1"
+      strokeOpacity="0.4"
+    />
+  </svg>
+);
+
+function ModeTabs({ onOpenBlockBuilder }: { readonly onOpenBlockBuilder?: () => void }) {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
 
   return (
     <div className="flex items-center gap-0.5 bg-surface-container/60 rounded-lg px-1 py-0.5">
-      {MODE_TABS.map((tab) => {
+      {WORKTABLE_TABS.map((tab) => {
         const isActive = activeWorktable === tab.mode;
         return (
           <button
@@ -141,6 +138,20 @@ function ModeTabs() {
           </button>
         );
       })}
+      {/* Block Builder opens the BlockDraftingShell modal — it is NOT a
+          worktable mode. The main canvas stays mounted while the modal
+          is open so the user can return to their quilt instantly. */}
+      {onOpenBlockBuilder && (
+        <button
+          type="button"
+          onClick={onOpenBlockBuilder}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50"
+          title="Open Block Builder — design a new block in a separate canvas"
+        >
+          <span className="text-on-surface/40">{BLOCK_BUILDER_ICON}</span>
+          Block Builder
+        </button>
+      )}
     </div>
   );
 }
@@ -484,6 +495,7 @@ interface StudioTopBarProps {
   readonly onSave?: () => void;
   readonly onOpenHistory?: () => void;
   readonly onOpenGridDimensions?: () => void;
+  readonly onOpenBlockBuilder?: () => void;
 }
 
 export function StudioTopBar({
@@ -493,6 +505,7 @@ export function StudioTopBar({
   onSave,
   onOpenHistory,
   onOpenGridDimensions,
+  onOpenBlockBuilder,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
@@ -550,7 +563,7 @@ export function StudioTopBar({
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
-          <ModeTabs />
+          <ModeTabs onOpenBlockBuilder={onOpenBlockBuilder} />
         </div>
 
         {/* Right: Viewport controls + Project info + Export + Upgrade */}
