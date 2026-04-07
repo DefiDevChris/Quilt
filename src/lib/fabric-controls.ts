@@ -196,75 +196,97 @@ function renderRotationHandle(
 
 import * as fabric from 'fabric';
 
+/** Whether the global control customization has already been installed. */
+let controlsInstalled = false;
+
 /**
  * Apply modern Figma-like control styling to all Fabric.js objects.
- * Call once after canvas creation.
+ * Call once after creating the first canvas — repeat calls are no-ops.
+ *
+ * In Fabric.js v7, controls live on each object instance (assigned in
+ * `InteractiveFabricObject`'s constructor via `this.constructor.createControls()`),
+ * not on `FabricObject.prototype.controls`. To customize them globally we
+ * override the static `createControls` method on `InteractiveFabricObject` so
+ * every new object inherits our styled control set, and we set visual
+ * defaults via `InteractiveFabricObject.ownDefaults`.
  */
 export function applyCustomControls() {
-  // ── Global object defaults ──
-  const proto = fabric.FabricObject.prototype;
+  if (controlsInstalled) return;
+  controlsInstalled = true;
 
-  // Selection border
-  proto.borderColor = SELECTION_BORDER;
-  proto.borderDashArray = SELECTION_BORDER_DASH;
-  proto.borderOpacityWhenMoving = 0.6;
-  proto.borderScaleFactor = 1.2;
+  // ── Global object visual defaults (Fabric v7 ownDefaults pattern) ──
+  const InteractiveObject = fabric.InteractiveFabricObject as unknown as {
+    ownDefaults: Record<string, unknown>;
+    createControls: () => { controls: Record<string, fabric.Control> };
+  };
 
-  // Control handles
-  proto.cornerColor = CONTROL_COLOR;
-  proto.cornerStrokeColor = CONTROL_BORDER;
-  proto.cornerSize = CORNER_SIZE;
-  proto.transparentCorners = false;
-  proto.cornerStyle = 'rect';
-  proto.padding = CORNER_PADDING;
+  InteractiveObject.ownDefaults = {
+    ...InteractiveObject.ownDefaults,
+    borderColor: SELECTION_BORDER,
+    borderDashArray: SELECTION_BORDER_DASH,
+    borderOpacityWhenMoving: 0.6,
+    borderScaleFactor: 1.2,
+    cornerColor: CONTROL_COLOR,
+    cornerStrokeColor: CONTROL_BORDER,
+    cornerSize: CORNER_SIZE,
+    transparentCorners: false,
+    cornerStyle: 'rect',
+    padding: CORNER_PADDING,
+    hoverCursor: 'move',
+  };
 
-  // Hover cursor
-  proto.hoverCursor = 'move';
+  // Override the static factory so every new object instance gets a styled
+  // control set. Subclasses that don't override `createControls` (every shape
+  // except Textbox) inherit this via the static prototype chain.
+  InteractiveObject.createControls = function () {
+    const controls = fabric.controlsUtils.createObjectDefaultControls() as Record<
+      string,
+      fabric.Control
+    >;
 
-  // Apply custom render functions to the default controls
-  const controls = proto.controls;
-
-  // Corner handles (resize from corners)
-  const cornerKeys = ['tl', 'tr', 'bl', 'br'];
-  for (const key of cornerKeys) {
-    if (controls[key]) {
-      controls[key].render = renderCornerHandle;
-      controls[key].sizeX = CORNER_SIZE;
-      controls[key].sizeY = CORNER_SIZE;
-      controls[key].touchSizeX = CORNER_SIZE + 10;
-      controls[key].touchSizeY = CORNER_SIZE + 10;
+    // Corner handles (resize from corners)
+    for (const key of ['tl', 'tr', 'bl', 'br'] as const) {
+      const c = controls[key];
+      if (!c) continue;
+      c.render = renderCornerHandle;
+      c.sizeX = CORNER_SIZE;
+      c.sizeY = CORNER_SIZE;
+      c.touchSizeX = CORNER_SIZE + 10;
+      c.touchSizeY = CORNER_SIZE + 10;
     }
-  }
 
-  // Midpoint handles (resize from edges)
-  const hMidKeys = ['mt', 'mb']; // horizontal midpoints
-  for (const key of hMidKeys) {
-    if (controls[key]) {
-      controls[key].render = renderMidpointHandle;
-      controls[key].sizeX = MIDPOINT_WIDTH;
-      controls[key].sizeY = MIDPOINT_HEIGHT;
+    // Horizontal midpoint handles (top/bottom edges)
+    for (const key of ['mt', 'mb'] as const) {
+      const c = controls[key];
+      if (!c) continue;
+      c.render = renderMidpointHandle;
+      c.sizeX = MIDPOINT_WIDTH;
+      c.sizeY = MIDPOINT_HEIGHT;
     }
-  }
 
-  const vMidKeys = ['ml', 'mr']; // vertical midpoints
-  for (const key of vMidKeys) {
-    if (controls[key]) {
-      controls[key].render = renderMidpointHandleVertical;
-      controls[key].sizeX = MIDPOINT_HEIGHT;
-      controls[key].sizeY = MIDPOINT_WIDTH;
+    // Vertical midpoint handles (left/right edges)
+    for (const key of ['ml', 'mr'] as const) {
+      const c = controls[key];
+      if (!c) continue;
+      c.render = renderMidpointHandleVertical;
+      c.sizeX = MIDPOINT_HEIGHT;
+      c.sizeY = MIDPOINT_WIDTH;
     }
-  }
 
-  // Rotation handle
-  if (controls.mtr) {
-    controls.mtr.render = renderRotationHandle;
-    controls.mtr.sizeX = ROTATION_HANDLE_RADIUS * 2;
-    controls.mtr.sizeY = ROTATION_HANDLE_RADIUS * 2;
-    controls.mtr.touchSizeX = ROTATION_HANDLE_RADIUS * 2 + 10;
-    controls.mtr.touchSizeY = ROTATION_HANDLE_RADIUS * 2 + 10;
-    controls.mtr.offsetY = ROTATION_OFFSET_Y;
-    controls.mtr.cursorStyle = 'grab';
-  }
+    // Rotation handle
+    const mtr = controls.mtr;
+    if (mtr) {
+      mtr.render = renderRotationHandle;
+      mtr.sizeX = ROTATION_HANDLE_RADIUS * 2;
+      mtr.sizeY = ROTATION_HANDLE_RADIUS * 2;
+      mtr.touchSizeX = ROTATION_HANDLE_RADIUS * 2 + 10;
+      mtr.touchSizeY = ROTATION_HANDLE_RADIUS * 2 + 10;
+      mtr.offsetY = ROTATION_OFFSET_Y;
+      mtr.cursorStyle = 'grab';
+    }
+
+    return { controls };
+  };
 }
 
 /**
