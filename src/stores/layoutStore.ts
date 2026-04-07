@@ -28,6 +28,7 @@ interface LayoutStoreState {
   setHasCornerstones: (value: boolean) => void;
   setBindingWidth: (width: number) => void;
   setCreatorMode: (mode: 'preset' | 'custom') => void;
+  setLayout: (preset: any) => void;
   reset: () => void;
 }
 
@@ -101,6 +102,19 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
     set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
 
   setCreatorMode: (creatorMode) => set({ creatorMode }),
+
+  setLayout: (preset) => {
+    if (!preset) return;
+    set({
+      layoutType: preset.category || 'grid',
+      selectedPresetId: preset.id,
+      rows: preset.config?.rows || 3,
+      cols: preset.config?.cols || 3,
+      blockSize: preset.config?.blockSize || 6,
+      sashing: preset.config?.sashing || { ...DEFAULT_SASHING },
+      borders: preset.config?.borders || [],
+    });
+  },
 
   reset: () => set({ ...INITIAL_STATE }),
 }));

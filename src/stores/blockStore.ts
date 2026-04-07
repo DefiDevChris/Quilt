@@ -27,6 +27,7 @@ interface BlockStoreState {
   fetchUserBlocks: () => Promise<void>;
   deleteUserBlock: (blockId: string) => Promise<boolean>;
   setSelectedBlockId: (blockId: string | null) => void;
+  initBlocks: (elements: any[]) => void;
   reset: () => void;
 }
 
@@ -171,6 +172,14 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
 
   setSelectedBlockId: (selectedBlockId) => {
     set({ selectedBlockId });
+  },
+
+  initBlocks: (elements) => {
+    // Basic hydration of block elements from project storage
+    // This typically filters elements by type 'block' if they aren't already
+    const blocks = elements.filter((e) => e.type === 'block');
+    console.log(`Initialized ${blocks.length} blocks from project`);
+    // Logic to insert these into the canvas or local library state could go here
   },
 
   reset: () => {

@@ -43,9 +43,6 @@ Thumbs.db
 # Misc
 *.pem
 
-# Fabric images (root-level upload dir only)
-/fabrics/
-
 # Playwright
 /playwright-report/
 /test-results/

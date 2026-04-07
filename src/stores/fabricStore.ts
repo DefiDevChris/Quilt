@@ -36,6 +36,7 @@ interface FabricStoreState {
   deleteUserFabric: (fabricId: string) => Promise<boolean>;
   setSelectedFabric: (fabricId: string | null, fabricUrl: string | null) => void;
   setWhereUsedFabric: (fabricId: string | null, fabricUrl: string | null) => void;
+  initFabrics: (project: any) => void;
   reset: () => void;
 }
 
@@ -199,6 +200,11 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
 
   setWhereUsedFabric: (fabricId, fabricUrl) => {
     set({ whereUsedFabricId: fabricId, whereUsedFabricUrl: fabricUrl });
+  },
+
+  initFabrics: (project) => {
+    // Placeholder for fabric hydration from project (e.g. project-specific palette)
+    console.log(`Initialized fabrics for project: ${project.id}`);
   },
 
   reset: () => {

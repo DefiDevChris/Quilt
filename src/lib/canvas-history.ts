@@ -7,6 +7,22 @@
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { create } from 'zustand';
+
+interface HistoryStoreState {
+  init: () => void;
+  undo: () => Promise<boolean>;
+  redo: () => Promise<boolean>;
+}
+
+export const useHistoryStore = create<HistoryStoreState>((set, get) => ({
+  init: () => {
+    console.log('History system initialized');
+    useCanvasStore.getState().resetHistory();
+  },
+  undo: async () => performUndo(),
+  redo: async () => performRedo(),
+}));
 
 /** Minimal canvas interface needed for undo/redo (avoids Fabric.js import). */
 interface UndoableCanvas {
