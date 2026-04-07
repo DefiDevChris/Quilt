@@ -21,11 +21,11 @@ function CollapsibleSection({
   readonly children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className={isOpen ? 'flex-1 min-h-0 flex flex-col' : ''}>
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-2.5 px-3 bg-surface-container-high border-b border-outline-variant/50 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface hover:bg-surface-container-highest transition-colors"
+        className="w-full flex items-center justify-between py-2.5 px-3 bg-surface-container-high border-b border-outline-variant/50 text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface hover:bg-surface-container-highest transition-colors flex-shrink-0"
       >
         {title}
         <svg
@@ -40,7 +40,7 @@ function CollapsibleSection({
           <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {isOpen && <div className="pb-0 bg-surface">{children}</div>}
+      {isOpen && <div className="flex-1 min-h-0 flex flex-col bg-surface">{children}</div>}
     </div>
   );
 }
@@ -73,7 +73,7 @@ export function ContextPanel({
   // Layout worktable: show role assignment panel + fabric library
   if (activeWorktable === 'layout') {
     return (
-      <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15 flex flex-col">
+      <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-hidden border-l border-outline-variant/15 flex flex-col">
         <CollapsibleSection
           title="Piece Role"
           isOpen={openSection === 'role' || openSection === 'layout'}
@@ -93,7 +93,7 @@ export function ContextPanel({
   }
 
   return (
-    <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-y-auto overflow-x-hidden border-l border-outline-variant/15 flex flex-col">
+    <div className="w-[300px] h-full bg-surface flex-shrink-0 overflow-hidden border-l border-outline-variant/15 flex flex-col">
       {activeWorktable !== 'block' && (
         <CollapsibleSection
           title="Layout Library"

@@ -163,6 +163,19 @@ export const LAYOUT_PRESETS: LayoutPreset[] = [
   },
 ];
 
+/** SVG thumbnail paths for each layout preset */
+export const PRESET_SVG: Record<string, string> = {
+  'grid-3x3': '/quilt_layouts/straight_3x3.svg',
+  'grid-4x4': '/quilt_layouts/straight_4x4.svg',
+  'grid-5x5': '/quilt_layouts/straight_5x5.svg',
+  'sashing-3x3': '/quilt_layouts/sashing_3x3.svg',
+  'sashing-4x4': '/quilt_layouts/sashing_4x4.svg',
+  'sashing-5x5-border': '/quilt_layouts/sashing_4x4.svg',
+  'on-point-3x3': '/quilt_layouts/on_point_3x3.svg',
+  'on-point-4x4': '/quilt_layouts/on_point_3x3.svg',
+  'on-point-5x5-border': '/quilt_layouts/on_point_2x2_border.svg',
+};
+
 export function getLayoutPreset(id: string): LayoutPreset | undefined {
   return LAYOUT_PRESETS.find((p) => p.id === id);
 }

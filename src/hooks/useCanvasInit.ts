@@ -102,7 +102,7 @@ export function useCanvasInit(
 
         // Compute layout cells for layout overlay
         let layoutCells;
-        if (state.showLayoutOverlay && layout.layoutType !== 'free-form') {
+        if (state.showLayoutOverlay && layout.layoutType !== 'none') {
           const pxPerUnit = state.unitSystem === 'imperial' ? 96 : 96 / 2.54;
           const layoutResult = computeLayout(
             {
@@ -204,29 +204,25 @@ export function useCanvasInit(
         const { canvasWidth, canvasHeight } = useProjectStore.getState();
         const us = useCanvasStore.getState().unitSystem;
         const ppu = getPixelsPerUnit(us);
-        const maxX = canvasWidth * ppu;
-        const maxY = canvasHeight * ppu;
-
-        if (!e.target) return;
         const obj = e.target;
-        const left = obj.left ?? 0;
-        const top = obj.top ?? 0;
-        const width = (obj.width ?? 0) * (obj.scaleX ?? 1);
-        const height = (obj.height ?? 0) * (obj.scaleY ?? 1);
+        const left = obj?.left ?? 0;
+        const top = obj?.top ?? 0;
+        const width = (obj?.width ?? 0) * (obj?.scaleX ?? 1);
+        const height = (obj?.height ?? 0) * (obj?.scaleY ?? 1);
 
         // Minimum size enforcement (at least 4px)
-        const minScale = 4 / Math.max(obj.width ?? 1, 1);
-        if ((obj.scaleX ?? 1) < minScale) obj.set({ scaleX: minScale });
-        if ((obj.scaleY ?? 1) < minScale) obj.set({ scaleY: minScale });
+        const minScale = 4 / Math.max(obj?.width ?? 1, 1);
+        if ((obj?.scaleX ?? 1) < minScale) obj?.set({ scaleX: minScale });
+        if ((obj?.scaleY ?? 1) < minScale) obj?.set({ scaleY: minScale });
 
         // Constrain to canvas bounds
-        if (left < 0) obj.set({ left: 0 });
-        if (top < 0) obj.set({ top: 0 });
-        if (left + width > maxX) {
-          obj.set({ scaleX: (maxX - left) / (obj.width ?? 1) });
+        if (left < 0) obj?.set({ left: 0 });
+        if (top < 0) obj?.set({ top: 0 });
+        if (left + width > (canvasWidth * ppu)) {
+          obj?.set({ scaleX: (canvasWidth * ppu - left) / (obj?.width ?? 1) });
         }
-        if (top + height > maxY) {
-          obj.set({ scaleY: (maxY - top) / (obj.height ?? 1) });
+        if (top + height > (canvasHeight * ppu)) {
+          obj?.set({ scaleY: (canvasHeight * ppu - top) / (obj?.height ?? 1) });
         }
       };
 

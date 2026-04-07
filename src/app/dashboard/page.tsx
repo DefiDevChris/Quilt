@@ -73,8 +73,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isLoadingAuth && user) {
-      fetchProjects();
-      fetchMobileUploads('pending');
+      setTimeout(() => {
+        fetchProjects();
+        fetchMobileUploads('pending');
+      }, 0);
     }
   }, [isLoadingAuth, user, fetchProjects, fetchMobileUploads]);
 

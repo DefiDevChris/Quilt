@@ -16,7 +16,9 @@ import {
  * Marks all layout-generated Fabric.js objects with this property
  * so they can be identified and removed on layout changes.
  */
-const LAYOUT_MARKER = '_layoutElement';
+const LAYOUT_MARKER = 'selectable';
+const RENDERER_MARKER = '_layoutRendererElement';
+const AREA_ROLE = '_layoutAreaRole';
 const CELL_ROW = '_layoutCellRow';
 const CELL_COL = '_layoutCellCol';
 
@@ -58,8 +60,8 @@ function getLayoutConfig(): LayoutConfig {
   };
 }
 
-function configToKey(config: LayoutConfig): string {
-  return JSON.stringify(config);
+function configToKey(config: LayoutConfig, unitSystem: string): string {
+  return `${JSON.stringify(config)}-${unitSystem}`;
 }
 
 /**
@@ -80,12 +82,12 @@ export function useLayoutEngine() {
     const applyCurrentLayout = async () => {
       if (disposed) return;
 
+      const us = useCanvasStore.getState().unitSystem;
       const config = getLayoutConfig();
-      const key = configToKey(config);
+      const key = configToKey(config, us);
       if (key === prevConfigKeyRef.current) return;
       prevConfigKeyRef.current = key;
 
-      const us = useCanvasStore.getState().unitSystem;
       const pxPerUnit = getPixelsPerUnit(us);
 
       const fabric = await import('fabric');
@@ -97,7 +99,7 @@ export function useLayoutEngine() {
         (obj) => !(obj as Record<string, unknown>)[LAYOUT_MARKER]
       );
       const layoutObjects = allObjects.filter(
-        (obj) => !!(obj as Record<string, unknown>)[LAYOUT_MARKER]
+        (obj) => !!(obj as Record<string, unknown>)[RENDERER_MARKER]
       );
 
       // Remove old layout objects
@@ -163,7 +165,8 @@ function renderCells(fabric: typeof import('fabric'), canvas: FabricCanvas, resu
       hoverCursor: 'default',
     });
     const r = rect as unknown as Record<string, unknown>;
-    r[LAYOUT_MARKER] = true;
+    r[RENDERER_MARKER] = true;
+    r[AREA_ROLE] = 'block-cell';
     r[CELL_ROW] = cell.row;
     r[CELL_COL] = cell.col;
     canvas.add(rect as unknown as FabricObject);
@@ -188,7 +191,8 @@ function renderSashingStrips(
       evented: false,
       hoverCursor: 'default',
     });
-    (rect as unknown as Record<string, unknown>)[LAYOUT_MARKER] = true;
+    (rect as unknown as Record<string, unknown>)[RENDERER_MARKER] = true;
+    (rect as unknown as Record<string, unknown>)[AREA_ROLE] = 'sashing';
     canvas.add(rect as unknown as FabricObject);
     canvas.sendObjectToBack(rect as unknown as FabricObject);
   }
@@ -208,7 +212,8 @@ function renderSettingTriangles(
       evented: false,
       hoverCursor: 'default',
     });
-    (poly as unknown as Record<string, unknown>)[LAYOUT_MARKER] = true;
+    (poly as unknown as Record<string, unknown>)[RENDERER_MARKER] = true;
+    (poly as unknown as Record<string, unknown>)[AREA_ROLE] = 'setting-triangle';
     canvas.add(poly as unknown as FabricObject);
     canvas.sendObjectToBack(poly as unknown as FabricObject);
   }
@@ -232,7 +237,8 @@ function renderBorderStrips(
       evented: false,
       hoverCursor: 'default',
     });
-    (rect as unknown as Record<string, unknown>)[LAYOUT_MARKER] = true;
+    (rect as unknown as Record<string, unknown>)[RENDERER_MARKER] = true;
+    (rect as unknown as Record<string, unknown>)[AREA_ROLE] = 'border-strip';
     canvas.add(rect as unknown as FabricObject);
     canvas.sendObjectToBack(rect as unknown as FabricObject);
   }

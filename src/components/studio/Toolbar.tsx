@@ -25,7 +25,7 @@ function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
         aria-label={isOpen ? 'Collapse advanced tools' : 'Expand advanced tools'}
         aria-expanded={isOpen}
         onClick={onClick}
-        className="w-full h-10 flex items-center justify-center rounded-lg text-on-surface/50 hover:bg-surface-container transition-colors col-span-2"
+        className="w-full h-10 flex items-center justify-center rounded-lg text-on-surface/50 hover:bg-surface-container transition-colors"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           {isOpen ? (
@@ -51,7 +51,7 @@ function MoreToolsToggle({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
 
 const GROUP_LABELS: Record<string, string> = {
   tools: 'Tools',
-  libraries: 'Libraries',
+  create: '',
   layout: 'Layout',
   shapes: 'Shapes',
   drawing: 'Drawing',
@@ -73,19 +73,18 @@ function renderToolGroup(
     <div>
       {showSeparatorBefore && <Separator />}
       {label && (
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5 text-center">
           {label}
         </div>
       )}
-      <div className="grid grid-cols-2 gap-1">
-        {tools.map((tool, index) => {
+      <div className="grid grid-cols-1 gap-1">
+        {tools.map((tool) => {
           const isActive = tool.toolType
             ? activeTool === tool.toolType
             : tool.isActive
               ? tool.isActive()
               : false;
-          const isOrphan = index === tools.length - 1 && tools.length % 2 !== 0;
-          const icon = (
+          return (
             <ToolIcon
               key={tool.id}
               tool={tool}
@@ -98,13 +97,6 @@ function renderToolGroup(
                 }
               }}
             />
-          );
-          return isOrphan ? (
-            <div key={tool.id} className="col-span-2 flex justify-center">
-              {icon}
-            </div>
-          ) : (
-            icon
           );
         })}
       </div>
@@ -248,17 +240,17 @@ export function Toolbar({
     <nav
       aria-label="Design tools"
       data-tour="toolbar"
-      className="bg-surface border-r border-outline-variant/15 flex items-start py-2 h-full overflow-y-auto min-w-[160px] shrink-0"
+      className="bg-surface border-r border-outline-variant/15 flex flex-col py-2 h-full overflow-y-auto min-w-[88px] w-[88px] shrink-0"
     >
-      {/* Main tools column - 2 wide grid */}
-      <div className="flex flex-col items-center gap-1 h-full px-1.5">
+      {/* Main tools column - single column */}
+      <div className="flex flex-col items-center gap-1 h-full px-1">
         {primaryGroups.map((group, idx) =>
           renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name)
         )}
 
         {/* More tools toggle */}
         <Separator />
-        <div className="w-full grid grid-cols-2">
+        <div className="w-full px-1">
           <MoreToolsToggle isOpen={advancedOpen} onClick={() => setAdvancedOpen((o) => !o)} />
         </div>
 

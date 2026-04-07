@@ -131,8 +131,8 @@ export function useLayoutRenderer() {
           const r = obj as unknown as Record<string, unknown>;
           const areaId = r[AREA_ID_PROP] as string | undefined;
           if (areaId) {
-            preservedFills[areaId] = (obj as any).fill;
-            preservedStrokes[areaId] = (obj as any).stroke;
+            preservedFills[areaId] = r.fill as string | undefined;
+            preservedStrokes[areaId] = r.stroke as string | undefined;
           }
         }
         canvas.remove(...oldObjects);
