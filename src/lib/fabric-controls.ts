@@ -222,6 +222,13 @@ export function applyCustomControls() {
 
   InteractiveObject.ownDefaults = {
     ...InteractiveObject.ownDefaults,
+    // Fabric.js v7 changed the default origin from 'left'/'top' to 'center'.
+    // The entire codebase (layout renderer, block drop, onObjectMoving bounds
+    // check, photo-to-design import, drawing tools, seed data) assumes v5-style
+    // top-left origin where `left`/`top` is the unrotated upper-left corner.
+    // Restore that assumption globally here so new objects behave consistently.
+    originX: 'left',
+    originY: 'top',
     borderColor: SELECTION_BORDER,
     borderDashArray: SELECTION_BORDER_DASH,
     borderOpacityWhenMoving: 0.6,
