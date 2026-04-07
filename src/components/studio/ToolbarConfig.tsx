@@ -69,11 +69,17 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M12.5 3C12.5 2.17 11.83 1.5 11 1.5C10.17 1.5 9.5 2.17 9.5 3V10L7.5 8.5C7 8.1 6.3 8.1 5.8 8.5C5.3 8.9 5.2 9.6 5.6 10.1L8.5 14.5L10 17C10.3 17.5 10.8 17.7 11.3 17.6C11.8 17.5 12.1 17.1 12.1 16.6V11H14.5C15.3 11 16 10.3 16 9.5C16 8.7 15.3 8 14.5 8H12.5V3Z"
+            d="M10 3C8.5 3 7 4 7 6C7 7.5 8 9 9 10V15C9 16 10 17 11 17C12 17 13 16 13 15V10C14 9 15 7.5 15 6C15 4 13.5 3 12 3H10Z"
             stroke="currentColor"
             strokeWidth="1.3"
             strokeLinecap="round"
             strokeLinejoin="round"
+          />
+          <path
+            d="M7 6V4M13 6V4M10 10V8"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
           />
         </svg>
       ),

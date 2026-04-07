@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useMotionValue, animate, PanInfo } from 'framer-motion';
 import Link from 'next/link';
 
 export interface BlogPost {
@@ -16,138 +16,176 @@ export interface BlogPost {
   authorAvatarUrl: string | null;
 }
 
-const FALLBACK_IMAGES = [
+const FALLBACK = [
   '/images/quilts/gallery_quilt_one_1775440540412.png',
   '/images/quilts/gallery_quilt_five_1775440598069.png',
   '/images/quilts/gallery_quilt_nine_1775440876043.png',
   '/images/quilts/gallery_quilt_seven_1775440703829.png',
 ];
 
-interface FeaturedCarouselProps {
-  posts: BlogPost[];
-}
+export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
+  const [active, setActive] = useState(0);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const x = useMotionValue(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-export default function FeaturedCarousel({ posts }: FeaturedCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const nextSlide = useCallback(() => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % posts.length);
-  }, [posts.length]);
-
-  const prevSlide = useCallback(() => {
-    setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
-  }, [posts.length]);
-
+  const slides = posts.slice(0, 4);
+  
   useEffect(() => {
-    if (!isHovered) {
-      const timer = setInterval(nextSlide, 8000);
-      return () => clearInterval(timer);
+    const handleResize = () => setWidth(window.innerWidth);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!slides.length) return null;
+
+  const snapTo = (index: number) => {
+    animate(x, -index * width, { type: 'spring', stiffness: 280, damping: 32 });
+    setActive(index);
+  };
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    const threshold = width / 4;
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+
+    if (Math.abs(velocity) > 400 || Math.abs(offset) > threshold) {
+      const dir = offset > 0 ? -1 : 1;
+      const next = Math.max(0, Math.min(slides.length - 1, active + dir));
+      snapTo(next);
+    } else {
+      snapTo(active);
     }
-  }, [isHovered, nextSlide]);
-
-  if (!posts || posts.length === 0) return null;
-
-  const currentPost = posts[currentIndex];
-  const imageUrl =
-    currentPost.featuredImageUrl || FALLBACK_IMAGES[currentIndex % FALLBACK_IMAGES.length];
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   return (
-    <div
-      className="relative w-full h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: '#FAFAF7' }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <AnimatePresence initial={false} mode="wait">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
-          className="absolute inset-0"
-        >
-          <div className="absolute inset-0">
-            <img
-              src={imageUrl}
-              alt=""
-              className="w-full h-full object-cover"
-              style={{ filter: 'grayscale(20%) brightness(0.9)' }}
+    <section className="relative w-full h-screen overflow-hidden bg-[#faf9f7]">
+      <motion.div
+        ref={containerRef}
+        drag="x"
+        dragConstraints={{ left: -(slides.length - 1) * width, right: 0 }}
+        dragElastic={0.15}
+        onDragStart={() => setIsInteracting(true)}
+        onDragEnd={handleDragEnd}
+        style={{ x }}
+        className="flex h-full cursor-grab active:cursor-grabbing"
+      >
+        {slides.map((post, i) => {
+          const img = post.featuredImageUrl || FALLBACK[i % FALLBACK.length];
+          return (
+            <Slide
+              key={post.id}
+              post={post}
+              img={img}
+              index={i}
+              x={x}
+              width={width}
             />
-          </div>
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to right, rgba(250,250,247,0.95) 0%, rgba(250,250,247,0.6) 50%, rgba(250,250,247,0.3) 100%)',
-            }}
-          />
-        </motion.div>
-      </AnimatePresence>
+          );
+        })}
+      </motion.div>
 
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={`content-${currentIndex}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative z-10 max-w-3xl mx-auto px-8 text-center"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <span
-              className="text-xs font-medium uppercase tracking-[0.2em]"
-              style={{ color: '#666' }}
-            >
-              {currentPost.category}
-            </span>
-            <span className="w-6 h-px" style={{ backgroundColor: '#E67E22' }} />
-            <span className="text-xs text-[#666]">{formatDate(currentPost.createdAt)}</span>
-          </div>
-
-          <Link href={`/blog/${currentPost.slug}`}>
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-normal text-[#1a1a1a] mb-4 leading-[1.15]"
-              style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
-            >
-              {currentPost.title}
-            </h1>
-          </Link>
-
-          {currentPost.excerpt && (
-            <p className="text-base text-[#555] max-w-xl mx-auto leading-relaxed">
-              {currentPost.excerpt}
-            </p>
-          )}
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-1.5">
-        {posts.map((_, i) => (
+      {/* Indicators - only visible on interaction */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isInteracting ? 1 : 0 }}
+        transition={{ duration: 0.4 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-end gap-3 z-20"
+      >
+        {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => {
-              setDirection(i > currentIndex ? 1 : -1);
-              setCurrentIndex(i);
-            }}
-            className="h-px transition-all duration-500"
+            onClick={() => snapTo(i)}
+            className="h-px transition-all duration-500 ease-out"
             style={{
-              width: i === currentIndex ? 32 : 8,
-              backgroundColor: i === currentIndex ? '#1a1a1a' : '#ccc',
+              width: i === active ? 48 : 20,
+              backgroundColor: i === active ? '#3a2e26' : 'rgba(58, 46, 38, 0.25)',
             }}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </section>
+  );
+}
+
+function Slide({
+  post,
+  img,
+  index,
+  x,
+  width,
+}: {
+  post: BlogPost;
+  img: string;
+  index: number;
+  x: ReturnType<typeof useMotionValue<number>>;
+  width: number;
+}) {
+  const imageX = useMotionValue(0);
+
+  useEffect(() => {
+    const unsubscribe = x.on('change', (latest) => {
+      const slideOffset = -index * width;
+      const progress = (latest - slideOffset) / width;
+      imageX.set(progress * 30);
+    });
+    return unsubscribe;
+  }, [x, index, width, imageX]);
+
+  return (
+    <article className="relative min-w-full h-full flex items-center">
+      {/* Image layer with parallax */}
+      <motion.div
+        style={{ x: imageX }}
+        className="absolute inset-0 will-change-transform"
+      >
+        <img
+          src={img}
+          alt=""
+          className="w-full h-full object-cover"
+          loading={index === 0 ? 'eager' : 'lazy'}
+        />
+      </motion.div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#faf9f7] via-[#faf9f7]/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7]/40 via-transparent to-transparent" />
+
+      {/* Content */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 + index * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl"
+      >
+        <div className="flex items-center gap-4 mb-8">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-[#7a6c60] font-medium">
+            {post.category}
+          </span>
+          <span className="w-6 h-px bg-[#c48a28]" />
+          <time className="text-[10px] uppercase tracking-[0.15em] text-[#7a6c60]">
+            {post.createdAt?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </time>
+        </div>
+
+        <Link href={`/blog/${post.slug}`} className="group block">
+          <h2 
+            className="text-5xl md:text-6xl lg:text-7xl text-[#3a2e26] leading-[1.05] tracking-[-0.02em] mb-6 transition-opacity group-hover:opacity-70"
+            style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+          >
+            {post.title}
+          </h2>
+        </Link>
+
+        {post.excerpt && (
+          <p className="text-base md:text-lg text-[#5c4d42] leading-relaxed max-w-md font-light">
+            {post.excerpt}
+          </p>
+        )}
+      </motion.div>
+    </article>
   );
 }

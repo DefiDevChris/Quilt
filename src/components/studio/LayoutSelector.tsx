@@ -1,8 +1,6 @@
 'use client';
 
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { useCanvasStore } from '@/stores/canvasStore';
 import { LAYOUT_PRESETS, PRESET_SVG, type LayoutPreset } from '@/lib/layout-library';
 import type { LayoutType } from '@/lib/layout-utils';
 
@@ -64,41 +62,15 @@ export function LayoutSelector({ onSelect, onClose }: LayoutSelectorProps) {
   const layoutType = useLayoutStore((s) => s.layoutType);
 
   const handleSelectPreset = (preset: LayoutPreset) => {
+    // Quilt dimensions are the source of truth — layouts fit inside them.
+    // Updating layoutStore here triggers useLayoutRenderer, which calls
+    // fitLayoutToQuilt() to scale the layout to the current quilt size.
     setLayoutType(preset.config.type as LayoutType);
     setSelectedPreset(preset.id);
     setRows(preset.config.rows);
     setCols(preset.config.cols);
     setBlockSize(preset.config.blockSize);
     setSashing(preset.config.sashing);
-
-    // Update canvas dimensions for grid/sashing/on-point layouts
-    const layoutType = preset.config.type;
-    if (layoutType === 'grid' || layoutType === 'sashing' || layoutType === 'on-point') {
-      const { rows, cols, blockSize, sashing } = preset.config;
-      
-      let totalWidth: number;
-      let totalHeight: number;
-
-      if (layoutType === 'on-point') {
-        // For on-point layouts, blocks are rotated 45 degrees
-        // The diagonal of a square block becomes the width/height
-        const diagonal = blockSize * Math.sqrt(2);
-        // On-point layout calculation: (rows + cols - 1) * diagonal / 2
-        const dimension = Math.ceil((rows + cols - 1) * diagonal / 2);
-        totalWidth = dimension;
-        totalHeight = dimension;
-      } else {
-        // For grid and sashing layouts
-        totalWidth = cols * blockSize + sashing.width * (cols - 1);
-        totalHeight = rows * blockSize + sashing.width * (rows - 1);
-      }
-
-      // Update canvas dimensions in project store
-      useProjectStore.getState().setCanvasDimensions(totalWidth, totalHeight);
-
-      // Center and fit viewport to show the new layout
-      useCanvasStore.getState().centerAndFitViewport();
-    }
 
     onSelect?.(preset);
   };
