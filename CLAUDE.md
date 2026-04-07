@@ -134,7 +134,7 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 
 **Buttons:**
 
-- Primary: `bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full hover:opacity-90`
+- Primary: `bg-gradient-to-r from-primary to-primary-dark text-white rounded-full hover:opacity-90`
 - Secondary: `bg-white/50 text-secondary rounded-full`
 - Active chips: `bg-primary text-white shadow-elevation-1`, inactive: `bg-white/50 text-secondary`
 
@@ -154,7 +154,7 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 - `border-[#e5e5e5]`, `bg-[#f5f5f5]`
 - `bg-white border border-gray-100` flat cards
 - `bg-gray-900 text-white` dark buttons
-- `bg-primary text-white` on CTA buttons (use gradient instead: `from-orange-500 to-rose-400`)
+- `bg-primary text-white` on CTA buttons (use gradient instead: `from-primary to-primary-dark`)
 
 ### State Management
 
@@ -172,6 +172,7 @@ Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All compo
 ### S3 Upload Purposes
 
 Presigned URL API at `/api/upload/presigned-url` — `purpose` field determines S3 prefix and auth:
+
 - `fabric`, `thumbnail`, `export`, `block` — Pro required
 - `mobile-upload` — all authenticated users (Pro gate applies at processing time)
 
@@ -190,7 +191,7 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 ### The User Flow (canonical)
 
 1. **Pick quilt size** — `NewQuiltSetupModal` prompts the user for finished quilt dimensions on first visit (Throw / Twin / Full / Queen / King / Custom). The dimensions become the source of truth in `projectStore.canvasWidth/Height`. The canvas renders an empty grid scaled to those dimensions.
-2. **Add or create a layout** — From the right pane's **Layouts** library tab, drag (or click) any layout preset onto the canvas. The layout renders as a *clickable overlay* of cells, sashing, cornerstones, borders, and binding via `useLayoutRenderer`. The layout *fits inside* the quilt — `fitLayoutToQuilt()` scales it uniformly. Layouts NEVER resize the quilt.
+2. **Add or create a layout** — From the right pane's **Layouts** library tab, drag (or click) any layout preset onto the canvas. The layout renders as a _clickable overlay_ of cells, sashing, cornerstones, borders, and binding via `useLayoutRenderer`. The layout _fits inside_ the quilt — `fitLayoutToQuilt()` scales it uniformly. Layouts NEVER resize the quilt.
 3. **Add blocks into layout cells** — From the **Blocks** library tab, drag any block onto a layout block-cell. `useBlockDrop` snaps the block to the cell's bounding box, scales it to fit, and inherits the cell's rotation (for on-point layouts). Dropping a new block on an occupied cell replaces the previous one (tracked via `_inLayoutCellId` tag).
 4. **Add fabrics to layout chrome** — From the **Fabrics** library tab, drag any fabric swatch onto sashing strips, cornerstones, borders, or binding. `useFabricDrop` applies it as a Fabric.js pattern fill.
 5. **Add fabrics to individual block pieces** — Drag a fabric onto a sub-piece of a placed block. `subTargetCheck: true` (set on every dropped block group in `useBlockDrop`) routes the drop to the inner piece, not the whole group.
@@ -226,32 +227,33 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 
 ### Component Map (canonical)
 
-| Component | File | Role |
-|---|---|---|
-| `StudioClient` | `src/components/studio/StudioClient.tsx` | Project loader + shell mounter (~110 lines). Owns project fetch + loading/error states only. |
-| `StudioDialogsProvider` | `src/components/studio/StudioDialogs.tsx` | Context provider that owns all studio dialog state. Exposes `useStudioDialogs()` hook returning `{ openImageExport, openPdfExport, openHelp, openHistory, openGridDimensions, openLayoutSettings, openLayoutOverlay, openPhotoToDesign, openResize, openReferenceImage, openDrafting, openPhotoBlockUpload, openFabricUpload, promptUpgrade }`. Pro-gated openers automatically surface the upgrade prompt for free users. |
-| `StudioLayout` | `src/components/studio/StudioLayout.tsx` | Flex shell. Renders Toolbar + StudioDropZone + ContextPanel + BottomBar. Owns first-visit setup detection for quilt/block/layout worktables. |
-| `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Wraps `CanvasWorkspace` with the unified drag-drop dispatcher. Routes layout-preset / fabric-id / block-id payloads to their respective handlers. |
-| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane shell. Library tabs (top) + SelectionInspector (bottom). |
-| `LayoutSelector`, `BlockLibrary`, `FabricLibrary` | (existing) | Library tab bodies. Drag-source only. |
-| `inspectors/DefaultInspector` | New | Quilt dimensions, size presets, grid cell size, snap toggle. Replaces the deleted modal `QuiltDimensionsPanel`. |
-| `inspectors/BlockCellInspector` | New | Empty cell info + "Drag a block here" hint + Clear Cell action. |
-| `inspectors/BlockInspector` | New | Placed block actions: rotate ±90°, flip H/V, layer order, delete. |
-| `inspectors/PieceInspector` | New | Wraps existing `PieceInspectorPanel` for sub-piece selection. |
-| `inspectors/SashingInspector` | New | Sashing width slider + fabric assignment via `AreaFabricControls`. |
-| `inspectors/CornerstoneInspector` | New | Cornerstone toggle + fabric assignment. |
-| `inspectors/BorderInspector` | New | Border width + fabric assignment + Add/Remove border. |
-| `inspectors/BindingInspector` | New | Binding width + fabric assignment. |
-| `inspectors/SettingTriangleInspector` | New | On-point setting triangle fabric assignment. |
-| `inspectors/FreeShapeInspector` | New | Free-form shape fabric/color assignment. |
-| `inspectors/AreaFabricControls` | New | Shared drag-drop fabric assignment UI used by all area inspectors. |
-| `NewQuiltSetupModal` | New | First-visit quilt size picker. Triggered once per project (sessionStorage gated). |
+| Component                                         | File                                       | Role                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `StudioClient`                                    | `src/components/studio/StudioClient.tsx`   | Project loader + shell mounter (~110 lines). Owns project fetch + loading/error states only.                                                                                                                                                                                                                                                                                                                               |
+| `StudioDialogsProvider`                           | `src/components/studio/StudioDialogs.tsx`  | Context provider that owns all studio dialog state. Exposes `useStudioDialogs()` hook returning `{ openImageExport, openPdfExport, openHelp, openHistory, openGridDimensions, openLayoutSettings, openLayoutOverlay, openPhotoToDesign, openResize, openReferenceImage, openDrafting, openPhotoBlockUpload, openFabricUpload, promptUpgrade }`. Pro-gated openers automatically surface the upgrade prompt for free users. |
+| `StudioLayout`                                    | `src/components/studio/StudioLayout.tsx`   | Flex shell. Renders Toolbar + StudioDropZone + ContextPanel + BottomBar. Owns first-visit setup detection for quilt/block/layout worktables.                                                                                                                                                                                                                                                                               |
+| `StudioDropZone`                                  | `src/components/studio/StudioDropZone.tsx` | Wraps `CanvasWorkspace` with the unified drag-drop dispatcher. Routes layout-preset / fabric-id / block-id payloads to their respective handlers.                                                                                                                                                                                                                                                                          |
+| `ContextPanel`                                    | `src/components/studio/ContextPanel.tsx`   | Right-pane shell. Library tabs (top) + SelectionInspector (bottom).                                                                                                                                                                                                                                                                                                                                                        |
+| `LayoutSelector`, `BlockLibrary`, `FabricLibrary` | (existing)                                 | Library tab bodies. Drag-source only.                                                                                                                                                                                                                                                                                                                                                                                      |
+| `inspectors/DefaultInspector`                     | New                                        | Quilt dimensions, size presets, grid cell size, snap toggle. Replaces the deleted modal `QuiltDimensionsPanel`.                                                                                                                                                                                                                                                                                                            |
+| `inspectors/BlockCellInspector`                   | New                                        | Empty cell info + "Drag a block here" hint + Clear Cell action.                                                                                                                                                                                                                                                                                                                                                            |
+| `inspectors/BlockInspector`                       | New                                        | Placed block actions: rotate ±90°, flip H/V, layer order, delete.                                                                                                                                                                                                                                                                                                                                                          |
+| `inspectors/PieceInspector`                       | New                                        | Wraps existing `PieceInspectorPanel` for sub-piece selection.                                                                                                                                                                                                                                                                                                                                                              |
+| `inspectors/SashingInspector`                     | New                                        | Sashing width slider + fabric assignment via `AreaFabricControls`.                                                                                                                                                                                                                                                                                                                                                         |
+| `inspectors/CornerstoneInspector`                 | New                                        | Cornerstone toggle + fabric assignment.                                                                                                                                                                                                                                                                                                                                                                                    |
+| `inspectors/BorderInspector`                      | New                                        | Border width + fabric assignment + Add/Remove border.                                                                                                                                                                                                                                                                                                                                                                      |
+| `inspectors/BindingInspector`                     | New                                        | Binding width + fabric assignment.                                                                                                                                                                                                                                                                                                                                                                                         |
+| `inspectors/SettingTriangleInspector`             | New                                        | On-point setting triangle fabric assignment.                                                                                                                                                                                                                                                                                                                                                                               |
+| `inspectors/FreeShapeInspector`                   | New                                        | Free-form shape fabric/color assignment.                                                                                                                                                                                                                                                                                                                                                                                   |
+| `inspectors/AreaFabricControls`                   | New                                        | Shared drag-drop fabric assignment UI used by all area inspectors.                                                                                                                                                                                                                                                                                                                                                         |
+| `NewQuiltSetupModal`                              | New                                        | First-visit quilt size picker. Triggered once per project (sessionStorage gated).                                                                                                                                                                                                                                                                                                                                          |
 
 ### Layout Renderer (single source)
 
 The studio has **one** layout renderer: `useLayoutRenderer` (`src/hooks/useLayoutRenderer.ts`). It is mounted in `CanvasWorkspace.tsx`.
 
 Key behavior:
+
 - Subscribes to both `layoutStore` and `projectStore` so it reflows when either layout config or quilt dimensions change.
 - Calls `fitLayoutToQuilt(template, quiltWidth, quiltHeight, pxPerUnit)` from `src/lib/layout-renderer.ts` to compute area positions and scaling.
 - Renders each `LayoutArea` as a `fabric.Rect` (or polygon for setting triangles) that is **selectable + evented + locked-movement**. Tagged with:
@@ -268,18 +270,18 @@ Key behavior:
 
 `useBlockDrop` (`src/hooks/useBlockDrop.ts`) is the canonical block drop handler. The flow:
 
-1. On drop, temporarily disable `evented` on all existing user blocks so `canvas.findTarget()` reads the layout cell *underneath* any current occupant.
+1. On drop, temporarily disable `evented` on all existing user blocks so `canvas.findTarget()` reads the layout cell _underneath_ any current occupant.
 2. If the target is a `block-cell`, the block snaps to the cell's `(left, top)`, scales to `(width × scaleX, height × scaleY)`, and inherits `angle` (for on-point).
 3. If a previous block is tagged with the same `_inLayoutCellId`, it's removed before the new block is added (overwrite semantics).
 4. The new block group is tagged with `_inLayoutCellId: areaId` and `subTargetCheck: true`.
-5. If the target is *not* a layout cell, falls through to grid-snap.
+5. If the target is _not_ a layout cell, falls through to grid-snap.
 
 ### Block Builder vs `'block'` Worktable (do not conflate)
 
 There are two **distinct** "block edit" surfaces:
 
 1. **`BlockDraftingShell` modal** (`src/components/blocks/BlockDraftingShell.tsx`) — a `fixed inset-0 z-50` modal with its own 400 × 400 mini-canvas. Used to draft a brand-new custom block from any worktable. On save, the block lands in the user's My Blocks library and is immediately drag-droppable into the active layout. The main `CanvasWorkspace` is **never** unmounted; the modal is purely additive. **This is the Block Builder.**
-2. **`activeWorktable === 'block'`** — the *main* `CanvasWorkspace` switches into single-block edit mode for editing an existing block in-place. The same canvas is reused; pan/zoom is preserved by virtue of not unmounting. Triggered by `NewBlockSetupModal` on first visit.
+2. **`activeWorktable === 'block'`** — the _main_ `CanvasWorkspace` switches into single-block edit mode for editing an existing block in-place. The same canvas is reused; pan/zoom is preserved by virtue of not unmounting. Triggered by `NewBlockSetupModal` on first visit.
 
 These are NOT the same component, NOT the same canvas, and NOT the same problem. Do not propose unifying them.
 
@@ -359,6 +361,7 @@ Layouts are structural worktables: binding, borders, sashing, cornerstones, bloc
 6. **Cutting templates** — Each individual piece shape as a black outline with dashed seam allowance line around it, printed at exact 1:1 scale
 
 **Current state**: Only `src/lib/pdf-generator.ts` exists (basic bin-packed pattern pieces). The following engines are planned but **not yet implemented**:
+
 - `cutlist-pdf-engine.ts` — individual cutting templates with seam allowance
 - `project-pdf-engine.ts` — full pattern document
 - `fpp-pdf-engine.ts` — foundation paper piecing templates
@@ -374,6 +377,7 @@ Existing utilities that support PDF: `yardage-utils.ts`, `cutting-chart-generato
 Upload a photo of any quilt → OpenCV extracts the individual pieces → pieces are placed on the worktable as independent objects. Users can then group pieces into blocks, assign fabrics, create a printlist, or do anything the regular design studio supports.
 
 **Current state**: The full pipeline is implemented — OpenCV web worker (`src/lib/piece-detection.worker.ts`), 7-step wizard UI, and post-processing structure detection:
+
 - `structure-detection-engine.ts` — Orchestrator: grid → sashing → border → role assignment
 - `grid-detection-engine.ts` — Block repeat grid from centroid clustering
 - `sashing-detection-engine.ts` — Sashing strips + cornerstones between blocks
@@ -533,12 +537,13 @@ TypeScript: 0 errors. ESLint: 1 pre-existing error in `dashboard/page.tsx` (setS
 
 ## PM2 Services
 
-| Port | Name | Type |
-|------|------|------|
-| 3000 | quilt-3000 | Next.js |
+| Port | Name          | Type                        |
+| ---- | ------------- | --------------------------- |
+| 3000 | quilt-3000    | Next.js                     |
 | 5432 | quiltcorgi-db | PostgreSQL (Docker Compose) |
 
 **Terminal Commands:**
+
 ```bash
 pm2 start ecosystem.config.cjs   # First time
 pm2 start all                    # After first time

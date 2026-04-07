@@ -25,8 +25,8 @@ export default function PublicNav() {
     <header
       className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl transition-all duration-200"
       style={{
-        boxShadow: scrolled ? '0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04)' : 'none',
-        borderBottom: scrolled ? '1px solid #e5e5e5' : '1px solid transparent',
+        boxShadow: scrolled ? 'var(--shadow-elevation-1)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--color-outline-variant)' : '1px solid transparent',
       }}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-3">

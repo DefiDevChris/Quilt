@@ -9,7 +9,11 @@ import PostNavigation from '@/components/blog/PostNavigation';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const [post] = await db
     .select({ title: blogPosts.title, excerpt: blogPosts.excerpt })
@@ -55,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const next = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 
   return (
-    <article className="min-h-screen bg-[#faf9f7]">
+    <article className="min-h-screen">
       {/* Full-bleed hero image */}
       {post.featuredImageUrl && (
         <div className="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
@@ -64,8 +68,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             alt={post.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7] via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#faf9f7]/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-transparent to-transparent" />
         </div>
       )}
 
@@ -75,7 +79,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="absolute -top-16 left-6 md:left-12 z-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-3 text-sm text-[#5c4d42] hover:text-[#3a2e26] transition-colors group"
+            className="inline-flex items-center gap-3 text-sm text-secondary hover:text-on-surface transition-colors group"
           >
             <span className="w-6 h-px bg-current transition-all duration-300 group-hover:w-10" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Stories</span>
@@ -85,11 +89,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Header */}
         <header className="max-w-3xl mx-auto px-6 md:px-12 pt-12 md:pt-20 pb-12">
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c48a28] font-medium">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-primary-golden font-medium">
               {post.category}
             </span>
-            <span className="w-6 h-px bg-[#e8dfd5]" />
-            <time className="text-[10px] uppercase tracking-[0.15em] text-[#7a6c60]">
+            <span className="w-6 h-px bg-outline-variant" />
+            <time className="text-[10px] uppercase tracking-[0.15em] text-warm-text-muted">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
                     month: 'long',
@@ -100,8 +104,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </time>
           </div>
 
-          <h1 
-            className="text-4xl md:text-5xl lg:text-6xl text-[#3a2e26] leading-[1.08] tracking-[-0.02em] mb-10"
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl text-on-surface leading-[1.08] tracking-[-0.02em] mb-10"
             style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
           >
             {post.title}
@@ -112,10 +116,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <img
                 src={post.authorAvatarUrl}
                 alt={post.authorName ?? 'Author'}
-                className="w-10 h-10 rounded-[2px] object-cover"
+                className="w-10 h-10 rounded-full bg-primary-container object-cover"
               />
             )}
-            <span className="text-sm text-[#5c4d42] font-medium">{post.authorName}</span>
+            <span className="text-sm text-secondary font-medium">{post.authorName}</span>
           </div>
         </header>
 
