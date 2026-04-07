@@ -1,156 +1,103 @@
 'use client';
 
-/* ── Custom SVG Icons ──────────────────────────────────────────────── */
-
-function CameraPatternIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className={className}>
-      <rect x="6" y="12" width="36" height="28" rx="4" stroke="currentColor" strokeWidth="2.5" />
-      <circle cx="24" cy="26" r="8" stroke="currentColor" strokeWidth="2.5" />
-      <circle cx="24" cy="26" r="3" fill="currentColor" opacity="0.3" />
-      <path
-        d="M16 12L18 7H30L32 12"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4 22L10 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M4 30L10 28"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M44 22L38 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M44 30L38 28"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-    </svg>
-  );
-}
-
-function QuiltBlocksIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className={className}>
-      <rect x="5" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2.5" />
-      <rect x="27" y="5" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2.5" />
-      <rect x="5" y="27" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2.5" />
-      <rect x="27" y="27" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2.5" />
-      <polygon points="9,9 17,13 9,17" fill="currentColor" opacity="0.25" />
-      <polygon points="31,9 39,13 31,17" fill="currentColor" opacity="0.25" />
-      <polygon points="9,31 17,35 9,39" fill="currentColor" opacity="0.25" />
-      <rect x="30" y="30" width="10" height="10" rx="1" fill="currentColor" opacity="0.15" />
-    </svg>
-  );
-}
-
-function NewCanvasIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className={className}>
-      <rect x="8" y="6" width="32" height="36" rx="4" stroke="currentColor" strokeWidth="2.5" />
-      <line
-        x1="24"
-        y1="16"
-        x2="24"
-        y2="32"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        x1="16"
-        y1="24"
-        x2="32"
-        y2="24"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path d="M14 6V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-      <path d="M24 6V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-      <path d="M34 6V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-    </svg>
-  );
-}
+import React, { useState } from 'react';
+import { Plus, Rocket, BookOpen, Clock } from 'lucide-react';
+import { NewProjectWizard } from '../projects/NewProjectWizard';
+import { Project } from '@/types/project';
+import Link from 'next/link';
+import { formatRelativeTime } from '@/lib/format-time';
 
 interface QuickStartWorkflowsProps {
-  onPhotoToDesign: () => void;
-  onStartFromTemplate: () => void;
-  onBlankProject: () => void;
-  isPro: boolean;
+  recentProjects?: Project[];
 }
 
-export function QuickStartWorkflows({
-  onPhotoToDesign,
-  onStartFromTemplate,
-  onBlankProject,
-  isPro,
-}: QuickStartWorkflowsProps) {
+export function QuickStartWorkflows({ recentProjects = [] }: QuickStartWorkflowsProps) {
+  const [wizardOpen, setWizardOpen] = useState(false);
+
   return (
-    <section className="mb-8" aria-label="Quick start workflows">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-secondary mb-3">
-        Quick Start
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Photo to Design */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Left Column - Actions */}
+      <div className="space-y-4 flex flex-col h-full">
         <button
-          type="button"
-          onClick={onPhotoToDesign}
-          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
-          aria-label="Photo to Design workflow"
+          onClick={() => setWizardOpen(true)}
+          className="group relative overflow-hidden flex flex-col justify-end p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-orange-500/10 to-rose-400/10 hover:from-orange-500/20 hover:to-rose-400/20 transition-all duration-300 min-h-[160px] text-left"
         >
-          <div>
-            <p className="text-on-surface font-extrabold text-xl mb-1">Photo to Design</p>
-            <p className="text-secondary text-sm">Extract blocks with AI</p>
+          <div className="absolute top-6 right-6 w-12 h-12 bg-gradient-to-r from-orange-500 to-rose-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <Plus size={24} className="text-white" />
           </div>
-          <CameraPatternIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+          <h3 className="text-2xl font-light text-white mb-2 group-hover:text-orange-400 transition-colors">
+            Start New Project
+          </h3>
+          <p className="text-white/60 max-w-[80%]">
+            Launch the studio wizard and begin your next quilt from scratch, a structured layout, or
+            a template.
+          </p>
         </button>
 
-        {/* Start from Template */}
-        <button
-          type="button"
-          onClick={onStartFromTemplate}
-          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
-          aria-label="Start from template workflow"
+        <Link
+          href="/fabrics"
+          className="group relative overflow-hidden flex items-center justify-between p-6 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
         >
           <div>
-            <p className="text-on-surface font-extrabold text-xl mb-1">Start from Template</p>
-            <p className="text-secondary text-sm">Patterns and blocks</p>
+            <h3 className="text-lg font-medium text-white mb-1 group-hover:text-rose-400 transition-colors">
+              Fabric Library
+            </h3>
+            <p className="text-sm text-white/50">Upload and manage your custom stashes.</p>
           </div>
-          <QuiltBlocksIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
-        </button>
-
-        {/* Blank Project */}
-        <button
-          type="button"
-          onClick={onBlankProject}
-          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
-          aria-label="Create blank project workflow"
-        >
-          <div>
-            <p className="text-on-surface font-extrabold text-xl mb-1">Blank Project</p>
-            <p className="text-secondary text-sm">Design from scratch</p>
-          </div>
-          <NewCanvasIcon className="w-12 h-12 text-warm-terracotta shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
-        </button>
+          <BookOpen className="text-white/20 group-hover:text-rose-400/50 transition-colors" />
+        </Link>
       </div>
-    </section>
+
+      {/* Right Column - Resume Recent */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-medium text-white flex items-center gap-2">
+            <Clock size={18} className="text-orange-400" /> Resume Working
+          </h3>
+          <Link
+            href="/projects"
+            className="text-sm text-white/50 hover:text-white transition-colors"
+          >
+            View Quiltbook →
+          </Link>
+        </div>
+
+        {recentProjects.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+            <Rocket size={32} className="text-white/20 mb-4" />
+            <p className="text-white/60">No recent projects. Time to start stitching!</p>
+          </div>
+        ) : (
+          <div className="flex-1 space-y-3 overflow-y-auto max-h-[220px] pr-2 custom-scrollbar">
+            {recentProjects.slice(0, 4).map((project) => (
+              <Link
+                key={project.id}
+                href={`/studio/${project.id}`}
+                className="flex items-center justify-between p-4 rounded-xl bg-black/40 border border-transparent hover:border-white/10 transition-colors group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden">
+                    {/* Placeholder for thumbnail */}
+                    <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"></div>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium group-hover:text-orange-400 transition-colors truncate max-w-[180px]">
+                      {project.name}
+                    </h4>
+                    <p className="text-xs text-white/40">
+                      {project.updatedAt
+                        ? formatRelativeTime(new Date(project.updatedAt))
+                        : 'Recently'}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <NewProjectWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+    </div>
   );
 }

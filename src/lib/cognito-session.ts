@@ -112,6 +112,8 @@ export async function clearAuthCookies(): Promise<void> {
   cookieStore.delete('qc_dev_user_id');
 }
 
+export const getCognitoSession = getSession;
+
 /**
  * Get the current session from cookies. Verifies JWT, attempts refresh if expired.
  * Requires a DB lookup to get the user's role (stored in our DB, not Cognito).
