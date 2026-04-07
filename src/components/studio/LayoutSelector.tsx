@@ -1,7 +1,9 @@
 'use client';
 
 import { useLayoutStore } from '@/stores/layoutStore';
-import { LAYOUT_PRESETS, type LayoutPreset } from '@/lib/layout-library';
+import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
+import { LAYOUT_PRESETS, PRESET_SVG, type LayoutPreset } from '@/lib/layout-library';
 import type { LayoutType } from '@/lib/layout-utils';
 
 interface LayoutSelectorProps {
@@ -13,18 +15,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   grid: 'Straight Set',
   sashing: 'Sashing',
   'on-point': 'On-Point',
-};
-
-const PRESET_SVG: Record<string, string> = {
-  'grid-3x3': '/quilt_layouts/straight_3x3.svg',
-  'grid-4x4': '/quilt_layouts/straight_4x4.svg',
-  'grid-5x5': '/quilt_layouts/straight_5x5.svg',
-  'sashing-3x3': '/quilt_layouts/sashing_3x3.svg',
-  'sashing-4x4': '/quilt_layouts/sashing_4x4.svg',
-  'sashing-5x5-border': '/quilt_layouts/sashing_4x4.svg',
-  'on-point-3x3': '/quilt_layouts/on_point_3x3.svg',
-  'on-point-4x4': '/quilt_layouts/on_point_3x3.svg',
-  'on-point-5x5-border': '/quilt_layouts/on_point_2x2_border.svg',
 };
 
 function LayoutThumbnail({ preset }: { readonly preset: LayoutPreset }) {
@@ -80,6 +70,36 @@ export function LayoutSelector({ onSelect, onClose }: LayoutSelectorProps) {
     setCols(preset.config.cols);
     setBlockSize(preset.config.blockSize);
     setSashing(preset.config.sashing);
+
+    // Update canvas dimensions for grid/sashing/on-point layouts
+    const layoutType = preset.config.type;
+    if (layoutType === 'grid' || layoutType === 'sashing' || layoutType === 'on-point') {
+      const { rows, cols, blockSize, sashing } = preset.config;
+      
+      let totalWidth: number;
+      let totalHeight: number;
+
+      if (layoutType === 'on-point') {
+        // For on-point layouts, blocks are rotated 45 degrees
+        // The diagonal of a square block becomes the width/height
+        const diagonal = blockSize * Math.sqrt(2);
+        // On-point layout calculation: (rows + cols - 1) * diagonal / 2
+        const dimension = Math.ceil((rows + cols - 1) * diagonal / 2);
+        totalWidth = dimension;
+        totalHeight = dimension;
+      } else {
+        // For grid and sashing layouts
+        totalWidth = cols * blockSize + sashing.width * (cols - 1);
+        totalHeight = rows * blockSize + sashing.width * (rows - 1);
+      }
+
+      // Update canvas dimensions in project store
+      useProjectStore.getState().setCanvasDimensions(totalWidth, totalHeight);
+
+      // Center and fit viewport to show the new layout
+      useCanvasStore.getState().centerAndFitViewport();
+    }
+
     onSelect?.(preset);
   };
 

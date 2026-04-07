@@ -74,7 +74,7 @@ export function BlockLibrary({
 
   return (
     <>
-      <div className="flex h-[400px] w-full flex-col bg-surface">
+      <div className="flex flex-1 min-h-0 w-full flex-col bg-surface">
         {/* Tabs */}
         <div className="flex border-b border-outline-variant">
           <button

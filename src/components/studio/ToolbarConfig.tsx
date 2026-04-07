@@ -1,6 +1,4 @@
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useBlockStore } from '@/stores/blockStore';
-import { useFabricStore } from '@/stores/fabricStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
@@ -21,10 +19,6 @@ export interface ToolbarCallbacks {
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
-  const isBlockPanelOpen = useBlockStore((s) => s.isPanelOpen);
-  const toggleBlockPanel = useBlockStore((s) => s.togglePanel);
-  const isFabricPanelOpen = useFabricStore((s) => s.isPanelOpen);
-  const toggleFabricPanel = useFabricStore((s) => s.togglePanel);
   const layoutType = useLayoutStore((s) => s.layoutType);
   const isYardagePanelOpen = useYardageStore((s) => s.isPanelOpen);
   const toggleYardagePanel = useYardageStore((s) => s.togglePanel);
@@ -35,10 +29,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
-
-  // Pattern builder panel state - use block store
-  const activePatternPanel = useBlockStore((s) => s.activePanel);
-  const togglePatternPanel = useBlockStore((s) => s.togglePanel);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -58,26 +48,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             stroke="currentColor"
             strokeWidth="1.4"
             strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'bend',
-      label: 'Curved Edge',
-      shortcut: 'U',
-      description: 'Bend edges of shapes',
-      mascot: '/mascots&avatars/corgi24.png',
-      toolType: 'bend',
-      group: 'tools',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 16 Q 10 4 16 16"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
           />
         </svg>
       ),
@@ -105,46 +75,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </svg>
-      ),
-    },
-    {
-      id: 'blocks',
-      label: 'Block Library',
-      shortcut: 'B',
-      description: 'Browse quilt blocks and drag them onto your canvas',
-      mascot: '/mascots&avatars/corgi4.png',
-      group: 'library',
-      tier: 'primary',
-      onClick: toggleBlockPanel,
-      isActive: () => isBlockPanelOpen,
-      dataTour: 'block-library',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 3L16 10L10 17L4 10L10 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'fabrics',
-      label: 'Fabric Library',
-      shortcut: 'F',
-      description: 'Upload your fabric photos and apply them to patches',
-      mascot: '/mascots&avatars/corgi6.png',
-      group: 'library',
-      tier: 'primary',
-      onClick: toggleFabricPanel,
-      isActive: () => isFabricPanelOpen,
-      dataTour: 'fabric-library',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17M10 3V17" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
         </svg>
       ),
     },
@@ -183,194 +113,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
           <rect x="11" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="3" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
           <rect x="11" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    // ── PRIMARY: Pattern building ──
-    {
-      id: 'pattern-block',
-      label: 'Blocks',
-      shortcut: 'B',
-      description: 'Place block slots on your pattern — assign quilt blocks or fabric to each slot',
-      mascot: '/mascots&avatars/corgi14.png',
-      group: 'pattern',
-      onClick: () => togglePatternPanel('block-placement'),
-      isActive: () => activePatternPanel === 'block-placement',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect
-            x="3"
-            y="3"
-            width="6"
-            height="6"
-            rx="0.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeDasharray="3 2"
-          />
-          <rect
-            x="11"
-            y="3"
-            width="6"
-            height="6"
-            rx="0.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeDasharray="3 2"
-          />
-          <rect
-            x="3"
-            y="11"
-            width="6"
-            height="6"
-            rx="0.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeDasharray="3 2"
-          />
-          <rect
-            x="11"
-            y="11"
-            width="6"
-            height="6"
-            rx="0.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeDasharray="3 2"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'pattern-border',
-      label: 'Borders',
-      description: 'Add border strips around your quilt edges',
-      mascot: '/mascots&avatars/corgi16.png',
-      group: 'pattern',
-      onClick: () => togglePatternPanel('border'),
-      isActive: () => activePatternPanel === 'border',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="2" y="2" width="16" height="16" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <rect
-            x="5"
-            y="5"
-            width="10"
-            height="10"
-            rx="0.5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeOpacity="0.5"
-          />
-          <path
-            d="M2 5H5M15 5H18M2 15H5M15 15H18"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeOpacity="0.4"
-          />
-          <path
-            d="M5 2V5M5 15V18M15 2V5M15 15V18"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeOpacity="0.4"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'pattern-hedging',
-      label: 'Hedging',
-      description: 'Add inner hedging strips to divide sections of your quilt',
-      mascot: '/mascots&avatars/corgi18.png',
-      group: 'pattern',
-      onClick: () => togglePatternPanel('hedging'),
-      isActive: () => activePatternPanel === 'hedging',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <rect
-            x="3"
-            y="8.5"
-            width="14"
-            height="3"
-            fill="currentColor"
-            fillOpacity="0.15"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'pattern-sashing',
-      label: 'Sashing',
-      description: 'Add sashing strips between blocks — define width and assign fabric',
-      mascot: '/mascots&avatars/corgi20.png',
-      group: 'pattern',
-      onClick: () => togglePatternPanel('sashing'),
-      isActive: () => activePatternPanel === 'sashing',
-      tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect
-            x="2"
-            y="2"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="12"
-            y="2"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="2"
-            y="12"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="12"
-            y="12"
-            width="6"
-            height="6"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeDasharray="2 2"
-          />
-          <rect
-            x="8"
-            y="2"
-            width="4"
-            height="16"
-            fill="currentColor"
-            fillOpacity="0.15"
-            stroke="currentColor"
-            strokeWidth="0.8"
-          />
-          <rect
-            x="2"
-            y="8"
-            width="16"
-            height="4"
-            fill="currentColor"
-            fillOpacity="0.15"
-            stroke="currentColor"
-            strokeWidth="0.8"
-          />
         </svg>
       ),
     },

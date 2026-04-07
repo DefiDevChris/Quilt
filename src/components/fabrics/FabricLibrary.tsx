@@ -128,7 +128,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
 
   return (
     <>
-      <div className="flex flex-col w-full h-[400px] bg-surface">
+      <div className="flex flex-col w-full flex-1 min-h-0 bg-surface">
         {/* Tabs */}
         <div className="flex border-b border-outline-variant">
           {tabs.map((tab) => (

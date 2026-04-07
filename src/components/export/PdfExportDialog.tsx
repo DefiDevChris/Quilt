@@ -8,13 +8,10 @@ import { generatePatternPdf, type PaperSize } from '@/lib/pdf-generator';
 import { downloadPdf } from '@/lib/dom-utils';
 import { generateCutListPdf } from '@/lib/cutlist-pdf-engine';
 import { generateProjectPdf, type ProjectPdfConfig } from '@/lib/project-pdf-engine';
-import { generateFppPdf } from '@/lib/fpp-pdf-engine';
-import { parseSvgToPatches, computeSewingOrder, mirrorPatches } from '@/lib/fpp-generator';
 import { captureCanvasPng, extractBlocksFromCanvas } from '@/lib/canvas-snapshot';
-import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 import { sanitizeFilename } from '@/lib/string-utils';
 
-type ExportMode = 'pattern-pieces' | 'cut-list' | 'print-project' | 'fpp-template';
+type ExportMode = 'pattern-pieces' | 'cut-list' | 'print-project';
 
 interface PdfExportDialogProps {
   isOpen: boolean;
@@ -33,10 +30,6 @@ const MODE_INFO: Record<ExportMode, { label: string; description: string }> = {
   'print-project': {
     label: 'Print Project',
     description: 'Full quilt overview, block diagrams, and totals table.',
-  },
-  'fpp-template': {
-    label: 'Paper Piecing',
-    description: 'Foundation paper piecing template with numbered sewing order.',
   },
 };
 
@@ -133,42 +126,6 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
           pdfBytes = await generateProjectPdf(config);
           filename = `${safeName}-project.pdf`;
-          break;
-        }
-
-        case 'fpp-template': {
-          const fppBlocks = await extractBlocksFromCanvas(fabricCanvas);
-          if (fppBlocks.length === 0) {
-            setError('No blocks found on canvas. Add a block first.');
-            return;
-          }
-
-          // Use the first block's SVG data
-          const block = fppBlocks[0];
-          const svgData = block.pieces.map((p) => p.svgData).join('');
-          const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${svgData}</svg>`;
-
-          const rawPatches = parseSvgToPatches(svgWrapper);
-          if (rawPatches.length === 0) {
-            setError('Block has no pieceable patches for paper piecing.');
-            return;
-          }
-
-          const ordered = computeSewingOrder(rawPatches);
-          const mirrored = mirrorPatches(ordered, 100);
-
-          pdfBytes = await generateFppPdf({
-            blockName: block.blockName ?? projectName ?? 'Block',
-            patches: mirrored,
-            blockWidth: 100,
-            blockHeight: 100,
-            paperSize,
-            seamAllowance: DEFAULT_SEAM_ALLOWANCE_INCHES,
-            showColors: true,
-            showNumbers: true,
-            logoPngBytes: logoPng,
-          });
-          filename = `${safeName}-fpp.pdf`;
           break;
         }
 
@@ -280,16 +237,6 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
             <p className="text-[11px] leading-relaxed text-secondary">
               Generates a complete pattern document: quilt overview image, block diagrams with piece
               labels, and a totals summary table.
-            </p>
-          </div>
-        )}
-
-        {exportMode === 'fpp-template' && (
-          <div className="mb-4 rounded-lg bg-background p-3">
-            <p className="text-[11px] leading-relaxed text-secondary">
-              Generates a mirrored FPP template with numbered sewing order. Sew patches in order —
-              each piece is sewn to the growing unit. Template includes seam allowance lines and a
-              sewing order reference page.
             </p>
           </div>
         )}

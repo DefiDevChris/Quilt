@@ -98,7 +98,7 @@ function renderLayoutOverlay(
     const halfSize = cell.size / 2;
 
     // Fill
-    ctx.fillStyle = 'rgba(100, 150, 255, 0.08)';
+    ctx.fillStyle = 'rgba(100, 150, 255, 0.12)';
     ctx.save();
     ctx.translate(cell.centerX, cell.centerY);
     ctx.rotate((cell.rotation * Math.PI) / 180);
@@ -177,7 +177,7 @@ export function renderGrid(
   // Grid lines inside the quilt area
   if (gridSettings.size > 0) {
     const gridSizePx = gridSettings.size * pxPerUnit;
-    ctx.strokeStyle = 'rgba(229, 226, 221, 0.85)';
+    ctx.strokeStyle = 'rgba(190, 185, 178, 0.85)';
     ctx.lineWidth = 1 / zoom;
 
     ctx.beginPath();

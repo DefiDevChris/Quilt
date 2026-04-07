@@ -55,6 +55,8 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { LAYOUT_PRESETS } from '@/lib/layout-library';
+import type { LayoutType } from '@/lib/layout-utils';
 import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
@@ -266,10 +268,29 @@ export function StudioClient({ projectId }: StudioClientProps) {
   }, []);
 
   const handleLayoutSetupConfirm = useCallback(
-    (rows: number, cols: number, blockSize: number, _cellSize: number) => {
-      useLayoutStore.getState().setRows(rows);
-      useLayoutStore.getState().setCols(cols);
-      useLayoutStore.getState().setBlockSize(blockSize);
+    (rows: number, cols: number, blockSize: number, _cellSize: number, presetId?: string) => {
+      const store = useLayoutStore.getState();
+      store.setRows(rows);
+      store.setCols(cols);
+      store.setBlockSize(blockSize);
+
+      if (presetId) {
+        const preset = LAYOUT_PRESETS.find((p) => p.id === presetId);
+        if (preset) {
+          store.setLayoutType(preset.config.type as LayoutType);
+          store.setSelectedPreset(preset.id);
+          store.setSashing(preset.config.sashing);
+        }
+      } else {
+        store.setLayoutType('grid');
+      }
+
+      // Update canvas dimensions so the grid renders at the correct size
+      useProjectStore.getState().setCanvasWidth(cols * blockSize);
+      useProjectStore.getState().setCanvasHeight(rows * blockSize);
+      useCanvasStore.getState().setGridSettings({ size: _cellSize, snapToGrid: true });
+      useCanvasStore.getState().centerAndFitViewport();
+
       setShowLayoutSetup(false);
     },
     []
@@ -314,12 +335,20 @@ export function StudioClient({ projectId }: StudioClientProps) {
             const preset = LAYOUT_PRESETS.find((p) => p.id === layoutPresetId);
             if (preset) {
               const store = useLayoutStore.getState();
-              store.setLayoutType(preset.config.type as any);
+              store.setLayoutType(preset.config.type as LayoutType);
               store.setSelectedPreset(preset.id);
               store.setRows(preset.config.rows);
               store.setCols(preset.config.cols);
               store.setBlockSize(preset.config.blockSize);
               store.setSashing(preset.config.sashing);
+              // Update canvas dimensions so the grid renders at the correct size
+              useProjectStore
+                .getState()
+                .setCanvasWidth(preset.config.cols * preset.config.blockSize);
+              useProjectStore
+                .getState()
+                .setCanvasHeight(preset.config.rows * preset.config.blockSize);
+              useCanvasStore.getState().centerAndFitViewport();
             }
           });
         });
