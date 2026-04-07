@@ -39,7 +39,7 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
   if (!posts?.length) return null;
 
   return (
-    <section className="relative w-full py-16 md:py-24 bg-[#faf9f7]">
+    <section className="relative w-full py-16 md:py-24">
       <motion.header
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -48,10 +48,15 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
         className="max-w-[1400px] mx-auto px-6 md:px-12 mb-12 md:mb-16"
       >
         <div className="flex items-center gap-4 mb-4">
-          <span className="w-12 h-px bg-[#c48a28]" />
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[#7a6c60] font-medium">Stories</span>
+          <span className="w-12 h-px bg-primary-golden" />
+          <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
+            Stories
+          </span>
         </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl text-[#3a2e26] tracking-[-0.02em]" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+        <h2
+          className="text-4xl md:text-5xl lg:text-6xl text-on-surface tracking-[-0.02em]"
+          style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+        >
           Recent Explorations
         </h2>
       </motion.header>
@@ -61,15 +66,7 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
           {posts.map((post, i) => {
             const layout = GRID_CONFIG[i % GRID_CONFIG.length];
             const img = post.featuredImageUrl || FALLBACK[i % FALLBACK.length];
-            return (
-              <PostCard
-                key={post.id}
-                post={post}
-                img={img}
-                layout={layout}
-                index={i}
-              />
-            );
+            return <PostCard key={post.id} post={post} img={img} layout={layout} index={i} />;
           })}
         </div>
       </div>
@@ -85,7 +82,7 @@ function PostCard({
 }: {
   post: BlogPost;
   img: string;
-  layout: typeof GRID_CONFIG[number];
+  layout: (typeof GRID_CONFIG)[number];
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -106,13 +103,34 @@ function PostCard({
       <Link href={`/blog/${post.slug}`} className="block h-full">
         <article className={`h-full flex flex-col ${layout.mobileH} ${layout.h}`}>
           {/* Image container - shadow intensifies on hover only */}
-          <div className="relative overflow-hidden flex-1 rounded-[2px] transition-shadow duration-300 group-hover:shadow-[0_8px_32px_rgba(58,46,38,0.12)] shadow-[0_2px_8px_rgba(58,46,38,0.06)]">
-            <img
-              src={img}
-              alt={post.title}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
+          <div className="relative overflow-hidden flex-1 rounded-2xl transition-shadow duration-300 group-hover:shadow-elevation-2 shadow-elevation-1">
+            <img src={img} alt={post.title} loading="lazy" className="w-full h-full object-cover" />
+          </div>
+
+          {/* Content */}
+          <div className="pt-4 md:pt-5">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-primary-golden font-medium">
+                {post.category}
+              </span>
+              <span className="w-4 h-px bg-outline-variant" />
+              <time className="text-[9px] uppercase tracking-[0.15em] text-warm-text-muted">
+                {post.createdAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </time>
+            </div>
+
+            <h3
+              className="text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
+              style={{
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontSize:
+                  layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
+                    ? 'clamp(1.5rem, 2.5vw, 2rem)'
+                    : 'clamp(1.125rem, 1.5vw, 1.375rem)',
+              }}
+            >
+              {post.title}
+            </h3>
           </div>
 
           {/* Content */}
@@ -127,13 +145,14 @@ function PostCard({
               </time>
             </div>
 
-            <h3 
+            <h3
               className="text-[#3a2e26] leading-[1.15] tracking-[-0.01em] group-hover:text-[#c48a28] transition-colors duration-300"
-              style={{ 
+              style={{
                 fontFamily: '"Playfair Display", Georgia, serif',
-                fontSize: layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
-                  ? 'clamp(1.5rem, 2.5vw, 2rem)'
-                  : 'clamp(1.125rem, 1.5vw, 1.375rem)',
+                fontSize:
+                  layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
+                    ? 'clamp(1.5rem, 2.5vw, 2rem)'
+                    : 'clamp(1.125rem, 1.5vw, 1.375rem)',
               }}
             >
               {post.title}

@@ -8,8 +8,11 @@ import { StudioDialogsProvider } from '@/components/studio/StudioDialogs';
 import { StudioLayout } from '@/components/studio/StudioLayout';
 
 import { useAuthStore } from '@/stores/authStore';
+import { useLayoutStore } from '@/stores/layoutStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
+import { applyInitialSetup, markSetupModalDismissed } from '@/lib/wizard-hydration';
 
 interface StudioClientProps {
   readonly projectId: string;
@@ -48,20 +51,34 @@ export function StudioClient({ projectId }: StudioClientProps) {
           return;
         }
 
-        const projectData = data.data;
+        const projectData = data.data as Project;
 
         // For free users, check if there's a newer temp version in localStorage
         if (!isPro) {
           const { loadTempProject } = await import('@/lib/temp-project-storage');
           const tempData = loadTempProject(projectId);
           if (tempData && tempData.savedAt > new Date(projectData.lastSavedAt).getTime()) {
-            projectData.canvasData = tempData.canvasData;
-            projectData.unitSystem = tempData.unitSystem;
-            projectData.gridSettings = tempData.gridSettings;
+            projectData.canvasData = tempData.canvasData as Project['canvasData'];
+            projectData.unitSystem = tempData.unitSystem as Project['unitSystem'];
+            projectData.gridSettings = tempData.gridSettings as unknown as Project['gridSettings'];
             projectData.fabricPresets = tempData.fabricPresets;
             projectData.canvasWidth = tempData.canvasWidth;
             projectData.canvasHeight = tempData.canvasHeight;
           }
+        }
+
+        // If the project was created via the New Project wizard, hydrate the
+        // layoutStore from canvasData.initialSetup so the canvas paints with
+        // the chosen layout/template on first frame, then suppress the legacy
+        // first-visit setup modal.
+        const layoutSetters = useLayoutStore.getState();
+        const hydration = applyInitialSetup(projectData, layoutSetters, {
+          setCanvasDimensions: (w, h) => {
+            useProjectStore.getState().setCanvasDimensions(w, h);
+          },
+        });
+        if (hydration.hydrated) {
+          markSetupModalDismissed(projectData.id);
         }
 
         setProject(projectData);

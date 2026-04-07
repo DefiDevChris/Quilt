@@ -5,13 +5,25 @@ export interface Worktable {
   order: number;
 }
 
-export interface InitialSetupConfig {
-  kind: 'layout' | 'template';
-  preset?: unknown;
-  templateData?: unknown;
-  blockSize: number;
-  rotated: boolean;
-}
+/**
+ * One-shot setup payload written by the New Project wizard into
+ * `project.canvasData.initialSetup`. The studio bootstrap reads it on
+ * first mount, hydrates the relevant stores, and then clears it.
+ */
+export type InitialSetupConfig =
+  | {
+      kind: 'layout';
+      presetId: string;
+      blockSize: number;
+      rotated: boolean;
+    }
+  | {
+      kind: 'template';
+      templateId: string;
+      templateData: unknown;
+      blockSize: number;
+      rotated: boolean;
+    };
 
 export interface Project {
   id: string;
@@ -25,8 +37,6 @@ export interface Project {
   fabricPresets?: Array<{ id: string; name: string; imageUrl: string }>;
   canvasWidth: number;
   canvasHeight: number;
-  width?: number;
-  height?: number;
   thumbnailUrl: string | null;
   isPublic: boolean;
   lastSavedAt: Date;

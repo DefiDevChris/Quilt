@@ -9,7 +9,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Stories — QuiltCorgi',
-  description: 'Quilting inspiration, pattern explorations, and creative narratives from our community.',
+  description:
+    'Quilting inspiration, pattern explorations, and creative narratives from our community.',
 };
 
 export default async function BlogPage() {
@@ -34,16 +35,26 @@ export default async function BlogPage() {
 
   if (!posts.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#faf9f7] px-6">
+      <div className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-md text-center">
-          <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center border border-[#e8dfd5] rounded-[2px]">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[#7a6c60]">
+          <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center rounded-2xl bg-primary-container/40">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              className="text-secondary"
+            >
               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
               <path d="M8 7h6M8 11h8" />
             </svg>
           </div>
-          <h2 className="font-serif text-4xl text-[#3a2e26] mb-4 tracking-[-0.02em]">No stories yet</h2>
-          <p className="text-[#5c4d42] leading-relaxed font-light">
+          <h2 className="font-serif text-4xl text-on-surface mb-4 tracking-[-0.02em]">
+            No stories yet
+          </h2>
+          <p className="text-secondary leading-relaxed font-light">
             New content is being crafted. Return soon for fresh inspiration.
           </p>
         </div>
@@ -55,7 +66,7 @@ export default async function BlogPage() {
   const feed = posts.slice(4);
 
   return (
-    <div className="w-full bg-[#faf9f7]">
+    <div className="w-full">
       <FeaturedCarousel posts={featured} />
       <AsymmetricPostFeed posts={feed.length ? feed : posts} />
     </div>

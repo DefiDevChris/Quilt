@@ -31,7 +31,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
   const [width, setWidth] = useState(0);
 
   const slides = posts.slice(0, 4);
-  
+
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
     handleResize();
@@ -61,7 +61,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-[#faf9f7]">
+    <section className="relative w-full h-screen overflow-hidden bg-surface">
       <motion.div
         ref={containerRef}
         drag="x"
@@ -74,16 +74,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
       >
         {slides.map((post, i) => {
           const img = post.featuredImageUrl || FALLBACK[i % FALLBACK.length];
-          return (
-            <Slide
-              key={post.id}
-              post={post}
-              img={img}
-              index={i}
-              x={x}
-              width={width}
-            />
-          );
+          return <Slide key={post.id} post={post} img={img} index={i} x={x} width={width} />;
         })}
       </motion.div>
 
@@ -101,7 +92,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
             className="h-px transition-all duration-500 ease-out"
             style={{
               width: i === active ? 48 : 20,
-              backgroundColor: i === active ? '#3a2e26' : 'rgba(58, 46, 38, 0.25)',
+              backgroundColor: i === active ? 'var(--color-on-surface)' : 'rgba(58, 46, 38, 0.25)',
             }}
             aria-label={`Go to slide ${i + 1}`}
           />
@@ -138,10 +129,7 @@ function Slide({
   return (
     <article className="relative min-w-full h-full flex items-center">
       {/* Image layer with parallax */}
-      <motion.div
-        style={{ x: imageX }}
-        className="absolute inset-0 will-change-transform"
-      >
+      <motion.div style={{ x: imageX }} className="absolute inset-0 will-change-transform">
         <img
           src={img}
           alt=""
@@ -151,8 +139,8 @@ function Slide({
       </motion.div>
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#faf9f7] via-[#faf9f7]/60 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7]/40 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-surface/40 via-transparent to-transparent" />
 
       {/* Content */}
       <motion.div
@@ -162,18 +150,22 @@ function Slide({
         className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl"
       >
         <div className="flex items-center gap-4 mb-8">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[#7a6c60] font-medium">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
             {post.category}
           </span>
-          <span className="w-6 h-px bg-[#c48a28]" />
-          <time className="text-[10px] uppercase tracking-[0.15em] text-[#7a6c60]">
-            {post.createdAt?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          <span className="w-6 h-px bg-primary-golden" />
+          <time className="text-[10px] uppercase tracking-[0.15em] text-warm-text-muted">
+            {post.createdAt?.toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </time>
         </div>
 
         <Link href={`/blog/${post.slug}`} className="group block">
-          <h2 
-            className="text-5xl md:text-6xl lg:text-7xl text-[#3a2e26] leading-[1.05] tracking-[-0.02em] mb-6 transition-opacity group-hover:opacity-70"
+          <h2
+            className="text-5xl md:text-6xl lg:text-7xl text-on-surface leading-[1.05] tracking-[-0.02em] mb-6 transition-opacity group-hover:opacity-70"
             style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
           >
             {post.title}
@@ -181,7 +173,7 @@ function Slide({
         </Link>
 
         {post.excerpt && (
-          <p className="text-base md:text-lg text-[#5c4d42] leading-relaxed max-w-md font-light">
+          <p className="text-base md:text-lg text-secondary leading-relaxed max-w-md font-light">
             {post.excerpt}
           </p>
         )}

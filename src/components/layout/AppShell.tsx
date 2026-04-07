@@ -53,7 +53,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="min-h-screen relative"
-      style={{ background: "url('/background.png') center top / cover no-repeat fixed, #fafafa" }}
+      style={{
+        background:
+          "url('/background.png') center top / cover no-repeat fixed, var(--color-background)",
+      }}
     >
       <nav
         aria-label="Main navigation"

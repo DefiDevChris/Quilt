@@ -22,10 +22,10 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
 
   return (
     <nav ref={containerRef} className="relative max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
-      <div className="absolute top-0 left-6 md:left-12 right-6 md:right-12 h-px bg-[#e8dfd5]">
+      <div className="absolute top-0 left-6 md:left-12 right-6 md:right-12 h-px bg-outline-variant">
         <motion.div
           style={{ scaleX: lineProgress, transformOrigin: 'left' }}
-          className="h-full bg-[#c48a28]"
+          className="h-full bg-primary-golden"
         />
       </div>
 
@@ -40,13 +40,13 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
             >
               <Link href={`/blog/${prev.slug}`} className="group block">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="w-8 h-px bg-[#3a2e26] transition-all duration-300 group-hover:w-12" />
-                  <span className="text-[10px] uppercase tracking-[0.25em] text-[#7a6c60] font-medium">
+                  <span className="w-8 h-px bg-on-surface transition-all duration-300 group-hover:w-12" />
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
                     Previous
                   </span>
                 </div>
-                <h3 
-                  className="text-2xl md:text-3xl text-[#3a2e26] leading-[1.15] tracking-[-0.01em] group-hover:text-[#c48a28] transition-colors duration-300"
+                <h3
+                  className="text-2xl md:text-3xl text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
                   style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
                 >
                   {prev.title}
@@ -68,13 +68,13 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
             >
               <Link href={`/blog/${next.slug}`} className="group block">
                 <div className="flex items-center gap-3 mb-4 md:flex-row-reverse">
-                  <span className="w-8 h-px bg-[#3a2e26] transition-all duration-300 group-hover:w-12" />
-                  <span className="text-[10px] uppercase tracking-[0.25em] text-[#7a6c60] font-medium">
+                  <span className="w-8 h-px bg-on-surface transition-all duration-300 group-hover:w-12" />
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
                     Next
                   </span>
                 </div>
-                <h3 
-                  className="text-2xl md:text-3xl text-[#3a2e26] leading-[1.15] tracking-[-0.01em] group-hover:text-[#c48a28] transition-colors duration-300"
+                <h3
+                  className="text-2xl md:text-3xl text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
                   style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
                 >
                   {next.title}

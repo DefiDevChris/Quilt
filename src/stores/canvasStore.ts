@@ -116,8 +116,6 @@ interface CanvasStoreState {
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
   toggleReferencePanel: () => void;
-  initFromProject: (project: any) => void;
-  setDimensions: (width: number, height: number) => void;
   reset: () => void;
 }
 
@@ -332,23 +330,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),
-
-  initFromProject: (project) => {
-    // Basic hydration from project model
-    set({
-      unitSystem: project.unitSystem || 'imperial',
-      gridSettings: project.gridSettings || INITIAL_STATE.gridSettings,
-      backgroundColor: project.canvasData?.backgroundColor || '#FFFFFF',
-    });
-  },
-
-  setDimensions: (width, height) => {
-    // This typically triggers on-canvas resizing or informs the bridge
-    // For now, update local state if we had it, but mostly this is for the layout engine
-    // which reads from projectState or bridge.
-    console.log(`Setting dimensions: ${width}x${height}`);
-    // If the schema was also updated to have these columns, we'd set them here.
-  },
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

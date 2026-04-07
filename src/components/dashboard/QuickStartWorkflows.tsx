@@ -1,103 +1,192 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Plus, Rocket, BookOpen, Clock } from 'lucide-react';
-import { NewProjectWizard } from '../projects/NewProjectWizard';
-import { Project } from '@/types/project';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatRelativeTime } from '@/lib/format-time';
 
-interface QuickStartWorkflowsProps {
-  recentProjects?: Project[];
+interface RecentProject {
+  id: string;
+  name: string;
+  updatedAt: string;
 }
 
-export function QuickStartWorkflows({ recentProjects = [] }: QuickStartWorkflowsProps) {
-  const [wizardOpen, setWizardOpen] = useState(false);
+interface QuickStartWorkflowsProps {
+  onPhotoToDesign: () => void;
+  onNewProject: () => void;
+  recentProjects: ReadonlyArray<RecentProject>;
+}
+
+export function QuickStartWorkflows({
+  onPhotoToDesign,
+  onNewProject,
+  recentProjects,
+}: QuickStartWorkflowsProps) {
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const resumeRef = useRef<HTMLDivElement>(null);
+
+  // Close resume popover on outside click or Escape
+  useEffect(() => {
+    if (!resumeOpen) return;
+    function handleClick(event: MouseEvent) {
+      if (resumeRef.current && !resumeRef.current.contains(event.target as Node)) {
+        setResumeOpen(false);
+      }
+    }
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') setResumeOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [resumeOpen]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Left Column - Actions */}
-      <div className="space-y-4 flex flex-col h-full">
+    <section className="mb-8" aria-label="Quick start workflows">
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-secondary mb-3">
+        Quick Start
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Start New Project */}
         <button
-          onClick={() => setWizardOpen(true)}
-          className="group relative overflow-hidden flex flex-col justify-end p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-orange-500/10 to-rose-400/10 hover:from-orange-500/20 hover:to-rose-400/20 transition-all duration-300 min-h-[160px] text-left"
-        >
-          <div className="absolute top-6 right-6 w-12 h-12 bg-gradient-to-r from-orange-500 to-rose-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <Plus size={24} className="text-white" />
-          </div>
-          <h3 className="text-2xl font-light text-white mb-2 group-hover:text-orange-400 transition-colors">
-            Start New Project
-          </h3>
-          <p className="text-white/60 max-w-[80%]">
-            Launch the studio wizard and begin your next quilt from scratch, a structured layout, or
-            a template.
-          </p>
-        </button>
-
-        <Link
-          href="/fabrics"
-          className="group relative overflow-hidden flex items-center justify-between p-6 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
+          type="button"
+          onClick={onNewProject}
+          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
+          aria-label="Start a new project"
         >
           <div>
-            <h3 className="text-lg font-medium text-white mb-1 group-hover:text-rose-400 transition-colors">
-              Fabric Library
-            </h3>
-            <p className="text-sm text-white/50">Upload and manage your custom stashes.</p>
+            <p className="text-on-surface font-extrabold text-xl mb-1">Start New Project</p>
+            <p className="text-secondary text-sm">Template, layout, or scratch</p>
           </div>
-          <BookOpen className="text-white/20 group-hover:text-rose-400/50 transition-colors" />
-        </Link>
-      </div>
+          <Image
+            src="/icons/quilt-13-dashed-squares-Photoroom.png"
+            alt=""
+            width={48}
+            height={48}
+            className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+          />
+        </button>
 
-      {/* Right Column - Resume Recent */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-medium text-white flex items-center gap-2">
-            <Clock size={18} className="text-orange-400" /> Resume Working
-          </h3>
-          <Link
-            href="/projects"
-            className="text-sm text-white/50 hover:text-white transition-colors"
+        {/* Resume */}
+        <div className="relative" ref={resumeRef}>
+          <button
+            type="button"
+            onClick={() => setResumeOpen((open) => !open)}
+            aria-haspopup="listbox"
+            aria-expanded={resumeOpen}
+            aria-label="Resume a recent project"
+            className="w-full min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
           >
-            View Quiltbook →
-          </Link>
+            <div>
+              <p className="text-on-surface font-extrabold text-xl mb-1">Resume</p>
+              <p className="text-secondary text-sm">
+                {recentProjects.length > 0
+                  ? `Pick up where you left off (${recentProjects.length})`
+                  : 'No projects yet'}
+              </p>
+            </div>
+            <Image
+              src="/icons/quilt-12-ruler-Photoroom.png"
+              alt=""
+              width={48}
+              height={48}
+              className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+            />
+          </button>
+
+          {resumeOpen && (
+            <div
+              role="listbox"
+              className="absolute left-0 right-0 mt-2 z-30 rounded-xl border border-white/60 bg-white/95 backdrop-blur-xl shadow-elevation-3 overflow-hidden"
+            >
+              {recentProjects.length === 0 ? (
+                <div className="px-4 py-6 text-center">
+                  <p className="text-sm text-secondary">No projects yet.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResumeOpen(false);
+                      onNewProject();
+                    }}
+                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+                  >
+                    Start your first quilt
+                  </button>
+                </div>
+              ) : (
+                <ul className="max-h-72 overflow-y-auto divide-y divide-white/60">
+                  {recentProjects.map((project) => (
+                    <li key={project.id}>
+                      <Link
+                        href={`/studio/${project.id}`}
+                        role="option"
+                        aria-selected="false"
+                        className="flex items-center justify-between px-4 py-3 hover:bg-primary-container/40 transition-colors"
+                        onClick={() => setResumeOpen(false)}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-on-surface truncate">
+                            {project.name}
+                          </p>
+                          <p className="text-xs text-secondary mt-0.5">
+                            {formatRelativeTime(project.updatedAt)}
+                          </p>
+                        </div>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          className="text-secondary ml-3 shrink-0"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M5 3L9 7L5 11"
+                            stroke="currentColor"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link
+                href="/projects"
+                onClick={() => setResumeOpen(false)}
+                className="block px-4 py-2.5 text-center text-xs font-semibold text-primary-dark hover:bg-primary-container/40 border-t border-white/60"
+              >
+                View all in My Quiltbook →
+              </Link>
+            </div>
+          )}
         </div>
 
-        {recentProjects.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <Rocket size={32} className="text-white/20 mb-4" />
-            <p className="text-white/60">No recent projects. Time to start stitching!</p>
+        {/* Photo to Design */}
+        <button
+          type="button"
+          onClick={onPhotoToDesign}
+          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
+          aria-label="Photo to Design workflow"
+        >
+          <div>
+            <p className="text-on-surface font-extrabold text-xl mb-1">Photo to Design</p>
+            <p className="text-secondary text-sm">Extract blocks with AI</p>
           </div>
-        ) : (
-          <div className="flex-1 space-y-3 overflow-y-auto max-h-[220px] pr-2 custom-scrollbar">
-            {recentProjects.slice(0, 4).map((project) => (
-              <Link
-                key={project.id}
-                href={`/studio/${project.id}`}
-                className="flex items-center justify-between p-4 rounded-xl bg-black/40 border border-transparent hover:border-white/10 transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden">
-                    {/* Placeholder for thumbnail */}
-                    <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"></div>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium group-hover:text-orange-400 transition-colors truncate max-w-[180px]">
-                      {project.name}
-                    </h4>
-                    <p className="text-xs text-white/40">
-                      {project.updatedAt
-                        ? formatRelativeTime(new Date(project.updatedAt))
-                        : 'Recently'}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+          <Image
+            src="/icons/quilt-02-needle-Photoroom.png"
+            alt=""
+            width={48}
+            height={48}
+            className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+          />
+        </button>
       </div>
-
-      <NewProjectWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
-    </div>
+    </section>
   );
 }
