@@ -66,11 +66,12 @@ function renderToolGroup(
   activeTool: ToolType,
   setActiveTool: (tool: ToolType) => void,
   showSeparatorBefore: boolean,
-  groupName?: string
+  groupName: string,
+  groupIdx: number
 ) {
   const label = groupName ? (GROUP_LABELS[groupName] ?? '') : '';
   return (
-    <div>
+    <div key={`${groupName}-${groupIdx}`}>
       {showSeparatorBefore && <Separator />}
       {label && (
         <div className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/35 px-1 pt-1.5 pb-0.5 text-center">
@@ -245,7 +246,7 @@ export function Toolbar({
       {/* Main tools column - single column */}
       <div className="flex flex-col items-center gap-1 h-full px-1">
         {primaryGroups.map((group, idx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name)
+          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name, idx)
         )}
 
         {/* More tools toggle */}
@@ -259,7 +260,7 @@ export function Toolbar({
           <>
             <Separator />
             {advancedGroups.map((group, idx) =>
-              renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name)
+              renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name, idx)
             )}
           </>
         )}
@@ -270,7 +271,7 @@ export function Toolbar({
         {/* Pinned tools - always at bottom */}
         <Separator />
         {pinnedGroups.map((group, idx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name)
+          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name, idx)
         )}
       </div>
     </nav>
