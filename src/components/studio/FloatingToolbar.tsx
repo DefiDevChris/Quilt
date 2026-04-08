@@ -166,6 +166,7 @@ export function FloatingToolbar() {
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
     'layout-builder': [],
+    'block-builder': [],
     block: BLOCK_TOOLS,
     image: [],
     print: [],
@@ -201,8 +202,8 @@ export function FloatingToolbar() {
                 }
               }}
               className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${isActive
-                  ? 'bg-primary/20 text-primary ring-1 ring-primary/35'
-                  : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
+                ? 'bg-primary/20 text-primary ring-1 ring-primary/35'
+                : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
                 }`}
             >
               {tool.icon}
@@ -226,8 +227,8 @@ export function FloatingToolbar() {
                   aria-disabled={disabled}
                   onClick={disabled ? undefined : tool.onClick}
                   className={`relative w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${disabled
-                      ? 'text-outline-variant/45 cursor-default'
-                      : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
+                    ? 'text-outline-variant/45 cursor-default'
+                    : 'text-on-surface/65 hover:text-on-surface hover:bg-surface-container'
                     }`}
                 >
                   {tool.icon}

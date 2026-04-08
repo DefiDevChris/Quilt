@@ -41,7 +41,7 @@ export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
 export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
 
-export type WorktableType = 'quilt' | 'layout-builder' | 'block' | 'image' | 'print';
+export type WorktableType = 'quilt' | 'layout-builder' | 'block-builder' | 'block' | 'image' | 'print';
 
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;

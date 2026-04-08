@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { DraftTabProps } from './BlockDraftingShell';
+import type { DraftTabProps } from '@/components/studio/BlockBuilderWorktable';
 import { BlockBuilderToolbar } from './BlockBuilderToolbar';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { GRID_UNIT_PRESETS, type GridUnitPreset } from '@/lib/block-builder-engine';
@@ -120,6 +120,7 @@ export function BlockBuilderTab({
         {activeMode === 'rectangle' && 'Click two grid corners to draw a rectangle.'}
         {activeMode === 'triangle' && 'Click a grid cell to split it diagonally.'}
         {activeMode === 'curve' && 'Click a straight seam line to curve it.'}
+        {activeMode === 'bend' && 'Click and drag a seam line to bend it into a curve.'}
       </div>
     </div>
   );

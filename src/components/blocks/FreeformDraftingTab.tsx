@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { DraftTabProps } from './BlockDraftingShell';
+import type { DraftTabProps } from '@/components/studio/BlockBuilderWorktable';
 import { GRID_LINE_COLOR } from '@/lib/constants';
 
 type FreeformTool = 'select' | 'rectangle' | 'triangle' | 'line';
@@ -174,11 +174,10 @@ export function FreeformDraftingTab({
           type="button"
           onClick={() => setActiveDraftTool(tool.id)}
           title={tool.label}
-          className={`h-8 w-8 rounded text-sm ${
-            activeDraftTool === tool.id
+          className={`h-8 w-8 rounded text-sm ${activeDraftTool === tool.id
               ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
               : 'text-secondary hover:bg-background'
-          }`}
+            }`}
         >
           {tool.icon}
         </button>

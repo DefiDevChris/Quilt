@@ -58,7 +58,7 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       const layoutStore = useLayoutStore.getState();
       const projectStore = useProjectStore.getState();
       layoutStore.setLayoutType('free-form');
-      
+
       const initialWidth = projectStore.canvasWidth;
       const initialHeight = projectStore.canvasHeight;
 
@@ -75,12 +75,12 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       // Arrange: Set a grid layout first
       const layoutStore = useLayoutStore.getState();
       const projectStore = useProjectStore.getState();
-      
+
       layoutStore.setLayoutType('grid');
       layoutStore.setRows(3);
       layoutStore.setCols(3);
       layoutStore.setBlockSize(6);
-      
+
       const dimensionsBeforeFreeForm = {
         width: projectStore.canvasWidth,
         height: projectStore.canvasHeight
@@ -122,20 +122,20 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
 
       // Assert: All tool buttons should be in single-column layout
       const toolButtons = container.querySelectorAll('button[aria-label]');
-      
+
       // Verify we have tools rendered
       expect(toolButtons.length).toBeGreaterThan(0);
-      
+
       // The parent container should use flex-col, not grid-cols-2
       const flexColContainers = container.querySelectorAll('.flex.flex-col');
       expect(flexColContainers.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Layout Worktable Toolbar Preservation (Requirement 4.4)', () => {
-    it('should display tools in single-column layout for layout worktable', () => {
-      // Arrange: Set active worktable to 'layout'
-      useCanvasStore.setState({ activeWorktable: 'layout' });
+  describe('Quilt Worktable Toolbar Layout (Requirement 4.4)', () => {
+    it('should display tools in single-column layout for quilt worktable', () => {
+      // Arrange: Set active worktable to 'quilt'
+      useCanvasStore.setState({ activeWorktable: 'quilt' });
 
       // Act: Render toolbar
       const { container } = render(<Toolbar />);
@@ -149,19 +149,19 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       expect(singleColumnContainers.length).toBeGreaterThan(0);
     });
 
-    it('should maintain single-column structure across all tool groups in layout worktable', () => {
-      // Arrange: Set active worktable to 'layout'
-      useCanvasStore.setState({ activeWorktable: 'layout' });
+    it('should maintain single-column structure across all tool groups in quilt worktable', () => {
+      // Arrange: Set active worktable to 'quilt'
+      useCanvasStore.setState({ activeWorktable: 'quilt' });
 
       // Act: Render toolbar
       const { container } = render(<Toolbar />);
 
       // Assert: All tool buttons should be in single-column layout
       const toolButtons = container.querySelectorAll('button[aria-label]');
-      
+
       // Verify we have tools rendered
       expect(toolButtons.length).toBeGreaterThan(0);
-      
+
       // The parent container should use flex-col, not grid-cols-2
       const flexColContainers = container.querySelectorAll('.flex.flex-col');
       expect(flexColContainers.length).toBeGreaterThan(0);
@@ -178,19 +178,19 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
 
       // Find all 2-column grid containers
       const gridContainers = container.querySelectorAll('.grid.grid-cols-2');
-      
+
       // Assert: For groups with even tool counts, no tools should be centered
       gridContainers.forEach(gridContainer => {
         const gridChildren = Array.from(gridContainer.children);
-        
+
         // If the group has an even number of children, none should be centered
         if (gridChildren.length % 2 === 0) {
           const centeredTools = gridChildren.filter(child => {
             const element = child as HTMLElement;
-            return element.classList.contains('col-span-2') && 
-                   element.classList.contains('justify-center');
+            return element.classList.contains('col-span-2') &&
+              element.classList.contains('justify-center');
           });
-          
+
           // Even-count groups should have no centered tools
           expect(centeredTools.length).toBe(0);
         }
@@ -284,7 +284,7 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       // If any of these tests FAIL on unfixed code, it indicates that our
       // understanding of the baseline behavior is incorrect and we need to
       // re-observe the actual behavior before writing preservation tests.
-      
+
       expect(true).toBe(true); // Placeholder to document expected behavior
     });
   });
