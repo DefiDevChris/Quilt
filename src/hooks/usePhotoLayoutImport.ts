@@ -311,7 +311,3 @@ export function usePhotoPatternImport() {
     });
   }, [fabricCanvas, scaledPieces, originalImageUrl, seamAllowance, quiltStructure]);
 }
-
-export function usePhotoLayoutImport() {
-  return usePhotoPatternImport();
-}

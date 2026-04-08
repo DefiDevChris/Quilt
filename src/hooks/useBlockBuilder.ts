@@ -9,6 +9,7 @@ import {
   type DrawSegment,
   type ArcSegment,
   type Patch,
+  type GridPoint,
 } from '@/lib/blockbuilder-utils';
 import {
   generateTriangle,
@@ -83,6 +84,7 @@ export function useBlockBuilder({
     segmentIndex: number;
     segment: Segment;
   } | null>(null);
+  const bendCenterRef = useRef<GridPoint | null>(null);
   const bendPreviewRef = useRef<unknown>(null);
 
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
@@ -260,9 +262,9 @@ export function useBlockBuilder({
 
       canvas.renderAll();
 
-      // Set cursor
+      // Set cursor based on mode
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = activeMode === 'bend' ? 'pointer' : 'crosshair';
 
       function onMouseDown(e: { e: MouseEvent }) {
         const pointer = canvas.getScenePoint(e.e);
@@ -306,6 +308,29 @@ export function useBlockBuilder({
               previewRef.current = null;
             }
           }
+          return;
+        }
+
+        // ─── Bend tool: click a segment, drag to curve it ────────────────
+        if (activeMode === 'bend') {
+          const lineSegments = segmentsRef.current.filter((s): s is Segment => !('center' in s));
+          const SNAP_TOLERANCE = gridSize * 0.5;
+          const filteredIdx = findNearestSegment(pointer.x, pointer.y, lineSegments, gridSize, SNAP_TOLERANCE);
+          if (filteredIdx < 0) return;
+
+          const seg = lineSegments[filteredIdx];
+          // Find the actual index in the full segments array
+          const realIdx = segmentsRef.current.findIndex(
+            (s) =>
+              !('center' in s) &&
+              s.from.row === seg.from.row &&
+              s.from.col === seg.from.col &&
+              s.to.row === seg.to.row &&
+              s.to.col === seg.to.col
+          );
+          if (realIdx < 0) return;
+
+          bendStateRef.current = { segmentIndex: realIdx, segment: seg };
           return;
         }
 
@@ -358,6 +383,88 @@ export function useBlockBuilder({
         }
       }
 
+      function onMouseMove(e: { e: MouseEvent }) {
+        // ─── Bend tool preview ───────────────────────────────────────────
+        if (activeMode !== 'bend' || !bendStateRef.current) return;
+
+        const pointer = canvas.getScenePoint(e.e);
+        const centerGridPt = snapToGridPoint(pointer.x, pointer.y);
+        if (!centerGridPt) return;
+
+        bendCenterRef.current = centerGridPt;
+
+        const { segment } = bendStateRef.current;
+        const arc = generateBend(segment, centerGridPt);
+        const fromPx = gridPointToPixel(arc.from, gridSize);
+        const toPx = gridPointToPixel(arc.to, gridSize);
+        const centerPx = gridPointToPixel(arc.center, gridSize);
+        const dx = fromPx.x - centerPx.x;
+        const dy = fromPx.y - centerPx.y;
+        const radius = Math.sqrt(dx * dx + dy * dy);
+        const sweepFlag = arc.clockwise ? 1 : 0;
+
+        // Remove old preview
+        if (bendPreviewRef.current) {
+          canvas.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+        }
+
+        // Draw preview arc
+        const pathStr = `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`;
+        const pathObj = new fabric.Path(pathStr, {
+          fill: '',
+          stroke: '#f97316',
+          strokeWidth: SEAM_LINE_WIDTH,
+          strokeDashArray: [6, 4],
+          selectable: false,
+          evented: false,
+        });
+        canvas.add(pathObj);
+        bendPreviewRef.current = pathObj;
+        canvas.renderAll();
+      }
+
+      function onMouseUp() {
+        // ─── Bend tool commit ────────────────────────────────────────────
+        if (activeMode !== 'bend' || !bendStateRef.current || !bendCenterRef.current) {
+          bendStateRef.current = null;
+          bendCenterRef.current = null;
+          return;
+        }
+
+        // Remove preview
+        if (bendPreviewRef.current) {
+          canvas.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+          bendPreviewRef.current = null;
+        }
+
+        const { segmentIndex, segment } = bendStateRef.current;
+        const center = bendCenterRef.current;
+        bendStateRef.current = null;
+        bendCenterRef.current = null;
+
+        // Generate the arc and replace the straight segment at the known index
+        const arc = generateBend(segment, center);
+        setSegments((prev) => {
+          // Verify the segment still exists at this index
+          const existing = prev[segmentIndex];
+          if (
+            !existing ||
+            'center' in existing ||
+            existing.from.row !== segment.from.row ||
+            existing.from.col !== segment.from.col ||
+            existing.to.row !== segment.to.row ||
+            existing.to.col !== segment.to.col
+          ) {
+            return prev;
+          }
+          const next = [...prev];
+          next[segmentIndex] = arc;
+          return next;
+        });
+
+        canvas.renderAll();
+      }
+
       function onDoubleClick() {
         // End freedraw chain on double-click
         if (activeMode === 'freedraw') {
@@ -371,10 +478,14 @@ export function useBlockBuilder({
       }
 
       canvas.on('mouse:down', onMouseDown as never);
+      canvas.on('mouse:move', onMouseMove as never);
+      canvas.on('mouse:up', onMouseUp as never);
       canvas.on('mouse:dblclick', onDoubleClick as never);
 
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
+        canvas.off('mouse:move', onMouseMove as never);
+        canvas.off('mouse:up', onMouseUp as never);
         canvas.off('mouse:dblclick', onDoubleClick as never);
       };
     })().catch(() => {

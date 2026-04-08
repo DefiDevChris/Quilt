@@ -28,7 +28,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useYardageCalculation } from '@/hooks/useYardageCalculation';
-import { usePhotoLayoutImport } from '@/hooks/usePhotoLayoutImport';
+import { usePhotoPatternImport } from '@/hooks/usePhotoLayoutImport';
 import { saveProject } from '@/lib/save-project';
 
 interface StudioLayoutProps {
@@ -96,7 +96,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
   // Mount supporting hooks
   useYardageCalculation();
-  usePhotoLayoutImport();
+  usePhotoPatternImport();
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();

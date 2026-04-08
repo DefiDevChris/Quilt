@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useToast } from '@/components/ui/ToastProvider';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
@@ -121,7 +120,6 @@ export function useFabricLayout() {
 export function useFabricDrop() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const { applyFabricToObject } = useFabricLayout();
-  const { toast } = useToast();
   const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
 
   const handleFabricDragStart = useCallback((e: React.DragEvent, fabricId: string) => {
@@ -222,14 +220,12 @@ export function useFabricDrop() {
       const foundTarget = canvas.findTarget(e.nativeEvent);
       if (!foundTarget) {
         clearHighlight();
-        toast({ type: 'error', title: 'Invalid drop', description: 'Fabrics can only be applied to sashing, borders, binding, or edging' });
         return;
       }
 
       const areaObj = foundTarget as Record<string, unknown>;
       if (!areaObj['_fenceElement'] || !ALLOWED_ROLES.includes(areaObj['_fenceRole'] as typeof ALLOWED_ROLES[number])) {
         clearHighlight();
-        toast({ type: 'error', title: 'Invalid drop', description: 'Fabrics can only be applied to sashing, borders, binding, or edging' });
         return;
       }
 
@@ -238,12 +234,8 @@ export function useFabricDrop() {
       saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
       clearHighlight();
     },
-    [fabricCanvas, applyFabricToObject, clearHighlight, toast]
+    [fabricCanvas, applyFabricToObject, clearHighlight]
   );
 
   return { handleFabricDragStart, handleFabricDragOver, handleFabricDrop };
-}
-
-export function useFabricPattern() {
-  return useFabricLayout();
 }

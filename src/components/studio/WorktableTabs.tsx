@@ -6,6 +6,29 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import type { BorderConfig } from '@/lib/layout-utils';
 
 /**
+ * Restore a layout snapshot from a worktable tab into the layoutStore.
+ * Shared by handleCloseTab and handleSwitchTab.
+ */
+function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
+  if (!ls) return;
+  const store = useLayoutStore.getState();
+  store.setLayoutType(ls.layoutType as never);
+  store.setRows(ls.rows);
+  store.setCols(ls.cols);
+  store.setBlockSize(ls.blockSize);
+  store.setSashing({
+    width: ls.sashingWidth,
+    color: '#E8E2D8',
+    fabricId: null,
+  });
+  store.setBorders(ls.borders as BorderConfig[]);
+  store.setBindingWidth(ls.bindingWidth);
+  if (ls.selectedPresetId) {
+    store.setSelectedPreset(ls.selectedPresetId);
+  }
+}
+
+/**
  * Worktable tab bar shown above the canvas.
  * Each tab represents a layout + blocks + fabrics combination.
  * Changing layout creates a new tab; closing a tab restores its layout
@@ -41,22 +64,7 @@ export function WorktableTabs() {
       // If this is the active tab, restore its layout snapshot
       // before removing it
       if (tabId === activeWorktableId && tab.layoutSnapshot) {
-        const ls = tab.layoutSnapshot;
-        const store = useLayoutStore.getState();
-        store.setLayoutType(ls.layoutType as never);
-        store.setRows(ls.rows);
-        store.setCols(ls.cols);
-        store.setBlockSize(ls.blockSize);
-        store.setSashing({
-          width: ls.sashingWidth,
-          color: '#E8E2D8',
-          fabricId: null,
-        });
-        store.setBorders(ls.borders as BorderConfig[]);
-        store.setBindingWidth(ls.bindingWidth);
-        if (ls.selectedPresetId) {
-          store.setSelectedPreset(ls.selectedPresetId);
-        }
+        restoreLayoutSnapshot(tab.layoutSnapshot);
       }
 
       removeWorktableTab(tabId);
@@ -71,24 +79,9 @@ export function WorktableTabs() {
       if (!tab) return;
 
       // Restore the layout snapshot from the tab
-      if (tab.layoutSnapshot) {
-        const ls = tab.layoutSnapshot;
-        const store = useLayoutStore.getState();
-        store.setLayoutType(ls.layoutType as never);
-        store.setRows(ls.rows);
-        store.setCols(ls.cols);
-        store.setBlockSize(ls.blockSize);
-        store.setSashing({
-          width: ls.sashingWidth,
-          color: '#E8E2D8',
-          fabricId: null,
-        });
-        store.setBorders(ls.borders as BorderConfig[]);
-        store.setBindingWidth(ls.bindingWidth);
-        if (ls.selectedPresetId) {
-          store.setSelectedPreset(ls.selectedPresetId);
-        }
-      } else {
+      restoreLayoutSnapshot(tab.layoutSnapshot);
+
+      if (!tab.layoutSnapshot) {
         // No layout = free-draw mode, clear layout
         useLayoutStore.getState().setLayoutType('none');
       }

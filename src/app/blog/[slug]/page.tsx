@@ -63,13 +63,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* Full-bleed hero image */}
       {post.featuredImageUrl && (
         <div className="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
-          <img
-            src={post.featuredImageUrl}
-            alt={post.title}
-            className="w-full h-full object-cover"
-          />
+          <div className="absolute inset-0">
+            <img
+              src={post.featuredImageUrl}
+              alt={post.title}
+              className="w-[130%] h-full object-cover"
+              style={{ objectPosition: '20% 50%' }}
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-surface/30 to-surface/80" />
         </div>
       )}
 
@@ -96,10 +99,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <time className="text-[10px] uppercase tracking-[0.15em] text-warm-text-muted">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
                 : ''}
             </time>
           </div>
