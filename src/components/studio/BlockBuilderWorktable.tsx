@@ -32,6 +32,7 @@ export interface DraftTabProps {
 }
 
 const DEFAULT_CELL_SIZE = 1;
+const DEFAULT_CANVAS_SIZE = 400;
 
 interface BlockBuilderWorktableProps {
   onDone: () => void;
@@ -57,26 +58,9 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
-  const [canvasSize, setCanvasSize] = useState(400);
+  const canvasSize = DEFAULT_CANVAS_SIZE;
 
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
-
-  // Responsive canvas sizing
-  useEffect(() => {
-    const container = canvasContainerRef.current;
-    if (!container) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        const size = Math.min(width, height) - 32;
-        setCanvasSize(Math.max(200, Math.min(size, 600)));
-      }
-    });
-
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
 
   // Compute grid dimensions
   const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));

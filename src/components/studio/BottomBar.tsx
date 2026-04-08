@@ -11,7 +11,7 @@ export function BottomBar() {
 
   return (
     <div className="h-7 bg-surface flex items-center justify-between px-4 font-mono text-body-sm text-secondary">
-      {/* Left side */}
+      {/* Left side - cursor position */}
       <div className="flex items-center gap-[2.75rem]">
         <span>
           Mouse H: {formatMeasurement(cursorPosition.x, unitSystem)} V:{' '}
@@ -24,7 +24,7 @@ export function BottomBar() {
         )}
       </div>
 
-      {/* Right side */}
+      {/* Right side - snap settings */}
       <div className="flex items-center gap-[2.75rem]">
         <span className={gridSettings.snapToGrid ? 'text-success' : 'text-secondary'}>
           Snap to Grid: {gridSettings.snapToGrid ? 'ON' : 'OFF'}

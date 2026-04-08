@@ -30,9 +30,8 @@ function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
 
 /**
  * Worktable tab bar shown above the canvas.
- * Each tab represents a layout + blocks + fabrics combination.
- * Changing layout creates a new tab; closing a tab restores its layout
- * snapshot to the layoutStore.
+ * Shows mode tabs (Quilt, Block Builder, Layout Creator) and quilt worktable tabs when in quilt mode.
+ * Each tab preserves its pan/zoom position when switching between tabs.
  */
 export function WorktableTabs() {
   const worktableTabs = useCanvasStore((s) => s.worktableTabs);
@@ -92,33 +91,75 @@ export function WorktableTabs() {
     [worktableTabs, setActiveWorktableId, setActiveWorktable]
   );
 
-  if (activeWorktable === 'block-builder' || activeWorktable === 'layout-creator') {
-    return null;
-  }
+  const handleSwitchMode = useCallback(
+    (mode: 'quilt' | 'block-builder' | 'layout-creator') => {
+      setActiveWorktable(mode);
+      if (mode === 'quilt' && worktableTabs.length > 0) {
+        // Switch to the first quilt tab if available
+        const firstTab = worktableTabs[0];
+        handleSwitchTab(firstTab.id);
+      }
+    },
+    [setActiveWorktable, worktableTabs, handleSwitchTab]
+  );
+
+  const modeTabs = [
+    { id: 'quilt', label: 'Quilt' },
+    { id: 'block-builder', label: 'Block Builder' },
+    { id: 'layout-creator', label: 'Layout Creator' },
+  ] as const;
 
   return (
-    <div className="flex items-center gap-1 px-3 py-1.5 bg-surface-container/30 border-b border-outline-variant/15 overflow-x-auto">
-      {worktableTabs.map((tab) => (
-        <WorktableTabItem
-          key={tab.id}
-          tab={tab}
-          isActive={tab.id === activeWorktableId}
-          onSwitch={() => handleSwitchTab(tab.id)}
-          onClose={() => handleCloseTab(tab.id)}
-        />
-      ))}
+    <div>
+      {/* Mode tabs */}
+      <div className="flex items-center gap-1 px-3 py-1.5 bg-surface-container/30 border-b border-outline-variant/15">
+        {modeTabs.map((mode) => (
+          <button
+            key={mode.id}
+            type="button"
+            onClick={() => handleSwitchMode(mode.id)}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              activeWorktable === mode.id
+                ? 'bg-primary/10 text-primary border border-primary/20'
+                : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
+            }`}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
 
-      <button
-        type="button"
-        onClick={handleAddTab}
-        className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
-        title="Add new worktable"
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M6 2V10M2 6H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-        <span className="text-[10px] font-medium">New Worktable</span>
-      </button>
+      {/* Quilt worktable tabs */}
+      {activeWorktable === 'quilt' && (
+        <div className="flex items-center gap-1 px-3 py-1.5 bg-surface-container/30 border-b border-outline-variant/15 overflow-x-auto">
+          {worktableTabs.map((tab) => (
+            <WorktableTabItem
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeWorktableId}
+              onSwitch={() => handleSwitchTab(tab.id)}
+              onClose={() => handleCloseTab(tab.id)}
+            />
+          ))}
+
+          <button
+            type="button"
+            onClick={handleAddTab}
+            className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+            title="Add new worktable"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M6 2V10M2 6H10"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+            <span className="text-[10px] font-medium">New Worktable</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -140,10 +181,11 @@ function WorktableTabItem({
 
   return (
     <div
-      className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${isActive
-        ? 'bg-primary/10 text-primary border border-primary/20'
-        : 'bg-white/40 text-on-surface/60 border border-transparent hover:bg-surface-container'
-        }`}
+      className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+        isActive
+          ? 'bg-primary/10 text-primary border border-primary/20'
+          : 'bg-white/40 text-on-surface/60 border border-transparent hover:bg-surface-container'
+      }`}
       onClick={onSwitch}
     >
       <span className="truncate max-w-[140px]">{layoutLabel}</span>
@@ -157,7 +199,12 @@ function WorktableTabItem({
         aria-label={`Close ${tab.name}`}
       >
         <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-          <path d="M1 1L7 7M7 1L1 7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          <path
+            d="M1 1L7 7M7 1L1 7"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+          />
         </svg>
       </button>
     </div>
