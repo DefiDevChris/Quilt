@@ -13,7 +13,7 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
+import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import type { PaperSize } from './pdf-generator';
 import type { UnitSystem } from '@/types/canvas';
 import type { BlockSnapshot, PieceSnapshot } from './canvas-snapshot';
@@ -28,6 +28,7 @@ import {
   drawFullCoverPage,
   drawContentPageHeader,
   drawTable,
+  createPdfDocument,
   drawBrandedFooter,
   drawValidationSquare,
   drawGrainLine,
@@ -87,10 +88,8 @@ export async function generateProjectPdf(config: ProjectPdfConfig): Promise<Uint
   const pageH = pageDims.height * pts;
   const margin = pageDims.margin;
 
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fonts = { titleFont: boldFont, bodyFont: font };
+  const { pdfDoc, fonts: pdfFonts } = await createPdfDocument();
+  const fonts = { titleFont: pdfFonts.bold, bodyFont: pdfFonts.regular };
 
   // Embed assets
   const logoImage = await embedLogo(pdfDoc, config.logoPngBytes);
@@ -122,8 +121,8 @@ export async function generateProjectPdf(config: ProjectPdfConfig): Promise<Uint
   const coverPage = addPage();
   drawFullCoverPage(coverPage, {
     branding,
-    titleFont: boldFont,
-    bodyFont: font,
+    titleFont: fonts.titleFont,
+    bodyFont: fonts.bodyFont,
     projectName: config.projectName,
     quiltSize,
     date: config.date,
@@ -159,7 +158,7 @@ export async function generateProjectPdf(config: ProjectPdfConfig): Promise<Uint
 
   const totalPages = pages.length;
   for (let i = 0; i < totalPages; i++) {
-    drawBrandedFooter(pages[i], font, i + 1, totalPages, margin);
+    drawBrandedFooter(pages[i], fonts.bodyFont, i + 1, totalPages, margin);
   }
 
   return pdfDoc.save();

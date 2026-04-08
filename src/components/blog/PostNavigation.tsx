@@ -47,7 +47,7 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                 </div>
                 <h3
                   className="text-2xl md:text-3xl text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
-                  style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+                  style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {prev.title}
                 </h3>
@@ -75,7 +75,7 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                 </div>
                 <h3
                   className="text-2xl md:text-3xl text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
-                  style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+                  style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {next.title}
                 </h3>
