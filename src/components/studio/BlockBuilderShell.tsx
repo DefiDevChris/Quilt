@@ -56,11 +56,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       if (cancelled) return;
       if (!canvasEl) return;
 
-      const { width: elW, height: elH } = canvasEl.getBoundingClientRect();
-      const size = Math.min(elW, elH, canvasPx);
       const fabricCanvas = new fabric.Canvas(canvasEl, {
-        width: size,
-        height: size,
         backgroundColor: '#F0EDE8',
         selection: true,
         preserveObjectStacking: true,
@@ -223,9 +219,6 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       });
 
       const ro = new ResizeObserver(() => {
-        const { width: w, height: h } = canvasEl.getBoundingClientRect();
-        const size = Math.min(w, h, canvasPx);
-        fabricCanvas.setDimensions({ width: size, height: size });
         fabricCanvas.renderAll();
       });
       ro.observe(canvasEl);
@@ -362,8 +355,8 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
           onClick={() => setActiveTool('pan')}
           icon={
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M8 12V4C8 3.4 8.4 3 9 3C9.6 3 10 3.4 10 4V8H12V5C12 4.4 12.4 4 13 4C13.6 4 14 4.4 14 5V10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <path d="M14 10V6C14 5.4 14.4 5 15 5C15.6 5 16 5.4 16 6V12C16 14.2 14.2 16 12 16H8C4.7 16 2 13.3 2 10V8C2 7.4 2.4 7 3 7C3.6 7 4 7.4 4 8V10" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+              <path d="M10 3V7M10 13V17M3 10H7M13 10H17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M10 3L7.5 5.5M10 3L12.5 5.5M10 17L7.5 14.5M10 17L12.5 14.5M3 10L5.5 7.5M3 10L5.5 12.5M17 10L14.5 7.5M17 10L14.5 12.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           }
           label="Pan"
@@ -428,7 +421,12 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
             className="relative rounded-lg overflow-hidden shadow-elevation-2 border border-outline-variant/30"
             style={{ width: canvasPx, height: canvasPx }}
           >
-            <canvas ref={canvasElRef} className="block" />
+            <canvas
+              ref={canvasElRef}
+              width={canvasPx}
+              height={canvasPx}
+              className="block"
+            />
           </div>
         </div>
 
