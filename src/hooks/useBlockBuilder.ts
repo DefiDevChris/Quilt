@@ -13,6 +13,7 @@ import {
 import {
   generateTriangle,
   generateRectangle,
+  generateBend,
   pixelToGridCell,
   isValidCell,
   findNearestSegment,
@@ -76,6 +77,13 @@ export function useBlockBuilder({
   segmentsRef.current = segments;
   const startPointRef = useRef<{ row: number; col: number } | null>(null);
   const previewRef = useRef<unknown>(null);
+
+  // Bend tool state
+  const bendStateRef = useRef<{
+    segmentIndex: number;
+    segment: Segment;
+  } | null>(null);
+  const bendPreviewRef = useRef<unknown>(null);
 
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
 

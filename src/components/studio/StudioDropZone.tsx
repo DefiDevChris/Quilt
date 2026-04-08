@@ -28,10 +28,8 @@ interface StudioDropZoneProps {
  * of truth and layouts adapt to fit inside it.
  */
 export function StudioDropZone({ project }: StudioDropZoneProps) {
-  const { handleDragStart: _handleBlockDragStart, handleDragOver, handleDrop } = useBlockDrop();
+  const { handleDragOver, handleDrop } = useBlockDrop();
   const { handleFabricDragOver, handleFabricDrop } = useFabricDrop();
-
-  void _handleBlockDragStart;
 
   const combinedDragOver = useCallback(
     async (e: React.DragEvent) => {

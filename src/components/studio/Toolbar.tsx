@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useCanvasStore, type ToolType, type WorktableType } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
 import {
   useQuiltTools,
-  useBlockTools,
-  useLayoutCreatorTools,
   type ToolbarCallbacks,
 } from './ToolbarConfig';
 
@@ -121,18 +119,9 @@ export function Toolbar({
     onNewBlock,
   };
 
-  const quiltTools = useQuiltTools(callbacks);
-  const blockTools = useBlockTools();
+  const tools = useQuiltTools(callbacks);
 
   if (activeWorktable === 'block-builder' || activeWorktable === 'layout-creator') return null;
-
-  const TOOLS_MAP: Record<WorktableType, ToolDef[]> = {
-    quilt: quiltTools,
-    'block-builder': [],
-    'layout-creator': [],
-  };
-
-  const tools = TOOLS_MAP[activeWorktable];
 
   // Split tools by tier (only quilt worktable uses tiers)
   const hasTiers = tools.some((t) => t.tier);
