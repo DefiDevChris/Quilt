@@ -11,12 +11,10 @@ import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
-import { LayoutOverlayPanel } from '@/components/studio/LayoutOverlayPanel';
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
 import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
 import { ResizeDialog } from '@/components/studio/ResizeDialog';
-import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
 
@@ -35,10 +33,8 @@ interface StudioDialogsApi {
   openHistory: () => void;
   openGridDimensions: () => void;
   openLayoutSettings: () => void;
-  openLayoutOverlay: () => void;
   openPhotoToDesign: () => void;
   openResize: () => void;
-  openReferenceImage: () => void;
   openPhotoBlockUpload: () => void;
   openFabricUpload: () => void;
 
@@ -67,13 +63,11 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   const [isPhotoBlockUploadOpen, setIsPhotoBlockUploadOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
-  const [isLayoutOverlayOpen, setIsLayoutOverlayOpen] = useState(false);
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
   const [isPhotoPromoOpen, setIsPhotoPromoOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
-  const [isReferenceImageOpen, setIsReferenceImageOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Pro upgrade prompt state
@@ -84,8 +78,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     setProUpgradeFeature(feature);
   }, []);
 
-  // Open quilt-dimensions docks the inspector default panel — for now, this
-  // also clears selection so the right pane shows the dimensions controls.
+  // Open quilt-dimensions clears selection so the default panel shows dimensions controls.
   const openGridDimensions = useCallback(() => {
     useCanvasStore.getState().setSelectedObjectIds([]);
     const canvas = useCanvasStore.getState().fabricCanvas;
@@ -142,10 +135,8 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     openHistory: () => setIsHistoryOpen(true),
     openGridDimensions,
     openLayoutSettings: () => setIsLayoutSettingsOpen(true),
-    openLayoutOverlay: () => setIsLayoutOverlayOpen(true),
     openPhotoToDesign: () => setIsPhotoPromoOpen(true),
     openResize: () => setIsResizeOpen(true),
-    openReferenceImage: () => setIsReferenceImageOpen(true),
     openPhotoBlockUpload,
     openFabricUpload,
     promptUpgrade,
@@ -189,9 +180,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
           {isLayoutSettingsOpen && (
             <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
           )}
-          {isLayoutOverlayOpen && (
-            <LayoutOverlayPanel onClose={() => setIsLayoutOverlayOpen(false)} />
-          )}
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
             isOpen={isImageExportOpen}
@@ -205,10 +193,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
 
       {/* ── Always-available dialogs ──────────────────────────── */}
       <ResizeDialog isOpen={isResizeOpen} onClose={() => setIsResizeOpen(false)} />
-      <ReferenceImageDialog
-        isOpen={isReferenceImageOpen}
-        onClose={() => setIsReferenceImageOpen(false)}
-      />
       <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
       <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
 

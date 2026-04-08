@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { SectionTitle } from '@/components/ui/SectionTitle';
 
 export default function AdminLibrariesPage() {
   const [activeTab, setActiveTab] = useState<'fabrics' | 'blocks' | 'shop'>('fabrics');
 
   return (
     <div className="space-y-6">
-      <SectionTitle>System Libraries</SectionTitle>
       <p className="text-secondary text-sm">Manage global system content available to all users.</p>
 
       <div className="flex border-b border-outline-variant">

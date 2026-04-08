@@ -4,16 +4,12 @@ import { useRef } from 'react';
 import type { Project } from '@/types/project';
 import { useCanvasInit } from '@/hooks/useCanvasInit';
 import { useDrawingTool } from '@/hooks/useDrawingTool';
-import { useBlockBuilderCanvas } from '@/hooks/useBlockBuilderCanvas';
 import { usePolygonTool } from '@/hooks/usePolygonTool';
-import { useCurveEdit } from '@/hooks/useCurveEdit';
-import { useEdgeBendTool } from '@/hooks/useEdgeBendTool';
 import { useCanvasZoomPan } from '@/hooks/useCanvasZoomPan';
 import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
-import { useLayoutRenderer } from '@/hooks/useLayoutRenderer';
-import { useColorThemeTool } from '@/hooks/useColorThemeTool';
+import { useFenceRenderer } from '@/hooks/useFenceRenderer';
 
 interface CanvasWorkspaceProps {
   project: Project;
@@ -26,14 +22,10 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
 
   useCanvasInit(fabricCanvasRef, gridCanvasRef, containerRef, project);
   useDrawingTool();
-  useBlockBuilderCanvas();
   usePolygonTool();
-  useCurveEdit();
-  useEdgeBendTool();
   useCanvasZoomPan();
   useCanvasKeyboard();
-  useLayoutRenderer();
-  useColorThemeTool();
+  useFenceRenderer();
   useAutoSave();
   useBeforeUnload();
 

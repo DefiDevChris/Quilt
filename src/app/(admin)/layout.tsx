@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/cognito-session';
-import PublicNav from '@/components/landing/PublicNav';
-import Footer from '@/components/landing/Footer';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -14,11 +12,5 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/dashboard');
   }
 
-  return (
-    <>
-      <PublicNav />
-      <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
-      <Footer />
-    </>
-  );
+  return <>{children}</>;
 }

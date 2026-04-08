@@ -1,6 +1,6 @@
 'use client';
 
-export type BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'curve' | 'bend';
+export type BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle';
 
 interface BlockBuilderToolbarProps {
   activeMode: BlockBuilderMode;
@@ -14,8 +14,6 @@ const TOOLS: { id: BlockBuilderMode; label: string; icon: string }[] = [
   { id: 'freedraw', label: 'Freedraw', icon: '\u270E' },
   { id: 'rectangle', label: 'Rectangle', icon: '\u25AD' },
   { id: 'triangle', label: 'Triangle', icon: '\u25E3' },
-  { id: 'curve', label: 'Curve', icon: '\u25E0' },
-  { id: 'bend', label: 'Bend', icon: '\u2934' },
 ];
 
 export function BlockBuilderToolbar({

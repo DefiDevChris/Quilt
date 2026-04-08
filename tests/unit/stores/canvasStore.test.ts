@@ -49,9 +49,9 @@ describe('canvasStore', () => {
       expect(useCanvasStore.getState().activeTool).toBe('rectangle');
     });
 
-    it('sets curve tool', () => {
-      useCanvasStore.getState().setActiveTool('curve');
-      expect(useCanvasStore.getState().activeTool).toBe('curve');
+    it('sets polygon tool', () => {
+      useCanvasStore.getState().setActiveTool('polygon');
+      expect(useCanvasStore.getState().activeTool).toBe('polygon');
     });
 
     it('setActiveTool saves previous tool settings', () => {
@@ -198,34 +198,27 @@ describe('canvasStore', () => {
     });
 
     it('loadToolSettings uses defaults when no settings saved', () => {
-      useCanvasStore.getState().loadToolSettings('eyedropper');
+      useCanvasStore.getState().loadToolSettings('polygon');
       expect(useCanvasStore.getState().fillColor).toBe(DEFAULT_FILL_COLOR);
       expect(useCanvasStore.getState().strokeColor).toBe(DEFAULT_STROKE_COLOR);
       expect(useCanvasStore.getState().strokeWidth).toBe(1);
     });
   });
 
-  describe('extended ToolType', () => {
-    const newToolTypes: ToolType[] = ['easydraw', 'text', 'eyedropper', 'spraycan'];
+  describe('tool type validation', () => {
+    const toolTypes: ToolType[] = [
+      'select',
+      'pan',
+      'rectangle',
+      'circle',
+      'triangle',
+      'polygon',
+      'easydraw',
+    ];
 
-    it.each(newToolTypes)('accepts new tool type: %s', (toolType) => {
+    it.each(toolTypes)('accepts tool type: %s', (toolType) => {
       useCanvasStore.getState().setActiveTool(toolType);
       expect(useCanvasStore.getState().activeTool).toBe(toolType);
-    });
-
-    it('still accepts existing tool types', () => {
-      const existingTools: ToolType[] = [
-        'select',
-        'rectangle',
-        'triangle',
-        'polygon',
-        'line',
-        'curve',
-      ];
-      for (const tool of existingTools) {
-        useCanvasStore.getState().setActiveTool(tool);
-        expect(useCanvasStore.getState().activeTool).toBe(tool);
-      }
     });
   });
 
@@ -269,33 +262,6 @@ describe('canvasStore', () => {
     });
   });
 
-  describe('activeColorwayTool', () => {
-    it('defaults to null', () => {
-      expect(useCanvasStore.getState().activeColorwayTool).toBeNull();
-    });
-
-    it('can be set to spraycan', () => {
-      useCanvasStore.getState().setActiveColorwayTool('spraycan');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('spraycan');
-    });
-
-    it('can be set to swap', () => {
-      useCanvasStore.getState().setActiveColorwayTool('swap');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('swap');
-    });
-
-    it('can be set to randomize', () => {
-      useCanvasStore.getState().setActiveColorwayTool('randomize');
-      expect(useCanvasStore.getState().activeColorwayTool).toBe('randomize');
-    });
-
-    it('can be cleared to null', () => {
-      useCanvasStore.getState().setActiveColorwayTool('spraycan');
-      useCanvasStore.getState().setActiveColorwayTool(null);
-      expect(useCanvasStore.getState().activeColorwayTool).toBeNull();
-    });
-  });
-
   describe('viewport and other settings', () => {
     it('setViewportLocked sets isViewportLocked', () => {
       useCanvasStore.getState().setViewportLocked(false);
@@ -325,10 +291,10 @@ describe('canvasStore', () => {
     });
 
     it('setActiveWorktable sets active worktable', () => {
-      useCanvasStore.getState().setActiveWorktable('block');
-      expect(useCanvasStore.getState().activeWorktable).toBe('block');
-      useCanvasStore.getState().setActiveWorktable('print');
-      expect(useCanvasStore.getState().activeWorktable).toBe('print');
+      useCanvasStore.getState().setActiveWorktable('block-builder');
+      expect(useCanvasStore.getState().activeWorktable).toBe('block-builder');
+      useCanvasStore.getState().setActiveWorktable('layout-creator');
+      expect(useCanvasStore.getState().activeWorktable).toBe('layout-creator');
     });
 
     it('reset restores initial state', () => {

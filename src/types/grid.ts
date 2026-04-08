@@ -11,7 +11,6 @@ export interface GridSettings {
 
 export interface CanvasGridSettings extends GridSettings {
   snapToNodes?: boolean;
-  showBlockGrid?: boolean;
 }
 
 export interface PatternGridSettings extends GridSettings {

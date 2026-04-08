@@ -97,38 +97,21 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
   });
 
   describe('Block Worktable Toolbar Preservation (Requirement 4.3)', () => {
-    it('should display tools in single-column layout for block worktable', () => {
-      // Arrange: Set active worktable to 'block'
-      useCanvasStore.setState({ activeWorktable: 'block' });
+    it('should render null toolbar for block-builder worktable', () => {
+      // Arrange: Set active worktable to 'block-builder'
+      useCanvasStore.setState({ activeWorktable: 'block-builder' });
 
       // Act: Render toolbar
       const { container } = render(<Toolbar />);
 
-      // Assert: Should NOT have 2-column grid containers
-      const twoColumnGrids = container.querySelectorAll('.grid.grid-cols-2');
-      expect(twoColumnGrids.length).toBe(0);
-
-      // Assert: Should have single-column layout (flex-col)
-      const singleColumnContainers = container.querySelectorAll('.flex.flex-col');
-      expect(singleColumnContainers.length).toBeGreaterThan(0);
+      // Assert: Toolbar renders nothing (BlockBuilderWorktable has its own toolbar)
+      expect(container.firstChild).toBeNull();
     });
 
-    it('should maintain single-column structure across all tool groups in block worktable', () => {
-      // Arrange: Set active worktable to 'block'
-      useCanvasStore.setState({ activeWorktable: 'block' });
-
-      // Act: Render toolbar
+    it('should render null toolbar for layout-creator worktable', () => {
+      useCanvasStore.setState({ activeWorktable: 'layout-creator' });
       const { container } = render(<Toolbar />);
-
-      // Assert: All tool buttons should be in single-column layout
-      const toolButtons = container.querySelectorAll('button[aria-label]');
-
-      // Verify we have tools rendered
-      expect(toolButtons.length).toBeGreaterThan(0);
-
-      // The parent container should use flex-col, not grid-cols-2
-      const flexColContainers = container.querySelectorAll('.flex.flex-col');
-      expect(flexColContainers.length).toBeGreaterThan(0);
+      expect(container.firstChild).toBeNull();
     });
   });
 

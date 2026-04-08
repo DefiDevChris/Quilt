@@ -1,15 +1,15 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useToast } from '@/components/ui/ToastProvider';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
- * Uses dynamic import for SSR safety.
  */
 export function useFabricLayout() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -21,7 +21,6 @@ export function useFabricLayout() {
       const fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
-      // Find target object — either by ID or use active selection
       let target: InstanceType<typeof fabric.FabricObject> | null = null;
       if (objectId) {
         target =
@@ -38,15 +37,11 @@ export function useFabricLayout() {
 
       try {
         const img = await loadImage(imageUrl);
-        const pattern = new fabric.Pattern({
-          source: img,
-          repeat: 'repeat',
-        });
+        const pattern = new fabric.Pattern({ source: img, repeat: 'repeat' });
 
         target.set('fill', pattern);
         canvas.renderAll();
 
-        // Push undo state
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);
       } catch {
@@ -68,17 +63,11 @@ export function useFabricLayout() {
       const fill = active.get('fill');
       if (!fill || typeof fill === 'string') return;
 
-      // Global pattern transform
       const rad = (rotation * Math.PI) / 180;
       const cos = Math.cos(rad) * scaleX;
       const sin = Math.sin(rad) * scaleY;
       const patternTransform: [number, number, number, number, number, number] = [
-        cos,
-        sin,
-        -sin,
-        cos,
-        offsetX,
-        offsetY,
+        cos, sin, -sin, cos, offsetX, offsetY,
       ];
 
       (fill as InstanceType<typeof fabric.Pattern>).patternTransform = patternTransform;
@@ -102,7 +91,6 @@ export function useFabricLayout() {
     const pattern = fill as InstanceType<typeof fabric.Pattern>;
     const transform = pattern.patternTransform ?? [1, 0, 0, 1, 0, 0];
 
-    // Extract scale and rotation from transform matrix
     const a = transform[0];
     const b = transform[1];
     const extractedRotation = Math.atan2(b, a) * (180 / Math.PI);
@@ -128,23 +116,97 @@ export function useFabricLayout() {
 
 /**
  * Hook for drag-from-library-to-shape fabric application.
- * Similar to useBlockDrop but applies fabric pattern fills.
+ * Fence-enforced: fabrics can ONLY drop into sashing/cornerstone/border/binding/edging areas.
  */
 export function useFabricDrop() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const { applyFabricToObject } = useFabricLayout();
+  const { toast } = useToast();
+  const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
 
   const handleFabricDragStart = useCallback((e: React.DragEvent, fabricId: string) => {
     e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  const handleFabricDragOver = useCallback((e: React.DragEvent) => {
-    const hasFabricData = e.dataTransfer.types.includes('application/quiltcorgi-fabric-id');
-    if (!hasFabricData) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  }, []);
+  const clearHighlight = useCallback(() => {
+    if (!highlightRectRef.current || !fabricCanvas) return;
+    const canvas = fabricCanvas as unknown as {
+      remove: (...objs: unknown[]) => void;
+      requestRenderAll: () => void;
+    };
+    canvas.remove(highlightRectRef.current);
+    canvas.requestRenderAll();
+    highlightRectRef.current = null;
+  }, [fabricCanvas]);
+
+  const showFabricHighlight = useCallback(
+    async (target: unknown) => {
+      if (!fabricCanvas || !target) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as unknown as {
+        add: (...objs: unknown[]) => void;
+        bringObjectToFront: (obj: unknown) => void;
+        requestRenderAll: () => void;
+      };
+
+      clearHighlight();
+
+      const fabricObj = target as unknown as import('fabric').FabricObject;
+      const x = fabricObj.left ?? 0;
+      const y = fabricObj.top ?? 0;
+      const w = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
+      const h = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
+
+      const rect = new fabric.Rect({
+        left: x,
+        top: y,
+        width: w,
+        height: h,
+        fill: 'rgba(16, 185, 129, 0.08)',
+        stroke: '#10B981',
+        strokeWidth: 2,
+        strokeDashArray: [6, 4],
+        selectable: false,
+        evented: false,
+        hasControls: false,
+        hasBorders: false,
+      });
+
+      (rect as unknown as Record<string, unknown>)['_dragHighlight'] = true;
+      highlightRectRef.current = rect as unknown as import('fabric').FabricObject;
+      canvas.add(rect as unknown as import('fabric').FabricObject);
+      canvas.bringObjectToFront(rect as unknown as import('fabric').FabricObject);
+      canvas.requestRenderAll();
+    },
+    [fabricCanvas, clearHighlight]
+  );
+
+  const ALLOWED_ROLES = ['sashing', 'cornerstone', 'border', 'binding', 'edging'] as const;
+
+  const handleFabricDragOver = useCallback(
+    async (e: React.DragEvent) => {
+      const hasFabricData = e.dataTransfer.types.includes('application/quiltcorgi-fabric-id');
+      if (!hasFabricData) return;
+      e.preventDefault();
+
+      if (fabricCanvas) {
+        const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
+        const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
+        if (foundTarget) {
+          const areaObj = foundTarget as Record<string, unknown>;
+          if (areaObj['_fenceElement'] && ALLOWED_ROLES.includes(areaObj['_fenceRole'] as typeof ALLOWED_ROLES[number])) {
+            e.dataTransfer.dropEffect = 'copy';
+            await showFabricHighlight(foundTarget);
+            return;
+          }
+        }
+      }
+      e.dataTransfer.dropEffect = 'none';
+      clearHighlight();
+    },
+    [fabricCanvas, showFabricHighlight, clearHighlight]
+  );
 
   const handleFabricDrop = useCallback(
     async (e: React.DragEvent) => {
@@ -158,22 +220,25 @@ export function useFabricDrop() {
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       const foundTarget = canvas.findTarget(e.nativeEvent);
-      if (!foundTarget) return;
+      if (!foundTarget) {
+        clearHighlight();
+        toast({ type: 'error', title: 'Invalid drop', description: 'Fabrics can only be applied to sashing, borders, binding, or edging' });
+        return;
+      }
 
       const areaObj = foundTarget as Record<string, unknown>;
-      const role = areaObj['_layoutAreaRole'] as string | undefined;
-
-      // Only allow fabric drops on sashing, cornerstone, border, binding, or edging areas
-      const allowedRoles = ['sashing', 'cornerstone', 'border', 'binding', 'edging'];
-      if (!areaObj['_layoutRendererElement'] || !role || !allowedRoles.includes(role)) {
+      if (!areaObj['_fenceElement'] || !ALLOWED_ROLES.includes(areaObj['_fenceRole'] as typeof ALLOWED_ROLES[number])) {
+        clearHighlight();
+        toast({ type: 'error', title: 'Invalid drop', description: 'Fabrics can only be applied to sashing, borders, binding, or edging' });
         return;
       }
 
       canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
       await applyFabricToObject(null, imageUrl);
       saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
+      clearHighlight();
     },
-    [fabricCanvas, applyFabricToObject]
+    [fabricCanvas, applyFabricToObject, clearHighlight, toast]
   );
 
   return { handleFabricDragStart, handleFabricDragOver, handleFabricDrop };

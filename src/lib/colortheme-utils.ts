@@ -54,30 +54,6 @@ export function normalizeColor(hex: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// spraycanRecolor
-// ---------------------------------------------------------------------------
-
-/**
- * Return a ColorChange for every patch whose normalized currentFill matches
- * the normalized targetFill.
- */
-export function spraycanRecolor(
-  patches: PatchColor[],
-  targetFill: string,
-  newFill: string
-): ColorChange[] {
-  const normalizedTarget = normalizeColor(targetFill);
-  const normalizedNew = normalizeColor(newFill);
-
-  return patches.reduce<ColorChange[]>((acc, patch) => {
-    if (normalizeColor(patch.currentFill) === normalizedTarget) {
-      return [...acc, { objectId: patch.objectId, newFill: normalizedNew }];
-    }
-    return acc;
-  }, []);
-}
-
-// ---------------------------------------------------------------------------
 // swapColors
 // ---------------------------------------------------------------------------
 

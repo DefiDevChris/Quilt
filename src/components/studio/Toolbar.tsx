@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType, type WorktableType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
@@ -107,8 +107,6 @@ function renderToolGroup(
 
 export function Toolbar({
   onOpenImageExport,
-  onOpenReferenceImage,
-  onOpenLayoutOverlay,
   onSaveBlock,
   onNewBlock,
 }: ToolbarProps) {
@@ -119,8 +117,6 @@ export function Toolbar({
 
   const callbacks: ToolbarCallbacks = {
     onOpenImageExport,
-    onOpenReferenceImage,
-    onOpenLayoutOverlay,
     onSaveBlock,
     onNewBlock,
   };
@@ -128,13 +124,12 @@ export function Toolbar({
   const quiltTools = useQuiltTools(callbacks);
   const blockTools = useBlockTools();
 
-  if (activeWorktable === 'print' || activeWorktable === 'image') return null;
+  if (activeWorktable === 'block-builder' || activeWorktable === 'layout-creator') return null;
 
-  const TOOLS_MAP: Record<'quilt' | 'block' | 'layout-builder' | 'block-builder', ToolDef[]> = {
+  const TOOLS_MAP: Record<WorktableType, ToolDef[]> = {
     quilt: quiltTools,
-    block: blockTools,
-    'layout-builder': [],
     'block-builder': [],
+    'layout-creator': [],
   };
 
   const tools = TOOLS_MAP[activeWorktable];

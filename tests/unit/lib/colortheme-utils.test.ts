@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   normalizeColor,
-  spraycanRecolor,
   swapColors,
   randomizeColors,
   extractUniquePalette,
@@ -29,19 +28,6 @@ describe('colortheme-utils', () => {
       expect(normalizeColor('invalid')).toBe('#000000');
       expect(normalizeColor('#xyz')).toBe('#000000');
       expect(normalizeColor('')).toBe('#000000');
-    });
-  });
-
-  describe('spraycanRecolor', () => {
-    it('recolors matching patches', () => {
-      const patches: PatchColor[] = [
-        { objectId: '1', currentFill: '#ff0000' },
-        { objectId: '2', currentFill: '#0000ff' },
-        { objectId: '3', currentFill: '#ff0000' },
-      ];
-      const result = spraycanRecolor(patches, '#ff0000', '#00ff00');
-      expect(result).toHaveLength(2);
-      expect(result.map((c) => c.newFill)).toEqual(['#00ff00', '#00ff00']);
     });
   });
 

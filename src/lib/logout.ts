@@ -12,7 +12,6 @@ import { useYardageStore } from '@/stores/yardageStore';
 import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCartStore } from '@/stores/cartStore';
-import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 
 /**
@@ -51,6 +50,5 @@ export async function logout(): Promise<void> {
   usePhotoLayoutStore.getState().reset();
   useLayoutStore.getState().reset();
   useCartStore.getState().reset();
-  usePieceInspectorStore.getState().reset();
   useSocialQuickView.getState().reset();
 }

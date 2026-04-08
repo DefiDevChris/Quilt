@@ -352,8 +352,8 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               type="button"
               onClick={() => setActiveMode(mode)}
               className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${activeMode === mode
-                  ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-                  : 'text-secondary hover:text-on-surface'
+                ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+                : 'text-secondary hover:text-on-surface'
                 }`}
             >
               {TAB_LABELS[mode]}
@@ -487,7 +487,18 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         {/* Error + Actions */}
         <div className="px-3 py-3 mt-2">
           {error && <p className="mb-1.5 text-[11px] text-error">{error}</p>}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('qc-block-builder-undo'))}
+              className="rounded-md px-2 py-1.5 text-xs font-medium text-secondary hover:bg-background"
+              title="Undo last segment (Ctrl+Z)"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 6H10C12.2091 6 14 7.79086 14 10C14 12.2091 12.2091 14 10 14H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M6 4L4 6L6 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
             <button
               type="button"
               onClick={handleClearCanvas}

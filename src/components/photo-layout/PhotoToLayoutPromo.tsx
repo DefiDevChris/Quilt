@@ -31,7 +31,7 @@ function validateFile(file: File): string | null {
 
 type Mode = 'pick-source' | 'mobile-uploads' | 'upload' | 'processing';
 
-export function PhotoToDesignPromo({ isPro, onClose, preloadedImageUrl }: PhotoToDesignPromoProps) {
+export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }: PhotoToDesignPromoProps) {
   const [mode, setMode] = useState<Mode>(preloadedImageUrl ? 'processing' : 'pick-source');
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
@@ -55,20 +55,24 @@ export function PhotoToDesignPromo({ isPro, onClose, preloadedImageUrl }: PhotoT
   }, [mode, fetchUploads]);
 
   // Handle preloaded image URL (from mobile uploads processed via dashboard)
+  const [imageLoading, setImageLoading] = useState(
+    () => !!preloadedImageUrl && mode === 'processing'
+  );
+
   useEffect(() => {
     if (!preloadedImageUrl || mode !== 'processing') return;
-    setLoading(true);
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       setOriginalImage(img, preloadedImageUrl);
       setStep('imagePrep');
-      setLoading(false);
+      setImageLoading(false);
       onClose();
     };
     img.onerror = () => {
       setError('Failed to load image from URL.');
-      setLoading(false);
+      setImageLoading(false);
     };
     img.src = preloadedImageUrl;
   }, [preloadedImageUrl, mode, setOriginalImage, setStep, onClose]);
@@ -333,7 +337,7 @@ export function PhotoToDesignPromo({ isPro, onClose, preloadedImageUrl }: PhotoT
                 </div>
                 <p className="text-body-md font-medium text-on-surface mb-1">No uploads waiting</p>
                 <p className="text-body-sm text-secondary max-w-xs">
-                  Take photos on your phone and they'll appear here for processing.
+                  Take photos on your phone and they&apos;ll appear here for processing.
                 </p>
               </div>
             ) : (
