@@ -87,7 +87,6 @@ interface CanvasStoreState {
   clipboard: unknown[];
   referenceImageUrl: string;
   showReferencePanel: boolean;
-  backgroundColor: string;
 
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
@@ -124,7 +123,6 @@ interface CanvasStoreState {
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
-  setBackgroundColor: (color: string) => void;
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
   toggleReferencePanel: () => void;
@@ -171,7 +169,6 @@ const INITIAL_STATE = {
   clipboard: [] as unknown[],
   referenceImageUrl: '',
   showReferencePanel: false,
-  backgroundColor: '#FFFFFF',
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -228,8 +225,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
       console.warn(
         `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
-          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
-          'Undo disabled for this action. Consider reducing canvas complexity.'
+        `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+        'Undo disabled for this action. Consider reducing canvas complexity.'
       );
       return false;
     }
@@ -352,8 +349,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   },
 
   setClipboard: (clipboard) => set({ clipboard }),
-
-  setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),

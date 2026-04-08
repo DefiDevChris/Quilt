@@ -235,8 +235,9 @@ export function useFenceRenderer() {
 /**
  * Get the fence area ID and role from a selected Fabric.js object,
  * if it was created by the fence renderer.
+ * Internal utility — not exported for external use.
  */
-export function getFenceAreaFromObject(
+function getFenceAreaFromObject(
   obj: Record<string, unknown>
 ): { areaId: string; role: LayoutAreaRole } | null {
   if (!obj[FENCE_MARKER]) return null;

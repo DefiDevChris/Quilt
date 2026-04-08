@@ -44,15 +44,17 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
   const tempShapeRef = useRef<unknown | null>(null);
   const { toast } = useToast();
 
-  // Initialize Fabric canvas
+  const activeToolRef = useRef<CreatorTool>('select');
+
+  // Initialize Fabric canvas — runs ONCE on mount
   useEffect(() => {
     const canvasEl = canvasElRef.current;
     if (!canvasEl) return;
-    let cancelled = false;
+    let disposed = false;
 
     async function init() {
       const fabric = await import('fabric');
-      if (cancelled || !canvasEl) return;
+      if (disposed || !canvasEl) return;
 
       const fc = new fabric.Canvas(canvasEl, {
         width: CANVAS_SIZE,
@@ -107,7 +109,7 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
       fc.on('selection:cleared', () => setSelectedObject(null));
 
       fc.on('mouse:down', (opt) => {
-        if (activeTool === 'select') return;
+        if (activeToolRef.current === 'select') return;
         const pointer = (fc as unknown as { getPointer: (e: import('fabric').TPointerEvent) => { x: number; y: number } }).getPointer(opt.e!);
         isDrawingRef.current = true;
         drawStartPointRef.current = { x: pointer.x, y: pointer.y };
@@ -123,7 +125,7 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
         }
 
         const colors = ROLE_COLORS['none'];
-        if (activeTool === 'rectangle') {
+        if (activeToolRef.current === 'rectangle') {
           const rect = new fabric.Rect({
             left: Math.min(start.x, pointer.x),
             top: Math.min(start.y, pointer.y),
@@ -139,7 +141,7 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
           tempShapeRef.current = rect;
           fc.add(rect);
           fc.renderAll();
-        } else if (activeTool === 'triangle') {
+        } else if (activeToolRef.current === 'triangle') {
           const tri = new fabric.Triangle({
             left: Math.min(start.x, pointer.x),
             top: Math.min(start.y, pointer.y),
@@ -177,7 +179,7 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
         if (Math.abs(w) < 5 || Math.abs(h) < 5) return;
 
         const colors = ROLE_COLORS['none'];
-        if (activeTool === 'rectangle') {
+        if (activeToolRef.current === 'rectangle') {
           const rect = new fabric.Rect({
             left: Math.min(start.x, pointer.x),
             top: Math.min(start.y, pointer.y),
@@ -194,7 +196,7 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
           fc.add(rect);
           fc.setActiveObject(rect);
           fc.renderAll();
-        } else if (activeTool === 'triangle') {
+        } else if (activeToolRef.current === 'triangle') {
           const tri = new fabric.Triangle({
             left: Math.min(start.x, pointer.x),
             top: Math.min(start.y, pointer.y),
@@ -214,14 +216,25 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
         }
         setActiveTool('select');
       });
-
-      return () => {
-        fc.dispose();
-      };
     }
 
     void init();
-    return () => { cancelled = true; };
+    return () => {
+      disposed = true;
+      const fc = fabricCanvasRef.current as { dispose: () => void } | null;
+      fc?.dispose();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync activeTool to ref so event handlers read current value without re-init
+  useEffect(() => {
+    activeToolRef.current = activeTool;
+  }, [activeTool]);
+
+  // Sync activeTool to canvasStore so ToolIcon isActive works
+  useEffect(() => {
+    useCanvasStore.getState().setActiveTool(activeTool as never);
   }, [activeTool]);
 
   const handleAssignRole = useCallback((role: LayoutRole) => {
@@ -427,8 +440,8 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
                   type="button"
                   onClick={() => handleAssignRole(role)}
                   className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors ${selectedRole === role
-                      ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
-                      : 'text-on-surface/70 hover:bg-surface-container'
+                    ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                    : 'text-on-surface/70 hover:bg-surface-container'
                     }`}
                 >
                   <span
@@ -480,8 +493,8 @@ function ToolButton({
       type="button"
       onClick={onClick}
       className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl text-[10px] leading-tight transition-all ${active
-          ? 'text-primary'
-          : 'text-secondary hover:bg-surface-container hover:text-on-surface'
+        ? 'text-primary'
+        : 'text-secondary hover:bg-surface-container hover:text-on-surface'
         }`}
       title={label}
     >

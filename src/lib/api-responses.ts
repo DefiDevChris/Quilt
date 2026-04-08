@@ -1,4 +1,20 @@
-import type { ApiErrorCode } from '@/types/api';
+type ApiErrorCode =
+  | 'BAD_REQUEST'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'PRO_REQUIRED'
+  | 'PROJECT_LIMIT_REACHED'
+  | 'NOT_FOUND'
+  | 'CONFLICT'
+  | 'ALREADY_SHARED'
+  | 'VALIDATION_ERROR'
+  | 'RATE_LIMITED'
+  | 'TRUST_INSUFFICIENT'
+  | 'INTERNAL_ERROR'
+  | 'USERNAME_CONFLICT'
+  | 'SLUG_CONFLICT'
+  | 'ALREADY_REPORTED'
+  | 'PRIVATE_PROFILE';
 
 export function unauthorizedResponse(message = 'Authentication required') {
   return Response.json(

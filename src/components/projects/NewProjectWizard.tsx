@@ -160,11 +160,10 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
         return;
       }
 
-      // Store selected dimensions so NewQuiltSetupModal can pre-fill them
-      sessionStorage.setItem(`qc-quilt-setup-dimensions-${newId}`, JSON.stringify({ width: canvasWidth, height: canvasHeight }));
+      // The wizard already collects all necessary info (name, starting point, size, cell size).
+      // Suppress the NewQuiltSetupModal in the studio to avoid redundancy.
+      sessionStorage.setItem(`qc-quilt-setup-shown-${newId}`, '1');
 
-      // Note: We intentionally do NOT suppress the NewQuiltSetupModal.
-      // The modal will appear in the studio to confirm/finalize the dimensions.
       if (startingPoint === 'create-layout') {
         sessionStorage.setItem(`qc-layout-builder-${newId}`, 'true');
       }

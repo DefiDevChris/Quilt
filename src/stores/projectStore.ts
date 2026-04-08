@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/lib/constants';
+import type { Worktable } from '@/types/project';
 
 export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 
@@ -11,12 +12,7 @@ export interface FabricPreset {
   readonly imageUrl: string;
 }
 
-export interface Worktable {
-  id: string;
-  name: string;
-  canvasData: Record<string, unknown>;
-  order: number;
-}
+export type { Worktable } from '@/types/project';
 
 interface ProjectStoreState {
   projectId: string | null;

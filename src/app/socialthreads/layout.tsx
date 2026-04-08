@@ -1,5 +1,5 @@
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
 
 export default function SocialThreadsLayout({ children }: { children: React.ReactNode }) {
-  return <ResponsiveShell>{children}</ResponsiveShell>;
+  return <div className="min-h-screen bg-white">{children}</div>;
 }

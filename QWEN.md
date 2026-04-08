@@ -397,6 +397,16 @@ The fence renderer is the **only** way layout areas appear on canvas:
 - `src/lib/logger.ts` — dead utility, never imported
 - `src/types/quilt-ocr.ts` — dead type, never imported
 - `src/types/wizard.ts` — dead type, never imported
+- `src/types/api.ts` — dead types (ApiResponse, PaginatedResponse), never imported
+- `src/components/auth/ProGate.tsx` — dead component, never imported
+- `src/components/community/FollowButton.tsx` — UserProfilePage has its own inline version
+- `src/components/community/comments/CommentInput.tsx` — RedditStyleComments has its own inline version
+- `src/components/export/PrintlistPanel.tsx` — dead component, never imported
+- `src/components/landing/CommunityPreview.tsx` — not used in landing page
+- `src/components/measurement/YardagePanel.tsx` — dead component, never imported
+- `src/components/photo-layout/steps/` directory entirely (CorrectionStep, DimensionsStep, ImagePrepStep, ProcessingStep, ResultsStep, ScanSettingsStep, UploadStep) — old wizard steps
+- `src/components/social/BlogContent.tsx` — dead component, never imported
+- `src/components/social/ReportModal.tsx` — dead component, never imported
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab
 
 ### Block Library

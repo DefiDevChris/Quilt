@@ -1,10 +1,3 @@
-export interface Worktable {
-  id: string;
-  name: string;
-  canvasData: Record<string, unknown>;
-  order: number;
-}
-
 /**
  * One-shot setup payload written by the New Project wizard into
  * `project.canvasData.initialSetup`. The studio bootstrap reads it on
@@ -12,18 +5,25 @@ export interface Worktable {
  */
 export type InitialSetupConfig =
   | {
-      kind: 'layout';
-      presetId: string;
-      blockSize: number;
-      rotated: boolean;
-    }
+    kind: 'layout';
+    presetId: string;
+    blockSize: number;
+    rotated: boolean;
+  }
   | {
-      kind: 'template';
-      templateId: string;
-      templateData: unknown;
-      blockSize: number;
-      rotated: boolean;
-    };
+    kind: 'template';
+    templateId: string;
+    templateData: unknown;
+    blockSize: number;
+    rotated: boolean;
+  };
+
+export interface Worktable {
+  id: string;
+  name: string;
+  canvasData: Record<string, unknown>;
+  order: number;
+}
 
 export interface Project {
   id: string;
@@ -33,7 +33,7 @@ export interface Project {
   canvasData: Record<string, unknown> & { initialSetup?: InitialSetupConfig };
   worktables: Worktable[];
   unitSystem: 'imperial' | 'metric';
-  gridSettings: GridSettings;
+  gridSettings: import('./grid').GridSettings;
   fabricPresets?: Array<{ id: string; name: string; imageUrl: string }>;
   canvasWidth: number;
   canvasHeight: number;
@@ -44,8 +44,4 @@ export interface Project {
   updatedAt: Date;
 }
 
-export interface GridSettings {
-  enabled: boolean;
-  size: number;
-  snapToGrid: boolean;
-}
+export type { GridSettings } from './grid';

@@ -19,25 +19,23 @@
  * 15. Memory Management — Aggressive cleanup
  */
 
-import type {
-  DetectedPiece,
-  WorkerRequestMessage,
-  WorkerResponseMessage,
-  WorkerProgressMessage,
-  Point2D,
-  QuiltDetectionConfig,
-} from './photo-layout-types';
-import { DEFAULT_QUILT_DETECTION_CONFIG } from './photo-layout-types';
 import {
-  PHOTO_PATTERN_PIECE_MIN_AREA_RATIO,
-  PHOTO_PATTERN_PIECE_MAX_AREA_RATIO,
-} from './constants';
+  DEFAULT_QUILT_DETECTION_CONFIG,
+  type DetectedPiece,
+  type WorkerRequestMessage,
+  type WorkerResponseMessage,
+  type WorkerProgressMessage,
+  type Point2D,
+  type QuiltDetectionConfig,
+  type DetectionOptions,
+} from './photo-layout-types';
+import { PHOTO_PATTERN_PIECE_MAX_AREA_RATIO } from './constants';
 import {
   applyQuiltConfigToOptions,
+  approximatePolygon,
   getMinAreaRatioForPieceScale,
   dynamicKernelSize,
 } from './piece-detection-shared';
-import type { DetectionOptions } from './photo-layout-types';
 
 import type { OpenCV, OpenCVMat } from '../types/opencv-js';
 
@@ -124,34 +122,6 @@ function sendResult(pieces: DetectedPiece[]): void {
 // ============================================================================
 // QUILT CONFIG HELPERS
 // ============================================================================
-
-// ============================================================================
-// PIPELINE FUNCTIONS
-// ============================================================================
-
-function approximatePolygon(
-  cv: OpenCV,
-  contour: OpenCVMat,
-  epsilon?: number,
-  hasCurvedPiecing: boolean = false
-): Point2D[] {
-  const approx = new cv.Mat();
-  try {
-    const perimeter = cv.arcLength(contour, true);
-    // For curved piecing, use smaller epsilon (0.5% vs 2%) to preserve more points
-    const defaultEpsilon = hasCurvedPiecing ? perimeter * 0.005 : perimeter * 0.02;
-    const eps = epsilon ?? defaultEpsilon;
-    cv.approxPolyDP(contour, approx, eps, true);
-    const vertices: Point2D[] = [];
-    for (let i = 0; i < approx.rows; i++) {
-      const ptr = approx.intPtr(i, 0);
-      vertices.push({ x: ptr[0], y: ptr[1] });
-    }
-    return vertices;
-  } finally {
-    approx.delete();
-  }
-}
 
 // ============================================================================
 // PIPELINE FUNCTIONS
@@ -548,4 +518,4 @@ self.onmessage = async (event: MessageEvent<WorkerRequestMessage & DetectionOpti
   }
 };
 
-export {};
+export { };

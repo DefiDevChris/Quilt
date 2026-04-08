@@ -1,19 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-
-interface TiptapNode {
-  type: string;
-  content?: TiptapNode[];
-  text?: string;
-  marks?: { type: string; attrs?: Record<string, unknown> }[];
-  attrs?: Record<string, unknown>;
-}
-
-interface TiptapDoc {
-  type: string;
-  content: TiptapNode[];
-}
+import type { TiptapNode, TiptapDocument as TiptapDoc } from '@/types/community';
 
 // Simple HTML to Tiptap JSON converter (pure function, outside component)
 function htmlToTiptapInner(html: string): TiptapDoc {

@@ -12,8 +12,3 @@ export interface GridSettings {
 export interface CanvasGridSettings extends GridSettings {
   snapToNodes?: boolean;
 }
-
-export interface PatternGridSettings extends GridSettings {
-  rows: number;
-  cols: number;
-}

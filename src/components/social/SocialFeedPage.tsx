@@ -64,8 +64,8 @@ export function SocialFeedPage() {
                   key={cat.label}
                   onClick={() => setCategory(cat.value)}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${category === cat.value
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
-                      : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
+                    ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
+                    : 'bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface'
                     }`}
                 >
                   {cat.label}

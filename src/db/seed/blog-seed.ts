@@ -3,6 +3,8 @@
  * and are pre-set to 'published' status with publishedAt timestamps.
  */
 
+import type { TiptapNode } from '@/types/community';
+
 type BlogCategory =
   | 'Product Updates'
   | 'Behind the Scenes'
@@ -13,14 +15,7 @@ type BlogCategory =
   | 'History'
   | 'Organization';
 
-interface TiptapNode {
-  readonly type: string;
-  readonly content?: readonly TiptapNode[];
-  readonly text?: string;
-  readonly marks?: readonly { type: string; attrs?: Record<string, unknown> }[];
-  readonly attrs?: Record<string, unknown>;
-}
-
+/** TiptapDoc with required content — seed data always has content */
 interface TiptapDoc {
   readonly type: 'doc';
   readonly content: readonly TiptapNode[];

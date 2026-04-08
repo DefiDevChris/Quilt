@@ -1,22 +1,5 @@
 import type { ReactNode } from 'react';
-
-interface TiptapMark {
-  readonly type: string;
-  readonly attrs?: Record<string, unknown>;
-}
-
-interface TiptapNode {
-  readonly type: string;
-  readonly content?: readonly TiptapNode[];
-  readonly text?: string;
-  readonly marks?: readonly TiptapMark[];
-  readonly attrs?: Record<string, unknown>;
-}
-
-interface TiptapDoc {
-  readonly type: string;
-  readonly content?: readonly TiptapNode[];
-}
+import type { TiptapMark, TiptapNode, TiptapDocument as TiptapDoc } from '@/types/community';
 
 function isSafeHref(href: string): boolean {
   try {
@@ -172,7 +155,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       const alt = (node.attrs?.alt as string) ?? '';
       const align = (node.attrs?.align as string) ?? 'center';
       const src = isSafeHref(rawSrc) ? rawSrc : '#';
-      
+
       // Alignment classes for staggered media layout
       const alignClasses = {
         left: 'float-left mr-6 mb-4 w-1/2 md:w-1/3 rounded-xl',
@@ -180,7 +163,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
         center: 'mx-auto mb-4 rounded-xl',
         full: 'w-full mb-4 rounded-xl',
       };
-      
+
       return (
         <figure key={key} className={`mb-4 ${alignClasses[align as keyof typeof alignClasses] || alignClasses.center}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -300,6 +300,19 @@ body {
       0 20px 48px rgba(74, 59, 50, 0.04);
   }
 
+  /* Clean white card for social feed on white background */
+  .social-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .social-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
   .glass-panel-social-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
