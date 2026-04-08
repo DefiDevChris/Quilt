@@ -98,7 +98,7 @@ export function useCanvasInit(
         lastGridKey = key;
 
         // Layout geometry is rendered on the Fabric.js canvas by
-        // useLayoutRenderer (as selectable Rect objects). The grid layer
+        // useFenceRenderer (as selectable Rect objects). The grid layer
         // only draws the background quilt rectangle + grid lines.
         renderGrid(
           gridEl,
@@ -273,6 +273,12 @@ export function useCanvasInit(
 
       useCanvasStore.getState().setFabricCanvas(canvas);
       useCanvasStore.getState().setZoom(initZoom);
+
+      // Expose for E2E testing
+      if (typeof window !== 'undefined') {
+        (window as any).fabricCanvas = canvas;
+        (window as any).useCanvasStore = useCanvasStore;
+      }
     })();
 
     return () => {

@@ -200,8 +200,6 @@ const CONTEXTUAL_HELP: Readonly<Record<string, string>> = {
   rectangle: 'Click and drag to draw a rectangle. Hold Shift for a perfect square.',
   triangle: 'Click and drag to draw a triangle. Release to place it on your canvas.',
   easydraw: 'Place grid points, then draw seam lines between them to draft your own block designs.',
-  spraycan:
-    'Click patches to fill them with the current color. Hold and drag to color continuously.',
 };
 
 // --- Public API ---

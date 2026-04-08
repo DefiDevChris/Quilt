@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -50,21 +50,18 @@ function DashboardPageContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
   const [showProUpgrade, setShowProUpgrade] = useState(false);
-  const [showPhotoPromo, setShowPhotoPromo] = useState(false);
   const uploads = useMobileUploadStore((s) => s.uploads);
   const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
   const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
   const searchParams = useSearchParams();
   const action = searchParams?.get('action') ?? '';
   const preloadUrl = searchParams?.get('preloadUrl') ?? '';
-  const uploadId = searchParams?.get('uploadId') ?? '';
+  const _uploadId = searchParams?.get('uploadId') ?? '';
 
   // Auto-open Photo to Design promo when redirected from mobile uploads
-  useEffect(() => {
-    if (action === 'photo-to-design' && preloadUrl) {
-      setShowPhotoPromo(true);
-    }
-  }, [action, preloadUrl]);
+  const [showPhotoPromo, setShowPhotoPromo] = useState<boolean>(
+    () => !!(action === 'photo-to-design' && preloadUrl)
+  );
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -183,7 +180,7 @@ function DashboardPageContent() {
               </p>
             </div>
             <Image
-              src="/icons/quilt-01-spool-Photoroom.png"
+              src="/icons/quilt-projects.png"
               alt=""
               width={44}
               height={44}
@@ -244,7 +241,7 @@ function DashboardPageContent() {
             <div className="flex justify-between items-start">
               <div />
               <Image
-                src="/icons/quilt-02-needle-Photoroom.png"
+                src="/icons/quilt-mobile-uploads.png"
                 alt=""
                 width={44}
                 height={44}
@@ -270,7 +267,7 @@ function DashboardPageContent() {
           <div className="flex justify-between items-start">
             <div />
             <Image
-              src="/icons/quilt-04-scissors-Photoroom.png"
+              src="/icons/quilt-01-spool-Photoroom.png"
               alt=""
               width={44}
               height={44}
@@ -293,7 +290,7 @@ function DashboardPageContent() {
             <p className="text-secondary text-sm mt-0.5">Manage details and settings</p>
           </div>
           <Image
-            src="/icons/quilt-05-bobbin-Photoroom.png"
+            src="/icons/quilt-profile.png"
             alt=""
             width={40}
             height={40}
@@ -311,7 +308,7 @@ function DashboardPageContent() {
             <p className="text-secondary text-sm mt-0.5">Units, theme, and defaults</p>
           </div>
           <Image
-            src="/icons/quilt-07-thimble-Photoroom.png"
+            src="/icons/quilt-settings.png"
             alt=""
             width={40}
             height={40}

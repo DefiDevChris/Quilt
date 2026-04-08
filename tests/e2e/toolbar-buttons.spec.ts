@@ -124,7 +124,7 @@ test.describe('Studio Action Buttons', () => {
     }
   });
 
-  test('reference image button', async ({ page }) => {
+  test.skip('reference image button — removed from toolbar', async ({ page }) => {
     const refBtn = page.getByRole('button', { name: /reference/i });
     if (await refBtn.isVisible()) {
       await refBtn.click();
@@ -138,14 +138,14 @@ test.describe('Studio Action Buttons', () => {
     }
   });
 
-  test('grid toggle button', async ({ page }) => {
+  test.skip('grid toggle button — removed from toolbar', async ({ page }) => {
     const gridBtn = page.getByRole('button', { name: /grid/i });
     if (await gridBtn.isVisible()) {
       await gridBtn.click();
     }
   });
 
-  test('snap toggle button', async ({ page }) => {
+  test.skip('snap toggle button — removed from toolbar', async ({ page }) => {
     const snapBtn = page.getByRole('button', { name: /snap/i });
     if (await snapBtn.isVisible()) {
       await snapBtn.click();

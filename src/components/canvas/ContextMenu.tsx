@@ -95,10 +95,11 @@ export function ContextMenu() {
       canvas.on('mouse:down', onMouseDown);
       registeredListeners.push(() => canvas.off('mouse:down', onMouseDown));
 
-      if (canvas.wrapperEl) {
-        canvas.wrapperEl.addEventListener('contextmenu', handleContextMenu);
+      const wrapperEl = canvas.wrapperEl;
+      if (wrapperEl) {
+        wrapperEl.addEventListener('contextmenu', handleContextMenu);
         registeredListeners.push(() =>
-          canvas.wrapperEl.removeEventListener('contextmenu', handleContextMenu)
+          wrapperEl.removeEventListener('contextmenu', handleContextMenu)
         );
       }
 
@@ -196,7 +197,7 @@ export function ContextMenu() {
               left:
                 (active.left ?? 0) +
                 ((active as InstanceType<typeof fabric.Group>).width ?? 0) *
-                  ((active as InstanceType<typeof fabric.Group>).scaleX ?? 1) +
+                ((active as InstanceType<typeof fabric.Group>).scaleX ?? 1) +
                 20,
               top: active.top ?? 0,
             });
@@ -709,52 +710,52 @@ export function ContextMenu() {
 
   const menuItems = position.hasTarget
     ? [
-        { label: 'Duplicate', icon: '⧉', action: 'duplicate' },
-        { label: 'Delete', icon: '🗑', action: 'delete' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Flip Horizontal', icon: '↔', action: 'flipH' },
-        { label: 'Flip Vertical', icon: '↕', action: 'flipV' },
-        { label: 'Rotate 90°', icon: '↻', action: 'rotate90' },
-        { label: 'divider', icon: '', action: 'divider' },
-        ...(isMultiSelect
-          ? [
-              { label: 'Group', icon: '⊡', action: 'group' },
-              { label: 'Align Left', icon: '⊣', action: 'align-left' },
-              { label: 'Align Center', icon: '⊟', action: 'align-center' },
-              { label: 'Align Right', icon: '⊢', action: 'align-right' },
-              { label: 'Align Top', icon: '⊤', action: 'align-top' },
-              { label: 'Align Middle', icon: '⊞', action: 'align-middle' },
-              { label: 'Align Bottom', icon: '⊥', action: 'align-bottom' },
-              { label: 'divider', icon: '', action: 'divider' },
-              { label: 'Distribute Horizontally', icon: '⇔', action: 'distribute-h' },
-              { label: 'Distribute Vertically', icon: '⇕', action: 'distribute-v' },
-              { label: 'divider', icon: '', action: 'divider' },
-            ]
-          : []),
-        ...(isGroup
-          ? [
-              { label: 'Block Settings ▸', icon: '⚙', action: 'block-menu' },
-              { label: 'Ungroup', icon: '⊟', action: 'ungroup' },
-            ]
-          : []),
-        { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
-        { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Select Similar ▸', icon: '◎', action: 'select-similar' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Add Fabric ▸', icon: '◆', action: 'fabric-menu' },
-        ...(isGroup && sameBlockCount > 0
-          ? [
-              {
-                label: `Apply Fabric to All ${sameBlockCount + 1} Blocks ▸`,
-                icon: '◆◆',
-                action: 'fabric-all',
-              },
-            ]
-          : []),
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
-      ]
+      { label: 'Duplicate', icon: '⧉', action: 'duplicate' },
+      { label: 'Delete', icon: '🗑', action: 'delete' },
+      { label: 'divider', icon: '', action: 'divider' },
+      { label: 'Flip Horizontal', icon: '↔', action: 'flipH' },
+      { label: 'Flip Vertical', icon: '↕', action: 'flipV' },
+      { label: 'Rotate 90°', icon: '↻', action: 'rotate90' },
+      { label: 'divider', icon: '', action: 'divider' },
+      ...(isMultiSelect
+        ? [
+          { label: 'Group', icon: '⊡', action: 'group' },
+          { label: 'Align Left', icon: '⊣', action: 'align-left' },
+          { label: 'Align Center', icon: '⊟', action: 'align-center' },
+          { label: 'Align Right', icon: '⊢', action: 'align-right' },
+          { label: 'Align Top', icon: '⊤', action: 'align-top' },
+          { label: 'Align Middle', icon: '⊞', action: 'align-middle' },
+          { label: 'Align Bottom', icon: '⊥', action: 'align-bottom' },
+          { label: 'divider', icon: '', action: 'divider' },
+          { label: 'Distribute Horizontally', icon: '⇔', action: 'distribute-h' },
+          { label: 'Distribute Vertically', icon: '⇕', action: 'distribute-v' },
+          { label: 'divider', icon: '', action: 'divider' },
+        ]
+        : []),
+      ...(isGroup
+        ? [
+          { label: 'Block Settings ▸', icon: '⚙', action: 'block-menu' },
+          { label: 'Ungroup', icon: '⊟', action: 'ungroup' },
+        ]
+        : []),
+      { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
+      { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
+      { label: 'divider', icon: '', action: 'divider' },
+      { label: 'Select Similar ▸', icon: '◎', action: 'select-similar' },
+      { label: 'divider', icon: '', action: 'divider' },
+      { label: 'Add Fabric ▸', icon: '◆', action: 'fabric-menu' },
+      ...(isGroup && sameBlockCount > 0
+        ? [
+          {
+            label: `Apply Fabric to All ${sameBlockCount + 1} Blocks ▸`,
+            icon: '◆◆',
+            action: 'fabric-all',
+          },
+        ]
+        : []),
+      { label: 'divider', icon: '', action: 'divider' },
+      { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
+    ]
     : [{ label: 'Select All', icon: '⊞', action: 'selectAll' }];
 
   return (

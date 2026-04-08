@@ -179,7 +179,7 @@ export function QuickStartWorkflows({
             <p className="text-secondary text-sm">Extract blocks with AI</p>
           </div>
           <Image
-            src="/icons/quilt-02-needle-Photoroom.png"
+            src="/icons/quilt-photo-camera.png"
             alt=""
             width={48}
             height={48}

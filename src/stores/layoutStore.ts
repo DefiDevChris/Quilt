@@ -22,6 +22,7 @@ interface LayoutStoreState {
   setCols: (cols: number) => void;
   setBlockSize: (size: number) => void;
   setSashing: (updates: Partial<SashingConfig>) => void;
+  setBorders: (borders: BorderConfig[]) => void;
   addBorder: () => void;
   updateBorder: (index: number, updates: Partial<BorderConfig>) => void;
   removeBorder: (index: number) => void;
@@ -78,6 +79,8 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
     set((state) => ({
       sashing: { ...state.sashing, ...updates },
     })),
+
+  setBorders: (borders) => set({ borders }),
 
   addBorder: () =>
     set((state) => {

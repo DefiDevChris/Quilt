@@ -28,20 +28,31 @@ export type ToolType =
   | 'circle'
   | 'triangle'
   | 'polygon'
-  | 'line'
-  | 'blockbuilder'
-  | 'easydraw'
-  | 'text'
-  | 'spraycan'
-  | 'bend'
-  | 'curve'
-  | 'eyedropper';
+  | 'easydraw';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
-export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
+export type WorktableType = 'quilt' | 'block-builder' | 'layout-creator';
 
-export type WorktableType = 'quilt' | 'layout-builder' | 'block-builder' | 'block' | 'image' | 'print';
+/** A single worktable tab with its own isolated layout state. */
+export interface WorktableTab {
+  id: string;
+  name: string;
+  type: WorktableType;
+  layoutSnapshot: {
+    // Snapshot of layoutStore at the time this tab was created
+    layoutType: string;
+    rows: number;
+    cols: number;
+    blockSize: number;
+    sashingWidth: number;
+    hasCornerstones: boolean;
+    borders: unknown[];
+    bindingWidth: number;
+    selectedPresetId: string | null;
+  } | null;
+  createdAt: number;
+}
 
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
@@ -51,6 +62,8 @@ interface CanvasStoreState {
   selectedObjectIds: string[];
   activeTool: ToolType;
   activeWorktable: WorktableType;
+  worktableTabs: WorktableTab[];
+  activeWorktableId: string | null;
   cursorPosition: { x: number; y: number };
   isSpacePressed: boolean;
   fillColor: string;
@@ -60,7 +73,6 @@ interface CanvasStoreState {
   redoStack: string[];
   blockDraftingMode: BlockDraftingMode;
   referenceImageOpacity: number;
-  activeColorwayTool: ColorThemeTool | null;
 
   isViewportLocked: boolean;
   showSeamAllowance: boolean;
@@ -72,8 +84,6 @@ interface CanvasStoreState {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >;
   clipboard: unknown[];
-  showLayoutOverlay: boolean;
-  autoAlignToPattern: boolean;
   referenceImageUrl: string;
   showReferencePanel: boolean;
   backgroundColor: string;
@@ -85,6 +95,10 @@ interface CanvasStoreState {
   setSelectedObjectIds: (ids: string[]) => void;
   setActiveTool: (tool: ToolType) => void;
   setActiveWorktable: (worktable: WorktableType) => void;
+  setWorktableTabs: (tabs: WorktableTab[]) => void;
+  setActiveWorktableId: (id: string | null) => void;
+  addWorktableTab: (tab: WorktableTab) => void;
+  removeWorktableTab: (id: string) => void;
   setCursorPosition: (pos: { x: number; y: number }) => void;
   setIsSpacePressed: (pressed: boolean) => void;
   setFillColor: (color: string) => void;
@@ -98,7 +112,6 @@ interface CanvasStoreState {
   resetHistory: () => void;
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
-  setActiveColorwayTool: (tool: ColorThemeTool | null) => void;
 
   setViewportLocked: (locked: boolean) => void;
   toggleSeamAllowance: () => void;
@@ -110,8 +123,6 @@ interface CanvasStoreState {
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
-  setShowLayoutOverlay: (show: boolean) => void;
-  setAutoAlignToPattern: (auto: boolean) => void;
   setBackgroundColor: (color: string) => void;
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
@@ -135,6 +146,8 @@ const INITIAL_STATE = {
   selectedObjectIds: [] as string[],
   activeTool: 'select' as ToolType,
   activeWorktable: 'quilt' as WorktableType,
+  worktableTabs: [] as WorktableTab[],
+  activeWorktableId: null as string | null,
   cursorPosition: { x: 0, y: 0 },
   isSpacePressed: false,
   fillColor: DEFAULT_FILL_COLOR,
@@ -144,7 +157,6 @@ const INITIAL_STATE = {
   redoStack: [] as string[],
   blockDraftingMode: 'freeform' as BlockDraftingMode,
   referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
-  activeColorwayTool: null as ColorThemeTool | null,
 
   isViewportLocked: false,
   showSeamAllowance: true,
@@ -156,8 +168,6 @@ const INITIAL_STATE = {
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
   >,
   clipboard: [] as unknown[],
-  showLayoutOverlay: true,
-  autoAlignToPattern: true,
   referenceImageUrl: '',
   showReferencePanel: false,
   backgroundColor: '#FFFFFF',
@@ -185,6 +195,28 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     loadToolSettings(tool);
   },
   setActiveWorktable: (worktable) => set({ activeWorktable: worktable }),
+  setWorktableTabs: (tabs) => set({ worktableTabs: tabs }),
+  setActiveWorktableId: (id) => set({ activeWorktableId: id }),
+  addWorktableTab: (tab) =>
+    set((state) => ({
+      worktableTabs: [...state.worktableTabs, tab],
+      activeWorktableId: tab.id,
+    })),
+  removeWorktableTab: (id) =>
+    set((state) => {
+      const remaining = state.worktableTabs.filter((t) => t.id !== id);
+      // If we removed the active tab, switch to the last remaining one
+      const newActiveId =
+        state.activeWorktableId === id
+          ? remaining.length > 0
+            ? remaining[remaining.length - 1].id
+            : null
+          : state.activeWorktableId;
+      return {
+        worktableTabs: remaining,
+        activeWorktableId: newActiveId,
+      };
+    }),
   setCursorPosition: (pos) => set({ cursorPosition: pos }),
   setIsSpacePressed: (pressed) => set({ isSpacePressed: pressed }),
   setFillColor: (color) => set({ fillColor: color }),
@@ -236,8 +268,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
 
   setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
-
-  setActiveColorwayTool: (tool) => set({ activeColorwayTool: tool }),
 
   setViewportLocked: (locked) => {
     set({ isViewportLocked: locked });
@@ -321,10 +351,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   },
 
   setClipboard: (clipboard) => set({ clipboard }),
-
-  setShowLayoutOverlay: (showLayoutOverlay) => set({ showLayoutOverlay }),
-
-  setAutoAlignToPattern: (autoAlignToPattern) => set({ autoAlignToPattern }),
 
   setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),

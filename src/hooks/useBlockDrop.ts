@@ -3,13 +3,16 @@
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { PIXELS_PER_INCH } from '@/lib/constants';
 import type { Canvas as FabricCanvas } from 'fabric';
+import { useToast } from '@/components/ui/ToastProvider';
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
  * Fetches the full block data, deserializes the Fabric.js JSON,
- * places it at drop coordinates, and applies grid snapping.
+ * places it at drop coordinates, and snaps to fence cells.
+ *
+ * Fence-enforced: blocks can ONLY drop into block-cell areas.
+ * Invalid drops are rejected with toast + not-allowed cursor.
  */
 export function useBlockDrop() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -18,39 +21,101 @@ export function useBlockDrop() {
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const blockSize = useLayoutStore((s) => s.blockSize);
   const dragBlockIdRef = useRef<string | null>(null);
+  const { toast } = useToast();
+  const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
 
   const handleDragStart = useCallback((_e: React.DragEvent, blockId: string) => {
     dragBlockIdRef.current = blockId;
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const target = e.currentTarget as HTMLElement;
-    
-    // Check if we're over a valid drop target
-    if (fabricCanvas) {
-      const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
-      const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
-      
-      if (foundTarget) {
-        const areaObj = foundTarget as Record<string, unknown>;
-        if (areaObj['_layoutRendererElement'] && areaObj['_layoutAreaRole'] === 'block-cell') {
-          e.dataTransfer.dropEffect = 'copy';
-          target.style.cursor = 'copy';
-          return;
-        }
-      }
-    }
-    
-    // Invalid drop target
-    e.dataTransfer.dropEffect = 'none';
-    target.style.cursor = 'not-allowed';
+  const clearHighlight = useCallback(() => {
+    if (!highlightRectRef.current || !fabricCanvas) return;
+    const canvas = fabricCanvas as unknown as {
+      remove: (...objs: unknown[]) => void;
+      requestRenderAll: () => void;
+    };
+    canvas.remove(highlightRectRef.current);
+    canvas.requestRenderAll();
+    highlightRectRef.current = null;
   }, [fabricCanvas]);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    const target = e.currentTarget as HTMLElement;
-    target.style.cursor = '';
-  }, []);
+  const showCellHighlight = useCallback(
+    async (target: unknown) => {
+      if (!fabricCanvas || !target) return;
+      const fabric = await import('fabric');
+      const canvas = fabricCanvas as unknown as {
+        add: (...objs: unknown[]) => void;
+        bringObjectToFront: (obj: unknown) => void;
+        requestRenderAll: () => void;
+      };
+
+      clearHighlight();
+
+      const fabricObj = target as unknown as import('fabric').FabricObject;
+      const cellX = fabricObj.left ?? 0;
+      const cellY = fabricObj.top ?? 0;
+      const cellW = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
+      const cellH = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
+
+      const rect = new fabric.Rect({
+        left: cellX,
+        top: cellY,
+        width: cellW,
+        height: cellH,
+        fill: 'rgba(99, 102, 241, 0.08)',
+        stroke: '#6366F1',
+        strokeWidth: 2,
+        strokeDashArray: [6, 4],
+        selectable: false,
+        evented: false,
+        hasControls: false,
+        hasBorders: false,
+      });
+
+      (rect as unknown as Record<string, unknown>)['_dragHighlight'] = true;
+      highlightRectRef.current = rect as unknown as import('fabric').FabricObject;
+      canvas.add(rect as unknown as import('fabric').FabricObject);
+      canvas.bringObjectToFront(rect as unknown as import('fabric').FabricObject);
+      canvas.requestRenderAll();
+    },
+    [fabricCanvas, clearHighlight]
+  );
+
+  const handleDragOver = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      const target = e.currentTarget as HTMLElement;
+
+      if (fabricCanvas) {
+        const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
+        const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
+
+        if (foundTarget) {
+          const areaObj = foundTarget as Record<string, unknown>;
+          if (areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell') {
+            e.dataTransfer.dropEffect = 'copy';
+            target.style.cursor = 'copy';
+            await showCellHighlight(foundTarget);
+            return;
+          }
+        }
+      }
+
+      clearHighlight();
+      e.dataTransfer.dropEffect = 'none';
+      target.style.cursor = 'not-allowed';
+    },
+    [fabricCanvas, showCellHighlight, clearHighlight]
+  );
+
+  const handleDragLeave = useCallback(
+    (e: React.DragEvent) => {
+      const target = e.currentTarget as HTMLElement;
+      target.style.cursor = '';
+      clearHighlight();
+    },
+    [clearHighlight]
+  );
 
   const handleDrop = useCallback(
     async (e: React.DragEvent) => {
@@ -83,7 +148,7 @@ export function useBlockDrop() {
 
         const fabric = await import('fabric');
 
-        // Disable non-layout objects temporarily so findTarget hits the cells
+        // Disable non-fence objects temporarily so findTarget hits fence cells
         const allObjects = canvas.getObjects();
         const userBlocksToRestore: Array<{
           obj: import('fabric').FabricObject;
@@ -91,59 +156,53 @@ export function useBlockDrop() {
         }> = [];
         for (const obj of allObjects) {
           const r = obj as unknown as Record<string, unknown>;
-          if (!r['_layoutRendererElement']) {
+          if (!r['_fenceElement']) {
             userBlocksToRestore.push({ obj, prev: obj.evented ?? true });
             obj.evented = false;
           }
         }
 
-        // Use getScenePoint for accurate coordinate mapping on drop
         const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
-        const foundTarget = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
+        let hitTarget: unknown = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
 
-        // Restore eventedness immediately after hit-test
         for (const { obj, prev } of userBlocksToRestore) {
           obj.evented = prev;
         }
 
         // Only allow drops into block-cell areas
-        if (!foundTarget) {
-          console.warn('[useBlockDrop] findTarget failed - checking fallbackTarget');
-          // Fallback: search objects at the pointer coordinate if findTarget missed
+        if (!hitTarget) {
           const fallbackTarget = allObjects.find(o => {
             const r = o as unknown as Record<string, unknown>;
-            return r['_layoutRendererElement'] && 
-                   r['_layoutAreaRole'] === 'block-cell' && 
-                   o.containsPoint(pointer);
+            return r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer);
           });
-          
+
           if (!fallbackTarget) {
-            console.warn('[useBlockDrop] No hit detected at pointer coords', pointer);
+            toast({ type: 'error', title: 'Invalid drop', description: 'Blocks can only be placed in block cells' });
             return;
           }
-          (foundTarget as any) = fallbackTarget;
+          hitTarget = fallbackTarget;
         }
 
-        const areaObj = foundTarget as Record<string, unknown>;
-        console.log('[useBlockDrop] Found target:', areaObj['_layoutAreaId'], areaObj['_layoutAreaRole']);
-        if (!areaObj['_layoutRendererElement'] || areaObj['_layoutAreaRole'] !== 'block-cell') {
+        const areaObj = hitTarget as Record<string, unknown>;
+        if (!areaObj['_fenceElement'] || areaObj['_fenceRole'] !== 'block-cell') {
+          toast({ type: 'error', title: 'Invalid drop', description: 'Blocks can only be placed in block cells' });
           return;
         }
 
-        const fabricObj = foundTarget as unknown as import('fabric').FabricObject;
+        const fabricObj = hitTarget as unknown as import('fabric').FabricObject;
         const cellX = fabricObj.left ?? 0;
         const cellY = fabricObj.top ?? 0;
         const cellW = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
         const cellH = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
         const cellRotation = fabricObj.angle ?? 0;
-        const targetCellId = (areaObj['_layoutAreaId'] as string | undefined) ?? null;
+        const targetCellId = (areaObj['_fenceAreaId'] as string | undefined) ?? null;
 
         // Remove existing block in this cell
         let previousOccupant: import('fabric').FabricObject | null = null;
         if (targetCellId) {
           for (const obj of allObjects) {
             const r = obj as unknown as Record<string, unknown>;
-            if (r['_inLayoutCellId'] === targetCellId) {
+            if (r['_inFenceCellId'] === targetCellId) {
               previousOccupant = obj as unknown as import('fabric').FabricObject;
               break;
             }
@@ -190,7 +249,7 @@ export function useBlockDrop() {
         });
 
         if (targetCellId) {
-          (group as unknown as Record<string, unknown>)['_inLayoutCellId'] = targetCellId;
+          (group as unknown as Record<string, unknown>)['_inFenceCellId'] = targetCellId;
         }
 
         canvas.add(group);
@@ -199,11 +258,13 @@ export function useBlockDrop() {
         setActiveTool('select');
       } catch {
         // Block drop failed silently
+      } finally {
+        clearHighlight();
       }
 
       dragBlockIdRef.current = null;
     },
-    [fabricCanvas, gridSettings, blockSize, pushUndoState, setActiveTool]
+    [fabricCanvas, gridSettings, blockSize, pushUndoState, setActiveTool, clearHighlight]
   );
 
   return { handleDragStart, handleDragOver, handleDrop, handleDragLeave };
@@ -219,7 +280,7 @@ async function createFabricObject(
   const strokeWidth = (obj.strokeWidth as number) ?? 0.5;
 
   switch (type) {
-    case 'Rect': {
+    case 'Rect':
       return new fabric.Rect({
         left: obj.left as number,
         top: obj.top as number,
@@ -230,17 +291,12 @@ async function createFabricObject(
         strokeWidth,
         opacity: (obj.opacity as number) ?? 1,
       });
-    }
     case 'Polygon': {
       const points = obj.points as Array<{ x: number; y: number }>;
       if (!points || points.length === 0) return null;
-      return new fabric.Polygon(points, {
-        fill,
-        stroke,
-        strokeWidth,
-      });
+      return new fabric.Polygon(points, { fill, stroke, strokeWidth });
     }
-    case 'Circle': {
+    case 'Circle':
       return new fabric.Circle({
         left: obj.left as number,
         top: obj.top as number,
@@ -249,23 +305,13 @@ async function createFabricObject(
         stroke,
         strokeWidth,
       });
-    }
     case 'Path': {
       const pathData = obj.path as string;
       if (!pathData) return null;
-      return new fabric.Path(pathData, {
-        fill: fill || undefined,
-        stroke,
-        strokeWidth,
-      });
+      return new fabric.Path(pathData, { fill: fill || undefined, stroke, strokeWidth });
     }
     case 'Line': {
-      const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [
-        number,
-        number,
-        number,
-        number,
-      ];
+      const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [number, number, number, number];
       return new fabric.Line(coords, {
         stroke: (obj.stroke as string) ?? '#333',
         strokeWidth,

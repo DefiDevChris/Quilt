@@ -43,7 +43,6 @@ interface UseBlockBuilderReturn {
 const SNAP_RADIUS_FRACTION = 0.3;
 const SEAM_LINE_COLOR = '#383831';
 const SEAM_LINE_WIDTH = 2;
-const CURVE_HIT_TOLERANCE = 12;
 
 const PATCH_COLORS = [
   '#ffca9d',
@@ -77,13 +76,6 @@ export function useBlockBuilder({
   segmentsRef.current = segments;
   const startPointRef = useRef<{ row: number; col: number } | null>(null);
   const previewRef = useRef<unknown>(null);
-  const bendStateRef = useRef<{
-    segIdx: number;
-    fromPx: { x: number; y: number };
-    toPx: { x: number; y: number };
-    isDragging: boolean;
-    apexPx: { x: number; y: number } | null;
-  } | null>(null);
 
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
 
@@ -262,88 +254,10 @@ export function useBlockBuilder({
 
       // Set cursor
       canvas.selection = false;
-      if (activeMode === 'curve' || activeMode === 'bend') {
-        canvas.defaultCursor = 'pointer';
-        // Use custom bend cursor
-        const canvasEl = canvas.getElement();
-        if (canvasEl && activeMode === 'bend') {
-          canvasEl.style.cursor = 'url(/cursors/bend.cur) 10 10, pointer';
-        }
-      } else {
-        canvas.defaultCursor = 'crosshair';
-      }
+      canvas.defaultCursor = 'crosshair';
 
       function onMouseDown(e: { e: MouseEvent }) {
         const pointer = canvas.getScenePoint(e.e);
-
-        // ─── Bend tool: click and drag a segment to curve it ─────────────
-        if (activeMode === 'bend') {
-          const lineSegs = segmentsRef.current
-            .map((s, i) => ({ seg: s, idx: i }))
-            .filter((s) => !('center' in s.seg));
-
-          const plainSegs = lineSegs.map((s) => s.seg as Segment);
-          const hitIdx = findNearestSegment(
-            pointer.x,
-            pointer.y,
-            plainSegs,
-            gridSize,
-            CURVE_HIT_TOLERANCE
-          );
-          if (hitIdx === -1) return;
-
-          const originalIdx = lineSegs[hitIdx].idx;
-          const seg = segmentsRef.current[originalIdx] as Segment;
-          const fromPx = gridPointToPixel(seg.from, gridSize);
-          const toPx = gridPointToPixel(seg.to, gridSize);
-
-          bendStateRef.current = {
-            segIdx: originalIdx,
-            fromPx,
-            toPx,
-            isDragging: true,
-            apexPx: { x: pointer.x, y: pointer.y },
-          };
-          return;
-        }
-
-        // ─── Curve tool: click near a straight segment to convert to arc ───
-        if (activeMode === 'curve') {
-          const lineSegs = segmentsRef.current
-            .map((s, i) => ({ seg: s, idx: i }))
-            .filter((s) => !('center' in s.seg));
-
-          const plainSegs = lineSegs.map((s) => s.seg as Segment);
-          const hitIdx = findNearestSegment(
-            pointer.x,
-            pointer.y,
-            plainSegs,
-            gridSize,
-            CURVE_HIT_TOLERANCE
-          );
-          if (hitIdx === -1) return;
-
-          const originalIdx = lineSegs[hitIdx].idx;
-          const seg = segmentsRef.current[originalIdx] as Segment;
-
-          // Compute arc center as midpoint offset perpendicular
-          const midRow = (seg.from.row + seg.to.row) / 2;
-          const midCol = (seg.from.col + seg.to.col) / 2;
-
-          const arcSeg: ArcSegment = {
-            from: seg.from,
-            to: seg.to,
-            center: { row: midRow, col: midCol },
-            clockwise: true,
-          };
-
-          setSegments((prev) => {
-            const updated = [...prev];
-            updated[originalIdx] = arcSeg;
-            return updated;
-          });
-          return;
-        }
 
         // ─── Triangle tool: click a grid cell ─────────────────────────────
         if (activeMode === 'triangle') {
@@ -448,128 +362,11 @@ export function useBlockBuilder({
         }
       }
 
-      // ─── Bend: preview arc while dragging ────────────────────────────
-      function onMouseMove(e: { e: MouseEvent }) {
-        if (activeMode !== 'bend' || !bendStateRef.current?.isDragging) return;
-        if (!fabric || !canvas) return;
-
-        const pointer = canvas.getScenePoint(e.e);
-        bendStateRef.current.apexPx = { x: pointer.x, y: pointer.y };
-
-        // Remove old preview
-        if (previewRef.current) {
-          canvas.remove(previewRef.current as InstanceType<typeof fabric.FabricObject>);
-          previewRef.current = null;
-        }
-
-        const { fromPx, toPx } = bendStateRef.current;
-
-        // Draw preview arc through the apex
-        const dx = toPx.x - fromPx.x;
-        const dy = toPx.y - fromPx.y;
-        const len = Math.sqrt(dx * dx + dy * dy);
-        if (len === 0) return;
-
-        // Midpoint of the segment
-        const midX = (fromPx.x + toPx.x) / 2;
-        const midY = (fromPx.y + toPx.y) / 2;
-
-        // Perpendicular direction
-        const perpX = -dy / len;
-        const perpY = dx / len;
-
-        // Distance from midpoint to apex along perpendicular
-        const apexOffset = (pointer.x - midX) * perpX + (pointer.y - midY) * perpY;
-
-        // Arc radius: distance from endpoints to center
-        // The center is on the perpendicular bisector at distance |apexOffset|/2 from midpoint
-        const centerDist = Math.abs(apexOffset) / 2;
-        const halfLen = len / 2;
-        const radius = Math.sqrt(centerDist * centerDist + halfLen * halfLen);
-
-        // Determine sweep direction
-        const sweepFlag = apexOffset > 0 ? 1 : 0;
-
-        const pathStr = `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`;
-        const pathObj = new fabric.Path(pathStr, {
-          fill: '',
-          stroke: '#FF6B00',
-          strokeWidth: SEAM_LINE_WIDTH,
-          selectable: false,
-          evented: false,
-          strokeDashArray: [6, 3],
-        });
-        canvas.add(pathObj);
-        previewRef.current = pathObj;
-        canvas.renderAll();
-      }
-
-      function onMouseUp() {
-        if (activeMode !== 'bend' || !bendStateRef.current) return;
-        if (!fabric || !canvas) return;
-
-        const state = bendStateRef.current;
-        bendStateRef.current = null;
-
-        // Remove preview
-        if (previewRef.current) {
-          canvas.remove(previewRef.current as InstanceType<typeof fabric.FabricObject>);
-          previewRef.current = null;
-        }
-
-        // Calculate arc parameters from the final apex position
-        const apexPx = state.apexPx!;
-        const { fromPx, toPx } = state;
-
-        const dx = toPx.x - fromPx.x;
-        const dy = toPx.y - fromPx.y;
-        const len = Math.sqrt(dx * dx + dy * dy);
-        if (len === 0) return;
-
-        const midX = (fromPx.x + toPx.x) / 2;
-        const midY = (fromPx.y + toPx.y) / 2;
-        const perpX = -dy / len;
-        const perpY = dx / len;
-        const apexOffset = (apexPx.x - midX) * perpX + (apexPx.y - midY) * perpY;
-
-        // Only apply if there's significant bend
-        if (Math.abs(apexOffset) < 5) return;
-
-        // Convert back to grid coordinates to find the nearest arc center
-        const seg = segmentsRef.current[state.segIdx] as Segment | undefined;
-        if (!seg || 'center' in (seg as DrawSegment)) return;
-
-        const midRow = (seg.from.row + seg.to.row) / 2;
-        const midCol = (seg.from.col + seg.to.col) / 2;
-
-        // Determine arc direction based on bend direction
-        const sweepFlag = apexOffset > 0 ? 1 : 0;
-
-        const arcSeg: ArcSegment = {
-          from: seg.from,
-          to: seg.to,
-          center: { row: midRow, col: midCol },
-          clockwise: sweepFlag === 1,
-        };
-
-        setSegments((prev) => {
-          const updated = [...prev];
-          updated[state.segIdx] = arcSeg;
-          return updated;
-        });
-
-        canvas.renderAll();
-      }
-
       canvas.on('mouse:down', onMouseDown as never);
-      canvas.on('mouse:move', onMouseMove as never);
-      canvas.on('mouse:up', onMouseUp as never);
       canvas.on('mouse:dblclick', onDoubleClick as never);
 
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
-        canvas.off('mouse:move', onMouseMove as never);
-        canvas.off('mouse:up', onMouseUp as never);
         canvas.off('mouse:dblclick', onDoubleClick as never);
       };
     })().catch(() => {

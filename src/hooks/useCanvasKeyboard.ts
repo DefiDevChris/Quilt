@@ -164,8 +164,7 @@ export function useCanvasKeyboard() {
             t: 'triangle',
             h: 'pan',
             o: 'circle',
-            e: 'blockbuilder',
-            u: 'bend',
+            p: 'polygon',
           };
           const tool = TOOL_SHORTCUTS[e.key.toLowerCase()];
           if (tool) {

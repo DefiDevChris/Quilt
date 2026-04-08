@@ -165,16 +165,13 @@ export function FloatingToolbar() {
 
   const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
-    'layout-builder': [],
     'block-builder': [],
-    block: BLOCK_TOOLS,
-    image: [],
-    print: [],
+    'layout-creator': [],
   };
 
   const tools = TOOLS_BY_WORKTABLE[activeWorktable];
 
-  if (activeWorktable === 'print' || tools.length === 0) return null;
+  if (tools.length === 0) return null;
 
   // Split undo/redo from drawing tools for a visual separator
   const drawingTools = tools.filter((t) => t.id !== 'undo' && t.id !== 'redo');

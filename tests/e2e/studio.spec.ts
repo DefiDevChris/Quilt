@@ -264,7 +264,7 @@ test.describe('Block and Pattern Tools', () => {
     }
   });
 
-  test('grid overlay toggle works', async ({ page }) => {
+  test.skip('grid overlay toggle — removed from toolbar, use keyboard shortcut G', async ({ page }) => {
     test.skip(true, 'Requires authenticated user');
 
     await page.goto('/studio/test-project');

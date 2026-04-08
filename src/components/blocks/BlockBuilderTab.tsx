@@ -46,6 +46,13 @@ export function BlockBuilderTab({
     }
   }, [isOpen, gridCols, gridRows, redrawGrid]);
 
+  // Listen for undo events from the worktable toolbar
+  useEffect(() => {
+    const handler = () => undoSegment();
+    window.addEventListener('qc-block-builder-undo', handler);
+    return () => window.removeEventListener('qc-block-builder-undo', handler);
+  }, [undoSegment]);
+
   const presetCells = [1.5, 2, 3, 4];
 
   const handlePresetChange = (size: number) => {
@@ -119,8 +126,6 @@ export function BlockBuilderTab({
           'Click and drag to draw freehand. Lines snap to grid on release.'}
         {activeMode === 'rectangle' && 'Click two grid corners to draw a rectangle.'}
         {activeMode === 'triangle' && 'Click a grid cell to split it diagonally.'}
-        {activeMode === 'curve' && 'Click a straight seam line to curve it.'}
-        {activeMode === 'bend' && 'Click and drag a seam line to bend it into a curve.'}
       </div>
     </div>
   );

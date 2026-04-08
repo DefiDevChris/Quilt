@@ -64,6 +64,7 @@ export function QuiltSettingsDropdown() {
   }, []);
 
   // Sync local state with store when dropdown opens
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isOpen) {
       setWidthInput(String(canvasWidth));
@@ -72,6 +73,7 @@ export function QuiltSettingsDropdown() {
       setHeightError('');
     }
   }, [isOpen, canvasWidth, canvasHeight]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const commitWidth = useCallback(
     (raw: string) => {
@@ -183,11 +185,10 @@ export function QuiltSettingsDropdown() {
         <button
           type="button"
           onClick={() => setIsOpen((o) => !o)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${
-            isOpen
-              ? 'bg-surface-container-high text-on-surface'
-              : 'text-on-surface/70 hover:text-on-surface hover:bg-surface-container'
-          }`}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${isOpen
+            ? 'bg-surface-container-high text-on-surface'
+            : 'text-on-surface/70 hover:text-on-surface hover:bg-surface-container'
+            }`}
           aria-label="Quilt settings"
           aria-expanded={isOpen}
         >
@@ -235,9 +236,8 @@ export function QuiltSettingsDropdown() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
                   }}
-                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    widthError ? 'ring-2 ring-error/50' : ''
-                  }`}
+                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${widthError ? 'ring-2 ring-error/50' : ''
+                    }`}
                 />
                 {widthError && <p className="text-xs text-error mt-1">{widthError}</p>}
               </div>
@@ -258,9 +258,8 @@ export function QuiltSettingsDropdown() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
                   }}
-                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                    heightError ? 'ring-2 ring-error/50' : ''
-                  }`}
+                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${heightError ? 'ring-2 ring-error/50' : ''
+                    }`}
                 />
                 {heightError && <p className="text-xs text-error mt-1">{heightError}</p>}
               </div>
@@ -276,11 +275,10 @@ export function QuiltSettingsDropdown() {
                     key={p.label}
                     type="button"
                     onClick={() => applyPreset(p.width, p.height)}
-                    className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${
-                      isActive
-                        ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                        : 'bg-surface text-on-surface hover:bg-surface-container-high'
-                    }`}
+                    className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${isActive
+                      ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
+                      : 'bg-surface text-on-surface hover:bg-surface-container-high'
+                      }`}
                   >
                     <span>{p.label}</span>
                     <span className={`font-mono text-[10px] ${isActive ? 'text-white/80' : 'text-secondary'}`}>

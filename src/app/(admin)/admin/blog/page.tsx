@@ -117,10 +117,7 @@ export default function AdminBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-on-surface">Blog Posts</h1>
-          <p className="text-sm text-secondary mt-1">Manage your blog content</p>
-        </div>
+        <p className="text-sm text-secondary">Manage your blog content</p>
         <Link
           href="/admin/blog/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity"

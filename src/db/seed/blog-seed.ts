@@ -230,7 +230,7 @@ const gettingStarted: TiptapDoc = {
     heading(2, 'Step 3: Apply Fabrics'),
     p(
       text(
-        'Switch to the Fabric panel and choose from our built-in fabric library or upload your own. Click on any shape in your block to apply a fabric. Use the eyedropper tool to copy colors between shapes.'
+        'Switch to the Fabric panel and choose from our built-in fabric library or upload your own. Click on any shape in your block to apply a fabric.'
       )
     ),
     heading(2, 'Step 4: Arrange Your Layout'),

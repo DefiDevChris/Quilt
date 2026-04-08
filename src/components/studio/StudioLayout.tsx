@@ -12,13 +12,12 @@ import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
 import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
-import { NewBlockSetupModal } from '@/components/studio/NewBlockSetupModal';
 import { NewQuiltSetupModal } from '@/components/studio/NewQuiltSetupModal';
-import { PrintOptionsPanel } from '@/components/studio/PrintOptionsPanel';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
+import { WorktableTabs } from '@/components/studio/WorktableTabs';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
-import { LayoutBuilderShell } from '@/components/studio/LayoutBuilderShell';
-import { BlockBuilderShell } from '@/components/studio/BlockBuilderShell';
+import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
+import { LayoutCreatorWorktable } from '@/components/studio/LayoutCreatorWorktable';
 
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
@@ -46,34 +45,10 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
   // First-visit setup detection
-  const [showBlockSetup, setShowBlockSetup] = useState(false);
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
-  const blockSetupShownRef = useRef(false);
   const quiltSetupShownRef = useRef(false);
 
-  // Layout-builder mode: activated when the project was created via the
-  // "Create a Layout" wizard path. The session flag is consumed once.
-  const [layoutBuilderActive, setLayoutBuilderActive] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const key = `qc-layout-builder-${project.id}`;
-    const flag = window.sessionStorage.getItem(key);
-    if (flag === 'true') {
-      window.sessionStorage.removeItem(key);
-      return true;
-    }
-    return false;
-  });
-
-  // When layout-builder flag is set, switch the worktable immediately
-  useEffect(() => {
-    if (layoutBuilderActive) {
-      useCanvasStore.getState().setActiveWorktable('layout-builder');
-    }
-  }, [layoutBuilderActive]);
-
-  // First-visit detection for the QUILT worktable: brand-new projects with
-  // an empty canvas open the NewQuiltSetupModal so the user picks a finished
-  // size before doing anything else.
+  // First-visit detection for the QUILT worktable
   useEffect(() => {
     if (activeWorktable !== 'quilt' || quiltSetupShownRef.current) return;
     const key = `qc-quilt-setup-shown-${project.id}`;
@@ -85,7 +60,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
     const objs = canvas?.getObjects() ?? [];
     const hasUserContent = objs.some((o) => {
       const r = o as unknown as Record<string, unknown>;
-      if (r['_layoutRendererElement']) return false;
+      if (r['_fenceElement']) return false;
       const stroke = (r['stroke'] as string | undefined) ?? '';
       return stroke !== GRID_LINE_COLOR;
     });
@@ -119,28 +94,9 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const { handleDragStart: handleBlockDragStart } = useBlockDrop();
   const { handleFabricDragStart } = useFabricDrop();
 
-  // Mount supporting hooks (yardage calc, photo-layout import) at this scope
+  // Mount supporting hooks
   useYardageCalculation();
   usePhotoLayoutImport();
-
-  useEffect(() => {
-    if (activeWorktable === 'block' && !blockSetupShownRef.current) {
-      const canvas = useCanvasStore.getState().fabricCanvas;
-      const hasContent = (canvas?.getObjects() ?? []).some(
-        (o) => (o as { stroke?: string }).stroke !== GRID_LINE_COLOR
-      );
-      if (!hasContent) queueMicrotask(() => setShowBlockSetup(true));
-      blockSetupShownRef.current = true;
-    }
-  }, [activeWorktable]);
-
-  const handleBlockSetupConfirm = useCallback((blockSize: number, cellSize: number) => {
-    useProjectStore.getState().setCanvasWidth(blockSize);
-    useProjectStore.getState().setCanvasHeight(blockSize);
-    useCanvasStore.getState().setGridSettings({ size: cellSize, snapToGrid: true });
-    useCanvasStore.getState().fabricCanvas?.renderAll();
-    setShowBlockSetup(false);
-  }, []);
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
@@ -169,97 +125,91 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onSave={handleSave}
       />
 
-      {/* ── Layout Builder mode ─────────────────────────────────── */}
-      {activeWorktable === 'layout-builder' ? (
-        <LayoutBuilderShell
-          project={project}
+      {/* ── Block Builder worktable ──────────────────────────── */}
+      {activeWorktable === 'block-builder' ? (
+        <BlockBuilderWorktable
           onDone={() => {
             useCanvasStore.getState().setActiveWorktable('quilt');
           }}
         />
-      ) : activeWorktable === 'block-builder' ? (
-        /* ── Block Builder worktable ─────────────────────────── */
-        <BlockBuilderShell
-          project={project}
+      ) : activeWorktable === 'layout-creator' ? (
+        /* ── Layout Creator worktable ──────────────────────── */
+        <LayoutCreatorWorktable
           onDone={() => {
             useCanvasStore.getState().setActiveWorktable('quilt');
           }}
         />
       ) : (
-        /* ── Normal quilt/block/image/print worktables ─────────── */
+        /* ── Normal quilt worktable (free-draw or layout) ───── */
         <div className="flex-1 flex overflow-hidden">
-          {/* Left side: tools (or print options when in print mode) */}
-          {activeWorktable === 'print' ? (
-            <PrintOptionsPanel />
-          ) : (
-            <Toolbar
-              onOpenImageExport={dialogs.openImageExport}
-              onOpenReferenceImage={dialogs.openReferenceImage}
-              onOpenLayoutOverlay={dialogs.openLayoutOverlay}
-              onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
-              onNewBlock={handleNewBlock}
-            />
-          )}
+          {/* Left side: tools */}
+          <Toolbar
+            onOpenImageExport={dialogs.openImageExport}
+            onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
+            onNewBlock={handleNewBlock}
+          />
 
-          {/* Canvas area — splits side-by-side when reference image is shown */}
-          <div className="flex-1 flex overflow-hidden relative" data-tour="canvas">
-            <div
-              className={`flex flex-col overflow-hidden relative ${showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'
-                }`}
-            >
-              <StudioDropZone project={project} />
-              <ContextMenu />
-              <QuickInfo />
-              <LayoutAdjuster />
+          {/* Canvas area */}
+          <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
+            {/* Worktable tab bar */}
+            <WorktableTabs />
+            <div className="flex-1 flex overflow-hidden relative">
+              <div
+                className={`flex flex-col overflow-hidden relative ${showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'
+                  }`}
+              >
+                <StudioDropZone project={project} />
+                <ContextMenu />
+                <QuickInfo />
+                <LayoutAdjuster />
+              </div>
+
+              {/* Reference photo split pane */}
+              {showReferencePanel && referenceImageUrl && (
+                <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
+                    <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
+                      Reference Photo
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
+                      className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
+                      aria-label="Close reference panel"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path
+                          d="M3 3L11 11M11 3L3 11"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={referenceImageUrl}
+                      alt="Original reference photo"
+                      className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Reference photo split pane */}
-            {showReferencePanel && referenceImageUrl && (
-              <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
-                  <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
-                    Reference Photo
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
-                    className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
-                    aria-label="Close reference panel"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path
-                        d="M3 3L11 11M11 3L3 11"
-                        stroke="currentColor"
-                        strokeWidth="1.4"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={referenceImageUrl}
-                    alt="Original reference photo"
-                    className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
-                    draggable={false}
-                  />
-                </div>
-              </div>
+            {/* Pro-only production panels — flex siblings so they push the canvas, not cover it */}
+            {isPro && <YardagePanel />}
+            {isPro && (
+              <PrintlistPanel
+                onGeneratePdf={dialogs.openPdfExport}
+                onExportImage={dialogs.openImageExport}
+              />
             )}
-          </div>
 
-          {/* Pro-only production panels — flex siblings so they push the canvas, not cover it */}
-          {isPro && <YardagePanel />}
-          {isPro && (
-            <PrintlistPanel
-              onGeneratePdf={dialogs.openPdfExport}
-              onExportImage={dialogs.openImageExport}
-            />
-          )}
-
-          {/* Right context panel (libraries + selection-driven inspector). Hidden in print mode. */}
-          {activeWorktable !== 'print' && (
+            {/* Right context panel (libraries) */}
             <ContextPanel
               onBlockDragStart={handleBlockDragStart}
               onFabricDragStart={handleFabricDragStart}
@@ -267,25 +217,20 @@ export function StudioLayout({ project }: StudioLayoutProps) {
               onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
               onOpenUpload={dialogs.openFabricUpload}
             />
-          )}
+          </div>
         </div>
       )}
 
-      {activeWorktable !== 'block-builder' && <BottomBar />}
+      <BottomBar />
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
 
-      {/* First-visit setup modals — quilt and block worktables */}
+      {/* First-visit setup modal */}
       <NewQuiltSetupModal
         isOpen={showQuiltSetup}
         onConfirm={handleQuiltSetupConfirm}
         onDismiss={handleQuiltSetupDismiss}
-      />
-      <NewBlockSetupModal
-        isOpen={showBlockSetup}
-        onConfirm={handleBlockSetupConfirm}
-        onDismiss={() => setShowBlockSetup(false)}
       />
     </div>
   );

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { SectionTitle } from '@/components/ui/SectionTitle';
 
 export default function AdminSettingsPage() {
   const [shopEnabled, setShopEnabled] = useState(false);
@@ -90,7 +89,6 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <SectionTitle>Settings</SectionTitle>
         <div className="glass-panel rounded-2xl p-6 animate-pulse">
           <div className="h-6 bg-primary-container/40 rounded w-1/4 mb-4" />
           <div className="h-10 bg-primary-container/20 rounded w-1/3" />
@@ -101,16 +99,14 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle>Settings</SectionTitle>
       <p className="text-secondary text-sm">Manage site-wide feature settings.</p>
 
       {message && (
         <div
-          className={`rounded-xl px-4 py-3 text-sm font-medium ${
-            message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}
+          className={`rounded-xl px-4 py-3 text-sm font-medium ${message.type === 'success'
+            ? 'bg-green-50 text-green-800 border border-green-200'
+            : 'bg-red-50 text-red-800 border border-red-200'
+            }`}
         >
           {message.text}
         </div>
@@ -128,11 +124,10 @@ export default function AdminSettingsPage() {
           </div>
           <div className="flex items-center gap-3">
             <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                shopEnabled
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-primary-container/40 text-secondary'
-              }`}
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${shopEnabled
+                ? 'bg-green-100 text-green-800'
+                : 'bg-primary-container/40 text-secondary'
+                }`}
             >
               {shopEnabled ? 'Enabled' : 'Disabled'}
             </span>
@@ -140,17 +135,15 @@ export default function AdminSettingsPage() {
               type="button"
               onClick={handleToggle}
               disabled={saving}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 ${
-                shopEnabled ? 'bg-primary' : 'bg-primary-container/60'
-              }`}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 ${shopEnabled ? 'bg-primary' : 'bg-primary-container/60'
+                }`}
               role="switch"
               aria-checked={shopEnabled}
               aria-label="Toggle shop"
             >
               <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-elevation-1 transition-transform ${
-                  shopEnabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-elevation-1 transition-transform ${shopEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
               />
             </button>
           </div>

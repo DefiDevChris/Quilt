@@ -25,3 +25,4 @@ export { bookmarks } from './bookmarks';
 export { userFabrics } from './userFabrics';
 export { siteSettings } from './siteSettings';
 export { mobileUploads } from './mobileUploads';
+export { layoutTemplates } from './layoutTemplates';

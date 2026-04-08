@@ -1,7 +1,6 @@
 'use client';
 
 import { useCanvasStore } from '@/stores/canvasStore';
-import { usePieceInspectorStore } from '@/stores/pieceInspectorStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
@@ -18,13 +17,6 @@ export function PrintOptionsPanel() {
       label: 'Printlist',
       description: 'Block overview, patch count & cutting diagram',
       onClick: () => usePrintlistStore.getState().togglePanel(),
-    },
-    {
-      label: 'Piece Templates',
-      description: 'Select pieces to inspect & generate 1:1 PDF templates',
-      onClick: () => {
-        usePieceInspectorStore.getState().setOpen(true);
-      },
     },
     {
       label: 'Yardage Summary',
@@ -59,14 +51,12 @@ export function PrintOptionsPanel() {
               role="switch"
               aria-checked={showSeamAllowance}
               onClick={toggleSeamAllowance}
-              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors ${
-                showSeamAllowance ? 'bg-primary' : 'bg-outline-variant'
-              }`}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors ${showSeamAllowance ? 'bg-primary' : 'bg-outline-variant'
+                }`}
             >
               <span
-                className={`inline-block h-4 w-4 mt-0.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
-                  showSeamAllowance ? 'translate-x-4' : 'translate-x-0.5'
-                }`}
+                className={`inline-block h-4 w-4 mt-0.5 rounded-full bg-white shadow-elevation-1 transition-transform ${showSeamAllowance ? 'translate-x-4' : 'translate-x-0.5'
+                  }`}
               />
             </button>
           </div>

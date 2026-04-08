@@ -125,10 +125,7 @@ export default function AdminModerationPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-on-surface">Community Moderation</h1>
-        <p className="text-sm text-secondary mt-1">Review reports and moderate community content</p>
-      </div>
+      <p className="text-sm text-secondary">Review reports and moderate community content</p>
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-outline-variant">
@@ -141,11 +138,10 @@ export default function AdminModerationPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as Tab)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
                 ? 'border-primary text-primary'
                 : 'border-transparent text-secondary hover:text-on-surface'
-            }`}
+              }`}
           >
             {tab.label}
           </button>
