@@ -12,13 +12,10 @@ export interface ToolbarCallbacks {
 }
 
 export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
-  const isYardagePanelOpen = useYardageStore((s) => s.isPanelOpen);
-  const toggleYardagePanel = useYardageStore((s) => s.togglePanel);
-  const isPrintlistPanelOpen = usePrintlistStore((s) => s.isPanelOpen);
-  const togglePrintlistPanel = usePrintlistStore((s) => s.togglePanel);
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const isSnapEnabled = useCanvasStore((s) => s.gridSettings.snapToGrid);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -27,17 +24,14 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       label: 'Select',
       shortcut: 'V',
       description: 'Select and move pieces on your canvas',
-      mascot: '/mascots&avatars/corgi2.png',
       toolType: 'select',
       group: 'tools',
       tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M5 3L5 15L8.5 11.5L12 17L14 16L10.5 10L15 10L5 3Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
+            d="M4 3L4 16L8 12L11 18L13 17L10 11L16 11L4 3Z"
+            fill="currentColor"
           />
         </svg>
       ),
@@ -47,7 +41,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       label: 'Pan',
       shortcut: 'H',
       description: 'Click and drag to move around your canvas',
-      mascot: '/mascots&avatars/corgi8.png',
       toolType: 'pan',
       group: 'tools',
       tier: 'primary',
@@ -59,88 +52,74 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M10 3C8.5 3 7 4 7 6C7 7.5 8 9 9 10V15C9 16 10 17 11 17C12 17 13 16 13 15V10C14 9 15 7.5 15 6C15 4 13.5 3 12 3H10Z"
-            stroke="currentColor"
-            strokeWidth="1.3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d="M10 2C9 2 8 2.5 8 4C8 5 8.5 6 9 7V14C9 15 9.5 16 10 16C10.5 16 11 15 11 14V7C11.5 6 12 5 12 4C12 2.5 11 2 10 2Z"
+            fill="currentColor"
           />
-          <path
-            d="M7 6V4M13 6V4M10 10V8"
-            stroke="currentColor"
-            strokeWidth="1.3"
-            strokeLinecap="round"
-          />
+          <circle cx="6" cy="8" r="1.5" fill="currentColor" />
+          <circle cx="14" cy="8" r="1.5" fill="currentColor" />
+          <circle cx="10" cy="5" r="1.5" fill="currentColor" />
         </svg>
       ),
     },
-    // ── ADVANCED: Measure & export ──
     {
-      id: 'yardage',
-      label: 'Yardage Estimator',
-      description: 'Calculate how much fabric you need for your quilt',
-      mascot: '/mascots&avatars/corgi19.png',
-      group: 'export-adv',
-      tier: 'advanced',
-      onClick: toggleYardagePanel,
-      isActive: () => isYardagePanelOpen,
+      id: 'easydraw',
+      label: 'Easydraw',
+      description: 'Freehand drawing tool',
+      toolType: 'easydraw',
+      group: 'tools',
+      tier: 'primary',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M4 4V16H16"
+            d="M3 17L5 11L8 8L12 4L16 3L17 7L13 11L10 14L7 17L3 17Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="14" cy="6" r="1.5" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      id: 'bend',
+      label: 'Bend',
+      description: 'Warp/modify existing shapes',
+      toolType: 'bend',
+      group: 'tools',
+      tier: 'primary',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M4 16C4 16 6 12 10 12C14 12 16 16 16 16"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <circle cx="4" cy="16" r="1.5" fill="currentColor" />
+          <circle cx="10" cy="12" r="1.5" fill="currentColor" />
+          <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      id: 'snap-toggle',
+      label: 'Snap Toggle',
+      description: 'Enable/disable snap-to-grid',
+      group: 'tools',
+      tier: 'primary',
+      onClick: () => useCanvasStore.getState().setGridSettings({ snapToGrid: !isSnapEnabled }),
+      isActive: () => isSnapEnabled,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M10 2V6M10 14V18M6 10H2M14 10H18"
             stroke="currentColor"
             strokeWidth="1.4"
             strokeLinecap="round"
-            strokeLinejoin="round"
           />
-          <path
-            d="M7 12L10 8L13 10L16 6"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'printlist',
-      label: 'Printlist',
-      description: 'Review your materials list and generate a printable PDF',
-      mascot: '/mascots&avatars/corgi21.png',
-      group: 'export-adv',
-      tier: 'advanced',
-      onClick: togglePrintlistPanel,
-      isActive: () => isPrintlistPanelOpen,
-      dataTour: 'export',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="5" y="9" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M7 9V4H13V9" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 9H17V14H3V9Z" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M8 12H12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      ),
-    },
-    {
-      id: 'export-image',
-      label: 'Export Image',
-      description: 'Save your design as a high-res image to share online',
-      mascot: '/mascots&avatars/corgi23.png',
-      group: 'export-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenImageExport,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <circle cx="7" cy="7" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-          <path
-            d="M3 14L7 10L10 13L13 9L17 14"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
         </svg>
       ),
     },
@@ -150,7 +129,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       label: 'Undo',
       shortcut: 'Ctrl+Z',
       description: 'Undo the last action',
-      mascot: '/mascots&avatars/corgi25.png',
       group: 'history',
       tier: 'pinned',
       isDisabled: !canUndo,
@@ -183,7 +161,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       label: 'Redo',
       shortcut: 'Ctrl+Shift+Z',
       description: 'Redo the last undone action',
-      mascot: '/mascots&avatars/corgi27.png',
       group: 'history',
       tier: 'pinned',
       isDisabled: !canRedo,

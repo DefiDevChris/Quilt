@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * StudioLayout — The Design Studio workspace
+ *
+ * Three-panel layout:
+ * - Left sidebar (Toolbar): Narrow strip of tool buttons for interacting with the canvas
+ * - Center (Canvas): Main design area where you build your quilt (the worktable)
+ * - Right sidebar (Context Panel): Library tabs where you browse Layouts, Blocks, and Fabrics
+ *
+ * Top bar: Project name, viewport controls, settings, and actions like undo/redo/zoom
+ * Bottom bar: Status info like cursor position and snap settings
+ */
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Project } from '@/types/project';
 import { GRID_LINE_COLOR } from '@/lib/constants';
@@ -148,18 +160,18 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           }}
         />
       ) : (
-        /* ── Normal quilt worktable (free-draw or layout) ───── */
+        /* ── Normal quilt worktable ───── */
         <div className="flex-1 flex overflow-hidden">
-          {/* Left side: tools */}
+          {/* Left sidebar: Toolbar (narrow strip of tool buttons) */}
           <Toolbar
             onOpenImageExport={dialogs.openImageExport}
             onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
             onNewBlock={handleNewBlock}
           />
 
-          {/* Canvas area */}
+          {/* Center: Canvas (main design area) */}
           <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
-            {/* Worktable tab bar */}
+            {/* Top bar: Worktable tabs */}
             <WorktableTabs />
             <div className="flex-1 flex overflow-hidden relative">
               <div
@@ -217,7 +229,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
               />
             )}
 
-            {/* Right context panel (libraries) */}
+            {/* Right sidebar: Context Panel (Library tabs for Layouts, Blocks, Fabrics) */}
             <ContextPanel
               onBlockDragStart={handleBlockDragStart}
               onFabricDragStart={handleFabricDragStart}

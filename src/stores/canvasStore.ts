@@ -24,11 +24,12 @@ import { getProjectDimensions } from '@/stores/store-bridge';
 export type ToolType =
   | 'select'
   | 'pan'
+  | 'easydraw'
+  | 'bend'
   | 'rectangle'
   | 'circle'
   | 'triangle'
-  | 'polygon'
-  | 'easydraw';
+  | 'polygon';
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
@@ -227,8 +228,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
       console.warn(
         `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
-        `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
-        'Undo disabled for this action. Consider reducing canvas complexity.'
+          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+          'Undo disabled for this action. Consider reducing canvas complexity.'
       );
       return false;
     }

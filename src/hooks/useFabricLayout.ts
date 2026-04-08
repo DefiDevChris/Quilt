@@ -193,6 +193,7 @@ export function useFabricDrop() {
         const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
         if (foundTarget) {
           const areaObj = foundTarget as Record<string, unknown>;
+          // Highlight when cursor is over a valid fabric area
           if (areaObj['_fenceElement'] && ALLOWED_ROLES.includes(areaObj['_fenceRole'] as typeof ALLOWED_ROLES[number])) {
             e.dataTransfer.dropEffect = 'copy';
             await showFabricHighlight(foundTarget);
@@ -200,6 +201,7 @@ export function useFabricDrop() {
           }
         }
       }
+      // Drops outside valid areas are rejected
       e.dataTransfer.dropEffect = 'none';
       clearHighlight();
     },

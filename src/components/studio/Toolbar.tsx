@@ -5,10 +5,7 @@ import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
-import {
-  useQuiltTools,
-  type ToolbarCallbacks,
-} from './ToolbarConfig';
+import { useQuiltTools, type ToolbarCallbacks } from './ToolbarConfig';
 
 type ToolbarProps = ToolbarCallbacks;
 
@@ -103,11 +100,7 @@ function renderToolGroup(
   );
 }
 
-export function Toolbar({
-  onOpenImageExport,
-  onSaveBlock,
-  onNewBlock,
-}: ToolbarProps) {
+export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);

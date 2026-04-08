@@ -86,6 +86,7 @@ export function useBlockDrop() {
 
         if (foundTarget) {
           const areaObj = foundTarget as Record<string, unknown>;
+          // Highlight when cursor is over a valid block cell area
           if (areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell') {
             e.dataTransfer.dropEffect = 'copy';
             await showCellHighlight(foundTarget);
@@ -94,6 +95,7 @@ export function useBlockDrop() {
         }
       }
 
+      // Drops outside valid areas are rejected
       clearHighlight();
       e.dataTransfer.dropEffect = 'none';
     },
