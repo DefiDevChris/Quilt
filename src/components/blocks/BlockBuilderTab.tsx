@@ -126,6 +126,7 @@ export function BlockBuilderTab({
           'Click and drag to draw freehand. Lines snap to grid on release.'}
         {activeMode === 'rectangle' && 'Click two grid corners to draw a rectangle.'}
         {activeMode === 'triangle' && 'Click a grid cell to split it diagonally.'}
+        {activeMode === 'bend' && 'Click a seam line, then drag to curve it.'}
       </div>
     </div>
   );

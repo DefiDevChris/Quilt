@@ -2,9 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
-import { useToast } from '@/components/ui/ToastProvider';
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -12,16 +10,13 @@ import { useToast } from '@/components/ui/ToastProvider';
  * places it at drop coordinates, and snaps to fence cells.
  *
  * Fence-enforced: blocks can ONLY drop into block-cell areas.
- * Invalid drops are rejected with toast + not-allowed cursor.
+ * Invalid drops are silently ignored.
  */
 export function useBlockDrop() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
   const pushUndoState = useCanvasStore((s) => s.pushUndoState);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
-  const blockSize = useLayoutStore((s) => s.blockSize);
   const dragBlockIdRef = useRef<string | null>(null);
-  const { toast } = useToast();
   const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
 
   const handleDragStart = useCallback((_e: React.DragEvent, blockId: string) => {
@@ -84,7 +79,6 @@ export function useBlockDrop() {
   const handleDragOver = useCallback(
     async (e: React.DragEvent) => {
       e.preventDefault();
-      const target = e.currentTarget as HTMLElement;
 
       if (fabricCanvas) {
         const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
@@ -94,7 +88,6 @@ export function useBlockDrop() {
           const areaObj = foundTarget as Record<string, unknown>;
           if (areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell') {
             e.dataTransfer.dropEffect = 'copy';
-            target.style.cursor = 'copy';
             await showCellHighlight(foundTarget);
             return;
           }
@@ -103,15 +96,12 @@ export function useBlockDrop() {
 
       clearHighlight();
       e.dataTransfer.dropEffect = 'none';
-      target.style.cursor = 'not-allowed';
     },
     [fabricCanvas, showCellHighlight, clearHighlight]
   );
 
   const handleDragLeave = useCallback(
-    (e: React.DragEvent) => {
-      const target = e.currentTarget as HTMLElement;
-      target.style.cursor = '';
+    (_e: React.DragEvent) => {
       clearHighlight();
     },
     [clearHighlight]
@@ -120,8 +110,6 @@ export function useBlockDrop() {
   const handleDrop = useCallback(
     async (e: React.DragEvent) => {
       e.preventDefault();
-      const target = e.currentTarget as HTMLElement;
-      target.style.cursor = '';
 
       if (!fabricCanvas) return;
       const canvas = fabricCanvas as FabricCanvas | null;
@@ -176,16 +164,12 @@ export function useBlockDrop() {
             return r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer);
           });
 
-          if (!fallbackTarget) {
-            toast({ type: 'error', title: 'Invalid drop', description: 'Blocks can only be placed in block cells' });
-            return;
-          }
+          if (!fallbackTarget) return;
           hitTarget = fallbackTarget;
         }
 
         const areaObj = hitTarget as Record<string, unknown>;
         if (!areaObj['_fenceElement'] || areaObj['_fenceRole'] !== 'block-cell') {
-          toast({ type: 'error', title: 'Invalid drop', description: 'Blocks can only be placed in block cells' });
           return;
         }
 
@@ -264,7 +248,7 @@ export function useBlockDrop() {
 
       dragBlockIdRef.current = null;
     },
-    [fabricCanvas, gridSettings, blockSize, pushUndoState, setActiveTool, clearHighlight]
+    [fabricCanvas, pushUndoState, setActiveTool, clearHighlight]
   );
 
   return { handleDragStart, handleDragOver, handleDrop, handleDragLeave };

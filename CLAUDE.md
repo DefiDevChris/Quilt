@@ -1,5 +1,7 @@
 # QWEN.md
 
+> **IMPORTANT:** This file MUST stay identical to `CLAUDE.md` at all times. Any change made here must be mirrored in `CLAUDE.md`, and vice versa.
+
 This file provides guidance to Qwen Code when working with code in this repository.
 
 ## Project Overview
@@ -73,11 +75,11 @@ src/
     studio/[projectId]/  # Design canvas (desktop only)
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
-  stores/           # Zustand stores (18 total)
+  stores/           # Zustand stores (16 total)
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
-  db/schema/        # Drizzle table definitions (20 files)
+  db/schema/        # Drizzle table definitions (21 files)
   types/            # Shared TypeScript type definitions
 ```
 
@@ -198,12 +200,9 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 │ Tool │       CanvasWorkspace                │  ContextPanel         │
 │ bar  │       + Fence Overlay (if layout)    │  (right, 320 px)      │
 │      │       + User Blocks                  │                       │
-│      │                                      │  TOP: Library tabs    │
+│      │                                      │  Library tabs only    │
 │      │                                      │   Layouts/Blocks/     │
 │      │                                      │   Fabrics             │
-│      │                                      │                       │
-│      │                                      │  BOTTOM:              │
-│      │                                      │   SelectionInspector  │
 ├──────┴──────────────────────────────────────┴───────────────────────┤
 │ BottomBar                                                           │
 └─────────────────────────────────────────────────────────────────────┘
@@ -211,9 +210,7 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 
 - **Toolbar (left, 88 px)** — Tools: Select, Pan, Eyedropper, Easydraw, Curve, Bend, Spraycan. View actions: Grid Toggle, Snap Toggle, Reference Image, Pattern Overlay. **No transforms** (rotate/flip/delete) — those live in inspectors in the right pane.
 - **CanvasWorkspace (center)** — Single Fabric.js canvas, never unmounted. Pan/zoom is preserved across all worktable mode changes. Canvas dimensions are calculated by `src/lib/quilt-sizing.ts` based on block size, grid dimensions, sashing, and borders.
-- **ContextPanel (right, 320 px)** — Two stacked sections:
-  - **Top (50%)**: Three library tabs (Layouts / Blocks / Fabrics). User-driven only — **never auto-switches based on canvas selection.**
-  - **Bottom (50%)**: `SelectionInspector` that branches on `resolveSelection()` and renders the right inspector panel for whatever's selected. When nothing is selected, renders `DefaultInspector` (quilt dimensions, size presets, grid cell size, snap toggle).
+- **ContextPanel (right, 320 px)** — Library tabs only (Layouts / Blocks / Fabrics). User-driven — **never auto-switches based on canvas selection.**
 
 ### Worktable Types
 
@@ -291,46 +288,22 @@ A layout is a **fence** — it defines areas where specific things can be placed
 | `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Unified drag-drop dispatcher with `FloatingToolbar` and `CanvasErrorBoundary` |
 | `StudioTopBar` | `src/components/studio/StudioTopBar.tsx` | Top bar: project info, viewport controls, settings dropdown, hamburger menu |
 | `WorktableTabs` | `src/components/studio/WorktableTabs.tsx` | Tab bar for switching between worktable tabs |
-| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics) + SelectionInspector |
+| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics) |
 | `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip (2-column grid of ToolIcon buttons) |
 | `FloatingToolbar` | `src/components/studio/FloatingToolbar.tsx` | Floating overlay toolbar with undo/redo/zoom controls |
 | `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state |
 | `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 400×400 canvas, tools, Block Library |
-| `BlockBuilderShell` | `src/components/studio/BlockBuilderShell.tsx` | Legacy block builder shell (still exists, being phased out) |
 | `LayoutCreatorWorktable` | `src/components/studio/LayoutCreatorWorktable.tsx` | Layout drafting: draw shapes, assign roles, save to library |
 | `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
 | `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
 | `NewQuiltSetupModal` | `src/components/studio/NewQuiltSetupModal.tsx` | First-visit quilt setup: pick size + name |
-| `NewBlockSetupModal` | `src/components/studio/NewBlockSetupModal.tsx` | First-visit block setup modal |
 | `DuplicateOptionsPopup` | `src/components/studio/DuplicateOptionsPopup.tsx` | Project duplication options |
-| `PrintOptionsPanel` | `src/components/studio/PrintOptionsPanel.tsx` | Print/export options |
 | `ResizeDialog` | `src/components/studio/ResizeDialog.tsx` | Quilt resize dialog |
 | `QuiltSettingsDropdown` | `src/components/studio/QuiltSettingsDropdown.tsx` | Settings dropdown in StudioTopBar |
 | `HamburgerDrawer` | `src/components/studio/HamburgerDrawer.tsx` | Mobile/hamburger side drawer |
 | `HelpPanel` | `src/components/studio/HelpPanel.tsx` | Contextual help with FAQs |
 | `HistoryPanel` | `src/components/studio/HistoryPanel.tsx` | Undo/redo history browser |
-| `KeyboardShortcutsModal` | `src/components/studio/KeyboardShortcutsModal.tsx` | Keyboard shortcuts reference |
 | `CanvasErrorBoundary` | `src/components/studio/CanvasErrorBoundary.tsx` | Error boundary for canvas |
-| `BackgroundColorControl` | `src/components/studio/BackgroundColorControl.tsx` | Canvas background color picker |
-| `ColorThemeTools` | `src/components/studio/ColorThemeTools.tsx` | Color theme tool (spraycan/swap/randomize) |
-| `BlockBuilderOptions` | `src/components/studio/BlockBuilderOptions.tsx` | Block builder options panel |
-
-### Inspectors (selection-driven, rendered by ContextPanel bottom)
-
-| Component | Selection Kind | Role |
-| --------- | -------------- | ---- |
-| `DefaultInspector` | `none` | Quilt info, size presets, grid settings |
-| `BlockCellInspector` | `block-cell` | Empty cell dimensions, "Drag a block here" hint |
-| `BlockInspector` | `block` | Rotate, flip, layer order, delete |
-| `PieceInspector` | `piece` | Wraps `PieceInspectorPanel` for sub-piece selection |
-| `PieceInspectorPanel` | (internal) | SVG preview, seam allowance, print/copy SVG |
-| `SashingInspector` | `sashing` | Width slider + fabric assignment |
-| `CornerstoneInspector` | `cornerstone` | Show/hide toggle + fabric assignment |
-| `BorderInspector` | `border` | Width, add/remove border + fabric |
-| `BindingInspector` | `binding` | Width slider + fabric assignment |
-| `SettingTriangleInspector` | `setting-triangle` / `edging` | Fabric assignment |
-| `FreeShapeInspector` | `free-shape` | Fabric/color assignment |
-| `AreaFabricControls` | (shared) | Drag-drop fabric assignment UI used by all area inspectors |
 
 ### Fence Renderer
 
@@ -363,22 +336,6 @@ The fence renderer is the **only** way layout areas appear on canvas:
 2. If target role is in `['sashing', 'cornerstone', 'border', 'binding', 'edging']` → applies fabric as pattern fill, sized to fill entire area
 3. If target is NOT a valid fabric area → **drop rejected** with toast + `not-allowed` cursor
 
-### Selection Resolution
-
-`src/lib/canvas-selection.ts` exports `resolveSelection(canvas, ids)` — the **only** way the right pane decides which inspector to render. Pure function, fully Vitest-tested. Returns a `ResolvedSelection` with:
-
-- `kind: SelectionKind` — `'none' | 'block-cell' | 'block' | 'piece' | 'sashing' | 'cornerstone' | 'border' | 'binding' | 'setting-triangle' | 'edging' | 'free-shape' | 'mixed' | 'unknown'`
-- `objects`, `primary`, `layoutAreaId`, `layoutAreaRole`, `borderIndex`, `blockGroup`, `inFenceCellId`
-
-Reads runtime tags written by `useFenceRenderer` and `useBlockDrop`:
-
-- `_fenceElement: true` → fence area
-- `_fenceRole: string` → area kind
-- `_inFenceCellId: string` → block placed in a cell
-- `subTargetCheck: true` → enables piece-level drop detection
-
-Never mutate selection-detection logic in component code — extend the helper instead.
-
 ### Layout Library
 
 - **File**: `src/lib/layout-library.ts`
@@ -398,19 +355,27 @@ Never mutate selection-detection logic in component code — extend the helper i
 - On save: serializes all shapes + roles → `LayoutTemplate` JSON → POST `/api/layout-templates` → appears in Layouts library
 - Saved layouts are immediately draggable from the Layouts tab onto the canvas (creates new worktable tab)
 
-### Dead Code (safe to delete)
-
-These files exist but are **never imported** and have been superseded:
-
-| File | Lines | Replaced By |
-|------|-------|-------------|
-| `src/components/studio/LayoutRolePanel.tsx` | 164 | Inspectors in `inspectors/` directory |
-| `src/components/studio/SelectionPanel.tsx` | ~400 | `SelectionInspector` via `ContextPanel` bottom |
-
 ### Removed (DO NOT REINTRODUCE)
 
+- `src/components/studio/LayoutRolePanel.tsx` — superseded by inspectors in `inspectors/` directory
+- `src/components/studio/SelectionPanel.tsx` — superseded by `SelectionInspector` via `ContextPanel` bottom
+- `src/components/studio/BackgroundColorControl.tsx` — dead component, never imported
+- `src/components/studio/KeyboardShortcutsModal.tsx` — dead component, never imported
+- `src/components/studio/NewBlockSetupModal.tsx` — dead component, never imported
+- `src/components/studio/PrintOptionsPanel.tsx` — dead component, never imported
+- `src/components/blocks/BlockDraftingErrorBoundary.tsx` — dead component, never imported
+- `src/components/photo-layout/PhotoPatternErrorBoundary.tsx` — dead component, never imported
+- `src/components/onboarding/TourOverlay.tsx` — dead component, old onboarding tour removed
+- `src/components/community/FollowListModal.tsx` — dead component, never imported
+- `src/components/projects/BlockSizePicker.tsx` — dead component, never imported
+- `src/components/export/ExportOptionsDialog.tsx` — dead component, never imported
+- `src/components/layout/ResponsivePublicShell.tsx` — dead component, never imported
+- `src/components/ui/Checkbox.tsx` — dead component, never imported
+- `src/components/ui/NumberInput.tsx` — dead component, never imported
+- `src/components/ui/SegmentedToggle.tsx` — dead component, only used by deleted test
 - `src/hooks/useLayoutEngine.ts` — replaced by fence engine. Auto-shuffle `rearrangeBlocks` anti-pattern removed.
 - `src/hooks/useLayoutRenderer.ts` — never existed; the canonical renderer is `useFenceRenderer`.
+- `src/hooks/useBlockBuilderCanvas.ts` — never existed; canvas interactions are in `useBlockBuilder.ts`
 - `src/components/studio/QuiltDimensionsPanel.tsx` — modal removed. Quilt dimensions in `DefaultInspector`.
 - `src/components/studio/panels/` directory entirely (BlockPlacementPanel, BorderPanel, HedgingPanel, SashingPanel)
 - `src/components/blocks/BlockDraftingShell.tsx` — replaced by `BlockBuilderWorktable`
@@ -419,11 +384,24 @@ These files exist but are **never imported** and have been superseded:
 - `src/components/studio/layout-builder/` directory — replaced by new layout creator
 - `src/components/studio/NewLayoutSetupModal.tsx` — layout selection now via drag from Layouts tab
 - `src/lib/layout-renderer.ts` — replaced by `fence-engine.ts`
+- `src/lib/layout-import-canvas.ts` — orphaned island, no production consumer
+- `src/lib/layout-import-helpers.ts` — orphaned island, no production consumer
+- `src/lib/layout-import-layouts.ts` — orphaned island, no production consumer
+- `src/lib/layout-import-printlist.ts` — orphaned island, no production consumer
+- `src/lib/layout-import-types.ts` — orphaned island, no production consumer
+- `src/lib/layout-block-matcher.ts` — orphaned island, no production consumer
+- `src/lib/layout-fabric-matcher.ts` — orphaned island, no production consumer
+- `src/lib/layout-parser-types.ts` — orphaned island, no production consumer
+- `src/lib/cn.ts` — dead utility, never imported
+- `src/lib/colortheme-utils.ts` — dead utility, never imported
+- `src/lib/logger.ts` — dead utility, never imported
+- `src/types/quilt-ocr.ts` — dead type, never imported
+- `src/types/wizard.ts` — dead type, never imported
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab
 
 ### Block Library
 
-- 35 block SVGs in `/quilt_blocks/` (`01_nine_patch.svg` through `35_pine_tree.svg`, `viewBox="0 0 300 300"`, grayscale palette)
+- 50 block SVGs in `/quilt_blocks/` (`01_nine_patch.svg` through `50_*.svg`, `viewBox="0 0 300 300"`, grayscale palette)
 - System blocks are seeded from SVG files via `src/db/seed/seedBlocksFromFiles.ts` — converts SVG to Fabric.js JSON using `fabric.loadSVGFromString()` and stores in `blocks` table with `isDefault=true`
 - Users can also upload photos of sewn blocks — these go into the block library as square image blocks (non-editable, resizable, placeable in layouts like regular blocks)
 - Block types: `'svg'` (system), `'custom'` (user-drawn), `'photo'` (uploaded photo) — tracked via `BlockType` in `src/types/block.ts`
@@ -433,11 +411,10 @@ These files exist but are **never imported** and have been superseded:
 
 ### Block Builder Architecture
 
-- Pure engine: `src/lib/block-builder-engine.ts` — shape generators (`generateTriangle`, `generateRectangle`), grid utilities (`pixelToGridCell`, `findNearestSegment`), grid unit presets
+- Pure engine: `src/lib/block-builder-engine.ts` — shape generators (`generateTriangle`, `generateRectangle`, `generateBend`), grid utilities (`pixelToGridCell`, `findNearestSegment`), grid unit presets
 - Planar graph engine: `src/lib/blockbuilder-utils.ts` — `detectPatches()` uses half-edge face traversal to find closed regions from seam-line segments
-- Hook: `src/hooks/useBlockBuilder.ts` — bridges engines to Fabric.js, manages segments/patches/patchFills state, handles mouse events per tool mode, redraws grid on unit change
-- Hook: `src/hooks/useBlockBuilderCanvas.ts` — canvas-specific interactions for block builder
-- Toolbar: `src/components/blocks/BlockBuilderToolbar.tsx` — `BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'curve'`
+- Hook: `src/hooks/useBlockBuilder.ts` — bridges engines to Fabric.js, manages segments/patches/patchFills state, handles mouse events per tool mode (including bend: click segment → drag to curve), redraws grid on unit change
+- Toolbar: `src/components/blocks/BlockBuilderToolbar.tsx` — `BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'bend'`
 - Tab: `src/components/blocks/BlockBuilderTab.tsx` — grid unit selector + toolbar + tool hints
 - Worktable: `src/components/studio/BlockBuilderWorktable.tsx` — full worktable mode with left drafting tools, center 400×400 canvas, right Block Library. Replaces the former `BlockDraftingShell` modal.
 - `DraftTabProps` type: defined in `BlockBuilderWorktable.tsx`, shared by `FreeformDraftingTab` and `BlockBuilderTab`
@@ -496,12 +473,11 @@ Upload a photo of any quilt → OpenCV extracts the individual pieces → pieces
 
 Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
 
-### Layout Import Pipeline
+### Photo-to-Design Supporting Modules
 
-- `src/lib/layout-import-*.ts` — modular import helpers (canvas, layouts, printlist, helpers, types)
 - `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow
 - `src/lib/photo-layout-*.ts` — photo layout types and utilities
-- `src/hooks/usePhotoLayoutImport.ts` — hook bridging photo import to canvas
+- `src/hooks/usePhotoLayoutImport.ts` — exports `usePhotoPatternImport()` (hook bridging photo import to canvas); `StudioLayout.tsx` calls it directly
 
 ## Fabric Library
 
