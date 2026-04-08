@@ -7,7 +7,7 @@
  * Runs client-side in the browser.
  */
 
-import { PDFDocument, rgb, StandardFonts, LineCapStyle } from 'pdf-lib';
+import { PDFDocument, rgb, LineCapStyle } from 'pdf-lib';
 import type { PrintlistItem } from '@/types/printlist';
 import { PDF_POINTS_PER_INCH, PIXELS_PER_INCH } from '@/lib/constants';
 import {
@@ -28,6 +28,8 @@ import {
   drawCoverBranding,
   drawPageHeader,
   drawBrandedFooter,
+  createPdfDocument,
+  type PdfFonts,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
 
@@ -194,9 +196,8 @@ export async function generatePatternPdf(
   const pageDims = PAGE_SIZES[paperSize];
   const paper: PaperConfig = paperSize === 'letter' ? PAPER_LETTER : PAPER_A4;
 
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const { pdfDoc, fonts } = await createPdfDocument();
+  const { regular: font, bold: boldFont } = fonts;
 
   // Embed logo for branding
   const logoImage = await embedLogo(pdfDoc, logoPngBytes ?? null);

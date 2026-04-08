@@ -6,7 +6,7 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import { PDFDocument, PDFPage, PDFFont, PDFImage, rgb, LineCapStyle } from 'pdf-lib';
+import { PDFDocument, PDFPage, PDFFont, PDFImage, rgb, LineCapStyle, StandardFonts } from 'pdf-lib';
 import { PDF_POINTS_PER_INCH } from '@/lib/constants';
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -687,4 +687,24 @@ export function drawColorSwatch(
     borderColor: rgb(0.7, 0.7, 0.7),
     borderWidth: 0.5,
   });
+}
+
+// ── PDF Initialization ───────────────────────────────────────────────
+
+export interface PdfFonts {
+  regular: PDFFont;
+  bold: PDFFont;
+}
+
+/**
+ * Initialize a new PDF document with standard fonts.
+ * Used by all PDF generation engines.
+ */
+export async function createPdfDocument(): Promise<{ pdfDoc: PDFDocument; fonts: PdfFonts }> {
+  const pdfDoc = await PDFDocument.create();
+  const fonts: PdfFonts = {
+    regular: await pdfDoc.embedFont(StandardFonts.Helvetica),
+    bold: await pdfDoc.embedFont(StandardFonts.HelveticaBold),
+  };
+  return { pdfDoc, fonts };
 }

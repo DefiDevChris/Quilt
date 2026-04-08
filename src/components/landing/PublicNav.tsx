@@ -58,7 +58,7 @@ export default function PublicNav() {
             href="#social-threads"
             className="text-secondary hover:text-on-surface transition-colors font-medium"
           >
-            Community
+            Social Threads
           </a>
           <a
             href="/blog"
@@ -141,7 +141,7 @@ export default function PublicNav() {
             className="block text-secondary font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
-            Community
+            Social Threads
           </a>
           <a
             href="/blog"

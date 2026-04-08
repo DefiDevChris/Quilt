@@ -23,6 +23,7 @@ import {
   drawValidationSquare,
   drawGrainLine,
   drawPolylinePoints,
+  createPdfDocument,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
 import { svgPathToPolyline, extractPathFromSvg, computeSeamOffset } from '@/lib/seam-allowance';
@@ -72,10 +73,8 @@ export async function generateCutListPdf(
   const margin = pageDims.margin;
   const mx = margin * pts;
 
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fonts = { titleFont: boldFont, bodyFont: font };
+  const { pdfDoc, fonts: pdfFonts } = await createPdfDocument();
+  const fonts = { titleFont: pdfFonts.bold, bodyFont: pdfFonts.regular };
 
   const logoImage = await embedLogo(pdfDoc, logoPng);
   const branding: PdfBranding = { logoImage };
@@ -122,7 +121,7 @@ export async function generateCutListPdf(
 
     // Validation square on first template page
     if (isFirstTemplate) {
-      drawValidationSquare(page, font, mx, y);
+      drawValidationSquare(page, fonts.bodyFont, mx, y);
       y -= 1 * pts + 20;
       isFirstTemplate = false;
     }
@@ -132,7 +131,7 @@ export async function generateCutListPdf(
       x: mx,
       y,
       size: 12,
-      font: boldFont,
+      font: fonts.titleFont,
       color: rgb(0, 0, 0),
     });
 
@@ -142,17 +141,17 @@ export async function generateCutListPdf(
       x: mx,
       y: y - 14,
       size: 8,
-      font,
+      font: fonts.bodyFont,
       color: rgb(0.4, 0.4, 0.4),
     });
 
     // Dimensions text
     const dimText = `Finished: ${cutBbox.width.toFixed(2)}" x ${cutBbox.height.toFixed(2)}"`;
     page.drawText(dimText, {
-      x: mx + font.widthOfTextAtSize(nameText, 8) + 12,
+      x: mx + fonts.bodyFont.widthOfTextAtSize(nameText, 8) + 12,
       y: y - 14,
       size: 8,
-      font,
+      font: fonts.bodyFont,
       color: rgb(0.4, 0.4, 0.4),
     });
     y -= 32;
@@ -197,12 +196,12 @@ export async function generateCutListPdf(
       const labelX = midPdfX + offset * Math.cos(perpAngle);
       const labelY = midPdfY + offset * Math.sin(perpAngle);
 
-      const labelW = font.widthOfTextAtSize(edge.formattedLength, 7);
+      const labelW = fonts.bodyFont.widthOfTextAtSize(edge.formattedLength, 7);
       page.drawText(edge.formattedLength, {
         x: labelX - labelW / 2,
         y: labelY - 3,
         size: 7,
-        font,
+        font: fonts.bodyFont,
         color: rgb(0.2, 0.2, 0.2),
       });
     }
@@ -211,7 +210,7 @@ export async function generateCutListPdf(
     const grainX = centerX;
     const grainTopY = drawOriginY + outerBbox.height * pts * 0.2;
     const grainLen = outerBbox.height * pts * 0.6;
-    drawGrainLine(page, font, grainX, grainTopY, grainLen, Math.PI / 2);
+    drawGrainLine(page, fonts.bodyFont, grainX, grainTopY, grainLen, Math.PI / 2);
 
     // Legend below shape
     const legendY = drawOriginY - 16;
@@ -225,7 +224,7 @@ export async function generateCutListPdf(
       x: mx + 24,
       y: legendY,
       size: 7,
-      font,
+      font: fonts.bodyFont,
       color: rgb(0.3, 0.3, 0.3),
     });
 
@@ -240,7 +239,7 @@ export async function generateCutListPdf(
       x: mx + 104,
       y: legendY,
       size: 7,
-      font,
+      font: fonts.bodyFont,
       color: rgb(0.3, 0.3, 0.3),
     });
   }
@@ -249,7 +248,7 @@ export async function generateCutListPdf(
 
   const totalPages = pages.length;
   for (let i = 0; i < totalPages; i++) {
-    drawBrandedFooter(pages[i], font, i + 1, totalPages, margin);
+    drawBrandedFooter(pages[i], fonts.bodyFont, i + 1, totalPages, margin);
   }
 
   return pdfDoc.save();

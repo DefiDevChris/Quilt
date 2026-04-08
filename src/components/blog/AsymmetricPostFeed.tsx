@@ -21,19 +21,19 @@ const GRID_CONFIG: Array<{
   h: string;
   mobileH: string;
 }> = [
-  { col: 'md:col-span-2', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[300px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-3', row: 'md:row-span-1', h: 'md:h-[280px]', mobileH: 'h-[280px]' },
-  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-];
+    { col: 'md:col-span-2', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[300px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-3', row: 'md:row-span-1', h: 'md:h-[280px]', mobileH: 'h-[280px]' },
+    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+    { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  ];
 
 export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
   if (!posts?.length) return null;
@@ -55,7 +55,7 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
         </div>
         <h2
           className="text-4xl md:text-5xl lg:text-6xl text-on-surface tracking-[-0.02em]"
-          style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           Recent Explorations
         </h2>
@@ -122,33 +122,7 @@ function PostCard({
             <h3
               className="text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
               style={{
-                fontFamily: '"Playfair Display", Georgia, serif',
-                fontSize:
-                  layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
-                    ? 'clamp(1.5rem, 2.5vw, 2rem)'
-                    : 'clamp(1.125rem, 1.5vw, 1.375rem)',
-              }}
-            >
-              {post.title}
-            </h3>
-          </div>
-
-          {/* Content */}
-          <div className="pt-4 md:pt-5">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-[#c48a28] font-medium">
-                {post.category}
-              </span>
-              <span className="w-4 h-px bg-[#e8dfd5]" />
-              <time className="text-[9px] uppercase tracking-[0.15em] text-[#7a6c60]">
-                {post.createdAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </time>
-            </div>
-
-            <h3
-              className="text-[#3a2e26] leading-[1.15] tracking-[-0.01em] group-hover:text-[#c48a28] transition-colors duration-300"
-              style={{
-                fontFamily: '"Playfair Display", Georgia, serif',
+                fontFamily: 'var(--font-display)',
                 fontSize:
                   layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
                     ? 'clamp(1.5rem, 2.5vw, 2rem)'
