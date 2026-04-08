@@ -17,22 +17,20 @@ import {
 } from '@/lib/layout-utils';
 import { DEFAULT_SASHING_COLOR, DEFAULT_BORDER_COLOR } from '@/lib/constants';
 
+/** Map template category to the internal LayoutType used by computeLayout. */
+const CATEGORY_TO_LAYOUT_TYPE: Record<LayoutCategory, 'grid' | 'sashing' | 'on-point'> = {
+  straight: 'grid',
+  sashing: 'sashing',
+  'on-point': 'on-point',
+  medallion: 'grid',
+  strippy: 'grid',
+};
+
 /**
  * Map template category to the internal LayoutType used by computeLayout.
  */
 function categoryToLayoutType(category: LayoutCategory): 'grid' | 'sashing' | 'on-point' {
-  switch (category) {
-    case 'straight':
-      return 'grid';
-    case 'sashing':
-      return 'sashing';
-    case 'on-point':
-      return 'on-point';
-    case 'medallion':
-      return 'grid';
-    case 'strippy':
-      return 'grid';
-  }
+  return CATEGORY_TO_LAYOUT_TYPE[category];
 }
 
 /**
@@ -469,14 +467,12 @@ export function computeFenceAreas(
   const finalScaleX = quiltWPx / fittedWPx;
   const finalScaleY = quiltHPx / fittedHPx;
 
-  // Calculate centering offsets
-  const offsetX = (quiltWPx - fittedWPx * finalScaleX) / 2;
-  const offsetY = (quiltHPx - fittedHPx * finalScaleY) / 2;
-
+  // Note: offsetX/Y are always 0 because fittedWPx * finalScaleX = quiltWPx
+  // (the second pass stretches the uniformly-scaled template to fill the quilt).
   return areas.map((area) => ({
     ...area,
-    x: area.x * finalScaleX + offsetX,
-    y: area.y * finalScaleY + offsetY,
+    x: area.x * finalScaleX,
+    y: area.y * finalScaleY,
     width: area.width * finalScaleX,
     height: area.height * finalScaleY,
   }));

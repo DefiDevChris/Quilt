@@ -4,6 +4,7 @@ import { usePrintlistStore } from '@/stores/printlistStore';
 
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
+import { MousePointer2, Hand, Pencil, Wand2, Grid3x3, Undo2, Redo2 } from 'lucide-react';
 
 export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
@@ -27,14 +28,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       toolType: 'select',
       group: 'tools',
       tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 3L4 16L8 12L11 18L13 17L10 11L16 11L4 3Z"
-            fill="currentColor"
-          />
-        </svg>
-      ),
+      icon: <MousePointer2 size={20} />,
     },
     {
       id: 'pan',
@@ -49,17 +43,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
         useCanvasStore.getState().setActiveTool('pan');
       },
       isDisabled: isViewportLocked,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 2C9 2 8 2.5 8 4C8 5 8.5 6 9 7V14C9 15 9.5 16 10 16C10.5 16 11 15 11 14V7C11.5 6 12 5 12 4C12 2.5 11 2 10 2Z"
-            fill="currentColor"
-          />
-          <circle cx="6" cy="8" r="1.5" fill="currentColor" />
-          <circle cx="14" cy="8" r="1.5" fill="currentColor" />
-          <circle cx="10" cy="5" r="1.5" fill="currentColor" />
-        </svg>
-      ),
+      icon: <Hand size={20} />,
     },
     {
       id: 'easydraw',
@@ -68,18 +52,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       toolType: 'easydraw',
       group: 'tools',
       tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M3 17L5 11L8 8L12 4L16 3L17 7L13 11L10 14L7 17L3 17Z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle cx="14" cy="6" r="1.5" fill="currentColor" />
-        </svg>
-      ),
+      icon: <Pencil size={20} />,
     },
     {
       id: 'bend',
@@ -88,73 +61,22 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       toolType: 'bend',
       group: 'tools',
       tier: 'primary',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 16C4 16 6 12 10 12C14 12 16 16 16 16"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <circle cx="4" cy="16" r="1.5" fill="currentColor" />
-          <circle cx="10" cy="12" r="1.5" fill="currentColor" />
-          <circle cx="16" cy="16" r="1.5" fill="currentColor" />
-        </svg>
-      ),
+      icon: <Wand2 size={20} />,
     },
-    {
-      id: 'snap-toggle',
-      label: 'Snap Toggle',
-      description: 'Enable/disable snap-to-grid',
-      group: 'tools',
-      tier: 'primary',
-      onClick: () => useCanvasStore.getState().setGridSettings({ snapToGrid: !isSnapEnabled }),
-      isActive: () => isSnapEnabled,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.4" />
-          <path
-            d="M10 2V6M10 14V18M6 10H2M14 10H18"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      ),
-    },
-    // ── PINNED: History (always at bottom) ──
     {
       id: 'undo',
       label: 'Undo',
       shortcut: 'Ctrl+Z',
       description: 'Undo the last action',
       group: 'history',
-      tier: 'pinned',
+      tier: 'primary',
       isDisabled: !canUndo,
       onClick: () => {
         if (!canUndo) return;
         performUndo();
       },
       isActive: () => false,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M5 8H13C14.6569 8 16 9.34315 16 11C16 12.6569 14.6569 14 13 14H10"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M8 5L5 8L8 11"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
+      icon: <Undo2 size={20} />,
     },
     {
       id: 'redo',
@@ -162,31 +84,25 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+Shift+Z',
       description: 'Redo the last undone action',
       group: 'history',
-      tier: 'pinned',
+      tier: 'primary',
       isDisabled: !canRedo,
       onClick: () => {
         if (!canRedo) return;
         performRedo();
       },
       isActive: () => false,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M15 8H7C5.34315 8 4 9.34315 4 11C4 12.6569 5.34315 14 7 14H10"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M12 5L15 8L12 11"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
+      icon: <Redo2 size={20} />,
+    },
+    // ── PINNED: Snap toggle (always at bottom) ──
+    {
+      id: 'snap-toggle',
+      label: 'Snap Toggle',
+      description: 'Enable/disable snap-to-grid',
+      group: 'snap',
+      tier: 'pinned',
+      onClick: () => useCanvasStore.getState().setGridSettings({ snapToGrid: !isSnapEnabled }),
+      isActive: () => isSnapEnabled,
+      icon: <Grid3x3 size={20} />,
     },
   ];
 }

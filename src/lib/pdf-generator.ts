@@ -41,6 +41,11 @@ interface PageDimensions {
   margin: number;
 }
 
+/**
+ * Bin-packed pattern pieces PDF — uses 0.5" margins (tighter than pattern docs)
+ * because pieces are densely packed with labels.
+ * For project/cutlist PDFs, see PDF_PAGE_SIZES in constants.ts (0.75" margins).
+ */
 const PAGE_SIZES: Record<PaperSize, PageDimensions> = {
   letter: { width: 8.5, height: 11, margin: 0.5 },
   a4: { width: 8.268, height: 11.693, margin: 0.5 },

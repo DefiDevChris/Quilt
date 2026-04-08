@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
-import { BlockBuilderTab } from '@/components/blocks/BlockBuilderTab';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockBuilderFabricPicker } from '@/components/blocks/BlockBuilderFabricPicker';
 import { BlockOverlaySelector } from '@/components/blocks/BlockOverlaySelector';
+import { BlockBuilderToolbarUnified, BlockBuilderCallbacks } from '@/components/blocks/BlockBuilderToolbarUnified';
 import { GRID_LINE_COLOR } from '@/lib/constants';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
@@ -24,15 +25,17 @@ export interface DraftTabProps {
   blockWidthIn: number;
   blockHeightIn: number;
   canvasSize: number;
-  activeMode: 'pencil' | 'rectangle' | 'circle' | 'bend';
-  setActiveMode: (mode: 'pencil' | 'rectangle' | 'circle' | 'bend') => void;
+  activeMode: BlockBuilderMode;
+  setActiveMode: (mode: BlockBuilderMode) => void;
   segmentCount: number;
   onClear: () => void;
   onUndoSegment: () => void;
 }
 
+export type BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'circle' | 'bend';
+
 const DEFAULT_CELL_SIZE = 1;
-const DEFAULT_CANVAS_SIZE = 400;
+const DEFAULT_CANVAS_SIZE = 600;
 
 interface BlockBuilderWorktableProps {
   onDone: () => void;
@@ -55,6 +58,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
   } | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
   const [rightTab, setRightTab] = useState<'blocks' | 'fabrics'>('blocks');
+  const [activeMode, setActiveMode] = useState<BlockBuilderMode>('select');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -62,14 +66,17 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
 
+  // Sync activeMode to canvasStore so ToolIcon isActive works
+  useEffect(() => {
+    useCanvasStore.getState().setActiveTool(activeMode as never);
+  }, [activeMode]);
+
   // Compute grid dimensions
   const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
   const gridRows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
 
   // Block builder hook — manages all canvas state
   const {
-    activeMode,
-    setActiveMode,
     segments,
     patches,
     clearSegments: hookClearSegments,
@@ -326,90 +333,119 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     e.dataTransfer.dropEffect = 'copy';
   }, []);
 
-  const tabProps: DraftTabProps = {
-    draftCanvasRef,
-    isOpen: true,
-    activeOverlay,
-    overlayOpacity,
-    setOverlayOpacity,
-    cellSizeIn,
-    onCellSizeInChange: setCellSizeIn,
-    blockWidthIn,
-    blockHeightIn,
-    canvasSize,
-    activeMode,
-    setActiveMode,
-    segmentCount: segments.length,
-    onClear: hookClearSegments,
-    onUndoSegment: hookUndoSegment,
+  // ── Toolbar callbacks ───────────────────────────────────────
+  const toolbarCallbacks: BlockBuilderCallbacks = {
+    onModeChange: setActiveMode,
+    onUndo: hookUndoSegment,
+    onRedo: () => {
+      /* redo not implemented in useBlockBuilder */
+    },
+    onClear: handleClearCanvas,
+    canUndo: segments.length > 0,
+    canRedo: false,
+  };
+
+  // ── Grid unit slider helpers ────────────────────────────────
+  const sliderValue = Math.round(cellSizeIn / 0.25);
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value) * 0.25;
+    setCellSizeIn(val);
   };
 
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* ── Left: Drafting tools ──────────────────────────────── */}
-      <aside className="w-[240px] h-full flex-shrink-0 flex flex-col bg-surface-container/40 border-r border-outline-variant/15 overflow-y-auto">
-        {/* Done button */}
-        <div className="px-3 py-3 border-b border-outline-variant/15">
+      {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
+      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-surface border-r border-outline-variant/15 overflow-y-auto">
+        {/* Back to Worktable */}
+        <div className="px-2 pt-2 pb-2 border-b border-outline-variant/15">
           <button
             type="button"
             onClick={onDone}
-            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-2 py-1.5 text-[11px] font-semibold text-white hover:opacity-90 transition-opacity"
           >
-            ← Back to Worktable
+            ← Back
           </button>
         </div>
 
-        {/* Block Builder toolbar */}
-        <div className="px-3 pt-3">
-          <BlockBuilderTab {...tabProps} />
+        {/* Grid unit slider */}
+        <div className="px-2 pt-3 pb-2 border-b border-outline-variant/15">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-medium text-secondary">Grid</span>
+            <span className="text-[9px] font-mono text-secondary bg-surface-container py-0.5 px-1 rounded">
+              {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
+            </span>
+          </div>
+          <input
+            type="range"
+            min={1}
+            max={8}
+            step={1}
+            value={sliderValue}
+            onChange={handleSliderChange}
+            className="w-full accent-primary h-1"
+          />
         </div>
 
-        {/* Overlay controls */}
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-outline-variant/15 mt-2">
+        {/* Unified toolbar */}
+        <BlockBuilderToolbarUnified callbacks={toolbarCallbacks} segmentCount={segments.length} />
+      </aside>
+
+      {/* ── Center: Canvas (unified styling) ────────────────── */}
+      <div
+        ref={canvasContainerRef}
+        className="flex-1 flex items-center justify-center bg-surface-container/20 overflow-hidden"
+      >
+        <div
+          className="border border-outline-variant/20 bg-white shadow-elevation-1"
+          onDrop={handleCanvasDrop}
+          onDragOver={handleCanvasDragOver}
+        >
+          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} />
+        </div>
+      </div>
+
+      {/* ── Right: Panel (320px, unified) ──────────────────── */}
+      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
+        {/* Tab toggle */}
+        <div className="flex border-b border-outline-variant/15">
           <button
             type="button"
-            onClick={() => setShowOverlaySelector(true)}
-            className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-secondary hover:text-on-surface"
+            onClick={() => setRightTab('blocks')}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-secondary hover:text-on-surface'
+              }`}
           >
-            {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
+            My Blocks
           </button>
-          {activeOverlay && (
-            <>
-              <button
-                type="button"
-                onClick={handleClearOverlay}
-                className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-error hover:text-red-700"
-              >
-                Clear
-              </button>
-              {overlayDimensions && (
-                <span className="text-[10px] text-secondary font-mono">
-                  {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
-                </span>
-              )}
-            </>
-          )}
-          {activeOverlay && (
-            <div className="flex items-center gap-1 ml-auto">
-              <span className="text-[10px] text-secondary">Opacity</span>
-              <input
-                type="range"
-                min="0.1"
-                max="0.8"
-                step="0.05"
-                value={overlayOpacity}
-                onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
-                className="w-12"
-              />
-              <span className="text-[10px] text-secondary font-mono">
-                {Math.round(overlayOpacity * 100)}%
-              </span>
-            </div>
+          <button
+            type="button"
+            onClick={() => setRightTab('fabrics')}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-secondary hover:text-on-surface'
+              }`}
+          >
+            Fabrics
+          </button>
+        </div>
+
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          {rightTab === 'blocks' ? (
+            <BlockLibrary
+              onBlockDragStart={handleBlockDragStart}
+              onOpenDrafting={undefined}
+              onOpenPhotoUpload={undefined}
+            />
+          ) : (
+            <BlockBuilderFabricPicker onFabricDragStart={handleFabricDragStart} />
           )}
         </div>
 
-        {/* Block metadata */}
-        <div className="px-3 pt-3 space-y-2 border-t border-outline-variant/15 mt-2">
+        {/* Block metadata + Save */}
+        <div className="border-t border-outline-variant/15 px-3 py-3 space-y-2">
+          {error && <p className="text-[11px] text-error">{error}</p>}
+
           <div>
             <label className="mb-0.5 block text-[10px] font-medium text-secondary">
               Block Name *
@@ -426,6 +462,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
+
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="mb-0.5 block text-[10px] font-medium text-secondary">W (in)</label>
@@ -452,6 +489,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               />
             </div>
           </div>
+
           <div>
             <label className="mb-0.5 block text-[10px] font-medium text-secondary">Category</label>
             <input
@@ -463,6 +501,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
+
           <div>
             <label className="mb-0.5 block text-[10px] font-medium text-secondary">Tags</label>
             <input
@@ -473,92 +512,56 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
-        </div>
 
-        {/* Error + Actions */}
-        <div className="px-3 py-3 mt-2 border-t border-outline-variant/15">
-          {error && <p className="mb-1.5 text-[11px] text-error">{error}</p>}
-          <div className="flex gap-1.5">
+          {/* Overlay controls */}
+          <div className="flex items-center gap-2 pt-1 border-t border-outline-variant/15">
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('qc-block-builder-undo'))}
-              className="rounded-md px-2 py-1.5 text-xs font-medium text-secondary hover:bg-background"
-              title="Undo last segment (Ctrl+Z)"
+              onClick={() => setShowOverlaySelector(true)}
+              className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-secondary hover:text-on-surface"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M4 6H10C12.2091 6 14 7.79086 14 10C14 12.2091 12.2091 14 10 14H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M6 4L4 6L6 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
             </button>
-            <button
-              type="button"
-              onClick={handleClearCanvas}
-              className="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-secondary hover:bg-background"
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Save Block'}
-            </button>
+            {activeOverlay && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleClearOverlay}
+                  className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-error hover:text-red-700"
+                >
+                  Clear
+                </button>
+                {overlayDimensions && (
+                  <span className="text-[10px] text-secondary font-mono">
+                    {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
+                  </span>
+                )}
+              </>
+            )}
+            {activeOverlay && (
+              <div className="flex items-center gap-1 ml-auto">
+                <span className="text-[10px] text-secondary">Opacity</span>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="0.8"
+                  step="0.05"
+                  value={overlayOpacity}
+                  onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
+                  className="w-12"
+                />
+              </div>
+            )}
           </div>
-        </div>
-      </aside>
 
-      {/* ── Center: Drafting canvas ───────────────────────────── */}
-      <div
-        ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center bg-white/60 p-4"
-      >
-        <div
-          className="border border-outline-variant/20 bg-white shadow-elevation-1 overflow-hidden"
-          onDrop={handleCanvasDrop}
-          onDragOver={handleCanvasDragOver}
-        >
-          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} />
-        </div>
-      </div>
-
-      {/* ── Right: Blocks / Fabrics ───────────────────────────── */}
-      <aside className="w-[280px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
-        {/* Tab toggle */}
-        <div className="flex border-b border-outline-variant/15">
           <button
             type="button"
-            onClick={() => setRightTab('blocks')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark text-white py-2 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
-            My Blocks
+            {saving ? 'Saving…' : 'Save Block'}
           </button>
-          <button
-            type="button"
-            onClick={() => setRightTab('fabrics')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
-          >
-            Fabrics
-          </button>
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          {rightTab === 'blocks' ? (
-            <BlockLibrary
-              onBlockDragStart={handleBlockDragStart}
-              onOpenDrafting={undefined}
-              onOpenPhotoUpload={undefined}
-            />
-          ) : (
-            <BlockBuilderFabricPicker onFabricDragStart={handleFabricDragStart} />
-          )}
         </div>
       </aside>
 

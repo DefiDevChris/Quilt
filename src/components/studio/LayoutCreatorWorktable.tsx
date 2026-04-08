@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Project } from '@/types/project';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { PIXELS_PER_INCH, GRID_LINE_COLOR } from '@/lib/constants';
+import { GRID_LINE_COLOR } from '@/lib/constants';
 import { useToast } from '@/components/ui/ToastProvider';
 
 interface LayoutCreatorWorktableProps {
@@ -126,10 +125,10 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
         const colors = ROLE_COLORS['none'];
         if (activeTool === 'rectangle') {
           const rect = new fabric.Rect({
-            left: start.x,
-            top: start.y,
-            width: pointer.x - start.x,
-            height: pointer.y - start.y,
+            left: Math.min(start.x, pointer.x),
+            top: Math.min(start.y, pointer.y),
+            width: Math.abs(pointer.x - start.x),
+            height: Math.abs(pointer.y - start.y),
             fill: colors.fill,
             stroke: colors.stroke,
             strokeWidth: 1.5,
@@ -142,10 +141,10 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
           fc.renderAll();
         } else if (activeTool === 'triangle') {
           const tri = new fabric.Triangle({
-            left: start.x,
-            top: start.y,
-            width: pointer.x - start.x,
-            height: pointer.y - start.y,
+            left: Math.min(start.x, pointer.x),
+            top: Math.min(start.y, pointer.y),
+            width: Math.abs(pointer.x - start.x),
+            height: Math.abs(pointer.y - start.y),
             fill: colors.fill,
             stroke: colors.stroke,
             strokeWidth: 1.5,
@@ -180,8 +179,8 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
         const colors = ROLE_COLORS['none'];
         if (activeTool === 'rectangle') {
           const rect = new fabric.Rect({
-            left: w > 0 ? start.x : pointer.x,
-            top: h > 0 ? start.y : pointer.y,
+            left: Math.min(start.x, pointer.x),
+            top: Math.min(start.y, pointer.y),
             width: Math.abs(w),
             height: Math.abs(h),
             fill: colors.fill,
@@ -307,90 +306,129 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
     ? ((selectedObject as unknown as Record<string, unknown>)['_layoutRole'] as LayoutRole | undefined) ?? 'none'
     : 'none';
 
+  const hasSelection = selectedObject !== null;
+
   return (
     <div className="flex-1 flex overflow-hidden bg-surface">
-      {/* ── Left Toolbar ──────────────────────────────────── */}
-      <div className="w-[88px] h-full flex-shrink-0 bg-surface border-r border-outline-variant/15 flex flex-col items-center py-3 gap-1 overflow-y-auto">
-        <ToolButton active={activeTool === 'select'} onClick={() => setActiveTool('select')} label="Select">
+      {/* ── Left: Minimal Toolbar ───────────────────────────── */}
+      <aside className="w-[72px] h-full flex-shrink-0 bg-surface flex flex-col items-center py-4 gap-1 overflow-y-auto">
+        {/* Tool buttons - icon + label, vertical stack */}
+        <ToolButton
+          active={activeTool === 'select'}
+          onClick={() => setActiveTool('select')}
+          label="Select"
+        >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M4 3L4 15L8 11L12 17L14 15.5L10 10L15 10L4 3Z" fill="currentColor" />
           </svg>
         </ToolButton>
-        <ToolButton active={activeTool === 'rectangle'} onClick={() => setActiveTool('rectangle')} label="Rectangle">
+        <ToolButton
+          active={activeTool === 'rectangle'}
+          onClick={() => setActiveTool('rectangle')}
+          label="Rectangle"
+        >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
           </svg>
         </ToolButton>
-        <ToolButton active={activeTool === 'triangle'} onClick={() => setActiveTool('triangle')} label="Triangle">
+        <ToolButton
+          active={activeTool === 'triangle'}
+          onClick={() => setActiveTool('triangle')}
+          label="Triangle"
+        >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M10 3L17 16H3L10 3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
           </svg>
         </ToolButton>
-      </div>
 
-      {/* ── Canvas Area ───────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden relative">
-        <div className="absolute top-3 left-3 z-10 flex gap-2">
+        <div className="flex-1" />
+
+        {/* Clear All */}
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className="w-14 h-14 flex flex-col items-center justify-center rounded-xl text-[10px] leading-tight text-error hover:bg-error/10 transition-colors"
+          title="Clear All"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+          <span>Clear</span>
+        </button>
+
+        {/* Done button at bottom */}
+        <div className="w-full px-2 pt-2 border-t border-outline-variant/15 mt-2">
           <button
             type="button"
             onClick={onDone}
-            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30"
+            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-2 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity"
           >
-            ← Back to Worktable
+            ← Back
           </button>
+        </div>
+      </aside>
+
+      {/* ── Center: Canvas Area ─────────────────────────────── */}
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Floating action pills - top-left */}
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
           <button
             type="button"
             onClick={handleDeleteShape}
-            disabled={!selectedObject}
-            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-outline-variant/30"
+            disabled={!hasSelection}
+            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium transition-colors border border-outline-variant/30 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-error/10 hover:text-error hover:border-error/20"
           >
             Delete
           </button>
-          <button
-            type="button"
-            onClick={handleClearAll}
-            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 transition-colors border border-outline-variant/30"
-          >
-            Clear All
-          </button>
         </div>
 
+        {/* Canvas centered */}
         <div className="flex-1 flex items-center justify-center p-8">
-          <div className="relative rounded-lg overflow-hidden shadow-elevation-2 border border-outline-variant/30">
+          <div className="relative overflow-hidden shadow-elevation-2 bg-white">
             <canvas ref={canvasElRef} width={CANVAS_SIZE} height={CANVAS_SIZE} className="block" />
           </div>
         </div>
+
+        {/* Floating save button - bottom-right */}
+        <div className="absolute bottom-4 right-4 z-10">
+          <button
+            type="button"
+            onClick={handleSaveLayout}
+            disabled={saving}
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-2 text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity shadow-elevation-1"
+          >
+            {saving ? 'Saving…' : 'Save Layout to Library'}
+          </button>
+        </div>
       </div>
 
-      {/* ── Right Panel ───────────────────────────────────── */}
-      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
+      {/* ── Right Panel: Minimal ────────────────────────────── */}
+      <aside className="w-[280px] h-full flex-shrink-0 flex flex-col bg-surface overflow-hidden">
         {/* Layout Info */}
-        <div className="px-3 py-3 border-b border-outline-variant/15">
+        <div className="px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Layout Info</p>
           <input
             type="text"
             value={layoutName}
             onChange={(e) => setLayoutName(e.target.value)}
             placeholder="Layout name…"
-            className="w-full px-2 py-1.5 text-xs rounded-md border border-outline-variant/20 bg-white/60 text-on-surface placeholder:text-secondary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-outline-variant/20 bg-white/60 text-on-surface placeholder:text-secondary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
           />
         </div>
 
-        {/* Role Assignment */}
-        <div className="px-3 py-3 border-b border-outline-variant/15">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">
-            {selectedObject ? 'Assign Role' : 'Select a shape'}
-          </p>
-          {selectedObject !== null && (
+        {/* Role Assignment (only when shape selected) */}
+        {hasSelection && (
+          <div className="px-4 py-3 border-t border-outline-variant/15">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Assign Role</p>
             <div className="space-y-1">
               {(['block-cell', 'sashing', 'border', 'binding', 'edging'] as LayoutRole[]).map((role) => (
                 <button
                   key={role}
                   type="button"
                   onClick={() => handleAssignRole(role)}
-                  className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-colors ${selectedRole === role
-                    ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
-                    : 'text-on-surface/70 hover:bg-surface-container'
+                  className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors ${selectedRole === role
+                      ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                      : 'text-on-surface/70 hover:bg-surface-container'
                     }`}
                 >
                   <span
@@ -400,21 +438,27 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
                   {ROLE_LABELS[role]}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => handleAssignRole('none')}
+                className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors text-on-surface/70 hover:bg-surface-container"
+              >
+                <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: ROLE_COLORS['none'].stroke }} />
+                No Role
+              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Save Button */}
-        <div className="px-3 py-3 mt-auto">
-          <button
-            type="button"
-            onClick={handleSaveLayout}
-            disabled={saving}
-            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark text-white py-2 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
-          >
-            {saving ? 'Saving…' : 'Save Layout to Library'}
-          </button>
-        </div>
+        {/* Empty state hint */}
+        {!hasSelection && (
+          <div className="px-4 py-3 border-t border-outline-variant/15">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Select a Shape</p>
+            <p className="text-[11px] text-secondary leading-relaxed">
+              Click a shape on the canvas to select it, then assign a role from this panel.
+            </p>
+          </div>
+        )}
       </aside>
     </div>
   );
@@ -436,13 +480,13 @@ function ToolButton({
       type="button"
       onClick={onClick}
       className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl text-[10px] leading-tight transition-all ${active
-        ? 'bg-primary text-white shadow-elevation-1'
-        : 'text-secondary hover:bg-surface-container hover:text-on-surface'
+          ? 'text-primary'
+          : 'text-secondary hover:bg-surface-container hover:text-on-surface'
         }`}
       title={label}
     >
       <span className="mb-0.5">{children}</span>
-      <span>{label}</span>
+      <span className="text-[10px]">{label}</span>
     </button>
   );
 }

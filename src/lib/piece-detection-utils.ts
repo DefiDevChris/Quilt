@@ -123,16 +123,8 @@ export function extractDominantColor(
 // UTILITY FUNCTIONS
 // ============================================================================
 
-export function roundToEighthUp(value: number): number {
-  return Math.ceil(value * 8) / 8;
-}
-
 export function roundToEighthNearest(value: number): number {
   return Math.round(value * 8) / 8;
-}
-
-export function roundToQuarterNearest(value: number): number {
-  return Math.round(value * 4) / 4;
 }
 
 export function formatFraction(value: number, separator: string = ' '): string {

@@ -3,10 +3,12 @@
 import { useCallback } from 'react';
 import { useCanvasStore, type WorktableTab } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { useProjectStore } from '@/stores/projectStore';
 import type { BorderConfig } from '@/lib/layout-utils';
 
 /**
- * Restore a layout snapshot from a worktable tab into the layoutStore.
+ * Restore a layout snapshot from a worktable tab into the layoutStore
+ * and resize the quilt canvas to match the layout dimensions.
  * Shared by handleCloseTab and handleSwitchTab.
  */
 function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
@@ -26,6 +28,31 @@ function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
   if (ls.selectedPresetId) {
     store.setSelectedPreset(ls.selectedPresetId);
   }
+
+  // Resize the quilt canvas to match the layout dimensions
+  const blockAreaW = ls.cols * ls.blockSize;
+  const blockAreaH = ls.rows * ls.blockSize;
+  const sashingCols = Math.max(0, ls.cols - 1) * ls.sashingWidth;
+  const sashingRows = Math.max(0, ls.rows - 1) * ls.sashingWidth;
+
+  let borderW = 0;
+  let borderH = 0;
+  for (const b of (ls.borders as BorderConfig[])) {
+    borderW += b.width * 2;
+    borderH += b.width * 2;
+  }
+
+  const bindingTotal = ls.bindingWidth * 2;
+  const totalW = blockAreaW + sashingCols + borderW + bindingTotal;
+  const totalH = blockAreaH + sashingRows + borderH + bindingTotal;
+
+  useProjectStore.getState().setCanvasWidth(Math.max(1, Math.round(totalW * 100) / 100));
+  useProjectStore.getState().setCanvasHeight(Math.max(1, Math.round(totalH * 100) / 100));
+
+  // Re-center the viewport
+  setTimeout(() => {
+    useCanvasStore.getState().centerAndFitViewport();
+  }, 50);
 }
 
 /**
@@ -61,7 +88,7 @@ export function WorktableTabs() {
       if (!tab) return;
 
       // If this is the active tab, restore its layout snapshot
-      // before removing it
+      // before removing it (resize is handled inside restoreLayoutSnapshot)
       if (tabId === activeWorktableId && tab.layoutSnapshot) {
         restoreLayoutSnapshot(tab.layoutSnapshot);
       }
@@ -77,7 +104,7 @@ export function WorktableTabs() {
       const tab = worktableTabs.find((t) => t.id === tabId);
       if (!tab) return;
 
-      // Restore the layout snapshot from the tab
+      // Restore the layout snapshot from the tab (includes resize + viewport re-center)
       restoreLayoutSnapshot(tab.layoutSnapshot);
 
       if (!tab.layoutSnapshot) {
@@ -118,11 +145,10 @@ export function WorktableTabs() {
             key={mode.id}
             type="button"
             onClick={() => handleSwitchMode(mode.id)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              activeWorktable === mode.id
-                ? 'bg-primary/10 text-primary border border-primary/20'
-                : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
-            }`}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeWorktable === mode.id
+              ? 'bg-primary/10 text-primary border border-primary/20'
+              : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-container'
+              }`}
           >
             {mode.label}
           </button>
@@ -181,11 +207,10 @@ function WorktableTabItem({
 
   return (
     <div
-      className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-        isActive
-          ? 'bg-primary/10 text-primary border border-primary/20'
-          : 'bg-white/40 text-on-surface/60 border border-transparent hover:bg-surface-container'
-      }`}
+      className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${isActive
+        ? 'bg-primary/10 text-primary border border-primary/20'
+        : 'bg-white/40 text-on-surface/60 border border-transparent hover:bg-surface-container'
+        }`}
       onClick={onSwitch}
     >
       <span className="truncate max-w-[140px]">{layoutLabel}</span>

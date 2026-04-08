@@ -154,10 +154,6 @@ export function toFractionString(f: Fraction): string {
   return `${s.numerator}/${s.denominator}`;
 }
 
-export function toImproperFractionString(f: Fraction): string {
-  return toFractionString(f);
-}
-
 export function inchesToCm(inches: number): number {
   return inches * 2.54;
 }

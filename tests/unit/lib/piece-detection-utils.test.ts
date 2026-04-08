@@ -2,9 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   filterContoursByArea,
   extractDominantColor,
-  roundToEighthUp,
   roundToEighthNearest,
-  roundToQuarterNearest,
   formatFraction,
   offsetPolygon,
 } from '@/lib/piece-detection-utils';
@@ -31,27 +29,11 @@ describe('piece-detection-utils', () => {
     });
   });
 
-  describe('roundToEighthUp', () => {
-    it('rounds up to nearest eighth', () => {
-      expect(roundToEighthUp(0.11)).toBe(0.125);
-      expect(roundToEighthUp(0.12)).toBe(0.125);
-      expect(roundToEighthNearest(0.12)).toBe(0.125);
-    });
-  });
-
   describe('roundToEighthNearest', () => {
     it('rounds to nearest eighth', () => {
       expect(roundToEighthNearest(0.12)).toBe(0.125);
       expect(roundToEighthNearest(0.124)).toBe(0.125);
       expect(roundToEighthNearest(0.13)).toBe(0.125);
-    });
-  });
-
-  describe('roundToQuarterNearest', () => {
-    it('rounds to nearest quarter', () => {
-      expect(roundToQuarterNearest(0.12)).toBe(0);
-      expect(roundToQuarterNearest(0.13)).toBe(0.25);
-      expect(roundToQuarterNearest(0.62)).toBe(0.5);
     });
   });
 

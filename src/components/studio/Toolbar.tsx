@@ -239,9 +239,38 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
 
         {/* Pinned tools - always at bottom */}
         <Separator />
-        {pinnedGroups.map((group, idx) =>
-          renderToolGroup(group.items, activeTool, setActiveTool, idx > 0, group.name, idx)
-        )}
+        {pinnedGroups.map((group) => {
+          // Render toggle switches for pinned tools
+          if (group.name === 'snap') {
+            return (
+              <div key={group.name} className="w-full px-2">
+                {group.items.map((tool) => {
+                  const isActive = tool.isActive ? tool.isActive() : false;
+                  return (
+                    <div key={tool.id} className="flex flex-col items-center gap-1 py-2">
+                      <span className="text-[10px] font-medium text-on-surface/60">{tool.label}</span>
+                      <button
+                        type="button"
+                        onClick={tool.onClick}
+                        className={`relative w-12 h-6 rounded-full transition-colors ${
+                          isActive ? 'bg-primary' : 'bg-surface-container-high'
+                        }`}
+                        aria-label={tool.description}
+                      >
+                        <div
+                          className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                            isActive ? 'translate-x-6' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          }
+          return renderToolGroup(group.items, activeTool, setActiveTool, false, group.name, 0);
+        })}
       </div>
     </nav>
   );

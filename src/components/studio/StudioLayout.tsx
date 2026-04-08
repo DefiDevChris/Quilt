@@ -31,15 +31,10 @@ import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 import { LayoutCreatorWorktable } from '@/components/studio/LayoutCreatorWorktable';
 
-import { YardagePanel } from '@/components/measurement/YardagePanel';
-import { PrintlistPanel } from '@/components/export/PrintlistPanel';
-
-import { useAuthStore } from '@/stores/authStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
-import { useYardageCalculation } from '@/hooks/useYardageCalculation';
 import { usePhotoPatternImport } from '@/hooks/usePhotoLayoutImport';
 import { saveProject } from '@/lib/save-project';
 
@@ -49,7 +44,6 @@ interface StudioLayoutProps {
 
 export function StudioLayout({ project }: StudioLayoutProps) {
   const dialogs = useStudioDialogs();
-  const isPro = useAuthStore((s) => s.isPro);
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -115,7 +109,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const { handleFabricDragStart } = useFabricDrop();
 
   // Mount supporting hooks
-  useYardageCalculation();
   usePhotoPatternImport();
 
   const handleSave = useCallback(() => {
@@ -160,7 +153,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           }}
         />
       ) : (
-        /* ── Normal quilt worktable ───── */
+        /* ── Normal quilt worktable — same 3-pane layout ── */
         <div className="flex-1 flex overflow-hidden">
           {/* Left sidebar: Toolbar (narrow strip of tool buttons) */}
           <Toolbar
@@ -169,9 +162,9 @@ export function StudioLayout({ project }: StudioLayoutProps) {
             onNewBlock={handleNewBlock}
           />
 
-          {/* Center: Canvas (main design area) */}
-          <div className="flex-1 flex flex-col overflow-hidden relative" data-tour="canvas">
-            {/* Top bar: Worktable tabs */}
+          {/* Center: Canvas area with tabs above */}
+          <div className="flex-1 flex flex-col overflow-hidden relative">
+            {/* Worktable tabs */}
             <WorktableTabs />
             <div className="flex-1 flex overflow-hidden relative">
               <div
@@ -219,25 +212,16 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                 </div>
               )}
             </div>
-
-            {/* Pro-only production panels — flex siblings so they push the canvas, not cover it */}
-            {isPro && <YardagePanel />}
-            {isPro && (
-              <PrintlistPanel
-                onGeneratePdf={dialogs.openPdfExport}
-                onExportImage={dialogs.openImageExport}
-              />
-            )}
-
-            {/* Right sidebar: Context Panel (Library tabs for Layouts, Blocks, Fabrics) */}
-            <ContextPanel
-              onBlockDragStart={handleBlockDragStart}
-              onFabricDragStart={handleFabricDragStart}
-              onOpenDrafting={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
-              onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
-              onOpenUpload={dialogs.openFabricUpload}
-            />
           </div>
+
+          {/* Right sidebar: Context Panel (Library tabs for Layouts, Blocks, Fabrics) */}
+          <ContextPanel
+            onBlockDragStart={handleBlockDragStart}
+            onFabricDragStart={handleFabricDragStart}
+            onOpenDrafting={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
+            onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
+            onOpenUpload={dialogs.openFabricUpload}
+          />
         </div>
       )}
 
