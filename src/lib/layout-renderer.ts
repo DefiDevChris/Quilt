@@ -73,7 +73,7 @@ export function renderLayoutTemplate(template: LayoutTemplate, pxPerUnit: number
  * `defaultBlockSize`. Returns null for medallion/strippy categories which
  * have their own sizing rules.
  */
-function computeTemplateFootprint(
+export function computeTemplateFootprint(
   template: LayoutTemplate
 ): { width: number; height: number } | null {
   if (template.category === 'medallion' || template.category === 'strippy') {
@@ -133,7 +133,7 @@ export function fitLayoutToQuilt(
   const footprint = computeTemplateFootprint(template);
 
   // Medallion and strippy don't have a clean uniform-scale fit — fall back
-  // to their bespoke renderers and let the user resize as needed.
+  // to their bespoke renderers and scale to fill the entire quilt.
   if (!footprint) {
     return renderLayoutTemplate(template, pxPerUnit);
   }
@@ -142,27 +142,29 @@ export function fitLayoutToQuilt(
     return [];
   }
 
-  const scale = Math.min(quiltWidth / footprint.width, quiltHeight / footprint.height);
-  if (!Number.isFinite(scale) || scale <= 0) {
+  // Layout must always match grid dimensions exactly - scale to fill entire quilt
+  const scaleX = quiltWidth / footprint.width;
+  const scaleY = quiltHeight / footprint.height;
+  
+  if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY) || scaleX <= 0 || scaleY <= 0) {
     return [];
   }
 
-  // Build a scaled clone of the template using the fitted block size.
+  // Use non-uniform scaling to make layout exactly match grid dimensions
   const fittedTemplate: LayoutTemplate = {
     ...template,
-    defaultBlockSize: template.defaultBlockSize * scale,
-    sashingWidth: template.sashingWidth * scale,
-    bindingWidth: template.bindingWidth * scale,
+    defaultBlockSize: template.defaultBlockSize * Math.min(scaleX, scaleY),
+    sashingWidth: template.sashingWidth * Math.min(scaleX, scaleY),
+    bindingWidth: template.bindingWidth * Math.min(scaleX, scaleY),
     borders: template.borders.map((b) => ({
       ...b,
-      width: b.width * scale,
+      width: b.width * Math.min(scaleX, scaleY),
     })),
   };
 
   const areas = renderLayoutTemplate(fittedTemplate, pxPerUnit);
 
-  // Compute the actual rendered footprint after scaling, then center it
-  // inside the quilt. We translate every area by (offsetX, offsetY).
+  // Scale areas to fill entire quilt dimensions exactly
   const fittedFootprint = computeTemplateFootprint(fittedTemplate);
   if (!fittedFootprint) return areas;
 
@@ -171,20 +173,20 @@ export function fitLayoutToQuilt(
   const fittedWPx = fittedFootprint.width * pxPerUnit;
   const fittedHPx = fittedFootprint.height * pxPerUnit;
 
-  // Areas are emitted relative to the inner layout origin (0,0). We need
-  // them centered inside the quilt, accounting for the border ring that
-  // sits OUTSIDE the inner origin (negative coordinates from
-  // computeBorderStrips).
-  const totalBorderPx = fittedTemplate.borders.reduce((sum, b) => sum + b.width * pxPerUnit, 0);
-  const bindingPx = fittedTemplate.bindingWidth * pxPerUnit;
+  const finalScaleX = quiltWPx / fittedWPx;
+  const finalScaleY = quiltHPx / fittedHPx;
 
-  const offsetX = (quiltWPx - fittedWPx) / 2 + totalBorderPx + bindingPx;
-  const offsetY = (quiltHPx - fittedHPx) / 2 + totalBorderPx + bindingPx;
+  // Calculate centering offsets if one dimension doesn't fill the quilt
+  // (though finalScaleX/Y currently stretches to fill, let's make it robust)
+  const offsetX = (quiltWPx - fittedWPx * finalScaleX) / 2;
+  const offsetY = (quiltHPx - fittedHPx * finalScaleY) / 2;
 
   return areas.map((area) => ({
     ...area,
-    x: area.x + offsetX,
-    y: area.y + offsetY,
+    x: area.x * finalScaleX + offsetX,
+    y: area.y * finalScaleY + offsetY,
+    width: area.width * finalScaleX,
+    height: area.height * finalScaleY,
   }));
 }
 

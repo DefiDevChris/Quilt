@@ -139,10 +139,10 @@ export function Toolbar({
 
   if (activeWorktable === 'print' || activeWorktable === 'image') return null;
 
-  const TOOLS_MAP: Record<'quilt' | 'block' | 'layout', ToolDef[]> = {
+  const TOOLS_MAP: Record<'quilt' | 'block' | 'layout-builder', ToolDef[]> = {
     quilt: quiltTools,
     block: blockTools,
-    layout: layoutTools,
+    'layout-builder': [],
   };
 
   const tools = TOOLS_MAP[activeWorktable];

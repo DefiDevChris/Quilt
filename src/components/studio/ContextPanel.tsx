@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { LayoutSelector } from '@/components/studio/LayoutSelector';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { resolveSelection, type SelectionKind } from '@/lib/canvas-selection';
@@ -17,7 +16,7 @@ import { SettingTriangleInspector } from '@/components/studio/inspectors/Setting
 import { PieceInspector } from '@/components/studio/inspectors/PieceInspector';
 import { FreeShapeInspector } from '@/components/studio/inspectors/FreeShapeInspector';
 
-type LibraryTab = 'layouts' | 'blocks' | 'fabrics';
+type LibraryTab = 'blocks' | 'fabrics';
 
 interface ContextPanelProps {
   readonly onBlockDragStart: (e: React.DragEvent, blockId: string) => void;
@@ -50,7 +49,7 @@ export function ContextPanel({
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
 
-  const [activeTab, setActiveTab] = useState<LibraryTab>('layouts');
+  const [activeTab, setActiveTab] = useState<LibraryTab>('blocks');
 
   const selection = useMemo(
     () => resolveSelection(fabricCanvas, selectedObjectIds),
@@ -67,11 +66,6 @@ export function ContextPanel({
       <section className="flex flex-col" style={{ flex: '0 0 50%', minHeight: 0 }}>
         <div className="flex border-b border-outline-variant/40 flex-shrink-0">
           <LibraryTabButton
-            label="Layouts"
-            active={activeTab === 'layouts'}
-            onClick={() => setActiveTab('layouts')}
-          />
-          <LibraryTabButton
             label="Blocks"
             active={activeTab === 'blocks'}
             onClick={() => setActiveTab('blocks')}
@@ -83,11 +77,6 @@ export function ContextPanel({
           />
         </div>
         <div className="flex-1 min-h-0 overflow-y-auto">
-          {activeTab === 'layouts' && (
-            <div className="p-3">
-              <LayoutSelector />
-            </div>
-          )}
           {activeTab === 'blocks' && (
             <BlockLibrary
               onBlockDragStart={onBlockDragStart}
@@ -132,11 +121,10 @@ function LibraryTabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${
-        active
-          ? 'border-b-2 border-primary text-primary'
-          : 'text-on-surface/60 hover:text-on-surface'
-      }`}
+      className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${active
+        ? 'border-b-2 border-primary text-primary'
+        : 'text-on-surface/60 hover:text-on-surface'
+        }`}
     >
       {label}
     </button>

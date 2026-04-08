@@ -50,6 +50,14 @@ export function BlockLibrary({
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
+  const fetchBlocks = useBlockStore((s) => s.fetchBlocks);
+
+  useEffect(() => {
+    if (blocks.length === 0) {
+      fetchBlocks();
+    }
+  }, [blocks.length, fetchBlocks]);
+
   useEffect(() => {
     if (activeTab === 'myblocks' && isPro) {
       fetchUserBlocks();

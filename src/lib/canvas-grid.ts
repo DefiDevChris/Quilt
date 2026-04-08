@@ -106,29 +106,8 @@ export function renderGrid(
   ctx.fillStyle = '#EDEBE8';
   ctx.fillRect(0, 0, w, h);
 
-  // --- Infinite background grid (always visible, covers full canvas area) ---
-  // Use a fixed dot-grid at a sensible pitch in screen pixels, then clamp
-  // to a minimum pixel spacing so it doesn't become invisible when zoomed out.
-  {
-    const gridSizePx = gridSettings.size * pxPerUnit;
-    const screenPitch = Math.max(gridSizePx * zoom, 8); // never draw tighter than 8px
-    // Align the grid to the viewport pan so it stays stationary as you pan
-    const offsetX = ((panX % screenPitch) + screenPitch) % screenPitch;
-    const offsetY = ((panY % screenPitch) + screenPitch) % screenPitch;
+  // --- Infinite background grid removed as per user request ---
 
-    ctx.strokeStyle = 'rgba(178, 173, 167, 0.45)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    for (let x = offsetX - screenPitch; x <= w + screenPitch; x += screenPitch) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-    }
-    for (let y = offsetY - screenPitch; y <= h + screenPitch; y += screenPitch) {
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-    }
-    ctx.stroke();
-  }
 
   ctx.save();
   ctx.transform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);

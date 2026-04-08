@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
-import { fitLayoutToQuilt } from '@/lib/layout-renderer';
+import { fitLayoutToQuilt, computeTemplateFootprint } from '@/lib/layout-renderer';
 import type { LayoutTemplate, LayoutArea, LayoutAreaRole } from '@/types/layout';
 
 /** Property name used to tag Fabric.js objects created by this renderer. */
@@ -22,6 +22,7 @@ type FabricCanvas = {
   toJSON: () => Record<string, unknown>;
   on: (event: string, handler: (...args: unknown[]) => void) => void;
   off: (event: string, handler: (...args: unknown[]) => void) => void;
+  bringObjectToFront: (obj: FabricObject) => void;
 };
 
 type FabricObject = {
@@ -112,8 +113,21 @@ export function useLayoutRenderer() {
 
       const template = storeToTemplate();
       const project = useProjectStore.getState();
-      const quiltWidth = project.canvasWidth;
-      const quiltHeight = project.canvasHeight;
+      let quiltWidth = project.canvasWidth;
+      let quiltHeight = project.canvasHeight;
+      
+      // If layout dictates exact dimensions, apply them to the project and locally
+      if (template) {
+        const footprint = computeTemplateFootprint(template);
+        if (footprint) {
+          if (quiltWidth !== footprint.width || quiltHeight !== footprint.height) {
+            quiltWidth = footprint.width;
+            quiltHeight = footprint.height;
+            // This syncs the UI/grid visually around the canvas layout bounds
+            project.setCanvasDimensions(quiltWidth, quiltHeight);
+          }
+        }
+      }
 
       // Cache key includes quilt dimensions so the layout reflows when the
       // quilt is resized — but does NOT trigger on unrelated project changes.
@@ -128,6 +142,7 @@ export function useLayoutRenderer() {
 
       // Remove old renderer objects, preserving any user-applied fabric/color
       // assignments by area ID so a rerender doesn't blow them away.
+      // CRITICAL: Do NOT remove or modify user blocks - they must stay exactly as placed.
       const oldObjects = canvas
         .getObjects()
         .filter((obj) => !!(obj as Record<string, unknown>)[RENDERER_MARKER]);
@@ -144,6 +159,7 @@ export function useLayoutRenderer() {
             preservedStrokes[areaId] = r.stroke as string | undefined;
           }
         }
+        // Only remove layout renderer objects, never user blocks
         canvas.remove(...oldObjects);
       }
 
@@ -186,6 +202,7 @@ export function useLayoutRenderer() {
           lockScalingY: true,
           hoverCursor: 'pointer',
           objectCaching: false,
+          perPixelTargeting: false,
         });
 
         const r = rect as unknown as Record<string, unknown>;
@@ -194,7 +211,18 @@ export function useLayoutRenderer() {
         r[AREA_ROLE_PROP] = area.role;
 
         canvas.add(rect as unknown as FabricObject);
+        // Always keep layout areas in back, behind user blocks
         canvas.sendObjectToBack(rect as unknown as FabricObject);
+      }
+
+      // Ensure all user blocks stay on top of layout areas
+      const allObjects = canvas.getObjects();
+      for (const obj of allObjects) {
+        const r = obj as unknown as Record<string, unknown>;
+        // If it's a user block (has _inLayoutCellId), bring to front
+        if (r['_inLayoutCellId']) {
+          canvas.bringObjectToFront(obj as unknown as FabricObject);
+        }
       }
 
       canvas.requestRenderAll();

@@ -169,10 +169,16 @@ export function applyInitialSetup(
   }
 
   if (result) {
-    projectStore.setCanvasDimensions(result.width, result.height);
-    project.canvasWidth = result.width;
-    project.canvasHeight = result.height;
-    return { hydrated: true, canvasWidth: result.width, canvasHeight: result.height };
+    // If the project already has dimensions (e.g. from the wizard), respect them.
+    // Otherwise, use the natural dimensions computed from the layout.
+    const finalWidth = project.canvasWidth > 0 ? project.canvasWidth : result.width;
+    const finalHeight = project.canvasHeight > 0 ? project.canvasHeight : result.height;
+
+    projectStore.setCanvasDimensions(finalWidth, finalHeight);
+    project.canvasWidth = finalWidth;
+    project.canvasHeight = finalHeight;
+
+    return { hydrated: true, canvasWidth: finalWidth, canvasHeight: finalHeight };
   }
 
   return { hydrated: false, canvasWidth: project.canvasWidth, canvasHeight: project.canvasHeight };

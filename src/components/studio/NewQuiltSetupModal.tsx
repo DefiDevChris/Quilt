@@ -5,21 +5,19 @@ import { QUILT_SIZE_PRESETS } from '@/lib/constants';
 
 interface Props {
   readonly isOpen: boolean;
-  readonly onConfirm: (args: { width: number; height: number; openLayouts: boolean }) => void;
+  readonly onConfirm: (args: { width: number; height: number }) => void;
   readonly onDismiss: () => void;
 }
 
 /**
  * First-visit setup modal for a brand-new quilt project. The user picks
- * a finished quilt size (preset or custom) and optionally jumps straight
- * to the Layouts library tab. The chosen dimensions become the source of
- * truth — layouts dropped onto the canvas later will fit inside this size.
+ * a finished quilt size (preset or custom). The chosen dimensions become
+ * the source of truth.
  */
 export function NewQuiltSetupModal({ isOpen, onConfirm, onDismiss }: Props) {
   const [selectedPreset, setSelectedPreset] = useState<string>('Throw');
   const [customW, setCustomW] = useState('');
   const [customH, setCustomH] = useState('');
-  const [openLayouts, setOpenLayouts] = useState(true);
 
   const isCustom = selectedPreset === 'Custom';
 
@@ -38,8 +36,8 @@ export function NewQuiltSetupModal({ isOpen, onConfirm, onDismiss }: Props) {
       width = preset.width;
       height = preset.height;
     }
-    onConfirm({ width, height, openLayouts });
-  }, [isCustom, customW, customH, selectedPreset, openLayouts, onConfirm]);
+    onConfirm({ width, height });
+  }, [isCustom, customW, customH, selectedPreset, onConfirm]);
 
   if (!isOpen) return null;
 
@@ -63,11 +61,10 @@ export function NewQuiltSetupModal({ isOpen, onConfirm, onDismiss }: Props) {
                 key={preset.label}
                 type="button"
                 onClick={() => setSelectedPreset(preset.label)}
-                className={`flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors ${
-                  isActive
-                    ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
-                    : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-                }`}
+                className={`flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors ${isActive
+                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+                  : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                  }`}
               >
                 <span className="text-sm font-medium">{preset.label}</span>
                 <span
@@ -81,11 +78,10 @@ export function NewQuiltSetupModal({ isOpen, onConfirm, onDismiss }: Props) {
           <button
             type="button"
             onClick={() => setSelectedPreset('Custom')}
-            className={`col-span-2 flex items-center justify-center rounded-lg px-3 py-2.5 transition-colors ${
-              isCustom
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
-                : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-            }`}
+            className={`col-span-2 flex items-center justify-center rounded-lg px-3 py-2.5 transition-colors ${isCustom
+              ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+              : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+              }`}
           >
             <span className="text-sm font-medium">Custom Size</span>
           </button>
@@ -128,19 +124,6 @@ export function NewQuiltSetupModal({ isOpen, onConfirm, onDismiss }: Props) {
             </div>
           </div>
         )}
-
-        {/* Layout shortcut */}
-        <label className="flex items-center gap-2 mb-5 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={openLayouts}
-            onChange={(e) => setOpenLayouts(e.target.checked)}
-            className="rounded accent-primary"
-          />
-          <span className="text-sm text-secondary">
-            Open the Layouts library after I create my quilt
-          </span>
-        </label>
 
         <div className="flex justify-end gap-3">
           <button

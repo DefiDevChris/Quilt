@@ -73,11 +73,10 @@ export function BlockBuilderTab({
               key={size}
               type="button"
               onClick={() => handlePresetChange(size)}
-              className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-                cellSizeIn === size && !isCustom
-                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                  : 'bg-background text-secondary hover:text-on-surface'
-              }`}
+              className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${cellSizeIn === size && !isCustom
+                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
+                : 'bg-background text-secondary hover:text-on-surface'
+                }`}
             >
               {size}&quot;
             </button>
@@ -94,11 +93,10 @@ export function BlockBuilderTab({
             }}
             onBlur={handleCustomUnitsSubmit}
             placeholder="#"
-            className={`w-10 rounded-md border px-1.5 py-1 text-xs ${
-              isCustom
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-outline-variant bg-white text-secondary'
-            } focus:border-primary focus:outline-none`}
+            className={`w-10 rounded-md border px-1.5 py-1 text-xs ${isCustom
+              ? 'border-primary bg-primary/10 text-primary'
+              : 'border-outline-variant bg-white text-secondary'
+              } focus:border-primary focus:outline-none`}
           />
         </div>
         <div className="ml-auto text-[10px] text-secondary font-mono tracking-tight bg-surface-container py-0.5 px-1.5 rounded">
@@ -118,7 +116,7 @@ export function BlockBuilderTab({
       {/* Tool hint */}
       <div className="text-[10px] text-secondary">
         {activeMode === 'freedraw' &&
-          'Click grid points to draw straight seam lines. Double-click to end.'}
+          'Click and drag to draw freehand. Lines snap to grid on release.'}
         {activeMode === 'rectangle' && 'Click two grid corners to draw a rectangle.'}
         {activeMode === 'triangle' && 'Click a grid cell to split it diagonally.'}
         {activeMode === 'curve' && 'Click a straight seam line to curve it.'}
