@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
@@ -53,6 +54,17 @@ export default function DashboardPage() {
   const uploads = useMobileUploadStore((s) => s.uploads);
   const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
   const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
+  const searchParams = useSearchParams();
+  const action = searchParams?.get('action') ?? '';
+  const preloadUrl = searchParams?.get('preloadUrl') ?? '';
+  const uploadId = searchParams?.get('uploadId') ?? '';
+
+  // Auto-open Photo to Design promo when redirected from mobile uploads
+  useEffect(() => {
+    if (action === 'photo-to-design' && preloadUrl) {
+      setShowPhotoPromo(true);
+    }
+  }, [action, preloadUrl]);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -321,7 +333,11 @@ export default function DashboardPage() {
 
       {/* Photo to Design promo */}
       {showPhotoPromo && (
-        <PhotoToDesignPromo isPro={isPro} onClose={() => setShowPhotoPromo(false)} />
+        <PhotoToDesignPromo
+          isPro={isPro}
+          onClose={() => setShowPhotoPromo(false)}
+          preloadedImageUrl={preloadUrl || undefined}
+        />
       )}
     </div>
   );
