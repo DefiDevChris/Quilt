@@ -304,49 +304,40 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
     }
   }, [blockName, blockSize, onDone]);
 
-  // Handle dropped block piece
-  const handleDropPiece = useCallback((shape: unknown) => {
-    const fc = fabricCanvasRef.current as { add: (obj: unknown) => void; setActiveObject: (obj: unknown) => void; renderAll: () => void } | null;
-    if (!fc) return;
-    fc.add(shape as Parameters<typeof fc.add>[0]);
-    fc.setActiveObject(shape as Parameters<typeof fc.setActiveObject>[0]);
-    fc.renderAll();
-  }, []);
-
   // Handle canvas drag-and-drop
-  const handleCanvasDrop = useCallback((e: React.DragEvent) => {
+  const handleCanvasDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     const pieceId = e.dataTransfer.getData('application/quiltcorgi-block-piece');
     if (!pieceId) return;
 
-    // Import fabric and create the shape at drop position
-    import('fabric').then((fabric) => {
-      const fc = fabricCanvasRef.current as {
-        getScenePoint?: (p: DOMPoint) => { x: number; y: number };
-        getWidth: () => number;
-      } | null;
+    try {
+      const fabric = await import('fabric');
+      const fc = fabricCanvasRef.current;
       if (!fc) return;
 
-      const canvasW = fc.getWidth();
-      // Get drop position from event
-      const rect = (e.target as HTMLElement).closest('.flex-1')?.getBoundingClientRect();
-      if (!rect) return;
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
+      const canvasW = (fc as { getWidth: () => number }).getWidth();
       const piece = BLOCK_PIECES.find((p) => p.id === pieceId);
       if (!piece) return;
 
-      const shape = piece.createShape(fabric, canvasW / 2);
-      // Position shape at drop point
-      (shape as Record<string, unknown>)['left'] = x;
-      (shape as Record<string, unknown>)['top'] = y;
-      (shape as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
+      // Get drop position relative to the canvas container
+      const canvasEl = canvasElRef.current;
+      if (!canvasEl) return;
+      const rect = canvasEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-      const canvas = fabricCanvasRef.current as { add: (obj: unknown) => void; renderAll: () => void } | null;
-      canvas?.add(shape as Parameters<typeof canvas.add>[0]);
-      canvas?.renderAll();
-    });
+      const shape = piece.createShape(fabric, canvasW / 2) as Record<string, unknown>;
+      // Position shape at drop point
+      shape['left'] = x;
+      shape['top'] = y;
+      shape['_blockBuilderShape'] = true;
+
+      const canvas = fc as { add: (obj: unknown) => void; renderAll: () => void };
+      canvas.add(shape);
+      canvas.renderAll();
+    } catch (err) {
+      console.error('Failed to drop piece:', err);
+    }
   }, []);
 
   const activeToolRef = useRef(activeTool);
