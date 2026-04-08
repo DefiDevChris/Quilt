@@ -406,6 +406,11 @@ export function computeBorderStrips(
     const border = borders[i];
     const bw = border.width * pxPerUnit;
 
+    // Top/bottom strips span innerWidth + accumulated offset (NOT corners).
+    // Left/right strips span full height INCLUDING their own border width (covering corners).
+    // This asymmetry means left/right strips "paint over" corner areas — intentional
+    // so that vertical borders create continuous strips from top to bottom.
+
     // Top strip - spans only innerWidth + accumulated offset (not corners)
     strips.push({
       x: accumulatedOffset === 0 ? 0 : -accumulatedOffset,

@@ -39,9 +39,9 @@ function tokenizeSvgPath(d: string): PathCommand[] {
     const args =
       argStr.length > 0
         ? argStr
-            .split(/[\s,]+/)
-            .map(Number)
-            .filter((n) => !isNaN(n))
+          .split(/[\s,]+/)
+          .map(Number)
+          .filter((n) => !isNaN(n))
         : [];
     commands.push({ type, args });
   }
@@ -327,6 +327,35 @@ export function computeSeamAllowance(
   }));
 
   const seamLine = computeSeamOffset(cutLine, seamAllowance);
+
+  return { cutLine, seamLine };
+}
+
+// ── PDF Engine Helper ─────────────────────────────────────────────
+
+/**
+ * Extract polyline from SVG data for PDF engines.
+ * Converts SVG path → polyline → pixel-to-inch conversion → seam offset.
+ *
+ * Shared between cutlist-pdf-engine.ts and project-pdf-engine.ts.
+ */
+export function extractShapePolyline(
+  svgData: string,
+  seamAllowance: number
+): { cutLine: Point[]; seamLine: Point[] | null } | null {
+  const pathD = extractPathFromSvg(svgData);
+  if (!pathD) return null;
+
+  const rawPoints = svgPathToPolyline(pathD);
+  if (rawPoints.length < 3) return null;
+
+  const pixelToInch = 1 / 96; // PIXELS_PER_INCH
+  const cutLine = rawPoints.map((p) => ({
+    x: p.x * pixelToInch,
+    y: p.y * pixelToInch,
+  }));
+
+  const seamLine = seamAllowance > 0 ? computeSeamOffset(cutLine, seamAllowance) : null;
 
   return { cutLine, seamLine };
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { BlockBuilderMode } from '@/components/blocks/BlockBuilderToolbar';
+import type { BlockBuilderMode } from '@/components/studio/BlockBuilderWorktable';
 import {
   detectPatches,
   gridPointToPixel,
@@ -281,14 +281,18 @@ export function useBlockBuilder({
 
   // Draw seam lines and patches on canvas + handle mouse events
   useEffect(() => {
-    if (!draftCanvasRef.current || !isOpen) return;
+    if (!isOpen) return;
+    if (!draftCanvasRef.current) {
+      // Canvas not ready yet, wait for next render
+      return;
+    }
 
     let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
-      if (!isMounted) return;
+      if (!isMounted || !draftCanvasRef.current) return;
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
       // Clear existing user objects (keep overlay)
@@ -737,6 +741,7 @@ export function useBlockBuilder({
     gridSize,
     gridCols,
     gridRows,
+    canvasSize,
     snapToGridPoint,
     addShapeSegments,
     findNearestSegment,

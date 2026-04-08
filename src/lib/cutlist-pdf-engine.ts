@@ -15,7 +15,7 @@ import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf
 import type { PaperSize } from './pdf-generator';
 import type { UnitSystem } from '@/types/canvas';
 import type { PrintlistItem } from '@/types/printlist';
-import { PDF_POINTS_PER_INCH, PIXELS_PER_INCH } from '@/lib/constants';
+import { PDF_POINTS_PER_INCH, PDF_PAGE_SIZES } from '@/lib/constants';
 import {
   embedLogo,
   drawContentPageHeader,
@@ -26,9 +26,10 @@ import {
   createPdfDocument,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
-import { svgPathToPolyline, extractPathFromSvg, computeSeamOffset } from '@/lib/seam-allowance';
+import { extractShapePolyline } from '@/lib/seam-allowance';
 import { polylineBoundingBox } from '@/lib/bin-packer';
 import { calculateEdgeDimensions } from '@/lib/edge-dimension-utils';
+import { deduplicateBy } from '@/lib/dedup-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -36,17 +37,6 @@ export interface BlockInfo {
   blockName?: string | null;
   pieces: Array<{ svgData: string }>;
 }
-
-interface PageDims {
-  width: number;
-  height: number;
-  margin: number;
-}
-
-const PAGE_SIZES: Record<PaperSize, PageDims> = {
-  letter: { width: 8.5, height: 11, margin: 0.75 },
-  a4: { width: 8.268, height: 11.693, margin: 0.75 },
-};
 
 // ── Main Generator ─────────────────────────────────────────────────
 
@@ -66,7 +56,7 @@ export async function generateCutListPdf(
   logoPng: Uint8Array | null,
   blocks: BlockInfo[]
 ): Promise<Uint8Array> {
-  const pageDims = PAGE_SIZES[paperSize];
+  const pageDims = PDF_PAGE_SIZES[paperSize];
   const pts = PDF_POINTS_PER_INCH;
   const pageW = pageDims.width * pts;
   const pageH = pageDims.height * pts;
@@ -94,10 +84,10 @@ export async function generateCutListPdf(
 
   // ── Template Pages: One Per Unique Shape ───────────────────────
 
-  const uniqueShapes = deduplicateItems(items);
+  const uniqueShapes = deduplicateBy(items, (item) => item.svgData, (item) => item.quantity);
   let isFirstTemplate = true;
 
-  for (const { item, totalQuantity, label } of uniqueShapes) {
+  for (const { item: item, count: totalQuantity, label } of uniqueShapes) {
     const shapeResult = extractShapePolyline(
       item.svgData,
       item.seamAllowanceEnabled !== false ? item.seamAllowance : 0
@@ -281,9 +271,9 @@ function buildKeyBlockPage(
   y -= 20;
 
   // List all shapes with labels
-  const uniqueShapes = deduplicateItems(items);
+  const uniqueShapes = deduplicateBy(items, (item) => item.svgData, (item) => item.quantity);
 
-  for (const { item, totalQuantity, label } of uniqueShapes) {
+  for (const { item, count: totalQuantity, label } of uniqueShapes) {
     if (y < mx + 30) break; // stop if page is full
 
     page.drawText(`Piece ${label}`, {
@@ -304,56 +294,4 @@ function buildKeyBlockPage(
     });
     y -= 14;
   }
-}
-
-// ── Helpers ────────────────────────────────────────────────────────
-
-interface UniqueItem {
-  item: PrintlistItem;
-  totalQuantity: number;
-  label: string;
-}
-
-function deduplicateItems(items: PrintlistItem[]): UniqueItem[] {
-  const map = new Map<string, { item: PrintlistItem; totalQuantity: number }>();
-
-  for (const item of items) {
-    const key = item.svgData.trim();
-    if (!key) continue;
-
-    const existing = map.get(key);
-    if (existing) {
-      map.set(key, { ...existing, totalQuantity: existing.totalQuantity + item.quantity });
-    } else {
-      map.set(key, { item, totalQuantity: item.quantity });
-    }
-  }
-
-  let idx = 0;
-  return Array.from(map.values()).map(({ item, totalQuantity }) => ({
-    item,
-    totalQuantity,
-    label: String.fromCharCode(65 + (idx++ % 26)),
-  }));
-}
-
-function extractShapePolyline(
-  svgData: string,
-  seamAllowance: number
-): { cutLine: { x: number; y: number }[]; seamLine: { x: number; y: number }[] | null } | null {
-  const pathD = extractPathFromSvg(svgData);
-  if (!pathD) return null;
-
-  const rawPoints = svgPathToPolyline(pathD);
-  if (rawPoints.length < 3) return null;
-
-  const pixelToInch = 1 / PIXELS_PER_INCH;
-  const cutLine = rawPoints.map((p) => ({
-    x: p.x * pixelToInch,
-    y: p.y * pixelToInch,
-  }));
-
-  const seamLine = seamAllowance > 0 ? computeSeamOffset(cutLine, seamAllowance) : null;
-
-  return { cutLine, seamLine };
 }

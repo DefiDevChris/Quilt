@@ -217,13 +217,13 @@ export const QUILT_SIZE_PRESETS: readonly {
   readonly width: number;
   readonly height: number;
 }[] = [
-  { label: 'Baby', width: 36, height: 52 },
-  { label: 'Throw', width: 50, height: 65 },
-  { label: 'Twin', width: 68, height: 90 },
-  { label: 'Full/Double', width: 81, height: 96 },
-  { label: 'Queen', width: 90, height: 108 },
-  { label: 'King', width: 108, height: 108 },
-];
+    { label: 'Baby', width: 36, height: 52 },
+    { label: 'Throw', width: 50, height: 65 },
+    { label: 'Twin', width: 68, height: 90 },
+    { label: 'Full/Double', width: 81, height: 96 },
+    { label: 'Queen', width: 90, height: 108 },
+    { label: 'King', width: 108, height: 108 },
+  ];
 
 // Support contact
 export const SUPPORT_EMAIL = 'support@quiltcorgi.com';
@@ -243,3 +243,19 @@ export const DEFAULT_STROKE_COLOR = '#383831';
 // Default layout colors
 export const DEFAULT_SASHING_COLOR = '#F5F0E8';
 export const DEFAULT_BORDER_COLOR = '#2D2D2D';
+
+// ── PDF Page Sizes ──
+
+export type PaperSize = 'letter' | 'a4';
+
+export interface PdfPageDims {
+  readonly width: number;
+  readonly height: number;
+  readonly margin: number;
+}
+
+/** Standard PDF page dimensions with 0.75" margins for pattern documents */
+export const PDF_PAGE_SIZES: Record<PaperSize, PdfPageDims> = {
+  letter: { width: 8.5, height: 11, margin: 0.75 },
+  a4: { width: 8.268, height: 11.693, margin: 0.75 },
+};

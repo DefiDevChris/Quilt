@@ -371,5 +371,3 @@ export function optimizeStripCutting(
 
   return plans;
 }
-
-export { formatFraction } from '@/lib/piece-detection-utils';

@@ -105,23 +105,11 @@ export function gridPointToPixel(gp: GridPoint, gridSize: number): { x: number; 
 
 // ─── Area computation (shoelace formula) ────────────────────────────────────
 
-export function patchArea(patch: Patch): number {
-  const verts = patch.vertices;
-  const n = verts.length;
-  if (n < 3) return 0;
-
-  let area = 0;
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    area += verts[i].x * verts[j].y;
-    area -= verts[j].x * verts[i].y;
-  }
-  return Math.abs(area) / 2;
-}
-
-// ─── Signed area (for winding detection) ────────────────────────────────────
-
-function signedArea(vertices: { x: number; y: number }[]): number {
+/**
+ * Signed shoelace area — positive for CCW winding, negative for CW.
+ * Used by detectPatches() for outer-face detection.
+ */
+function signedArea(vertices: readonly { x: number; y: number }[]): number {
   const n = vertices.length;
   if (n < 3) return 0;
   let area = 0;
@@ -131,6 +119,10 @@ function signedArea(vertices: { x: number; y: number }[]): number {
     area -= vertices[j].x * vertices[i].y;
   }
   return area / 2;
+}
+
+export function patchArea(patch: Patch): number {
+  return Math.abs(signedArea(patch.vertices));
 }
 
 // ─── Arc SVG path ───────────────────────────────────────────────────────────
@@ -241,7 +233,7 @@ export function detectPatches(
   const unique = deduplicateSegments(allSegments);
 
   // Build adjacency: vertex → sorted list of neighbor vertices
-  const adj = buildAdjacency(unique, gridCols, gridRows);
+  const adj = buildAdjacency(unique);
 
   // Build half-edges
   const halfEdges: HalfEdge[] = [];
@@ -429,7 +421,7 @@ function deduplicateSegments(segments: Segment[]): Segment[] {
   return result;
 }
 
-function buildAdjacency(segments: Segment[], _gc: number, _gr: number): Map<string, string[]> {
+function buildAdjacency(segments: Segment[]): Map<string, string[]> {
   const adj = new Map<string, string[]>();
   const adjSets = new Map<string, Set<string>>();
 

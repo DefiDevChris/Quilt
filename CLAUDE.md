@@ -208,7 +208,7 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Toolbar (left, 88 px)** — Tools: Select, Pan, Eyedropper, Easydraw, Curve, Bend, Spraycan. View actions: Grid Toggle, Snap Toggle, Reference Image, Pattern Overlay. **No transforms** (rotate/flip/delete) — those live in inspectors in the right pane.
+- **Toolbar (left, 88 px)** — Primary tools: Select, Pan. Advanced (collapsed): Yardage Estimator, Printlist, Export Image. Pinned (always visible): Undo, Redo. View actions: Reference Image. **No transforms** (rotate/flip/delete) — those live in inspectors in the right pane.
 - **CanvasWorkspace (center)** — Single Fabric.js canvas, never unmounted. Pan/zoom is preserved across all worktable mode changes. Canvas dimensions are calculated by `src/lib/quilt-sizing.ts` based on block size, grid dimensions, sashing, and borders.
 - **ContextPanel (right, 320 px)** — Library tabs only (Layouts / Blocks / Fabrics). User-driven — **never auto-switches based on canvas selection.**
 

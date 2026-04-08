@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
-import { useCanvasStore, type WorktableType } from '@/stores/canvasStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
 import { ON_SURFACE_COLOR } from '@/lib/constants';
 
@@ -25,70 +25,6 @@ function formatTimestamp(date: Date | null): string {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();
-}
-
-const BLOCK_BUILDER_ICON = (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <path
-      d="M10 2L18 7V13L10 18L2 13V7L10 2Z"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M10 8L18 13M10 8L2 13M10 8V18"
-      stroke="currentColor"
-      strokeWidth="1"
-      strokeOpacity="0.4"
-    />
-  </svg>
-);
-
-const WORKTABLE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
-  {
-    mode: 'quilt',
-    label: 'Worktable',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <rect x="2" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="2" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-      </svg>
-    ),
-  },
-  {
-    mode: 'block-builder',
-    label: 'Block Builder',
-    icon: BLOCK_BUILDER_ICON,
-  },
-];
-
-function ModeTabs() {
-  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-  const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
-
-  return (
-    <div className="flex items-center gap-0.5 bg-surface-container/60 rounded-lg px-1 py-0.5">
-      {WORKTABLE_TABS.map((tab) => {
-        const isActive = activeWorktable === tab.mode;
-        return (
-          <button
-            key={tab.mode}
-            type="button"
-            onClick={() => setActiveWorktable(tab.mode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all ${isActive
-              ? 'bg-surface shadow-elevation-1 text-on-surface'
-              : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
-              }`}
-          >
-            <span className={isActive ? 'text-primary' : 'text-on-surface/40'}>{tab.icon}</span>
-            {tab.label}
-          </button>
-        );
-      })}
-    </div>
-  );
 }
 
 function ReferenceImageToggle() {
@@ -330,9 +266,8 @@ export function StudioTopBar({
           </div>
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
-          <ModeTabs />
-        </div>
+        {/* Center: empty spacer (mode tabs moved to WorktableTabs) */}
+        <div className="absolute left-1/2 -translate-x-1/2" />
 
         {/* Right: Viewport controls + Project info + Export + Upgrade */}
         <div className="flex items-center gap-4">

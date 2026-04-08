@@ -9,7 +9,47 @@ import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasStore, type WorktableTab } from '@/stores/canvasStore';
-import type { LayoutType } from '@/lib/layout-utils';
+import { useProjectStore } from '@/stores/projectStore';
+import type { LayoutType, BorderConfig, SashingConfig } from '@/lib/layout-utils';
+
+/**
+ * Compute the total quilt size (in inches) from a layout config.
+ */
+function computeLayoutSize(opts: {
+  rows: number;
+  cols: number;
+  blockSize: number;
+  sashing: SashingConfig;
+  borders: BorderConfig[];
+  bindingWidth: number;
+  hasCornerstones: boolean;
+}): { width: number; height: number } {
+  const { rows, cols, blockSize, sashing, borders, bindingWidth } = opts;
+
+  // Block area
+  const blockAreaW = cols * blockSize;
+  const blockAreaH = rows * blockSize;
+
+  // Sashing gaps (between blocks)
+  const sashingCols = Math.max(0, cols - 1) * sashing.width;
+  const sashingRows = Math.max(0, rows - 1) * sashing.width;
+
+  // Borders (each border adds width to BOTH sides)
+  let borderW = 0;
+  let borderH = 0;
+  for (const b of borders) {
+    borderW += b.width * 2;
+    borderH += b.width * 2;
+  }
+
+  // Binding adds to all four sides
+  const bindingTotal = bindingWidth * 2;
+
+  const totalW = blockAreaW + sashingCols + borderW + bindingTotal;
+  const totalH = blockAreaH + sashingRows + borderH + bindingTotal;
+
+  return { width: Math.max(1, Math.round(totalW * 100) / 100), height: Math.max(1, Math.round(totalH * 100) / 100) };
+}
 
 interface StudioDropZoneProps {
   readonly project: Project;
@@ -20,12 +60,9 @@ interface StudioDropZoneProps {
  *
  * The dispatcher inspects the dataTransfer payload and routes:
  *  - `application/quiltcorgi-layout-preset` → creates a new worktable tab
- *    with the layout as a fence. One layout per worktable.
+ *    with the layout as a fence, and resizes the quilt canvas to fit.
  *  - `application/quiltcorgi-fabric-id`     → applies a pattern fill
  *  - everything else                        → block drop with cell-snap
- *
- * Quilt dimensions are NEVER resized by drops — the quilt is the source
- * of truth and layouts adapt to fit inside it.
  */
 export function StudioDropZone({ project }: StudioDropZoneProps) {
   const { handleDragOver, handleDrop } = useBlockDrop();
@@ -60,6 +97,19 @@ export function StudioDropZone({ project }: StudioDropZoneProps) {
           layoutStore.setBlockSize(preset.config.blockSize);
           layoutStore.setSashing(preset.config.sashing);
 
+          // Resize the quilt canvas to match the layout dimensions
+          const layoutSize = computeLayoutSize({
+            rows: preset.config.rows,
+            cols: preset.config.cols,
+            blockSize: preset.config.blockSize,
+            sashing: preset.config.sashing,
+            borders: preset.config.borders ?? [],
+            bindingWidth: 0,
+            hasCornerstones: false,
+          });
+          useProjectStore.getState().setCanvasWidth(layoutSize.width);
+          useProjectStore.getState().setCanvasHeight(layoutSize.height);
+
           // Create a new worktable tab with this layout snapshot
           const tab: WorktableTab = {
             id: `wt-${Date.now()}`,
@@ -79,6 +129,11 @@ export function StudioDropZone({ project }: StudioDropZoneProps) {
             createdAt: Date.now(),
           };
           useCanvasStore.getState().addWorktableTab(tab);
+
+          // Re-center the viewport after resize
+          setTimeout(() => {
+            useCanvasStore.getState().centerAndFitViewport();
+          }, 50);
         });
       } else if (fabricId) {
         handleFabricDrop(e);

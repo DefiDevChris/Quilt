@@ -23,6 +23,7 @@ import {
   DEFAULT_SEAM_ALLOWANCE_INCHES,
   DEFAULT_WOF,
   DEFAULT_WASTE_MARGIN,
+  PDF_PAGE_SIZES,
 } from '@/lib/constants';
 import {
   drawFullCoverPage,
@@ -48,9 +49,10 @@ import {
   calculateBindingYardage,
   type CanvasShapeData,
 } from '@/lib/yardage-utils';
-import { svgPathToPolyline, extractPathFromSvg, computeSeamOffset } from '@/lib/seam-allowance';
+import { extractShapePolyline } from '@/lib/seam-allowance';
 import { polylineBoundingBox } from '@/lib/bin-packer';
 import { calculateEdgeDimensions } from '@/lib/edge-dimension-utils';
+import { deduplicateBy } from '@/lib/dedup-utils';
 import { toMixedNumberString, decimalToFraction } from '@/lib/fraction-math';
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -68,21 +70,10 @@ export interface ProjectPdfConfig {
   logoPngBytes: Uint8Array | null;
 }
 
-interface PageDims {
-  width: number;
-  height: number;
-  margin: number;
-}
-
-const PAGE_SIZES: Record<PaperSize, PageDims> = {
-  letter: { width: 8.5, height: 11, margin: 0.75 },
-  a4: { width: 8.268, height: 11.693, margin: 0.75 },
-};
-
 // ── Main Generator ─────────────────────────────────────────────────
 
 export async function generateProjectPdf(config: ProjectPdfConfig): Promise<Uint8Array> {
-  const pageDims = PAGE_SIZES[config.paperSize];
+  const pageDims = PDF_PAGE_SIZES[config.paperSize];
   const pts = PDF_POINTS_PER_INCH;
   const pageW = pageDims.width * pts;
   const pageH = pageDims.height * pts;
@@ -525,13 +516,13 @@ function buildCuttingTemplatePages(
   const mx = margin * pts;
 
   // Collect unique piece shapes by SVG data
-  const uniquePieces = deduplicatePieces(config.allPieces);
+  const uniquePieces = deduplicateBy(config.allPieces, (piece) => piece.svgData);
   if (uniquePieces.length === 0) return;
 
   let isFirstTemplatePage = true;
 
-  for (const { piece, count, label } of uniquePieces) {
-    const shapeResult = extractShapePolyline(piece.svgData);
+  for (const { item: piece, count, label } of uniquePieces) {
+    const shapeResult = extractShapePolyline(piece.svgData, DEFAULT_SEAM_ALLOWANCE_INCHES);
     if (!shapeResult) continue;
 
     const { cutLine, seamLine } = shapeResult;
@@ -650,54 +641,4 @@ function piecesToShapeData(pieces: PieceSnapshot[]): CanvasShapeData[] {
     fillColor: piece.fill,
     type: piece.shapeType,
   }));
-}
-
-interface UniquePiece {
-  piece: PieceSnapshot;
-  count: number;
-  label: string;
-}
-
-function deduplicatePieces(pieces: PieceSnapshot[]): UniquePiece[] {
-  const map = new Map<string, { piece: PieceSnapshot; count: number }>();
-
-  for (const piece of pieces) {
-    // Key by SVG data content
-    const key = piece.svgData.trim();
-    if (!key) continue;
-
-    const existing = map.get(key);
-    if (existing) {
-      map.set(key, { ...existing, count: existing.count + 1 });
-    } else {
-      map.set(key, { piece, count: 1 });
-    }
-  }
-
-  let labelIdx = 0;
-  return Array.from(map.values()).map(({ piece, count }) => ({
-    piece,
-    count,
-    label: String.fromCharCode(65 + (labelIdx++ % 26)),
-  }));
-}
-
-function extractShapePolyline(
-  svgData: string
-): { cutLine: { x: number; y: number }[]; seamLine: { x: number; y: number }[] | null } | null {
-  const pathD = extractPathFromSvg(svgData);
-  if (!pathD) return null;
-
-  const rawPoints = svgPathToPolyline(pathD);
-  if (rawPoints.length < 3) return null;
-
-  const pixelToInch = 1 / PIXELS_PER_INCH;
-  const cutLine = rawPoints.map((p) => ({
-    x: p.x * pixelToInch,
-    y: p.y * pixelToInch,
-  }));
-
-  const seamLine = computeSeamOffset(cutLine, DEFAULT_SEAM_ALLOWANCE_INCHES);
-
-  return { cutLine, seamLine };
 }
