@@ -453,8 +453,6 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
         onBlockSizeChange={setBlockSize}
         onSave={handleSaveBlock}
         selectedObject={selectedObject}
-        fabricCanvasRef={fabricCanvasRef}
-        onDropPiece={handleDropPiece}
       />
     </div>
   );

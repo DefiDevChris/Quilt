@@ -7,11 +7,7 @@ import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
 
 export interface ToolbarCallbacks {
-  onOpenLayoutSettings?: () => void;
-  onOpenGridDimensions?: () => void;
   onOpenImageExport?: () => void;
-  onOpenPhotoToDesign?: () => void;
-  onOpenResize?: () => void;
   onOpenReferenceImage?: () => void;
   onOpenLayoutOverlay?: () => void;
   onSaveBlock?: () => void;
@@ -85,101 +81,33 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       ),
     },
     {
-      id: 'photo-to-design',
-      label: 'Photo to Design',
-      description: 'Turn any photo into a quilt design — the fastest way to start a project',
-      mascot: '/mascots&avatars/corgi10.png',
-      group: 'create',
+      id: 'pan',
+      label: 'Pan',
+      shortcut: 'H',
+      description: 'Click and drag to move around your canvas',
+      mascot: '/mascots&avatars/corgi8.png',
+      toolType: 'pan',
+      group: 'tools',
       tier: 'primary',
-      isProFeature: true,
-      onClick: callbacks.onOpenPhotoToDesign,
-      dataTour: 'photo-to-design',
+      onClick: () => {
+        if (isViewportLocked) return;
+        useCanvasStore.getState().setActiveTool('pan');
+      },
+      isDisabled: isViewportLocked,
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="7" cy="7" r="1.5" stroke="currentColor" strokeWidth="1" />
-        </svg>
-      ),
-    },
-    {
-      id: 'layout',
-      label: 'Layout Settings',
-      description: 'Set up your quilt layout — grid, sashing, on-point, and more',
-      mascot: '/mascots&avatars/corgi12.png',
-      group: 'layout',
-      tier: 'primary',
-      onClick: callbacks.onOpenLayoutSettings,
-      isActive: () => layoutType !== 'free-form',
-      dataTour: 'layout-settings',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="11" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="3" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="11" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      ),
-    },
-    // ── PRIMARY: Layout & sizing ──
-    {
-      id: 'grid-dimensions',
-      label: 'Grid & Dimensions',
-      description: 'Set your quilt dimensions and grid spacing',
-      mascot: '/mascots&avatars/corgi26.png',
-      group: 'layout',
-      tier: 'primary',
-      onClick: callbacks.onOpenGridDimensions,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path d="M3 6.5H17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
-          <path d="M3 13.5H17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
-          <path d="M6.5 3V17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
-          <path d="M13.5 3V17" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.3" />
           <path
-            d="M1 3V1H3"
+            d="M10 3C8.5 3 7 4 7 6C7 7.5 8 9 9 10V15C9 16 10 17 11 17C12 17 13 16 13 15V10C14 9 15 7.5 15 6C15 4 13.5 3 12 3H10Z"
             stroke="currentColor"
-            strokeWidth="1.2"
+            strokeWidth="1.3"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           <path
-            d="M17 1H19V3"
+            d="M7 6V4M13 6V4M10 10V8"
             stroke="currentColor"
-            strokeWidth="1.2"
+            strokeWidth="1.3"
             strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: 'resize-quilt',
-      label: 'Resize Quilt',
-      description: 'Scale the entire quilt or add blocks to change dimensions',
-      mascot: '/mascots&avatars/corgi28.png',
-      group: 'layout-adv',
-      tier: 'advanced',
-      onClick: callbacks.onOpenResize,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 13V16H7M16 7V4H13"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M16 4L11 9M4 16L9 11"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
           />
         </svg>
       ),
@@ -493,7 +421,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
 }
 
 export function useBlockTools(
-  callbacks?: Pick<ToolbarCallbacks, 'onOpenGridDimensions' | 'onSaveBlock' | 'onNewBlock'>
+  callbacks?: Pick<ToolbarCallbacks, 'onSaveBlock' | 'onNewBlock'>
 ): ToolDef[] {
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
@@ -607,34 +535,6 @@ export function useBlockTools(
         </svg>
       ),
     },
-    {
-      id: 'grid-dimensions',
-      label: 'Grid & Dims',
-      description: 'Set block size and grid spacing',
-      group: 'canvas',
-      onClick: callbacks?.onOpenGridDimensions,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path
-            d="M1 3V1H3"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M17 1H19V3"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
     // ── History ──
     {
       id: 'undo',
@@ -738,7 +638,7 @@ export function useBlockTools(
 }
 
 export function useLayoutCreatorTools(
-  callbacks?: Pick<ToolbarCallbacks, 'onOpenGridDimensions' | 'onSaveBlock' | 'onNewBlock'>
+  callbacks?: Pick<ToolbarCallbacks, 'onSaveBlock' | 'onNewBlock'>
 ): ToolDef[] {
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
@@ -805,34 +705,6 @@ export function useLayoutCreatorTools(
             strokeLinejoin="round"
           />
           <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      ),
-    },
-    {
-      id: 'grid-dimensions',
-      label: 'Grid & Dims',
-      description: 'Set layout dimensions and grid spacing',
-      group: 'canvas',
-      onClick: callbacks?.onOpenGridDimensions,
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path
-            d="M1 3V1H3"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M17 1H19V3"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
         </svg>
       ),
     },

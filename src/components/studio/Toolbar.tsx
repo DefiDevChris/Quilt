@@ -106,11 +106,7 @@ function renderToolGroup(
 }
 
 export function Toolbar({
-  onOpenLayoutSettings,
-  onOpenGridDimensions,
   onOpenImageExport,
-  onOpenPhotoToDesign,
-  onOpenResize,
   onOpenReferenceImage,
   onOpenLayoutOverlay,
   onSaveBlock,
@@ -122,11 +118,7 @@ export function Toolbar({
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
 
   const callbacks: ToolbarCallbacks = {
-    onOpenLayoutSettings,
-    onOpenGridDimensions,
     onOpenImageExport,
-    onOpenPhotoToDesign,
-    onOpenResize,
     onOpenReferenceImage,
     onOpenLayoutOverlay,
     onSaveBlock,
@@ -134,8 +126,7 @@ export function Toolbar({
   };
 
   const quiltTools = useQuiltTools(callbacks);
-  const blockTools = useBlockTools({ onOpenGridDimensions, onSaveBlock, onNewBlock });
-  const layoutTools = useLayoutCreatorTools({ onOpenGridDimensions, onSaveBlock, onNewBlock });
+  const blockTools = useBlockTools();
 
   if (activeWorktable === 'print' || activeWorktable === 'image') return null;
 

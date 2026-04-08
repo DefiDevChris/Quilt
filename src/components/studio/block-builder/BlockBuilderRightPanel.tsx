@@ -3,14 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
 import { STANDARD_BLOCK_SIZES } from '@/lib/quilt-sizing';
-import type { fabric } from 'fabric';
 
 interface BlockPieceDef {
   id: string;
   name: string;
   description: string;
   fill: string;
-  createShape: (fc: typeof import('fabric'), canvasSize: number) => unknown;
+  createShape: (
+    fabric: typeof import('fabric'),
+    canvasSize: number
+  ) => unknown;
 }
 
 interface BlockBuilderRightPanelProps {
@@ -20,8 +22,6 @@ interface BlockBuilderRightPanelProps {
   readonly onBlockSizeChange: (size: number) => void;
   readonly onSave: () => void;
   readonly selectedObject: object | null;
-  readonly fabricCanvasRef: React.MutableRefObject<unknown>;
-  readonly onDropPiece: (shape: unknown) => void;
 }
 
 /** Common quilt block pieces that can be dragged onto the canvas. */
@@ -40,7 +40,7 @@ export const BLOCK_PIECES: BlockPieceDef[] = [
         selectable: true,
         evented: true,
       });
-      (path as Record<string, unknown>)['_blockBuilderShape'] = true;
+      (path as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
       return path;
     },
   },
@@ -62,7 +62,7 @@ export const BLOCK_PIECES: BlockPieceDef[] = [
           evented: true,
         }
       );
-      (path as Record<string, unknown>)['_blockBuilderShape'] = true;
+      (path as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
       return path;
     },
   },
@@ -76,7 +76,6 @@ export const BLOCK_PIECES: BlockPieceDef[] = [
       const h = canvasSize;
       const halfW = w / 2;
       const halfH = h / 2;
-      // Large center triangle + two side triangles
       const path = new fabric.Path(
         `M ${halfW} 0 L ${w} ${h} L 0 ${h} Z`,
         {
@@ -87,7 +86,7 @@ export const BLOCK_PIECES: BlockPieceDef[] = [
           evented: true,
         }
       );
-      (path as Record<string, unknown>)['_blockBuilderShape'] = true;
+      (path as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
       return path;
     },
   },
@@ -150,7 +149,7 @@ export const BLOCK_PIECES: BlockPieceDef[] = [
           evented: true,
         }
       );
-      (path as Record<string, unknown>)['_blockBuilderShape'] = true;
+      (path as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
       return path;
     },
   },
@@ -186,25 +185,6 @@ export function BlockBuilderRightPanel({
       e.dataTransfer.setData('application/quiltcorgi-block-piece', piece.id);
       e.dataTransfer.effectAllowed = 'copy';
     };
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const pieceId = e.dataTransfer.getData('application/quiltcorgi-block-piece');
-    if (!pieceId) return;
-    const piece = BLOCK_PIECES.find((p) => p.id === pieceId);
-    if (!piece) return;
-
-    // Get canvas context for shape creation
-    const fc = fabricCanvasRef.current;
-    if (!fc) return;
-
-    const size = (fc as { getWidth?: () => number }).getWidth?.() ?? blockSize * 32;
-    const shape = piece.createShape(
-      require('fabric'),
-      size
-    );
-    onDropPiece(shape);
   };
 
   return (
@@ -266,11 +246,7 @@ export function BlockBuilderRightPanel({
         </div>
       ) : activeTab === 'pieces' ? (
         /* ── Block Pieces Library ────────────────────────────────── */
-        <div
-          className="flex-1 overflow-y-auto p-3"
-          onDrop={handleDrop}
-          onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; }}
-        >
+        <div className="flex-1 overflow-y-auto p-3">
           <p className="text-[11px] text-secondary mb-3">
             Drag a piece onto the canvas, or use the drawing tools to create custom shapes.
           </p>
