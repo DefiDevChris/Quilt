@@ -380,7 +380,7 @@ function ProfileStripVertical() {
             <p className="text-on-surface font-extrabold text-base leading-tight">
               {user?.name ?? 'Your Name'}
             </p>
-            <p className="text-orange-500 font-semibold text-xs leading-tight">
+            <p className="text-primary font-semibold text-xs leading-tight">
               @{user?.email?.split('@')[0] ?? 'username'}
             </p>
           </div>
@@ -456,7 +456,7 @@ function SavedContent() {
   return (
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Bookmark size={20} className="text-orange-500" />
+        <Bookmark size={20} className="text-primary" />
         <h2 className="font-extrabold text-xl text-on-surface">Saved</h2>
         <span className="text-xs text-secondary/80 font-medium">{MOCK_SAVED.length} posts</span>
       </div>
@@ -474,8 +474,8 @@ function SavedContent() {
               <h3 className="font-semibold text-on-surface text-base mb-2">{post.title}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center border border-white shadow-elevation-1">
-                    <span className="text-caption font-bold text-orange-500">
+                  <div className="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center border border-white shadow-elevation-1">
+                    <span className="text-caption font-bold text-primary-dark">
                       {post.author.charAt(0)}
                     </span>
                   </div>
@@ -485,7 +485,7 @@ function SavedContent() {
                   <span className="flex items-center gap-1 text-xs">
                     <Heart size={14} /> {post.likes}
                   </span>
-                  <Bookmark size={14} className="text-orange-500 fill-orange-500" />
+                  <Bookmark size={14} className="text-primary fill-primary" />
                 </div>
               </div>
             </div>
@@ -549,7 +549,7 @@ function ProfileContentPanel() {
               className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-elevation-1"
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-orange-100 border-2 border-white shadow-elevation-1 flex items-center justify-center text-2xl font-bold text-orange-500">
+            <div className="h-16 w-16 rounded-full bg-primary-container border-2 border-white shadow-elevation-1 flex items-center justify-center text-2xl font-bold text-primary-dark">
               {initial}
             </div>
           )}

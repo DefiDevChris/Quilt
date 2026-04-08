@@ -108,7 +108,7 @@ function StudioMockup() {
           <span className="text-warm-text-muted hidden sm:inline">Share</span>
           <span className="text-warm-text-muted hidden sm:inline">View</span>
           <span className="text-warm-text-muted hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-md font-bold text-[9px]">
+          <div className="px-3 py-1 bg-gradient-to-r from-primary to-primary-dark text-white rounded-md font-bold text-[9px]">
             Export
           </div>
         </div>
@@ -123,9 +123,8 @@ function StudioMockup() {
             ) : (
               <div
                 key={i}
-                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${
-                  tool.active ? 'text-orange-500' : 'text-warm-text-muted'
-                }`}
+                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-orange-500' : 'text-warm-text-muted'
+                  }`}
               >
                 <svg
                   width="14"
@@ -265,7 +264,7 @@ export default function HeroSection() {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               From First Stitch
-              <span className="block bg-gradient-to-r from-orange-500 to-rose-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
                 to Finished Quilt
               </span>
             </motion.h1>
@@ -289,7 +288,7 @@ export default function HeroSection() {
             >
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3 text-center"
+                className="px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3 text-center"
               >
                 Start Designing Free
               </Link>

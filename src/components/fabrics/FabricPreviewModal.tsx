@@ -124,7 +124,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List

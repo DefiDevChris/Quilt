@@ -224,11 +224,10 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
-                  mode === m
-                    ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${mode === m
+                    ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
                     : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
-                }`}
+                  }`}
               >
                 {m === 'image' && <ImageIcon size={12} className="inline mr-1" />}
                 {m === 'project' && <Link2 size={12} className="inline mr-1" />}
@@ -377,7 +376,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                   (mode === 'image' && !imageUrl && !uploadedImage) ||
                   (mode === 'project' && !selectedProject)
                 }
-                className="flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold shadow-elevation-1 hover:shadow-elevation-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold shadow-elevation-1 hover:shadow-elevation-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 Post
@@ -402,11 +401,10 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
                     setSelectedProject(project);
                     setShowProjectPicker(false);
                   }}
-                  className={`p-2 rounded-xl text-left transition-colors ${
-                    selectedProject?.id === project.id
+                  className={`p-2 rounded-xl text-left transition-colors ${selectedProject?.id === project.id
                       ? 'bg-primary-container/50 ring-2 ring-primary'
                       : 'bg-white/30 hover:bg-white/50'
-                  }`}
+                    }`}
                 >
                   {project.thumbnailUrl ? (
                     <NextImage

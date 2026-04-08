@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <!-- Log Cabin Block with warm autumn palette -->
+    <g id="log-cabin-block">
+      <!-- Center square -->
+      <rect x="100" y="100" width="40" height="40" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 1 -->
+      <rect x="140" y="100" width="20" height="40" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="100" y="140" width="60" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="100" width="20" height="60" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="80" width="80" height="20" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 2 -->
+      <rect x="160" y="80" width="20" height="80" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="160" width="100" height="20" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="80" width="20" height="100" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="60" width="120" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 3 -->
+      <rect x="180" y="60" width="20" height="120" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="180" width="140" height="20" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="60" width="20" height="140" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="40" width="160" height="20" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 4 -->
+      <rect x="200" y="40" width="20" height="160" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="200" width="180" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="20" y="40" width="20" height="180" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="20" y="20" width="200" height="20" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+    </g>
+    
+    <!-- Log Cabin Block rotated 180 degrees (light/dark swap) -->
+    <g id="log-cabin-block-rotated">
+      <!-- Center square -->
+      <rect x="100" y="100" width="40" height="40" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 1 -->
+      <rect x="140" y="100" width="20" height="40" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="100" y="140" width="60" height="20" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="100" width="20" height="60" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="80" width="80" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 2 -->
+      <rect x="160" y="80" width="20" height="80" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="80" y="160" width="100" height="20" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="80" width="20" height="100" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="60" width="120" height="20" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 3 -->
+      <rect x="180" y="60" width="20" height="120" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="60" y="180" width="140" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="60" width="20" height="140" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="40" width="160" height="20" fill="#E9EDC9" stroke="#5C4033" stroke-width="2"/>
+      <!-- Round 4 -->
+      <rect x="200" y="40" width="20" height="160" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="40" y="200" width="180" height="20" fill="#D4A373" stroke="#5C4033" stroke-width="2"/>
+      <rect x="20" y="40" width="20" height="180" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+      <rect x="20" y="20" width="200" height="20" fill="#CCD5AE" stroke="#5C4033" stroke-width="2"/>
+    </g>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="#FEFAE0"/>
+  
+  <!-- Barn Raising Layout - 4x4 grid with alternating rotations -->
+  <!-- Row 1 -->
+  <use href="#log-cabin-block" x="0" y="0"/>
+  <use href="#log-cabin-block-rotated" x="240" y="0"/>
+  <use href="#log-cabin-block" x="480" y="0"/>
+  <use href="#log-cabin-block-rotated" x="720" y="0"/>
+  
+  <!-- Row 2 -->
+  <use href="#log-cabin-block-rotated" x="0" y="240"/>
+  <use href="#log-cabin-block" x="240" y="240"/>
+  <use href="#log-cabin-block-rotated" x="480" y="240"/>
+  <use href="#log-cabin-block" x="720" y="240"/>
+  
+  <!-- Row 3 -->
+  <use href="#log-cabin-block" x="0" y="480"/>
+  <use href="#log-cabin-block-rotated" x="240" y="480"/>
+  <use href="#log-cabin-block" x="480" y="480"/>
+  <use href="#log-cabin-block-rotated" x="720" y="480"/>
+  
+  <!-- Row 4 -->
+  <use href="#log-cabin-block-rotated" x="0" y="720"/>
+  <use href="#log-cabin-block" x="240" y="720"/>
+  <use href="#log-cabin-block-rotated" x="480" y="720"/>
+  <use href="#log-cabin-block" x="720" y="720"/>
+  
+  <!-- Border -->
+  <rect x="0" y="0" width="960" height="960" fill="none" stroke="#5C4033" stroke-width="20"/>
+  <rect x="20" y="20" width="920" height="920" fill="none" stroke="#D4A373" stroke-width="8"/>
+  
+  <!-- Quilt title overlay area (bottom right) -->
+  <rect x="760" y="200" width="400" height="300" fill="#FEFAE0" opacity="0.9" rx="20"/>
+  <text x="960" y="320" font-family="Georgia, serif" font-size="48" font-weight="bold" fill="#5C4033" text-anchor="middle">Log Cabin</text>
+  <text x="960" y="380" font-family="Georgia, serif" font-size="32" fill="#8B6914" text-anchor="middle">Traditional Pattern</text>
+  <text x="960" y="430" font-family="Georgia, serif" font-size="24" fill="#A67C52" text-anchor="middle">Barn Raising Layout</text>
+</svg>

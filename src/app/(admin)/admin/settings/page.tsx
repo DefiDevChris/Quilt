@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
                 type="button"
                 onClick={handleConfirmEnable}
                 disabled={confirmText !== 'ENABLE SHOP' || saving}
-                className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
+                className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
               >
                 {saving ? 'Enabling...' : 'Enable Shop'}
               </button>

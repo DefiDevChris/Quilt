@@ -167,6 +167,53 @@ interface HalfEdge {
  * 6. For each unvisited half-edge, follow the "turn right" rule to trace a face
  * 7. Discard the outer (infinite) face
  */
+
+/**
+ * Check if a point (x, y) is inside a polygon defined by vertices.
+ * Uses the ray casting algorithm.
+ */
+export function pointInPolygon(
+  x: number,
+  y: number,
+  vertices: { x: number; y: number }[]
+): boolean {
+  let inside = false;
+  const n = vertices.length;
+  if (n < 3) return false;
+
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const xi = vertices[i].x;
+    const yi = vertices[i].y;
+    const xj = vertices[j].x;
+    const yj = vertices[j].y;
+
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
+}
+
+/**
+ * Find which patch contains the given point (in pixel coordinates).
+ * Returns the patch ID or null if no patch contains the point.
+ */
+export function findPatchAtPoint(
+  x: number,
+  y: number,
+  patches: readonly Patch[]
+): string | null {
+  // Check patches in reverse order (top-most first)
+  for (let i = patches.length - 1; i >= 0; i--) {
+    const patch = patches[i];
+    if (pointInPolygon(x, y, [...patch.vertices])) {
+      return patch.id;
+    }
+  }
+  return null;
+}
+
 export function detectPatches(
   segments: readonly DrawSegment[],
   gridCols: number,

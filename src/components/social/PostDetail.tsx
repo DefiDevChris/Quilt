@@ -128,8 +128,8 @@ export function PostDetail({ postId }: PostDetailProps) {
         {/* Author */}
         <div className="flex items-center justify-between mb-3">
           <Link href={`/members/${post.creatorUsername}`} className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full border-2 border-white bg-orange-100 flex items-center justify-center shadow-elevation-1">
-              <span className="text-sm font-bold text-orange-500">
+            <div className="w-12 h-12 rounded-full border-2 border-white bg-primary-container flex items-center justify-center shadow-elevation-1">
+              <span className="text-sm font-bold text-primary-dark">
                 {post.creatorName.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -189,19 +189,18 @@ export function PostDetail({ postId }: PostDetailProps) {
         <div className="flex gap-2 border-t border-white/40 pt-4">
           <button
             onClick={handleLike}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors ${
-              liked ? 'text-rose-500 bg-rose-50/50' : 'text-secondary hover:bg-white/50'
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition-colors ${liked ? 'text-rose-500 bg-rose-50/50' : 'text-secondary hover:bg-white/50'
+              }`}
           >
             <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
             {likeCount}
           </button>
-          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors">
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-secondary hover:bg-white/50 transition-colors">
             <MessageCircle size={20} /> {post.commentCount}
           </button>
           <button
             onClick={handleShare}
-            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-secondary hover:bg-white/50 transition-colors"
           >
             <Share2 size={20} /> {copied ? 'Copied!' : 'Share'}
           </button>
@@ -237,9 +236,9 @@ function PostDetailSkeleton() {
         <div className="h-4 bg-white/50 rounded w-full mb-4" />
         <div className="h-64 bg-white/50 rounded-2xl mb-4" />
         <div className="flex gap-2">
-          <div className="h-10 flex-1 bg-white/50 rounded-xl" />
-          <div className="h-10 flex-1 bg-white/50 rounded-xl" />
-          <div className="h-10 flex-1 bg-white/50 rounded-xl" />
+          <div className="h-10 flex-1 bg-white/50 rounded-full" />
+          <div className="h-10 flex-1 bg-white/50 rounded-full" />
+          <div className="h-10 flex-1 bg-white/50 rounded-full" />
         </div>
       </div>
     </div>
@@ -270,7 +269,7 @@ function PostLoadError({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="glass-panel rounded-[2rem] p-10 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-container/40 flex items-center justify-center">
           <span className="text-2xl">⚠️</span>
         </div>
         <h2 className="text-xl font-bold text-on-surface mb-2">Failed to Load</h2>

@@ -147,7 +147,7 @@ export function CartDrawer() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
                 >
                   {isLoading ? 'Loading...' : 'Checkout'}
                 </a>
@@ -155,7 +155,7 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={handleCopyList}
-                  className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+                  className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
                 >
                   Copy Shopping List
                 </button>

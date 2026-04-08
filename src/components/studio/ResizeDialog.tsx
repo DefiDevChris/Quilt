@@ -196,7 +196,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-body-md text-secondary hover:text-on-surface transition-colors rounded-lg"
+                className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
               >
                 Cancel
               </button>
@@ -204,7 +204,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
                 type="button"
                 disabled={isSameDimensions}
                 onClick={handleSubmit}
-                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continue
               </button>
@@ -233,7 +233,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               <button
                 type="button"
                 onClick={() => handleConfirm('scale')}
-                className="w-full px-4 py-2.5 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all"
+                className="w-full px-4 py-2.5 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
               >
                 Resize Current Pattern
               </button>
@@ -247,7 +247,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full px-4 py-2.5 text-body-md text-secondary hover:text-on-surface transition-colors rounded-lg"
+                className="bg-white/50 w-full px-4 py-2.5 text-body-md text-secondary rounded-full"
               >
                 Keep {formattedCurrent}
               </button>

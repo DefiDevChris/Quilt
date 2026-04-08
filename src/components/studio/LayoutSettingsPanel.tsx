@@ -58,11 +58,10 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
                 key={opt.id}
                 type="button"
                 onClick={() => setLayoutType(opt.id)}
-                className={`rounded-lg border-2 p-3 text-left transition-colors ${
-                  layoutType === opt.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-outline-variant hover:border-primary-container'
-                }`}
+                className={`rounded-lg border-2 p-3 text-left transition-colors ${layoutType === opt.id
+                  ? 'border-primary bg-primary/5'
+                  : 'border-outline-variant hover:border-primary-container'
+                  }`}
               >
                 <div className="text-sm font-medium text-on-surface">{opt.label}</div>
                 <div className="text-caption text-secondary mt-0.5">{opt.desc}</div>
@@ -313,7 +312,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             Done
           </button>

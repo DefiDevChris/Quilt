@@ -80,7 +80,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-5 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+              className="px-5 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
             >
               Go to Dashboard
             </Link>
@@ -94,7 +94,7 @@ export default function PublicNav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-5 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+                className="px-5 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
               >
                 Start Designing
               </Link>
@@ -164,7 +164,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold"
+              className="block text-center px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -173,7 +173,7 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-semibold"
+                className="block text-center px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing

@@ -85,7 +85,7 @@ export class CanvasErrorBoundary extends Component<
             <button
               type="button"
               onClick={this.handleReload}
-              className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+              className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
             >
               Reload Canvas
             </button>

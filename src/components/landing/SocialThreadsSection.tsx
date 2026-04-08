@@ -19,7 +19,7 @@ function SocialThreadsScreenshot() {
             {/* Post 1 */}
             <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-orange-500 to-rose-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   S
                 </div>
                 <div>
@@ -209,7 +209,7 @@ export default function SocialThreadsSection() {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
-              <span className="block bg-gradient-to-r from-orange-500 to-rose-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
                 Who Get It
               </span>
             </h2>
@@ -298,7 +298,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

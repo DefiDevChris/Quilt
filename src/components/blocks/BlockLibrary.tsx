@@ -89,8 +89,8 @@ export function BlockLibrary({
             type="button"
             onClick={() => setActiveTab('library')}
             className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'library'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-on-surface/60 hover:text-on-surface'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-on-surface/60 hover:text-on-surface'
               }`}
           >
             Library
@@ -99,8 +99,8 @@ export function BlockLibrary({
             type="button"
             onClick={() => setActiveTab('myblocks')}
             className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'myblocks'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-on-surface/60 hover:text-on-surface'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-on-surface/60 hover:text-on-surface'
               }`}
           >
             My Blocks
@@ -161,7 +161,7 @@ export function BlockLibrary({
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
+                  className="bg-white/50 text-secondary rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
                 >
                   {'\u2190'} Prev
                 </button>
@@ -172,7 +172,7 @@ export function BlockLibrary({
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
+                  className="bg-white/50 text-secondary rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
                 >
                   Next {'\u2192'}
                 </button>
@@ -192,8 +192,8 @@ export function BlockLibrary({
                       type="button"
                       onClick={() => setBlockFilter(filter)}
                       className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${blockFilter === filter
-                          ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                          : 'bg-background text-secondary hover:text-on-surface'
+                        ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+                        : 'bg-background text-secondary hover:text-on-surface'
                         }`}
                     >
                       {FILTER_LABELS[filter]}
@@ -252,8 +252,8 @@ export function BlockLibrary({
                             : 'Delete block'
                         }
                         className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === block.id
-                            ? 'bg-error ring-2 ring-error/50 !opacity-100'
-                            : 'bg-error'
+                          ? 'bg-error ring-2 ring-error/50 !opacity-100'
+                          : 'bg-error'
                           }`}
                       >
                         {confirmDeleteId === block.id ? '\u2713' : '\u2715'}
@@ -269,7 +269,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenDrafting}
-                    className="flex-1 rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                    className="flex-1 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
                   >
                     + Draft Block
                   </button>
@@ -278,7 +278,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenPhotoUpload}
-                    className="flex-1 rounded-md bg-background px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface"
+                    className="flex-1 rounded-full bg-white/50 px-3 py-1.5 text-xs font-medium text-secondary hover:opacity-90"
                   >
                     + Photo Block
                   </button>

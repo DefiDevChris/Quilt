@@ -137,8 +137,8 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               type="button"
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 px-2 py-1.5 text-xs font-medium ${activeTab === tab.key
-                  ? 'border-b-2 border-primary text-primary'
-                  : 'text-on-surface/60 hover:text-on-surface'
+                ? 'border-b-2 border-primary text-primary'
+                : 'text-on-surface/60 hover:text-on-surface'
                 }`}
             >
               {tab.label}
@@ -303,8 +303,8 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                             : 'Delete fabric'
                         }
                         className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === fabric.id
-                            ? 'bg-error ring-2 ring-error/50 !opacity-100'
-                            : 'bg-error'
+                          ? 'bg-error ring-2 ring-error/50 !opacity-100'
+                          : 'bg-error'
                           }`}
                       >
                         {confirmDeleteId === fabric.id ? '✓' : '✕'}
@@ -319,7 +319,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <button
                   type="button"
                   onClick={onOpenUpload}
-                  className="w-full rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                  className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
                 >
                   + Import Fabric
                 </button>

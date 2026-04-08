@@ -214,11 +214,10 @@ export function RecommendedDimensionsModal({
                 key={rec.label}
                 type="button"
                 onClick={() => onSelect(rec.width, rec.height)}
-                className={`rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${
-                  rec.isClosest
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-outline-variant bg-white hover:border-primary/50'
-                }`}
+                className={`rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${rec.isClosest
+                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
+                  : 'border-outline-variant bg-white hover:border-primary/50'
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-on-surface">{rec.label}</span>
@@ -267,9 +266,8 @@ export function RecommendedDimensionsModal({
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
-                className={`rounded p-1.5 transition-colors ${
-                  lockAspect ? 'bg-primary/10 text-primary' : 'bg-background text-secondary'
-                }`}
+                className={`rounded p-1.5 transition-colors ${lockAspect ? 'bg-primary/10 text-primary' : 'bg-background text-secondary'
+                  }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -340,7 +338,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Apply
               </button>

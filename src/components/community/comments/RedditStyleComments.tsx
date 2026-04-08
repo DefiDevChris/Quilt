@@ -95,9 +95,8 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
                 setSort(s);
                 setShowAll(s !== 'recent');
               }}
-              className={`text-sm font-semibold transition-colors ${
-                sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`text-sm font-semibold transition-colors ${sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+                }`}
             >
               {s === 'recent' ? 'Recent' : 'Top'}
             </button>
@@ -196,8 +195,8 @@ function CommentRow({
             unoptimized
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-            <span className="text-xs font-semibold text-orange-500">
+          <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+            <span className="text-xs font-semibold text-primary-dark">
               {comment.authorName.charAt(0)}
             </span>
           </div>
@@ -274,7 +273,7 @@ function CommentInput({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="text-sm font-semibold text-orange-500 hover:opacity-80 disabled:opacity-50 transition-opacity"
+          className="text-sm font-semibold text-primary hover:opacity-80 disabled:opacity-50 transition-opacity"
         >
           Post
         </button>

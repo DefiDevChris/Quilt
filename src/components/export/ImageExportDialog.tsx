@@ -71,39 +71,19 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
         <div className="mb-4">
           <label className="text-xs font-medium text-on-surface block mb-1">Format</label>
           <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => setFormat('png')}
-              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                format === 'png'
-                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
+            {(['png', 'jpeg', 'svg'] as const).map((fmt) => (
+              <button
+                key={fmt}
+                type="button"
+                onClick={() => setFormat(fmt)}
+                className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
+                  ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
                   : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-              }`}
-            >
-              PNG (lossless)
-            </button>
-            <button
-              type="button"
-              onClick={() => setFormat('jpeg')}
-              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                format === 'jpeg'
-                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                  : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-              }`}
-            >
-              JPEG (smaller)
-            </button>
-            <button
-              type="button"
-              onClick={() => setFormat('svg')}
-              className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                format === 'svg'
-                  ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                  : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-              }`}
-            >
-              SVG (vector)
-            </button>
+                  }`}
+              >
+                {fmt === 'png' ? 'PNG (lossless)' : fmt === 'jpeg' ? 'JPEG (smaller)' : 'SVG (vector)'}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -119,11 +99,10 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                   key={opt}
                   type="button"
                   onClick={() => setDpi(opt)}
-                  className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                    dpi === opt
-                      ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                      : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-                  }`}
+                  className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
+                    ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
+                    : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                    }`}
                 >
                   {opt}
                 </button>
@@ -147,7 +126,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
             type="button"
             onClick={onClose}
             disabled={isExporting}
-            className="rounded-md border border-outline-variant bg-white px-4 py-2 text-sm text-on-surface hover:bg-background"
+            className="rounded-full border border-outline-variant bg-white px-4 py-2 text-sm text-on-surface hover:bg-background"
           >
             Cancel
           </button>
@@ -155,7 +134,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
             type="button"
             onClick={handleExport}
             disabled={isExporting || !fabricCanvas}
-            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isExporting ? (
               <>

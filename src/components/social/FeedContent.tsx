@@ -132,7 +132,7 @@ export function FeedContent({
           <p className="text-secondary text-sm mb-4">{error}</p>
           <button
             onClick={() => fetchPosts(1, false)}
-            className="bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+            className="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
           >
             Retry
           </button>
@@ -162,7 +162,7 @@ export function FeedContent({
               {user && (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
                 >
                   Share Your Design
                 </Link>

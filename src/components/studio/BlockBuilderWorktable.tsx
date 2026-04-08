@@ -1,21 +1,20 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useCanvasStore, type BlockDraftingMode } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
-import { FreeformDraftingTab } from '@/components/blocks/FreeformDraftingTab';
 import { BlockBuilderTab } from '@/components/blocks/BlockBuilderTab';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
+import { BlockBuilderFabricPicker } from '@/components/blocks/BlockBuilderFabricPicker';
 import { BlockOverlaySelector } from '@/components/blocks/BlockOverlaySelector';
 import { GRID_LINE_COLOR } from '@/lib/constants';
+import { useBlockBuilder } from '@/hooks/useBlockBuilder';
+import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 
 /**
- * Shared props for drafting tab components (FreeformDraftingTab, BlockBuilderTab).
+ * Shared props for drafting tab components.
  */
 export interface DraftTabProps {
   draftCanvasRef: React.MutableRefObject<unknown>;
-  fillColor: string;
-  strokeColor: string;
   isOpen: boolean;
   activeOverlay?: string | null;
   overlayOpacity?: number;
@@ -24,24 +23,15 @@ export interface DraftTabProps {
   onCellSizeInChange?: (units: number) => void;
   blockWidthIn: number;
   blockHeightIn: number;
+  canvasSize: number;
+  activeMode: 'pencil' | 'rectangle' | 'circle' | 'bend';
+  setActiveMode: (mode: 'pencil' | 'rectangle' | 'circle' | 'bend') => void;
+  segmentCount: number;
+  onClear: () => void;
+  onUndoSegment: () => void;
 }
 
-/**
- * Block Builder worktable — a full worktable mode (like 'quilt', 'print', etc.)
- * with its own dedicated 400×400 mini-canvas for drafting custom blocks.
- *
- * Left pane: tools (Freeform / BlockBuilder tabs + overlay controls)
- * Center: drafting canvas
- * Right: Block Library (saved blocks, drag-and-drop to quilt worktable)
- */
-
-const DRAFT_CANVAS_SIZE = 400;
-const DEFAULT_CELL_SIZE = 3;
-
-const TAB_LABELS: Record<BlockDraftingMode, string> = {
-  freeform: 'Freeform',
-  blockbuilder: 'BlockBuilder',
-};
+const DEFAULT_CELL_SIZE = 1;
 
 interface BlockBuilderWorktableProps {
   onDone: () => void;
@@ -63,16 +53,53 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     height: number;
   } | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
+  const [rightTab, setRightTab] = useState<'blocks' | 'fabrics'>('blocks');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [canvasSize, setCanvasSize] = useState(400);
 
-  const activeMode = useCanvasStore((s) => s.blockDraftingMode);
-  const setActiveMode = useCanvasStore((s) => s.setBlockDraftingMode);
-  const fillColor = useCanvasStore((s) => s.fillColor);
-  const strokeColor = useCanvasStore((s) => s.strokeColor);
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
 
-  // Initialize / dispose Fabric.js canvas with grid
+  // Responsive canvas sizing
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        const size = Math.min(width, height) - 32;
+        setCanvasSize(Math.max(200, Math.min(size, 600)));
+      }
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  // Compute grid dimensions
+  const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
+  const gridRows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
+
+  // Block builder hook — manages all canvas state
+  const {
+    activeMode,
+    setActiveMode,
+    segments,
+    patches,
+    clearSegments: hookClearSegments,
+    undoSegment: hookUndoSegment,
+    setPatchFill,
+  } = useBlockBuilder({
+    draftCanvasRef,
+    isOpen: true,
+    gridCols,
+    gridRows,
+    canvasSize,
+  });
+
+  // Initialize / dispose Fabric.js canvas
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -83,42 +110,12 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       if (disposed || !canvasRef.current) return;
 
       const canvas = new fabric.Canvas(canvasRef.current, {
-        width: DRAFT_CANVAS_SIZE,
-        height: DRAFT_CANVAS_SIZE,
+        width: canvasSize,
+        height: canvasSize,
         backgroundColor: '#FFFFFF',
         selection: true,
         preserveObjectStacking: true,
       });
-
-      // Draw grid
-      const cols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
-      const rows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
-      const gridStepX = DRAFT_CANVAS_SIZE / cols;
-      const gridStepY = DRAFT_CANVAS_SIZE / rows;
-
-      for (let i = 0; i <= cols; i++) {
-        const pos = i * gridStepX;
-        canvas.add(
-          new fabric.Line([pos, 0, pos, DRAFT_CANVAS_SIZE], {
-            stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === cols ? 2 : 0.5,
-            selectable: false,
-            evented: false,
-          })
-        );
-      }
-
-      for (let i = 0; i <= rows; i++) {
-        const pos = i * gridStepY;
-        canvas.add(
-          new fabric.Line([0, pos, DRAFT_CANVAS_SIZE, pos], {
-            stroke: GRID_LINE_COLOR,
-            strokeWidth: i === 0 || i === rows ? 2 : 0.5,
-            selectable: false,
-            evented: false,
-          })
-        );
-      }
 
       canvas.renderAll();
       draftCanvasRef.current = canvas;
@@ -135,7 +132,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       draftCanvasRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blockWidthIn, blockHeightIn, cellSizeIn]);
+  }, [canvasSize]);
 
   // Load overlay SVG onto canvas when activeOverlay changes
   useEffect(() => {
@@ -168,7 +165,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
           const svgWidth = options.width || 300;
           const svgHeight = options.height || 300;
-          const fitScale = DRAFT_CANVAS_SIZE / Math.max(svgWidth, svgHeight);
+          const fitScale = canvasSize / Math.max(svgWidth, svgHeight);
 
           const scaledW = svgWidth * fitScale;
           const scaledH = svgHeight * fitScale;
@@ -179,8 +176,8 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             opacity: overlayOpacity,
             scaleX: fitScale,
             scaleY: fitScale,
-            left: (DRAFT_CANVAS_SIZE - scaledW) / 2,
-            top: (DRAFT_CANVAS_SIZE - scaledH) / 2,
+            left: (canvasSize - scaledW) / 2,
+            top: (canvasSize - scaledH) / 2,
           } as Record<string, unknown>);
 
           (group as unknown as { name: string }).name = 'overlay-ref';
@@ -191,7 +188,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         // Silently fail
       }
     })();
-  }, [activeOverlay, overlayOpacity]);
+  }, [activeOverlay, overlayOpacity, canvasSize]);
 
   const handleOverlaySelect = useCallback(
     (svgPath: string, _type: 'block' | 'layout', width?: number, height?: number) => {
@@ -209,7 +206,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     const fabric = await import('fabric');
     const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
     const objs = canvas.getObjects().filter((o) => {
-      if (o.stroke === '#E5E2DD') return false;
+      if (o.stroke === GRID_LINE_COLOR) return false;
       if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
       return true;
     });
@@ -236,7 +233,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
 
       const objs = canvas.getObjects().filter((o) => {
-        if (o.stroke === '#E5E2DD') return false;
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
         return true;
       });
@@ -281,7 +277,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         return;
       }
 
-      // Reset form and refresh library
       setBlockName('');
       setTags('');
       setCategory('Custom');
@@ -294,18 +289,18 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
   }, [blockName, category, tags, blockWidthIn, blockHeightIn, generateThumbnailSvg, fetchUserBlocks]);
 
   const handleClearCanvas = useCallback(() => {
+    hookClearSegments();
     if (!draftCanvasRef.current) return;
     void import('fabric').then((f) => {
       const canvas = draftCanvasRef.current as InstanceType<typeof f.Canvas>;
       const toRemove = canvas.getObjects().filter((o) => {
-        if (o.stroke === '#E5E2DD') return false;
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
         return true;
       });
       for (const obj of toRemove) canvas.remove(obj);
       canvas.renderAll();
     });
-  }, []);
+  }, [hookClearSegments]);
 
   const handleBlockDragStart = useCallback(
     (e: React.DragEvent, blockId: string) => {
@@ -315,10 +310,40 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     []
   );
 
-  const tabProps = {
+  const handleFabricDragStart = useCallback((e: React.DragEvent, fabricId: string) => {
+    e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
+    e.dataTransfer.effectAllowed = 'copy';
+  }, []);
+
+  // Handle fabric drop on canvas — fill the patch under the drop point
+  const handleCanvasDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const fabricId = e.dataTransfer.getData('application/quiltcorgi-fabric-id');
+      if (!fabricId) return;
+
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const patchId = findPatchAtPoint(x, y, patches);
+      if (patchId) {
+        setPatchFill(patchId, fabricId);
+      }
+    },
+    [patches, setPatchFill]
+  );
+
+  const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  const tabProps: DraftTabProps = {
     draftCanvasRef,
-    fillColor,
-    strokeColor,
     isOpen: true,
     activeOverlay,
     overlayOpacity,
@@ -327,54 +352,36 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     onCellSizeInChange: setCellSizeIn,
     blockWidthIn,
     blockHeightIn,
+    canvasSize,
+    activeMode,
+    setActiveMode,
+    segmentCount: segments.length,
+    onClear: hookClearSegments,
+    onUndoSegment: hookUndoSegment,
   };
 
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* ── Left: Drafting tools ──────────────────────────────── */}
-      <aside className="w-[280px] h-full flex-shrink-0 flex flex-col bg-surface-container/40 border-r border-outline-variant/15 overflow-y-auto">
+      <aside className="w-[240px] h-full flex-shrink-0 flex flex-col bg-surface-container/40 border-r border-outline-variant/15 overflow-y-auto">
         {/* Done button */}
         <div className="px-3 py-3 border-b border-outline-variant/15">
           <button
             type="button"
             onClick={onDone}
-            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
           >
             ← Back to Worktable
           </button>
         </div>
 
-        {/* Tab switcher */}
-        <div className="flex gap-1 rounded-lg bg-background p-1 mx-3 mt-3">
-          {(Object.keys(TAB_LABELS) as BlockDraftingMode[]).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setActiveMode(mode)}
-              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${activeMode === mode
-                ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-                : 'text-secondary hover:text-on-surface'
-                }`}
-            >
-              {TAB_LABELS[mode]}
-            </button>
-          ))}
-        </div>
-
-        {/* Active tab toolbar */}
-        <div className="px-3 pt-2">
-          {activeMode === 'freeform' && <FreeformDraftingTab {...tabProps} />}
-          {activeMode === 'blockbuilder' && (
-            <BlockBuilderTab
-              {...tabProps}
-              cellSizeIn={cellSizeIn}
-              onCellSizeInChange={setCellSizeIn}
-            />
-          )}
+        {/* Block Builder toolbar */}
+        <div className="px-3 pt-3">
+          <BlockBuilderTab {...tabProps} />
         </div>
 
         {/* Overlay controls */}
-        <div className="flex items-center gap-2 px-3 py-2">
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-outline-variant/15 mt-2">
           <button
             type="button"
             onClick={() => setShowOverlaySelector(true)}
@@ -418,7 +425,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         </div>
 
         {/* Block metadata */}
-        <div className="px-3 pt-2 space-y-2">
+        <div className="px-3 pt-3 space-y-2 border-t border-outline-variant/15 mt-2">
           <div>
             <label className="mb-0.5 block text-[10px] font-medium text-secondary">
               Block Name *
@@ -485,7 +492,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         </div>
 
         {/* Error + Actions */}
-        <div className="px-3 py-3 mt-2">
+        <div className="px-3 py-3 mt-2 border-t border-outline-variant/15">
           {error && <p className="mb-1.5 text-[11px] text-error">{error}</p>}
           <div className="flex gap-1.5">
             <button
@@ -510,7 +517,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 rounded-md bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
+              className="flex-1 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Block'}
             </button>
@@ -519,25 +526,55 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       </aside>
 
       {/* ── Center: Drafting canvas ───────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center bg-white/60">
-        <div className="rounded-xl border border-outline-variant/20 bg-white shadow-elevation-1 overflow-hidden">
-          <canvas ref={canvasRef} width={DRAFT_CANVAS_SIZE} height={DRAFT_CANVAS_SIZE} />
+      <div
+        ref={canvasContainerRef}
+        className="flex-1 flex items-center justify-center bg-white/60 p-4"
+      >
+        <div
+          className="border border-outline-variant/20 bg-white shadow-elevation-1 overflow-hidden"
+          onDrop={handleCanvasDrop}
+          onDragOver={handleCanvasDragOver}
+        >
+          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} />
         </div>
       </div>
 
-      {/* ── Right: Block Library ──────────────────────────────── */}
+      {/* ── Right: Blocks / Fabrics ───────────────────────────── */}
       <aside className="w-[280px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
-        <div className="flex items-center justify-between px-3 py-2 bg-surface-container-high border-b border-outline-variant/40 flex-shrink-0">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-on-surface">
+        {/* Tab toggle */}
+        <div className="flex border-b border-outline-variant/15">
+          <button
+            type="button"
+            onClick={() => setRightTab('blocks')}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-secondary hover:text-on-surface'
+              }`}
+          >
             My Blocks
-          </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRightTab('fabrics')}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-secondary hover:text-on-surface'
+              }`}
+          >
+            Fabrics
+          </button>
         </div>
+
         <div className="flex-1 min-h-0 overflow-y-auto">
-          <BlockLibrary
-            onBlockDragStart={handleBlockDragStart}
-            onOpenDrafting={undefined}
-            onOpenPhotoUpload={undefined}
-          />
+          {rightTab === 'blocks' ? (
+            <BlockLibrary
+              onBlockDragStart={handleBlockDragStart}
+              onOpenDrafting={undefined}
+              onOpenPhotoUpload={undefined}
+            />
+          ) : (
+            <BlockBuilderFabricPicker onFabricDragStart={handleFabricDragStart} />
+          )}
         </div>
       </aside>
 

@@ -93,11 +93,10 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
               type="button"
               onClick={() => onUpdateType(upload.id, opt.value)}
               disabled={upload.status !== 'pending'}
-              className={`px-2 py-0.5 text-xs font-medium rounded-full transition-colors ${
-                upload.assignedType === opt.value
+              className={`px-2 py-0.5 text-xs font-medium rounded-full transition-colors ${upload.assignedType === opt.value
                   ? TYPE_COLORS[opt.value]
                   : 'bg-transparent text-secondary/60 hover:bg-surface-container'
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               {opt.label}
             </button>
@@ -110,18 +109,17 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleProcess}
             disabled={!canProcess || processing}
-            className="flex-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white disabled:opacity-40 hover:opacity-90 transition-all"
+            className="flex-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gradient-to-r from-primary to-primary-dark text-white disabled:opacity-40 hover:opacity-90 transition-all"
           >
             {processing ? 'Opening...' : 'Process'}
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
-              confirmDelete
+            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${confirmDelete
                 ? 'bg-error/10 text-error'
                 : 'bg-white/50 text-secondary hover:text-error hover:bg-error/10'
-            }`}
+              }`}
           >
             {confirmDelete ? 'Confirm?' : 'Delete'}
           </button>

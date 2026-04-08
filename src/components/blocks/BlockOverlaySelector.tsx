@@ -60,26 +60,24 @@ export function BlockOverlaySelector({
         </div>
 
         {/* Type tabs */}
-        <div className="mb-3 flex gap-1 rounded-lg bg-background p-1">
+        <div className="mb-3 flex gap-1 rounded-full bg-background p-1">
           <button
             type="button"
             onClick={() => setActiveType('block')}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeType === 'block'
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                : 'text-secondary hover:text-on-surface'
-            }`}
+            className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${activeType === 'block'
+              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+              : 'text-secondary hover:text-on-surface'
+              }`}
           >
             Blocks ({BLOCK_OVERLAYS.length})
           </button>
           <button
             type="button"
             onClick={() => setActiveType('layout')}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeType === 'layout'
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                : 'text-secondary hover:text-on-surface'
-            }`}
+            className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${activeType === 'layout'
+              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+              : 'text-secondary hover:text-on-surface'
+              }`}
           >
             Layouts ({LAYOUT_OVERLAYS.length})
           </button>
@@ -102,11 +100,10 @@ export function BlockOverlaySelector({
                 key={d}
                 type="button"
                 onClick={() => setDifficultyFilter(d)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  difficultyFilter === d
-                    ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                    : 'bg-background text-secondary hover:text-on-surface'
-                }`}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${difficultyFilter === d
+                  ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+                  : 'bg-background text-secondary hover:text-on-surface'
+                  }`}
               >
                 {d === 'all' ? 'All' : d.charAt(0).toUpperCase() + d.slice(1)}
               </button>
@@ -123,11 +120,10 @@ export function BlockOverlaySelector({
                   key={block.id}
                   type="button"
                   onClick={() => onSelect(block.svgPath, 'block')}
-                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${
-                    currentOverlay === block.svgPath
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-white hover:border-primary/50'
-                  }`}
+                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${currentOverlay === block.svgPath
+                    ? 'border-primary bg-primary/5'
+                    : 'border-outline-variant bg-white hover:border-primary/50'
+                    }`}
                 >
                   <div className="mb-2 aspect-square overflow-hidden rounded bg-background">
                     <img
@@ -158,11 +154,10 @@ export function BlockOverlaySelector({
                     setPendingOverlay({ path: layout.svgPath, type: 'layout' });
                     setShowDimensions(true);
                   }}
-                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${
-                    currentOverlay === layout.svgPath
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-white hover:border-primary/50'
-                  }`}
+                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${currentOverlay === layout.svgPath
+                    ? 'border-primary bg-primary/5'
+                    : 'border-outline-variant bg-white hover:border-primary/50'
+                    }`}
                 >
                   <div className="mb-2 aspect-[3/4] overflow-hidden rounded bg-background">
                     <img
@@ -185,10 +180,10 @@ export function BlockOverlaySelector({
 
           {((activeType === 'block' && filteredBlocks.length === 0) ||
             (activeType === 'layout' && filteredLayouts.length === 0)) && (
-            <div className="py-12 text-center text-secondary">
-              No overlays found matching your search.
-            </div>
-          )}
+              <div className="py-12 text-center text-secondary">
+                No overlays found matching your search.
+              </div>
+            )}
         </div>
       </div>
 

@@ -108,7 +108,7 @@ export default function AdminLayoutsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium hover:opacity-90 transition-opacity"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -175,16 +175,14 @@ export default function AdminLayoutsPage() {
                       <button
                         type="button"
                         onClick={() => handleTogglePublish(layout.id, layout.isPublished)}
-                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          layout.isPublished ? 'bg-primary' : 'bg-primary-container/60'
-                        }`}
+                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors ${layout.isPublished ? 'bg-primary' : 'bg-primary-container/60'
+                          }`}
                         role="switch"
                         aria-checked={layout.isPublished}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-elevation-1 transition-transform ${
-                            layout.isPublished ? 'translate-x-6' : 'translate-x-1'
-                          }`}
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-elevation-1 transition-transform ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
+                            }`}
                         />
                       </button>
                     </td>
@@ -466,7 +464,7 @@ function LayoutFormModal({
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
+              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Layout' : 'Create Layout'}
             </button>

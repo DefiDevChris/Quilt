@@ -170,7 +170,7 @@ export function SocialLayout({
                   <Link
                     href="/socialthreads"
                     onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                    className="block px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-primary-container/50 hover:text-primary transition-colors"
                   >
                     Profile
                   </Link>
@@ -181,7 +181,7 @@ export function SocialLayout({
                   <button
                     onClick={handleSignOut}
                     disabled={signingOut}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-error hover:bg-error/10 transition-colors disabled:opacity-50"
                   >
                     {signingOut ? 'Signing out…' : 'Sign Out'}
                   </button>

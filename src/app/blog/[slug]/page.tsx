@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-surface/30 to-surface/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface/10 via-transparent via-[25%] to-transparent" />
         </div>
       )}
 

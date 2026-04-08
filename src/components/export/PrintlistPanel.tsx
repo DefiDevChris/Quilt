@@ -109,8 +109,8 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                         dangerouslySetInnerHTML={{
                           __html: item.svgData
                             ? sanitizeSvg(
-                                `<svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg">${item.svgData}</svg>`
-                              )
+                              `<svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg">${item.svgData}</svg>`
+                            )
                             : '',
                         }}
                       />
@@ -143,14 +143,12 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                               role="switch"
                               aria-checked={item.seamAllowanceEnabled}
                               onClick={() => toggleSeamAllowance(item.shapeId)}
-                              className={`relative inline-flex h-3.5 w-6 shrink-0 cursor-pointer rounded-full transition-colors ${
-                                item.seamAllowanceEnabled ? 'bg-primary' : 'bg-outline-variant'
-                              }`}
+                              className={`relative inline-flex h-3.5 w-6 shrink-0 cursor-pointer rounded-full transition-colors ${item.seamAllowanceEnabled ? 'bg-primary' : 'bg-outline-variant'
+                                }`}
                             >
                               <span
-                                className={`inline-block h-2.5 w-2.5 mt-[1px] rounded-full bg-white shadow-elevation-1 transition-transform ${
-                                  item.seamAllowanceEnabled ? 'translate-x-3' : 'translate-x-0.5'
-                                }`}
+                                className={`inline-block h-2.5 w-2.5 mt-[1px] rounded-full bg-white shadow-elevation-1 transition-transform ${item.seamAllowanceEnabled ? 'translate-x-3' : 'translate-x-0.5'
+                                  }`}
                               />
                             </button>
                           </div>
@@ -194,7 +192,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
                 type="button"
                 onClick={onGeneratePdf}
                 disabled={items.length === 0}
-                className="w-full rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-2 text-xs font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-2 text-xs font-medium text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
               >
                 Generate PDF Pattern
               </button>
@@ -202,7 +200,7 @@ export function PrintlistPanel({ onGeneratePdf, onExportImage }: PrintlistPanelP
               <button
                 type="button"
                 onClick={onExportImage}
-                className="w-full rounded-md border border-outline-variant bg-white px-3 py-2 text-xs font-medium text-on-surface hover:bg-background transition-colors"
+                className="w-full rounded-full border border-outline-variant bg-white px-3 py-2 text-xs font-medium text-on-surface hover:bg-background transition-colors"
               >
                 Export Image
               </button>

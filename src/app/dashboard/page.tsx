@@ -91,24 +91,11 @@ function DashboardPageContent() {
   if (activeTab === 'mobile-uploads') {
     return (
       <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
-        <div
-          className="flex items-center gap-3 px-6 py-2.5 flex-shrink-0"
-          style={{
-            borderBottom: '1px solid var(--color-outline-variant)',
-            backgroundColor: 'var(--color-surface-container-lowest)',
-          }}
-        >
+        <div className="flex items-center gap-3 px-6 py-2.5 flex-shrink-0 border-b border-outline-variant bg-surface-container-lowest">
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer"
-            style={{ color: 'var(--color-secondary)' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-surface-container)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2 py-1 rounded-[var(--radius-sm)] transition-colors cursor-pointer text-secondary hover:bg-surface-container"
           >
             <ArrowLeft size={14} strokeWidth={2.5} />
             Back to Dashboard
@@ -138,7 +125,7 @@ function DashboardPageContent() {
         {!isPro && !isLoadingAuth && user && (
           <button
             onClick={() => setShowProUpgrade(true)}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-orange-500 to-rose-400 p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-dark p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
           >
             <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
               <Sparkles size={20} className="text-primary-dark" />
@@ -166,11 +153,11 @@ function DashboardPageContent() {
         }))}
       />
 
-      <div className="grid grid-cols-12 auto-rows-[minmax(140px,auto)] md:grid-rows-[200px_200px_110px] gap-4 pb-20 relative z-10">
+      <div className="grid grid-cols-12 gap-5 pb-20 relative z-10">
         {/* ── Quiltbook ──────────────────────────────────────────────── */}
         <Link
           href="/projects"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex flex-col justify-between group"
+          className="col-span-12 md:col-span-4 rounded-2xl p-6 overflow-hidden transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex flex-col justify-between group"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -182,47 +169,12 @@ function DashboardPageContent() {
             <Image
               src="/icons/quilt-projects.png"
               alt=""
-              width={44}
-              height={44}
-              className="w-11 h-11 shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              width={80}
+              height={80}
+              className="w-20 h-20 shrink-0 opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
             />
           </div>
           <div>
-            {projects.length > 0 ? (
-              <div className="flex gap-2">
-                {projects.slice(0, 3).map((p) => (
-                  <div
-                    key={p.id}
-                    className="w-12 h-12 rounded-lg bg-white overflow-hidden border border-outline-variant shadow-elevation-1"
-                  >
-                    {p.thumbnailUrl ? (
-                      <Image
-                        src={p.thumbnailUrl}
-                        alt={p.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary-container">
-                        <span className="text-warm-terracotta/50 text-xs font-bold">
-                          {p.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-12 h-12 rounded-lg border-2 border-dashed border-outline-variant"
-                  />
-                ))}
-              </div>
-            )}
             <p className="text-xs text-secondary mt-3 font-medium">
               {projects.length > 0
                 ? `Last edited ${formatRelativeTime(projects[0].updatedAt)}`
@@ -236,16 +188,16 @@ function DashboardPageContent() {
           <button
             type="button"
             onClick={() => setActiveTab('mobile-uploads')}
-            className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 text-left bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] group flex flex-col justify-between"
+            className="col-span-12 md:col-span-4 rounded-2xl p-6 overflow-hidden transition-all duration-300 text-left glass-panel hover:shadow-elevation-2 hover:scale-[1.01] group flex flex-col justify-between"
           >
             <div className="flex justify-between items-start">
               <div />
               <Image
                 src="/icons/quilt-mobile-uploads.png"
                 alt=""
-                width={44}
-                height={44}
-                className="w-11 h-11 shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+                width={80}
+                height={80}
+                className="w-20 h-20 shrink-0 opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
               />
             </div>
             <div className="mt-auto">
@@ -262,16 +214,16 @@ function DashboardPageContent() {
         {/* ── Community Threads ──────────────────────────────────────── */}
         <Link
           href="/socialthreads"
-          className="col-span-12 md:col-span-4 rounded-xl p-6 overflow-hidden transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] group flex flex-col justify-between"
+          className="col-span-12 md:col-span-4 rounded-2xl p-6 overflow-hidden transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] group flex flex-col justify-between"
         >
           <div className="flex justify-between items-start">
             <div />
             <Image
               src="/icons/quilt-01-spool-Photoroom.png"
               alt=""
-              width={44}
-              height={44}
-              className="w-11 h-11 shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
+              width={80}
+              height={80}
+              className="w-20 h-20 shrink-0 opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
             />
           </div>
           <div className="mt-auto">
@@ -281,40 +233,48 @@ function DashboardPageContent() {
         </Link>
 
         {/* ── Profile ────────────────────────────────────────────────── */}
-        <Link
-          href="/profile"
-          className="col-span-12 md:col-span-6 rounded-xl p-5 transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(198,123,92,0.08)] group flex items-center justify-between gap-4"
-        >
-          <div>
-            <p className="text-on-surface font-extrabold text-xl">My Profile</p>
-            <p className="text-secondary text-sm mt-0.5">Manage details and settings</p>
-          </div>
-          <Image
-            src="/icons/quilt-profile.png"
-            alt=""
-            width={40}
-            height={40}
-            className="w-10 h-10 shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
-          />
-        </Link>
+        <div className="col-span-12 md:col-span-6 group">
+          <Link
+            href="/profile"
+            className="w-full rounded-2xl p-5 transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-on-surface font-bold text-lg truncate">My Profile</p>
+              <p className="text-secondary text-sm mt-0.5">Manage details and settings</p>
+            </div>
+            <Image
+              src="/icons/quilt-profile.png"
+              alt=""
+              width={64}
+              height={64}
+              className="w-16 h-16 shrink-0 opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+            />
+          </Link>
+          {/* Reflection */}
+          <div className="mt-1 -mb-2 mx-2 h-8 bg-gradient-to-b from-primary-container/30 via-primary-container/10 to-transparent rounded-b-2xl blur-md pointer-events-none" />
+        </div>
 
         {/* ── Settings ───────────────────────────────────────────────── */}
-        <Link
-          href="/settings"
-          className="col-span-12 md:col-span-6 rounded-xl p-5 transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(198,123,92,0.08)] group flex items-center justify-between gap-4"
-        >
-          <div>
-            <p className="text-on-surface font-extrabold text-xl">System Settings</p>
-            <p className="text-secondary text-sm mt-0.5">Units, theme, and defaults</p>
-          </div>
-          <Image
-            src="/icons/quilt-settings.png"
-            alt=""
-            width={40}
-            height={40}
-            className="w-10 h-10 shrink-0 opacity-60 group-hover:opacity-90 transition-opacity"
-          />
-        </Link>
+        <div className="col-span-12 md:col-span-6 group">
+          <Link
+            href="/settings"
+            className="w-full rounded-2xl p-5 transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-on-surface font-bold text-lg truncate">System Settings</p>
+              <p className="text-secondary text-sm mt-0.5">Units, theme, and defaults</p>
+            </div>
+            <Image
+              src="/icons/quilt-settings.png"
+              alt=""
+              width={64}
+              height={64}
+              className="w-16 h-16 shrink-0 opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+            />
+          </Link>
+          {/* Reflection */}
+          <div className="mt-1 -mb-2 mx-2 h-8 bg-gradient-to-b from-primary-container/30 via-primary-container/10 to-transparent rounded-b-2xl blur-md pointer-events-none" />
+        </div>
       </div>
 
       <NewProjectWizard

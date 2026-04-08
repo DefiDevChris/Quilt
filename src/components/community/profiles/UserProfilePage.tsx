@@ -86,7 +86,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
           {isOwner ? (
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white px-4 py-2 text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white px-4 py-2 text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
             >
               <Pencil size={14} />
               Edit Profile
@@ -153,9 +153,8 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       <div className="flex items-center gap-1 border-b border-outline-variant mb-6">
         <button
           onClick={() => setActiveTab('posts')}
-          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === 'posts' ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-          }`}
+          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === 'posts' ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+            }`}
         >
           Posts
           {activeTab === 'posts' && (
@@ -164,9 +163,8 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         </button>
         <button
           onClick={() => setActiveTab('about')}
-          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === 'about' ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-          }`}
+          className={`relative px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === 'about' ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+            }`}
         >
           About
           {activeTab === 'about' && (
@@ -188,7 +186,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               {isOwner && (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-lg font-semibold hover:opacity-90 transition-all"
+                  className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
                 >
                   Create Your First Design
                 </Link>
@@ -252,11 +250,10 @@ function FollowButton({ username, initialFollowing }: FollowButtonProps) {
   return (
     <button
       onClick={handleFollow}
-      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all shadow-elevation-1 ${
-        following
-          ? 'bg-surface-container border border-outline-variant text-secondary hover:bg-error/10 hover:text-error hover:border-error/20'
-          : 'bg-gradient-to-r from-orange-500 to-rose-400 text-white hover:opacity-90'
-      }`}
+      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all shadow-elevation-1 ${following
+        ? 'bg-surface-container border border-outline-variant text-secondary hover:bg-error/10 hover:text-error hover:border-error/20'
+        : 'bg-gradient-to-r from-primary to-primary-dark text-white hover:opacity-90'
+        }`}
     >
       {following ? 'Following' : 'Follow'}
     </button>

@@ -232,7 +232,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
               <button
                 type="button"
                 onClick={() => setProUpgradeFeature(null)}
-                className="rounded-md px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+                className="bg-white/50 rounded-full px-4 py-2 text-sm font-medium text-secondary"
               >
                 Maybe Later
               </button>
@@ -240,7 +240,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>

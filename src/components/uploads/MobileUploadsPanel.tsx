@@ -102,11 +102,10 @@ export function MobileUploadsPanel() {
               key={chip.value}
               type="button"
               onClick={() => setFilter(chip.value)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
-                filter === chip.value
-                  ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${filter === chip.value
+                  ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
                   : 'bg-white/50 text-secondary hover:bg-white/80'
-              }`}
+                }`}
             >
               {chip.label}
               {count > 0 && <span className="ml-1.5 text-xs opacity-70">{count}</span>}
