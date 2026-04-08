@@ -2,11 +2,11 @@
  * Block Builder Engine — Shape generation for grid-based quilt block construction.
  *
  * Pure functions that generate grid-snapped segments for block drawing tools:
- * Triangle, Rectangle, and grid utilities.
+ * Triangle, Rectangle, Bend, and grid utilities.
  * Zero React/Fabric.js/DOM dependencies — fully testable.
  */
 
-import type { Segment, GridPoint } from './blockbuilder-utils';
+import type { Segment, GridPoint, ArcSegment } from './blockbuilder-utils';
 
 // ─── Grid unit presets ─────────────────────────────────────────────────────
 
@@ -65,6 +65,36 @@ export function generateRectangle(
   if (minR === maxR || minC === maxC) return [];
 
   return cellOutline(minR, minC, maxC - minC, maxR - minR);
+}
+
+/**
+ * Bend: convert a straight segment into an arc by specifying a control point.
+ *
+ * The arc passes through the segment's endpoints with the given center point
+ * determining the curvature. The center should be offset perpendicular to the
+ * segment — the direction and distance determine the arc's bulge.
+ *
+ * Returns a single ArcSegment replacing the original straight segment.
+ */
+export function generateBend(
+  seg: Segment,
+  center: GridPoint,
+): ArcSegment {
+  // Determine clockwise direction based on center position relative to segment
+  // Cross product of (to-from) × (center-from) determines which side the center is on
+  const dr = seg.to.row - seg.from.row;
+  const dc = seg.to.col - seg.from.col;
+  const cr = center.row - seg.from.row;
+  const cc = center.col - seg.from.col;
+  const crossProduct = dr * cc - dc * cr;
+  const clockwise = crossProduct < 0;
+
+  return {
+    from: { row: seg.from.row, col: seg.from.col },
+    to: { row: seg.to.row, col: seg.to.col },
+    center: { row: center.row, col: center.col },
+    clockwise,
+  };
 }
 
 // ─── Grid cell from pixel ──────────────────────────────────────────────────
