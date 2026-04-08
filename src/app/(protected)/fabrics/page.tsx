@@ -87,9 +87,12 @@ export default function FabricsPage() {
   }, [scope, page, debouncedSearch, colorFamily]);
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mb-2">
+        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+          Library
+        </p>
+        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-display)' }}>
           Fabric Library
         </h1>
         <p className="text-secondary">

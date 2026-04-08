@@ -16,8 +16,14 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   }
 
   return (
-    <ResponsiveShell>
-      <ProtectedPageShell>{children}</ProtectedPageShell>
-    </ResponsiveShell>
+    <>
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: "url('/background.png')" }}
+      />
+      <ResponsiveShell>
+        <ProtectedPageShell>{children}</ProtectedPageShell>
+      </ResponsiveShell>
+    </>
   );
 }
