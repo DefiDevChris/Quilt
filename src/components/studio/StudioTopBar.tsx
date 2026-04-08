@@ -10,6 +10,7 @@ import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { QuiltSettingsDropdown } from '@/components/studio/QuiltSettingsDropdown';
 import { Sparkles } from 'lucide-react';
 
 function formatTimestamp(date: Date | null): string {
@@ -144,168 +145,6 @@ function ReferenceImageToggle() {
   );
 }
 
-function ViewMenu({ onOpenGridDimensions }: { onOpenGridDimensions?: () => void }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const setGridSettings = useCanvasStore((s) => s.setGridSettings);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const items = [
-    {
-      label: isViewportLocked ? 'Unlock Viewport' : 'Lock Viewport',
-      icon: isViewportLocked ? (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.4"
-        >
-          <rect x="4" y="9" width="12" height="8" rx="2" />
-          <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9" strokeLinecap="round" />
-        </svg>
-      ) : (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.4"
-        >
-          <rect x="4" y="9" width="12" height="8" rx="2" />
-          <path d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7" strokeLinecap="round" />
-        </svg>
-      ),
-      action: () => {
-        useCanvasStore.getState().setViewportLocked(!isViewportLocked);
-        setOpen(false);
-      },
-    },
-    {
-      label: 'Recenter Viewport',
-      icon: (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.4"
-        >
-          <circle cx="10" cy="10" r="3" />
-          <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
-        </svg>
-      ),
-      action: () => {
-        useCanvasStore.getState().centerAndFitViewport();
-        setOpen(false);
-      },
-    },
-    {
-      label: gridSettings.enabled ? 'Hide Grid' : 'Show Grid',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="9" y="3" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="3" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="9" y="9" width="5" height="5" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      ),
-      action: () => {
-        setGridSettings({ enabled: !gridSettings.enabled });
-        setOpen(false);
-      },
-    },
-    {
-      label: gridSettings.snapToGrid ? 'Disable Snap' : 'Enable Snap',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <circle cx="6" cy="6" r="1.5" fill="currentColor" />
-          <circle cx="14" cy="6" r="1.5" fill="currentColor" />
-          <circle cx="6" cy="14" r="1.5" fill="currentColor" />
-          <circle cx="14" cy="14" r="1.5" fill="currentColor" />
-          <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.4" fill="none" />
-        </svg>
-      ),
-      action: () => {
-        setGridSettings({ snapToGrid: !gridSettings.snapToGrid });
-        setOpen(false);
-      },
-    },
-    {
-      label: 'Grid & Dimensions',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-        </svg>
-      ),
-      action: () => {
-        onOpenGridDimensions?.();
-        setOpen(false);
-      },
-    },
-  ];
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M3 5H17M3 10H17M3 15H17"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-        View
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path
-            d="M3 4.5L6 7.5L9 4.5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 w-52 bg-surface border border-outline-variant/20 rounded-xl shadow-elevation-2 py-1.5 z-50">
-          {items.map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              onClick={item.action}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-on-surface/80 hover:bg-surface-container-high transition-colors text-left"
-            >
-              <span className="text-on-surface/50 flex-shrink-0">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function ToolsMenu({
   onOpenHistory,
   onOpenHelp,
@@ -427,7 +266,6 @@ interface StudioTopBarProps {
   readonly onOpenHelp?: () => void;
   readonly onSave?: () => void;
   readonly onOpenHistory?: () => void;
-  readonly onOpenGridDimensions?: () => void;
 }
 
 export function StudioTopBar({
@@ -436,7 +274,6 @@ export function StudioTopBar({
   onOpenHelp,
   onSave,
   onOpenHistory,
-  onOpenGridDimensions,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
@@ -611,7 +448,7 @@ export function StudioTopBar({
           <div className="h-6 w-px bg-outline-variant/30" />
 
           <div className="flex items-center gap-1">
-            <ViewMenu onOpenGridDimensions={onOpenGridDimensions} />
+            <QuiltSettingsDropdown />
             <ToolsMenu onOpenHistory={onOpenHistory} onOpenHelp={onOpenHelp} />
           </div>
 

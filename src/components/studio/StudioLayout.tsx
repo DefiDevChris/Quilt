@@ -166,7 +166,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onOpenPdfExport={dialogs.openPdfExport}
         onOpenHelp={dialogs.openHelp}
         onOpenHistory={dialogs.openHistory}
-        onOpenGridDimensions={dialogs.openGridDimensions}
         onSave={handleSave}
       />
 
@@ -194,11 +193,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
             <PrintOptionsPanel />
           ) : (
             <Toolbar
-              onOpenLayoutSettings={dialogs.openLayoutSettings}
-              onOpenGridDimensions={dialogs.openGridDimensions}
               onOpenImageExport={dialogs.openImageExport}
-              onOpenPhotoToDesign={dialogs.openPhotoToDesign}
-              onOpenResize={dialogs.openResize}
               onOpenReferenceImage={dialogs.openReferenceImage}
               onOpenLayoutOverlay={dialogs.openLayoutOverlay}
               onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
