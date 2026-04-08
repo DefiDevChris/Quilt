@@ -167,8 +167,6 @@ export function BlockBuilderRightPanel({
   onBlockSizeChange,
   onSave,
   selectedObject,
-  fabricCanvasRef,
-  onDropPiece,
 }: BlockBuilderRightPanelProps) {
   const blocks = useBlockStore((s) => s.blocks);
   const fetchBlocks = useBlockStore((s) => s.fetchBlocks);

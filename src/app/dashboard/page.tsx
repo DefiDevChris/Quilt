@@ -41,7 +41,7 @@ interface ProjectListItem {
   updatedAt: string;
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const user = useAuthStore((s) => s.user);
   const isPro = useAuthStore((s) => s.isPro);
   const isLoadingAuth = useAuthStore((s) => s.isLoading);
@@ -340,5 +340,13 @@ export default function DashboardPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={null}>
+      <DashboardPageContent />
+    </Suspense>
   );
 }
