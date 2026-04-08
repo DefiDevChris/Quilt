@@ -18,6 +18,7 @@ import { PrintOptionsPanel } from '@/components/studio/PrintOptionsPanel';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { LayoutBuilderShell } from '@/components/studio/LayoutBuilderShell';
+import { BlockBuilderShell } from '@/components/studio/BlockBuilderShell';
 
 import { YardagePanel } from '@/components/measurement/YardagePanel';
 import { PrintlistPanel } from '@/components/export/PrintlistPanel';
@@ -166,13 +167,20 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onOpenHelp={dialogs.openHelp}
         onOpenHistory={dialogs.openHistory}
         onOpenGridDimensions={dialogs.openGridDimensions}
-        onOpenBlockBuilder={dialogs.openDrafting}
         onSave={handleSave}
       />
 
       {/* ── Layout Builder mode ─────────────────────────────────── */}
       {activeWorktable === 'layout-builder' ? (
         <LayoutBuilderShell
+          project={project}
+          onDone={() => {
+            useCanvasStore.getState().setActiveWorktable('quilt');
+          }}
+        />
+      ) : activeWorktable === 'block-builder' ? (
+        /* ── Block Builder worktable ─────────────────────────── */
+        <BlockBuilderShell
           project={project}
           onDone={() => {
             useCanvasStore.getState().setActiveWorktable('quilt');
@@ -193,7 +201,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
               onOpenResize={dialogs.openResize}
               onOpenReferenceImage={dialogs.openReferenceImage}
               onOpenLayoutOverlay={dialogs.openLayoutOverlay}
-              onSaveBlock={dialogs.openDrafting}
+              onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
               onNewBlock={handleNewBlock}
             />
           )}
@@ -260,7 +268,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
             <ContextPanel
               onBlockDragStart={handleBlockDragStart}
               onFabricDragStart={handleFabricDragStart}
-              onOpenDrafting={dialogs.openDrafting}
+              onOpenDrafting={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
               onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
               onOpenUpload={dialogs.openFabricUpload}
             />

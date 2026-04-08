@@ -547,7 +547,7 @@ export function useBlockTools(
       id: 'polygon',
       label: 'Polygon',
       shortcut: 'P',
-      description: 'Draw a polygon — adjust sides after placing',
+      description: 'Click to place points. Click start point to close. Escape cancels.',
       toolType: 'polygon',
       group: 'tools',
       icon: (
@@ -578,6 +578,32 @@ export function useBlockTools(
             strokeLinejoin="round"
           />
           <path d="M10.5 5.5L14.5 9.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      ),
+    },
+    {
+      id: 'bend',
+      label: 'Bend',
+      shortcut: 'B',
+      description: 'Click and drag a shape edge to bend it into a curve',
+      toolType: 'bend',
+      group: 'tools',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M12 16C12 16 10 10 8 7C6 4 5.5 3 5.5 3L4.5 4C4.5 4 5 6 7 9C9 12 10 14 10 14"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M3 5L4.5 4L5 6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
     },

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/chrishoran/.npm/_npx/0b76306e13ae2c3b/node_modules/qwen-code/docs/support/**)"
+    ]
+  },
+  "$version": 3
+}

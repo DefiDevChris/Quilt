@@ -1,12 +1,36 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+
+interface EdgeHit {
+  target: unknown;
+  edgeIndex: number;
+  p0: { x: number; y: number };
+  p2: { x: number; y: number };
+  isClosed: boolean;
+}
+
+interface AdjacentEdge {
+  target: unknown;
+  edgeIndex: number;
+  p0: { x: number; y: number };
+  p2: { x: number; y: number };
+  isClosed: boolean;
+  isReversed: boolean;
+}
 
 export function useEdgeBendTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
+  const stateRef = useRef({ isSpacePressed: false });
+
+  useEffect(() => {
+    return useCanvasStore.subscribe((state) => {
+      stateRef.current.isSpacePressed = state.isSpacePressed;
+    });
+  }, []);
 
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'bend') return;
@@ -19,18 +43,30 @@ export function useEdgeBendTool() {
       if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
-      type EdgeInfo = {
-        target: InstanceType<typeof fabric.Polygon | typeof fabric.Path>;
-        pointIndex: number;
-        p1: { x: number; y: number };
-        p2: { x: number; y: number };
-        isPolygon: boolean;
-        adjacentEdges?: EdgeInfo[];
-      };
+      canvas.selection = false;
+      canvas.defaultCursor = 'pointer';
+      // Use custom bend cursor
+      const canvasEl = canvas.getElement();
+      if (canvasEl) {
+        canvasEl.style.cursor = 'url(/cursors/bend.cur) 10 10, pointer';
+      }
+      canvas.discardActiveObject();
+      canvas.renderAll();
 
-      let draggingInfo: EdgeInfo | null = null;
+      let activeEdge: EdgeHit | null = null;
+      let adjacentEdges: AdjacentEdge[] = [];
+      let convertedTargets = new Map<unknown, InstanceType<typeof fabric.Path>>();
 
-      function getDistanceToSegment(p: {x: number, y: number}, v: {x: number, y: number}, w: {x: number, y: number}) {
+      const EDGE_HIT_THRESHOLD = 10;
+      const COORDINATE_EPSILON = 2;
+
+      // ── Helpers ──────────────────────────────────────────────────
+
+      function distToSegment(
+        p: { x: number; y: number },
+        v: { x: number; y: number },
+        w: { x: number; y: number }
+      ): number {
         const l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
         if (l2 === 0) return Math.sqrt((p.x - v.x) ** 2 + (p.y - v.y) ** 2);
         let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
@@ -41,292 +77,277 @@ export function useEdgeBendTool() {
         );
       }
 
-      function onMouseDown(e: { e: MouseEvent }) {
-        const pointer = canvas.getScenePoint(e.e);
-        const objects = canvas.getObjects().filter((obj) => obj.type === 'polygon' || obj.type === 'path');
+      function getVertices(
+        obj: unknown
+      ): { x: number; y: number }[] {
+        const mat = (obj as InstanceType<typeof fabric.FabricObject>).calcTransformMatrix();
+        const objType = (obj as InstanceType<typeof fabric.FabricObject>).type;
 
-        let minDistance = 10; // Threshold
-        let bestMatch: typeof draggingInfo = null;
-
-        for (const obj of objects) {
-          const matrix = obj.calcTransformMatrix();
-
-          if (obj.type === 'polygon') {
-            const polygon = obj as InstanceType<typeof fabric.Polygon>;
-            const points = polygon.points || [];
-            for (let i = 0; i < points.length; i++) {
-              const p1 = points[i];
-              const p2 = points[(i + 1) % points.length];
-
-              const p1Transformed = fabric.util.transformPoint(new fabric.Point(p1.x, p1.y), matrix);
-              const p2Transformed = fabric.util.transformPoint(new fabric.Point(p2.x, p2.y), matrix);
-
-              const dist = getDistanceToSegment(pointer, p1Transformed, p2Transformed);
-              if (dist < minDistance) {
-                minDistance = dist;
-                bestMatch = {
-                  target: polygon,
-                  pointIndex: i,
-                  p1: p1Transformed,
-                  p2: p2Transformed,
-                  isPolygon: true
-                };
-              }
-            }
-          } else if (obj.type === 'path') {
-             const path = obj as InstanceType<typeof fabric.Path>;
-             const pathData = path.path;
-             if (!Array.isArray(pathData)) continue;
-
-             // Extract actual points
-             const parsedPoints: {x: number, y: number}[] = [];
-             for (const seg of pathData) {
-               const cmd = seg[0] as string;
-               if (cmd === 'M' || cmd === 'L') {
-                 parsedPoints.push({ x: seg[1] as number, y: seg[2] as number });
-               } else if (cmd === 'Q') {
-                 parsedPoints.push({ x: seg[3] as number, y: seg[4] as number });
-               } else if (cmd === 'C') {
-                 parsedPoints.push({ x: seg[5] as number, y: seg[6] as number });
-               }
-             }
-
-             // We assume closed path for edge bending, matching the structure
-             for (let i = 0; i < parsedPoints.length; i++) {
-                const nextIdx = (i + 1) % parsedPoints.length;
-
-                // If it's a straight line
-                const p1 = parsedPoints[i];
-                const p2 = parsedPoints[nextIdx];
-
-                const p1Transformed = fabric.util.transformPoint(new fabric.Point(p1.x, p1.y), matrix);
-                const p2Transformed = fabric.util.transformPoint(new fabric.Point(p2.x, p2.y), matrix);
-
-                // Right now, only allow bending of straight line segments
-                // We'll calculate distance as if it's a line
-                const dist = getDistanceToSegment(pointer, p1Transformed, p2Transformed);
-                if (dist < minDistance) {
-                  // Make sure the segment in path is actually a line (M or L), otherwise skip or replace later
-                  const nextCmd = pathData[nextIdx][0];
-                  if (nextCmd === 'L' || nextCmd === 'M' || nextIdx === 0) {
-                      minDistance = dist;
-                      bestMatch = {
-                        target: path,
-                        pointIndex: i,
-                        p1: p1Transformed,
-                        p2: p2Transformed,
-                        isPolygon: false
-                      };
-                  }
-                }
-             }
-          }
+        if (objType === 'polygon') {
+          const poly = obj as InstanceType<typeof fabric.Polygon>;
+          return (poly.points || []).map((p) =>
+            fabric.util.transformPoint(new fabric.Point(p.x, p.y), mat)
+          );
         }
 
-        if (bestMatch) {
-          // Find adjacent edges
-          const adjacentEdges: typeof draggingInfo[] = [];
-          for (const obj of objects) {
-            if (obj === bestMatch.target) continue;
+        // Path
+        const path = obj as InstanceType<typeof fabric.Path>;
+        const cmds = path.path;
+        if (!Array.isArray(cmds)) return [];
 
-            const matrix = obj.calcTransformMatrix();
-            if (obj.type === 'polygon') {
-               const polygon = obj as InstanceType<typeof fabric.Polygon>;
-               const points = polygon.points || [];
-               for (let i = 0; i < points.length; i++) {
-                 const p1 = points[i];
-                 const p2 = points[(i + 1) % points.length];
-
-                 const p1Transformed = fabric.util.transformPoint(new fabric.Point(p1.x, p1.y), matrix);
-                 const p2Transformed = fabric.util.transformPoint(new fabric.Point(p2.x, p2.y), matrix);
-
-                 // Check if it matches exactly or in reverse
-                 const matchDirect = Math.abs(p1Transformed.x - bestMatch.p1.x) < 1 && Math.abs(p1Transformed.y - bestMatch.p1.y) < 1 &&
-                                     Math.abs(p2Transformed.x - bestMatch.p2.x) < 1 && Math.abs(p2Transformed.y - bestMatch.p2.y) < 1;
-                 const matchReverse = Math.abs(p1Transformed.x - bestMatch.p2.x) < 1 && Math.abs(p1Transformed.y - bestMatch.p2.y) < 1 &&
-                                      Math.abs(p2Transformed.x - bestMatch.p1.x) < 1 && Math.abs(p2Transformed.y - bestMatch.p1.y) < 1;
-
-                 if (matchDirect || matchReverse) {
-                   adjacentEdges.push({
-                     target: polygon,
-                     pointIndex: i,
-                     p1: p1Transformed,
-                     p2: p2Transformed,
-                     isPolygon: true
-                   });
-                 }
-               }
-            } else if (obj.type === 'path') {
-               const path = obj as InstanceType<typeof fabric.Path>;
-               const pathData = path.path;
-               if (!Array.isArray(pathData)) continue;
-
-               const parsedPoints: {x: number, y: number}[] = [];
-               for (const seg of pathData) {
-                 const cmd = seg[0] as string;
-                 if (cmd === 'M' || cmd === 'L') {
-                   parsedPoints.push({ x: seg[1] as number, y: seg[2] as number });
-                 } else if (cmd === 'Q') {
-                   parsedPoints.push({ x: seg[3] as number, y: seg[4] as number });
-                 } else if (cmd === 'C') {
-                   parsedPoints.push({ x: seg[5] as number, y: seg[6] as number });
-                 }
-               }
-
-               for (let i = 0; i < parsedPoints.length; i++) {
-                 const nextIdx = (i + 1) % parsedPoints.length;
-                 const p1 = parsedPoints[i];
-                 const p2 = parsedPoints[nextIdx];
-
-                 const p1Transformed = fabric.util.transformPoint(new fabric.Point(p1.x, p1.y), matrix);
-                 const p2Transformed = fabric.util.transformPoint(new fabric.Point(p2.x, p2.y), matrix);
-
-                 const matchDirect = Math.abs(p1Transformed.x - bestMatch.p1.x) < 1 && Math.abs(p1Transformed.y - bestMatch.p1.y) < 1 &&
-                                     Math.abs(p2Transformed.x - bestMatch.p2.x) < 1 && Math.abs(p2Transformed.y - bestMatch.p2.y) < 1;
-                 const matchReverse = Math.abs(p1Transformed.x - bestMatch.p2.x) < 1 && Math.abs(p1Transformed.y - bestMatch.p2.y) < 1 &&
-                                      Math.abs(p2Transformed.x - bestMatch.p1.x) < 1 && Math.abs(p2Transformed.y - bestMatch.p1.y) < 1;
-
-                 if (matchDirect || matchReverse) {
-                    const nextCmd = pathData[nextIdx][0];
-                    if (nextCmd === 'L' || nextCmd === 'M' || nextIdx === 0) {
-                      adjacentEdges.push({
-                        target: path,
-                        pointIndex: i,
-                        p1: p1Transformed,
-                        p2: p2Transformed,
-                        isPolygon: false
-                      });
-                    }
-                 }
-               }
-            }
+        const verts: { x: number; y: number }[] = [];
+        for (const cmd of cmds) {
+          const type = cmd[0] as string;
+          if (type === 'M' || type === 'L') {
+            verts.push({ x: cmd[1] as number, y: cmd[2] as number });
+          } else if (type === 'Q') {
+            verts.push({ x: cmd[3] as number, y: cmd[4] as number });
+          } else if (type === 'C') {
+            verts.push({ x: cmd[5] as number, y: cmd[6] as number });
           }
-
-          draggingInfo = { ...bestMatch, adjacentEdges: adjacentEdges.filter((e): e is EdgeInfo => e !== null) };
         }
+        return verts.map((p) =>
+          fabric.util.transformPoint(new fabric.Point(p.x, p.y), mat)
+        );
       }
 
-      function convertPolygonToPath(polygon: InstanceType<typeof fabric.Polygon>): InstanceType<typeof fabric.Path> {
-        const points = polygon.points || [];
-        if (points.length === 0) return new fabric.Path('M 0 0');
-        let pathData = `M ${points[0].x} ${points[0].y}`;
-        for (let i = 1; i < points.length; i++) {
-          pathData += ` L ${points[i].x} ${points[i].y}`;
-        }
-        pathData += ' Z';
+      function findNearestEdge(
+        obj: unknown,
+        pointer: { x: number; y: number }
+      ): { hit: EdgeHit; distance: number } | null {
+        const verts = getVertices(obj);
+        if (verts.length < 2) return null;
 
-        const path = new fabric.Path(pathData, {
-           fill: polygon.fill,
-           stroke: polygon.stroke,
-           strokeWidth: polygon.strokeWidth,
-           selectable: polygon.selectable,
-           evented: polygon.evented,
-           left: polygon.left,
-           top: polygon.top,
-           scaleX: polygon.scaleX,
-           scaleY: polygon.scaleY,
-           angle: polygon.angle,
-           flipX: polygon.flipX,
-           flipY: polygon.flipY,
+        let bestDist = Infinity;
+        let bestEdge: EdgeHit | null = null;
+
+        for (let i = 0; i < verts.length; i++) {
+          const p0 = verts[i];
+          const p1 = verts[(i + 1) % verts.length];
+          const d = distToSegment(pointer, p0, p1);
+          if (d < bestDist) {
+            bestDist = d;
+            bestEdge = {
+              target: obj,
+              edgeIndex: i,
+              p0,
+              p2: p1,
+              isClosed: true,
+            };
+          }
+        }
+
+        if (bestEdge && bestDist <= EDGE_HIT_THRESHOLD) {
+          return { hit: bestEdge, distance: bestDist };
+        }
+        return null;
+      }
+
+      function findAdjacentEdges(
+        edge: EdgeHit,
+        allObjects: unknown[]
+      ): AdjacentEdge[] {
+        const results: AdjacentEdge[] = [];
+        for (const obj of allObjects) {
+          if (obj === edge.target) continue;
+          const verts = getVertices(obj);
+          for (let i = 0; i < verts.length; i++) {
+            const v0 = verts[i];
+            const v1 = verts[(i + 1) % verts.length];
+
+            const directMatch =
+              Math.abs(v0.x - edge.p0.x) < COORDINATE_EPSILON &&
+              Math.abs(v0.y - edge.p0.y) < COORDINATE_EPSILON &&
+              Math.abs(v1.x - edge.p2.x) < COORDINATE_EPSILON &&
+              Math.abs(v1.y - edge.p2.y) < COORDINATE_EPSILON;
+
+            const reverseMatch =
+              Math.abs(v0.x - edge.p2.x) < COORDINATE_EPSILON &&
+              Math.abs(v0.y - edge.p2.y) < COORDINATE_EPSILON &&
+              Math.abs(v1.x - edge.p0.x) < COORDINATE_EPSILON &&
+              Math.abs(v1.y - edge.p0.y) < COORDINATE_EPSILON;
+
+            if (directMatch) {
+              results.push({
+                target: obj,
+                edgeIndex: i,
+                p0: v0,
+                p2: v1,
+                isClosed: true,
+                isReversed: false,
+              });
+            } else if (reverseMatch) {
+              results.push({
+                target: obj,
+                edgeIndex: i,
+                p0: v1,
+                p2: v0,
+                isClosed: true,
+                isReversed: true,
+              });
+            }
+          }
+        }
+        return results;
+      }
+
+      function ensurePath(
+        obj: unknown
+      ): InstanceType<typeof fabric.Path> {
+        const objType = (obj as InstanceType<typeof fabric.FabricObject>).type;
+        if (objType === 'path') {
+          return obj as InstanceType<typeof fabric.Path>;
+        }
+
+        if (convertedTargets.has(obj)) {
+          return convertedTargets.get(obj)!;
+        }
+
+        const poly = obj as InstanceType<typeof fabric.Polygon>;
+        const pts = poly.points || [];
+        if (pts.length < 3) return obj as InstanceType<typeof fabric.Path>;
+
+        let d = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 1; i < pts.length; i++) {
+          d += ` L ${pts[i].x} ${pts[i].y}`;
+        }
+        d += ' Z';
+
+        const path = new fabric.Path(d, {
+          fill: poly.fill,
+          stroke: poly.stroke,
+          strokeWidth: poly.strokeWidth,
+          selectable: poly.selectable,
+          evented: poly.evented,
+          left: poly.left,
+          top: poly.top,
+          scaleX: poly.scaleX,
+          scaleY: poly.scaleY,
+          angle: poly.angle,
+          flipX: poly.flipX,
+          flipY: poly.flipY,
+          opacity: poly.opacity,
         });
+
+        canvas.remove(poly);
+        canvas.add(path);
+        convertedTargets.set(obj, path);
         return path;
       }
 
-      function updatePathSegment(path: InstanceType<typeof fabric.Path>, pointIndex: number, cpX: number, cpY: number, endX: number, endY: number) {
-         const pathData = [...(path.path || [])];
-         const nextIdx = (pointIndex + 1) % pathData.length;
+      function bendEdge(
+        path: InstanceType<typeof fabric.Path>,
+        edgeIndex: number,
+        apexLocal: { x: number; y: number }
+      ) {
+        const pathData = path.path as unknown as Array<[string, ...number[]]>;
+        if (!Array.isArray(pathData)) return;
 
-         // We convert the segment to a Q command
-         // The pointIndex points to the START of the line, the NEXT command defines how we get to the END.
-         // If nextIdx is 0, the path relies on 'Z' to close. We must explicitly add a command before Z.
+        let p0x: number, p0y: number;
+        const startCmd = pathData[edgeIndex];
+        p0x = startCmd[1] as number;
+        p0y = startCmd[2] as number;
 
-         if (nextIdx === 0 && pathData[pathData.length - 1][0] === 'Z') {
-             // It was a Z closing a path. Replace Z with Q to the first point, then add Z back.
-             pathData[pathData.length - 1] = ['Q', cpX, cpY, endX, endY];
-             pathData.push(['Z']);
-         } else {
-             // Regular segment
-             pathData[nextIdx] = ['Q', cpX, cpY, endX, endY];
-         }
+        const nextIdx = (edgeIndex + 1) % pathData.length;
+        const endCmd = pathData[nextIdx];
+        const endType = endCmd[0];
+        let p2x: number, p2y: number;
 
-         path.set({ path: pathData });
-         path.setBoundingBox(true);
-         path.setCoords();
+        if (endType === 'Z') {
+          const firstCmd = pathData.find((c) => c[0] === 'M' || c[0] === 'm');
+          p2x = firstCmd?.[1] as number;
+          p2y = firstCmd?.[2] as number;
+        } else {
+          p2x = endCmd[1] as number;
+          p2y = endCmd[2] as number;
+        }
+
+        const cpX = 2 * apexLocal.x - 0.5 * p0x - 0.5 * p2x;
+        const cpY = 2 * apexLocal.y - 0.5 * p0y - 0.5 * p2y;
+
+        const newPathData: [string, ...number[]][] = [...pathData];
+        if (endType === 'Z') {
+          newPathData[nextIdx] = ['Q', cpX, cpY, p2x, p2y];
+          newPathData.push(['Z']);
+        } else if (endType === 'M') {
+          newPathData[nextIdx] = ['Q', cpX, cpY, p2x, p2y];
+        } else {
+          newPathData[nextIdx] = ['Q', cpX, cpY, p2x, p2y];
+        }
+
+        path.set({ path: newPathData as never });
+        path.setCoords();
+      }
+
+      // ── Event handlers ───────────────────────────────────────────
+
+      function onMouseDown(e: { e: MouseEvent }) {
+        if (stateRef.current.isSpacePressed) return;
+
+        const pointer = canvas.getScenePoint(e.e);
+        const objects = canvas
+          .getObjects()
+          .filter(
+            (o) =>
+              (o.type === 'polygon' || o.type === 'path') &&
+              o.selectable &&
+              o.evented
+          );
+
+        let bestResult: { hit: EdgeHit; distance: number } | null = null;
+
+        for (const obj of objects) {
+          const result = findNearestEdge(obj, pointer);
+          if (result && (!bestResult || result.distance < bestResult.distance)) {
+            bestResult = result;
+          }
+        }
+
+        if (bestResult) {
+          activeEdge = bestResult.hit;
+          adjacentEdges = findAdjacentEdges(activeEdge, objects);
+          convertedTargets.clear();
+
+          const primaryPath = ensurePath(activeEdge.target);
+          activeEdge.target = primaryPath;
+
+          for (const adj of adjacentEdges) {
+            adj.target = ensurePath(adj.target);
+          }
+        }
       }
 
       function onMouseMove(e: { e: MouseEvent }) {
-        if (!draggingInfo) return;
+        if (!activeEdge) return;
         const pointer = canvas.getScenePoint(e.e);
 
-        const applyBend = (info: EdgeInfo, isPrimary: boolean) => {
-            if (!info) return;
-            let target = info.target;
+        const primaryPath = activeEdge.target as InstanceType<typeof fabric.Path>;
+        const invMat = fabric.util.invertTransform(primaryPath.calcTransformMatrix());
+        const apexLocal = fabric.util.transformPoint(
+          new fabric.Point(pointer.x, pointer.y),
+          invMat
+        );
+        bendEdge(primaryPath, activeEdge.edgeIndex, apexLocal);
 
-            // Convert polygon to path if needed
-            if (info.isPolygon) {
-               const newPath = convertPolygonToPath(target as InstanceType<typeof fabric.Polygon>);
-               canvas.remove(target);
-               canvas.add(newPath);
-               info.target = newPath;
-               info.isPolygon = false;
-               target = newPath;
-
-               // Update parent dragging info reference if it was primary
-               if (isPrimary) {
-                  draggingInfo!.target = newPath;
-                  draggingInfo!.isPolygon = false;
-               }
-            }
-
-            const invMatrix = fabric.util.invertTransform(target.calcTransformMatrix());
-            const localPointer = fabric.util.transformPoint(new fabric.Point(pointer.x, pointer.y), invMatrix);
-
-            // To make a curve that passes THROUGH the pointer, we calculate the control point for a quadratic bezier.
-            // P(t) = (1-t)^2 * P0 + 2t(1-t) * P1 + t^2 * P2
-            // Let's assume t=0.5 (the middle of the curve).
-            // P(0.5) = 0.25 * P0 + 0.5 * P1 + 0.25 * P2
-            // We want P(0.5) = localPointer
-            // localPointer = 0.25 * P0 + 0.5 * cp + 0.25 * P2
-            // 0.5 * cp = localPointer - 0.25 * P0 - 0.25 * P2
-            // cp = 2 * localPointer - 0.5 * P0 - 0.5 * P2
-
-            const pathTarget = target as InstanceType<typeof fabric.Path>;
-            const pathData = pathTarget.path;
-            const p0x = (pathData[info.pointIndex][1] || pathData[info.pointIndex][3] || pathData[info.pointIndex][5]) as number;
-            const p0y = (pathData[info.pointIndex][2] || pathData[info.pointIndex][4] || pathData[info.pointIndex][6]) as number;
-
-            const nextIdx = (info.pointIndex + 1) % pathData.length;
-            const cmd = pathData[nextIdx][0];
-            let p2x: number, p2y: number;
-            if (cmd === 'Z' || nextIdx === 0) {
-               p2x = (pathData[0][1] || 0) as number;
-               p2y = (pathData[0][2] || 0) as number;
-            } else {
-               p2x = (pathData[nextIdx][1] || pathData[nextIdx][3] || pathData[nextIdx][5]) as number;
-               p2y = (pathData[nextIdx][2] || pathData[nextIdx][4] || pathData[nextIdx][6]) as number;
-            }
-
-            const cpX = 2 * localPointer.x - 0.5 * p0x - 0.5 * p2x;
-            const cpY = 2 * localPointer.y - 0.5 * p0y - 0.5 * p2y;
-
-            updatePathSegment(pathTarget, info.pointIndex, cpX, cpY, p2x, p2y);
-        };
-
-        applyBend(draggingInfo, true);
-
-        if (draggingInfo.adjacentEdges) {
-            for (const adj of draggingInfo.adjacentEdges) {
-                applyBend(adj, false);
-            }
+        for (const adj of adjacentEdges) {
+          const adjPath = adj.target as InstanceType<typeof fabric.Path>;
+          const adjInvMat = fabric.util.invertTransform(adjPath.calcTransformMatrix());
+          const adjApexLocal = fabric.util.transformPoint(
+            new fabric.Point(pointer.x, pointer.y),
+            adjInvMat
+          );
+          bendEdge(adjPath, adj.edgeIndex, adjApexLocal);
         }
 
         canvas.renderAll();
       }
 
       function onMouseUp() {
-        if (!draggingInfo) return;
+        if (!activeEdge) return;
 
-        draggingInfo = null;
+        activeEdge = null;
+        adjacentEdges = [];
+        convertedTargets.clear();
 
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);
@@ -343,8 +364,15 @@ export function useEdgeBendTool() {
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);
+        const el = canvas.getElement();
+        if (el) el.style.cursor = '';
+        activeEdge = null;
+        adjacentEdges = [];
+        convertedTargets.clear();
       };
-    })();
+    })().catch(() => {
+      // Bend tool setup failed
+    });
 
     return () => {
       isMounted = false;

@@ -43,7 +43,12 @@ export function useDrawingTool() {
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       // Tools handled by their own hooks — exit early
-      if (activeTool === 'blockbuilder' || activeTool === 'spraycan') {
+      if (
+        activeTool === 'blockbuilder' ||
+        activeTool === 'spraycan' ||
+        activeTool === 'polygon' ||
+        activeTool === 'bend'
+      ) {
         return;
       }
 

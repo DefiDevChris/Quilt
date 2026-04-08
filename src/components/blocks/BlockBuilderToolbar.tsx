@@ -1,6 +1,6 @@
 'use client';
 
-export type BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'curve';
+export type BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'curve' | 'bend';
 
 interface BlockBuilderToolbarProps {
   activeMode: BlockBuilderMode;
@@ -15,6 +15,7 @@ const TOOLS: { id: BlockBuilderMode; label: string; icon: string }[] = [
   { id: 'rectangle', label: 'Rectangle', icon: '\u25AD' },
   { id: 'triangle', label: 'Triangle', icon: '\u25E3' },
   { id: 'curve', label: 'Curve', icon: '\u25E0' },
+  { id: 'bend', label: 'Bend', icon: '\u2934' },
 ];
 
 export function BlockBuilderToolbar({
@@ -32,9 +33,8 @@ export function BlockBuilderToolbar({
           type="button"
           onClick={() => onModeChange(tool.id)}
           title={tool.label}
-          className={`h-8 w-8 rounded text-sm ${
-            activeMode === tool.id ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white' : 'text-secondary hover:bg-background'
-          }`}
+          className={`h-8 w-8 rounded text-sm ${activeMode === tool.id ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white' : 'text-secondary hover:bg-background'
+            }`}
         >
           {tool.icon}
         </button>

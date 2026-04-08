@@ -8,7 +8,6 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 
-import { BlockDraftingModal } from '@/components/blocks/BlockDraftingModal';
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
@@ -20,7 +19,6 @@ import { ResizeDialog } from '@/components/studio/ResizeDialog';
 import { ReferenceImageDialog } from '@/components/studio/ReferenceImageDialog';
 import { HelpPanel } from '@/components/studio/HelpPanel';
 import { HistoryPanel } from '@/components/studio/HistoryPanel';
-import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 
 /**
  * Centralized open/close API for every studio dialog. Components consume this
@@ -41,7 +39,6 @@ interface StudioDialogsApi {
   openPhotoToDesign: () => void;
   openResize: () => void;
   openReferenceImage: () => void;
-  openDrafting: () => void;
   openPhotoBlockUpload: () => void;
   openFabricUpload: () => void;
 
@@ -67,7 +64,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   const isPro = useAuthStore((s) => s.isPro);
 
   // Dialog open/close state
-  const [isDraftingOpen, setIsDraftingOpen] = useState(false);
   const [isPhotoBlockUploadOpen, setIsPhotoBlockUploadOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
   const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
@@ -150,7 +146,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     openPhotoToDesign: () => setIsPhotoPromoOpen(true),
     openResize: () => setIsResizeOpen(true),
     openReferenceImage: () => setIsReferenceImageOpen(true),
-    openDrafting: () => setIsDraftingOpen(true),
     openPhotoBlockUpload,
     openFabricUpload,
     promptUpgrade,
@@ -159,17 +154,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   return (
     <StudioDialogsContext.Provider value={api}>
       {children}
-
-      {/* ── Block drafting (pro only) ─────────────────────────── */}
-      {isPro && (
-        <CanvasErrorBoundary>
-          <BlockDraftingModal
-            isOpen={isDraftingOpen}
-            onClose={() => setIsDraftingOpen(false)}
-            onSaved={handleBlockSaved}
-          />
-        </CanvasErrorBoundary>
-      )}
 
       {/* ── Photo block upload (pro only) ─────────────────────── */}
       {isPro && isPhotoBlockUploadOpen && (

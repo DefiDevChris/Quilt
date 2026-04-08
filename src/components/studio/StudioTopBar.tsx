@@ -27,21 +27,6 @@ function formatTimestamp(date: Date | null): string {
   return date.toLocaleDateString();
 }
 
-const WORKTABLE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
-  {
-    mode: 'quilt',
-    label: 'Worktable',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <rect x="2" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="2" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
-      </svg>
-    ),
-  },
-];
-
 const BLOCK_BUILDER_ICON = (
   <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
     <path
@@ -59,7 +44,27 @@ const BLOCK_BUILDER_ICON = (
   </svg>
 );
 
-function ModeTabs({ onOpenBlockBuilder }: { readonly onOpenBlockBuilder?: () => void }) {
+const WORKTABLE_TABS: { mode: WorktableType; label: string; icon: React.ReactNode }[] = [
+  {
+    mode: 'quilt',
+    label: 'Worktable',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="11" y="2" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="2" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+        <rect x="11" y="11" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.4" />
+      </svg>
+    ),
+  },
+  {
+    mode: 'block-builder',
+    label: 'Block Builder',
+    icon: BLOCK_BUILDER_ICON,
+  },
+];
+
+function ModeTabs() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
 
@@ -73,8 +78,8 @@ function ModeTabs({ onOpenBlockBuilder }: { readonly onOpenBlockBuilder?: () => 
             type="button"
             onClick={() => setActiveWorktable(tab.mode)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all ${isActive
-                ? 'bg-surface shadow-elevation-1 text-on-surface'
-                : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
+              ? 'bg-surface shadow-elevation-1 text-on-surface'
+              : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
               }`}
           >
             <span className={isActive ? 'text-primary' : 'text-on-surface/40'}>{tab.icon}</span>
@@ -82,20 +87,6 @@ function ModeTabs({ onOpenBlockBuilder }: { readonly onOpenBlockBuilder?: () => 
           </button>
         );
       })}
-      {/* Block Builder opens the BlockDraftingShell modal — it is NOT a
-          worktable mode. The main canvas stays mounted while the modal
-          is open so the user can return to their quilt instantly. */}
-      {onOpenBlockBuilder && (
-        <button
-          type="button"
-          onClick={onOpenBlockBuilder}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50"
-          title="Open Block Builder — design a new block in a separate canvas"
-        >
-          <span className="text-on-surface/40">{BLOCK_BUILDER_ICON}</span>
-          Block Builder
-        </button>
-      )}
     </div>
   );
 }
@@ -116,8 +107,8 @@ function ReferenceImageToggle() {
         type="button"
         onClick={toggleReferencePanel}
         className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${showReferencePanel
-            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-            : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
+          ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+          : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
           }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
         aria-pressed={showReferencePanel}
@@ -438,7 +429,6 @@ interface StudioTopBarProps {
   readonly onSave?: () => void;
   readonly onOpenHistory?: () => void;
   readonly onOpenGridDimensions?: () => void;
-  readonly onOpenBlockBuilder?: () => void;
 }
 
 export function StudioTopBar({
@@ -448,7 +438,6 @@ export function StudioTopBar({
   onSave,
   onOpenHistory,
   onOpenGridDimensions,
-  onOpenBlockBuilder,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
@@ -506,7 +495,7 @@ export function StudioTopBar({
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2" data-tour="worktable-switcher">
-          <ModeTabs onOpenBlockBuilder={onOpenBlockBuilder} />
+          <ModeTabs />
         </div>
 
         {/* Right: Viewport controls + Project info + Export + Upgrade */}
@@ -536,8 +525,8 @@ export function StudioTopBar({
                 type="button"
                 onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
                 className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${isViewportLocked
-                    ? 'hover:bg-surface-container'
-                    : 'bg-primary/10 hover:bg-primary/20'
+                  ? 'hover:bg-surface-container'
+                  : 'bg-primary/10 hover:bg-primary/20'
                   }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >

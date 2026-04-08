@@ -4,7 +4,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 ## What You Can Do
 
-- **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two modes: Worktable (full quilt) and Block Builder (draft custom blocks with grid-snapped drawing tools).
+- **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two worktable modes: Worktable (full quilt canvas) and Block Builder (dedicated 3-pane drafting workspace for custom blocks).
 - **Block Library** — 35 traditional quilt block SVGs. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
 - **Photo-to-Design** — Snap a photo of any quilt and recreate it digitally. OpenCV extracts individual pieces onto the worktable where you can group them into blocks, assign fabrics, and create a printlist.
 - **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
@@ -110,7 +110,7 @@ src/
     social/               # FeedContent, BlogContent, SocialLayout
     mobile/               # MobileShell, MobileBottomNav (3 items)
     studio/               # Studio panels and controls
-    blocks/               # BlockDraftingShell, BlockBuilderTab, BlockLibrary, SimplePhotoBlockUpload
+    blocks/               # BlockBuilderWorktable, BlockBuilderTab, BlockBuilderToolbar, BlockLibrary, SimplePhotoBlockUpload
     export/               # PdfExportDialog, PrintlistPanel
   hooks/                  # Custom React hooks (canvas, drawing, auth)
   stores/                 # Zustand stores (19 total)
