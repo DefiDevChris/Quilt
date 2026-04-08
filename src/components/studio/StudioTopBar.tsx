@@ -7,7 +7,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { ON_SURFACE_COLOR } from '@/lib/constants';
 
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
-import { ShareMenu } from '@/components/studio/ShareMenu';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
@@ -612,7 +611,6 @@ export function StudioTopBar({
           <div className="h-6 w-px bg-outline-variant/30" />
 
           <div className="flex items-center gap-1">
-            <ShareMenu />
             <ViewMenu onOpenGridDimensions={onOpenGridDimensions} />
             <ToolsMenu onOpenHistory={onOpenHistory} onOpenHelp={onOpenHelp} />
           </div>

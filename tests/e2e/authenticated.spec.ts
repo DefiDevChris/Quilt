@@ -207,17 +207,6 @@ test.describe('Community Interactions', () => {
   });
 });
 
-test.describe('Templates', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
-  });
-
-  test('templates page loads', async ({ page }) => {
-    await page.goto('/templates');
-    await expect(page.getByText(/template/i)).toBeVisible({ timeout: 10000 });
-  });
-});
-
 test.describe('Photo to Design', () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page, 'pro');

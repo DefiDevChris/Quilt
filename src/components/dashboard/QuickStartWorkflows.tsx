@@ -59,7 +59,7 @@ export function QuickStartWorkflows({
         >
           <div>
             <p className="text-on-surface font-extrabold text-xl mb-1">Start New Project</p>
-            <p className="text-secondary text-sm">Template, layout, or scratch</p>
+            <p className="text-secondary text-sm">Pick a size and start designing</p>
           </div>
           <Image
             src="/icons/quilt-13-dashed-squares-Photoroom.png"

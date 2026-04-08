@@ -10,8 +10,7 @@ export const STANDARD_BLOCK_SIZES = [6, 8, 10, 12, 14, 16] as const;
 export type StandardBlockSize = (typeof STANDARD_BLOCK_SIZES)[number];
 
 /**
- * Canonical shape for layoutTemplates.templateData JSONB. Future template
- * seeds must conform to this shape so the wizard can size them correctly.
+ * Canonical shape for layout preset templateData JSONB.
  * Fields are intentionally optional — incomplete seeds gracefully fall
  * back to the row's stored finishedWidth/finishedHeight.
  */
@@ -27,7 +26,7 @@ export interface QuiltTemplateData {
 }
 
 /**
- * Minimal subset of a layoutTemplates row that the sizing engine reads.
+ * Minimal subset of a layout preset that the sizing engine reads.
  * templateData is unknown and re-narrowed internally.
  */
 export interface QuiltTemplateForSizing {

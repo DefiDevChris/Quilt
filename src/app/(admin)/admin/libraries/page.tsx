@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 
 export default function AdminLibrariesPage() {
-  const [activeTab, setActiveTab] = useState<'fabrics' | 'blocks' | 'templates' | 'shop'>(
-    'fabrics'
-  );
+  const [activeTab, setActiveTab] = useState<'fabrics' | 'blocks' | 'shop'>('fabrics');
 
   return (
     <div className="space-y-6">
@@ -14,15 +12,14 @@ export default function AdminLibrariesPage() {
       <p className="text-secondary text-sm">Manage global system content available to all users.</p>
 
       <div className="flex border-b border-outline-variant">
-        {['fabrics', 'blocks', 'templates', 'shop'].map((tab) => (
+        {['fabrics', 'blocks', 'shop'].map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab as 'fabrics' | 'blocks' | 'templates' | 'shop')}
-            className={`px-4 py-2 font-medium text-sm transition-colors ${
-              activeTab === tab
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-secondary hover:text-on-surface'
-            }`}
+            onClick={() => setActiveTab(tab as 'fabrics' | 'blocks' | 'shop')}
+            className={`px-4 py-2 font-medium text-sm transition-colors ${activeTab === tab
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-secondary hover:text-on-surface'
+              }`}
           >
             {tab === 'shop' ? 'Shop Management' : tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -32,7 +29,6 @@ export default function AdminLibrariesPage() {
       <div className="bg-surface rounded-xl border border-outline-variant p-6 shadow-elevation-1">
         {activeTab === 'fabrics' && <FabricForm />}
         {activeTab === 'blocks' && <BlockForm />}
-        {activeTab === 'templates' && <TemplateForm />}
         {activeTab === 'shop' && <ShopManagement />}
       </div>
     </div>
@@ -326,201 +322,6 @@ function BlockForm() {
   );
 }
 
-function TemplateForm() {
-  const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    skillLevel: 'beginner',
-    finishedWidth: '',
-    finishedHeight: '',
-    blockCount: '',
-    fabricCount: '',
-    layoutDataStr: '',
-    tagsStr: '',
-    thumbnailUrl: '',
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      let layoutData = null;
-      if (formData.layoutDataStr) {
-        try {
-          layoutData = JSON.parse(formData.layoutDataStr);
-        } catch {
-          layoutData = formData.layoutDataStr;
-        }
-      }
-
-      const tags = formData.tagsStr
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean);
-
-      const res = await fetch('/api/admin/libraries/templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, layoutData, tags }),
-      });
-      if (!res.ok) {
-        const error = await res.json();
-        alert(`Error: ${error.error}`);
-      } else {
-        alert('Template added successfully!');
-        setFormData({
-          name: '',
-          description: '',
-          skillLevel: 'beginner',
-          finishedWidth: '',
-          finishedHeight: '',
-          blockCount: '',
-          fabricCount: '',
-          layoutDataStr: '',
-          tagsStr: '',
-          thumbnailUrl: '',
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Failed to add template.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-      <h3 className="text-lg font-semibold text-on-surface">Add New Layout Template</h3>
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-on-surface">Name *</label>
-        <input
-          required
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
-        />
-      </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-on-surface">Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={2}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Skill Level *</label>
-          <select
-            name="skillLevel"
-            value={formData.skillLevel}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Thumbnail URL</label>
-          <input
-            type="text"
-            name="thumbnailUrl"
-            value={formData.thumbnailUrl}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Width (inches) *</label>
-          <input
-            required
-            type="number"
-            step="0.1"
-            name="finishedWidth"
-            value={formData.finishedWidth}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Height (inches) *</label>
-          <input
-            required
-            type="number"
-            step="0.1"
-            name="finishedHeight"
-            value={formData.finishedHeight}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Block Count</label>
-          <input
-            type="number"
-            name="blockCount"
-            value={formData.blockCount}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-on-surface">Fabric Count</label>
-          <input
-            type="number"
-            name="fabricCount"
-            value={formData.fabricCount}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-on-surface">Pattern Data (JSON) *</label>
-        <textarea
-          required
-          name="layoutDataStr"
-          value={formData.layoutDataStr}
-          onChange={handleChange}
-          rows={4}
-          className="w-full px-3 py-2 border rounded-lg bg-surface font-mono text-sm"
-        />
-      </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-on-surface">Tags (comma separated)</label>
-        <input
-          type="text"
-          name="tagsStr"
-          value={formData.tagsStr}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={saving}
-        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
-      >
-        {saving ? 'Adding...' : 'Add Template'}
-      </button>
-    </form>
-  );
-}
-
 interface ShopFabricRow {
   id: string;
   name: string;
@@ -722,14 +523,12 @@ function ShopManagement() {
                     <button
                       type="button"
                       onClick={() => handleToggleField(fabric.id, 'inStock', fabric.inStock)}
-                      className={`w-8 h-5 rounded-full transition-colors ${
-                        fabric.inStock ? 'bg-green-500' : 'bg-primary-container/60'
-                      }`}
+                      className={`w-8 h-5 rounded-full transition-colors ${fabric.inStock ? 'bg-green-500' : 'bg-primary-container/60'
+                        }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
-                          fabric.inStock ? 'translate-x-3.5' : 'translate-x-0.5'
-                        }`}
+                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${fabric.inStock ? 'translate-x-3.5' : 'translate-x-0.5'
+                          }`}
                       />
                     </button>
                   </td>
@@ -739,14 +538,12 @@ function ShopManagement() {
                       onClick={() =>
                         handleToggleField(fabric.id, 'isPurchasable', fabric.isPurchasable)
                       }
-                      className={`w-8 h-5 rounded-full transition-colors ${
-                        fabric.isPurchasable ? 'bg-primary' : 'bg-primary-container/60'
-                      }`}
+                      className={`w-8 h-5 rounded-full transition-colors ${fabric.isPurchasable ? 'bg-primary' : 'bg-primary-container/60'
+                        }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${
-                          fabric.isPurchasable ? 'translate-x-3.5' : 'translate-x-0.5'
-                        }`}
+                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${fabric.isPurchasable ? 'translate-x-3.5' : 'translate-x-0.5'
+                          }`}
                       />
                     </button>
                   </td>

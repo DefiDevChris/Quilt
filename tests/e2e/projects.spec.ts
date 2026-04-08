@@ -373,63 +373,6 @@ test.describe('Project Creation', () => {
   });
 });
 
-test.describe('Project Templates', () => {
-  test('templates page loads', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/templates');
-
-    // Should show template library
-    await expect(
-      page.getByRole('heading', { name: /templates|template library/i }).first()
-    ).toBeVisible();
-  });
-
-  test('template categories are shown', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/templates');
-
-    // Should show categories like traditional, modern, etc.
-    await expect(page.getByText(/traditional|modern|baby|wedding/i).first()).toBeVisible();
-  });
-
-  test('template preview works', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/templates');
-
-    // Click on a template
-    const templateCard = page.locator('[data-template-card]').first();
-    if (await templateCard.isVisible()) {
-      await templateCard.click();
-
-      // Should show template preview/details
-      await expect(page.getByText(/use.*template|create.*project/i).first()).toBeVisible();
-    }
-  });
-
-  test('create project from template', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/templates');
-
-    // Select a template and create project
-    const templateCard = page.locator('[data-template-card]').first();
-    if (await templateCard.isVisible()) {
-      await templateCard.click();
-
-      const createButton = page.getByRole('button', { name: /use.*template|create.*project/i });
-      if (await createButton.isVisible()) {
-        await createButton.click();
-
-        // Should navigate to studio with template loaded
-        await expect(page).toHaveURL(/\/studio\/.+/, { timeout: 10000 });
-      }
-    }
-  });
-});
-
 test.describe('Project Management', () => {
   test('project duplication works', async ({ page }) => {
     test.skip(true, 'Requires authenticated user');

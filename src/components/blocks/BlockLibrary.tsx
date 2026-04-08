@@ -88,22 +88,20 @@ export function BlockLibrary({
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className={`flex-1 px-3 py-1.5 text-xs font-medium ${
-              activeTab === 'library'
+            className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'library'
                 ? 'border-b-2 border-primary text-primary'
                 : 'text-on-surface/60 hover:text-on-surface'
-            }`}
+              }`}
           >
             Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('myblocks')}
-            className={`flex-1 px-3 py-1.5 text-xs font-medium ${
-              activeTab === 'myblocks'
+            className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'myblocks'
                 ? 'border-b-2 border-primary text-primary'
                 : 'text-on-surface/60 hover:text-on-surface'
-            }`}
+              }`}
           >
             My Blocks
           </button>
@@ -193,11 +191,10 @@ export function BlockLibrary({
                       key={filter}
                       type="button"
                       onClick={() => setBlockFilter(filter)}
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
-                        blockFilter === filter
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${blockFilter === filter
                           ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
                           : 'bg-background text-secondary hover:text-on-surface'
-                      }`}
+                        }`}
                     >
                       {FILTER_LABELS[filter]}
                     </button>
@@ -218,31 +215,13 @@ export function BlockLibrary({
                 </div>
               ) : filteredUserBlocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="mb-2 text-sm text-secondary">
+                  <p className="text-sm text-secondary">
                     {blockFilter === 'photo'
                       ? 'No photo blocks yet'
                       : blockFilter === 'custom'
                         ? 'No custom blocks yet'
                         : 'No blocks yet'}
                   </p>
-                  {blockFilter !== 'photo' && onOpenDrafting && (
-                    <button
-                      type="button"
-                      onClick={onOpenDrafting}
-                      className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
-                    >
-                      Draft New Block
-                    </button>
-                  )}
-                  {blockFilter === 'photo' && onOpenPhotoUpload && (
-                    <button
-                      type="button"
-                      onClick={onOpenPhotoUpload}
-                      className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
-                    >
-                      Upload Block Photo
-                    </button>
-                  )}
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -272,11 +251,10 @@ export function BlockLibrary({
                             ? 'Click again to confirm delete'
                             : 'Delete block'
                         }
-                        className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
-                          confirmDeleteId === block.id
+                        className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === block.id
                             ? 'bg-error ring-2 ring-error/50 !opacity-100'
                             : 'bg-error'
-                        }`}
+                          }`}
                       >
                         {confirmDeleteId === block.id ? '\u2713' : '\u2715'}
                       </button>
