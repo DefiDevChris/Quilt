@@ -5,7 +5,7 @@ import type { Project } from '@/types/project';
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { STANDARD_BLOCK_SIZES } from '@/lib/quilt-sizing';
-import { BlockBuilderRightPanel } from '@/components/studio/block-builder/BlockBuilderRightPanel';
+import { BlockBuilderRightPanel, BLOCK_PIECES } from '@/components/studio/block-builder/BlockBuilderRightPanel';
 
 import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
@@ -304,6 +304,51 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
     }
   }, [blockName, blockSize, onDone]);
 
+  // Handle dropped block piece
+  const handleDropPiece = useCallback((shape: unknown) => {
+    const fc = fabricCanvasRef.current as { add: (obj: unknown) => void; setActiveObject: (obj: unknown) => void; renderAll: () => void } | null;
+    if (!fc) return;
+    fc.add(shape as Parameters<typeof fc.add>[0]);
+    fc.setActiveObject(shape as Parameters<typeof fc.setActiveObject>[0]);
+    fc.renderAll();
+  }, []);
+
+  // Handle canvas drag-and-drop
+  const handleCanvasDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const pieceId = e.dataTransfer.getData('application/quiltcorgi-block-piece');
+    if (!pieceId) return;
+
+    // Import fabric and create the shape at drop position
+    import('fabric').then((fabric) => {
+      const fc = fabricCanvasRef.current as {
+        getScenePoint?: (p: DOMPoint) => { x: number; y: number };
+        getWidth: () => number;
+      } | null;
+      if (!fc) return;
+
+      const canvasW = fc.getWidth();
+      // Get drop position from event
+      const rect = (e.target as HTMLElement).closest('.flex-1')?.getBoundingClientRect();
+      if (!rect) return;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const piece = BLOCK_PIECES.find((p) => p.id === pieceId);
+      if (!piece) return;
+
+      const shape = piece.createShape(fabric, canvasW / 2);
+      // Position shape at drop point
+      (shape as Record<string, unknown>)['left'] = x;
+      (shape as Record<string, unknown>)['top'] = y;
+      (shape as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
+
+      const canvas = fabricCanvasRef.current as { add: (obj: unknown) => void; renderAll: () => void } | null;
+      canvas?.add(shape as Parameters<typeof canvas.add>[0]);
+      canvas?.renderAll();
+    });
+  }, []);
+
   const activeToolRef = useRef(activeTool);
   useEffect(() => { activeToolRef.current = activeTool; }, [activeTool]);
 
@@ -355,7 +400,11 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       </div>
 
       {/* ── Canvas Area ───────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden relative">
+      <div
+        className="flex-1 flex flex-col overflow-hidden relative"
+        onDrop={handleCanvasDrop}
+        onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; }}
+      >
         {/* Floating action bar */}
         <div className="absolute top-3 left-3 z-10 flex gap-2">
           <button
@@ -405,6 +454,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
         onSave={handleSaveBlock}
         selectedObject={selectedObject}
         fabricCanvasRef={fabricCanvasRef}
+        onDropPiece={handleDropPiece}
       />
     </div>
   );
@@ -426,8 +476,8 @@ function ToolButton({
       type="button"
       onClick={onClick}
       className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl text-[10px] leading-tight transition-all ${active
-          ? 'bg-primary text-white shadow-elevation-1'
-          : 'text-secondary hover:bg-surface-container hover:text-on-surface'
+        ? 'bg-primary text-white shadow-elevation-1'
+        : 'text-secondary hover:bg-surface-container hover:text-on-surface'
         }`}
       title={label}
     >
