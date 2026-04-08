@@ -15,6 +15,13 @@
       "when": 1775499516648,
       "tag": "0001_low_marrow",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775750400000,
+      "tag": "0003_drop_orphaned_tables",
+      "breakpoints": true
     }
   ]
 }

@@ -34,18 +34,3 @@ export interface LayoutTemplate {
   bindingWidth: number; // inches
   thumbnailSvg: string; // SVG string for preview
 }
-
-export interface LayoutArea {
-  id: string;
-  role: LayoutAreaRole;
-  row?: number;
-  col?: number;
-  borderIndex?: number;
-  x: number; // canvas position (px)
-  y: number;
-  width: number;
-  height: number;
-  assignedBlockId?: string;
-  assignedFabricId?: string;
-  rotation?: number; // for on-point blocks
-}

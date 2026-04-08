@@ -51,10 +51,13 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
   // First-visit setup detection
+  // NOTE: The NewQuiltSetupModal is kept for direct studio access (non-wizard flows),
+  // but users coming from the NewProjectWizard will have this suppressed.
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
   const quiltSetupShownRef = useRef(false);
 
   // First-visit detection for the QUILT worktable
+  // Only show modal if user didn't come from the wizard (which already collects all info)
   useEffect(() => {
     if (activeWorktable !== 'quilt' || quiltSetupShownRef.current) return;
     const key = `qc-quilt-setup-shown-${project.id}`;

@@ -28,6 +28,7 @@ import {
   drawCoverBranding,
   drawPageHeader,
   drawBrandedFooter,
+  drawValidationSquare,
   createPdfDocument,
   type PdfFonts,
   type PdfBranding,
@@ -51,7 +52,6 @@ const PAGE_SIZES: Record<PaperSize, PageDimensions> = {
   a4: { width: 8.268, height: 11.693, margin: 0.5 },
 };
 
-const VALIDATION_SQUARE_SIZE = 1; // 1 inch
 const VALIDATION_BLOCK_HEIGHT = 1.6; // Total height including label
 
 interface ShapeData {
@@ -140,48 +140,16 @@ function drawPolyline(
 /**
  * Draw the 1"x1" validation square on page 1.
  */
-function drawValidationSquare(
+function drawValidationSquareAtMargin(
   page: ReturnType<PDFDocument['addPage']>,
   font: Awaited<ReturnType<PDFDocument['embedFont']>>,
   margin: number
 ) {
   const pts = PDF_POINTS_PER_INCH;
   const pageHeight = page.getHeight();
-  const squareSize = VALIDATION_SQUARE_SIZE * pts;
   const x = margin * pts;
-  const y = pageHeight - margin * pts - squareSize;
-
-  // Draw the square
-  page.drawRectangle({
-    x,
-    y,
-    width: squareSize,
-    height: squareSize,
-    borderColor: rgb(0, 0, 0),
-    borderWidth: 1,
-    color: rgb(1, 1, 1),
-  });
-
-  // Label
-  const labelSize = 7;
-  const label = "This square should measure exactly 1 inch. If it doesn't, check your";
-  const label2 = "printer settings — ensure 'Actual Size' or '100%' is selected.";
-
-  page.drawText(label, {
-    x: x + squareSize + 6,
-    y: y + squareSize - labelSize - 2,
-    size: labelSize,
-    font,
-    color: rgb(0.3, 0.3, 0.3),
-  });
-
-  page.drawText(label2, {
-    x: x + squareSize + 6,
-    y: y + squareSize - labelSize * 2 - 5,
-    size: labelSize,
-    font,
-    color: rgb(0.3, 0.3, 0.3),
-  });
+  const y = pageHeight - margin * pts;
+  drawValidationSquare(page, font, x, y);
 }
 
 /**
@@ -235,7 +203,7 @@ export async function generatePatternPdf(
       pageDims.height * PDF_POINTS_PER_INCH,
     ]);
     drawCoverBranding(page, branding, boldFont, pageDims.margin);
-    drawValidationSquare(page, font, pageDims.margin);
+    drawValidationSquareAtMargin(page, font, pageDims.margin);
     drawBrandedFooter(page, font, 1, 1, pageDims.margin);
     return pdfDoc.save();
   }
@@ -260,7 +228,7 @@ export async function generatePatternPdf(
 
   // Page 1: cover branding + validation square. Other pages: small header.
   drawCoverBranding(pages[0], branding, boldFont, pageDims.margin);
-  drawValidationSquare(pages[0], font, pageDims.margin);
+  drawValidationSquareAtMargin(pages[0], font, pageDims.margin);
   for (let p = 1; p < pages.length; p++) {
     drawPageHeader(pages[p], branding, boldFont, pageDims.margin);
   }

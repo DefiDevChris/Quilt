@@ -108,7 +108,7 @@ export function FeedContent({
       {loading && (
         <div className="space-y-5">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-panel rounded-2xl overflow-hidden animate-pulse">
+            <div key={i} className="social-card rounded-2xl overflow-hidden animate-pulse">
               <div className="flex items-center gap-3 p-4">
                 <div className="w-10 h-10 rounded-full bg-primary-container/40" />
                 <div className="space-y-1.5">
@@ -128,7 +128,7 @@ export function FeedContent({
 
       {/* Error */}
       {!loading && error && (
-        <div className="glass-panel rounded-2xl p-10 text-center">
+        <div className="social-card rounded-2xl p-10 text-center">
           <p className="text-secondary text-sm mb-4">{error}</p>
           <button
             onClick={() => fetchPosts(1, false)}
@@ -141,7 +141,7 @@ export function FeedContent({
 
       {/* Empty */}
       {!loading && !error && posts.length === 0 && (
-        <div className="glass-panel rounded-2xl p-10 text-center">
+        <div className="social-card rounded-2xl p-10 text-center">
           <div className="w-16 h-16 mx-auto mb-4">
             <Mascot pose="sitting" size="lg" />
           </div>
@@ -252,7 +252,7 @@ function PostCard({ post }: { post: SocialPost }) {
   };
 
   return (
-    <article className="glass-panel rounded-2xl overflow-hidden">
+    <article className="social-card rounded-2xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <Link

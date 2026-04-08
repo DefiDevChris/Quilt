@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
-import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockBuilderFabricPicker } from '@/components/blocks/BlockBuilderFabricPicker';
 import { BlockOverlaySelector } from '@/components/blocks/BlockOverlaySelector';
@@ -32,7 +32,7 @@ export interface DraftTabProps {
   onUndoSegment: () => void;
 }
 
-export type BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'circle' | 'bend';
+export type BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'triangle' | 'circle' | 'bend';
 
 const DEFAULT_CELL_SIZE = 1;
 const DEFAULT_CANVAS_SIZE = 600;
@@ -66,9 +66,20 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
 
+  // Map BlockBuilderMode to ToolType for canvasStore compatibility
+  const modeToToolType: Record<BlockBuilderMode, ToolType> = {
+    select: 'select',
+    pencil: 'easydraw',
+    rectangle: 'rectangle',
+    triangle: 'triangle',
+    circle: 'circle',
+    bend: 'bend',
+  };
+
   // Sync activeMode to canvasStore so ToolIcon isActive works
   useEffect(() => {
-    useCanvasStore.getState().setActiveTool(activeMode as never);
+    useCanvasStore.getState().setActiveTool(modeToToolType[activeMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMode]);
 
   // Compute grid dimensions
@@ -88,6 +99,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     gridCols,
     gridRows,
     canvasSize,
+    activeMode,
   });
 
   // Initialize / dispose Fabric.js canvas
@@ -122,7 +134,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       }
       draftCanvasRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasSize]);
 
   // Load overlay SVG onto canvas when activeOverlay changes
@@ -279,18 +290,17 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     }
   }, [blockName, category, tags, blockWidthIn, blockHeightIn, generateThumbnailSvg, fetchUserBlocks]);
 
-  const handleClearCanvas = useCallback(() => {
+  const handleClearCanvas = useCallback(async () => {
     hookClearSegments();
     if (!draftCanvasRef.current) return;
-    void import('fabric').then((f) => {
-      const canvas = draftCanvasRef.current as InstanceType<typeof f.Canvas>;
-      const toRemove = canvas.getObjects().filter((o) => {
-        if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
-        return true;
-      });
-      for (const obj of toRemove) canvas.remove(obj);
-      canvas.renderAll();
+    const fabric = await import('fabric');
+    const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
+    const toRemove = canvas.getObjects().filter((o) => {
+      if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
+      return true;
     });
+    for (const obj of toRemove) canvas.remove(obj);
+    canvas.renderAll();
   }, [hookClearSegments]);
 
   const handleBlockDragStart = useCallback(
@@ -400,7 +410,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
           onDrop={handleCanvasDrop}
           onDragOver={handleCanvasDragOver}
         >
-          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} />
+          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
         </div>
       </div>
 
@@ -412,8 +422,8 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             type="button"
             onClick={() => setRightTab('blocks')}
             className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-secondary hover:text-on-surface'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-secondary hover:text-on-surface'
               }`}
           >
             My Blocks
@@ -422,8 +432,8 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             type="button"
             onClick={() => setRightTab('fabrics')}
             className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-secondary hover:text-on-surface'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-secondary hover:text-on-surface'
               }`}
           >
             Fabrics

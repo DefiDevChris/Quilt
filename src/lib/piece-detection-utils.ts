@@ -52,6 +52,7 @@ import {
 } from './constants';
 import {
   applyQuiltConfigToOptions,
+  approximatePolygon,
   getMinAreaRatioForPieceScale,
   dynamicKernelSize,
 } from './piece-detection-shared';
@@ -468,46 +469,6 @@ function filterContoursEnhanced(
 // ============================================================================
 // PHASE 1: SHAPE STANDARDIZATION (Objectives 2-3)
 // ============================================================================
-
-/**
- * Objective 2A: Polygon Approximation (Douglas-Peucker)
- *
- * MATH:
- * epsilon = arcLength × 0.02 (2% tolerance) for standard piecing
- * epsilon = arcLength × 0.005 (0.5% tolerance) for curved piecing
- * 1. Draw line from first to last vertex
- * 2. Find vertex with max perpendicular distance from line
- * 3. If distance > epsilon, split and recurse
- * 4. Result: Minimal vertices preserving shape
- *
- * When hasCurvedPiecing is true, uses a smaller epsilon to preserve
- * more points along curved edges, allowing Bezier/Spline fitting later.
- */
-function approximatePolygon(
-  cv: OpenCV,
-  contour: OpenCVMat,
-  epsilon?: number,
-  hasCurvedPiecing: boolean = false
-): Point2D[] {
-  const approx = new cv.Mat();
-
-  try {
-    const perimeter = cv.arcLength(contour, true);
-    // For curved piecing, use smaller epsilon (0.5% vs 2%) to preserve more points
-    const defaultEpsilon = hasCurvedPiecing ? perimeter * 0.005 : perimeter * 0.02;
-    const eps = epsilon ?? defaultEpsilon;
-    cv.approxPolyDP(contour, approx, eps, true);
-
-    const vertices: Point2D[] = [];
-    for (let i = 0; i < approx.rows; i++) {
-      const ptr = approx.intPtr(i, 0);
-      vertices.push({ x: ptr[0], y: ptr[1] });
-    }
-    return vertices;
-  } finally {
-    approx.delete();
-  }
-}
 
 function classifyShape(vertexCount: number): ShapeType {
   switch (vertexCount) {

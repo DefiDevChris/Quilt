@@ -1,18 +1,9 @@
-interface TiptapNode {
-  type?: string;
-  text?: string;
-  content?: TiptapNode[];
-}
-
-interface TiptapDoc {
-  type?: string;
-  content?: TiptapNode[];
-}
+import type { TiptapNode, TiptapDocument } from '@/types/community';
 
 /**
  * Extract plain text from Tiptap JSON structure recursively.
  */
-function extractTextFromTiptap(node: TiptapNode | TiptapDoc | unknown): string {
+function extractTextFromTiptap(node: TiptapNode | TiptapDocument | unknown): string {
   if (!node || typeof node !== 'object') {
     return '';
   }

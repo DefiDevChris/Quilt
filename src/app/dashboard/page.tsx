@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo, Suspense, useRef } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +12,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { Sparkles } from 'lucide-react';
 import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
-import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 
 const MobileUploadsPanel = dynamic(
@@ -54,14 +53,9 @@ function DashboardPageContent() {
   const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
   const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
   const searchParams = useSearchParams();
-  const action = searchParams?.get('action') ?? '';
-  const preloadUrl = searchParams?.get('preloadUrl') ?? '';
+  const _action = searchParams?.get('action') ?? '';
+  const _preloadUrl = searchParams?.get('preloadUrl') ?? '';
   const _uploadId = searchParams?.get('uploadId') ?? '';
-
-  // Auto-open Photo to Design promo when redirected from mobile uploads
-  const [showPhotoPromo, setShowPhotoPromo] = useState<boolean>(
-    () => !!(action === 'photo-to-design' && preloadUrl)
-  );
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -144,7 +138,6 @@ function DashboardPageContent() {
 
       {/* Quick Start Workflows */}
       <QuickStartWorkflows
-        onPhotoToDesign={() => setShowPhotoPromo(true)}
         onNewProject={() => setDialogOpen(true)}
         recentProjects={projects.slice(0, 6).map((p) => ({
           id: p.id,
@@ -287,15 +280,6 @@ function DashboardPageContent() {
 
       {/* Pro upgrade modal */}
       {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
-
-      {/* Photo to Design promo */}
-      {showPhotoPromo && (
-        <PhotoToDesignPromo
-          isPro={isPro}
-          onClose={() => setShowPhotoPromo(false)}
-          preloadedImageUrl={preloadUrl || undefined}
-        />
-      )}
     </div>
   );
 }

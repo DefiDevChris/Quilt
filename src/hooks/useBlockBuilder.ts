@@ -23,11 +23,10 @@ interface UseBlockBuilderOptions {
   gridCols: number;
   gridRows: number;
   canvasSize: number;
+  activeMode: BlockBuilderMode;
 }
 
 interface UseBlockBuilderReturn {
-  activeMode: BlockBuilderMode;
-  setActiveMode: (mode: BlockBuilderMode) => void;
   segments: readonly DrawSegment[];
   patches: readonly Patch[];
   patchFills: Readonly<Record<string, string>>;
@@ -41,6 +40,7 @@ const SNAP_RADIUS_FRACTION = 0.3;
 const SEAM_LINE_COLOR = '#383831';
 const SEAM_LINE_WIDTH = 2;
 const PENCIL_PREVIEW_COLOR = '#f97316';
+const GRID_LINE_COLOR = '#E5E2DD';
 
 export function useBlockBuilder({
   draftCanvasRef,
@@ -48,8 +48,8 @@ export function useBlockBuilder({
   gridCols,
   gridRows,
   canvasSize,
+  activeMode,
 }: UseBlockBuilderOptions): UseBlockBuilderReturn {
-  const [activeMode, setActiveMode] = useState<BlockBuilderMode>('pencil');
   const [segments, setSegments] = useState<readonly DrawSegment[]>([]);
   const [patches, setPatches] = useState<readonly Patch[]>([]);
   const [patchFills, setPatchFills] = useState<Record<string, string>>({});
@@ -70,6 +70,10 @@ export function useBlockBuilder({
   const circleRadiusRef = useRef<number>(0);
   const circlePreviewRef = useRef<unknown>(null);
 
+  // Triangle state (right triangle: click to set right-angle corner, release to set opposite corner)
+  const triangleStartRef = useRef<GridPoint | null>(null);
+  const trianglePreviewRef = useRef<unknown>(null);
+
   // Bend state
   const bendSegmentRef = useRef<{ index: number; seg: Segment } | null>(null);
   const bendCenterRef = useRef<GridPoint | null>(null);
@@ -77,7 +81,7 @@ export function useBlockBuilder({
 
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
 
-  // Snap mouse position to nearest grid point
+  // Snap mouse position to nearest grid point (with threshold — returns null if too far)
   const snapToGridPoint = useCallback(
     (x: number, y: number): GridPoint | null => {
       const col = Math.round(x / gridSize);
@@ -91,6 +95,16 @@ export function useBlockBuilder({
         return { row, col };
       }
       return null;
+    },
+    [gridSize, gridCols, gridRows]
+  );
+
+  // Snap mouse position to nearest grid point (always returns a valid grid point, no threshold)
+  const snapToNearestGridPoint = useCallback(
+    (x: number, y: number): GridPoint => {
+      const col = Math.max(0, Math.min(gridCols, Math.round(x / gridSize)));
+      const row = Math.max(0, Math.min(gridRows, Math.round(y / gridSize)));
+      return { row, col };
     },
     [gridSize, gridCols, gridRows]
   );
@@ -279,29 +293,53 @@ export function useBlockBuilder({
     [gridSize]
   );
 
-  // Draw seam lines and patches on canvas + handle mouse events
+  // Draw seam lines, patches, and grid on canvas + handle mouse events
   useEffect(() => {
     if (!isOpen) return;
-    if (!draftCanvasRef.current) {
-      // Canvas not ready yet, wait for next render
-      return;
-    }
+    const canvas = draftCanvasRef.current as InstanceType<typeof import('fabric').Canvas> | null;
+    if (!canvas) return;
 
     let isMounted = true;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const fabric = await import('fabric');
-      if (!isMounted || !draftCanvasRef.current) return;
-      const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
+      if (!isMounted) return;
+      const c = canvas as InstanceType<typeof fabric.Canvas>;
 
       // Clear existing user objects (keep overlay)
-      const toRemove = canvas.getObjects().filter((o) => {
+      const toRemove = c.getObjects().filter((o) => {
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
+        // Also keep grid lines so we don't flicker
+        if ((o as unknown as { _isGridLine?: boolean })._isGridLine) return false;
         return true;
       });
       for (const obj of toRemove) {
-        canvas.remove(obj);
+        c.remove(obj);
+      }
+
+      // Draw grid lines
+      for (let row = 0; row <= gridRows; row++) {
+        const y = row * gridSize;
+        const line = new fabric.Line([0, y, canvasSize, y], {
+          stroke: GRID_LINE_COLOR,
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        });
+        (line as unknown as { _isGridLine?: boolean })._isGridLine = true;
+        c.add(line);
+      }
+      for (let col = 0; col <= gridCols; col++) {
+        const x = col * gridSize;
+        const line = new fabric.Line([x, 0, x, canvasSize], {
+          stroke: GRID_LINE_COLOR,
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        });
+        (line as unknown as { _isGridLine?: boolean })._isGridLine = true;
+        c.add(line);
       }
 
       // Draw patch fills
@@ -322,7 +360,7 @@ export function useBlockBuilder({
           selectable: false,
           evented: false,
         });
-        canvas.add(polygon);
+        c.add(polygon);
       }
 
       // Draw selected patch highlight
@@ -341,7 +379,7 @@ export function useBlockBuilder({
               selectable: false,
               evented: false,
             });
-            canvas.add(highlight);
+            c.add(highlight);
           }
         }
       }
@@ -366,7 +404,7 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(pathObj);
+          c.add(pathObj);
         } else {
           const fromPx = gridPointToPixel(seg.from, gridSize);
           const toPx = gridPointToPixel(seg.to, gridSize);
@@ -376,15 +414,15 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(line);
+          c.add(line);
         }
       }
 
-      canvas.renderAll();
+      c.renderAll();
 
       // Set cursor
-      canvas.selection = false;
-      canvas.defaultCursor = activeMode === 'bend' ? 'pointer' : 'crosshair';
+      c.selection = false;
+      c.defaultCursor = activeMode === 'bend' ? 'pointer' : 'crosshair';
 
       function clearPreviews() {
         const allRefs = [
@@ -395,7 +433,7 @@ export function useBlockBuilder({
         ];
         for (const ref of allRefs) {
           if (ref.current) {
-            canvas.remove(ref.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(ref.current as InstanceType<typeof fabric.FabricObject>);
             ref.current = null;
           }
         }
@@ -403,7 +441,7 @@ export function useBlockBuilder({
 
       // ─── Mouse Down ────────────────────────────────────────────────
       function onMouseDown(e: { e: MouseEvent }) {
-        const pointer = canvas.getScenePoint(e.e);
+        const pointer = c.getScenePoint(e.e);
         const gridPt = snapToGridPoint(pointer.x, pointer.y);
 
         // ─── Bend tool: click a segment ──────────────────────────────
@@ -438,9 +476,9 @@ export function useBlockBuilder({
               evented: false,
               stroke: '',
             });
-            canvas.add(dot);
+            c.add(dot);
             pencilPreviewRef.current = dot;
-            canvas.renderAll();
+            c.renderAll();
           } else {
             const startPt = pencilStartRef.current;
             if (startPt.row === gridPt.row && startPt.col === gridPt.col) return;
@@ -450,7 +488,7 @@ export function useBlockBuilder({
 
             // Move preview dot
             if (pencilPreviewRef.current) {
-              canvas.remove(pencilPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+              c.remove(pencilPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
             }
             const px = gridPointToPixel(gridPt, gridSize);
             const dot = new fabric.Circle({
@@ -462,16 +500,17 @@ export function useBlockBuilder({
               evented: false,
               stroke: '',
             });
-            canvas.add(dot);
+            c.add(dot);
             pencilPreviewRef.current = dot;
-            canvas.renderAll();
+            c.renderAll();
           }
           return;
         }
 
         // ─── Rectangle: first corner ─────────────────────────────────
         if (activeMode === 'rectangle') {
-          if (!gridPt) return;
+          if (rectStartRef.current) return; // Already drawing, wait for mouseUp
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
           rectStartRef.current = gridPt;
           const px = gridPointToPixel(gridPt, gridSize);
           const dot = new fabric.Circle({
@@ -483,25 +522,47 @@ export function useBlockBuilder({
             evented: false,
             stroke: '',
           });
-          canvas.add(dot);
+          c.add(dot);
           rectPreviewRef.current = dot;
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
         // ─── Circle: center point ────────────────────────────────────
         if (activeMode === 'circle') {
           if (!gridPt) return;
+          if (circleCenterRef.current) return; // Already drawing, wait for mouseUp
           circleCenterRef.current = gridPt;
           circleRadiusRef.current = 0;
-          canvas.renderAll();
+          c.renderAll();
+          return;
+        }
+
+        // ─── Triangle: click to set right-angle corner ───────────────
+        if (activeMode === 'triangle') {
+          if (triangleStartRef.current) return; // Already drawing, wait for mouseUp
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
+          triangleStartRef.current = gridPt;
+          const px = gridPointToPixel(gridPt, gridSize);
+          const dot = new fabric.Circle({
+            left: px.x - 4,
+            top: px.y - 4,
+            radius: 4,
+            fill: PENCIL_PREVIEW_COLOR,
+            selectable: false,
+            evented: false,
+            stroke: '',
+          });
+          c.add(dot);
+          trianglePreviewRef.current = dot;
+          c.renderAll();
           return;
         }
       }
 
       // ─── Mouse Move ────────────────────────────────────────────────
       function onMouseMove(e: { e: MouseEvent }) {
-        const pointer = canvas.getScenePoint(e.e);
+        const pointer = c.getScenePoint(e.e);
 
         // ─── Bend preview ────────────────────────────────────────────
         if (activeMode === 'bend' && bendSegmentRef.current) {
@@ -521,7 +582,7 @@ export function useBlockBuilder({
           const sweepFlag = arc.clockwise ? 1 : 0;
 
           if (bendPreviewRef.current) {
-            canvas.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
           }
 
           const pathStr = `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`;
@@ -533,19 +594,18 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(pathObj);
+          c.add(pathObj);
           bendPreviewRef.current = pathObj;
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
         // ─── Rectangle preview ───────────────────────────────────────
         if (activeMode === 'rectangle' && rectStartRef.current) {
-          const gridPt = snapToGridPoint(pointer.x, pointer.y);
-          if (!gridPt) return;
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
 
           if (rectPreviewRef.current) {
-            canvas.remove(rectPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(rectPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
           }
 
           const start = rectStartRef.current;
@@ -566,9 +626,9 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(rect);
+          c.add(rect);
           rectPreviewRef.current = rect;
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
@@ -584,7 +644,7 @@ export function useBlockBuilder({
           circleRadiusRef.current = radius;
 
           if (circlePreviewRef.current) {
-            canvas.remove(circlePreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(circlePreviewRef.current as InstanceType<typeof fabric.FabricObject>);
           }
 
           const circle = new fabric.Circle({
@@ -598,9 +658,9 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(circle);
+          c.add(circle);
           circlePreviewRef.current = circle;
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
@@ -610,7 +670,7 @@ export function useBlockBuilder({
           if (!gridPt) return;
 
           if (pencilPreviewRef.current) {
-            canvas.remove(pencilPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(pencilPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
           }
 
           const startPx = gridPointToPixel(pencilStartRef.current, gridSize);
@@ -622,20 +682,53 @@ export function useBlockBuilder({
             selectable: false,
             evented: false,
           });
-          canvas.add(line);
+          c.add(line);
           pencilPreviewRef.current = line;
-          canvas.renderAll();
+          c.renderAll();
+        }
+
+        // ─── Triangle preview (right triangle from corner to cursor) ─
+        if (activeMode === 'triangle' && triangleStartRef.current) {
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
+          const start = triangleStartRef.current;
+          if (start.row === gridPt.row && start.col === gridPt.col) return; // Same point, no preview
+
+          // Clear old preview
+          if (trianglePreviewRef.current) {
+            c.remove(trianglePreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+          }
+
+          // Right triangle corners:
+          //   A = start (right angle)
+          //   B = (gridPt.row, start.col) — same col as start
+          //   C = (start.row, gridPt.col) — same row as start
+          const a = gridPointToPixel(start, gridSize);
+          const b = gridPointToPixel({ row: gridPt.row, col: start.col }, gridSize);
+          const cPt = gridPointToPixel({ row: start.row, col: gridPt.col }, gridSize);
+
+          const pathStr = `M ${a.x} ${a.y} L ${b.x} ${b.y} L ${cPt.x} ${cPt.y} Z`;
+          const path = new fabric.Path(pathStr, {
+            fill: 'rgba(249, 115, 22, 0.1)',
+            stroke: PENCIL_PREVIEW_COLOR,
+            strokeWidth: 1.5,
+            strokeDashArray: [6, 4],
+            selectable: false,
+            evented: false,
+          });
+          c.add(path);
+          trianglePreviewRef.current = path;
+          c.renderAll();
         }
       }
 
       // ─── Mouse Up ──────────────────────────────────────────────────
       function onMouseUp(e: { e: MouseEvent }) {
-        const pointer = canvas.getScenePoint(e.e);
+        const pointer = c.getScenePoint(e.e);
 
         // ─── Bend: commit ────────────────────────────────────────────
         if (activeMode === 'bend' && bendSegmentRef.current && bendCenterRef.current) {
           if (bendPreviewRef.current) {
-            canvas.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+            c.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
             bendPreviewRef.current = null;
           }
 
@@ -662,24 +755,22 @@ export function useBlockBuilder({
 
           bendSegmentRef.current = null;
           bendCenterRef.current = null;
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
-        // ─── Rectangle: commit on second click ───────────────────────
+        // ─── Rectangle: commit on mouseup ────────────────────────────
         if (activeMode === 'rectangle' && rectStartRef.current) {
-          const gridPt = snapToGridPoint(pointer.x, pointer.y);
-          if (gridPt && rectStartRef.current) {
-            const start = rectStartRef.current;
-            if (start.row !== gridPt.row || start.col !== gridPt.col) {
-              addShapeSegments(
-                generateRectangle(start.row, start.col, gridPt.row, gridPt.col)
-              );
-            }
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
+          const start = rectStartRef.current;
+          if (start.row !== gridPt.row || start.col !== gridPt.col) {
+            addShapeSegments(
+              generateRectangle(start.row, start.col, gridPt.row, gridPt.col)
+            );
           }
           rectStartRef.current = null;
           clearPreviews();
-          canvas.renderAll();
+          c.renderAll();
           return;
         }
 
@@ -698,7 +789,28 @@ export function useBlockBuilder({
           circleCenterRef.current = null;
           circleRadiusRef.current = 0;
           clearPreviews();
-          canvas.renderAll();
+          c.renderAll();
+          return;
+        }
+
+        // ─── Triangle: commit right triangle on release ──────────────
+        if (activeMode === 'triangle' && triangleStartRef.current) {
+          const gridPt = snapToNearestGridPoint(pointer.x, pointer.y);
+          const start = triangleStartRef.current;
+          if (start.row !== gridPt.row || start.col !== gridPt.col) {
+            // Right triangle: 3 segments forming the right angle
+            const cornerA = start;
+            const cornerB = { row: gridPt.row, col: start.col };
+            const cornerC = { row: start.row, col: gridPt.col };
+            addShapeSegments([
+              { from: cornerA, to: cornerB },
+              { from: cornerB, to: cornerC },
+              { from: cornerC, to: cornerA },
+            ]);
+          }
+          triangleStartRef.current = null;
+          clearPreviews();
+          c.renderAll();
           return;
         }
       }
@@ -708,20 +820,65 @@ export function useBlockBuilder({
         if (activeMode === 'pencil') {
           pencilStartRef.current = null;
           clearPreviews();
-          canvas.renderAll();
+          c.renderAll();
+        }
+        if (activeMode === 'triangle' && triangleStartRef.current) {
+          triangleStartRef.current = null;
+          clearPreviews();
+          c.renderAll();
         }
       }
 
-      canvas.on('mouse:down', onMouseDown as never);
-      canvas.on('mouse:move', onMouseMove as never);
-      canvas.on('mouse:up', onMouseUp as never);
-      canvas.on('mouse:dblclick', onDoubleClick as never);
+      c.on('mouse:down', onMouseDown as never);
+      c.on('mouse:move', onMouseMove as never);
+      c.on('mouse:up', onMouseUp as never);
+      c.on('mouse:dblclick', onDoubleClick as never);
+
+      // ─── Escape key: cancel in-progress drawing ────────────────────
+      function onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Escape') {
+          if (activeMode === 'pencil' && pencilStartRef.current) {
+            pencilStartRef.current = null;
+            clearPreviews();
+            c.renderAll();
+          }
+          if (activeMode === 'rectangle' && rectStartRef.current) {
+            rectStartRef.current = null;
+            clearPreviews();
+            c.renderAll();
+          }
+          if (activeMode === 'triangle' && triangleStartRef.current) {
+            triangleStartRef.current = null;
+            clearPreviews();
+            c.renderAll();
+          }
+          if (activeMode === 'circle' && circleCenterRef.current) {
+            circleCenterRef.current = null;
+            circleRadiusRef.current = 0;
+            clearPreviews();
+            c.renderAll();
+          }
+          if (activeMode === 'bend' && bendSegmentRef.current) {
+            bendSegmentRef.current = null;
+            bendCenterRef.current = null;
+            if (bendPreviewRef.current) {
+              c.remove(bendPreviewRef.current as InstanceType<typeof fabric.FabricObject>);
+              bendPreviewRef.current = null;
+            }
+            c.renderAll();
+          }
+        }
+      }
+
+      const canvasEl = c.getElement();
+      canvasEl.addEventListener('keydown', onKeyDown);
 
       cleanup = () => {
-        canvas.off('mouse:down', onMouseDown as never);
-        canvas.off('mouse:move', onMouseMove as never);
-        canvas.off('mouse:up', onMouseUp as never);
-        canvas.off('mouse:dblclick', onDoubleClick as never);
+        c.off('mouse:down', onMouseDown as never);
+        c.off('mouse:move', onMouseMove as never);
+        c.off('mouse:up', onMouseUp as never);
+        c.off('mouse:dblclick', onDoubleClick as never);
+        canvasEl.removeEventListener('keydown', onKeyDown);
       };
     })().catch(() => {
       // Block builder render failed
@@ -733,7 +890,7 @@ export function useBlockBuilder({
     };
   }, [
     isOpen,
-    draftCanvasRef,
+    canvasSize,
     patches,
     patchFills,
     selectedPatchId,
@@ -741,7 +898,6 @@ export function useBlockBuilder({
     gridSize,
     gridCols,
     gridRows,
-    canvasSize,
     snapToGridPoint,
     addShapeSegments,
     findNearestSegment,
@@ -753,6 +909,7 @@ export function useBlockBuilder({
     setSelectedPatchId(null);
     pencilStartRef.current = null;
     rectStartRef.current = null;
+    triangleStartRef.current = null;
     circleCenterRef.current = null;
     bendSegmentRef.current = null;
   }, []);
@@ -762,8 +919,6 @@ export function useBlockBuilder({
   }, []);
 
   return {
-    activeMode,
-    setActiveMode,
     segments,
     patches,
     patchFills,

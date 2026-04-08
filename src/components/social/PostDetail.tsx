@@ -124,7 +124,7 @@ export function PostDetail({ postId }: PostDetailProps) {
       </Link>
 
       {/* Post Card */}
-      <article className="glass-panel rounded-[1.5rem] p-6">
+      <article className="social-card rounded-2xl p-6">
         {/* Author */}
         <div className="flex items-center justify-between mb-3">
           <Link href={`/members/${post.creatorUsername}`} className="flex items-center gap-3 group">

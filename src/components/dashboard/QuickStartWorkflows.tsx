@@ -12,13 +12,11 @@ interface RecentProject {
 }
 
 interface QuickStartWorkflowsProps {
-  onPhotoToDesign: () => void;
   onNewProject: () => void;
   recentProjects: ReadonlyArray<RecentProject>;
 }
 
 export function QuickStartWorkflows({
-  onPhotoToDesign,
   onNewProject,
   recentProjects,
 }: QuickStartWorkflowsProps) {
@@ -168,10 +166,9 @@ export function QuickStartWorkflows({
         </div>
 
         {/* Photo to Design */}
-        <button
-          type="button"
-          onClick={onPhotoToDesign}
-          className="min-h-[140px] rounded-2xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
+        <Link
+          href="/photo-to-design"
+          className="min-h-[140px] rounded-2xl p-6 text-left overflow-hidden transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
           aria-label="Photo to Design workflow"
         >
           <div>
@@ -185,7 +182,7 @@ export function QuickStartWorkflows({
             height={72}
             className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
           />
-        </button>
+        </Link>
       </div>
     </section>
   );

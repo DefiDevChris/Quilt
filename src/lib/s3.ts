@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3_UPLOAD_EXPIRY_SECONDS, MAX_FILE_SIZE_BYTES } from '@/lib/constants';
+import { sanitizeFilename } from '@/lib/string-utils';
 
 const awsVarsPresent =
   process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_S3_BUCKET;
@@ -25,12 +26,12 @@ const s3Configured = !!(
 
 const s3Client = s3Configured
   ? new S3Client({
-      region: process.env.AWS_REGION ?? 'us-east-1',
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-      },
-    })
+    region: process.env.AWS_REGION ?? 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  })
   : null;
 
 const bucket = process.env.AWS_S3_BUCKET ?? '';
@@ -61,7 +62,7 @@ export async function generatePresignedUrl({
   };
   const ext = extMap[contentType] ?? 'jpg';
   const timestamp = Date.now();
-  const fileKey = `${purpose}s/${userId}/${timestamp}-${sanitizeFilename(filename)}.${ext}`;
+  const fileKey = `${purpose}s/${userId}/${timestamp}-${sanitizeFilename(filename, { stripExtension: true, keepUnderscores: true, collapseHyphens: true, trimHyphens: true, maxLength: 64 })}.${ext}`;
 
   const command = new PutObjectCommand({
     Bucket: bucket,
@@ -79,16 +80,6 @@ export async function generatePresignedUrl({
     : `https://${bucket}.s3.amazonaws.com/${fileKey}`;
 
   return { uploadUrl, fileKey, publicUrl };
-}
-
-export function sanitizeFilename(name: string): string {
-  return name
-    .replace(/\.[^.]+$/, '')
-    .replace(/[^a-zA-Z0-9-_]/g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 64)
-    .toLowerCase();
 }
 
 export async function uploadCanvasDataToS3(

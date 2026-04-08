@@ -15,14 +15,13 @@ interface BlockStoreState {
   isLoadingUserBlocks: boolean;
   error: string | null;
   isPanelOpen: boolean;
-  activePanel: string | null;
   selectedBlockId: string | null;
 
   setSearch: (search: string) => void;
   setCategory: (category: string) => void;
   setPage: (page: number) => void;
   setPanelOpen: (open: boolean) => void;
-  togglePanel: (panel?: string) => void;
+  togglePanel: () => void;
   fetchBlocks: () => Promise<void>;
   fetchUserBlocks: () => Promise<void>;
   deleteUserBlock: (blockId: string) => Promise<boolean>;
@@ -45,7 +44,6 @@ const INITIAL_STATE = {
   isLoadingUserBlocks: false,
   error: null as string | null,
   isPanelOpen: false,
-  activePanel: null as string | null,
   selectedBlockId: null as string | null,
 };
 
@@ -74,18 +72,10 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
     }
   },
 
-  togglePanel: (panel?: string) => {
-    if (panel) {
-      const isAlreadyActive = get().activePanel === panel;
-      set({
-        isPanelOpen: !isAlreadyActive,
-        activePanel: isAlreadyActive ? null : panel,
-      });
-    } else {
-      const nextState = !get().isPanelOpen;
-      set({ isPanelOpen: nextState, activePanel: nextState ? get().activePanel : null });
-    }
-    if (get().isPanelOpen && get().blocks.length === 0) {
+  togglePanel: () => {
+    const nextState = !get().isPanelOpen;
+    set({ isPanelOpen: nextState });
+    if (nextState && get().blocks.length === 0) {
       get().fetchBlocks();
     }
   },

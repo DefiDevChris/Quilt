@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // Mock AWS SDK before importing
 vi.mock('@aws-sdk/client-s3', () => ({
   S3Client: class {
-    constructor() {}
+    constructor() { }
   },
   PutObjectCommand: vi.fn(),
 }));
@@ -18,7 +18,11 @@ vi.stubEnv('AWS_S3_BUCKET', 'test-bucket');
 vi.stubEnv('AWS_REGION', 'us-west-2');
 vi.stubEnv('NEXT_PUBLIC_CLOUDFRONT_URL', 'https://cdn.test.com');
 
-const { sanitizeFilename, generatePresignedUrl } = await import('@/lib/s3');
+const { generatePresignedUrl } = await import('@/lib/s3');
+const { sanitizeFilename: sanitizeFilenameBase } = await import('@/lib/string-utils');
+
+const s3Options = { stripExtension: true, keepUnderscores: true, collapseHyphens: true, trimHyphens: true, maxLength: 64 } as const;
+const sanitizeFilename = (name: string) => sanitizeFilenameBase(name, s3Options);
 
 describe('sanitizeFilename', () => {
   it('strips the file extension', () => {

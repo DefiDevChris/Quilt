@@ -8,13 +8,3 @@ export interface PrintlistItem {
   unitSystem: 'imperial' | 'metric';
   calibratedPpi?: number;
 }
-
-export interface Printlist {
-  id: string;
-  projectId: string;
-  userId: string;
-  items: PrintlistItem[];
-  paperSize: 'letter' | 'a4';
-  createdAt: Date;
-  updatedAt: Date;
-}

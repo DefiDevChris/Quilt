@@ -38,7 +38,7 @@ export function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[
       id: 'pencil',
       label: 'Pencil',
       shortcut: 'P',
-      toolType: 'pencil' as ToolType,
+      toolType: 'easydraw' as ToolType,
       group: 'drawing',
       icon: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -51,7 +51,7 @@ export function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[
         </svg>
       ),
       onClick: () => callbacks.onModeChange('pencil'),
-      isActive: () => useCanvasStore.getState().activeTool === ('pencil' as ToolType),
+      isActive: () => useCanvasStore.getState().activeTool === ('easydraw' as ToolType),
     },
     {
       id: 'rectangle',
@@ -66,6 +66,20 @@ export function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[
       ),
       onClick: () => callbacks.onModeChange('rectangle'),
       isActive: () => useCanvasStore.getState().activeTool === ('rectangle' as ToolType),
+    },
+    {
+      id: 'triangle',
+      label: 'Triangle',
+      shortcut: 'T',
+      toolType: 'triangle' as ToolType,
+      group: 'shapes',
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <polygon points="14,4 4,24 24,24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
+        </svg>
+      ),
+      onClick: () => callbacks.onModeChange('triangle'),
+      isActive: () => useCanvasStore.getState().activeTool === ('triangle' as ToolType),
     },
     {
       id: 'circle',
