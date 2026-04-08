@@ -107,7 +107,7 @@ export function LayoutRoleInspector({ selectedObject, onChange }: LayoutRoleInsp
       <div className="p-2 bg-surface-container rounded-lg">
         <p className="text-[10px] text-secondary mb-1">Dimensions</p>
         <p className="text-xs text-on-surface font-mono">
-          {Math.round(selectedObject.width ?? 0)} × {Math.round(selectedObject.height ?? 0)} px
+          {Math.round((selectedObject as { width?: number }).width ?? 0)} × {Math.round((selectedObject as { height?: number }).height ?? 0)} px
         </p>
       </div>
 

@@ -288,7 +288,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                 Choose a Starting Point
               </label>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 {/* Freeform */}
                 <button
                   type="button"
@@ -305,6 +305,26 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   </div>
                   <span className="font-bold text-on-surface text-lg mb-1">Freeform</span>
                   <span className="text-xs text-secondary text-center">Start with an empty canvas — place blocks, fabrics, and shapes anywhere.</span>
+                </button>
+
+                {/* Use a Layout */}
+                <button
+                  type="button"
+                  onClick={() => setStartingPoint('use-layout')}
+                  className={`flex flex-col items-center p-6 rounded-2xl border-2 transition-all ${startingPoint === 'use-layout'
+                    ? 'border-primary bg-primary/5'
+                    : 'border-outline-variant bg-surface hover:bg-surface-container'
+                    }`}
+                >
+                  <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-secondary">
+                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                      <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                  <span className="font-bold text-on-surface text-lg mb-1">Use a Layout</span>
+                  <span className="text-xs text-secondary text-center">Choose from pre-built layout templates with borders, sashing, and more.</span>
                 </button>
 
                 {/* Create a Layout */}
@@ -349,8 +369,95 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
             </div>
           )}
 
-          {/* ─── Step 3: Quilt Size + Cell Size ─── */}
-          {step === 3 && (
+          {/* ─── Step 3: Choose a Layout Template ─── */}
+          {step === 3 && startingPoint === 'use-layout' && (
+            <div className="space-y-6 flex-1 flex flex-col">
+              <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
+                Choose a Layout Template
+              </label>
+
+              {isLoadingLayouts ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="rounded-2xl border border-outline-variant bg-surface-container p-4 animate-pulse">
+                      <div className="w-full h-32 bg-primary-container/20 rounded-lg mb-3" />
+                      <div className="h-4 bg-primary-container/20 rounded w-3/4 mb-2" />
+                      <div className="h-3 bg-primary-container/20 rounded w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              ) : layoutTemplates.length === 0 ? (
+                <div className="text-center py-12 text-secondary">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="mx-auto mb-4 text-secondary/50">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
+                    <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                  <p className="font-semibold text-on-surface mb-1">No layout templates yet</p>
+                  <p className="text-sm">Layout templates will appear here once created.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
+                  {layoutTemplates.map((template) => {
+                    const isSelected = selectedLayoutId === template.id;
+                    return (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => setSelectedLayoutId(template.id)}
+                        className={`flex flex-col rounded-2xl border-2 p-4 transition-all text-left ${isSelected
+                            ? 'border-primary bg-primary/5'
+                            : 'border-outline-variant bg-surface hover:bg-surface-container'
+                          }`}
+                      >
+                        {/* Thumbnail placeholder */}
+                        <div className="w-full h-32 bg-primary-container/20 rounded-lg mb-3 flex items-center justify-center">
+                          {template.thumbnailUrl ? (
+                            <img
+                              src={template.thumbnailUrl}
+                              alt={template.name}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          ) : (
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-secondary/50">
+                              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
+                              <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="font-bold text-on-surface mb-1">{template.name}</span>
+                        {template.description && (
+                          <span className="text-xs text-secondary">{template.description}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex justify-between items-end flex-1 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="rounded-full px-5 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(4)}
+                  disabled={!selectedLayoutId}
+                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next Step
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ─── Step 3/4: Quilt Size + Cell Size ─── */}
+          {(step === 3 && startingPoint !== 'use-layout') || step === 4 ? (
             <div className="space-y-6 flex-1 flex flex-col">
               <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
                 Quilt Size
