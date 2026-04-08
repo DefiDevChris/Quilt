@@ -276,7 +276,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         </div>
       )}
 
-      <BottomBar />
+      {activeWorktable !== 'block-builder' && <BottomBar />}
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />

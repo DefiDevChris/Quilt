@@ -136,11 +136,10 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 px-2 py-1.5 text-xs font-medium ${
-                activeTab === tab.key
+              className={`flex-1 px-2 py-1.5 text-xs font-medium ${activeTab === tab.key
                   ? 'border-b-2 border-primary text-primary'
                   : 'text-on-surface/60 hover:text-on-surface'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -276,16 +275,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <SkeletonGrid count={6} columns={3} />
               ) : userFabrics.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary mb-2">No fabrics uploaded yet</p>
-                  {onOpenUpload && (
-                    <button
-                      type="button"
-                      onClick={onOpenUpload}
-                      className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
-                    >
-                      Import Fabric
-                    </button>
-                  )}
+                  <p className="text-sm text-secondary">No fabrics uploaded yet</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -312,11 +302,10 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                             ? 'Click again to confirm delete'
                             : 'Delete fabric'
                         }
-                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
-                          confirmDeleteId === fabric.id
+                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === fabric.id
                             ? 'bg-error ring-2 ring-error/50 !opacity-100'
                             : 'bg-error'
-                        }`}
+                          }`}
                       >
                         {confirmDeleteId === fabric.id ? '✓' : '✕'}
                       </button>

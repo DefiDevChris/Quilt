@@ -9,14 +9,7 @@ interface NewProjectWizardProps {
   readonly onClose: () => void;
 }
 
-type StartingPoint = 'freeform' | 'use-layout' | 'create-layout';
-
-interface LayoutTemplate {
-  id: string;
-  name: string;
-  description: string | null;
-  thumbnailUrl: string | null;
-}
+type StartingPoint = 'freeform' | 'create-layout';
 
 const CELL_SIZE_OPTIONS = [0.25, 0.5, 1, 2, 3] as const;
 
@@ -29,18 +22,13 @@ function fmtCellSize(inches: number): string {
 export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
   const router = useRouter();
 
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [startingPoint, setStartingPoint] = useState<StartingPoint>('freeform');
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  // Layout templates state
-  const [layoutTemplates, setLayoutTemplates] = useState<LayoutTemplate[]>([]);
-  const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);
-  const [isLoadingLayouts, setIsLoadingLayouts] = useState(false);
-
-  // Step 3/4: Size + cell size (for create-layout) or just size (for freeform/use-layout)
+  // Step 3: Size + cell size
   const [sizePresetLabel, setSizePresetLabel] = useState<string>('Throw');
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
@@ -62,8 +50,6 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
       setCustomWidth('');
       setCustomHeight('');
       setCellSize(1);
-      setSelectedLayoutId(null);
-      setLayoutTemplates([]);
     };
   }, [open]);
 
@@ -92,23 +78,6 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
   }, [open, onClose]);
-
-  // Fetch layout templates when entering step 3 and user selected 'use-layout'
-  useEffect(() => {
-    if (step !== 3 || startingPoint !== 'use-layout') return;
-    if (layoutTemplates.length > 0) return;
-
-    setIsLoadingLayouts(true);
-    fetch('/api/layout-templates')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.data) {
-          setLayoutTemplates(data.data);
-        }
-        setIsLoadingLayouts(false);
-      })
-      .catch(() => setIsLoadingLayouts(false));
-  }, [step, startingPoint, layoutTemplates.length]);
 
   const sizePreset = useMemo(() => {
     const found = QUILT_SIZE_PRESETS.find((p) => p.label === sizePresetLabel);
@@ -157,8 +126,6 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
         height: canvasHeight,
         cellSize,
       };
-    } else if (startingPoint === 'use-layout' && selectedLayoutId) {
-      payload.layoutTemplateId = selectedLayoutId;
     }
 
     try {
@@ -197,8 +164,6 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
       sessionStorage.setItem(`qc-quilt-setup-shown-${newId}`, '1');
       if (startingPoint === 'create-layout') {
         sessionStorage.setItem(`qc-layout-builder-${newId}`, 'true');
-      } else if (startingPoint === 'use-layout') {
-        sessionStorage.setItem(`qc-layout-template-${newId}`, selectedLayoutId || '');
       }
 
       onClose();
@@ -207,7 +172,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
       setError('Failed to create project');
       setIsCreating(false);
     }
-  }, [canSubmit, name, isCustom, customWidth, customHeight, sizePreset, cellSize, startingPoint, selectedLayoutId, onClose, router]);
+  }, [canSubmit, name, isCustom, customWidth, customHeight, sizePreset, cellSize, startingPoint, onClose, router]);
 
   if (!open) return null;
 
@@ -282,23 +247,22 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
             </div>
           )}
 
-          {/* ─── Step 2: Starting Point ─── */}
+          {/* ─── Step 2: Choose a Starting Point ─── */}
           {step === 2 && (
             <div className="space-y-6 flex-1 flex flex-col">
               <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
                 Choose a Starting Point
               </label>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {/* Freeform */}
                 <button
                   type="button"
                   onClick={() => setStartingPoint('freeform')}
-                  className={`flex flex-col items-center p-6 rounded-2xl border-2 transition-all ${
-                    startingPoint === 'freeform'
+                  className={`flex flex-col items-center p-8 rounded-2xl border-2 transition-all ${startingPoint === 'freeform'
                       ? 'border-primary bg-primary/5'
                       : 'border-outline-variant bg-surface hover:bg-surface-container'
-                  }`}
+                    }`}
                 >
                   <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-secondary">
@@ -309,36 +273,14 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   <span className="text-xs text-secondary text-center">Start with an empty canvas — place blocks, fabrics, and shapes anywhere.</span>
                 </button>
 
-                {/* Use a Layout */}
-                <button
-                  type="button"
-                  onClick={() => setStartingPoint('use-layout')}
-                  className={`flex flex-col items-center p-6 rounded-2xl border-2 transition-all ${
-                    startingPoint === 'use-layout'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-surface hover:bg-surface-container'
-                  }`}
-                >
-                  <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-secondary">
-                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                      <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
-                      <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  </div>
-                  <span className="font-bold text-on-surface text-lg mb-1">Use a Layout</span>
-                  <span className="text-xs text-secondary text-center">Choose from pre-built layout templates with borders, sashing, and more.</span>
-                </button>
-
                 {/* Create a Layout */}
                 <button
                   type="button"
                   onClick={() => setStartingPoint('create-layout')}
-                  className={`flex flex-col items-center p-6 rounded-2xl border-2 transition-all ${
-                    startingPoint === 'create-layout'
+                  className={`flex flex-col items-center p-8 rounded-2xl border-2 transition-all ${startingPoint === 'create-layout'
                       ? 'border-primary bg-primary/5'
                       : 'border-outline-variant bg-surface hover:bg-surface-container'
-                  }`}
+                    }`}
                 >
                   <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-secondary">
@@ -364,7 +306,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(startingPoint === 'use-layout' ? 3 : 4)}
+                  onClick={() => setStep(3)}
                   className="rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                 >
                   Next Step
@@ -373,95 +315,8 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
             </div>
           )}
 
-          {/* ─── Step 3: Choose a Layout Template ─── */}
-          {step === 3 && startingPoint === 'use-layout' && (
-            <div className="space-y-6 flex-1 flex flex-col">
-              <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
-                Choose a Layout Template
-              </label>
-
-              {isLoadingLayouts ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="rounded-2xl border border-outline-variant bg-surface-container p-4 animate-pulse">
-                      <div className="w-full h-32 bg-primary-container/20 rounded-lg mb-3" />
-                      <div className="h-4 bg-primary-container/20 rounded w-3/4 mb-2" />
-                      <div className="h-3 bg-primary-container/20 rounded w-1/2" />
-                    </div>
-                  ))}
-                </div>
-              ) : layoutTemplates.length === 0 ? (
-                <div className="text-center py-12 text-secondary">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="mx-auto mb-4 text-secondary/50">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
-                    <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                  <p className="font-semibold text-on-surface mb-1">No layout templates yet</p>
-                  <p className="text-sm">Layout templates will appear here once created.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-1">
-                  {layoutTemplates.map((template) => {
-                    const isSelected = selectedLayoutId === template.id;
-                    return (
-                      <button
-                        key={template.id}
-                        type="button"
-                        onClick={() => setSelectedLayoutId(template.id)}
-                        className={`flex flex-col rounded-2xl border-2 p-4 transition-all text-left ${
-                          isSelected
-                            ? 'border-primary bg-primary/5'
-                            : 'border-outline-variant bg-surface hover:bg-surface-container'
-                        }`}
-                      >
-                        <div className="w-full h-32 bg-primary-container/20 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                          {template.thumbnailUrl ? (
-                            <img
-                              src={template.thumbnailUrl}
-                              alt={template.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-secondary/50">
-                              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1.5" />
-                              <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1.5" />
-                            </svg>
-                          )}
-                        </div>
-                        <span className="font-bold text-on-surface mb-1">{template.name}</span>
-                        {template.description && (
-                          <span className="text-xs text-secondary line-clamp-2">{template.description}</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              <div className="flex justify-between items-end flex-1 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStep(4)}
-                  disabled={!selectedLayoutId}
-                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next Step
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ─── Step 3/4: Quilt Size + Cell Size ─── */}
-          {((step === 3 && startingPoint !== 'use-layout') || step === 4) && (
+          {/* ─── Step 3: Quilt Size + Cell Size ─── */}
+          {step === 3 && (
             <div className="space-y-6 flex-1 flex flex-col">
               <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
                 Quilt Size
@@ -540,38 +395,34 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                 </div>
               )}
 
-              {/* Grid Cell Size — only shown for create-layout */}
-              {startingPoint === 'create-layout' && (
-                <div>
-                  <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
-                    Grid Cell Size
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {CELL_SIZE_OPTIONS.map((size) => (
-                      <button
-                        key={size}
-                        type="button"
-                        onClick={() => setCellSize(size)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                          Math.abs(cellSize - size) < 0.001
-                            ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
-                            : 'bg-surface-container text-secondary hover:bg-surface-container-high'
+              <div>
+                <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
+                  Grid Cell Size
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {CELL_SIZE_OPTIONS.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setCellSize(size)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${Math.abs(cellSize - size) < 0.001
+                          ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+                          : 'bg-surface-container text-secondary hover:bg-surface-container-high'
                         }`}
-                      >
-                        {fmtCellSize(size)}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-secondary mt-2">
-                    The reference grid spacing for your layout. Each cell = {fmtCellSize(cellSize)}.
-                  </p>
+                    >
+                      {fmtCellSize(size)}
+                    </button>
+                  ))}
                 </div>
-              )}
+                <p className="text-xs text-secondary mt-2">
+                  The reference grid spacing for your layout. Each cell = {fmtCellSize(cellSize)}.
+                </p>
+              </div>
 
               <div className="flex justify-between items-end flex-1 pt-6">
                 <button
                   type="button"
-                  onClick={() => setStep(startingPoint === 'use-layout' ? 3 : 2)}
+                  onClick={() => setStep(2)}
                   className="rounded-full px-5 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container transition-colors"
                 >
                   Back

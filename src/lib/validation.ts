@@ -111,32 +111,6 @@ export const updateProjectSchema = z.object({
   version: z.number().int().min(1).optional(),
 });
 
-// --- Published Template Schemas ---
-
-const MAX_SNAPSHOT_SIZE = 5 * 1024 * 1024; // 5 MB JSON limit
-
-export const publishTemplateSchema = z.object({
-  projectId: z.string().uuid().optional(),
-  title: z.string().min(1).max(255),
-  description: z.string().max(2000).optional(),
-  thumbnailUrl: assetUrlSchema.optional(),
-  snapshotData: z
-    .record(z.string(), z.unknown())
-    .refine((data) => JSON.stringify(data).length <= MAX_SNAPSHOT_SIZE, {
-      message: 'Snapshot data exceeds 5 MB limit',
-    }),
-  isPublic: z.boolean().default(true),
-});
-
-export const templateIdSchema = z.object({
-  templateId: z.string().uuid(),
-});
-
-export const shareToThreadsSchema = z.object({
-  templateId: z.string().uuid(),
-  comment: z.string().max(2000).optional(),
-});
-
 export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(PAGINATION_MAX_LIMIT).default(PAGINATION_DEFAULT_LIMIT),
@@ -378,21 +352,6 @@ export const adminCreateFabricSchema = z.object({
   scaleY: z.number().min(0.1).max(10).default(1.0),
   rotation: z.number().min(-360).max(360).default(0.0),
   isDefault: z.boolean().default(false),
-});
-
-export const adminCreateLayoutTemplateSchema = z.object({
-  slug: z.string().min(1).max(255),
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  skillLevel: z.string().min(1).max(50),
-  finishedWidth: z.number().positive(),
-  finishedHeight: z.number().positive(),
-  blockCount: z.number().int().nonnegative().optional(),
-  fabricCount: z.number().int().nonnegative().optional(),
-  thumbnailUrl: z.string().url().optional(),
-  layoutData: z.record(z.string(), z.unknown()),
-  tags: z.array(z.string()).default([]),
-  isPublished: z.boolean().default(true),
 });
 
 export const adminUpdateSettingSchema = z.object({

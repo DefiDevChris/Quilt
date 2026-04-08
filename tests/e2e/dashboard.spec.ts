@@ -76,29 +76,6 @@ test.describe('Projects Page', () => {
   });
 });
 
-test.describe('Templates Page', () => {
-  test('templates page redirects unauthenticated users', async ({ page }) => {
-    await page.goto('/templates');
-    await page.waitForURL(/signin/);
-    expect(page.url()).toContain('signin');
-  });
-
-  test.skip('templates page loads', async ({ page }) => {
-    // Requires auth setup
-    await page.goto('/templates');
-    await expect(page.getByText(/template/i)).toBeVisible();
-  });
-
-  test.skip('templates can be created', async ({ page }) => {
-    // Requires auth setup
-    await page.goto('/templates');
-    const createButton = page.getByRole('button', { name: /create/i });
-    if (await createButton.isVisible()) {
-      await expect(createButton).toBeVisible();
-    }
-  });
-});
-
 test.describe('Settings Page', () => {
   test('settings page redirects unauthenticated users', async ({ page }) => {
     await page.goto('/settings');

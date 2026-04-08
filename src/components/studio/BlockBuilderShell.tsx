@@ -5,10 +5,8 @@ import type { Project } from '@/types/project';
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { STANDARD_BLOCK_SIZES } from '@/lib/quilt-sizing';
-import { LayoutBuilderToolbar } from '@/components/studio/layout-builder/LayoutBuilderToolbar';
 import { BlockBuilderRightPanel } from '@/components/studio/block-builder/BlockBuilderRightPanel';
 
-import { BottomBar } from '@/components/studio/BottomBar';
 import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
 
@@ -17,20 +15,16 @@ interface BlockBuilderShellProps {
   readonly onDone: () => void;
 }
 
-type BuilderTool = 'select' | 'draw' | 'rectangle' | 'triangle' | 'pan';
+type BuilderTool = 'select' | 'pan' | 'draw-rect' | 'triangle';
 
 /**
- * Block Builder — a canvas where users draw/design individual quilt block
- * pieces.  All shapes placed on the canvas become part of a single block
- * group.  When saved, the group is stored as a user block and becomes
- * available in the block library for dragging into block cells.
+ * Block Builder — full worktable-style layout for designing custom quilt blocks.
  *
- * Left toolbar (88px): Select, Pan, Draw, Rectangle, Triangle
- * Center: canvas with reference grid
- * Right panel (320px): TOP = Block Library (system blocks for reference),
- *   BOTTOM = Block Info (name, save button)
+ * Left toolbar (single column, ~72px): Select, Pan, Draw Rectangle, Triangle
+ * Center: Canvas with floating action bar (Back, Delete, Clear All)
+ * Right panel (320px): Block Info / Block Library tabs
  *
- * No role assignments — every shape is just a block piece.
+ * No bottom bar, no bottom status bar — clean canvas-focused layout.
  */
 export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
@@ -43,13 +37,12 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
   const drawStartPointRef = useRef<{ x: number; y: number } | null>(null);
   const tempShapeRef = useRef<unknown | null>(null);
 
-  // Grid cell size from project settings, or default
-  const gridCellSize = project.gridSettings?.size ?? 1;
-
-  // Canvas size in pixels — derived from block size so the grid
-  // accurately represents the finished block dimensions.
+  // Canvas size in pixels — derived from block size
   const PIXELS_PER_INCH = 32;
   const canvasPx = blockSize * PIXELS_PER_INCH;
+
+  // Grid cell size from project settings
+  const gridCellSize = project.gridSettings?.size ?? 1;
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -64,12 +57,11 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       if (!canvasEl) return;
 
       const { width: elW, height: elH } = canvasEl.getBoundingClientRect();
-      // Use the smaller of the container size or the computed block canvas size
       const size = Math.min(elW, elH, canvasPx);
       const fabricCanvas = new fabric.Canvas(canvasEl, {
         width: size,
         height: size,
-        backgroundColor: '#F8F7F5',
+        backgroundColor: '#F0EDE8',
         selection: true,
         preserveObjectStacking: true,
       });
@@ -105,7 +97,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       }
       gridLines.forEach((l) => fabricCanvas.add(l as Parameters<typeof fabricCanvas.add>[0]));
 
-      // Events
+      // Selection events
       fabricCanvas.on('selection:created', (e) => {
         const obj = e.selected?.[0] ?? null;
         if (obj && !(obj as unknown as Record<string, unknown>)['_blockBuilderGridElement']) {
@@ -120,6 +112,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
       });
       fabricCanvas.on('selection:cleared', () => setSelectedObject(null));
 
+      // Mouse events for drawing
       fabricCanvas.on('mouse:down', (opt) => {
         if (activeTool === 'select' || activeTool === 'pan') return;
         const fc = fabricCanvas as unknown as { getPointer: (e: import('fabric').TPointerEvent) => { x: number; y: number } };
@@ -138,7 +131,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
           fabricCanvas.remove(tempShapeRef.current as Parameters<typeof fabricCanvas.remove>[0]);
         }
 
-        if (activeTool === 'rectangle') {
+        if (activeTool === 'draw-rect') {
           const w = pointer.x - start.x;
           const h = pointer.y - start.y;
           const rect = new fabric.Rect({
@@ -146,10 +139,9 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
             top: h > 0 ? start.y : pointer.y,
             width: Math.abs(w),
             height: Math.abs(h),
-            fill: 'rgba(255, 165, 0, 0.15)',
-            stroke: '#FF9800',
-            strokeWidth: 2,
-            strokeDashArray: [5, 3],
+            fill: 'rgba(100, 100, 100, 0.12)',
+            stroke: '#333',
+            strokeWidth: 1.5,
             selectable: false,
             evented: false,
           });
@@ -162,10 +154,9 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
             top: start.y,
             width: Math.abs(pointer.x - start.x),
             height: Math.abs(pointer.y - start.y),
-            fill: 'rgba(255, 165, 0, 0.15)',
-            stroke: '#FF9800',
-            strokeWidth: 2,
-            strokeDashArray: [5, 3],
+            fill: 'rgba(100, 100, 100, 0.12)',
+            stroke: '#333',
+            strokeWidth: 1.5,
             selectable: false,
             evented: false,
           });
@@ -188,7 +179,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
           tempShapeRef.current = null;
         }
 
-        if (activeTool === 'rectangle') {
+        if (activeTool === 'draw-rect') {
           const w = pointer.x - start.x;
           const h = pointer.y - start.y;
           if (Math.abs(w) > 3 && Math.abs(h) > 3) {
@@ -197,7 +188,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
               top: h > 0 ? start.y : pointer.y,
               width: Math.abs(w),
               height: Math.abs(h),
-              fill: 'rgba(100, 100, 100, 0.15)',
+              fill: 'rgba(100, 100, 100, 0.12)',
               stroke: '#333',
               strokeWidth: 1.5,
               selectable: true,
@@ -215,7 +206,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
               top: Math.min(start.y, pointer.y),
               width: Math.abs(pointer.x - start.x),
               height: Math.abs(pointer.y - start.y),
-              fill: 'rgba(100, 100, 100, 0.15)',
+              fill: 'rgba(100, 100, 100, 0.12)',
               stroke: '#333',
               strokeWidth: 1.5,
               selectable: true,
@@ -226,27 +217,15 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
             fabricCanvas.setActiveObject(triangle as Parameters<typeof fabricCanvas.setActiveObject>[0]);
             fabricCanvas.renderAll();
           }
-        } else if (activeTool === 'draw') {
-          const pathData = `M ${start.x} ${start.y} L ${pointer.x} ${pointer.y}`;
-          const path = new fabric.Path(pathData, {
-            fill: '',
-            stroke: '#333',
-            strokeWidth: 2,
-            selectable: true,
-            evented: true,
-          });
-          (path as unknown as Record<string, unknown>)['_blockBuilderShape'] = true;
-          fabricCanvas.add(path as Parameters<typeof fabricCanvas.add>[0]);
-          fabricCanvas.renderAll();
         }
 
-        // Switch back to select after drawing
         setActiveTool('select');
       });
 
       const ro = new ResizeObserver(() => {
         const { width: w, height: h } = canvasEl.getBoundingClientRect();
-        fabricCanvas.setDimensions({ width: w, height: h });
+        const size = Math.min(w, h, canvasPx);
+        fabricCanvas.setDimensions({ width: size, height: size });
         fabricCanvas.renderAll();
       });
       ro.observe(canvasEl);
@@ -259,11 +238,7 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
 
     void init();
     return () => { cancelled = true; };
-  }, [gridCellSize, blockSize, canvasPx]);
-
-  // Sync activeTool state to mouse event handlers via ref
-  const activeToolRef = useRef(activeTool);
-  useEffect(() => { activeToolRef.current = activeTool; }, [activeTool]);
+  }, [blockSize, canvasPx, gridCellSize]);
 
   // Delete selected shape
   const handleDeleteShape = useCallback(() => {
@@ -286,17 +261,13 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
     setSelectedObject(null);
   }, []);
 
-  // Save block — group all shapes and store as a user block
+  // Save block
   const handleSaveBlock = useCallback(async () => {
-    const fc = fabricCanvasRef.current as {
-      getObjects: () => unknown[];
-    } | null;
+    const fc = fabricCanvasRef.current as { getObjects: () => unknown[] } | null;
     if (!fc) return;
-
     const shapes = fc.getObjects().filter((o) =>
       (o as unknown as Record<string, unknown>)['_blockBuilderShape']
     );
-
     if (shapes.length === 0) return;
 
     try {
@@ -309,7 +280,6 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
           tags: [],
           blockWidthIn: blockSize,
           blockHeightIn: blockSize,
-          // Serialize the shapes as JSON for storage
           fabricJsData: {
             type: 'custom-block',
             shapes: shapes.map((s) => {
@@ -320,65 +290,113 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
                 top: rec['top'] ?? 0,
                 width: rec['width'] ?? 100,
                 height: rec['height'] ?? 100,
-                fill: rec['fill'] ?? 'rgba(100,100,100,0.15)',
+                fill: rec['fill'] ?? 'rgba(100,100,100,0.12)',
                 stroke: rec['stroke'] ?? '#333',
               };
             }),
           },
         }),
       });
-
-      if (!res.ok) {
-        console.error('Failed to save block');
-        return;
-      }
-
+      if (!res.ok) { console.error('Failed to save block'); return; }
       onDone();
     } catch {
       console.error('Failed to save block');
     }
   }, [blockName, blockSize, onDone]);
 
-  return (
-    <div className="flex-1 flex overflow-hidden">
-      {/* Left toolbar */}
-      <LayoutBuilderToolbar activeTool={activeTool} onToolChange={setActiveTool} />
+  const activeToolRef = useRef(activeTool);
+  useEffect(() => { activeToolRef.current = activeTool; }, [activeTool]);
 
-      {/* Canvas */}
+  return (
+    <div className="flex-1 flex overflow-hidden bg-surface">
+      {/* ── Left Toolbar (single column) ──────────────────────────── */}
+      <div className="w-[72px] h-full flex-shrink-0 bg-white/60 backdrop-blur-xl border-r border-white/40 flex flex-col items-center py-3 gap-1 overflow-y-auto">
+        <ToolButton
+          active={activeTool === 'select'}
+          onClick={() => setActiveTool('select')}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 3L4 15L8 11L12 17L14 15.5L10 10L15 10L4 3Z" fill="currentColor" />
+            </svg>
+          }
+          label="Select"
+        />
+        <ToolButton
+          active={activeTool === 'pan'}
+          onClick={() => setActiveTool('pan')}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M8 12V4C8 3.4 8.4 3 9 3C9.6 3 10 3.4 10 4V8H12V5C12 4.4 12.4 4 13 4C13.6 4 14 4.4 14 5V10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M14 10V6C14 5.4 14.4 5 15 5C15.6 5 16 5.4 16 6V12C16 14.2 14.2 16 12 16H8C4.7 16 2 13.3 2 10V8C2 7.4 2.4 7 3 7C3.6 7 4 7.4 4 8V10" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+            </svg>
+          }
+          label="Pan"
+        />
+        <ToolButton
+          active={activeTool === 'draw-rect'}
+          onClick={() => setActiveTool('draw-rect')}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
+          }
+          label="Rectangle"
+        />
+        <ToolButton
+          active={activeTool === 'triangle'}
+          onClick={() => setActiveTool('triangle')}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 3L17 16H3L10 3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+            </svg>
+          }
+          label="Triangle"
+        />
+      </div>
+
+      {/* ── Canvas Area ───────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
-        <div className="flex-1 relative">
-          {/* "Done" button overlay */}
-          <div className="absolute top-3 left-3 z-10 flex gap-2">
-            <button
-              type="button"
-              onClick={onDone}
-              className="rounded-full bg-surface-container px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors"
-            >
-              ← Back to Worktable
-            </button>
-            <button
-              type="button"
-              onClick={handleDeleteShape}
-              disabled={!selectedObject}
-              className="rounded-full bg-surface-container px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Delete
-            </button>
-            <button
-              type="button"
-              onClick={handleClearAll}
-              className="rounded-full bg-surface-container px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 transition-colors"
-            >
-              Clear All
-            </button>
-          </div>
-          <canvas ref={canvasElRef} className="w-full h-full block" />
+        {/* Floating action bar */}
+        <div className="absolute top-3 left-3 z-10 flex gap-2">
+          <button
+            type="button"
+            onClick={onDone}
+            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30"
+          >
+            ← Back to Worktable
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteShape}
+            disabled={!selectedObject}
+            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-outline-variant/30"
+          >
+            Delete
+          </button>
+          <button
+            type="button"
+            onClick={handleClearAll}
+            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 transition-colors border border-outline-variant/30"
+          >
+            Clear All
+          </button>
         </div>
+
+        {/* Canvas centered */}
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div
+            className="relative rounded-lg overflow-hidden shadow-elevation-2 border border-outline-variant/30"
+            style={{ width: canvasPx, height: canvasPx }}
+          >
+            <canvas ref={canvasElRef} className="block" />
+          </div>
+        </div>
+
         <ContextMenu />
         <QuickInfo />
       </div>
 
-      {/* Right panel */}
+      {/* ── Right Panel ───────────────────────────────────────────── */}
       <BlockBuilderRightPanel
         blockName={blockName}
         onBlockNameChange={setBlockName}
@@ -388,8 +406,33 @@ export function BlockBuilderShell({ project, onDone }: BlockBuilderShellProps) {
         selectedObject={selectedObject}
         fabricCanvasRef={fabricCanvasRef}
       />
-
-      <BottomBar />
     </div>
+  );
+}
+
+function ToolButton({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  readonly active: boolean;
+  readonly onClick: () => void;
+  readonly icon: React.ReactNode;
+  readonly label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl text-[10px] leading-tight transition-all ${active
+          ? 'bg-primary text-white shadow-elevation-1'
+          : 'text-secondary hover:bg-surface-container hover:text-on-surface'
+        }`}
+      title={label}
+    >
+      <span className="mb-0.5">{icon}</span>
+      <span>{label}</span>
+    </button>
   );
 }

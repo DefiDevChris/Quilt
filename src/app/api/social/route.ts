@@ -118,7 +118,6 @@ export async function GET(request: NextRequest) {
           projectId: socialPosts.projectId,
           projectName: projects.name,
           projectThumbnailUrl: projects.thumbnailUrl,
-          templateId: socialPosts.templateId,
         })
         .from(socialPosts)
         .leftJoin(users, eq(socialPosts.userId, users.id))
@@ -171,7 +170,6 @@ export async function GET(request: NextRequest) {
       projectId: post.projectId,
       projectName: post.projectName ?? null,
       projectThumbnailUrl: post.projectThumbnailUrl ?? null,
-      templateId: post.templateId ?? null,
       createdAt: post.createdAt,
       isLikedByUser: likedPostIds.has(post.id),
       isBookmarkedByUser: bookmarkedPostIds.has(post.id),

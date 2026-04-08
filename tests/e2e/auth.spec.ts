@@ -212,11 +212,6 @@ test.describe('Authentication Flow', () => {
       await page.goto('/settings');
       await page.waitForURL(/auth\/signin|signin/);
     });
-
-    test('templates page redirects unauthenticated users', async ({ page }) => {
-      await page.goto('/templates');
-      await page.waitForURL(/auth\/signin|signin/);
-    });
   });
 });
 

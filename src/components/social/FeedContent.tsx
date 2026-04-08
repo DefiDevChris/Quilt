@@ -8,7 +8,6 @@ import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
 import { CreatePostComposer } from './CreatePostComposer';
-import { TemplateDetailModal } from '@/components/templates/TemplateDetailModal';
 
 interface SocialPost {
   id: string;
@@ -24,7 +23,6 @@ interface SocialPost {
   creatorAvatarUrl: string | null;
   isLikedByUser: boolean;
   isBookmarkedByUser: boolean;
-  templateId: string | null;
 }
 
 interface PaginationInfo {
@@ -204,7 +202,6 @@ function PostCard({ post }: { post: SocialPost }) {
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [bookmarked, setBookmarked] = useState(post.isBookmarkedByUser);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -237,11 +234,6 @@ function PostCard({ post }: { post: SocialPost }) {
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (post.templateId) {
-      setShowTemplateModal(true);
-      return;
-    }
 
     open({
       type: 'post',
@@ -317,9 +309,8 @@ function PostCard({ post }: { post: SocialPost }) {
       <div className="px-4 py-3 flex items-center border-t border-white/40">
         <button
           onClick={handleLike}
-          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${
-            liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
-          }`}
+          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
+            }`}
         >
           <Heart size={18} fill={liked ? 'currentColor' : 'none'} strokeWidth={1.5} />
           {likeCount > 0 && <span className="text-sm font-medium">{likeCount}</span>}
@@ -337,9 +328,8 @@ function PostCard({ post }: { post: SocialPost }) {
 
         <button
           onClick={handleBookmark}
-          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${
-            bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
-          }`}
+          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
+            }`}
         >
           <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={1.5} />
         </button>
@@ -351,13 +341,6 @@ function PostCard({ post }: { post: SocialPost }) {
           <Share2 size={18} strokeWidth={1.5} />
         </Link>
       </div>
-
-      {showTemplateModal && post.templateId && (
-        <TemplateDetailModal
-          templateId={post.templateId}
-          onClose={() => setShowTemplateModal(false)}
-        />
-      )}
     </article>
   );
 }
