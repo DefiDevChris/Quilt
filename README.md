@@ -19,9 +19,9 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand (18 stores)                                  |
+| State     | Zustand (19 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (20 schema files)      |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (23 schema files)      |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF       | pdf-lib (client-side 1:1 scale)                      |
@@ -52,7 +52,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 ## Roles
 
-`free | pro | admin` — defined in `src/lib/trust-engine.ts`
+`free | pro | admin` — defined in `src/lib/role-utils.ts`
 
 - Free: like, save, comment — cannot post
 - Pro: like, save, comment, post
@@ -113,11 +113,11 @@ src/
     blocks/               # BlockDraftingShell, BlockBuilderTab, BlockLibrary, SimplePhotoBlockUpload
     export/               # PdfExportDialog, PrintlistPanel
   hooks/                  # Custom React hooks (canvas, drawing, auth)
-  stores/                 # Zustand stores (18 total)
+  stores/                 # Zustand stores (19 total)
   lib/                    # Pure utility modules and engines
     *-engine.ts           # Pure computation — zero DOM deps, fully testable
     *-utils.ts            # Domain-specific utilities
-  db/schema/              # Drizzle table definitions (20 files)
+  db/schema/              # Drizzle table definitions (23 files)
   types/                  # Shared TypeScript type definitions
 ```
 

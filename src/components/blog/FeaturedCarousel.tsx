@@ -164,10 +164,7 @@ function Slide({
         </div>
 
         <Link href={`/blog/${post.slug}`} className="group block">
-          <h2
-            className="text-5xl md:text-6xl lg:text-7xl text-on-surface leading-[1.05] tracking-[-0.02em] mb-6 transition-opacity group-hover:opacity-70"
-            style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
-          >
+          <h2 className="text-5xl md:text-6xl lg:text-7xl text-on-surface leading-[1.05] tracking-tight mb-6 transition-opacity group-hover:opacity-70 font-bold">
             {post.title}
           </h2>
         </Link>

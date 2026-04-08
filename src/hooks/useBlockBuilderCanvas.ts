@@ -54,23 +54,29 @@ export function useBlockBuilderCanvas() {
       let isDrawing = false;
       let rawPoints: { x: number; y: number }[] = [];
       let previewPath: InstanceType<typeof fabric.Path> | null = null;
-      let previewDot: InstanceType<typeof fabric.Circle> | null = null;
 
-      function snapToGrid(points: { x: number; y: number }[]): { x: number; y: number }[] {
+      function snapToGrid(point: { x: number; y: number }): { x: number; y: number } {
         const s = stateRef.current;
-        if (!s.gridSettings.snapToGrid) return points;
+        if (!s.gridSettings.snapToGrid) return point;
 
-        return points.map((p) => ({
-          x: maybeSnap(p.x, s.gridSettings, s.unitSystem),
-          y: maybeSnap(p.y, s.gridSettings, s.unitSystem),
-        }));
+        return {
+          x: maybeSnap(point.x, s.gridSettings, s.unitSystem),
+          y: maybeSnap(point.y, s.gridSettings, s.unitSystem),
+        };
       }
 
+      function distance(p1: { x: number; y: number }, p2: { x: number; y: number }): number {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      // Simplify path using Douglas-Peucker algorithm
       function simplifyPath(
         points: { x: number; y: number }[],
-        tolerance = 4
+        tolerance: number
       ): { x: number; y: number }[] {
-        if (points.length < 3) return points;
+        if (points.length <= 2) return points;
 
         const sqTolerance = tolerance * tolerance;
 
@@ -78,7 +84,7 @@ export function useBlockBuilderCanvas() {
           p: { x: number; y: number },
           p1: { x: number; y: number },
           p2: { x: number; y: number }
-        ) {
+        ): number {
           let x = p1.x;
           let y = p1.y;
           let dx = p2.x - x;
@@ -133,31 +139,13 @@ export function useBlockBuilderCanvas() {
         return douglasPeucker(points, sqTolerance);
       }
 
-      function pointsToClosedPathData(points: { x: number; y: number }[], smooth: boolean): string {
-        if (points.length < 2) return '';
-        if (points.length === 2) {
-          return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y} Z`;
-        }
-
-        if (!smooth) {
-          let path = `M ${points[0].x} ${points[0].y}`;
-          for (let i = 1; i < points.length; i++) {
-            path += ` L ${points[i].x} ${points[i].y}`;
-          }
-          path += ' Z';
-          return path;
-        }
-
-        // Smooth curves using quadratic bezier with closure
+      function buildPathData(points: { x: number; y: number }[]): string {
+        if (points.length === 0) return '';
+        if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
         let path = `M ${points[0].x} ${points[0].y}`;
         for (let i = 1; i < points.length; i++) {
-          const curr = points[i];
-          const next = points[(i + 1) % points.length];
-          const xc = (curr.x + next.x) / 2;
-          const yc = (curr.y + next.y) / 2;
-          path += ` Q ${curr.x} ${curr.y} ${xc} ${yc}`;
+          path += ` L ${points[i].x} ${points[i].y}`;
         }
-        path += ' Z';
         return path;
       }
 
@@ -169,24 +157,11 @@ export function useBlockBuilderCanvas() {
         isDrawing = true;
         rawPoints = [{ x: pointer.x, y: pointer.y }];
 
-        // Show start dot
-        const snapped = snapToGrid([{ x: pointer.x, y: pointer.y }])[0];
-        previewDot = new fabric.Circle({
-          left: snapped.x - 4,
-          top: snapped.y - 4,
-          radius: 4,
-          fill: '#8d4f00',
-          selectable: false,
-          evented: false,
-        });
-        canvas.add(previewDot);
-
-        const pathData = `M ${pointer.x} ${pointer.y}`;
-        previewPath = new fabric.Path(pathData, {
-          stroke: '#00FF00',
+        // Create initial preview path (pencil stroke)
+        previewPath = new fabric.Path(`M ${pointer.x} ${pointer.y}`, {
+          stroke: '#383831',
           strokeWidth: 2,
-          fill: undefined,
-          strokeDashArray: [4, 4],
+          fill: '',
           selectable: false,
           evented: false,
         });
@@ -200,34 +175,8 @@ export function useBlockBuilderCanvas() {
         const pointer = canvas.getScenePoint(e.e);
         rawPoints.push({ x: pointer.x, y: pointer.y });
 
-        const simplified = simplifyPath(rawPoints, 6);
-        const snapped = snapToGrid(simplified);
-        const smooth = stateRef.current.blockBuilderMode === 'smooth';
-
-        // Build open path for preview (not closed yet)
-        let pathData = '';
-        if (snapped.length > 0) {
-          if (snapped.length === 1) {
-            pathData = `M ${snapped[0].x} ${snapped[0].y}`;
-          } else if (!smooth) {
-            pathData = `M ${snapped[0].x} ${snapped[0].y}`;
-            for (let i = 1; i < snapped.length; i++) {
-              pathData += ` L ${snapped[i].x} ${snapped[i].y}`;
-            }
-          } else {
-            pathData = `M ${snapped[0].x} ${snapped[0].y}`;
-            for (let i = 1; i < snapped.length; i++) {
-              if (i < snapped.length - 1) {
-                const xc = (snapped[i].x + snapped[i + 1].x) / 2;
-                const yc = (snapped[i].y + snapped[i + 1].y) / 2;
-                pathData += ` Q ${snapped[i].x} ${snapped[i].y} ${xc} ${yc}`;
-              } else {
-                pathData += ` L ${snapped[i].x} ${snapped[i].y}`;
-              }
-            }
-          }
-        }
-
+        // Draw continuous path following cursor (like MS Paint pencil)
+        const pathData = buildPathData(rawPoints);
         previewPath.set({ path: pathData });
         canvas.renderAll();
       }
@@ -236,29 +185,29 @@ export function useBlockBuilderCanvas() {
         if (!fabric || !canvas || !isDrawing) return;
         isDrawing = false;
 
-        // Remove preview elements
-        if (previewPath) {
-          canvas.remove(previewPath);
-          previewPath = null;
-        }
-        if (previewDot) {
-          canvas.remove(previewDot);
-          previewDot = null;
-        }
-
         if (rawPoints.length < 2) {
+          if (previewPath) {
+            canvas.remove(previewPath);
+            previewPath = null;
+          }
           rawPoints = [];
           canvas.renderAll();
           return;
         }
 
-        // Simplify, snap, and close the path
-        const simplified = simplifyPath(rawPoints, 4);
-        const snapped = snapToGrid(simplified);
-        const smooth = stateRef.current.blockBuilderMode === 'smooth';
-        const { strokeColor, strokeWidth, fillColor } = stateRef.current;
+        // Remove the raw preview path
+        if (previewPath) {
+          canvas.remove(previewPath);
+          previewPath = null;
+        }
 
-        const pathData = pointsToClosedPathData(snapped, smooth);
+        // Simplify and snap to grid for clean straight lines
+        const simplified = simplifyPath(rawPoints, 4);
+        const snapped = simplified.map((p) => snapToGrid(p));
+
+        // Build final path data
+        const pathData = buildPathData(snapped);
+        const { strokeColor, strokeWidth, fillColor } = stateRef.current;
 
         const finalPath = new fabric.Path(pathData, {
           stroke: strokeColor,
@@ -287,7 +236,6 @@ export function useBlockBuilderCanvas() {
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);
         if (previewPath) canvas.remove(previewPath);
-        if (previewDot) canvas.remove(previewDot);
       };
     })();
 

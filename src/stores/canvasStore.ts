@@ -41,7 +41,7 @@ export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
 export type ColorThemeTool = 'spraycan' | 'swap' | 'randomize';
 
-export type WorktableType = 'quilt' | 'layout' | 'block' | 'image' | 'print';
+export type WorktableType = 'quilt' | 'layout-builder' | 'block' | 'image' | 'print';
 
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
@@ -195,8 +195,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
       console.warn(
         `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
-          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
-          'Undo disabled for this action. Consider reducing canvas complexity.'
+        `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+        'Undo disabled for this action. Consider reducing canvas complexity.'
       );
       return false;
     }

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, desc, asc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { projects, layoutTemplates } from '@/db/schema';
+import { projects } from '@/db/schema';
 import { createProjectSchema, paginationSchema } from '@/lib/validation';
 import {
   getRequiredSession,
@@ -13,8 +13,6 @@ import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-l
 import { z } from 'zod';
 import { isPro } from '@/lib/role-utils';
 import type { UserRole } from '@/lib/role-utils';
-import { LAYOUT_PRESETS } from '@/lib/layout-library';
-import { computeLayoutSize, computeTemplateSize } from '@/lib/quilt-sizing';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -160,68 +158,17 @@ export async function POST(request: NextRequest) {
       canvasWidth: bodyWidth,
       canvasHeight: bodyHeight,
       gridSettings,
-      initialLayout,
-      initialTemplate,
+      layoutBuilder,
     } = parsed.data;
-
-    if (initialLayout && initialTemplate) {
-      return validationErrorResponse('Provide initialLayout OR initialTemplate, not both');
-    }
 
     let canvasWidth = bodyWidth;
     let canvasHeight = bodyHeight;
-    let canvasData: Record<string, unknown> = {};
 
-    // --- Wizard: layout path ---
-    if (initialLayout) {
-      const preset = LAYOUT_PRESETS.find((p) => p.id === initialLayout.presetId);
-      if (!preset) {
-        return validationErrorResponse(`Unknown layout preset: ${initialLayout.presetId}`);
-      }
-      const size = computeLayoutSize(preset, initialLayout.blockSize, initialLayout.rotated);
-      canvasWidth = size.width;
-      canvasHeight = size.height;
-      canvasData = {
-        initialSetup: {
-          kind: 'layout',
-          presetId: preset.id,
-          blockSize: initialLayout.blockSize,
-          rotated: initialLayout.rotated,
-        },
-      };
-    }
-
-    // --- Wizard: template path ---
-    if (initialTemplate) {
-      const [tpl] = await db
-        .select({
-          id: layoutTemplates.id,
-          name: layoutTemplates.name,
-          finishedWidth: layoutTemplates.finishedWidth,
-          finishedHeight: layoutTemplates.finishedHeight,
-          templateData: layoutTemplates.templateData,
-          isPublished: layoutTemplates.isPublished,
-        })
-        .from(layoutTemplates)
-        .where(eq(layoutTemplates.id, initialTemplate.templateId))
-        .limit(1);
-
-      if (!tpl || !tpl.isPublished) {
-        return errorResponse('Template not found', 'NOT_FOUND', 404);
-      }
-
-      const size = computeTemplateSize(tpl, initialTemplate.blockSize, initialTemplate.rotated);
-      canvasWidth = size.width;
-      canvasHeight = size.height;
-      canvasData = {
-        initialSetup: {
-          kind: 'template',
-          templateId: tpl.id,
-          templateData: tpl.templateData,
-          blockSize: initialTemplate.blockSize,
-          rotated: initialTemplate.rotated,
-        },
-      };
+    // --- Wizard: layout builder path ---
+    if (layoutBuilder) {
+      canvasWidth = layoutBuilder.width;
+      canvasHeight = layoutBuilder.height;
+      gridSettings.size = layoutBuilder.cellSize;
     }
 
     const [newProject] = await db
@@ -233,7 +180,6 @@ export async function POST(request: NextRequest) {
         canvasWidth,
         canvasHeight,
         gridSettings,
-        canvasData,
       })
       .returning();
 

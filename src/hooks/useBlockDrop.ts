@@ -25,10 +25,27 @@ export function useBlockDrop() {
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
     const target = e.currentTarget as HTMLElement;
-    target.style.cursor = 'copy';
-  }, []);
+    
+    // Check if we're over a valid drop target
+    if (fabricCanvas) {
+      const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
+      const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
+      
+      if (foundTarget) {
+        const areaObj = foundTarget as Record<string, unknown>;
+        if (areaObj['_layoutRendererElement'] && areaObj['_layoutAreaRole'] === 'block-cell') {
+          e.dataTransfer.dropEffect = 'copy';
+          target.style.cursor = 'copy';
+          return;
+        }
+      }
+    }
+    
+    // Invalid drop target
+    e.dataTransfer.dropEffect = 'none';
+    target.style.cursor = 'not-allowed';
+  }, [fabricCanvas]);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     const target = e.currentTarget as HTMLElement;
@@ -66,25 +83,7 @@ export function useBlockDrop() {
 
         const fabric = await import('fabric');
 
-        // Get drop position relative to canvas
-        const canvasEl = canvas.getElement();
-        const rect = canvasEl.getBoundingClientRect();
-        const vpt = canvas.viewportTransform;
-        const zoom = canvas.getZoom();
-
-        let dropX = (e.clientX - rect.left - (vpt?.[4] ?? 0)) / zoom;
-        let dropY = (e.clientY - rect.top - (vpt?.[5] ?? 0)) / zoom;
-
-        let cellRotation = 0;
-        let targetScaleX = (blockSize * PIXELS_PER_INCH) / (groupData.width ?? 100);
-        let targetScaleY = (blockSize * PIXELS_PER_INCH) / (groupData.height ?? 100);
-        let targetCellId: string | null = null;
-        let previousOccupant: import('fabric').FabricObject | null = null;
-
-        // Hit-test the layout overlay UNDER any existing user blocks. We
-        // temporarily disable `evented` on user-block groups so findTarget
-        // returns the cell beneath them — this is what makes "drop a new
-        // block on a cell that already has one" work as overwrite.
+        // Disable non-layout objects temporarily so findTarget hits the cells
         const allObjects = canvas.getObjects();
         const userBlocksToRestore: Array<{
           obj: import('fabric').FabricObject;
@@ -98,62 +97,63 @@ export function useBlockDrop() {
           }
         }
 
-        const foundTarget = canvas.findTarget(
-          e.nativeEvent as unknown as import('fabric').TPointerEvent
-        );
+        // Use getScenePoint for accurate coordinate mapping on drop
+        const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
+        const foundTarget = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
 
-        // Restore evented state immediately
+        // Restore eventedness immediately after hit-test
         for (const { obj, prev } of userBlocksToRestore) {
           obj.evented = prev;
         }
 
-        if (foundTarget) {
-          const areaObj = foundTarget as Record<string, unknown>;
-          if (areaObj['_layoutRendererElement'] && areaObj['_layoutAreaRole'] === 'block-cell') {
-            const fabricObj = foundTarget as unknown as import('fabric').FabricObject;
-            dropX = fabricObj.left ?? dropX;
-            dropY = fabricObj.top ?? dropY;
-
-            const cellW =
-              (fabricObj.width ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleX ?? 1);
-            const cellH =
-              (fabricObj.height ?? blockSize * PIXELS_PER_INCH) * (fabricObj.scaleY ?? 1);
-
-            targetScaleX = cellW / (groupData.width ?? 100);
-            targetScaleY = cellH / (groupData.height ?? 100);
-            cellRotation = fabricObj.angle ?? 0;
-            targetCellId = (areaObj['_layoutAreaId'] as string | undefined) ?? null;
-
-            // Find existing block in this cell to remove on overwrite
-            if (targetCellId) {
-              for (const obj of allObjects) {
-                const r = obj as unknown as Record<string, unknown>;
-                if (r['_inLayoutCellId'] === targetCellId) {
-                  previousOccupant = obj as unknown as import('fabric').FabricObject;
-                  break;
-                }
-              }
-            }
-          } else {
-            // Only snap to grid if NOT dropping on a layout cell
-            if (gridSettings.snapToGrid && gridSettings.enabled) {
-              const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
-              dropX = Math.round(dropX / gridSizePx) * gridSizePx;
-              dropY = Math.round(dropY / gridSizePx) * gridSizePx;
-            }
+        // Only allow drops into block-cell areas
+        if (!foundTarget) {
+          console.warn('[useBlockDrop] findTarget failed - checking fallbackTarget');
+          // Fallback: search objects at the pointer coordinate if findTarget missed
+          const fallbackTarget = allObjects.find(o => {
+            const r = o as unknown as Record<string, unknown>;
+            return r['_layoutRendererElement'] && 
+                   r['_layoutAreaRole'] === 'block-cell' && 
+                   o.containsPoint(pointer);
+          });
+          
+          if (!fallbackTarget) {
+            console.warn('[useBlockDrop] No hit detected at pointer coords', pointer);
+            return;
           }
-        } else if (gridSettings.snapToGrid && gridSettings.enabled) {
-          const gridSizePx = gridSettings.size * PIXELS_PER_INCH;
-          dropX = Math.round(dropX / gridSizePx) * gridSizePx;
-          dropY = Math.round(dropY / gridSizePx) * gridSizePx;
+          (foundTarget as any) = fallbackTarget;
         }
 
-        // Save undo state before adding
+        const areaObj = foundTarget as Record<string, unknown>;
+        console.log('[useBlockDrop] Found target:', areaObj['_layoutAreaId'], areaObj['_layoutAreaRole']);
+        if (!areaObj['_layoutRendererElement'] || areaObj['_layoutAreaRole'] !== 'block-cell') {
+          return;
+        }
+
+        const fabricObj = foundTarget as unknown as import('fabric').FabricObject;
+        const cellX = fabricObj.left ?? 0;
+        const cellY = fabricObj.top ?? 0;
+        const cellW = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
+        const cellH = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
+        const cellRotation = fabricObj.angle ?? 0;
+        const targetCellId = (areaObj['_layoutAreaId'] as string | undefined) ?? null;
+
+        // Remove existing block in this cell
+        let previousOccupant: import('fabric').FabricObject | null = null;
+        if (targetCellId) {
+          for (const obj of allObjects) {
+            const r = obj as unknown as Record<string, unknown>;
+            if (r['_inLayoutCellId'] === targetCellId) {
+              previousOccupant = obj as unknown as import('fabric').FabricObject;
+              break;
+            }
+          }
+        }
+
         const currentJson = JSON.stringify(canvas.toJSON());
         pushUndoState(currentJson);
 
         const objects: import('fabric').FabricObject[] = [];
-
         if (groupData.objects && Array.isArray(groupData.objects)) {
           for (const obj of groupData.objects) {
             const fabricObj = await createFabricObject(fabric, obj);
@@ -163,22 +163,32 @@ export function useBlockDrop() {
 
         if (objects.length === 0) return;
 
-        // Overwrite: if a block already occupies this layout cell, remove it
         if (previousOccupant) {
           canvas.remove(previousOccupant);
         }
 
         const group = new fabric.Group(objects, {
-          left: dropX,
-          top: dropY,
-          scaleX: targetScaleX,
-          scaleY: targetScaleY,
-          angle: cellRotation,
+          originX: 'center',
+          originY: 'center',
           subTargetCheck: true,
+          lockMovementX: true,
+          lockMovementY: true,
+          lockRotation: true,
+          lockScalingX: true,
+          lockScalingY: true,
         });
 
-        // Tag the group with its layout-cell association so future drops on
-        // the same cell can find and replace it.
+        const tightW = group.width ?? 100;
+        const tightH = group.height ?? 100;
+
+        group.set({
+          left: cellX + cellW / 2,
+          top: cellY + cellH / 2,
+          scaleX: cellW / tightW,
+          scaleY: cellH / tightH,
+          angle: cellRotation,
+        });
+
         if (targetCellId) {
           (group as unknown as Record<string, unknown>)['_inLayoutCellId'] = targetCellId;
         }
@@ -188,7 +198,7 @@ export function useBlockDrop() {
         canvas.requestRenderAll();
         setActiveTool('select');
       } catch {
-        // Block drop failed silently — canvas state unchanged
+        // Block drop failed silently
       }
 
       dragBlockIdRef.current = null;

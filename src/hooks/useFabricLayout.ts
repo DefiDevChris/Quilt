@@ -157,24 +157,21 @@ export function useFabricDrop() {
       const fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
-      // Find the object under the drop point
       const foundTarget = canvas.findTarget(e.nativeEvent);
+      if (!foundTarget) return;
 
-      let applied = false;
-      if (foundTarget && 'targets' in foundTarget && Array.isArray(foundTarget.targets)) {
-        const target = foundTarget.targets[0] ?? foundTarget;
-        canvas.setActiveObject(target as InstanceType<typeof fabric.FabricObject>);
-        await applyFabricToObject(null, imageUrl);
-        applied = true;
-      } else if (foundTarget) {
-        canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
-        await applyFabricToObject(null, imageUrl);
-        applied = true;
+      const areaObj = foundTarget as Record<string, unknown>;
+      const role = areaObj['_layoutAreaRole'] as string | undefined;
+
+      // Only allow fabric drops on sashing, cornerstone, border, binding, or edging areas
+      const allowedRoles = ['sashing', 'cornerstone', 'border', 'binding', 'edging'];
+      if (!areaObj['_layoutRendererElement'] || !role || !allowedRoles.includes(role)) {
+        return;
       }
 
-      if (applied) {
-        saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
-      }
+      canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
+      await applyFabricToObject(null, imageUrl);
+      saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
     },
     [fabricCanvas, applyFabricToObject]
   );

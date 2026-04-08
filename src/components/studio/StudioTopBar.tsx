@@ -40,61 +40,6 @@ const WORKTABLE_TABS: { mode: WorktableType; label: string; icon: React.ReactNod
       </svg>
     ),
   },
-  {
-    mode: 'layout',
-    label: 'Layout',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-        <line
-          x1="2"
-          y1="6"
-          x2="18"
-          y2="6"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.5"
-        />
-        <line
-          x1="2"
-          y1="14"
-          x2="18"
-          y2="14"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.5"
-        />
-        <line
-          x1="6"
-          y1="2"
-          x2="6"
-          y2="18"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.5"
-        />
-        <line
-          x1="14"
-          y1="2"
-          x2="14"
-          y2="18"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.5"
-        />
-        <rect
-          x="7"
-          y="7"
-          width="6"
-          height="6"
-          rx="0.5"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeDasharray="2 1"
-        />
-      </svg>
-    ),
-  },
 ];
 
 const BLOCK_BUILDER_ICON = (
@@ -127,11 +72,10 @@ function ModeTabs({ onOpenBlockBuilder }: { readonly onOpenBlockBuilder?: () => 
             key={tab.mode}
             type="button"
             onClick={() => setActiveWorktable(tab.mode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all ${
-              isActive
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all ${isActive
                 ? 'bg-surface shadow-elevation-1 text-on-surface'
                 : 'text-on-surface/50 hover:text-on-surface/70 hover:bg-surface/50'
-            }`}
+              }`}
           >
             <span className={isActive ? 'text-primary' : 'text-on-surface/40'}>{tab.icon}</span>
             {tab.label}
@@ -171,11 +115,10 @@ function ReferenceImageToggle() {
       <button
         type="button"
         onClick={toggleReferencePanel}
-        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-          showReferencePanel
+        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${showReferencePanel
             ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
             : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
-        }`}
+          }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
         aria-pressed={showReferencePanel}
       >
@@ -592,11 +535,10 @@ export function StudioTopBar({
               <button
                 type="button"
                 onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                  isViewportLocked
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${isViewportLocked
                     ? 'hover:bg-surface-container'
                     : 'bg-primary/10 hover:bg-primary/20'
-                }`}
+                  }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
                 {isViewportLocked ? (

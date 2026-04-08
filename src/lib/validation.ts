@@ -61,24 +61,10 @@ const gridSettingsSchema = z.object({
 // validation layer doesn't pull in studio code.
 const STANDARD_BLOCK_SIZE_VALUES = [6, 8, 10, 12, 14, 16] as const;
 
-export const initialLayoutSchema = z.object({
-  presetId: z.string().min(1),
-  blockSize: z
-    .number()
-    .refine((n) => (STANDARD_BLOCK_SIZE_VALUES as readonly number[]).includes(n), {
-      message: 'blockSize must be one of 6, 8, 10, 12, 14, 16',
-    }),
-  rotated: z.boolean().optional().default(false),
-});
-
-export const initialTemplateSchema = z.object({
-  templateId: z.string().uuid(),
-  blockSize: z
-    .number()
-    .refine((n) => (STANDARD_BLOCK_SIZE_VALUES as readonly number[]).includes(n), {
-      message: 'blockSize must be one of 6, 8, 10, 12, 14, 16',
-    }),
-  rotated: z.boolean().optional().default(false),
+export const layoutBuilderSchema = z.object({
+  width: z.number().min(1).max(200),
+  height: z.number().min(1).max(200),
+  cellSize: z.number().min(0.25).max(6),
 });
 
 export const createProjectSchema = z.object({
@@ -87,9 +73,8 @@ export const createProjectSchema = z.object({
   canvasWidth: z.number().min(1).max(200).default(48),
   canvasHeight: z.number().min(1).max(200).default(48),
   gridSettings: gridSettingsSchema.default({ enabled: true, size: 1, snapToGrid: true }),
-  // Wizard extensions — exactly one (or neither) may be present.
-  initialLayout: initialLayoutSchema.optional(),
-  initialTemplate: initialTemplateSchema.optional(),
+  // Layout Builder: opens the studio in layout-builder mode
+  layoutBuilder: layoutBuilderSchema.optional(),
 });
 
 export const updateProjectSchema = z.object({

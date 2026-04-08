@@ -104,10 +104,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </time>
           </div>
 
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl text-on-surface leading-[1.08] tracking-[-0.02em] mb-10"
-            style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
-          >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl text-on-surface leading-[1.08] tracking-tight mb-10 font-bold">
             {post.title}
           </h1>
 

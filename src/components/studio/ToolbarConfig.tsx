@@ -565,7 +565,7 @@ export function useBlockTools(
       id: 'blockbuilder',
       label: 'Easy Draw',
       shortcut: 'E',
-      description: 'Draw freehand paths that snap to grid — auto-close into shapes',
+      description: 'Draw freehand — lines snap to grid when you release',
       toolType: 'blockbuilder',
       group: 'tools',
       icon: (
