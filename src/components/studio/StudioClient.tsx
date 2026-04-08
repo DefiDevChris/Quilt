@@ -113,7 +113,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
           <p className="text-sm text-error mb-4">{error || 'Failed to load project.'}</p>
           <Link
             href="/dashboard"
-            className="rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="rounded-md bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90"
           >
             Return to Dashboard
           </Link>

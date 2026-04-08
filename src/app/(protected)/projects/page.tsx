@@ -93,7 +93,7 @@ export default function AllProjectsPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
           >
             <Plus size={18} />
             New Project
@@ -101,21 +101,19 @@ export default function AllProjectsPage() {
           <div className="flex items-center bg-surface-container-high rounded-full p-1 ml-2">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-full transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-primary text-on-surface shadow-elevation-1'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`p-2 rounded-full transition-colors ${viewMode === 'grid'
+                ? 'bg-primary text-white shadow-elevation-1'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               <Grid size={18} />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-full transition-colors ${
-                viewMode === 'list'
-                  ? 'bg-primary text-on-surface shadow-elevation-1'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`p-2 rounded-full transition-colors ${viewMode === 'list'
+                ? 'bg-primary text-white shadow-elevation-1'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               <List size={18} />
             </button>
@@ -169,7 +167,7 @@ export default function AllProjectsPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors shadow-elevation-1"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
             >
               <Sparkles size={18} />
               Start Your First Quilt
@@ -188,11 +186,10 @@ export default function AllProjectsPage() {
             <Link
               key={project.id}
               href={`/studio/${project.id}`}
-              className={`group block ${
-                viewMode === 'grid'
-                  ? 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all'
-                  : 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
-              }`}
+              className={`group block ${viewMode === 'grid'
+                ? 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all'
+                : 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
+                }`}
             >
               <div
                 className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}

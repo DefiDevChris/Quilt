@@ -173,11 +173,10 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
                 key={mode}
                 type="button"
                 onClick={() => setExportMode(mode)}
-                className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${
-                  exportMode === mode
-                    ? 'border-primary bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                    : 'border-outline-variant bg-white text-on-surface hover:bg-background'
-                }`}
+                className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
+                  ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
+                  : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                  }`}
               >
                 {MODE_INFO[mode].label}
               </button>
@@ -250,7 +249,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
             type="button"
             onClick={onClose}
             disabled={isGenerating}
-            className="rounded-md border border-outline-variant bg-white px-4 py-2 text-sm text-on-surface hover:bg-background"
+            className="rounded-full border border-outline-variant bg-white px-4 py-2 text-sm text-on-surface hover:bg-background"
           >
             Cancel
           </button>
@@ -258,7 +257,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
             type="button"
             onClick={handleGenerate}
             disabled={isDisabled}
-            className="flex items-center gap-2 rounded-md bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isGenerating ? (
               <>

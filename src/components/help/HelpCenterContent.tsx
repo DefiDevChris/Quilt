@@ -47,11 +47,10 @@ function FaqSection({
             key={cat}
             type="button"
             onClick={() => onCategoryChange(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              selectedCategory === cat
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                : 'bg-surface-container text-secondary hover:text-on-surface'
-            }`}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${selectedCategory === cat
+              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+              : 'bg-surface-container text-secondary hover:text-on-surface'
+              }`}
           >
             {cat === 'all' ? 'All' : FAQ_CATEGORY_LABELS[cat]}
           </button>
@@ -157,7 +156,7 @@ function ContactSection() {
       </p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 bg-gradient-to-r from-orange-500 to-rose-400 text-white"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-opacity hover:opacity-90 bg-gradient-to-r from-primary to-primary-dark text-white"
       >
         <svg
           width="16"

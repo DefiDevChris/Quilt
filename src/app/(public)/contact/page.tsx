@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Mail, MessageSquare } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
@@ -33,16 +33,6 @@ export default function ContactPage() {
               Reach out to our team directly at support@quiltcorgi.com
             </p>
           </a>
-
-          <div className="flex-1 p-8 rounded-xl glass-card opacity-60 cursor-default">
-            <div className="w-12 h-12 rounded-full bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-semibold text-on-surface mb-2">Community Discord</h3>
-            <p className="text-secondary text-sm">
-              Join our community to chat with other quilters and get help.
-            </p>
-          </div>
         </div>
       </main>
       <Footer />

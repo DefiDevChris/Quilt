@@ -30,7 +30,7 @@ export default function CtaSection() {
 
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3"
+              className="px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3"
             >
               Start Designing Free
             </Link>

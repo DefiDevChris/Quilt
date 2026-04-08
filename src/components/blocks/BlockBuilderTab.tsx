@@ -1,113 +1,58 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import type { DraftTabProps } from '@/components/studio/BlockBuilderWorktable';
 import { BlockBuilderToolbar } from './BlockBuilderToolbar';
-import { useBlockBuilder } from '@/hooks/useBlockBuilder';
-import { GRID_UNIT_PRESETS, type GridUnitPreset } from '@/lib/block-builder-engine';
+import type { DraftTabProps } from '@/components/studio/BlockBuilderWorktable';
 
-const DRAFT_CANVAS_SIZE = 400;
+type BlockBuilderTabProps = DraftTabProps;
 
-interface BlockBuilderTabProps extends DraftTabProps {
-  cellSizeIn?: number;
-  onCellSizeInChange?: (units: number) => void;
-}
+const MODE_HINTS: Record<BlockBuilderTabProps['activeMode'], string> = {
+  pencil: 'Click to start drawing. Click again to add segments. Double-click to finish.',
+  rectangle: 'Click 2 grid points for opposite corners.',
+  circle: 'Click for center, drag outward for radius.',
+  bend: 'Click a seam line, then click a grid point to curve it.',
+};
 
 export function BlockBuilderTab({
-  draftCanvasRef,
-  fillColor,
-  strokeColor,
-  isOpen,
-  cellSizeIn = 3,
+  cellSizeIn = 1,
   onCellSizeInChange,
-  blockWidthIn = 12,
-  blockHeightIn = 12,
+  activeMode,
+  setActiveMode,
+  segmentCount,
+  onClear,
+  onUndoSegment,
 }: BlockBuilderTabProps) {
-  const [customUnits, setCustomUnits] = useState('');
-
-  const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
-  const gridRows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
-
-  const { activeMode, setActiveMode, segments, clearSegments, undoSegment, redrawGrid } =
-    useBlockBuilder({
-      draftCanvasRef,
-      isOpen,
-      fillColor,
-      strokeColor,
-      gridCols,
-      gridRows,
-      canvasSize: DRAFT_CANVAS_SIZE,
-    });
-
-  // Redraw grid when units change
-  useEffect(() => {
-    if (isOpen) {
-      redrawGrid();
-    }
-  }, [isOpen, gridCols, gridRows, redrawGrid]);
-
-  // Listen for undo events from the worktable toolbar
-  useEffect(() => {
-    const handler = () => undoSegment();
-    window.addEventListener('qc-block-builder-undo', handler);
-    return () => window.removeEventListener('qc-block-builder-undo', handler);
-  }, [undoSegment]);
-
-  const presetCells = [1.5, 2, 3, 4];
-
-  const handlePresetChange = (size: number) => {
-    if (onCellSizeInChange) onCellSizeInChange(size);
-    setCustomUnits('');
+  // Slider value: 0.25 to 2.0 in 0.25 increments (1 to 8 steps)
+  const sliderValue = Math.round(cellSizeIn / 0.25);
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value) * 0.25;
+    if (onCellSizeInChange) onCellSizeInChange(val);
   };
-
-  const handleCustomUnitsSubmit = () => {
-    const val = parseFloat(customUnits);
-    if (val >= 0.5 && val <= 24 && onCellSizeInChange) {
-      onCellSizeInChange(val);
-    }
-  };
-
-  const isCustom = !presetCells.includes(cellSizeIn);
 
   return (
-    <div className="mb-2 space-y-2 px-1">
-      {/* Grid unit selector */}
-      <div className="flex items-center gap-1">
-        <span className="text-xs font-medium text-secondary">Cell Size (in):</span>
-        <div className="flex gap-1">
-          {presetCells.map((size) => (
-            <button
-              key={size}
-              type="button"
-              onClick={() => handlePresetChange(size)}
-              className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${cellSizeIn === size && !isCustom
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
-                : 'bg-background text-secondary hover:text-on-surface'
-                }`}
-            >
-              {size}&quot;
-            </button>
-          ))}
-          <input
-            type="number"
-            step={0.5}
-            min={0.5}
-            max={24}
-            value={isCustom ? cellSizeIn : customUnits}
-            onChange={(e) => setCustomUnits(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleCustomUnitsSubmit();
-            }}
-            onBlur={handleCustomUnitsSubmit}
-            placeholder="#"
-            className={`w-10 rounded-md border px-1.5 py-1 text-xs ${isCustom
-              ? 'border-primary bg-primary/10 text-primary'
-              : 'border-outline-variant bg-white text-secondary'
-              } focus:border-primary focus:outline-none`}
-          />
+    <div className="flex flex-col gap-3">
+      {/* Grid unit slider */}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs font-medium text-secondary">Grid Unit</span>
+          <span className="text-[10px] font-mono text-secondary bg-surface-container py-0.5 px-1.5 rounded">
+            {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
+          </span>
         </div>
-        <div className="ml-auto text-[10px] text-secondary font-mono tracking-tight bg-surface-container py-0.5 px-1.5 rounded">
-          Grid: {gridCols} × {gridRows}
+        <input
+          type="range"
+          min={1}
+          max={8}
+          step={1}
+          value={sliderValue}
+          onChange={handleSliderChange}
+          className="w-full accent-primary"
+        />
+        <div className="flex justify-between text-[9px] text-secondary mt-0.5">
+          <span>¼&quot;</span>
+          <span>½&quot;</span>
+          <span>1&quot;</span>
+          <span>1½&quot;</span>
+          <span>2&quot;</span>
         </div>
       </div>
 
@@ -115,19 +60,13 @@ export function BlockBuilderTab({
       <BlockBuilderToolbar
         activeMode={activeMode}
         onModeChange={setActiveMode}
-        segmentCount={segments.length}
-        onClear={clearSegments}
-        onUndoSegment={undoSegment}
+        segmentCount={segmentCount}
+        onClear={onClear}
+        onUndoSegment={onUndoSegment}
       />
 
       {/* Tool hint */}
-      <div className="text-[10px] text-secondary">
-        {activeMode === 'freedraw' &&
-          'Click and drag to draw freehand. Lines snap to grid on release.'}
-        {activeMode === 'rectangle' && 'Click two grid corners to draw a rectangle.'}
-        {activeMode === 'triangle' && 'Click a grid cell to split it diagonally.'}
-        {activeMode === 'bend' && 'Click a seam line, then drag to curve it.'}
-      </div>
+      <div className="text-[10px] text-secondary">{MODE_HINTS[activeMode]}</div>
     </div>
   );
 }

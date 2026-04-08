@@ -29,9 +29,8 @@ export function SocialFeedPage() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative px-4 py-2.5 text-sm font-semibold transition-colors capitalize ${
-                tab === t ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`relative px-4 py-2.5 text-sm font-semibold transition-colors capitalize ${tab === t ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+                }`}
             >
               {t === 'discover' ? 'Discover' : 'Saved'}
               {tab === t && (
@@ -50,9 +49,8 @@ export function SocialFeedPage() {
                 <button
                   key={s}
                   onClick={() => setSort(s)}
-                  className={`text-sm font-semibold transition-colors capitalize ${
-                    sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-                  }`}
+                  className={`text-sm font-semibold transition-colors capitalize ${sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
+                    }`}
                 >
                   {s}
                 </button>
@@ -65,11 +63,10 @@ export function SocialFeedPage() {
                 <button
                   key={cat.label}
                   onClick={() => setCategory(cat.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                    category === cat.value
-                      ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${category === cat.value
+                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
                       : 'bg-white/50 text-secondary hover:bg-white/70 hover:text-on-surface'
-                  }`}
+                    }`}
                 >
                   {cat.label}
                 </button>

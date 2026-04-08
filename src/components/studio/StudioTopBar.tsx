@@ -339,7 +339,7 @@ export function StudioTopBar({
           {!isPro && (
             <button
               onClick={() => setShowProUpgrade(true)}
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
             >
               <Sparkles size={14} className="text-white" />
               Upgrade to Pro

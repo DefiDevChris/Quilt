@@ -276,7 +276,7 @@ export function QuiltSettingsDropdown() {
                     type="button"
                     onClick={() => applyPreset(p.width, p.height)}
                     className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${isActive
-                      ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white'
+                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
                       : 'bg-surface text-on-surface hover:bg-surface-container-high'
                       }`}
                   >
@@ -356,14 +356,14 @@ export function QuiltSettingsDropdown() {
               <button
                 type="button"
                 onClick={cancelPending}
-                className="px-4 py-2 text-body-md text-secondary hover:text-on-surface transition-colors rounded-lg"
+                className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => confirmResize(pendingWidth, pendingHeight)}
-                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all"
+                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
               >
                 Resize
               </button>
@@ -394,14 +394,14 @@ export function QuiltSettingsDropdown() {
               <button
                 type="button"
                 onClick={cancelPending}
-                className="px-4 py-2 text-body-md text-secondary hover:text-on-surface transition-colors rounded-lg"
+                className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => confirmCellSizeChange(pendingCellSize)}
-                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 transition-all"
+                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
               >
                 Change
               </button>

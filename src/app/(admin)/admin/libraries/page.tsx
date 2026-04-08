@@ -161,7 +161,7 @@ function FabricForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Fabric'}
       </button>
@@ -312,7 +312,7 @@ function BlockForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-400 text-white rounded-lg font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Block'}
       </button>

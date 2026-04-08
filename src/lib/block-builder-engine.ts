@@ -48,6 +48,45 @@ export function generateTriangle(row: number, col: number): Segment[] {
 }
 
 /**
+ * Freeform triangle: 3 arbitrary grid points connected as a triangle.
+ * Returns 3 segments connecting the points.
+ */
+export function generateFreeformTriangle(p1: GridPoint, p2: GridPoint, p3: GridPoint): Segment[] {
+  return [
+    { from: p1, to: p2 },
+    { from: p2, to: p3 },
+    { from: p3, to: p1 },
+  ];
+}
+
+/**
+ * Circle: approximate a circle centered at (centerRow, centerCol) with given radius.
+ * Returns segments forming a circle approximation using grid points.
+ */
+export function generateCircle(
+  centerRow: number,
+  centerCol: number,
+  radius: number
+): Segment[] {
+  const segments: Segment[] = [];
+  const steps = Math.max(8, Math.round(2 * Math.PI * radius));
+
+  const points: GridPoint[] = [];
+  for (let i = 0; i < steps; i++) {
+    const angle = (2 * Math.PI * i) / steps;
+    const row = Math.round(centerRow + radius * Math.cos(angle));
+    const col = Math.round(centerCol + radius * Math.sin(angle));
+    points.push({ row, col });
+  }
+
+  for (let i = 0; i < points.length; i++) {
+    segments.push({ from: points[i], to: points[(i + 1) % points.length] });
+  }
+
+  return segments;
+}
+
+/**
  * Rectangle: outline from (r1,c1) to (r2,c2), snapped to grid.
  * Normalizes so r1 <= r2, c1 <= c2.
  */

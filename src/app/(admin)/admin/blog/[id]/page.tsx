@@ -198,7 +198,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
         </div>
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+          className="px-4 py-2 bg-white/50 text-secondary rounded-full text-sm font-medium hover:bg-white/70 transition-colors"
         >
           Cancel
         </button>
@@ -453,14 +453,14 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             type="button"
             onClick={() => handleSubmit('draft')}
             disabled={saving}
-            className="px-5 py-2.5 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 bg-white/50 text-secondary rounded-full text-sm font-medium hover:bg-white/70 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save as Draft
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? 'Saving...' : postId ? 'Update Post' : 'Create Post'}
           </button>

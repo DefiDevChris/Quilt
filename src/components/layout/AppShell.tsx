@@ -60,11 +60,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     >
       <nav
         aria-label="Main navigation"
-        className={`sticky top-0 z-40 backdrop-blur-xl px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${
-          scrolled
-            ? 'bg-white/95 border-outline-variant shadow-elevation-1'
-            : 'bg-white/95 border-transparent'
-        }`}
+        className={`sticky top-0 z-40 backdrop-blur-xl px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${scrolled
+          ? 'bg-white/95 border-outline-variant shadow-elevation-1'
+          : 'bg-white/95 border-transparent'
+          }`}
       >
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <Image
@@ -85,26 +84,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="hidden lg:flex items-center gap-6">
           <Link
             href="/dashboard"
-            className={`font-medium transition-colors ${
-              isActive('/dashboard') ? 'text-on-surface' : 'text-secondary hover:text-primary'
-            }`}
+            className={`font-medium transition-colors ${isActive('/dashboard') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+              }`}
           >
             Dashboard
           </Link>
           <Link
             href="/socialthreads"
-            className={`font-medium transition-colors ${
-              isActive('/socialthreads') ? 'text-on-surface' : 'text-secondary hover:text-primary'
-            }`}
+            className={`font-medium transition-colors ${isActive('/socialthreads') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+              }`}
           >
             Social Threads
           </Link>
           {shopEnabled && (
             <Link
               href="/shop"
-              className={`font-medium transition-colors ${
-                isActive('/shop') ? 'text-on-surface' : 'text-secondary hover:text-primary'
-              }`}
+              className={`font-medium transition-colors ${isActive('/shop') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+                }`}
             >
               Shop
             </Link>
@@ -112,9 +108,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isAuthenticated && (
             <Link
               href="/profile"
-              className={`font-medium transition-colors ${
-                isActive('/profile') ? 'text-on-surface' : 'text-secondary hover:text-primary'
-              }`}
+              className={`font-medium transition-colors ${isActive('/profile') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+                }`}
             >
               Profile
             </Link>
@@ -127,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {user?.role === 'free' && (
                 <button
                   onClick={() => setShowProUpgrade(true)}
-                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
                 >
                   <Sparkles size={14} className="text-white" />
                   Upgrade
@@ -167,7 +162,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary transition-all"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-primary transition-all">
+                  <div className="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-primary transition-all">
                     <Image
                       src="/mascots&avatars/corgi1.png"
                       alt="Default Avatar"
@@ -216,7 +211,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
               <Link
                 href="/auth/signup"
-                className="bg-gradient-to-r from-orange-500 to-rose-400 text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
+                className="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
               >
                 Start Designing
               </Link>

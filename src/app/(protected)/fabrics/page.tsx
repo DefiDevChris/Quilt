@@ -100,7 +100,7 @@ export default function FabricsPage() {
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
-        <div className="flex gap-1 p-1 bg-surface-container rounded-lg w-fit mb-6">
+        <div className="flex gap-1 p-1 bg-surface-container rounded-full w-fit mb-6">
           {(['system', 'user'] as const).map((s) => (
             <button
               key={s}
@@ -109,11 +109,10 @@ export default function FabricsPage() {
                 setScope(s);
                 setPage(1);
               }}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                scope === s
-                  ? 'bg-surface shadow-elevation-1 text-on-surface'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${scope === s
+                ? 'bg-surface shadow-elevation-1 text-on-surface'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               {s === 'system' ? 'Library' : 'My Fabrics'}
             </button>
@@ -222,7 +221,7 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-2 text-sm font-medium rounded-lg bg-surface-container text-on-surface disabled:opacity-40 hover:bg-surface-container-high transition-colors"
+            className="px-3 py-2 text-sm font-medium rounded-full bg-white/50 text-secondary disabled:opacity-40 hover:bg-white/70 transition-colors"
           >
             Previous
           </button>
@@ -233,7 +232,7 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-3 py-2 text-sm font-medium rounded-lg bg-surface-container text-on-surface disabled:opacity-40 hover:bg-surface-container-high transition-colors"
+            className="px-3 py-2 text-sm font-medium rounded-full bg-white/50 text-secondary disabled:opacity-40 hover:bg-white/70 transition-colors"
           >
             Next
           </button>

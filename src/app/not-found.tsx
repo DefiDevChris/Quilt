@@ -22,7 +22,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-on-surface rounded-full font-semibold hover:bg-primary-dark transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity"
             >
               Go to Dashboard
             </Link>

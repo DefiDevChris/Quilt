@@ -103,9 +103,8 @@ function PostContent({ item }: { item: Extract<QuickViewItem, { type: 'post' }> 
         <div className="px-5 py-3 flex items-center gap-2 border-b border-outline-variant shrink-0">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
-              liked ? 'text-error bg-error/10' : 'text-secondary bg-surface/50 hover:bg-surface/80'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all ${liked ? 'text-error bg-error/10' : 'text-secondary bg-surface/50 hover:bg-surface/80'
+              }`}
           >
             <Heart size={15} fill={liked ? 'currentColor' : 'none'} />
             {likeCount}
@@ -203,7 +202,7 @@ function BlogContentPane({ item }: { item: Extract<QuickViewItem, { type: 'blog'
         <div className="p-6 pt-0">
           <Link
             href="/socialthreads"
-            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all"
+            className="flex items-center justify-center gap-2 py-3.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all"
           >
             View Social
             <ExternalLink size={14} />
@@ -233,7 +232,7 @@ function FabricContentPane({ item }: { item: Extract<QuickViewItem, { type: 'fab
         )}
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all mt-auto"
+          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all mt-auto"
         >
           View in Fabric Library
           <ExternalLink size={14} />
@@ -279,7 +278,7 @@ function PatternContentPane({ item }: { item: Extract<QuickViewItem, { type: 'pa
         )}
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all mt-auto"
+          className="flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold text-sm shadow-elevation-1 hover:opacity-90 transition-all mt-auto"
         >
           Open in Studio
           <ExternalLink size={14} />

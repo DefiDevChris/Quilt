@@ -131,9 +131,8 @@ function StudioPreviewMockup() {
               ) : (
                 <div
                   key={i}
-                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${
-                    tool.active ? 'text-warm-peach' : 'text-warm-text-muted'
-                  }`}
+                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${tool.active ? 'text-warm-peach' : 'text-warm-text-muted'
+                    }`}
                 >
                   <svg
                     width="12"
@@ -288,7 +287,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-orange-500 to-rose-400 text-white font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:opacity-90 transition-all duration-300 transform"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-primary-dark text-white font-bold px-8 py-4 rounded-full text-lg shadow-elevation-3 hover:opacity-90 transition-all duration-300 transform"
             >
               See What You Can Create
             </Link>

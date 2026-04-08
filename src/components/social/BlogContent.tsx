@@ -25,8 +25,8 @@ function AuthorRow({ post, dark = false }: { post: BlogPostListItem; dark?: bool
           className="w-5 h-5 rounded-full object-cover border border-white/60 shrink-0"
         />
       ) : (
-        <div className="w-5 h-5 rounded-full bg-orange-100 border border-white flex items-center justify-center shrink-0">
-          <span className="text-[9px] font-bold text-orange-500">
+        <div className="w-5 h-5 rounded-full bg-primary-container border border-white flex items-center justify-center shrink-0">
+          <span className="text-[9px] font-bold text-primary-dark">
             {post.authorName.charAt(0).toUpperCase()}
           </span>
         </div>
@@ -329,7 +329,7 @@ export function BlogContent({ initialPosts = [], initialTotal = 0 }: BlogContent
         </p>
         <a
           href={`mailto:${SUPPORT_EMAIL}?subject=Blog%20Submission`}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 text-white font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium hover:opacity-90 transition-opacity"
         >
           Submit Your Story
         </a>

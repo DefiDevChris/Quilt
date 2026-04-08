@@ -480,13 +480,12 @@ export function SimplePhotoBlockUpload({
         {(['upload', 'imagePrep', 'crop'] as Step[]).map((s, index) => (
           <div key={s}>
             <div
-              className={`rounded-full transition-all ${
-                step === s
-                  ? 'w-6 h-2 bg-primary'
-                  : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
-                    ? 'w-2 h-2 bg-primary/50'
-                    : 'w-2 h-2 bg-outline-variant/40'
-              }`}
+              className={`rounded-full transition-all ${step === s
+                ? 'w-6 h-2 bg-primary'
+                : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
+                  ? 'w-2 h-2 bg-primary/50'
+                  : 'w-2 h-2 bg-outline-variant/40'
+                }`}
             />
           </div>
         ))}
@@ -517,22 +516,20 @@ export function SimplePhotoBlockUpload({
             <button
               type="button"
               onClick={() => setPrepMode('straighten')}
-              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                prepMode === 'straighten'
-                  ? 'bg-surface text-on-surface shadow-elevation-1'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${prepMode === 'straighten'
+                ? 'bg-surface text-on-surface shadow-elevation-1'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               Straighten
             </button>
             <button
               type="button"
               onClick={() => setPrepMode('perspective')}
-              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                prepMode === 'perspective'
-                  ? 'bg-surface text-on-surface shadow-elevation-1'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${prepMode === 'perspective'
+                ? 'bg-surface text-on-surface shadow-elevation-1'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               Perspective
             </button>
@@ -674,7 +671,7 @@ export function SimplePhotoBlockUpload({
               type="button"
               onClick={handlePrepContinue}
               disabled={applying}
-              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 disabled:opacity-50"
+              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 disabled:opacity-50"
             >
               {applying ? 'Applying...' : 'Continue'}
             </button>
@@ -750,7 +747,7 @@ export function SimplePhotoBlockUpload({
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-400 rounded-lg hover:opacity-90 disabled:opacity-50"
+              className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Block'}
             </button>

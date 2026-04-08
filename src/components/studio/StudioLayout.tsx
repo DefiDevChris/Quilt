@@ -71,12 +71,18 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, [activeWorktable, project.id]);
 
   const handleQuiltSetupConfirm = useCallback(
-    ({ width, height }: { width: number; height: number }) => {
+    ({ width, height, startingPoint }: { width: number; height: number; startingPoint?: 'freeform' | 'create-layout' }) => {
       useProjectStore.getState().setCanvasWidth(width);
       useProjectStore.getState().setCanvasHeight(height);
       useCanvasStore.getState().centerAndFitViewport();
       if (typeof window !== 'undefined') {
         window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
+        // Clean up the dimensions storage
+        window.sessionStorage.removeItem(`qc-quilt-setup-dimensions-${project.id}`);
+      }
+      // If user chose "Start with a Layout", switch to layout creator mode
+      if (startingPoint === 'create-layout') {
+        useCanvasStore.getState().setActiveWorktable('layout-creator');
       }
       setShowQuiltSetup(false);
     },
@@ -86,6 +92,8 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const handleQuiltSetupDismiss = useCallback(() => {
     if (typeof window !== 'undefined') {
       window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
+      // Clean up the dimensions storage
+      window.sessionStorage.removeItem(`qc-quilt-setup-dimensions-${project.id}`);
     }
     setShowQuiltSetup(false);
   }, [project.id]);
@@ -229,6 +237,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
       {/* First-visit setup modal */}
       <NewQuiltSetupModal
         isOpen={showQuiltSetup}
+        projectId={project.id}
         onConfirm={handleQuiltSetupConfirm}
         onDismiss={handleQuiltSetupDismiss}
       />

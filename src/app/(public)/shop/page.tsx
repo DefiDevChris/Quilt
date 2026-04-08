@@ -178,11 +178,10 @@ export default function ShopPage() {
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
-              showFilters || hasActiveFilters
-                ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
-                : 'bg-white/50 text-secondary hover:bg-white/70'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${showFilters || hasActiveFilters
+              ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
+              : 'bg-white/50 text-secondary hover:bg-white/70'
+              }`}
           >
             <SlidersHorizontal size={16} />
             Filters
@@ -414,7 +413,7 @@ function ShopFabricCard({
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-orange-500 to-rose-400 text-white hover:opacity-90 shadow-elevation-1 hover:shadow-elevation-2"
+          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-primary to-primary-dark text-white hover:opacity-90 shadow-elevation-1 hover:shadow-elevation-2"
         >
           {!fabric.shopifyVariantId
             ? 'Not Available'

@@ -160,8 +160,11 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
         return;
       }
 
-      // Suppress setup modals in the studio
-      sessionStorage.setItem(`qc-quilt-setup-shown-${newId}`, '1');
+      // Store selected dimensions so NewQuiltSetupModal can pre-fill them
+      sessionStorage.setItem(`qc-quilt-setup-dimensions-${newId}`, JSON.stringify({ width: canvasWidth, height: canvasHeight }));
+
+      // Note: We intentionally do NOT suppress the NewQuiltSetupModal.
+      // The modal will appear in the studio to confirm/finalize the dimensions.
       if (startingPoint === 'create-layout') {
         sessionStorage.setItem(`qc-layout-builder-${newId}`, 'true');
       }
@@ -239,7 +242,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   type="button"
                   onClick={() => setStep(2)}
                   disabled={!name.trim()}
-                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next Step
                 </button>
@@ -260,8 +263,8 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   type="button"
                   onClick={() => setStartingPoint('freeform')}
                   className={`flex flex-col items-center p-8 rounded-2xl border-2 transition-all ${startingPoint === 'freeform'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-surface hover:bg-surface-container'
+                    ? 'border-primary bg-primary/5'
+                    : 'border-outline-variant bg-surface hover:bg-surface-container'
                     }`}
                 >
                   <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
@@ -278,8 +281,8 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   type="button"
                   onClick={() => setStartingPoint('create-layout')}
                   className={`flex flex-col items-center p-8 rounded-2xl border-2 transition-all ${startingPoint === 'create-layout'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-surface hover:bg-surface-container'
+                    ? 'border-primary bg-primary/5'
+                    : 'border-outline-variant bg-surface hover:bg-surface-container'
                     }`}
                 >
                   <div className="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4">
@@ -307,7 +310,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                  className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
                 >
                   Next Step
                 </button>
@@ -331,7 +334,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                       onClick={() => setSizePresetLabel(preset.label)}
                       className={
                         isActive
-                          ? 'flex flex-col items-center justify-center rounded-xl p-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-md'
+                          ? 'flex flex-col items-center justify-center rounded-xl p-3 bg-gradient-to-r from-primary to-primary-dark text-white shadow-md'
                           : 'flex flex-col items-center justify-center rounded-xl p-3 bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors'
                       }
                     >
@@ -350,7 +353,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   onClick={() => setSizePresetLabel('Custom')}
                   className={
                     isCustom
-                      ? 'w-full rounded-xl px-4 py-3 bg-gradient-to-r from-orange-500 to-rose-400 text-white text-sm font-bold shadow-md'
+                      ? 'w-full rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-bold shadow-md'
                       : 'w-full rounded-xl px-4 py-3 bg-surface-container text-on-surface text-sm font-bold hover:bg-surface-container-high transition-colors border border-outline-variant/30'
                   }
                 >
@@ -406,8 +409,8 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                       type="button"
                       onClick={() => setCellSize(size)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${Math.abs(cellSize - size) < 0.001
-                          ? 'bg-gradient-to-r from-orange-500 to-rose-400 text-white shadow-elevation-1'
-                          : 'bg-surface-container text-secondary hover:bg-surface-container-high'
+                        ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
+                        : 'bg-surface-container text-secondary hover:bg-surface-container-high'
                         }`}
                     >
                       {fmtCellSize(size)}
@@ -431,7 +434,7 @@ export function NewProjectWizard({ open, onClose }: NewProjectWizardProps) {
                   type="button"
                   onClick={handleCreate}
                   disabled={!canSubmit}
-                  className="rounded-full px-8 py-2.5 text-sm font-bold bg-gradient-to-r from-orange-500 to-rose-400 text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="rounded-full px-8 py-2.5 text-sm font-bold bg-gradient-to-r from-primary to-primary-dark text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isCreating ? 'Creating…' : startingPoint === 'create-layout' ? 'Start Building Layout' : 'Create Project'}
                 </button>

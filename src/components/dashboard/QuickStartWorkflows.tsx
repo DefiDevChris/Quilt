@@ -54,7 +54,7 @@ export function QuickStartWorkflows({
         <button
           type="button"
           onClick={onNewProject}
-          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-2xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
           aria-label="Start a new project"
         >
           <div>
@@ -64,9 +64,9 @@ export function QuickStartWorkflows({
           <Image
             src="/icons/quilt-13-dashed-squares-Photoroom.png"
             alt=""
-            width={48}
-            height={48}
-            className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+            width={72}
+            height={72}
+            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
           />
         </button>
 
@@ -78,7 +78,7 @@ export function QuickStartWorkflows({
             aria-haspopup="listbox"
             aria-expanded={resumeOpen}
             aria-label="Resume a recent project"
-            className="w-full min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
+            className="w-full min-h-[140px] rounded-2xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
           >
             <div>
               <p className="text-on-surface font-extrabold text-xl mb-1">Resume</p>
@@ -91,9 +91,9 @@ export function QuickStartWorkflows({
             <Image
               src="/icons/quilt-12-ruler-Photoroom.png"
               alt=""
-              width={48}
-              height={48}
-              className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+              width={72}
+              height={72}
+              className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
             />
           </button>
 
@@ -111,7 +111,7 @@ export function QuickStartWorkflows({
                       setResumeOpen(false);
                       onNewProject();
                     }}
-                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
                   >
                     Start your first quilt
                   </button>
@@ -171,7 +171,7 @@ export function QuickStartWorkflows({
         <button
           type="button"
           onClick={onPhotoToDesign}
-          className="min-h-[120px] rounded-xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-white/80 backdrop-blur-sm border border-white/60 hover:bg-white/90 hover:shadow-[0_4px_16px_rgba(198,123,92,0.1)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-2xl p-6 text-left overflow-hidden group cursor-pointer transition-all duration-300 glass-panel hover:shadow-elevation-2 hover:scale-[1.01] flex items-center justify-between gap-4"
           aria-label="Photo to Design workflow"
         >
           <div>
@@ -181,9 +181,9 @@ export function QuickStartWorkflows({
           <Image
             src="/icons/quilt-photo-camera.png"
             alt=""
-            width={48}
-            height={48}
-            className="w-12 h-12 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+            width={72}
+            height={72}
+            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
           />
         </button>
       </div>

@@ -799,7 +799,7 @@ export function ContextMenu() {
                   type="button"
                   disabled={isExecuting}
                   onClick={handleAddToPrintlist}
-                  className="rounded bg-gradient-to-r from-orange-500 to-rose-400 px-2 py-0.5 text-xs text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded bg-gradient-to-r from-primary to-primary-dark px-2 py-0.5 text-xs text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isExecuting ? '...' : 'Add'}
                 </button>

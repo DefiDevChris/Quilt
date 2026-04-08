@@ -104,7 +104,7 @@ export function BillingSection() {
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="mt-2.5 rounded-lg bg-warning px-3.5 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="mt-2.5 rounded-full bg-warning px-3.5 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isPortalLoading ? 'Loading...' : 'Update Payment Method'}
           </button>
@@ -116,11 +116,10 @@ export function BillingSection() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
             <span
-              className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 ${
-                isPro
-                  ? 'text-primary-dark bg-primary-container border-primary/30'
-                  : 'text-secondary border-outline-variant'
-              }`}
+              className={`inline-block text-xs font-medium border rounded-full px-2.5 py-0.5 ${isPro
+                ? 'text-primary-dark bg-primary-container border-primary/30'
+                : 'text-secondary border-outline-variant'
+                }`}
             >
               {isPro ? 'Pro' : 'Free'}
             </span>
@@ -144,7 +143,7 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-lg glass-inset text-on-surface px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
+              className="rounded-full glass-inset text-on-surface px-3 py-1.5 text-xs font-medium hover:bg-white/50 transition-colors disabled:opacity-50"
             >
               {isPortalLoading ? 'Loading...' : 'Manage'}
             </button>
@@ -171,22 +170,20 @@ export function BillingSection() {
             <button
               type="button"
               onClick={() => setBillingInterval('monthly')}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                billingInterval === 'monthly'
-                  ? 'bg-surface-canvas text-on-surface'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${billingInterval === 'monthly'
+                ? 'bg-surface-canvas text-on-surface'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               Monthly
             </button>
             <button
               type="button"
               onClick={() => setBillingInterval('yearly')}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                billingInterval === 'yearly'
-                  ? 'bg-surface-canvas text-on-surface'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${billingInterval === 'yearly'
+                ? 'bg-surface-canvas text-on-surface'
+                : 'text-secondary hover:text-on-surface'
+                }`}
             >
               Yearly
               <span className="ml-1 text-[10px] text-primary-dark font-semibold">
@@ -214,7 +211,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="rounded-lg bg-gradient-to-r from-orange-500 to-rose-400 px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {isCheckoutLoading ? 'Loading...' : 'Start Pro'}
           </button>
