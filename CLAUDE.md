@@ -208,7 +208,7 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Toolbar (left, 88 px)** — Primary tools: Select, Pan. Advanced (collapsed): Yardage Estimator, Printlist, Export Image. Pinned (always visible): Undo, Redo. View actions: Reference Image. **No transforms** (rotate/flip/delete) — those live in inspectors in the right pane.
+- **Toolbar (left, 88 px)** — Primary tools: Select, Pan, Easydraw, Bend, Undo, Redo. Pinned (always visible, at bottom): Snap Toggle. Reference Image toggle is in StudioTopBar (not the Toolbar). **No advanced-tier tools** and **no transform tools** (rotate/flip/delete) — those live in inspectors in the right pane.
 - **CanvasWorkspace (center)** — Single Fabric.js canvas, never unmounted. Pan/zoom is preserved across all worktable mode changes. Canvas dimensions are calculated by `src/lib/quilt-sizing.ts` based on block size, grid dimensions, sashing, and borders.
 - **ContextPanel (right, 320 px)** — Library tabs only (Layouts / Blocks / Fabrics). User-driven — **never auto-switches based on canvas selection.**
 
@@ -223,7 +223,7 @@ export type WorktableType = 'quilt' | 'block-builder' | 'layout-creator';
 | Mode | Purpose | Canvas |
 |------|---------|--------|
 | **`quilt`** | Primary design canvas. Layout fence (if applied) constrains drops. Blocks→cells, fabrics→structural areas. | Main Fabric.js canvas + fence overlay |
-| **`block-builder`** | Grid-snapped block drafting. Save custom blocks to library. | Dedicated 400×400 mini-canvas |
+| **`block-builder`** | Grid-snapped block drafting. Save custom blocks to library. | Dedicated 600×600 mini-canvas |
 | **`layout-creator`** | Draw shapes, assign roles (block-cell/sashing/border/edging/binding). Save as layout template. | Dedicated canvas with grid |
 
 The canonical user surface is `'quilt'`. The `'block-builder'` type is the dedicated block drafting worktable. The `'layout-creator'` type is the dedicated layout drafting worktable.
@@ -271,12 +271,12 @@ A layout is a **fence** — it defines areas where specific things can be placed
 
 ### The User Flow (canonical)
 
-1. **Create new project** — `NewQuiltSetupModal` prompts for quilt size and name. Creates an empty canvas at the specified size with a grid.
+1. **Create new project** — `NewQuiltSetupModal` prompts for quilt size (preset or custom) and starting point (Freeform or Start with a Layout). Creates an empty canvas at the specified size with a grid.
 2. **Add layouts** — From the **Layouts** library tab in the right pane, drag layout presets onto the canvas. Layouts are automatically sized to fit the canvas grid perfectly.
 3. **Add blocks into layout cells** — From the **Blocks** library tab, drag any block onto a layout block-cell. `useBlockDrop` snaps the block to the cell's bounding box, scales it to fit, and inherits the cell's rotation. Dropping a new block on an occupied cell replaces the previous one (tracked via `_inFenceCellId` tag).
 4. **Add fabrics to layout chrome** — From the **Fabrics** library tab, drag any fabric swatch onto sashing strips, cornerstones, borders, or binding. `useFabricDrop` applies it as a Fabric.js pattern fill.
 5. **Add fabrics to individual block pieces** — Drag a fabric onto a sub-piece of a placed block. `subTargetCheck: true` routes the drop to the inner piece.
-6. **Block Builder (worktable mode)** — Switch to the Block Builder worktable from the mode tabs. Draft custom blocks on a dedicated 400×400 canvas with grid-snapped drawing tools. Saved blocks appear in the right-side Block Library and are immediately drag-droppable into the quilt worktable.
+6. **Block Builder (worktable mode)** — Switch to the Block Builder worktable from the mode tabs. Draft custom blocks on a dedicated 600×600 canvas with grid-snapped drawing tools (pencil, rectangle, triangle, circle, bend). Saved blocks appear in the right-side Block Library and are immediately drag-droppable into the quilt worktable.
 
 ### Studio Components
 
@@ -290,13 +290,13 @@ A layout is a **fence** — it defines areas where specific things can be placed
 | `WorktableTabs` | `src/components/studio/WorktableTabs.tsx` | Tab bar for switching between worktable tabs |
 | `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics) |
 | `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip (2-column grid of ToolIcon buttons) |
-| `FloatingToolbar` | `src/components/studio/FloatingToolbar.tsx` | Floating overlay toolbar with undo/redo/zoom controls |
-| `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state |
-| `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 400×400 canvas, tools, Block Library |
+| `FloatingToolbar` | `src/components/studio/FloatingToolbar.tsx` | Floating overlay toolbar with Select, Rectangle, Triangle drawing tools + undo/redo (with depth) + zoom in/out with percentage. Only active for `'quilt'` worktable. |
+| `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state, selection count |
+| `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 600×600 canvas, tools (select/pencil/rectangle/triangle/circle/bend), grid unit slider, Block Library, overlay controls, Save Block |
 | `LayoutCreatorWorktable` | `src/components/studio/LayoutCreatorWorktable.tsx` | Layout drafting: draw shapes, assign roles, save to library |
 | `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
 | `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
-| `NewQuiltSetupModal` | `src/components/studio/NewQuiltSetupModal.tsx` | First-visit quilt setup: pick size + name |
+| `NewQuiltSetupModal` | `src/components/studio/NewQuiltSetupModal.tsx` | First-visit quilt setup: pick size (preset or custom) + starting point (Freeform or Start with a Layout) |
 | `DuplicateOptionsPopup` | `src/components/studio/DuplicateOptionsPopup.tsx` | Project duplication options |
 | `ResizeDialog` | `src/components/studio/ResizeDialog.tsx` | Quilt resize dialog |
 | `QuiltSettingsDropdown` | `src/components/studio/QuiltSettingsDropdown.tsx` | Settings dropdown in StudioTopBar |
@@ -349,16 +349,15 @@ The fence renderer is the **only** way layout areas appear on canvas:
 `LayoutCreatorWorktable` (`src/components/studio/LayoutCreatorWorktable.tsx`) — a full worktable mode for drafting custom layout templates:
 
 - Dedicated canvas with grid
-- Drawing tools: rectangle, triangle, freeform
-- Drag pre-built elements: block-cell placeholder, sashing strip, border frame, edging frame
-- Select any shape → assign role via Layout Role Inspector (block-cell / sashing / border / binding / edging)
+- Drawing tools: rectangle, triangle
+- Select any shape → assign role via Layout Role Inspector (block-cell / sashing / border / binding / edging / none)
 - On save: serializes all shapes + roles → `LayoutTemplate` JSON → POST `/api/layout-templates` → appears in Layouts library
 - Saved layouts are immediately draggable from the Layouts tab onto the canvas (creates new worktable tab)
 
 ### Removed (DO NOT REINTRODUCE)
 
-- `src/components/studio/LayoutRolePanel.tsx` — superseded by inspectors in `inspectors/` directory
-- `src/components/studio/SelectionPanel.tsx` — superseded by `SelectionInspector` via `ContextPanel` bottom
+- `src/components/studio/LayoutRolePanel.tsx` — superseded by role inspector in LayoutCreatorWorktable
+- `src/components/studio/SelectionPanel.tsx` — superseded by inline selection handling in ContextPanel
 - `src/components/studio/BackgroundColorControl.tsx` — dead component, never imported
 - `src/components/studio/KeyboardShortcutsModal.tsx` — dead component, never imported
 - `src/components/studio/NewBlockSetupModal.tsx` — dead component, never imported
@@ -376,7 +375,7 @@ The fence renderer is the **only** way layout areas appear on canvas:
 - `src/hooks/useLayoutEngine.ts` — replaced by fence engine. Auto-shuffle `rearrangeBlocks` anti-pattern removed.
 - `src/hooks/useLayoutRenderer.ts` — never existed; the canonical renderer is `useFenceRenderer`.
 - `src/hooks/useBlockBuilderCanvas.ts` — never existed; canvas interactions are in `useBlockBuilder.ts`
-- `src/components/studio/QuiltDimensionsPanel.tsx` — modal removed. Quilt dimensions in `DefaultInspector`.
+- `src/components/studio/QuiltDimensionsPanel.tsx` — modal removed. Quilt dimensions in `QuiltSettingsDropdown`.
 - `src/components/studio/panels/` directory entirely (BlockPlacementPanel, BorderPanel, HedgingPanel, SashingPanel)
 - `src/components/blocks/BlockDraftingShell.tsx` — replaced by `BlockBuilderWorktable`
 - `src/components/blocks/BlockDraftingModal.tsx` — deleted with Shell
@@ -397,6 +396,16 @@ The fence renderer is the **only** way layout areas appear on canvas:
 - `src/lib/logger.ts` — dead utility, never imported
 - `src/types/quilt-ocr.ts` — dead type, never imported
 - `src/types/wizard.ts` — dead type, never imported
+- `src/types/api.ts` — dead types (ApiResponse, PaginatedResponse), never imported
+- `src/components/auth/ProGate.tsx` — dead component, never imported
+- `src/components/community/FollowButton.tsx` — UserProfilePage has its own inline version
+- `src/components/community/comments/CommentInput.tsx` — RedditStyleComments has its own inline version
+- `src/components/export/PrintlistPanel.tsx` — dead component, never imported
+- `src/components/landing/CommunityPreview.tsx` — not used in landing page
+- `src/components/measurement/YardagePanel.tsx` — dead component, never imported
+- `src/components/photo-layout/steps/` directory entirely (CorrectionStep, DimensionsStep, ImagePrepStep, ProcessingStep, ResultsStep, ScanSettingsStep, UploadStep) — old wizard steps
+- `src/components/social/BlogContent.tsx` — dead component, never imported
+- `src/components/social/ReportModal.tsx` — dead component, never imported
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab
 
 ### Block Library
@@ -411,12 +420,11 @@ The fence renderer is the **only** way layout areas appear on canvas:
 
 ### Block Builder Architecture
 
-- Pure engine: `src/lib/block-builder-engine.ts` — shape generators (`generateTriangle`, `generateRectangle`, `generateBend`), grid utilities (`pixelToGridCell`, `findNearestSegment`), grid unit presets
+- Pure engine: `src/lib/block-builder-engine.ts` — shape generators (`generateTriangle`, `generateRectangle`, `generateCircle`, `generateFreeformTriangle`, `generateBend`), grid utilities (`pixelToGridCell`, `findNearestSegment`), grid unit presets
 - Planar graph engine: `src/lib/blockbuilder-utils.ts` — `detectPatches()` uses half-edge face traversal to find closed regions from seam-line segments
 - Hook: `src/hooks/useBlockBuilder.ts` — bridges engines to Fabric.js, manages segments/patches/patchFills state, handles mouse events per tool mode (including bend: click segment → drag to curve), redraws grid on unit change
-- Toolbar: `src/components/blocks/BlockBuilderToolbar.tsx` — `BlockBuilderMode = 'freedraw' | 'rectangle' | 'triangle' | 'bend'`
-- Tab: `src/components/blocks/BlockBuilderTab.tsx` — grid unit selector + toolbar + tool hints
-- Worktable: `src/components/studio/BlockBuilderWorktable.tsx` — full worktable mode with left drafting tools, center 400×400 canvas, right Block Library. Replaces the former `BlockDraftingShell` modal.
+- Tools: `BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'triangle' | 'circle' | 'bend'`
+- Worktable: `src/components/studio/BlockBuilderWorktable.tsx` — full worktable mode with left drafting tools, center 600×600 canvas, right Block Library. Replaces the former `BlockDraftingShell` modal.
 - `DraftTabProps` type: defined in `BlockBuilderWorktable.tsx`, shared by `FreeformDraftingTab` and `BlockBuilderTab`
 
 ### Layout Templates

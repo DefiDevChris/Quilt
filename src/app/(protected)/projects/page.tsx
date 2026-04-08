@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Grid, List, Calendar, Plus, Sparkles } from 'lucide-react';
+import { Grid, List, Calendar, Plus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
@@ -18,8 +18,6 @@ interface ProjectListItem {
 export default function AllProjectsPage() {
   const user = useAuthStore((s) => s.user);
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<ProjectListItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(true);
 
@@ -28,11 +26,10 @@ export default function AllProjectsPage() {
       if (!user) return;
 
       try {
-        const res = await fetch('/api/projects?limit=100&sort=updatedAt&order=desc');
+        const res = await fetch('/api/projects?limit=50&sort=updatedAt&order=desc');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setProjects(data.data.projects);
-        setFilteredProjects(data.data.projects);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       } finally {
@@ -42,13 +39,6 @@ export default function AllProjectsPage() {
 
     fetchProjects();
   }, [user]);
-
-  useEffect(() => {
-    const filtered = projects.filter((project) =>
-      project.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredProjects(filtered);
-  }, [searchQuery, projects]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -75,18 +65,21 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
+    <div>
       {/* Header with gradient accent */}
       <div className="flex items-end justify-between mb-8">
         <div>
+          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
+            Projects
+          </p>
           <h1
-            className="text-4xl font-extrabold text-on-surface tracking-tight"
+            className="text-on-surface text-4xl font-extrabold tracking-tight"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             My Quiltbook
           </h1>
           <p className="text-secondary mt-1 text-lg">
-            {filteredProjects.length} {filteredProjects.length === 1 ? 'design' : 'designs'}
+            {projects.length} {projects.length === 1 ? 'design' : 'designs'}
           </p>
         </div>
 
@@ -121,19 +114,7 @@ export default function AllProjectsPage() {
         </div>
       </div>
 
-      {/* Search bar with depth */}
-      <div className="relative mb-8">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary" size={20} />
-        <input
-          type="text"
-          placeholder="Search projects..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3.5 bg-surface-container-lowest border border-outline-variant rounded-full text-on-surface placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-elevation-1 transition-shadow focus:shadow-elevation-2"
-        />
-      </div>
-
-      {filteredProjects.length === 0 ? (
+      {projects.length === 0 ? (
         <div className="flex flex-col items-center py-20">
           {/* Decorative illustration */}
           <div className="relative mb-8">
@@ -157,12 +138,10 @@ export default function AllProjectsPage() {
             className="text-2xl font-bold text-on-surface mb-2"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            {searchQuery ? 'No matching projects' : 'Your quiltbook is empty'}
+            Your quiltbook is empty
           </h3>
           <p className="text-secondary mb-8 max-w-sm text-center">
-            {searchQuery
-              ? 'Try a different search term'
-              : 'Start a new project from a blank canvas, a template, or a photo of a quilt you love.'}
+            Start a new project from a blank canvas, a template, or a photo of a quilt you love.
           </p>
           <div className="flex items-center gap-3">
             <Link
@@ -182,7 +161,7 @@ export default function AllProjectsPage() {
               : 'space-y-4'
           }
         >
-          {filteredProjects.map((project) => (
+          {projects.map((project) => (
             <Link
               key={project.id}
               href={`/studio/${project.id}`}
