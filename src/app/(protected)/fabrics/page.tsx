@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface FabricItem {
   id: string;
@@ -88,18 +89,15 @@ export default function FabricsPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
-          Library
-        </p>
-        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-display)' }}>
-          Fabric Library
-        </h1>
-        <p className="text-secondary">
-          Browse fabrics to use in your quilt designs.
-          {!isPro && ' Upgrade to Pro to upload your own fabrics.'}
-        </p>
-      </div>
+      <PageHeader
+        label="Library"
+        title="Fabric Library"
+        description={
+          isPro
+            ? 'Browse fabrics to use in your quilt designs. Upload your own fabrics in the Studio.'
+            : 'Browse fabrics to use in your quilt designs. Upgrade to Pro to upload your own.'
+        }
+      />
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
@@ -112,10 +110,11 @@ export default function FabricsPage() {
                 setScope(s);
                 setPage(1);
               }}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${scope === s
-                ? 'bg-surface shadow-elevation-1 text-on-surface'
-                : 'text-secondary hover:text-on-surface'
-                }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                scope === s
+                  ? 'bg-surface shadow-elevation-1 text-on-surface'
+                  : 'text-secondary hover:text-on-surface'
+              }`}
             >
               {s === 'system' ? 'Library' : 'My Fabrics'}
             </button>
