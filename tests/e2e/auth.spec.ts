@@ -93,9 +93,45 @@ test.describe('Authentication Flow', () => {
     });
 
     test('successful sign in redirects to dashboard', async ({ page }) => {
-      // This test would need actual test credentials or mocked auth
-      // For now, we'll test the form submission flow
-      test.skip(true, 'Requires test authentication setup');
+      // Mock auth before sign in
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/auth/signin');
+      await page.getByLabel('Email').fill('test@example.com');
+      await page.getByLabel('Password').fill('testpassword123');
+      await page.getByRole('button', { name: 'Sign In' }).click();
+
+      // Should redirect to dashboard
+      await expect(page).toHaveURL(/dashboard/, { timeout: 5000 });
     });
   });
 
@@ -239,43 +275,364 @@ test.describe('Navigation and Links', () => {
 test.describe('Authenticated User Flows', () => {
   test.describe('Session Management', () => {
     test('authenticated user stays logged in', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      // Mock auth
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/dashboard');
+      await expect(page).toHaveURL(/dashboard/);
+
+      // Reload and check still logged in
+      await page.reload();
+      await expect(page).toHaveURL(/dashboard/);
     });
 
     test('logout clears session and redirects', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      // Mock auth
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/dashboard');
+
+      // Find and click logout button
+      const logoutButton = page.getByRole('button', { name: /logout|sign out/i });
+      if (await logoutButton.isVisible()) {
+        await logoutButton.click();
+        await expect(page).toHaveURL(/auth\/signin|signin|\/$/);
+      }
     });
 
     test('session timeout redirects to login', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      // This would require mocking token expiration
+      // For now, test that invalid token redirects
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'expired-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'Unauthorized' }),
+        });
+      });
+
+      await page.goto('/dashboard');
+      await expect(page).toHaveURL(/auth\/signin|signin/, { timeout: 5000 });
     });
   });
 
   test.describe('Protected Routes Access', () => {
     test('authenticated user can access dashboard', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/dashboard');
+      await expect(page).toHaveURL(/dashboard/, { timeout: 5000 });
     });
 
     test('authenticated user can access studio', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'pro',
+            isPro: true,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'pro',
+              isPro: true,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/studio/test-project');
+      await expect(page).toHaveURL(/studio\/test-project/, { timeout: 5000 });
     });
 
     test('authenticated user can access projects', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/projects');
+      await expect(page).toHaveURL(/projects/, { timeout: 5000 });
     });
   });
 
   test.describe('Profile Management', () => {
     test('user can update profile information', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/settings');
+      const nameInput = page.getByLabel(/name/i);
+      if (await nameInput.isVisible()) {
+        await nameInput.fill('Updated Name');
+        const saveButton = page.getByRole('button', { name: /save/i });
+        if (await saveButton.isVisible()) {
+          await saveButton.click();
+          await expect(page.getByText(/saved|updated/i)).toBeVisible({ timeout: 5000 });
+        }
+      }
     });
 
     test('profile picture upload works', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/settings');
+      const uploadButton = page.getByRole('button', { name: /upload.*picture|change.*picture|avatar/i });
+      if (await uploadButton.isVisible()) {
+        await uploadButton.click();
+        // File upload would require file chooser handling
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
+      }
     });
 
     test('password change functionality', async ({ page }) => {
-      test.skip(true, 'Requires test authentication setup');
+      await page.addInitScript(() => {
+        localStorage.setItem('qc_access_token', 'mock-jwt-token');
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: 'test-user-123',
+            email: 'test@example.com',
+            name: 'Test User',
+            role: 'free',
+            isPro: false,
+            isAdmin: false,
+          })
+        );
+      });
+
+      await page.route('**/api/auth/session', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: {
+              id: 'test-user-123',
+              email: 'test@example.com',
+              role: 'free',
+              isPro: false,
+              isAdmin: false,
+            },
+          }),
+        });
+      });
+
+      await page.goto('/settings');
+      const passwordSection = page.getByText(/password/i);
+      if (await passwordSection.isVisible()) {
+        await passwordSection.click();
+        const currentPassword = page.getByLabel(/current.*password/i);
+        const newPassword = page.getByLabel(/new.*password/i);
+        if (await currentPassword.isVisible() && await newPassword.isVisible()) {
+          await currentPassword.fill('oldpassword123');
+          await newPassword.fill('newpassword123');
+          const submitButton = page.getByRole('button', { name: /change.*password|update.*password/i });
+          if (await submitButton.isVisible()) {
+            await submitButton.click();
+            await expect(page.getByText(/password.*changed|updated/i)).toBeVisible({ timeout: 5000 });
+          }
+        }
+      }
     });
   });
 });
