@@ -54,10 +54,8 @@ export default async function MemberProfilePage({ params }: PageProps) {
   const { username } = await params;
 
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <UserProfilePage username={username} />
-      </div>
+    <div className="max-w-4xl mx-auto px-6 py-8">
+      <UserProfilePage username={username} />
     </div>
   );
 }
