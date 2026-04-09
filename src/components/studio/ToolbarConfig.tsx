@@ -4,7 +4,8 @@ import { usePrintlistStore } from '@/stores/printlistStore';
 
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
-import { MousePointer2, Hand, Pencil, Wand2, Grid3x3, Undo2, Redo2 } from 'lucide-react';
+import { MousePointer2, Hand, Pencil, Wand2, Grid3x3, Undo2, Redo2, Square, Triangle, ZoomIn, ZoomOut } from 'lucide-react';
+import { ZOOM_FACTOR } from '@/lib/constants';
 
 export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
@@ -16,7 +17,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const canUndo = useCanvasStore((s) => s.undoStack.length > 0);
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
-  const isSnapEnabled = useCanvasStore((s) => s.gridSettings.snapToGrid);
+  const zoom = useCanvasStore((s) => s.zoom);
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -27,7 +28,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Select and move pieces on your canvas',
       toolType: 'select',
       group: 'tools',
-      tier: 'primary',
       icon: <MousePointer2 size={20} />,
     },
     {
@@ -37,7 +37,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Click and drag to move around your canvas',
       toolType: 'pan',
       group: 'tools',
-      tier: 'primary',
       onClick: () => {
         if (isViewportLocked) return;
         useCanvasStore.getState().setActiveTool('pan');
@@ -51,7 +50,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Freehand drawing tool',
       toolType: 'easydraw',
       group: 'tools',
-      tier: 'primary',
       icon: <Pencil size={20} />,
     },
     {
@@ -60,16 +58,34 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       description: 'Warp/modify existing shapes',
       toolType: 'bend',
       group: 'tools',
-      tier: 'primary',
       icon: <Wand2 size={20} />,
     },
+    // ── Shapes ──
+    {
+      id: 'rectangle',
+      label: 'Rectangle',
+      shortcut: 'R',
+      description: 'Draw a rectangle',
+      toolType: 'rectangle',
+      group: 'shapes',
+      icon: <Square size={20} />,
+    },
+    {
+      id: 'triangle',
+      label: 'Triangle',
+      shortcut: 'T',
+      description: 'Draw a triangle',
+      toolType: 'triangle',
+      group: 'shapes',
+      icon: <Triangle size={20} />,
+    },
+    // ── History ──
     {
       id: 'undo',
       label: 'Undo',
       shortcut: 'Ctrl+Z',
       description: 'Undo the last action',
       group: 'history',
-      tier: 'primary',
       isDisabled: !canUndo,
       onClick: () => {
         if (!canUndo) return;
@@ -84,7 +100,6 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+Shift+Z',
       description: 'Redo the last undone action',
       group: 'history',
-      tier: 'primary',
       isDisabled: !canRedo,
       onClick: () => {
         if (!canRedo) return;
@@ -93,16 +108,26 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isActive: () => false,
       icon: <Redo2 size={20} />,
     },
-    // ── PINNED: Snap toggle (always at bottom) ──
+    // ── Zoom ──
     {
-      id: 'snap-toggle',
-      label: 'Snap Toggle',
-      description: 'Enable/disable snap-to-grid',
-      group: 'snap',
-      tier: 'pinned',
-      onClick: () => useCanvasStore.getState().setGridSettings({ snapToGrid: !isSnapEnabled }),
-      isActive: () => isSnapEnabled,
-      icon: <Grid3x3 size={20} />,
+      id: 'zoom-in',
+      label: 'Zoom In',
+      shortcut: 'Ctrl+=',
+      description: 'Zoom in on the canvas',
+      group: 'zoom',
+      onClick: () => useCanvasStore.getState().zoomAndCenter(zoom * ZOOM_FACTOR),
+      isActive: () => false,
+      icon: <ZoomIn size={20} />,
+    },
+    {
+      id: 'zoom-out',
+      label: 'Zoom Out',
+      shortcut: 'Ctrl+-',
+      description: 'Zoom out on the canvas',
+      group: 'zoom',
+      onClick: () => useCanvasStore.getState().zoomAndCenter(zoom / ZOOM_FACTOR),
+      isActive: () => false,
+      icon: <ZoomOut size={20} />,
     },
   ];
 }

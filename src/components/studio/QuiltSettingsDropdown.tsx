@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAuthStore } from '@/stores/authStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
 import {
@@ -13,15 +14,25 @@ import {
 } from '@/lib/constants';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
+import { useStudioDialogs } from '@/components/studio/StudioDialogs';
+
+interface QuiltSettingsDropdownProps {
+  readonly onOpenImageExport?: () => void;
+  readonly onOpenPdfExport?: () => void;
+}
 
 /**
  * Dropdown menu in the top bar for quilt-level settings:
  * - Quilt dimensions (width/height inputs + presets)
  * - Grid cell size slider + snap toggle
- * 
+ * - Export buttons (Image / PDF)
+ *
  * Changes trigger confirmation modals before being applied.
  */
-export function QuiltSettingsDropdown() {
+export function QuiltSettingsDropdown({
+  onOpenImageExport,
+  onOpenPdfExport,
+}: QuiltSettingsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -33,6 +44,9 @@ export function QuiltSettingsDropdown() {
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const user = useAuthStore((s) => s.user);
+  const isPro = user?.role === 'pro' || user?.role === 'admin';
+  const dialogs = useStudioDialogs();
   const unit = getUnitLabel(unitSystem);
 
   // Local state for inputs
@@ -330,6 +344,46 @@ export function QuiltSettingsDropdown() {
               />
               <span className="text-xs text-secondary">Snap to grid</span>
             </label>
+          </div>
+
+          {/* Export section */}
+          <div className="px-3 pt-3 mt-3 border-t border-outline-variant/15">
+            <p className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-2">
+              Export
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPro) {
+                    dialogs.promptUpgrade('Image Export');
+                    return;
+                  }
+                  setIsOpen(false);
+                  onOpenImageExport?.();
+                }}
+                className="flex-1 bg-on-surface text-surface rounded-sm px-3 py-2 text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity"
+              >
+                Image
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPro) {
+                    dialogs.promptUpgrade('PDF Export');
+                    return;
+                  }
+                  setIsOpen(false);
+                  onOpenPdfExport?.();
+                }}
+                className="flex-1 bg-on-surface text-surface rounded-sm px-3 py-2 text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity"
+              >
+                PDF
+              </button>
+            </div>
+            {!isPro && (
+              <p className="text-[10px] text-primary mt-1.5">Pro required for export</p>
+            )}
           </div>
         </div>
       )}

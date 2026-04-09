@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -11,7 +11,6 @@ import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { QuiltSettingsDropdown } from '@/components/studio/QuiltSettingsDropdown';
-import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -81,135 +80,20 @@ function ReferenceImageToggle() {
   );
 }
 
-function ToolsMenu({
-  onOpenHistory,
-  onOpenHelp,
-}: {
-  onOpenHistory?: () => void;
-  onOpenHelp?: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const items = [
-    {
-      label: 'History',
-      description: 'View and restore previous states',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16C7.8 16 5.9 14.8 5 13"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <path d="M10 7V10L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path
-            d="M5 13L3 11L5 9"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-      action: () => {
-        onOpenHistory?.();
-        setOpen(false);
-      },
-    },
-    {
-      label: 'Help & Shortcuts',
-      description: 'Keyboard shortcuts and tutorials',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-          <path
-            d="M8 7.5C8 6.5 8.8 5.5 10 5.5C11.2 5.5 12 6.5 12 7.5C12 8.5 11 9 10 9.5V10.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <circle cx="10" cy="13" r="0.75" fill="currentColor" />
-        </svg>
-      ),
-      action: () => {
-        onOpenHelp?.();
-        setOpen(false);
-      },
-    },
-  ];
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-on-surface/70 hover:text-on-surface hover:bg-surface-container transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-        Tools
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path
-            d="M3 4.5L6 7.5L9 4.5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 w-56 bg-surface border border-outline-variant/20 rounded-xl shadow-elevation-2 py-1.5 z-50">
-          {items.map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              onClick={item.action}
-              className="w-full flex items-start gap-2.5 px-3 py-2.5 hover:bg-surface-container-high transition-colors text-left"
-            >
-              <span className="text-on-surface/50 flex-shrink-0 mt-0.5">{item.icon}</span>
-              <div>
-                <div className="text-[13px] font-medium text-on-surface">{item.label}</div>
-                <div className="text-[11px] text-on-surface/50">{item.description}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
   readonly onOpenPdfExport?: () => void;
   readonly onOpenHelp?: () => void;
-  readonly onSave?: () => void;
   readonly onOpenHistory?: () => void;
+  readonly onSave?: () => void;
 }
 
 export function StudioTopBar({
   onOpenImageExport,
   onOpenPdfExport,
   onOpenHelp,
-  onSave,
   onOpenHistory,
+  onSave,
 }: StudioTopBarProps) {
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
@@ -219,7 +103,6 @@ export function StudioTopBar({
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
-  const dialogs = useStudioDialogs();
 
   useEffect(() => {
     function handleSaveSuccess() {
@@ -237,10 +120,7 @@ export function StudioTopBar({
     <>
       <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <TooltipHint
-            name="Menu"
-            description="Access project settings and options"
-          >
+          <TooltipHint name="Menu" description="Access project settings and options">
             <button
               type="button"
               onClick={() => setDrawerOpen((prev) => !prev)}
@@ -264,14 +144,12 @@ export function StudioTopBar({
           </div>
         </div>
 
-        {/* Center: empty spacer (mode tabs moved to WorktableTabs) */}
+        {/* Center: empty spacer */}
         <div className="absolute left-1/2 -translate-x-1/2" />
 
-        {/* Right: Viewport controls + Project info + Export + Upgrade */}
+        {/* Right: Viewport controls + Project info + Settings */}
         <div className="flex items-center gap-4">
-          {!isPro && (
-            <ProUpgradeButton variant="studio" />
-          )}
+          {!isPro && <ProUpgradeButton variant="studio" />}
 
           {/* Viewport lock/unlock + recenter */}
           <div className="flex items-center gap-1">
@@ -372,34 +250,10 @@ export function StudioTopBar({
 
           <div className="h-6 w-px bg-outline-variant/30" />
 
-          <div className="flex items-center gap-1">
-            <QuiltSettingsDropdown />
-            <ToolsMenu onOpenHistory={onOpenHistory} onOpenHelp={onOpenHelp} />
-          </div>
-
-          <TooltipHint
-            name="Export"
-            description="Export your quilt as PNG, SVG, or PDF"
-          >
-            <button
-              type="button"
-              onClick={() => {
-                if (!isPro) {
-                  dialogs.promptUpgrade('Image Export');
-                  return;
-                }
-                onOpenImageExport?.();
-              }}
-              className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
-            >
-              Export
-              {!isPro && (
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-primary">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
-                </svg>
-              )}
-            </button>
-          </TooltipHint>
+          <QuiltSettingsDropdown
+            onOpenImageExport={onOpenImageExport}
+            onOpenPdfExport={onOpenPdfExport}
+          />
         </div>
       </div>
 
@@ -410,6 +264,7 @@ export function StudioTopBar({
         onOpenImageExport={onOpenImageExport}
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}
+        onOpenHistory={onOpenHistory}
       />
     </>
   );

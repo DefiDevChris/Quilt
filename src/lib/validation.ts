@@ -61,20 +61,12 @@ const gridSettingsSchema = z.object({
 // validation layer doesn't pull in studio code.
 const STANDARD_BLOCK_SIZE_VALUES = [6, 8, 10, 12, 14, 16] as const;
 
-export const layoutBuilderSchema = z.object({
-  width: z.number().min(1).max(200),
-  height: z.number().min(1).max(200),
-  cellSize: z.number().min(0.25).max(6),
-});
-
 export const createProjectSchema = z.object({
   name: z.string().min(1).max(255).default('Untitled Quilt'),
   unitSystem: z.enum(['imperial', 'metric']).default('imperial'),
   canvasWidth: z.number().min(1).max(200).default(48),
   canvasHeight: z.number().min(1).max(200).default(48),
   gridSettings: gridSettingsSchema.default({ enabled: true, size: 1, snapToGrid: true }),
-  // Layout Builder: opens the studio in layout-builder mode
-  layoutBuilder: layoutBuilderSchema.optional(),
 });
 
 export const updateProjectSchema = z.object({

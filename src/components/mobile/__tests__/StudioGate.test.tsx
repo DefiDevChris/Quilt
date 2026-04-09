@@ -6,7 +6,7 @@ import { StudioGate } from '@/components/mobile/StudioGate';
 describe('StudioGate', () => {
   it('renders the desktop prompt message', () => {
     render(<StudioGate />);
-    expect(screen.getByText(/open QuiltCorgi on a desktop/i)).toBeDefined();
+    expect(screen.getByText(/open Quilt Studio on a desktop/i)).toBeDefined();
   });
 
   it('has a link back to the library', () => {

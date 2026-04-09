@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
@@ -202,6 +203,7 @@ export function useFabricDrop() {
       canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
       await applyFabricToObject(null, imageUrl);
       saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
+      useProjectStore.getState().setHasContent(true);
       clearHighlight();
     },
     [fabricCanvas, applyFabricToObject, clearHighlight]

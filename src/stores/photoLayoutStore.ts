@@ -52,6 +52,7 @@ interface PhotoLayoutState {
   scaledPieces: readonly ScaledPiece[];
   scanConfig: QuiltDetectionConfig;
   quiltStructure: QuiltStructure | null;
+  shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null;
 
   setStep: (step: PhotoLayoutStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
@@ -66,6 +67,9 @@ interface PhotoLayoutState {
   setScaledPieces: (pieces: readonly ScaledPiece[]) => void;
   setScanConfig: (config: QuiltDetectionConfig) => void;
   setQuiltStructure: (structure: QuiltStructure | null) => void;
+  setShapeCorrection: (
+    correction: import('@/lib/photo-layout-types').ShapeCorrectionResult | null
+  ) => void;
   reset: () => void;
 }
 
@@ -85,6 +89,7 @@ const initialState = {
   scaledPieces: [] as readonly ScaledPiece[],
   scanConfig: DEFAULT_QUILT_DETECTION_CONFIG,
   quiltStructure: null as QuiltStructure | null,
+  shapeCorrection: null as import('@/lib/photo-layout-types').ShapeCorrectionResult | null,
 };
 
 /**
@@ -132,6 +137,9 @@ export const usePhotoLayoutStore = create<PhotoLayoutState>((set, get) => ({
   setScanConfig: (config) => set({ scanConfig: config }),
 
   setQuiltStructure: (structure) => set({ quiltStructure: structure }),
+
+  setShapeCorrection: (correction: import('@/lib/photo-layout-types').ShapeCorrectionResult | null) =>
+    set({ shapeCorrection: correction }),
 
   reset: () => {
     const { originalImageUrl, correctedImageRef } = get();

@@ -369,6 +369,94 @@ export interface DetectedPieceWithHierarchy extends DetectedPiece {
 }
 
 // ============================================================================
+// Shape Matching & Block Auto-Correction Types
+// ============================================================================
+
+/**
+ * Canonical shape signature for a block SVG.
+ * Computed once per block, used for fast matching against detected pieces.
+ */
+export interface BlockSignature {
+  /** Block ID, e.g. "01_nine_patch" */
+  readonly blockId: string;
+  /** Display name, e.g. "Nine Patch" */
+  readonly displayName: string;
+  /** Number of patches in the block */
+  readonly patchCount: number;
+  /** Distribution of vertex counts: e.g. { 3: 4, 4: 5 } = 4 triangles, 5 quads */
+  readonly vertexDistribution: ReadonlyMap<number, number>;
+  /** Adjacency graph: which patches share edges (pair indices) */
+  readonly adjacencyPairs: readonly Readonly<[number, number]>[];
+  /** Relative areas of each patch (normalized so sum = 1.0) */
+  readonly relativeAreas: readonly number[];
+  /** Whether the block has curved paths (true for Drunkard's Path, Dresden Plate, etc.) */
+  readonly hasCurves: boolean;
+  /** The raw SVG string for this block */
+  readonly svgData: string;
+}
+
+/**
+ * Result of matching a detected block cell against the block library.
+ */
+export interface BlockMatchResult {
+  /** Matched block ID, e.g. "01_nine_patch" */
+  readonly blockId: string;
+  /** Display name */
+  readonly displayName: string;
+  /** Confidence score 0.0–1.0 */
+  readonly confidence: number;
+  /** Mapping: detected piece index → SVG patch index */
+  readonly pieceToPatchMapping: readonly number[];
+}
+
+/**
+ * A block cell — a group of detected pieces that occupy one grid cell.
+ */
+export interface DetectedBlockCell {
+  /** Grid cell key, e.g. "0,0" */
+  readonly cellKey: string;
+  /** Row index */
+  readonly row: number;
+  /** Col index */
+  readonly col: number;
+  /** Piece IDs in this cell */
+  readonly pieceIds: readonly string[];
+  /** Cell bounding box in pixels */
+  readonly boundsPx: Rect;
+}
+
+/**
+ * Corrected piece after shape matching and edge snapping.
+ * Replaces raw detected pieces in the import pipeline.
+ */
+export interface CorrectedPiece {
+  readonly id: string;
+  /** Contour in pixels (post-correction) */
+  readonly contourPx: readonly Point2D[];
+  /** Source: 'block-svg' if matched to known block, 'detected' if raw CV */
+  readonly source: 'block-svg' | 'detected' | 'snapped';
+  /** If source is 'block-svg', which block and which patch */
+  readonly blockRef?: {
+    readonly blockId: string;
+    readonly patchIndex: number;
+  };
+  readonly role: PieceRole;
+  readonly dominantColor: string;
+}
+
+/**
+ * Result of the shape correction pipeline.
+ */
+export interface ShapeCorrectionResult {
+  /** Block cell matches (cell key → match result) */
+  readonly blockMatches: ReadonlyMap<string, BlockMatchResult>;
+  /** Corrected pieces for all cells (matched + unmatched) */
+  readonly correctedPieces: readonly CorrectedPiece[];
+  /** Cells that didn't match any known block (fallback to raw) */
+  readonly unmatchedCellKeys: readonly string[];
+}
+
+// ============================================================================
 // Quilt Structure Detection Types (Post-processing phase)
 // ============================================================================
 

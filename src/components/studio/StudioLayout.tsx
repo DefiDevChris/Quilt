@@ -14,7 +14,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Project } from '@/types/project';
-import { GRID_LINE_COLOR } from '@/lib/constants';
 
 import { StudioTopBar } from '@/components/studio/StudioTopBar';
 import { Toolbar } from '@/components/studio/Toolbar';
@@ -27,7 +26,6 @@ import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { WorktableTabs } from '@/components/studio/WorktableTabs';
-import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 
@@ -65,15 +63,8 @@ export function StudioLayout({ project }: StudioLayoutProps) {
       quiltSetupShownRef.current = true;
       return;
     }
-    const canvas = useCanvasStore.getState().fabricCanvas;
-    const objs = canvas?.getObjects() ?? [];
-    const hasUserContent = objs.some((o) => {
-      const r = o as unknown as Record<string, unknown>;
-      if (r['_fenceElement']) return false;
-      const stroke = (r['stroke'] as string | undefined) ?? '';
-      return stroke !== GRID_LINE_COLOR;
-    });
-    if (!hasUserContent) {
+    const hasContent = useProjectStore.getState().hasContent;
+    if (!hasContent) {
       queueMicrotask(() => setShowQuiltSetup(true));
     }
     quiltSetupShownRef.current = true;
@@ -215,9 +206,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
               </>
             )}
           </div>
-
-          {/* Floating toolbar (all modes) */}
-          <FloatingToolbar />
         </div>
 
         {/* Right sidebar: mode-specific panel */}
