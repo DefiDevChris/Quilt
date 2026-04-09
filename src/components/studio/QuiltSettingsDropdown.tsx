@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useLayoutStore } from '@/stores/layoutStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
 import {
@@ -13,6 +12,7 @@ import {
   QUILT_SIZE_PRESETS,
 } from '@/lib/constants';
 import { TooltipHint } from '@/components/ui/TooltipHint';
+import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 
 /**
  * Dropdown menu in the top bar for quilt-level settings:
@@ -336,12 +336,10 @@ export function QuiltSettingsDropdown() {
 
       {/* Confirmation modal for resize */}
       {pendingWidth !== null && pendingHeight !== null && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="bg-surface rounded-xl shadow-elevation-3 w-[400px] max-w-[90vw] p-6">
-            <h3 className="text-title-lg text-on-surface font-semibold mb-2">
-              Resize Quilt?
-            </h3>
-            <p className="text-body-md text-secondary mb-6">
+        <ConfirmationDialog
+          title="Resize Quilt?"
+          message={
+            <>
               This will change the quilt dimensions from{' '}
               <span className="font-medium text-on-surface">
                 {canvasWidth}″ × {canvasHeight}″
@@ -351,35 +349,20 @@ export function QuiltSettingsDropdown() {
                 {pendingWidth}″ × {pendingHeight}″
               </span>
               . This action cannot be undone.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <button
-                type="button"
-                onClick={cancelPending}
-                className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => confirmResize(pendingWidth, pendingHeight)}
-                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
-              >
-                Resize
-              </button>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+          confirmLabel="Resize"
+          onConfirm={() => confirmResize(pendingWidth, pendingHeight)}
+          onCancel={cancelPending}
+        />
       )}
 
       {/* Confirmation modal for cell size change */}
       {pendingCellSize !== null && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="bg-surface rounded-xl shadow-elevation-3 w-[400px] max-w-[90vw] p-6">
-            <h3 className="text-title-lg text-on-surface font-semibold mb-2">
-              Change Grid Cell Size?
-            </h3>
-            <p className="text-body-md text-secondary mb-6">
+        <ConfirmationDialog
+          title="Change Grid Cell Size?"
+          message={
+            <>
               This will change the grid cell size from{' '}
               <span className="font-medium text-on-surface">
                 {gridSettings.size.toFixed(2)}″
@@ -389,25 +372,12 @@ export function QuiltSettingsDropdown() {
                 {pendingCellSize.toFixed(2)}″
               </span>
               . This may affect layout positioning.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <button
-                type="button"
-                onClick={cancelPending}
-                className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => confirmCellSizeChange(pendingCellSize)}
-                className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
-              >
-                Change
-              </button>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+          confirmLabel="Change"
+          onConfirm={() => confirmCellSizeChange(pendingCellSize)}
+          onCancel={cancelPending}
+        />
       )}
     </div>
   );

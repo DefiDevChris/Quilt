@@ -9,8 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore } from '@/stores/authStore';
-import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
-import { Sparkles } from 'lucide-react';
+import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { QuickStartWorkflows } from '@/components/dashboard/QuickStartWorkflows';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 
@@ -48,7 +47,6 @@ function DashboardPageContent() {
   const [projectCount, setProjectCount] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
-  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const uploads = useMobileUploadStore((s) => s.uploads);
   const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
   const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
@@ -117,22 +115,7 @@ function DashboardPageContent() {
         </div>
 
         {!isPro && !isLoadingAuth && user && (
-          <button
-            onClick={() => setShowProUpgrade(true)}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-dark p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02]"
-          >
-            <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
-              <Sparkles size={20} className="text-primary-dark" />
-              <div className="text-left">
-                <p className="text-sm font-extrabold text-on-surface leading-none mb-1">
-                  Upgrade to Pro
-                </p>
-                <p className="text-xs font-medium text-secondary leading-none">
-                  Unlock AI & Exports
-                </p>
-              </div>
-            </div>
-          </button>
+          <ProUpgradeButton variant="dashboard" />
         )}
       </div>
 
@@ -277,9 +260,6 @@ function DashboardPageContent() {
           fetchProjects();
         }}
       />
-
-      {/* Pro upgrade modal */}
-      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
     </div>
   );
 }

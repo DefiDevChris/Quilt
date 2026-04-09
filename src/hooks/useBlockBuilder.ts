@@ -16,6 +16,7 @@ import {
   generateCircle,
   generateBend,
 } from '@/lib/block-builder-engine';
+import { GRID_LINE_COLOR } from '@/lib/constants';
 
 interface UseBlockBuilderOptions {
   draftCanvasRef: React.MutableRefObject<unknown>;
@@ -40,7 +41,6 @@ const SNAP_RADIUS_FRACTION = 0.3;
 const SEAM_LINE_COLOR = '#383831';
 const SEAM_LINE_WIDTH = 2;
 const PENCIL_PREVIEW_COLOR = '#f97316';
-const GRID_LINE_COLOR = '#E5E2DD';
 
 export function useBlockBuilder({
   draftCanvasRef,

@@ -9,9 +9,9 @@ import { ON_SURFACE_COLOR } from '@/lib/constants';
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
-import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { QuiltSettingsDropdown } from '@/components/studio/QuiltSettingsDropdown';
-import { Sparkles } from 'lucide-react';
+import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -215,11 +215,11 @@ export function StudioTopBar({
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
+  const dialogs = useStudioDialogs();
 
   useEffect(() => {
     function handleSaveSuccess() {
@@ -272,13 +272,7 @@ export function StudioTopBar({
         {/* Right: Viewport controls + Project info + Export + Upgrade */}
         <div className="flex items-center gap-4">
           {!isPro && (
-            <button
-              onClick={() => setShowProUpgrade(true)}
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105"
-            >
-              <Sparkles size={14} className="text-white" />
-              Upgrade to Pro
-            </button>
+            <ProUpgradeButton variant="studio" />
           )}
 
           {/* Viewport lock/unlock + recenter */}
@@ -396,7 +390,7 @@ export function StudioTopBar({
               type="button"
               onClick={() => {
                 if (!isPro) {
-                  setShowProUpgrade(true);
+                  dialogs.promptUpgrade('Image Export');
                   return;
                 }
                 onOpenImageExport?.();
@@ -404,7 +398,11 @@ export function StudioTopBar({
               className="bg-on-surface text-surface rounded-lg px-4 py-1.5 text-[13px] font-semibold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1.5"
             >
               Export
-              {!isPro && <Sparkles size={12} className="text-primary" />}
+              {!isPro && (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-primary">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
+                </svg>
+              )}
             </button>
           </TooltipHint>
         </div>
@@ -418,8 +416,6 @@ export function StudioTopBar({
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}
       />
-
-      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
     </>
   );
 }

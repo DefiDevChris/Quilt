@@ -74,7 +74,8 @@ export const DEFAULT_QUILT_PALETTE = [
   '#4A7C59',
 ] as const;
 
-export const PATTERN_PREVIEW_FILL = '#e5e2dd';
+/** @deprecated Use GRID_LINE_COLOR instead */
+export const PATTERN_PREVIEW_FILL = GRID_LINE_COLOR;
 export const PATTERN_PREVIEW_STROKE = '#c0b8ae';
 export const PATTERN_PREVIEW_ACCENT = '#8B7355';
 

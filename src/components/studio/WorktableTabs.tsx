@@ -131,7 +131,7 @@ export function WorktableTabs() {
   );
 
   const modeTabs = [
-    { id: 'quilt', label: 'Quilt' },
+    { id: 'quilt', label: 'Worktable' },
     { id: 'block-builder', label: 'Block Builder' },
     { id: 'layout-creator', label: 'Layout Creator' },
   ] as const;
@@ -155,9 +155,9 @@ export function WorktableTabs() {
         ))}
       </div>
 
-      {/* Quilt worktable tabs */}
-      {activeWorktable === 'quilt' && (
-        <div className="flex items-center gap-1 px-3 py-1.5 bg-surface-container/30 border-b border-outline-variant/15 overflow-x-auto">
+      {/* Quilt worktable tabs (always visible, hidden when not in quilt mode) */}
+      <div className={`overflow-x-auto ${activeWorktable === 'quilt' ? '' : 'hidden'}`}>
+        <div className="flex items-center gap-1 px-3 py-1.5 bg-surface-container/30 border-b border-outline-variant/15">
           {worktableTabs.map((tab) => (
             <WorktableTabItem
               key={tab.id}
@@ -185,7 +185,7 @@ export function WorktableTabs() {
             <span className="text-[10px] font-medium">New Worktable</span>
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

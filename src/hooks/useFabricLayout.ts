@@ -6,6 +6,9 @@ import { useCanvasStore } from '@/stores/canvasStore';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
+import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
+
+const FABRIC_HIGHLIGHT_COLOR = '#10B981';
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
@@ -128,54 +131,19 @@ export function useFabricDrop() {
   }, []);
 
   const clearHighlight = useCallback(() => {
-    if (!highlightRectRef.current || !fabricCanvas) return;
-    const canvas = fabricCanvas as unknown as {
-      remove: (...objs: unknown[]) => void;
-      requestRenderAll: () => void;
-    };
-    canvas.remove(highlightRectRef.current);
-    canvas.requestRenderAll();
+    clearDropHighlight(fabricCanvas, highlightRectRef.current);
     highlightRectRef.current = null;
   }, [fabricCanvas]);
 
   const showFabricHighlight = useCallback(
     async (target: unknown) => {
       if (!fabricCanvas || !target) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as unknown as {
-        add: (...objs: unknown[]) => void;
-        bringObjectToFront: (obj: unknown) => void;
-        requestRenderAll: () => void;
-      };
-
       clearHighlight();
-
-      const fabricObj = target as unknown as import('fabric').FabricObject;
-      const x = fabricObj.left ?? 0;
-      const y = fabricObj.top ?? 0;
-      const w = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
-      const h = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
-
-      const rect = new fabric.Rect({
-        left: x,
-        top: y,
-        width: w,
-        height: h,
-        fill: 'rgba(16, 185, 129, 0.08)',
-        stroke: '#10B981',
-        strokeWidth: 2,
-        strokeDashArray: [6, 4],
-        selectable: false,
-        evented: false,
-        hasControls: false,
-        hasBorders: false,
-      });
-
-      (rect as unknown as Record<string, unknown>)['_dragHighlight'] = true;
-      highlightRectRef.current = rect as unknown as import('fabric').FabricObject;
-      canvas.add(rect as unknown as import('fabric').FabricObject);
-      canvas.bringObjectToFront(rect as unknown as import('fabric').FabricObject);
-      canvas.requestRenderAll();
+      highlightRectRef.current = await showDropHighlight(
+        fabricCanvas,
+        target,
+        FABRIC_HIGHLIGHT_COLOR
+      );
     },
     [fabricCanvas, clearHighlight]
   );

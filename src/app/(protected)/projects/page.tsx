@@ -5,6 +5,7 @@ import { Grid, List, Calendar, Plus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface ProjectListItem {
   id: string;
@@ -50,15 +51,13 @@ export default function AllProjectsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-surface-container rounded w-48"></div>
-          <div className="h-12 bg-surface-container rounded"></div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-48 bg-surface-container rounded-xl"></div>
-            ))}
-          </div>
+      <div className="animate-pulse space-y-6">
+        <div className="h-8 bg-surface-container rounded w-48"></div>
+        <div className="h-12 bg-surface-container rounded"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="h-48 bg-surface-container rounded-xl"></div>
+          ))}
         </div>
       </div>
     );
@@ -66,57 +65,47 @@ export default function AllProjectsPage() {
 
   return (
     <div>
-      {/* Header with gradient accent */}
-      <div className="flex items-end justify-between mb-8">
-        <div>
-          <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
-            Projects
-          </p>
-          <h1
-            className="text-on-surface text-4xl font-extrabold tracking-tight"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            My Quiltbook
-          </h1>
-          <p className="text-secondary mt-1 text-lg">
-            {projects.length} {projects.length === 1 ? 'design' : 'designs'}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
-          >
-            <Plus size={18} />
-            New Project
-          </Link>
-          <div className="flex items-center bg-surface-container-high rounded-full p-1 ml-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-full transition-colors ${viewMode === 'grid'
-                ? 'bg-primary text-white shadow-elevation-1'
-                : 'text-secondary hover:text-on-surface'
-                }`}
+      <PageHeader
+        label="Projects"
+        title="My Quiltbook"
+        description={`${projects.length} ${projects.length === 1 ? 'design' : 'designs'}`}
+        action={
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
             >
-              <Grid size={18} />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-full transition-colors ${viewMode === 'list'
-                ? 'bg-primary text-white shadow-elevation-1'
-                : 'text-secondary hover:text-on-surface'
+              <Plus size={18} />
+              New Project
+            </Link>
+            <div className="flex items-center bg-surface-container-high rounded-full p-1 ml-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-full transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-primary text-white shadow-elevation-1'
+                    : 'text-secondary hover:text-on-surface'
                 }`}
-            >
-              <List size={18} />
-            </button>
+              >
+                <Grid size={18} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-full transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-primary text-white shadow-elevation-1'
+                    : 'text-secondary hover:text-on-surface'
+                }`}
+              >
+                <List size={18} />
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center py-20">
-          {/* Decorative illustration */}
           <div className="relative mb-8">
             <div className="w-32 h-32 rounded-3xl bg-primary-container/40 flex items-center justify-center rotate-6 shadow-elevation-2">
               <div className="w-28 h-28 rounded-2xl bg-surface-container-lowest -rotate-6 flex items-center justify-center shadow-elevation-1 border border-outline-variant">
@@ -143,15 +132,13 @@ export default function AllProjectsPage() {
           <p className="text-secondary mb-8 max-w-sm text-center">
             Start a new project from a blank canvas, a template, or a photo of a quilt you love.
           </p>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
-            >
-              <Sparkles size={18} />
-              Start Your First Quilt
-            </Link>
-          </div>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
+          >
+            <Sparkles size={18} />
+            Start Your First Quilt
+          </Link>
         </div>
       ) : (
         <div
@@ -165,10 +152,11 @@ export default function AllProjectsPage() {
             <Link
               key={project.id}
               href={`/studio/${project.id}`}
-              className={`group block ${viewMode === 'grid'
-                ? 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all'
-                : 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
-                }`}
+              className={`group block ${
+                viewMode === 'grid'
+                  ? 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all'
+                  : 'glass-panel rounded-xl p-4 hover:shadow-elevation-2 transition-all flex items-center gap-4'
+              }`}
             >
               <div
                 className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}
