@@ -200,7 +200,7 @@ export function ProfileEditForm() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-secondary text-body-lg">Please sign in to edit your profile.</p>
+        <p className="text-secondary text-[11px] font-black uppercase tracking-widest">Signed out</p>
       </div>
     );
   }
@@ -208,148 +208,161 @@ export function ProfileEditForm() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-on-surface border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6">
-      <h1 className="text-headline-lg font-bold text-on-surface">Edit Profile</h1>
-
-      <AvatarUpload
-        avatarPreview={avatarPreview}
-        displayName={form.displayName}
-        isUploading={isUploadingAvatar}
-        onChange={handleAvatarChange}
-      />
-
-      <FieldInput
-        label="Display Name"
-        value={form.displayName}
-        maxLength={DISPLAY_NAME_MAX}
-        error={fieldErrors.displayName}
-        onChange={(v) => updateField('displayName', v)}
-        required
-      />
-
-      <div>
-        <label className="block text-body-sm font-medium text-on-surface mb-1">Bio</label>
-        <textarea
-          value={form.bio}
-          onChange={(e) => updateField('bio', e.target.value)}
-          maxLength={BIO_MAX}
-          rows={3}
-          className="w-full px-3 py-2 rounded-md bg-surface border border-outline-variant text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+    <form onSubmit={handleSubmit} className="space-y-16 py-12">
+      <div className="space-y-10">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Identity Studio</p>
+        
+        <AvatarUpload
+          avatarPreview={avatarPreview}
+          displayName={form.displayName}
+          isUploading={isUploadingAvatar}
+          onChange={handleAvatarChange}
         />
-        <div className="flex justify-between mt-1">
-          {fieldErrors.bio && <span className="text-error text-body-sm">{fieldErrors.bio}</span>}
-          <span className="text-body-sm text-secondary ml-auto">
-            {form.bio.length}/{BIO_MAX}
-          </span>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <FieldInput
+            label="Display Identity"
+            value={form.displayName}
+            maxLength={DISPLAY_NAME_MAX}
+            error={fieldErrors.displayName}
+            onChange={(v) => updateField('displayName', v)}
+            required
+            placeholder="Studio Member"
+          />
+
+          <FieldInput
+            label="Studio Location"
+            value={form.location}
+            error={fieldErrors.location}
+            onChange={(v) => updateField('location', v)}
+            placeholder="City, Region"
+          />
+        </div>
+
+        <div>
+           <div className="flex justify-between items-center mb-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-secondary">Aesthetic & Vision (Bio)</label>
+            <span className="text-[10px] font-bold text-secondary/40">
+              {form.bio.length}/{BIO_MAX}
+            </span>
+          </div>
+          <textarea
+            value={form.bio}
+            onChange={(e) => updateField('bio', e.target.value)}
+            maxLength={BIO_MAX}
+            rows={4}
+            className="w-full px-5 py-4 rounded-2xl bg-white border border-outline-variant/30 text-on-surface text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-secondary/50"
+            placeholder="Describe your design principles..."
+          />
+          {fieldErrors.bio && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-2">{fieldErrors.bio}</p>}
         </div>
       </div>
 
-      <div>
-        <label className="block text-body-sm font-medium text-on-surface mb-3">
-          Social visibility
-        </label>
-        <div className="flex gap-2">
+      <div className="space-y-8">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Gallery Visibility</p>
+        <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
-            className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
+            className={`rounded-2xl border px-6 py-5 text-left transition-all duration-300 ${
               form.privacyMode === 'public'
-                ? 'border-primary bg-primary/10 text-on-surface'
-                : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
+                ? 'border-primary bg-primary/5 shadow-elevation-1'
+                : 'border-outline-variant/30 bg-white hover:border-outline-variant/60'
             }`}
           >
-            <div className="font-medium">Public</div>
-            <div className="mt-0.5 text-body-sm text-secondary/80">
-              View, post, comment &amp; heart
+            <div className="font-black text-xs uppercase tracking-widest text-on-surface">Open Studio</div>
+            <div className="mt-1 text-[10px] font-bold text-secondary/60 leading-relaxed">
+              Enable community feed, shared projects, and collaborative insights.
             </div>
           </button>
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
-            className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
+            className={`rounded-2xl border px-6 py-5 text-left transition-all duration-300 ${
               form.privacyMode === 'private'
-                ? 'border-primary bg-primary/10 text-on-surface'
-                : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
+                ? 'border-primary bg-primary/5 shadow-elevation-1'
+                : 'border-outline-variant/30 bg-white hover:border-outline-variant/60'
             }`}
           >
-            <div className="font-medium">Private</div>
-            <div className="mt-0.5 text-body-sm text-secondary/80">View &amp; heart only</div>
+            <div className="font-black text-xs uppercase tracking-widest text-on-surface">Private Workshop</div>
+            <div className="mt-1 text-[10px] font-bold text-secondary/60 leading-relaxed">
+              Limit visibility. Focus on solitary design and personal archives.
+            </div>
           </button>
         </div>
       </div>
 
-      <FieldInput
-        label="Location"
-        value={form.location}
-        error={fieldErrors.location}
-        onChange={(v) => updateField('location', v)}
-        placeholder="e.g. Portland, OR"
-      />
+      <div className="space-y-8">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Digital Connections</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-surface-container/30 border border-outline-variant/20 rounded-3xl">
+          <FieldInput
+            label="Digital Portfolio (Website)"
+            value={form.websiteUrl}
+            error={fieldErrors.websiteUrl}
+            onChange={(v) => updateField('websiteUrl', v)}
+            placeholder="https://..."
+          />
+          <FieldInput
+            label="Instagram Archive"
+            value={form.instagramHandle}
+            error={fieldErrors.instagramHandle}
+            onChange={(v) => updateField('instagramHandle', v)}
+            placeholder="@handle"
+          />
+          <FieldInput
+            label="Studio Stream (YouTube)"
+            value={form.youtubeHandle}
+            error={fieldErrors.youtubeHandle}
+            onChange={(v) => updateField('youtubeHandle', v)}
+            placeholder="Channel"
+          />
+          <FieldInput
+            label="Process Feed (TikTok)"
+            value={form.tiktokHandle}
+            error={fieldErrors.tiktokHandle}
+            onChange={(v) => updateField('tiktokHandle', v)}
+            placeholder="@handle"
+          />
+          <div className="md:col-span-2">
+            <FieldInput
+              label="Collaborative Inquiry (Public Email)"
+              value={form.publicEmail}
+              error={fieldErrors.publicEmail}
+              onChange={(v) => updateField('publicEmail', v)}
+              placeholder="connect@studio.com"
+              type="email"
+            />
+          </div>
+        </div>
+      </div>
 
-      <fieldset className="border border-outline-variant rounded-lg p-4 space-y-4">
-        <legend className="text-body-sm font-medium text-on-surface px-2">Social Links</legend>
+      <div className="flex flex-col gap-4 pt-4">
+        {error && (
+          <div className="p-4 rounded-xl bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
+            {error}
+          </div>
+        )}
 
-        <FieldInput
-          label="Website"
-          value={form.websiteUrl}
-          error={fieldErrors.websiteUrl}
-          onChange={(v) => updateField('websiteUrl', v)}
-          placeholder="https://example.com"
-        />
+        {success && (
+          <div className="p-4 rounded-xl bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
+            {success}
+          </div>
+        )}
 
-        <FieldInput
-          label="Instagram"
-          value={form.instagramHandle}
-          error={fieldErrors.instagramHandle}
-          onChange={(v) => updateField('instagramHandle', v)}
-          placeholder="username"
-        />
-
-        <FieldInput
-          label="YouTube"
-          value={form.youtubeHandle}
-          error={fieldErrors.youtubeHandle}
-          onChange={(v) => updateField('youtubeHandle', v)}
-          placeholder="channel"
-        />
-
-        <FieldInput
-          label="TikTok"
-          value={form.tiktokHandle}
-          error={fieldErrors.tiktokHandle}
-          onChange={(v) => updateField('tiktokHandle', v)}
-          placeholder="username"
-        />
-
-        <FieldInput
-          label="Public Email"
-          value={form.publicEmail}
-          error={fieldErrors.publicEmail}
-          onChange={(v) => updateField('publicEmail', v)}
-          placeholder="you@example.com"
-          type="email"
-        />
-      </fieldset>
-
-      {error && <div className="p-3 rounded-md bg-error/10 text-error text-body-sm">{error}</div>}
-
-      {success && (
-        <div className="p-3 rounded-md bg-success/10 text-success text-body-sm">{success}</div>
-      )}
-
-      <button
-        type="submit"
-        disabled={isSaving}
-        className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSaving ? 'Saving...' : 'Save Profile'}
-      </button>
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="w-full h-14 rounded-2xl bg-on-surface text-surface font-black uppercase tracking-[0.2em] text-xs hover:bg-on-surface/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-2 active:scale-[0.98]"
+        >
+          {isSaving ? 'Synchronizing...' : 'Finalize Studio Identity'}
+        </button>
+      </div>
     </form>
   );
 }
@@ -372,30 +385,32 @@ function AvatarUpload({
     .join('');
 
   return (
-    <div className="flex items-center gap-4">
-      <label className="relative cursor-pointer group">
-        {avatarPreview ? (
-          <img
-            src={avatarPreview}
-            alt="Avatar preview"
-            className="w-20 h-20 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center">
-            <span className="text-headline-md font-bold text-primary-on-container">
-              {initials || '?'}
-            </span>
+    <div className="flex items-center gap-8 group">
+      <label className="relative cursor-pointer">
+        <div className="w-24 h-24 rounded-3xl overflow-hidden ring-4 ring-white shadow-elevation-2 group-hover:shadow-elevation-3 transition-all bg-surface-container-high relative">
+          {avatarPreview ? (
+            <img
+              src={avatarPreview}
+              alt="Avatar preview"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-2xl font-black text-on-surface opacity-20 uppercase tracking-tighter">
+                {initials || '?'}
+              </span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="white"
+              className="w-6 h-6"
+            >
+              <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110-8 4 4 0 010 8z" />
+            </svg>
           </div>
-        )}
-        <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="white"
-            className="w-5 h-5"
-          >
-            <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110-8 4 4 0 010 8z" />
-          </svg>
         </div>
         <input
           type="file"
@@ -405,9 +420,9 @@ function AvatarUpload({
         />
       </label>
       <div>
-        <p className="text-body-sm font-medium text-on-surface">Profile Photo</p>
-        <p className="text-body-sm text-secondary">
-          {isUploading ? 'Uploading...' : 'Click to change'}
+        <p className="text-xs font-black text-on-surface uppercase tracking-widest mb-1.5">Profile Signature</p>
+        <p className="text-[10px] font-bold text-secondary/60 uppercase tracking-widest">
+          {isUploading ? 'Uploading Archive...' : 'Click portrait to update visual identity'}
         </p>
       </div>
     </div>
@@ -434,8 +449,8 @@ function FieldInput({
   type?: string;
 }) {
   return (
-    <div>
-      <label className="block text-body-sm font-medium text-on-surface mb-1">{label}</label>
+    <div className="space-y-2">
+      <label className="block text-[10px] font-black uppercase tracking-widest text-secondary">{label}</label>
       <input
         type={type}
         value={value}
@@ -443,9 +458,9 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-3 py-2 rounded-md bg-surface border border-outline-variant text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+        className="w-full px-5 py-3.5 rounded-2xl bg-white border border-outline-variant/30 text-on-surface text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-secondary/50"
       />
-      {error && <p className="text-error text-body-sm mt-1">{error}</p>}
+      {error && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-1">{error}</p>}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useCartStore, type CartItem } from '@/stores/cartStore';
 import { X, Minus, Plus, Trash2, ShoppingBag, Copy } from 'lucide-react';
 
-const CART_STORAGE_KEY = 'quiltcorgi_cart';
+const CART_STORAGE_KEY = 'quilt-studio-cart';
 
 /**
  * Slide-out cart drawer. Persists items in localStorage.

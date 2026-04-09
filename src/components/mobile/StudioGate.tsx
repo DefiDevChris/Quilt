@@ -22,7 +22,7 @@ export function StudioGate() {
       </svg>
       <h1 className="text-xl font-bold text-on-surface mb-3">Your design is waiting</h1>
       <p className="text-sm text-secondary leading-relaxed max-w-xs mb-8">
-        Open QuiltCorgi on a desktop to continue editing. The full design studio needs a larger
+        Open Quilt Studio on a desktop to continue editing. The full design studio needs a larger
         screen.
       </p>
       <Link

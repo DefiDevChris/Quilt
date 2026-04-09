@@ -142,7 +142,7 @@ export const FABRIC_SORT_OPTIONS = [
 ] as const;
 
 // Phase 16: Onboarding & Photo features
-export const ONBOARDING_STORAGE_KEY = 'quiltcorgi-onboarding-completed';
+export const ONBOARDING_STORAGE_KEY = 'quilt-studio-onboarding-completed';
 export const TOOLTIP_DELAY_MS = 400;
 
 export const KMEANS_MAX_ITERATIONS = 20;
@@ -227,7 +227,7 @@ export const QUILT_SIZE_PRESETS: readonly {
   ];
 
 // Support contact
-export const SUPPORT_EMAIL = 'support@quiltcorgi.com';
+export const SUPPORT_EMAIL = 'support@quilt.studio';
 
 // Social/Featured fallback images (files exist in public/images/quilts/)
 export const SOCIAL_FALLBACK_IMAGES = {

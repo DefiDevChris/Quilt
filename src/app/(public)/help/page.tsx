@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 
 export const metadata: Metadata = {
   title: 'Help Center',
-  description: 'Find answers, tutorials, and support for QuiltCorgi.',
+  description: 'Find answers, tutorials, and support for Quilt Studio.',
 };
 
 export default function HelpPage() {
@@ -16,7 +16,7 @@ export default function HelpPage() {
       <main className="max-w-4xl mx-auto px-6 py-12 lg:py-16">
         <PageHeader
           title="Help Center"
-          description="Find answers, tutorials, and support for QuiltCorgi."
+          description="Find answers, tutorials, and support for Quilt Studio."
         />
         <HelpCenterContent />
       </main>

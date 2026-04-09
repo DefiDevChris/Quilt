@@ -62,7 +62,6 @@ export function ToolIcon({
           shortcut={tool.shortcut}
           description={tool.description}
           isProFeature={tool.isProFeature}
-          mascot={tool.mascot}
         >
           {button}
         </TooltipHint>

@@ -219,7 +219,7 @@ export function HamburgerDrawer({
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12">
-              <span className="font-semibold text-[1.125rem] text-on-surface">QuiltCorgi</span>
+              <span className="font-semibold text-[1.125rem] text-on-surface">Quilt Studio</span>
               <button
                 type="button"
                 onClick={onClose}

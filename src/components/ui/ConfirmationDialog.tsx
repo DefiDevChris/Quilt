@@ -40,14 +40,14 @@ export function ConfirmationDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="bg-white/50 px-4 py-2 text-body-md text-secondary rounded-full"
+            className="bg-surface-container px-5 py-2 text-[13px] font-medium text-secondary rounded-full hover:bg-surface-container-high transition-colors"
           >
             {cancelLabel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="px-4 py-2 text-body-md text-white bg-gradient-to-r from-primary to-primary-dark rounded-full hover:opacity-90 transition-all"
+            className="px-6 py-2 text-[13px] font-semibold tracking-wide text-surface bg-on-surface rounded-full hover:opacity-90 transition-all"
           >
             {confirmLabel}
           </button>

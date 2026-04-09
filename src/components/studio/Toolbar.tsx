@@ -114,7 +114,7 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
 
   const tools = useQuiltTools(callbacks);
 
-  if (activeWorktable === 'block-builder' || activeWorktable === 'layout-creator') return null;
+  if (activeWorktable === 'block-builder') return null;
 
   // Split tools by tier (only quilt worktable uses tiers)
   const hasTiers = tools.some((t) => t.tier);

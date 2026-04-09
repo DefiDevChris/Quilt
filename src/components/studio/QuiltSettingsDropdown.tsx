@@ -236,7 +236,7 @@ export function QuiltSettingsDropdown() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
                   }}
-                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${widthError ? 'ring-2 ring-error/50' : ''
+                  className={`w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:border-black focus:outline-none ${widthError ? 'border-error' : ''
                     }`}
                 />
                 {widthError && <p className="text-xs text-error mt-1">{widthError}</p>}
@@ -258,7 +258,7 @@ export function QuiltSettingsDropdown() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
                   }}
-                  className={`w-full rounded-md bg-surface px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 ${heightError ? 'ring-2 ring-error/50' : ''
+                  className={`w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:border-black focus:outline-none ${heightError ? 'border-error' : ''
                     }`}
                 />
                 {heightError && <p className="text-xs text-error mt-1">{heightError}</p>}
@@ -276,12 +276,12 @@ export function QuiltSettingsDropdown() {
                     type="button"
                     onClick={() => applyPreset(p.width, p.height)}
                     className={`flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${isActive
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+                      ? 'bg-on-surface text-surface'
                       : 'bg-surface text-on-surface hover:bg-surface-container-high'
                       }`}
                   >
                     <span>{p.label}</span>
-                    <span className={`font-mono text-[10px] ${isActive ? 'text-white/80' : 'text-secondary'}`}>
+                    <span className={`font-mono text-[10px] ${isActive ? 'text-surface/80' : 'text-secondary'}`}>
                       {p.width}×{p.height}
                     </span>
                   </button>
@@ -318,7 +318,7 @@ export function QuiltSettingsDropdown() {
                 onMouseUp={() => {
                   // Commit on mouse up for slider
                 }}
-                className="w-full accent-primary"
+                className="w-full accent-on-surface"
               />
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -326,7 +326,7 @@ export function QuiltSettingsDropdown() {
                 type="checkbox"
                 checked={gridSettings.snapToGrid}
                 onChange={(e) => setGridSettings({ snapToGrid: e.target.checked })}
-                className="rounded accent-primary"
+                className="rounded accent-on-surface"
               />
               <span className="text-xs text-secondary">Snap to grid</span>
             </label>

@@ -119,7 +119,7 @@ export function WorktableTabs() {
   );
 
   const handleSwitchMode = useCallback(
-    (mode: 'quilt' | 'block-builder' | 'layout-creator') => {
+    (mode: 'quilt' | 'block-builder') => {
       setActiveWorktable(mode);
       if (mode === 'quilt' && worktableTabs.length > 0) {
         // Switch to the first quilt tab if available
@@ -133,7 +133,6 @@ export function WorktableTabs() {
   const modeTabs = [
     { id: 'quilt', label: 'Worktable' },
     { id: 'block-builder', label: 'Block Builder' },
-    { id: 'layout-creator', label: 'Layout Creator' },
   ] as const;
 
   return (

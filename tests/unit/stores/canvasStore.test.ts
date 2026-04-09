@@ -293,8 +293,8 @@ describe('canvasStore', () => {
     it('setActiveWorktable sets active worktable', () => {
       useCanvasStore.getState().setActiveWorktable('block-builder');
       expect(useCanvasStore.getState().activeWorktable).toBe('block-builder');
-      useCanvasStore.getState().setActiveWorktable('layout-creator');
-      expect(useCanvasStore.getState().activeWorktable).toBe('layout-creator');
+      useCanvasStore.getState().setActiveWorktable('quilt');
+      expect(useCanvasStore.getState().activeWorktable).toBe('quilt');
     });
 
     it('reset restores initial state', () => {

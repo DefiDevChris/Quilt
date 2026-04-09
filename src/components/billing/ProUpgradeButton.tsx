@@ -24,18 +24,13 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
         <button
           type="button"
           onClick={() => setShowUpgrade(true)}
-          className={`group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-dark p-[2px] transition-all duration-300 hover:shadow-elevation-3 hover:scale-[1.02] ${className}`}
+          className={`group flex flex-col justify-between border-2 border-on-surface bg-surface p-5 transition-all hover:bg-on-surface hover:text-surface ${className}`}
         >
-          <div className="relative flex items-center gap-3 rounded-[10px] bg-white/90 px-6 py-3 backdrop-blur-sm transition-all group-hover:bg-white/80">
-            <Sparkles size={20} className="text-primary-dark" />
-            <div className="text-left">
-              <p className="text-sm font-extrabold text-on-surface leading-none mb-1">
-                Upgrade to Pro
-              </p>
-              <p className="text-xs font-medium text-secondary leading-none">
-                Unlock AI & Exports
-              </p>
-            </div>
+          <div className="flex flex-col gap-2 text-left">
+            <span className="text-[11px] font-black uppercase tracking-[0.2em]">Studio Pro</span>
+            <p className="text-xs font-bold leading-relaxed opacity-80 decoration-2 underline-offset-4 group-hover:underline">
+              Unlock full library, precise exports, and custom layouts.
+            </p>
           </div>
         </button>
         {showUpgrade && <ProUpgradeModal onClose={() => setShowUpgrade(false)} />}
@@ -43,17 +38,16 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
     );
   }
 
-  // Nav and studio variants: compact pill
+  // Nav and studio variants: text or stark borders
   return (
     <>
       <button
         type="button"
         onClick={() => setShowUpgrade(true)}
-        className={`flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 ${variant === 'nav' ? 'mr-2' : ''
+        className={`flex items-center border border-on-surface px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-on-surface transition-colors hover:bg-on-surface hover:text-surface ${variant === 'nav' ? 'mr-4' : ''
           } ${className}`}
       >
-        <Sparkles size={14} className="text-white" />
-        Upgrade
+        Elevate to Pro
       </button>
       {showUpgrade && <ProUpgradeModal onClose={() => setShowUpgrade(false)} />}
     </>

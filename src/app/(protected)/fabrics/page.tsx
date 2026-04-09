@@ -88,20 +88,20 @@ export default function FabricsPage() {
   }, [scope, page, debouncedSearch, colorFamily]);
 
   return (
-    <div>
+    <div className="space-y-10">
       <PageHeader
-        label="Library"
-        title="Fabric Library"
+        label="Archives"
+        title="Material Library"
         description={
           isPro
-            ? 'Browse fabrics to use in your quilt designs. Upload your own fabrics in the Studio.'
-            : 'Browse fabrics to use in your quilt designs. Upgrade to Pro to upload your own.'
+            ? 'Access the curated studio collection of fabrics and textures for your projects.'
+            : 'Access the curated studio collection. Upgrade to Pro to integrate your custom textiles.'
         }
       />
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
-        <div className="flex gap-1 p-1 bg-surface-container rounded-full w-fit mb-6">
+        <div className="flex gap-2 p-1 bg-surface-container/50 border border-outline-variant/30 rounded-2xl w-fit">
           {(['system', 'user'] as const).map((s) => (
             <button
               key={s}
@@ -110,28 +110,28 @@ export default function FabricsPage() {
                 setScope(s);
                 setPage(1);
               }}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              className={`px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
                 scope === s
-                  ? 'bg-surface shadow-elevation-1 text-on-surface'
-                  : 'text-secondary hover:text-on-surface'
+                  ? 'bg-on-surface text-surface shadow-elevation-2'
+                  : 'text-secondary hover:bg-surface-container'
               }`}
             >
-              {s === 'system' ? 'Library' : 'My Fabrics'}
+              {s === 'system' ? 'Studio Archive' : 'Personal Collection'}
             </button>
           ))}
         </div>
       )}
 
       {/* Search + Color filter */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary" size={20} />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="md:col-span-3 relative group">
+          <Search className="absolute left-5 top-1/2 -track-y-1/2 text-secondary group-focus-within:text-primary transition-colors" size={20} />
           <input
             type="text"
-            placeholder="Search fabrics..."
+            placeholder="Filter archive by name or manufacturer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full pl-14 pr-6 py-4 bg-white border border-outline-variant/30 rounded-2xl text-on-surface placeholder:text-secondary/50 font-medium focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all"
           />
         </div>
 
@@ -141,9 +141,9 @@ export default function FabricsPage() {
             setColorFamily(e.target.value);
             setPage(1);
           }}
-          className="px-4 py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="px-6 py-4 bg-white border border-outline-variant/30 rounded-2xl text-on-surface text-sm font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 appearance-none cursor-pointer"
         >
-          <option value="">All Colors</option>
+          <option value="">Spectrum: All</option>
           {COLOR_FAMILIES.map((c) => (
             <option key={c} value={c.toLowerCase()}>
               {c}
@@ -153,61 +153,59 @@ export default function FabricsPage() {
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-secondary mb-4">
-        {loading ? 'Loading...' : `${total} fabric${total !== 1 ? 's' : ''} found`}
-      </p>
+      <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary/60">
+          Showing {loading ? '...' : total} Entries
+        </p>
+      </div>
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-          {Array.from({ length: 24 }, (_, i) => (
-            <div key={i} className="aspect-square bg-surface-container rounded-lg animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {Array.from({ length: 12 }, (_, i) => (
+            <div key={i} className="aspect-square bg-surface-container/50 rounded-3xl animate-pulse border border-outline-variant/10" />
           ))}
         </div>
       ) : fabrics.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-surface-container flex items-center justify-center">
-            <span className="text-2xl">🧵</span>
-          </div>
-          <h3 className="text-lg font-bold text-on-surface mb-2">
-            {debouncedSearch || colorFamily ? 'No matching fabrics' : 'No fabrics yet'}
+        <div className="py-24 text-center glass-panel rounded-[40px] border-dashed border-outline-variant/50">
+          <h3 className="text-xl font-black text-on-surface mb-2 uppercase tracking-tight">
+            No Entries Found
           </h3>
-          <p className="text-secondary text-sm">
+          <p className="text-secondary text-sm font-medium">
             {debouncedSearch || colorFamily
-              ? 'Try adjusting your search or filters'
-              : scope === 'user'
-                ? 'Upload your first fabric from the Studio'
-                : 'Fabrics will appear here once loaded'}
+              ? 'No materials match your current filter parameters.'
+              : 'Your personal material collection is currently empty.'}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {fabrics.map((fabric) => {
             const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
             return (
               <div
                 key={fabric.id}
-                className="group relative rounded-lg border border-outline-variant bg-surface overflow-hidden hover:border-primary transition-colors"
-                title={fabric.name}
+                className="group relative rounded-3xl border border-outline-variant/30 bg-white overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-elevation-3"
               >
-                <div className="aspect-square">
+                <div className="aspect-square relative overflow-hidden">
                   {imgSrc ? (
                     <img
                       src={imgSrc}
                       alt={fabric.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-surface-container">
-                      <span className="text-xl text-secondary">🧵</span>
+                    <div className="h-full w-full flex items-center justify-center bg-surface-container/30">
+                       <p className="text-[10px] font-black text-secondary/40 uppercase tracking-widest">No Preview</p>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1.5 pb-1 pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-caption text-white truncate">{fabric.name}</p>
+                
+                <div className="p-4 bg-white">
+                  <p className="text-xs font-black text-on-surface truncate uppercase tracking-tight">{fabric.name}</p>
                   {fabric.manufacturer && (
-                    <p className="text-[9px] text-white/70 truncate">{fabric.manufacturer}</p>
+                    <p className="text-[9px] text-secondary font-bold uppercase tracking-widest mt-1 opacity-60">{fabric.manufacturer}</p>
                   )}
                 </div>
               </div>
@@ -218,23 +216,24 @@ export default function FabricsPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-6 pt-12">
           <button
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-2 text-sm font-medium rounded-full bg-white/50 text-secondary disabled:opacity-40 hover:bg-white/70 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-outline-variant/30 rounded-2xl hover:bg-surface-container transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          <span className="text-sm text-secondary px-3">
-            Page {page} of {totalPages}
-          </span>
+          <div className="flex flex-col items-center">
+             <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Index</span>
+             <span className="text-sm font-black text-on-surface">{page} <span className="text-secondary/40">/</span> {totalPages}</span>
+          </div>
           <button
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-3 py-2 text-sm font-medium rounded-full bg-white/50 text-secondary disabled:opacity-40 hover:bg-white/70 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-outline-variant/30 rounded-2xl hover:bg-surface-container transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Next
           </button>

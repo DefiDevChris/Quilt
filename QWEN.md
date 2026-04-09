@@ -217,16 +217,17 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 In `canvasStore.ts`:
 
 ```typescript
-export type WorktableType = 'quilt' | 'block-builder' | 'layout-creator';
+export type WorktableType = 'quilt' | 'block-builder';
 ```
 
 | Mode | Purpose | Canvas |
 |------|---------|--------|
 | **`quilt`** | Primary design canvas. Layout fence (if applied) constrains drops. Blocks→cells, fabrics→structural areas. | Main Fabric.js canvas + fence overlay |
 | **`block-builder`** | Grid-snapped block drafting. Save custom blocks to library. | Dedicated 600×600 mini-canvas |
-| **`layout-creator`** | Draw shapes, assign roles (block-cell/sashing/border/edging/binding). Save as layout template. | Dedicated canvas with grid |
 
-The canonical user surface is `'quilt'`. The `'block-builder'` type is the dedicated block drafting worktable. The `'layout-creator'` type is the dedicated layout drafting worktable.
+The canonical user surface is `'quilt'`. The `'block-builder'` type is the dedicated block drafting worktable.
+
+**Note:** The `'layout-creator'` worktable type has been removed. Users configure layouts via the Layout Settings Panel and pick presets from the Layout Selector in the right panel.
 
 ### Worktable Tab Management
 
@@ -293,7 +294,6 @@ A layout is a **fence** — it defines areas where specific things can be placed
 | `FloatingToolbar` | `src/components/studio/FloatingToolbar.tsx` | Floating overlay toolbar with Select, Rectangle, Triangle drawing tools + undo/redo (with depth) + zoom in/out with percentage. Only active for `'quilt'` worktable. |
 | `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state, selection count |
 | `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 600×600 canvas, tools (select/pencil/rectangle/triangle/circle/bend), grid unit slider, Block Library, overlay controls, Save Block |
-| `LayoutCreatorWorktable` | `src/components/studio/LayoutCreatorWorktable.tsx` | Layout drafting: draw shapes, assign roles, save to library |
 | `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
 | `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
 | `NewQuiltSetupModal` | `src/components/studio/NewQuiltSetupModal.tsx` | First-visit quilt setup: pick size (preset or custom) + starting point (Freeform or Start with a Layout) |
@@ -344,15 +344,16 @@ The fence renderer is the **only** way layout areas appear on canvas:
 - Each preset has: `id`, `name`, `description`, `config` (rows, cols, blockSize, sashing, borders, binding, cornerstones)
 - Drag payload: `application/quiltcorgi-layout-preset` → creates new worktable tab with that layout as fence
 
-### Layout Creator
+### Layout Configuration
 
-`LayoutCreatorWorktable` (`src/components/studio/LayoutCreatorWorktable.tsx`) — a full worktable mode for drafting custom layout templates:
+Users configure layouts via:
 
-- Dedicated canvas with grid
-- Drawing tools: rectangle, triangle
-- Select any shape → assign role via Layout Role Inspector (block-cell / sashing / border / binding / edging / none)
-- On save: serializes all shapes + roles → `LayoutTemplate` JSON → POST `/api/layout-templates` → appears in Layouts library
-- Saved layouts are immediately draggable from the Layouts tab onto the canvas (creates new worktable tab)
+1. **Layout Settings Panel** (`LayoutSettingsPanel.tsx`) — Modal for configuring layout type, rows/cols, block size, sashing, borders, binding
+2. **Layout Selector** (`LayoutSelector.tsx`) — Right-panel tab showing preset layouts (grid, sashing, on-point)
+
+Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fence renderer enforces drop constraints.
+
+**Note:** The Layout Creator worktable has been removed. Users no longer draw custom layout shapes — they pick from presets and configure via the settings panel.
 
 ### Removed (DO NOT REINTRODUCE)
 

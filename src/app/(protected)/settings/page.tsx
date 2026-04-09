@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 
 export const metadata: Metadata = {
   title: 'Settings',
-  description: 'Manage your QuiltCorgi profile, account settings, and billing.',
+  description: 'Manage your Quilt Studio profile, account settings, and billing.',
 };
 
 export default async function SettingsPage() {

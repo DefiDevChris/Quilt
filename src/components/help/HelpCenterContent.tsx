@@ -47,8 +47,8 @@ function FaqSection({
             key={cat}
             type="button"
             onClick={() => onCategoryChange(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${selectedCategory === cat
-              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-colors ${selectedCategory === cat
+              ? 'bg-on-surface text-surface'
               : 'bg-surface-container text-secondary hover:text-on-surface'
               }`}
           >
@@ -67,7 +67,7 @@ function FaqSection({
             return (
               <div
                 key={entry.id}
-                className="glass-card border border-white/40 rounded-xl overflow-hidden"
+                className="border border-outline-variant bg-surface-container rounded-sm overflow-hidden"
               >
                 <button
                   type="button"
@@ -111,7 +111,7 @@ function VideoTutorialsSection() {
       {VIDEO_TUTORIALS.map((video) => (
         <div
           key={video.id}
-          className="glass-card border border-white/40 rounded-xl overflow-hidden"
+          className="border border-outline-variant bg-surface-container-low rounded-sm overflow-hidden hover:border-black transition-colors"
         >
           {/* Thumbnail placeholder */}
           <div className="aspect-video bg-surface-container flex items-center justify-center">
@@ -149,14 +149,14 @@ function VideoTutorialsSection() {
 
 function ContactSection() {
   return (
-    <div className="glass-card border border-white/40 rounded-xl p-6">
-      <h3 className="text-lg font-semibold text-on-surface mb-2">Contact Support</h3>
-      <p className="text-sm text-secondary mb-4">
+    <div className="bg-on-surface text-surface p-8 rounded-sm">
+      <h3 className="text-sm font-black uppercase tracking-[0.1em] mb-2">Contact Support</h3>
+      <p className="text-xs opacity-70 mb-6">
         Can&apos;t find what you need? Reach out and we&apos;ll help you out.
       </p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-opacity hover:opacity-90 bg-gradient-to-r from-primary to-primary-dark text-white"
+        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider transition-all hover:bg-surface hover:text-on-surface bg-surface/10 border border-surface/20"
       >
         <svg
           width="16"
@@ -196,9 +196,10 @@ export function HelpCenterContent() {
   return (
     <div>
       {/* Hero */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-on-surface mb-3">Help Center</h1>
-        <p className="text-secondary text-lg">Find answers, learn the tools, get support.</p>
+      <div className="text-center mb-12">
+        <h1 className="text-[11px] font-black text-secondary uppercase tracking-[0.3em] mb-4">Support Center</h1>
+        <h2 className="text-4xl md:text-5xl font-black text-on-surface tracking-tighter uppercase mb-4">Documentation</h2>
+        <p className="text-secondary text-sm max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
       </div>
 
       {/* Search */}
@@ -215,16 +216,16 @@ export function HelpCenterContent() {
         </svg>
         <input
           type="text"
-          placeholder="Search for help..."
+          placeholder="Search for assistance..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3.5 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-base"
+          className="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant/60 rounded-sm text-on-surface placeholder:text-secondary focus:outline-none focus:border-black text-sm"
         />
       </div>
 
       {/* FAQ Section */}
-      <section className="mb-12">
-        <h2 className="text-xl font-bold text-on-surface mb-4">Frequently Asked Questions</h2>
+      <section className="mb-16">
+        <h2 className="text-[11px] font-black text-secondary uppercase tracking-[0.2em] mb-6">Frequently Asked Questions</h2>
         <FaqSection
           entries={faqResults}
           selectedCategory={selectedCategory}
@@ -233,8 +234,8 @@ export function HelpCenterContent() {
       </section>
 
       {/* Video Tutorials */}
-      <section className="mb-12">
-        <h2 className="text-xl font-bold text-on-surface mb-4">Video Tutorials</h2>
+      <section className="mb-16">
+        <h2 className="text-[11px] font-black text-secondary uppercase tracking-[0.2em] mb-6">Video Tutorials</h2>
         <VideoTutorialsSection />
       </section>
 

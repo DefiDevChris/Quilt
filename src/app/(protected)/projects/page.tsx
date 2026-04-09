@@ -66,78 +66,64 @@ export default function AllProjectsPage() {
   return (
     <div>
       <PageHeader
-        label="Projects"
-        title="My Quiltbook"
-        description={`${projects.length} ${projects.length === 1 ? 'design' : 'designs'}`}
+        label="Archive"
+        title="Project Library"
+        description={`${projects.length} ${projects.length === 1 ? 'curated design' : 'curated designs'}`}
         action={
-          <div className="flex items-center gap-2">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
-            >
-              <Plus size={18} />
-              New Project
-            </Link>
-            <div className="flex items-center bg-surface-container-high rounded-full p-1 ml-2">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center bg-surface-container-high rounded-full p-1 border border-outline-variant">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-full transition-colors ${
+                className={`p-2 rounded-full transition-all ${
                   viewMode === 'grid'
-                    ? 'bg-primary text-white shadow-elevation-1'
+                    ? 'bg-white text-primary shadow-elevation-1'
                     : 'text-secondary hover:text-on-surface'
                 }`}
+                title="Grid View"
               >
                 <Grid size={18} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-full transition-colors ${
+                className={`p-2 rounded-full transition-all ${
                   viewMode === 'list'
-                    ? 'bg-primary text-white shadow-elevation-1'
+                    ? 'bg-white text-primary shadow-elevation-1'
                     : 'text-secondary hover:text-on-surface'
                 }`}
+                title="List View"
               >
                 <List size={18} />
               </button>
             </div>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-on-surface text-surface rounded-full font-black text-xs uppercase tracking-widest hover:bg-on-surface/90 transition-all shadow-elevation-2 active:scale-95"
+            >
+              <Plus size={16} strokeWidth={3} />
+              Create New
+            </Link>
           </div>
         }
       />
 
       {projects.length === 0 ? (
-        <div className="flex flex-col items-center py-20">
-          <div className="relative mb-8">
-            <div className="w-32 h-32 rounded-3xl bg-primary-container/40 flex items-center justify-center rotate-6 shadow-elevation-2">
-              <div className="w-28 h-28 rounded-2xl bg-surface-container-lowest -rotate-6 flex items-center justify-center shadow-elevation-1 border border-outline-variant">
-                <Grid size={36} className="text-primary" />
-              </div>
-            </div>
-            <div className="absolute -bottom-2 -right-3">
-              <Image
-                src="/mascots&avatars/corgi12.png"
-                alt=""
-                width={56}
-                height={56}
-                className="drop-shadow-lg"
-              />
-            </div>
+        <div className="flex flex-col items-center py-32 text-center">
+          <div className="w-24 h-24 rounded-3xl bg-surface-container-high flex items-center justify-center mb-8 border border-outline-variant rotate-3">
+            <Grid size={40} className="text-secondary opacity-50 -rotate-3" />
           </div>
 
-          <h3
-            className="text-2xl font-bold text-on-surface mb-2"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            Your quiltbook is empty
+          <h3 className="text-3xl font-black text-on-surface mb-3 tracking-tight">
+            The workspace is empty
           </h3>
-          <p className="text-secondary mb-8 max-w-sm text-center">
-            Start a new project from a blank canvas, a template, or a photo of a quilt you love.
+          <p className="text-secondary mb-10 max-w-sm font-medium leading-relaxed">
+            Begin your next creative journey by starting a new project or exploring studio templates.
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-elevation-1"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-on-surface text-surface rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-all shadow-elevation-3"
           >
-            <Sparkles size={18} />
-            Start Your First Quilt
+            <Plus size={20} strokeWidth={3} />
+            Initialize Blank Canvas
           </Link>
         </div>
       ) : (

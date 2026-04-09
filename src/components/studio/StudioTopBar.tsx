@@ -229,8 +229,8 @@ export function StudioTopBar({
         description: 'Your project has been saved',
       });
     }
-    window.addEventListener('quiltcorgi:save-success', handleSaveSuccess);
-    return () => window.removeEventListener('quiltcorgi:save-success', handleSaveSuccess);
+    window.addEventListener('quiltstudio:save-success', handleSaveSuccess);
+    return () => window.removeEventListener('quiltstudio:save-success', handleSaveSuccess);
   }, [toast]);
 
   return (
@@ -240,7 +240,6 @@ export function StudioTopBar({
           <TooltipHint
             name="Menu"
             description="Access project settings and options"
-            mascot="/mascots&avatars/corgi5.png"
           >
             <button
               type="button"
@@ -259,9 +258,8 @@ export function StudioTopBar({
             </button>
           </TooltipHint>
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="QuiltCorgi Logo" className="h-6 w-auto" />
             <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
-              QuiltCorgi
+              Quilt Studio
             </span>
           </div>
         </div>
@@ -284,7 +282,6 @@ export function StudioTopBar({
                   ? 'Click to unlock and pan/zoom freely'
                   : 'Click to lock viewport to centered fit'
               }
-              mascot="/mascots&avatars/corgi29.png"
             >
               <button
                 type="button"
@@ -334,7 +331,6 @@ export function StudioTopBar({
               <TooltipHint
                 name="Recenter Viewport"
                 description="Snap grid back to center of canvas"
-                mascot="/mascots&avatars/corgi1.png"
               >
                 <button
                   type="button"
@@ -384,7 +380,6 @@ export function StudioTopBar({
           <TooltipHint
             name="Export"
             description="Export your quilt as PNG, SVG, or PDF"
-            mascot="/mascots&avatars/corgi23.png"
           >
             <button
               type="button"

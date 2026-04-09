@@ -569,7 +569,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark text-white py-2 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full rounded-full bg-on-surface py-2.5 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-1"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>
@@ -772,7 +772,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark text-white py-2 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full rounded-full bg-on-surface py-2.5 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-1"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>

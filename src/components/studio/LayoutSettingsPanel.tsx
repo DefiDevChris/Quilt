@@ -312,7 +312,7 @@ export function LayoutSettingsPanel({ onClose }: LayoutSettingsPanelProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="rounded-full bg-on-surface px-6 py-2 text-sm font-semibold tracking-wide text-surface hover:opacity-90 transition-opacity"
           >
             Done
           </button>

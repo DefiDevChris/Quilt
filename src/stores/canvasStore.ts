@@ -33,7 +33,7 @@ export type ToolType =
 
 export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
-export type WorktableType = 'quilt' | 'block-builder' | 'layout-creator';
+export type WorktableType = 'quilt' | 'block-builder';
 
 /** A single worktable tab with its own isolated layout state. */
 export interface WorktableTab {

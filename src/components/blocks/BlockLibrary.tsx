@@ -88,9 +88,9 @@ export function BlockLibrary({
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'library'
-              ? 'border-b-2 border-primary text-primary'
-              : 'text-on-surface/60 hover:text-on-surface'
+            className={`flex-1 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase transition-all ${activeTab === 'library'
+              ? 'border-b-2 border-on-surface text-on-surface'
+              : 'text-secondary hover:text-on-surface'
               }`}
           >
             Library
@@ -98,9 +98,9 @@ export function BlockLibrary({
           <button
             type="button"
             onClick={() => setActiveTab('myblocks')}
-            className={`flex-1 px-3 py-1.5 text-xs font-medium ${activeTab === 'myblocks'
-              ? 'border-b-2 border-primary text-primary'
-              : 'text-on-surface/60 hover:text-on-surface'
+            className={`flex-1 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase transition-all ${activeTab === 'myblocks'
+              ? 'border-b-2 border-on-surface text-on-surface'
+              : 'text-secondary hover:text-on-surface'
               }`}
           >
             My Blocks
@@ -191,8 +191,8 @@ export function BlockLibrary({
                       key={filter}
                       type="button"
                       onClick={() => setBlockFilter(filter)}
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${blockFilter === filter
-                        ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
+                      className={`rounded-full px-3 py-1 text-[10px] font-semibold tracking-wide transition-all ${blockFilter === filter
+                        ? 'bg-on-surface text-surface shadow-elevation-1'
                         : 'bg-background text-secondary hover:text-on-surface'
                         }`}
                     >
@@ -269,7 +269,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenDrafting}
-                    className="flex-1 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                    className="flex-1 rounded-full bg-on-surface px-4 py-2 text-[11px] font-semibold tracking-wide text-surface hover:opacity-90 shadow-elevation-1 transition-all"
                   >
                     + Draft Block
                   </button>
@@ -278,7 +278,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenPhotoUpload}
-                    className="flex-1 rounded-full bg-white/50 px-3 py-1.5 text-xs font-medium text-secondary hover:opacity-90"
+                    className="flex-1 rounded-full bg-surface border border-outline-variant px-4 py-2 text-[11px] font-semibold tracking-wide text-on-surface hover:bg-surface-container transition-all"
                   >
                     + Photo Block
                   </button>

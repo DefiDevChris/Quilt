@@ -9,7 +9,6 @@ interface TooltipHintProps {
   readonly shortcut?: string;
   readonly description: string;
   readonly isProFeature?: boolean;
-  readonly mascot?: string;
   readonly children: ReactNode;
 }
 
@@ -18,7 +17,6 @@ export function TooltipHint({
   shortcut,
   description,
   isProFeature,
-  mascot,
   children,
 }: TooltipHintProps) {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -76,18 +74,8 @@ export function TooltipHint({
                     {shortcut}
                   </span>
                 )}
-                {isProFeature && (
-                  <span className="text-body-sm font-medium text-primary bg-primary-container/40 px-1.5 py-0.5 rounded-sm">
-                    Pro
-                  </span>
-                )}
               </div>
-              <p className="text-body-md text-secondary leading-relaxed mb-3">{description}</p>
-              {mascot && (
-                <div className="flex justify-center">
-                  <img src={mascot} alt="" className="w-16 h-16 object-contain" />
-                </div>
-              )}
+              <p className="text-body-md text-secondary leading-relaxed">{description}</p>
             </div>,
             document.body,
           )

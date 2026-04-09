@@ -5,7 +5,7 @@ import Footer from '@/components/landing/Footer';
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'QuiltCorgi Privacy Policy — how we collect, use, and protect your personal information.',
+    'Quilt Studio Privacy Policy — how we collect, use, and protect your personal information.',
 };
 
 export default function PrivacyPage() {
@@ -13,20 +13,23 @@ export default function PrivacyPage() {
     <>
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
-        <div className="mb-12">
+        <div className="mb-20">
           <h1
-            className="text-3xl md:text-4xl font-bold text-on-surface mb-4"
+            className="text-5xl md:text-7xl font-black text-on-surface tracking-tighter uppercase mb-6"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Privacy Policy
           </h1>
-          <p className="text-secondary text-sm">Effective date: March 30, 2026</p>
+          <div className="flex items-center gap-4">
+            <div className="h-0.5 w-12 bg-on-surface" />
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">Effective: March 30, 2026</p>
+          </div>
         </div>
 
         <div className="text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
-            Your privacy matters to us. This Privacy Policy explains how QuiltCorgi LLC
-            (&ldquo;QuiltCorgi,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;)
+            Your privacy matters to us. This Privacy Policy explains how Quilt Studio LLC
+            (&ldquo;Quilt Studio,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;)
             collects, uses, shares, and protects your personal information when you use our website,
             design studio, community features, and related services (collectively, the
             &ldquo;Service&rdquo;).
@@ -38,7 +41,8 @@ export default function PrivacyPage() {
 
           {/* 1. Information We Collect */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               1. Information We Collect
             </h2>
 
@@ -115,7 +119,8 @@ export default function PrivacyPage() {
 
           {/* 2. How We Use Your Information */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               2. How We Use Your Information
             </h2>
             <p className="mb-3">We use the information we collect to:</p>
@@ -142,7 +147,8 @@ export default function PrivacyPage() {
 
           {/* 3. How We Share Your Information */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               3. How We Share Your Information
             </h2>
             <p className="mb-3">
@@ -181,7 +187,7 @@ export default function PrivacyPage() {
               <li>
                 <strong>Legal requirements.</strong> We may disclose your information if required by
                 law, regulation, legal process, or governmental request, or if we believe disclosure
-                is necessary to protect the rights, property, or safety of QuiltCorgi, our users, or
+                is necessary to protect the rights, property, or safety of Quilt Studio, our users, or
                 the public.
               </li>
               <li>
@@ -198,7 +204,8 @@ export default function PrivacyPage() {
 
           {/* 4. Data Retention */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">4. Data Retention</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />4. Data Retention</h2>
             <p className="mb-3">
               We retain your information for as long as your account is active or as needed to
               provide you the Service. Specifically:
@@ -233,7 +240,8 @@ export default function PrivacyPage() {
 
           {/* 5. Security */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">5. Data Security</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />5. Data Security</h2>
             <p className="mb-3">
               We take the security of your data seriously. Our security measures include:
             </p>
@@ -274,7 +282,8 @@ export default function PrivacyPage() {
 
           {/* 6. Your Rights & Choices */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               6. Your Rights &amp; Choices
             </h2>
             <p className="mb-3">
@@ -315,7 +324,7 @@ export default function PrivacyPage() {
               To exercise any of these rights, contact us at{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>
@@ -325,11 +334,12 @@ export default function PrivacyPage() {
 
           {/* 7. Cookies */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               7. Cookies &amp; Authentication
             </h2>
             <p className="mb-3">
-              QuiltCorgi uses only essential cookies that are necessary for the Service to function.
+              Quilt Studio uses only essential cookies that are necessary for the Service to function.
               We do not use cookies for advertising, analytics, or tracking purposes.
             </p>
             <p className="mb-3">The cookies we use are:</p>
@@ -383,11 +393,12 @@ export default function PrivacyPage() {
 
           {/* 8. International Data Transfers */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               8. International Data Transfers
             </h2>
             <p className="mb-3">
-              QuiltCorgi is operated in the United States. If you are accessing the Service from
+              Quilt Studio is operated in the United States. If you are accessing the Service from
               outside the United States, please be aware that your information may be transferred
               to, stored, and processed in the United States or other jurisdictions where our
               service providers operate.
@@ -401,7 +412,8 @@ export default function PrivacyPage() {
 
           {/* 9. GDPR Rights (European Economic Area) */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               9. European Economic Area (EEA) &amp; UK Users
             </h2>
             <p className="mb-3">
@@ -449,18 +461,19 @@ export default function PrivacyPage() {
 
           {/* 10. Children's Privacy */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               10. Children&rsquo;s Privacy
             </h2>
             <p>
-              QuiltCorgi is not directed to children under the age of 13. We do not knowingly
+              Quilt Studio is not directed to children under the age of 13. We do not knowingly
               collect personal information from children under 13. If we learn that we have
               inadvertently collected personal information from a child under 13, we will delete
               that information as quickly as possible. If you believe a child under 13 has provided
               us with personal information, please contact us at{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>
@@ -470,7 +483,8 @@ export default function PrivacyPage() {
 
           {/* 11. Changes to This Policy */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               11. Changes to This Policy
             </h2>
             <p>
@@ -484,19 +498,20 @@ export default function PrivacyPage() {
 
           {/* 12. Contact */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">12. Contact Us</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />12. Contact Us</h2>
             <p>
               If you have questions, concerns, or requests regarding this Privacy Policy or our data
               practices, please reach out:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>
             </p>
             <p className="mt-3">
-              QuiltCorgi LLC
+              Quilt Studio LLC
               <br />
               Wyoming, United States
             </p>

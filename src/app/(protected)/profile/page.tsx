@@ -23,6 +23,9 @@ export default async function ProfilePage() {
     .where(eq(userProfiles.userId, session.user.id))
     .limit(1);
 
-  // Profile is always created during onboarding on first login
-  return <UserProfilePage username={profile.username} />;
+  return (
+    <div className="max-w-4xl mx-auto">
+      <UserProfilePage username={profile.username} />
+    </div>
+  );
 }

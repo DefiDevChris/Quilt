@@ -107,12 +107,6 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       // Assert: Toolbar renders nothing (BlockBuilderWorktable has its own toolbar)
       expect(container.firstChild).toBeNull();
     });
-
-    it('should render null toolbar for layout-creator worktable', () => {
-      useCanvasStore.setState({ activeWorktable: 'layout-creator' });
-      const { container } = render(<Toolbar />);
-      expect(container.firstChild).toBeNull();
-    });
   });
 
   describe('Quilt Worktable Toolbar Layout (Requirement 4.4)', () => {
