@@ -13,14 +13,17 @@ export default function TermsPage() {
     <>
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-on-surface mb-4 font-display">
+        <div className="mb-12">
+          <h1
+            className="text-3xl md:text-4xl font-bold text-on-surface mb-4"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             Terms of Service
           </h1>
           <p className="text-secondary text-sm">Effective date: March 30, 2026</p>
         </div>
 
-        <div className="text-left text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
+        <div className="text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
             Welcome to QuiltCorgi! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
             to and use of the QuiltCorgi website, design studio, community features, and related
