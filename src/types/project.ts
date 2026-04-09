@@ -3,20 +3,12 @@
  * `project.canvasData.initialSetup`. The studio bootstrap reads it on
  * first mount, hydrates the relevant stores, and then clears it.
  */
-export type InitialSetupConfig =
-  | {
-    kind: 'layout';
-    presetId: string;
-    blockSize: number;
-    rotated: boolean;
-  }
-  | {
-    kind: 'template';
-    templateId: string;
-    templateData: unknown;
-    blockSize: number;
-    rotated: boolean;
-  };
+export type InitialSetupConfig = {
+  kind: 'layout';
+  presetId: string;
+  blockSize: number;
+  rotated: boolean;
+};
 
 export interface Worktable {
   id: string;

@@ -137,19 +137,67 @@ function useQuiltFloatingTools(): FloatingTool[] {
   ];
 }
 
-const BLOCK_TOOLS: FloatingTool[] = [
-  { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
-  {
-    id: 'rectangle',
-    label: 'Rectangle',
-    toolType: 'rectangle',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <rect x="3" y="5" width="16" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
-  },
-];
+function useBlockBuilderFloatingTools(): FloatingTool[] {
+  return [
+    { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
+    {
+      id: 'rectangle',
+      label: 'Rectangle',
+      toolType: 'rectangle',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="3" y="5" width="16" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      ),
+    },
+    {
+      id: 'triangle',
+      label: 'Triangle',
+      toolType: 'triangle',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path
+            d="M11 4L19 18H3L11 4Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+  ];
+}
+
+function useLayoutCreatorFloatingTools(): FloatingTool[] {
+  return [
+    { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
+    {
+      id: 'rectangle',
+      label: 'Rectangle',
+      toolType: 'rectangle',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="3" y="5" width="16" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      ),
+    },
+    {
+      id: 'triangle',
+      label: 'Triangle',
+      toolType: 'triangle',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path
+            d="M11 4L19 18H3L11 4Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+  ];
+}
 
 export function FloatingToolbar() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
@@ -159,23 +207,26 @@ export function FloatingToolbar() {
   const zoom = useCanvasStore((s) => s.zoom);
 
   const quiltTools = useQuiltFloatingTools();
+  const blockBuilderTools = useBlockBuilderFloatingTools();
+  const layoutCreatorTools = useLayoutCreatorFloatingTools();
 
   const handleZoomIn = () => useCanvasStore.getState().zoomAndCenter(zoom * ZOOM_FACTOR);
   const handleZoomOut = () => useCanvasStore.getState().zoomAndCenter(zoom / ZOOM_FACTOR);
 
-  const TOOLS_BY_WORKTABLE: Record<WorktableType, FloatingTool[]> = {
+  const toolsByWorktable: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
-    'block-builder': [],
-    'layout-creator': [],
+    'block-builder': blockBuilderTools,
+    'layout-creator': layoutCreatorTools,
   };
 
-  const tools = TOOLS_BY_WORKTABLE[activeWorktable];
+  const tools = toolsByWorktable[activeWorktable];
 
-  if (tools.length === 0) return null;
+  if (!tools || tools.length === 0) return null;
 
-  // Split undo/redo from drawing tools for a visual separator
-  const drawingTools = tools.filter((t) => t.id !== 'undo' && t.id !== 'redo');
-  const historyTools = tools.filter((t) => t.id === 'undo' || t.id === 'redo');
+  // Split undo/redo from drawing tools for a visual separator (quilt mode only)
+  const isQuiltMode = activeWorktable === 'quilt';
+  const drawingTools = isQuiltMode ? tools.filter((t) => t.id !== 'undo' && t.id !== 'redo') : tools;
+  const historyTools = isQuiltMode ? tools.filter((t) => t.id === 'undo' || t.id === 'redo') : [];
 
   return (
     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
@@ -208,7 +259,7 @@ export function FloatingToolbar() {
           );
         })}
 
-        {/* Undo/Redo separator + buttons */}
+        {/* Undo/Redo separator + buttons (quilt mode only) */}
         {historyTools.length > 0 && (
           <>
             <div className="w-px h-5 bg-outline-variant/25 mx-1" />
@@ -235,29 +286,33 @@ export function FloatingToolbar() {
           </>
         )}
 
-        {/* Zoom controls */}
-        <div className="w-px h-5 bg-outline-variant/25 mx-1" />
-        <button
-          type="button"
-          title="Zoom Out"
-          aria-label="Zoom Out"
-          onClick={handleZoomOut}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
-        >
-          {ZOOM_OUT_ICON}
-        </button>
-        <span className="text-xs font-mono text-on-surface/50 min-w-[2.5rem] text-center select-none">
-          {Math.round(zoom * 100)}%
-        </span>
-        <button
-          type="button"
-          title="Zoom In"
-          aria-label="Zoom In"
-          onClick={handleZoomIn}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
-        >
-          {ZOOM_IN_ICON}
-        </button>
+        {/* Zoom controls (quilt mode only) */}
+        {isQuiltMode && (
+          <>
+            <div className="w-px h-5 bg-outline-variant/25 mx-1" />
+            <button
+              type="button"
+              title="Zoom Out"
+              aria-label="Zoom Out"
+              onClick={handleZoomOut}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
+            >
+              {ZOOM_OUT_ICON}
+            </button>
+            <span className="text-xs font-mono text-on-surface/50 min-w-[2.5rem] text-center select-none">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              title="Zoom In"
+              aria-label="Zoom In"
+              onClick={handleZoomIn}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface/65 hover:text-on-surface hover:bg-surface-container transition-all duration-150"
+            >
+              {ZOOM_IN_ICON}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

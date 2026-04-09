@@ -34,9 +34,9 @@ export interface ProjectStoreSetters {
 }
 
 export interface HydrationResult {
-  /** True iff a layout/template was applied. */
+  /** True iff a layout was applied. */
   hydrated: boolean;
-  /** Final canvas dimensions in inches (after sizing the layout/template). */
+  /** Final canvas dimensions in inches (after sizing the layout). */
   canvasWidth: number;
   canvasHeight: number;
 }
@@ -75,62 +75,6 @@ function hydrateLayout(
   return { width, height };
 }
 
-interface CanonicalTemplateData {
-  readonly category?: string;
-  readonly gridRows?: number;
-  readonly gridCols?: number;
-  readonly sashingWidth?: number;
-  readonly hasCornerstones?: boolean;
-  readonly borders?: ReadonlyArray<{ readonly width?: number; readonly position?: number }>;
-}
-
-function readTemplateData(data: unknown): CanonicalTemplateData | null {
-  if (!data || typeof data !== 'object') return null;
-  return data as CanonicalTemplateData;
-}
-
-/**
- * Hydrate the layout store from a template-path setup payload. Templates
- * carry their own grid + sashing in `templateData`; the chosen block size
- * scales the whole quilt while preserving aspect ratio.
- */
-function hydrateTemplate(
-  setup: Extract<InitialSetupConfig, { kind: 'template' }>,
-  layout: LayoutStoreSetters
-): { width: number; height: number } | null {
-  const data = readTemplateData(setup.templateData);
-  if (!data || !data.gridRows || !data.gridCols) return null;
-
-  const rawRows = data.gridRows;
-  const rawCols = data.gridCols;
-  const rows = setup.rotated ? rawCols : rawRows;
-  const cols = setup.rotated ? rawRows : rawCols;
-
-  const sashingWidth = data.sashingWidth ?? 0;
-
-  const layoutType: LayoutType = sashingWidth > 0 ? 'sashing' : 'grid';
-  layout.setLayoutType(layoutType);
-  layout.setSelectedPreset(null);
-  layout.setRows(rows);
-  layout.setCols(cols);
-  layout.setBlockSize(setup.blockSize);
-  layout.setSashing({ width: sashingWidth });
-
-  if (data.borders) {
-    for (let i = 0; i < data.borders.length; i++) {
-      const w = data.borders[i]?.width ?? 0;
-      if (w <= 0) continue;
-      layout.addBorder();
-      layout.updateBorder(i, { width: w });
-    }
-  }
-
-  const totalBorder = (data.borders ?? []).reduce((acc, b) => acc + (b.width ?? 0), 0) * 2;
-  const width = cols * setup.blockSize + Math.max(0, cols - 1) * sashingWidth + totalBorder;
-  const height = rows * setup.blockSize + Math.max(0, rows - 1) * sashingWidth + totalBorder;
-  return { width, height };
-}
-
 /**
  * Top-level entrypoint. Reads `project.canvasData.initialSetup`, hydrates
  * the relevant stores, and reports the final canvas dimensions. Safe to
@@ -157,8 +101,6 @@ export function applyInitialSetup(
     if (preset) {
       result = hydrateLayout(preset, setup, layout);
     }
-  } else if (setup.kind === 'template') {
-    result = hydrateTemplate(setup, layout);
   }
 
   // Strip the setup field so we never re-process it for this in-memory copy.

@@ -24,9 +24,10 @@ import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
 import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
-import { NewQuiltSetupModal } from '@/components/studio/NewQuiltSetupModal';
+import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { WorktableTabs } from '@/components/studio/WorktableTabs';
+import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 import { LayoutCreatorWorktable } from '@/components/studio/LayoutCreatorWorktable';
@@ -51,8 +52,8 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
   // First-visit setup detection
-  // NOTE: The NewQuiltSetupModal is kept for direct studio access (non-wizard flows),
-  // but users coming from the NewProjectWizard will have this suppressed.
+  // Uses the unified NewProjectWizard in studio mode.
+  // Users coming from the Dashboard NewProjectWizard will have this suppressed.
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
   const quiltSetupShownRef = useRef(false);
 
@@ -141,83 +142,119 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onSave={handleSave}
       />
 
-      {/* ── Block Builder worktable ──────────────────────────── */}
-      {activeWorktable === 'block-builder' ? (
-        <BlockBuilderWorktable
-          onDone={() => {
+      {/* ── Unified 3-pane layout for ALL modes ───────────────── */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left sidebar: mode-specific toolbar */}
+        {activeWorktable === 'block-builder' ? (
+          <BlockBuilderWorktable onDone={() => {
             useCanvasStore.getState().setActiveWorktable('quilt');
           }}
-        />
-      ) : activeWorktable === 'layout-creator' ? (
-        /* ── Layout Creator worktable ──────────────────────── */
-        <LayoutCreatorWorktable
-          onDone={() => {
-            useCanvasStore.getState().setActiveWorktable('quilt');
-          }}
-        />
-      ) : (
-        /* ── Normal quilt worktable — same 3-pane layout ── */
-        <div className="flex-1 flex overflow-hidden">
-          {/* Left sidebar: Toolbar (narrow strip of tool buttons) */}
+            toolbarOnly
+          />
+        ) : activeWorktable === 'layout-creator' ? (
+          <LayoutCreatorWorktable
+            onDone={() => {
+              useCanvasStore.getState().setActiveWorktable('quilt');
+            }}
+            toolbarOnly
+          />
+        ) : (
           <Toolbar
             onOpenImageExport={dialogs.openImageExport}
             onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
             onNewBlock={handleNewBlock}
           />
+        )}
 
-          {/* Center: Canvas area with tabs above */}
-          <div className="flex-1 flex flex-col overflow-hidden relative">
-            {/* Worktable tabs */}
-            <WorktableTabs />
-            <div className="flex-1 flex overflow-hidden relative">
-              <div
-                className={`flex flex-col overflow-hidden relative ${showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'
-                  }`}
-              >
-                <StudioDropZone project={project} />
-                <ContextMenu />
-                <QuickInfo />
-                <LayoutAdjuster />
-              </div>
-
-              {/* Reference photo split pane */}
-              {showReferencePanel && referenceImageUrl && (
-                <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
-                    <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
-                      Reference Photo
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
-                      className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
-                      aria-label="Close reference panel"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path
-                          d="M3 3L11 11M11 3L3 11"
-                          stroke="currentColor"
-                          strokeWidth="1.4"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={referenceImageUrl}
-                      alt="Original reference photo"
-                      className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
-                      draggable={false}
-                    />
-                  </div>
+        {/* Center: Canvas area with tabs above */}
+        <div className="flex-1 flex flex-col overflow-hidden relative">
+          {/* Worktable tabs */}
+          <WorktableTabs />
+          <div className="flex-1 flex overflow-hidden relative">
+            {activeWorktable === 'block-builder' ? (
+              <BlockBuilderWorktable
+                onDone={() => {
+                  useCanvasStore.getState().setActiveWorktable('quilt');
+                }}
+                canvasOnly
+              />
+            ) : activeWorktable === 'layout-creator' ? (
+              <LayoutCreatorWorktable
+                onDone={() => {
+                  useCanvasStore.getState().setActiveWorktable('quilt');
+                }}
+                canvasOnly
+              />
+            ) : (
+              <>
+                <div
+                  className={`flex flex-col overflow-hidden relative ${showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'
+                    }`}
+                >
+                  <StudioDropZone project={project} />
+                  <ContextMenu />
+                  <QuickInfo />
+                  <LayoutAdjuster />
                 </div>
-              )}
-            </div>
+
+                {/* Reference photo split pane */}
+                {showReferencePanel && referenceImageUrl && (
+                  <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
+                      <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
+                        Reference Photo
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
+                        className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
+                        aria-label="Close reference panel"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <path
+                            d="M3 3L11 11M11 3L3 11"
+                            stroke="currentColor"
+                            strokeWidth="1.4"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={referenceImageUrl}
+                        alt="Original reference photo"
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
-          {/* Right sidebar: Context Panel (Library tabs for Layouts, Blocks, Fabrics) */}
+          {/* Floating toolbar (all modes) */}
+          <FloatingToolbar />
+        </div>
+
+        {/* Right sidebar: mode-specific panel */}
+        {activeWorktable === 'block-builder' ? (
+          <BlockBuilderWorktable
+            onDone={() => {
+              useCanvasStore.getState().setActiveWorktable('quilt');
+            }}
+            panelOnly
+          />
+        ) : activeWorktable === 'layout-creator' ? (
+          <LayoutCreatorWorktable
+            onDone={() => {
+              useCanvasStore.getState().setActiveWorktable('quilt');
+            }}
+            panelOnly
+          />
+        ) : (
           <ContextPanel
             onBlockDragStart={handleBlockDragStart}
             onFabricDragStart={handleFabricDragStart}
@@ -225,19 +262,21 @@ export function StudioLayout({ project }: StudioLayoutProps) {
             onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
             onOpenUpload={dialogs.openFabricUpload}
           />
-        </div>
-      )}
+        )}
+      </div>
 
       <BottomBar />
 
       {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
 
-      {/* First-visit setup modal */}
-      <NewQuiltSetupModal
-        isOpen={showQuiltSetup}
+      {/* First-visit setup modal (unified wizard, studio mode) */}
+      <NewProjectWizard
+        mode="studio"
+        open={showQuiltSetup}
         projectId={project.id}
         onConfirm={handleQuiltSetupConfirm}
+        onClose={handleQuiltSetupDismiss}
         onDismiss={handleQuiltSetupDismiss}
       />
     </div>

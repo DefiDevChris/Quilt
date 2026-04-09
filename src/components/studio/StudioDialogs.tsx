@@ -7,6 +7,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
+import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
@@ -198,55 +199,45 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
 
       {/* ── Pro upgrade prompt ────────────────────────────────── */}
       {proUpgradeFeature && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
-          <div className="w-full max-w-sm rounded-xl bg-surface shadow-elevation-3 p-6 text-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-secondary mx-auto mb-3"
-              aria-hidden="true"
-            >
-              <rect
-                x="5"
-                y="11"
-                width="14"
-                height="10"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M8 11V7a4 4 0 0 1 8 0v4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-            <p className="text-lg font-semibold text-on-surface mb-1">{proUpgradeFeature}</p>
-            <p className="text-sm text-secondary mb-4">
-              This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                type="button"
-                onClick={() => setProUpgradeFeature(null)}
-                className="bg-white/50 rounded-full px-4 py-2 text-sm font-medium text-secondary"
+        <ConfirmationDialog
+          title=""
+          message={
+            <div className="text-center">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-secondary mx-auto mb-3"
+                aria-hidden="true"
               >
-                Maybe Later
-              </button>
-              <button
-                type="button"
-                onClick={handleUpgrade}
-                disabled={isUpgrading}
-                className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
-                {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
-              </button>
+                <rect
+                  x="5"
+                  y="11"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M8 11V7a4 4 0 0 1 8 0v4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <p className="text-lg font-semibold text-on-surface mb-1">{proUpgradeFeature}</p>
+              <p className="text-sm text-secondary mb-4">
+                This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
+              </p>
             </div>
-          </div>
-        </div>
+          }
+          cancelLabel="Maybe Later"
+          confirmLabel={isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
+          onConfirm={handleUpgrade}
+          onCancel={() => setProUpgradeFeature(null)}
+        />
       )}
     </StudioDialogsContext.Provider>
   );

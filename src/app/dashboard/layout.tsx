@@ -10,9 +10,10 @@ export const metadata: Metadata = {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* Background at 20% opacity */}
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/background.png')" }}
+        style={{ backgroundImage: "url('/background.png')", opacity: 0.2 }}
       />
       <ResponsiveShell>{children}</ResponsiveShell>
     </>

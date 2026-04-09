@@ -7,6 +7,12 @@ import { useToast } from '@/components/ui/ToastProvider';
 
 interface LayoutCreatorWorktableProps {
   onDone: () => void;
+  /** Render only the toolbar (72px left sidebar) */
+  toolbarOnly?: boolean;
+  /** Render only the canvas center area */
+  canvasOnly?: boolean;
+  /** Render only the right panel (280px) */
+  panelOnly?: boolean;
 }
 
 type CreatorTool = 'select' | 'rectangle' | 'triangle';
@@ -32,7 +38,7 @@ const ROLE_LABELS: Record<LayoutRole, string> = {
 
 const CANVAS_SIZE = 600;
 
-export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) {
+export function LayoutCreatorWorktable({ onDone, toolbarOnly, canvasOnly, panelOnly }: LayoutCreatorWorktableProps) {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<unknown>(null);
   const [activeTool, setActiveTool] = useState<CreatorTool>('select');
@@ -321,6 +327,159 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
 
   const hasSelection = selectedObject !== null;
 
+  // ── Render: toolbar only ────────────────────────────────────
+  if (toolbarOnly) {
+    return (
+      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-surface border-r border-outline-variant/15 overflow-y-auto items-center py-4 gap-1">
+        {/* Tool buttons - icon + label, vertical stack */}
+        <ToolButton
+          active={activeTool === 'select'}
+          onClick={() => setActiveTool('select')}
+          label="Select"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 3L4 15L8 11L12 17L14 15.5L10 10L15 10L4 3Z" fill="currentColor" />
+          </svg>
+        </ToolButton>
+        <ToolButton
+          active={activeTool === 'rectangle'}
+          onClick={() => setActiveTool('rectangle')}
+          label="Rectangle"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.4" />
+          </svg>
+        </ToolButton>
+        <ToolButton
+          active={activeTool === 'triangle'}
+          onClick={() => setActiveTool('triangle')}
+          label="Triangle"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 3L17 16H3L10 3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+          </svg>
+        </ToolButton>
+
+        <div className="flex-1" />
+
+        {/* Clear All */}
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className="w-14 h-14 flex flex-col items-center justify-center rounded-xl text-[10px] leading-tight text-error hover:bg-error/10 transition-colors"
+          title="Clear All"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+          <span>Clear</span>
+        </button>
+      </aside>
+    );
+  }
+
+  // ── Render: canvas only ────────────────────────────────────
+  if (canvasOnly) {
+    return (
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Floating action pills - top-left */}
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleDeleteShape}
+            disabled={!hasSelection}
+            className="rounded-full bg-surface-container/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium transition-colors border border-outline-variant/30 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-error/10 hover:text-error hover:border-error/20"
+          >
+            Delete
+          </button>
+        </div>
+
+        {/* Canvas centered */}
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="relative overflow-hidden shadow-elevation-2 bg-white">
+            <canvas ref={canvasElRef} width={CANVAS_SIZE} height={CANVAS_SIZE} className="block" />
+          </div>
+        </div>
+
+        {/* Floating save button - bottom-right */}
+        <div className="absolute bottom-4 right-4 z-10">
+          <button
+            type="button"
+            onClick={handleSaveLayout}
+            disabled={saving}
+            className="rounded-full bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-2 text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity shadow-elevation-1"
+          >
+            {saving ? 'Saving…' : 'Save Layout to Library'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Render: panel only ────────────────────────────────────
+  if (panelOnly) {
+    return (
+      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface overflow-hidden">
+        {/* Layout Info */}
+        <div className="px-4 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Layout Info</p>
+          <input
+            type="text"
+            value={layoutName}
+            onChange={(e) => setLayoutName(e.target.value)}
+            placeholder="Layout name…"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-outline-variant/20 bg-white/60 text-on-surface placeholder:text-secondary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+          />
+        </div>
+
+        {/* Role Assignment (only when shape selected) */}
+        {hasSelection && (
+          <div className="px-4 py-3 border-t border-outline-variant/15">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Assign Role</p>
+            <div className="space-y-1">
+              {(['block-cell', 'sashing', 'border', 'binding', 'edging'] as LayoutRole[]).map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => handleAssignRole(role)}
+                  className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors ${selectedRole === role
+                    ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                    : 'text-on-surface/70 hover:bg-surface-container'
+                    }`}
+                >
+                  <span
+                    className="w-3 h-3 rounded-sm flex-shrink-0"
+                    style={{ backgroundColor: ROLE_COLORS[role].stroke }}
+                  />
+                  {ROLE_LABELS[role]}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => handleAssignRole('none')}
+                className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors text-on-surface/70 hover:bg-surface-container"
+              >
+                <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: ROLE_COLORS['none'].stroke }} />
+                No Role
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Empty state hint */}
+        {!hasSelection && (
+          <div className="px-4 py-3 border-t border-outline-variant/15">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface/50 mb-2">Select a Shape</p>
+            <p className="text-[11px] text-secondary leading-relaxed">
+              Click a shape on the canvas to select it, then assign a role from this panel.
+            </p>
+          </div>
+        )}
+      </aside>
+    );
+  }
+
+  // ── Render: full layout (fallback, should not be used) ─────
   return (
     <div className="flex-1 flex overflow-hidden bg-surface">
       {/* ── Left: Minimal Toolbar ───────────────────────────── */}
@@ -368,17 +527,6 @@ export function LayoutCreatorWorktable({ onDone }: LayoutCreatorWorktableProps) 
           </svg>
           <span>Clear</span>
         </button>
-
-        {/* Done button at bottom */}
-        <div className="w-full px-2 pt-2 border-t border-outline-variant/15 mt-2">
-          <button
-            type="button"
-            onClick={onDone}
-            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-2 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity"
-          >
-            ← Back
-          </button>
-        </div>
       </aside>
 
       {/* ── Center: Canvas Area ─────────────────────────────── */}

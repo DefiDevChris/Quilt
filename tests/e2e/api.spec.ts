@@ -8,12 +8,12 @@ test.describe('API Rate Limiting', () => {
 
   test('rate limit enforced on auth endpoints', async ({ request }) => {
     // Make multiple requests quickly
-    const requests = Array(10).fill(null).map(() => 
+    const requests = Array(10).fill(null).map(() =>
       request.post('/api/auth/signin', {
         data: { email: 'test@example.com', password: 'wrong' }
       })
     );
-    
+
     const responses = await Promise.all(requests);
     const rateLimited = responses.some(r => r.status() === 429);
     expect(rateLimited).toBe(true);
@@ -26,10 +26,9 @@ test.describe('API Authentication', () => {
       '/api/projects',
       '/api/blocks',
       '/api/fabrics',
-      '/api/project-templates',
       '/api/community/posts'
     ];
-    
+
     for (const endpoint of endpoints) {
       const response = await request.get(endpoint);
       expect(response.status()).toBe(401);
@@ -41,7 +40,7 @@ test.describe('API Authentication', () => {
       '/api/admin/posts',
       '/api/blog'
     ];
-    
+
     for (const endpoint of endpoints) {
       const response = await request.get(endpoint);
       expect(response.status()).toBe(401);

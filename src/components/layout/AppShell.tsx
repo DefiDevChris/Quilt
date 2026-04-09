@@ -7,11 +7,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
-import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from '@/components/shop/CartDrawer';
-import { Sparkles, ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { logout } from '@/lib/logout';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -22,7 +22,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showProUpgrade, setShowProUpgrade] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -51,13 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div
-      className="min-h-screen relative"
-      style={{
-        background:
-          "url('/background.png') center top / cover no-repeat fixed, var(--color-background)",
-      }}
-    >
+    <div className="min-h-screen relative">
       <nav
         aria-label="Main navigation"
         className={`sticky top-0 z-40 backdrop-blur-xl px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${scrolled
@@ -120,13 +113,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isAuthenticated ? (
             <>
               {user?.role === 'free' && (
-                <button
-                  onClick={() => setShowProUpgrade(true)}
-                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary-dark px-3 py-1 text-xs font-extrabold text-white shadow-elevation-1 hover:shadow-elevation-2 transition-all hover:scale-105 mr-2"
-                >
-                  <Sparkles size={14} className="text-white" />
-                  Upgrade
-                </button>
+                <ProUpgradeButton variant="nav" />
               )}
 
               {shopEnabled && cartItems.length > 0 && (
@@ -224,7 +211,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {showProUpgrade && <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />}
       <CartDrawer />
     </div>
   );
