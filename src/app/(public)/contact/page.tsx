@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Mail } from 'lucide-react';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -12,13 +13,11 @@ export default function ContactPage() {
   return (
     <>
       <PublicNav />
-      <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-on-surface mb-6 font-display">
-          Contact Us
-        </h1>
-        <p className="text-lg text-secondary leading-relaxed">
-          Have a question, idea, or just want to say hello? We&apos;d love to hear from you.
-        </p>
+      <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
+        <PageHeader
+          title="Contact Us"
+          description="Have a question, idea, or just want to say hello? We'd love to hear from you."
+        />
 
         <div className="mt-12 flex flex-col md:flex-row gap-6 justify-center max-w-2xl mx-auto">
           <a

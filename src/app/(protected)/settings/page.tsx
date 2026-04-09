@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { ProfileEditForm } from '@/components/community/profiles/ProfileEditForm';
 import { BillingSection } from '@/components/billing/BillingSection';
 import { DeleteAccountSection } from '@/components/settings/DeleteAccountSection';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export const metadata: Metadata = {
   title: 'Settings',
@@ -10,18 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  // Auth check is handled by (protected)/layout.tsx
   return (
     <div className="space-y-10">
-      <div className="mb-8">
-        <p className="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">
-          Account
-        </p>
-        <h1 className="text-on-surface text-4xl font-extrabold tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-          Settings
-        </h1>
-        <p className="text-secondary mt-1">Manage your profile, billing, and account.</p>
-      </div>
+      <PageHeader
+        label="Account"
+        title="Settings"
+        description="Manage your profile, billing, and account."
+      />
       <div className="max-w-2xl">
         <ProfileEditForm />
         <hr className="border-outline-variant" />
