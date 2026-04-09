@@ -4,8 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { QUILT_SIZE_PRESETS } from '@/lib/constants';
 
-type StartingPoint = 'freeform' | 'create-layout';
-
 const CELL_SIZE_OPTIONS = [0.25, 0.5, 1, 2, 3] as const;
 
 function fmtCellSize(inches: number): string {
@@ -14,16 +12,16 @@ function fmtCellSize(inches: number): string {
   return `${inches}"`;
 }
 
-/** Full-creation mode (Dashboard): 3 steps, API create, navigate to studio */
+/** Full-creation mode (Dashboard): 2 steps, API create, navigate to studio */
 interface NewProjectWizardModeNew {
   mode?: 'new-project';
 }
 
-/** Studio setup mode (replaces NewQuiltSetupModal): 2 steps, calls onConfirm */
+/** Studio setup mode: 1 step, calls onConfirm with dimensions */
 interface NewProjectWizardModeStudio {
   mode: 'studio';
   projectId: string;
-  onConfirm: (args: { width: number; height: number; startingPoint?: StartingPoint }) => void;
+  onConfirm: (args: { width: number; height: number }) => void;
   onDismiss: () => void;
 }
 
@@ -40,16 +38,15 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
   const isStudio = props.mode === 'studio';
   const router = useRouter();
 
-  // In studio mode we skip the name step — start at step 1 = size, step 2 = starting point
-  // In new-project mode: step 1 = name, step 2 = starting point, step 3 = size + cell size
-  const [step, setStep] = useState<1 | 2 | 3>(isStudio ? 1 : 1);
-  const maxStep = isStudio ? 2 : 3;
-  const [startingPoint, setStartingPoint] = useState<StartingPoint>('freeform');
+  // In studio mode: step 1 = size (only step)
+  // In new-project mode: step 1 = name, step 2 = size + cell size
+  const [step, setStep] = useState<1 | 2>(isStudio ? 1 : 1);
+  const maxStep = isStudio ? 1 : 2;
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  // Size + cell size (step 3 in new-project, step 1 in studio)
+  // Size + cell size
   const [sizePresetLabel, setSizePresetLabel] = useState<string>('Throw');
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
@@ -62,17 +59,16 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
   useEffect(() => {
     if (!open) return;
     return () => {
-      setStep(isStudio ? 1 : 1);
+      setStep(1);
       setName('');
       setError(null);
       setIsCreating(false);
-      setStartingPoint('freeform');
       setSizePresetLabel('Throw');
       setCustomWidth('');
       setCustomHeight('');
       setCellSize(1);
     };
-  }, [open, isStudio]);
+  }, [open]);
 
   // Focus management
   useEffect(() => {
@@ -140,8 +136,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
   const handleStudioSubmit = useCallback(() => {
     if (!canSubmit || !isStudio) return;
     const { canvasWidth, canvasHeight } = getDimensions();
-    props.onConfirm({ width: canvasWidth, height: canvasHeight, startingPoint });
-  }, [canSubmit, isStudio, getDimensions, startingPoint, props]);
+    props.onConfirm({ width: canvasWidth, height: canvasHeight });
+  }, [canSubmit, isStudio, getDimensions, props]);
 
   // New-project mode: API create + navigate
   const handleCreate = useCallback(async () => {
@@ -162,14 +158,6 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
       canvasHeight,
       gridSettings: { enabled: true, size: cellSize, snapToGrid: true },
     };
-
-    if (startingPoint === 'create-layout') {
-      payload.layoutBuilder = {
-        width: canvasWidth,
-        height: canvasHeight,
-        cellSize,
-      };
-    }
 
     try {
       const res = await fetch('/api/projects', {
@@ -207,34 +195,27 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
       // Suppress the studio setup modal to avoid redundancy.
       sessionStorage.setItem(`qc-quilt-setup-shown-${newId}`, '1');
 
-      if (startingPoint === 'create-layout') {
-        sessionStorage.setItem(`qc-layout-builder-${newId}`, 'true');
-      }
-
       onClose();
       router.push(`/studio/${newId}`);
     } catch {
       setError('Failed to create project');
       setIsCreating(false);
     }
-  }, [canSubmit, isStudio, handleStudioSubmit, getDimensions, name, cellSize, startingPoint, onClose, router]);
+  }, [canSubmit, isStudio, handleStudioSubmit, getDimensions, name, cellSize, onClose, router]);
 
   const handleClose = isStudio ? props.onDismiss : onClose;
   const handleDismiss = isStudio ? props.onDismiss : onClose;
 
   if (!open) return null;
 
-  // ─── Step ordering: studio mode shows size first, then starting point ───
-  // studio: step 1 = size, step 2 = starting point
-  // new-project: step 1 = name, step 2 = starting point, step 3 = size + cell size
+  // ─── Step ordering ───
+  // studio: step 1 = size (only step)
+  // new-project: step 1 = name, step 2 = size + cell size
   const showNameStep = !isStudio && step === 1;
-  const showStartingPointStep = isStudio ? step === 2 : step === 2;
-  const showSizeStep = isStudio ? step === 1 : step === 3;
+  const showSizeStep = isStudio ? step === 1 : step === 2;
 
   const stepTitle = isStudio
-    ? step === 1
-      ? 'New Quilt'
-      : 'Choose a Starting Point'
+    ? 'New Quilt'
     : 'New Project';
 
   return (
@@ -292,7 +273,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   onChange={(e) => setName(e.target.value)}
                   maxLength={255}
                   placeholder="e.g. My Next Masterpiece"
-                  className="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 text-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                  className="w-full rounded-sm border border-outline-variant bg-surface px-4 py-3 text-lg text-on-surface focus:border-black focus:outline-none shadow-sm"
                   autoFocus
                 />
               </div>
@@ -301,7 +282,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   type="button"
                   onClick={() => setStep(2)}
                   disabled={!name.trim()}
-                  className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-full bg-on-surface px-6 py-2.5 text-[11px] font-semibold tracking-wide uppercase text-surface transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-1"
                 >
                   Next Step
                 </button>
@@ -325,12 +306,12 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel(preset.label)}
                       className={
                         isActive
-                          ? 'flex flex-col items-center justify-center rounded-xl p-3 bg-gradient-to-r from-primary to-primary-dark text-white shadow-md'
+                          ? 'flex flex-col items-center justify-center rounded-xl p-3 bg-on-surface text-surface shadow-elevation-1'
                           : 'flex flex-col items-center justify-center rounded-xl p-3 bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors'
                       }
                     >
-                      <span className="text-sm font-bold mb-1">{preset.label}</span>
-                      <span className={isActive ? 'text-xs font-mono text-white/80' : 'text-xs font-mono text-secondary'}>
+                      <span className="text-sm font-bold mb-1 tracking-tight">{preset.label}</span>
+                      <span className={isActive ? 'text-xs font-mono text-surface/80' : 'text-xs font-mono text-secondary'}>
                         {preset.width}″ × {preset.height}″
                       </span>
                     </button>
@@ -343,7 +324,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel('Custom')}
                       className={
                         isCustom
-                          ? 'w-full rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-bold shadow-md'
+                          ? 'w-full rounded-xl px-4 py-3 bg-on-surface text-surface text-sm font-bold shadow-elevation-1'
                           : 'w-full rounded-xl px-4 py-3 bg-surface-container text-on-surface text-sm font-bold hover:bg-surface-container-high transition-colors border border-outline-variant/30'
                       }
                     >
@@ -359,7 +340,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   type="button"
                   onClick={() => setSizePresetLabel('Custom')}
                   className={`col-span-2 flex items-center justify-center rounded-lg px-3 py-2.5 transition-colors ${isCustom
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
+                      ? 'bg-on-surface text-surface shadow-elevation-1'
                       : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
                     }`}
                 >
@@ -381,7 +362,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customWidth}
                       onChange={(e) => setCustomWidth(e.target.value)}
-                      className="w-full rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
+                      className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-2 text-sm focus:border-black focus:outline-none"
                       placeholder="e.g. 60"
                     />
                   </div>
@@ -397,7 +378,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customHeight}
                       onChange={(e) => setCustomHeight(e.target.value)}
-                      className="w-full rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
+                      className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-2 text-sm focus:border-black focus:outline-none"
                       placeholder="e.g. 72"
                     />
                   </div>
@@ -417,7 +398,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                         type="button"
                         onClick={() => setCellSize(size)}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${Math.abs(cellSize - size) < 0.001
-                            ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
+                            ? 'bg-on-surface text-surface shadow-elevation-1'
                             : 'bg-surface-container text-secondary hover:bg-surface-container-high'
                           }`}
                       >
@@ -442,92 +423,25 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                     Skip
                   </button>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setStep(isStudio ? 2 : (maxStep as 3))}
-                  disabled={isCustom && (!customWidth || !customHeight)}
-                  className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  Next Step
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ─── Starting Point step ─── */}
-          {showStartingPointStep && (
-            <div className="space-y-6 flex-1 flex flex-col">
-              <label className="block text-sm font-semibold uppercase tracking-wider text-secondary mb-2">
-                {isStudio ? 'Choose a Starting Point' : 'Choose a Starting Point'}
-              </label>
-
-              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isStudio ? 'mb-6' : 'mb-4'}`}>
-                {/* Freeform */}
-                <button
-                  type="button"
-                  onClick={() => setStartingPoint('freeform')}
-                  className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all ${startingPoint === 'freeform'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-surface-container hover:bg-surface-container-high'
-                    }`}
-                >
-                  <div className={`rounded-full bg-surface-variant flex items-center justify-center mb-3 ${isStudio ? 'w-12 h-12' : 'w-16 h-16'}`}>
-                    <svg width={isStudio ? 24 : 32} height={isStudio ? 24 : 32} viewBox="0 0 24 24" fill="none" className="text-secondary">
-                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
-                    </svg>
-                  </div>
-                  <span className={`font-bold text-on-surface mb-1 ${isStudio ? 'text-base' : 'text-lg'}`}>Freeform</span>
-                  <span className="text-xs text-secondary text-center">Start with an empty canvas — place blocks, fabrics, and shapes anywhere.</span>
-                </button>
-
-                {/* Start with a Layout / Create a Layout */}
-                <button
-                  type="button"
-                  onClick={() => setStartingPoint('create-layout')}
-                  className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all ${startingPoint === 'create-layout'
-                      ? 'border-primary bg-primary/5'
-                      : 'border-outline-variant bg-surface-container hover:bg-surface-container-high'
-                    }`}
-                >
-                  <div className={`rounded-full bg-surface-variant flex items-center justify-center mb-3 ${isStudio ? 'w-12 h-12' : 'w-16 h-16'}`}>
-                    <svg width={isStudio ? 24 : 32} height={isStudio ? 24 : 32} viewBox="0 0 24 24" fill="none" className="text-secondary">
-                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                      <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.5" />
-                      <line x1="3" y1="15" x2="21" y2="15" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.5" />
-                      <line x1="9" y1="3" x2="9" y2="21" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.5" />
-                      <line x1="15" y1="3" x2="15" y2="21" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.5" />
-                    </svg>
-                  </div>
-                  <span className={`font-bold text-on-surface mb-1 ${isStudio ? 'text-base' : 'text-lg'}`}>
-                    {isStudio ? 'Start with a Layout' : 'Create a Layout'}
-                  </span>
-                  <span className="text-xs text-secondary text-center">Draw your own layout on a reference grid — define borders, sashing, block cells, and more.</span>
-                </button>
-              </div>
-
-              <div className="flex justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => setStep(isStudio ? 1 : (maxStep - 1 as 1 | 2))}
-                  className="bg-white/50 px-4 py-2 text-sm font-medium text-secondary rounded-full"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCreate}
-                  className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
-                >
-                  {isCreating
-                    ? 'Creating…'
-                    : isStudio
-                      ? startingPoint === 'create-layout'
-                        ? 'Start Building Layout'
-                        : 'Create Quilt'
-                      : startingPoint === 'create-layout'
-                        ? 'Start Building Layout'
-                        : 'Create Project'}
-                </button>
+                {isStudio ? (
+                  <button
+                    type="button"
+                    onClick={handleCreate}
+                    disabled={isCustom && (!customWidth || !customHeight)}
+                    className="rounded-full bg-on-surface px-6 py-2.5 text-[11px] font-semibold tracking-wide uppercase text-surface hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-1"
+                  >
+                    Create Quilt
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    disabled={isCustom && (!customWidth || !customHeight)}
+                    className="rounded-full bg-on-surface px-6 py-2.5 text-[11px] font-semibold tracking-wide uppercase text-surface hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-1"
+                  >
+                    Next Step
+                  </button>
+                )}
               </div>
             </div>
           )}

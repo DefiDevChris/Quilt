@@ -53,7 +53,7 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
           </svg>
         </button>
         <Link href="/dashboard" className="text-base font-bold text-on-surface tracking-wide">
-          QuiltCorgi
+          Quilt Studio
         </Link>
         {isAuthenticated ? (
           <NotificationBell />

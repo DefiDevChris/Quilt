@@ -5,7 +5,7 @@ import Footer from '@/components/landing/Footer';
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description:
-    'QuiltCorgi Terms of Service — the rules for using our quilt design studio and community.',
+    'Quilt Studio Terms of Service — the rules for using our quilt design studio and community.',
 };
 
 export default function TermsPage() {
@@ -13,22 +13,25 @@ export default function TermsPage() {
     <>
       <PublicNav />
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
-        <div className="mb-12">
+        <div className="mb-20">
           <h1
-            className="text-3xl md:text-4xl font-bold text-on-surface mb-4"
+            className="text-5xl md:text-7xl font-black text-on-surface tracking-tighter uppercase mb-6"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Terms of Service
           </h1>
-          <p className="text-secondary text-sm">Effective date: March 30, 2026</p>
+          <div className="flex items-center gap-4">
+            <div className="h-0.5 w-12 bg-on-surface" />
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">Effective: March 30, 2026</p>
+          </div>
         </div>
 
         <div className="text-secondary space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
-            Welcome to QuiltCorgi! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
-            to and use of the QuiltCorgi website, design studio, community features, and related
+            Welcome to Quilt Studio! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
+            to and use of the Quilt Studio website, design studio, community features, and related
             services (collectively, the &ldquo;Service&rdquo;). The Service is operated by
-            QuiltCorgi LLC (&ldquo;QuiltCorgi,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or
+            Quilt Studio LLC (&ldquo;Quilt Studio,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or
             &ldquo;our&rdquo;), a Wyoming limited liability company.
           </p>
           <p>
@@ -38,18 +41,20 @@ export default function TermsPage() {
 
           {/* 1. Eligibility */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">1. Eligibility</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />1. Eligibility</h2>
             <p>
               You must be at least 13 years old to create an account or use the Service. If you are
               under 18, you represent that you have your parent or legal guardian&rsquo;s permission
-              to use the Service. By using QuiltCorgi, you represent and warrant that you meet these
+              to use the Service. By using Quilt Studio, you represent and warrant that you meet these
               requirements and have the legal capacity to enter into these Terms.
             </p>
           </section>
 
           {/* 2. Accounts & Security */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               2. Accounts &amp; Security
             </h2>
             <p className="mb-3">
@@ -68,7 +73,7 @@ export default function TermsPage() {
                 You must notify us immediately at{' '}
                 <a
                   href="mailto:support@quiltcorgi.com"
-                  className="text-primary underline underline-offset-2"
+                  className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
                 >
                   support@quiltcorgi.com
                 </a>{' '}
@@ -83,11 +88,12 @@ export default function TermsPage() {
 
           {/* 3. Subscriptions, Payments & Billing */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               3. Subscriptions, Payments &amp; Billing
             </h2>
             <p className="mb-3">
-              QuiltCorgi offers a free tier and a paid Pro subscription. The free tier includes
+              Quilt Studio offers a free tier and a paid Pro subscription. The free tier includes
               access to all design tools with limits on saved blocks, fabrics, and pattern library
               size. The Pro subscription unlocks unlimited saving, the full block library, fabric
               uploads, all export formats, and community posting.
@@ -103,14 +109,14 @@ export default function TermsPage() {
             </ul>
             <p className="mt-3">
               All billing and payment processing is handled entirely by Stripe, a third-party
-              payment processor. QuiltCorgi does not collect, process, or store your credit card
+              payment processor. Quilt Studio does not collect, process, or store your credit card
               number, bank details, or any other payment instrument on its servers. By subscribing,
               you agree to Stripe&rsquo;s{' '}
               <a
                 href="https://stripe.com/legal/ssa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 Services Agreement
               </a>{' '}
@@ -119,7 +125,7 @@ export default function TermsPage() {
                 href="https://stripe.com/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 Privacy Policy
               </a>
@@ -139,7 +145,8 @@ export default function TermsPage() {
 
           {/* 4. User Content & Intellectual Property */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               4. User Content &amp; Intellectual Property
             </h2>
             <p className="mb-3">
@@ -149,7 +156,7 @@ export default function TermsPage() {
             </p>
             <p className="mb-3">
               By posting or sharing User Content in the community features (such as Social Threads),
-              you grant QuiltCorgi a non-exclusive, worldwide, royalty-free license to host,
+              you grant Quilt Studio a non-exclusive, worldwide, royalty-free license to host,
               display, and distribute that content within the Service for the purpose of operating
               and improving the platform. This license ends when you delete your content or your
               account, except where the content has been shared with others and they have not
@@ -160,8 +167,8 @@ export default function TermsPage() {
               you and will not be shared in the community.
             </p>
             <p>
-              QuiltCorgi&rsquo;s name, logo, the design studio interface, and all related software
-              are the property of QuiltCorgi LLC. You may not copy, modify, distribute, or create
+              Quilt Studio&rsquo;s name, logo, the design studio interface, and all related software
+              are the property of Quilt Studio LLC. You may not copy, modify, distribute, or create
               derivative works of our proprietary software or branding without our prior written
               consent.
             </p>
@@ -169,11 +176,12 @@ export default function TermsPage() {
 
           {/* 5. Community Guidelines & Acceptable Use */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               5. Community Guidelines &amp; Acceptable Use
             </h2>
             <p className="mb-3">
-              QuiltCorgi is a community built by and for quilters. We want everyone to feel welcome.
+              Quilt Studio is a community built by and for quilters. We want everyone to feel welcome.
               By using the community features, you agree to:
             </p>
             <ul className="list-disc pl-6 space-y-2">
@@ -210,7 +218,8 @@ export default function TermsPage() {
 
           {/* 6. DMCA & Copyright */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               6. DMCA &amp; Copyright Infringement
             </h2>
             <p className="mb-3">
@@ -219,7 +228,7 @@ export default function TermsPage() {
               we will respond to notices of alleged copyright infringement that comply with the law.
             </p>
             <p className="mb-3">
-              If you believe that content on QuiltCorgi infringes your copyright, please send a
+              If you believe that content on Quilt Studio infringes your copyright, please send a
               written notice to our designated copyright agent including:
             </p>
             <ul className="list-disc pl-6 space-y-2">
@@ -241,7 +250,7 @@ export default function TermsPage() {
               Send DMCA notices to:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>
@@ -254,7 +263,8 @@ export default function TermsPage() {
 
           {/* 7. Disclaimers */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">7. Disclaimers</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />7. Disclaimers</h2>
             <p className="mb-3">
               THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo; WITHOUT
               WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
@@ -275,7 +285,8 @@ export default function TermsPage() {
 
           {/* 8. Limitation of Liability */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               8. Limitation of Liability
             </h2>
             <p className="mb-3">
@@ -295,7 +306,8 @@ export default function TermsPage() {
 
           {/* 9. Binding Arbitration & Class Action Waiver */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               9. Binding Arbitration &amp; Class Action Waiver
             </h2>
             <p className="mb-3">
@@ -304,7 +316,7 @@ export default function TermsPage() {
               </strong>
             </p>
             <p className="mb-3">
-              <strong>Agreement to arbitrate.</strong> You and QuiltCorgi agree that any dispute,
+              <strong>Agreement to arbitrate.</strong> You and Quilt Studio agree that any dispute,
               claim, or controversy arising out of or relating to these Terms or the Service will be
               resolved by binding individual arbitration administered by the American Arbitration
               Association (&ldquo;AAA&rdquo;) under its Consumer Arbitration Rules, rather than in
@@ -329,7 +341,7 @@ export default function TermsPage() {
               of first accepting these Terms by sending written notice to{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>{' '}
@@ -339,7 +351,8 @@ export default function TermsPage() {
 
           {/* 10. Termination */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">10. Termination</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />10. Termination</h2>
             <p className="mb-3">
               You may stop using the Service and delete your account at any time. Upon account
               deletion, your personal data will be handled in accordance with our Privacy Policy.
@@ -355,7 +368,8 @@ export default function TermsPage() {
 
           {/* 11. Changes to These Terms */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
               11. Changes to These Terms
             </h2>
             <p>
@@ -369,7 +383,8 @@ export default function TermsPage() {
 
           {/* 12. Governing Law */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">12. Governing Law</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />12. Governing Law</h2>
             <p>
               These Terms are governed by and construed in accordance with the laws of the State of
               Wyoming, without regard to its conflict-of-law principles. Subject to the arbitration
@@ -380,10 +395,11 @@ export default function TermsPage() {
 
           {/* 13. Miscellaneous */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">13. Miscellaneous</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />13. Miscellaneous</h2>
             <p className="mb-3">
               <strong>Entire agreement.</strong> These Terms, together with the Privacy Policy,
-              constitute the entire agreement between you and QuiltCorgi regarding the Service.
+              constitute the entire agreement between you and Quilt Studio regarding the Service.
             </p>
             <p className="mb-3">
               <strong>Severability.</strong> If any provision of these Terms is found to be
@@ -401,12 +417,13 @@ export default function TermsPage() {
 
           {/* 14. Contact */}
           <section>
-            <h2 className="text-xl font-semibold text-on-surface mb-3">14. Contact Us</h2>
+            <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />14. Contact Us</h2>
             <p>
               If you have questions about these Terms, please reach out:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-primary underline underline-offset-2"
+                className="text-on-surface underline underline-offset-4 decoration-thickness-1 hover:decoration-thickness-2 transition-all"
               >
                 support@quiltcorgi.com
               </a>

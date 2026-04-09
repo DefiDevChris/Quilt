@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { SocialLayout } from './SocialLayout';
 import { FeedContent } from './FeedContent';
 
@@ -22,35 +23,40 @@ export function SocialFeedPage() {
 
   return (
     <SocialLayout activeSection="feed">
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Feed tabs: Discover | Saved */}
-        <div className="flex items-center gap-1 border-b border-white/40 mb-1">
+        <div className="flex items-center gap-8 border-b border-outline-variant/30 mb-2">
           {(['discover', 'saved'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative px-4 py-2.5 text-sm font-semibold transition-colors capitalize ${tab === t ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-                }`}
+              className={`relative pb-3 text-sm font-black uppercase tracking-widest transition-all ${
+                tab === t ? 'text-on-surface' : 'text-secondary/60 hover:text-on-surface'
+              }`}
             >
-              {t === 'discover' ? 'Discover' : 'Saved'}
+              {t}
               {tab === t && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                <motion.span
+                  layoutId="feed-tab-indicator"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full"
+                />
               )}
             </button>
           ))}
         </div>
 
-        {/* Sort tabs + Category chips (only on discover tab) */}
+        {/* Sort and Filter */}
         {tab === 'discover' && (
-          <>
+          <div className="space-y-6">
             {/* Sort */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-6">
               {(['newest', 'popular'] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSort(s)}
-                  className={`text-sm font-semibold transition-colors capitalize ${sort === s ? 'text-on-surface' : 'text-secondary hover:text-on-surface'
-                    }`}
+                  className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${
+                    sort === s ? 'text-primary' : 'text-secondary/50 hover:text-on-surface'
+                  }`}
                 >
                   {s}
                 </button>
@@ -58,21 +64,22 @@ export function SocialFeedPage() {
             </div>
 
             {/* Category chips */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.label}
                   onClick={() => setCategory(cat.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${category === cat.value
-                    ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
-                    : 'bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface'
-                    }`}
+                  className={`px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider border transition-all ${
+                    category === cat.value
+                      ? 'bg-on-surface text-surface border-on-surface shadow-elevation-1'
+                      : 'bg-surface border-outline-variant text-secondary hover:border-primary/50 hover:text-primary'
+                  }`}
                 >
                   {cat.label}
                 </button>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         <FeedContent sort={sort} category={category} tab={tab} />

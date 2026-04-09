@@ -70,7 +70,7 @@ export async function embedLogo(
 
 /**
  * Draw cover branding on page 1 of pattern-pieces PDF.
- * Shows logo (if available) + "QuiltCorgi" text in top-left.
+ * Shows logo (if available) + "Quilt Studio" text in top-left.
  */
 export function drawCoverBranding(
   page: PDFPage,
@@ -94,7 +94,7 @@ export function drawCoverBranding(
     });
   }
 
-  page.drawText('QuiltCorgi', {
+  page.drawText('Quilt Studio', {
     x: branding.logoImage ? x + 30 : x,
     y: y - 16,
     size: 12,
@@ -105,7 +105,7 @@ export function drawCoverBranding(
 
 /**
  * Draw a small header on non-cover pages of pattern-pieces PDF.
- * Shows logo (if available) + "QuiltCorgi" in top-left.
+ * Shows logo (if available) + "Quilt Studio" in top-left.
  */
 export function drawPageHeader(
   page: PDFPage,
@@ -129,7 +129,7 @@ export function drawPageHeader(
     });
   }
 
-  page.drawText('QuiltCorgi', {
+  page.drawText('Quilt Studio', {
     x: branding.logoImage ? x + 22 : x,
     y: y - 12,
     size: 9,
@@ -154,7 +154,7 @@ export function drawBrandedFooter(
   const y = (margin * pts) / 2;
 
   // Website — bottom-left
-  page.drawText('quiltcorgi.com', {
+  page.drawText('quilt.studio', {
     x: mx,
     y,
     size: 7,
@@ -210,7 +210,7 @@ export function drawFullCoverPage(
     });
   }
 
-  page.drawText('QuiltCorgi', {
+  page.drawText('Quilt Studio', {
     x: options.branding.logoImage ? margin + 40 : margin,
     y: pageHeight - margin - 22,
     size: 14,
@@ -301,7 +301,7 @@ export function drawFullCoverPage(
   });
 
   // Website — bottom-left
-  page.drawText('quiltcorgi.com', {
+  page.drawText('quilt.studio', {
     x: margin,
     y: margin + 8,
     size: 7,
@@ -591,7 +591,7 @@ export function drawGrainLine(
 
 /**
  * Draw a standard content page header.
- * Top-left: logo + "QuiltCorgi" branding. Below that: section title + rule.
+ * Top-left: logo + "Quilt Studio" branding. Below that: section title + rule.
  * Returns Y position ready for content.
  */
 export function drawContentPageHeader(
@@ -610,7 +610,7 @@ export function drawContentPageHeader(
 
   let cursorY = pageHeight - mx;
 
-  // Top-left branding: logo + "QuiltCorgi"
+  // Top-left branding: logo + "Quilt Studio"
   if (branding?.logoImage) {
     const logoH = 16;
     const logoW = (branding.logoImage.width / branding.logoImage.height) * logoH;
@@ -620,7 +620,7 @@ export function drawContentPageHeader(
       width: logoW,
       height: logoH,
     });
-    page.drawText('QuiltCorgi', {
+    page.drawText('Quilt Studio', {
       x: mx + logoW + 6,
       y: cursorY - 12,
       size: 9,
@@ -628,7 +628,7 @@ export function drawContentPageHeader(
       color: BRAND_PRIMARY,
     });
   } else {
-    page.drawText('QuiltCorgi', {
+    page.drawText('Quilt Studio', {
       x: mx,
       y: cursorY - 12,
       size: 9,

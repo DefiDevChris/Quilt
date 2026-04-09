@@ -30,7 +30,6 @@ import { WorktableTabs } from '@/components/studio/WorktableTabs';
 import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
-import { LayoutCreatorWorktable } from '@/components/studio/LayoutCreatorWorktable';
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -81,7 +80,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, [activeWorktable, project.id]);
 
   const handleQuiltSetupConfirm = useCallback(
-    ({ width, height, startingPoint }: { width: number; height: number; startingPoint?: 'freeform' | 'create-layout' }) => {
+    ({ width, height }: { width: number; height: number }) => {
       useProjectStore.getState().setCanvasWidth(width);
       useProjectStore.getState().setCanvasHeight(height);
       useCanvasStore.getState().centerAndFitViewport();
@@ -89,10 +88,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
         // Clean up the dimensions storage
         window.sessionStorage.removeItem(`qc-quilt-setup-dimensions-${project.id}`);
-      }
-      // If user chose "Start with a Layout", switch to layout creator mode
-      if (startingPoint === 'create-layout') {
-        useCanvasStore.getState().setActiveWorktable('layout-creator');
       }
       setShowQuiltSetup(false);
     },
@@ -151,13 +146,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           }}
             toolbarOnly
           />
-        ) : activeWorktable === 'layout-creator' ? (
-          <LayoutCreatorWorktable
-            onDone={() => {
-              useCanvasStore.getState().setActiveWorktable('quilt');
-            }}
-            toolbarOnly
-          />
         ) : (
           <Toolbar
             onOpenImageExport={dialogs.openImageExport}
@@ -173,13 +161,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           <div className="flex-1 flex overflow-hidden relative">
             {activeWorktable === 'block-builder' ? (
               <BlockBuilderWorktable
-                onDone={() => {
-                  useCanvasStore.getState().setActiveWorktable('quilt');
-                }}
-                canvasOnly
-              />
-            ) : activeWorktable === 'layout-creator' ? (
-              <LayoutCreatorWorktable
                 onDone={() => {
                   useCanvasStore.getState().setActiveWorktable('quilt');
                 }}
@@ -242,13 +223,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         {/* Right sidebar: mode-specific panel */}
         {activeWorktable === 'block-builder' ? (
           <BlockBuilderWorktable
-            onDone={() => {
-              useCanvasStore.getState().setActiveWorktable('quilt');
-            }}
-            panelOnly
-          />
-        ) : activeWorktable === 'layout-creator' ? (
-          <LayoutCreatorWorktable
             onDone={() => {
               useCanvasStore.getState().setActiveWorktable('quilt');
             }}

@@ -78,7 +78,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'getting-started',
     title: 'What are the four worktables for?',
     content:
-      'Each worktable handles a different part of your quilting workflow. Quilt is for full layouts, Block is for drafting individual blocks, Image is for working with fabric photos, and Print is for exporting your finished patterns.',
+      'Each worktable handles a different part of your quilting workflow. Studio is for full layouts, Block is for drafting individual blocks, Image is for working with fabric photos, and Print is for exporting your finished patterns.',
   },
   {
     id: 'gs-3',
@@ -136,7 +136,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'export',
     title: 'What is foundation paper piecing (FPP)?',
     content:
-      'FPP is a sewing technique that uses paper templates for precise piecing. QuiltCorgi generates printable FPP templates with seam allowances and sewing order marked right on them.',
+      'FPP is a sewing technique that uses paper templates for precise piecing. Quilt Studio generates printable FPP templates with seam allowances and sewing order marked right on them.',
   },
   // Account
   {
@@ -179,7 +179,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
   {
     id: 'mb-1',
     category: 'mobile',
-    title: 'Can I use QuiltCorgi on my phone?',
+    title: 'Can I use the Studio on my phone?',
     content:
       'The full Studio is desktop-only for the best design experience. On mobile, you can upload fabrics and block photos, browse the community, and manage your account. Uploaded items sync to your desktop automatically.',
   },
@@ -248,7 +248,7 @@ export interface VideoTutorial {
 export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
   {
     id: 'vt-1',
-    title: 'Getting Started with QuiltCorgi',
+    title: 'Getting Started with Quilt Studio',
     description: 'A quick intro to the Studio workspace, worktables, and your first quilt.',
     category: 'getting-started',
     duration: '5 min',

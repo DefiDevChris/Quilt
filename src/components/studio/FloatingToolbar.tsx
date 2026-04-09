@@ -168,37 +168,6 @@ function useBlockBuilderFloatingTools(): FloatingTool[] {
   ];
 }
 
-function useLayoutCreatorFloatingTools(): FloatingTool[] {
-  return [
-    { id: 'select', label: 'Select', toolType: 'select', icon: SELECT_ICON },
-    {
-      id: 'rectangle',
-      label: 'Rectangle',
-      toolType: 'rectangle',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="3" y="5" width="16" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      ),
-    },
-    {
-      id: 'triangle',
-      label: 'Triangle',
-      toolType: 'triangle',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path
-            d="M11 4L19 18H3L11 4Z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-  ];
-}
-
 export function FloatingToolbar() {
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const activeTool = useCanvasStore((s) => s.activeTool);
@@ -208,7 +177,6 @@ export function FloatingToolbar() {
 
   const quiltTools = useQuiltFloatingTools();
   const blockBuilderTools = useBlockBuilderFloatingTools();
-  const layoutCreatorTools = useLayoutCreatorFloatingTools();
 
   const handleZoomIn = () => useCanvasStore.getState().zoomAndCenter(zoom * ZOOM_FACTOR);
   const handleZoomOut = () => useCanvasStore.getState().zoomAndCenter(zoom / ZOOM_FACTOR);
@@ -216,7 +184,6 @@ export function FloatingToolbar() {
   const toolsByWorktable: Record<WorktableType, FloatingTool[]> = {
     quilt: quiltTools,
     'block-builder': blockBuilderTools,
-    'layout-creator': layoutCreatorTools,
   };
 
   const tools = toolsByWorktable[activeWorktable];

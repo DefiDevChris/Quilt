@@ -100,90 +100,90 @@ export function SocialLayout({
 
   return (
     <div className="min-h-screen bg-surface relative overflow-hidden font-sans selection:bg-primary-container selection:text-primary-dark">
-      {/* Background Orbs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-primary/30 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-primary-golden/30 rounded-full blur-[140px] pointer-events-none" />
-      <div className="fixed top-[20%] left-[30%] w-[40vw] h-[40vw] bg-white/60 rounded-full blur-[100px] pointer-events-none" />
-
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-panel h-20 grid grid-cols-3 items-center px-6 border-b border-white/40">
-        {/* Left: Logo + Section Info */}
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="QuiltCorgi" className="h-10 w-auto" />
+      <header className="fixed top-0 left-0 right-0 z-50 h-20 flex items-center px-12 border-b border-outline-variant/30 bg-white/80 backdrop-blur-2xl">
+        {/* Left: Logo + Session Info */}
+        <div className="flex items-center gap-10 flex-1">
+          <Link href="/dashboard" className="flex items-center gap-2.5 group">
+            <img src="/logo.png" alt="Quilt Studio" className="h-10 w-auto group-hover:scale-110 transition-transform" />
+            <span className="text-2xl font-black text-on-surface tracking-tighter">Quilt Studio</span>
           </Link>
-          <div className="hidden sm:block w-px h-8 bg-tertiary/50 mx-2" />
-          <div className="text-left hidden sm:block">
-            <h1 className="text-xl font-extrabold text-on-surface tracking-tight leading-tight">
+          
+          <div className="hidden md:flex flex-col">
+            <h1 className="text-sm font-black text-on-surface tracking-widest uppercase">
               {splitMode ? SPLIT_HEADERS[splitPanel].label : activeSectionData.label}
             </h1>
-            <p className="text-xs text-secondary/80 font-medium">
-              {splitMode ? SPLIT_HEADERS[splitPanel].subtitle : activeSectionData.subtitle}
+            <p className="text-[10px] text-secondary font-bold uppercase tracking-[0.2em] opacity-60">
+              Collective Studio
             </p>
           </div>
         </div>
 
-        {/* Center: Section Title (mobile) */}
-        <div className="flex justify-center">
-          <span className="md:hidden text-sm font-bold text-on-surface">
-            {activeSectionData.label}
-          </span>
+        {/* Center: Search (optional placeholder for later) */}
+        <div className="hidden lg:flex flex-1 justify-center">
         </div>
 
-        {/* Right: Avatar + Dropdown */}
-        <div className="flex items-center gap-4 justify-end">
-          <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+        {/* Right: Actions & Profile */}
+        <div className="flex-1 flex items-center justify-end gap-6">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={handleAvatarClick}
-              className="w-12 h-12 rounded-full border-2 border-white overflow-hidden transition-all focus:outline-none focus:ring-4 focus:ring-primary/30 relative bg-primary-container flex items-center justify-center"
-              aria-label={user ? 'Account menu' : 'Sign in'}
+              className="flex items-center gap-3 p-1 rounded-full hover:bg-surface-container transition-all group"
             >
-              {user?.image ? (
-                <Image
-                  src={user.image}
-                  alt={user.name}
-                  fill
-                  className="object-cover"
-                  sizes="48px"
-                />
-              ) : (
-                <Image
-                  src="/mascots&avatars/corgi1.png"
-                  alt="Default Avatar"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
+              <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white shadow-elevation-1 group-hover:shadow-elevation-2 transition-all relative bg-primary-container flex items-center justify-center">
+                {user?.image ? (
+                  <Image
+                    src={user.image}
+                    alt={user.name}
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-surface-container flex items-center justify-center">
+                    <span className="text-xs font-black text-secondary/40">QS</span>
+                  </div>
+                )}
+              </div>
+              {user && (
+                <div className="hidden sm:block text-left pr-2">
+                  <p className="text-xs font-black text-on-surface truncate max-w-[120px]">{user.name}</p>
+                  <p className="text-[10px] text-secondary font-bold uppercase tracking-wider opacity-60">Studio Member</p>
+                </div>
               )}
             </button>
 
             {dropdownOpen && user && (
-              <div className="absolute top-16 right-0 w-56 bg-white/90 backdrop-blur-xl rounded-2xl shadow-elevation-4 z-50 border border-white/80 overflow-hidden">
-                {/* User info */}
-                <div className="px-4 py-3 border-b border-outline-variant">
-                  <p className="text-sm font-bold text-on-surface truncate">{user.name}</p>
-                  <p className="text-xs text-secondary/80 truncate">{user.email}</p>
+              <div className="absolute top-14 right-0 w-64 glass-elevated rounded-3xl shadow-elevation-4 z-50 py-2 border border-outline-variant/30 overflow-hidden animate-in fade-in slide-in-from-top-4">
+                <div className="px-6 py-4 border-b border-outline-variant/30">
+                  <p className="text-sm font-black text-on-surface truncate">{user.name}</p>
+                  <p className="text-xs text-secondary font-medium truncate">{user.email}</p>
                 </div>
 
-                {/* Links */}
-                <div className="py-1">
+                <div className="py-2">
                   <Link
                     href="/socialthreads"
                     onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                    className="flex items-center px-6 py-3 text-sm font-black text-on-surface hover:bg-surface-container transition-colors uppercase tracking-widest text-[11px]"
                   >
-                    Profile
+                    Personal Portfolio
+                  </Link>
+                  <Link
+                    href="/settings"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center px-6 py-3 text-sm font-black text-on-surface hover:bg-surface-container transition-colors uppercase tracking-widest text-[11px]"
+                  >
+                    Studio Settings
                   </Link>
                 </div>
 
-                {/* Sign out */}
-                <div className="py-1 border-t border-outline-variant">
+                <div className="py-2 border-t border-outline-variant/30">
                   <button
                     onClick={handleSignOut}
                     disabled={signingOut}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    className="w-full text-left px-6 py-3 text-[11px] font-black uppercase tracking-widest text-error hover:bg-error/5 transition-colors disabled:opacity-50"
                   >
-                    {signingOut ? 'Signing out…' : 'Sign Out'}
+                    {signingOut ? 'Signing out...' : 'Sign Out'}
                   </button>
                 </div>
               </div>
@@ -192,17 +192,6 @@ export function SocialLayout({
         </div>
       </header>
 
-      {/* Auth gate modal for unauthenticated users */}
-      <AuthGateModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        title="Join QuiltCorgi"
-        description="Sign up to share your designs and connect with the quilting community."
-      />
-
-      {/* Quick-view modal — rendered at root so it overlays everything */}
-      <SocialQuickViewModal />
-
       {/* Main Layout */}
       {splitMode ? (
         <div className="relative z-10 h-screen pt-20">
@@ -210,30 +199,49 @@ export function SocialLayout({
         </div>
       ) : (
         <div className="relative z-10 flex h-screen pt-20">
-          {/* Main Content */}
-          <main className="flex-1 overflow-y-auto relative animate-expand pt-4 px-4 lg:px-6">
-            <div className={contentClassName ?? 'pb-10 max-w-2xl mx-auto'}>{children}</div>
-          </main>
+          {/* Sidebar */}
+          <aside className="w-80 hidden lg:flex flex-col h-full border-r border-outline-variant/30 bg-white/50">
+            <div className="p-8 space-y-10">
+              <div className="space-y-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary/60">Directory</p>
+                <nav className="space-y-1">
+                  {SECTIONS.map((section) => (
+                    <Link
+                      key={section.id}
+                      href={section.href}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
+                        activeSection === section.id 
+                          ? 'bg-on-surface text-surface shadow-elevation-2' 
+                          : 'text-secondary hover:bg-surface-container'
+                      }`}
+                    >
+                      {section.label}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
 
-          {/* Right Sidebar — static image per section */}
-          <aside className="w-72 hidden lg:flex flex-col h-full flex-shrink-0">
-            {miniSections.map((section) => (
-              <Link
-                key={section.id}
-                href={section.href}
-                className="flex-1 relative w-full overflow-hidden group"
-              >
-                <img
-                  src={section.image}
-                  alt={section.label}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute top-0 left-0 right-0 p-3 z-10 bg-gradient-to-b from-black/60 to-transparent">
-                  <h5 className="text-white font-bold text-xl drop-shadow">{section.label}</h5>
-                </div>
-              </Link>
-            ))}
+              <div className="space-y-6">
+                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary/60">Featured Studio</p>
+                 <div className="aspect-[4/5] rounded-3xl overflow-hidden relative group cursor-pointer shadow-elevation-2">
+                    <img 
+                      src="/images/quilts/quilt_01_closeup_churndash.png" 
+                      alt="Featured Work" 
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    />
+                    <div className="absolute inset-x-0 bottom-0 p-6 bg-black/60 backdrop-blur-md">
+                      <p className="text-white text-xs font-black uppercase tracking-widest mb-1">Archive #042</p>
+                      <h5 className="text-white font-black text-lg leading-tight uppercase">Classic Churndash</h5>
+                    </div>
+                 </div>
+              </div>
+            </div>
           </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto relative animate-expand bg-surface-container/10">
+            <div className={contentClassName ?? 'py-12 px-6 lg:px-12 max-w-4xl mx-auto'}>{children}</div>
+          </main>
         </div>
       )}
     </div>

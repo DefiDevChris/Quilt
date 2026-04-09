@@ -42,152 +42,155 @@ export function BlockOverlaySelector({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40">
-      <div className="w-[700px] max-h-[80vh] rounded-xl bg-surface p-5 shadow-elevation-4 overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80 backdrop-blur-sm">
+      <div className="flex w-[800px] max-h-[85vh] flex-col border-2 border-on-surface bg-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-on-surface">Choose Overlay Template</h2>
-          <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
+        <div className="flex items-center justify-between border-b-2 border-on-surface bg-on-surface p-4 text-surface">
+          <h2 className="text-[14px] font-black uppercase tracking-[0.2em]">Overlay Templates</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="transition-transform hover:scale-110"
+          >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M5 5l10 10M15 5L5 15"
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="2"
                 strokeLinecap="round"
               />
             </svg>
           </button>
         </div>
 
-        {/* Type tabs */}
-        <div className="mb-3 flex gap-1 rounded-full bg-background p-1">
-          <button
-            type="button"
-            onClick={() => setActiveType('block')}
-            className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${activeType === 'block'
-              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-              : 'text-secondary hover:text-on-surface'
-              }`}
-          >
-            Blocks ({BLOCK_OVERLAYS.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveType('layout')}
-            className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${activeType === 'layout'
-              ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-              : 'text-secondary hover:text-on-surface'
-              }`}
-          >
-            Layouts ({LAYOUT_OVERLAYS.length})
-          </button>
-        </div>
-
-        {/* Search */}
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search blocks or layouts..."
-          className="mb-3 w-full rounded-sm border border-outline-variant bg-white px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-        />
-
-        {/* Difficulty filter (blocks only) */}
-        {activeType === 'block' && (
-          <div className="mb-3 flex gap-2">
-            {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((d) => (
+        <div className="p-6 flex flex-col gap-6 overflow-hidden">
+          {/* Type tabs and search */}
+          <div className="flex flex-col gap-4">
+            <div className="flex bg-surface border-2 border-on-surface">
               <button
-                key={d}
                 type="button"
-                onClick={() => setDifficultyFilter(d)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${difficultyFilter === d
-                  ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-                  : 'bg-background text-secondary hover:text-on-surface'
+                onClick={() => setActiveType('block')}
+                className={`flex-1 p-3 text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${activeType === 'block'
+                  ? 'bg-on-surface text-surface'
+                  : 'text-on-surface hover:bg-on-surface/10'
                   }`}
               >
-                {d === 'all' ? 'All' : d.charAt(0).toUpperCase() + d.slice(1)}
+                Blocks ({BLOCK_OVERLAYS.length})
               </button>
-            ))}
-          </div>
-        )}
-
-        {/* Grid of overlays */}
-        <div className="flex-1 overflow-y-auto">
-          {activeType === 'block' ? (
-            <div className="grid grid-cols-3 gap-3">
-              {filteredBlocks.map((block) => (
-                <button
-                  key={block.id}
-                  type="button"
-                  onClick={() => onSelect(block.svgPath, 'block')}
-                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${currentOverlay === block.svgPath
-                    ? 'border-primary bg-primary/5'
-                    : 'border-outline-variant bg-white hover:border-primary/50'
-                    }`}
-                >
-                  <div className="mb-2 aspect-square overflow-hidden rounded bg-background">
-                    <img
-                      src={block.svgPath}
-                      alt={block.displayName}
-                      className="h-full w-full object-contain p-1"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-on-surface">{block.displayName}</span>
-                  </div>
-                  <p className="mt-1 text-[11px] text-secondary line-clamp-2">
-                    {block.description}
-                  </p>
-                  <p className="mt-1 text-[10px] text-secondary">
-                    Sizes: {block.commonSizes.join(', ')}
-                  </p>
-                </button>
-              ))}
+              <div className="w-0.5 bg-on-surface" />
+              <button
+                type="button"
+                onClick={() => setActiveType('layout')}
+                className={`flex-1 p-3 text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${activeType === 'layout'
+                  ? 'bg-on-surface text-surface'
+                  : 'text-on-surface hover:bg-on-surface/10'
+                  }`}
+              >
+                Layouts ({LAYOUT_OVERLAYS.length})
+              </button>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {filteredLayouts.map((layout) => (
+
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="SEARCH ASSETS..."
+              className="w-full border-2 border-on-surface bg-surface p-4 text-[13px] font-black uppercase tracking-[0.1em] text-on-surface placeholder:text-on-surface/30 focus:outline-none"
+            />
+          </div>
+
+          {/* Difficulty filter (blocks only) */}
+          {activeType === 'block' && (
+            <div className="flex flex-wrap gap-2">
+              {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((d) => (
                 <button
-                  key={layout.id}
+                  key={d}
                   type="button"
-                  onClick={() => {
-                    setPendingOverlay({ path: layout.svgPath, type: 'layout' });
-                    setShowDimensions(true);
-                  }}
-                  className={`group rounded-lg border p-3 text-left transition-all hover:shadow-elevation-2 ${currentOverlay === layout.svgPath
-                    ? 'border-primary bg-primary/5'
-                    : 'border-outline-variant bg-white hover:border-primary/50'
+                  onClick={() => setDifficultyFilter(d)}
+                  className={`border-2 border-on-surface px-4 py-2 text-[10px] font-black uppercase tracking-[0.15em] transition-colors ${difficultyFilter === d
+                    ? 'bg-on-surface text-surface'
+                    : 'bg-surface text-on-surface hover:bg-on-surface/10'
                     }`}
                 >
-                  <div className="mb-2 aspect-[3/4] overflow-hidden rounded bg-background">
-                    <img
-                      src={layout.svgPath}
-                      alt={layout.displayName}
-                      className="h-full w-full object-contain p-1"
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-on-surface">{layout.displayName}</span>
-                  <p className="mt-1 text-[11px] text-secondary line-clamp-2">
-                    {layout.description}
-                  </p>
-                  <p className="mt-1 text-[10px] text-secondary">
-                    {layout.dimensions.width}&quot; &times; {layout.dimensions.height}&quot;
-                  </p>
+                  {d}
                 </button>
               ))}
             </div>
           )}
 
-          {((activeType === 'block' && filteredBlocks.length === 0) ||
-            (activeType === 'layout' && filteredLayouts.length === 0)) && (
-              <div className="py-12 text-center text-secondary">
-                No overlays found matching your search.
+          {/* Grid of overlays */}
+          <div className="flex-1 overflow-y-auto min-h-0 pr-2 pb-2">
+            {activeType === 'block' ? (
+              <div className="grid grid-cols-3 gap-4">
+                {filteredBlocks.map((block) => (
+                  <button
+                    key={block.id}
+                    type="button"
+                    onClick={() => onSelect(block.svgPath, 'block')}
+                    className={`group flex flex-col items-start border-2 border-on-surface bg-surface p-4 text-left transition-all hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${currentOverlay === block.svgPath
+                      ? 'bg-on-surface text-surface'
+                      : ''
+                      }`}
+                  >
+                    <div className="mb-4 w-full aspect-square border-2 border-on-surface bg-white">
+                      <img
+                        src={block.svgPath}
+                        alt={block.displayName}
+                        className="h-full w-full object-contain p-2"
+                      />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.1em]">
+                      {block.displayName}
+                    </span>
+                    <p className={`mt-2 text-[10px] font-bold uppercase tracking-wider ${currentOverlay === block.svgPath ? 'text-surface/70' : 'text-on-surface/70'}`}>
+                      {block.commonSizes.join(', ')}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {filteredLayouts.map((layout) => (
+                  <button
+                    key={layout.id}
+                    type="button"
+                    onClick={() => {
+                      setPendingOverlay({ path: layout.svgPath, type: 'layout' });
+                      setShowDimensions(true);
+                    }}
+                    className={`group flex flex-col items-start border-2 border-on-surface bg-surface p-4 text-left transition-all hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${currentOverlay === layout.svgPath
+                      ? 'bg-on-surface text-surface'
+                      : ''
+                      }`}
+                  >
+                    <div className="mb-4 w-full aspect-[3/4] border-2 border-on-surface bg-white">
+                      <img
+                        src={layout.svgPath}
+                        alt={layout.displayName}
+                        className="h-full w-full object-contain p-2"
+                      />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.1em]">
+                      {layout.displayName}
+                    </span>
+                    <p className={`mt-2 text-[10px] font-bold uppercase tracking-wider ${currentOverlay === layout.svgPath ? 'text-surface/70' : 'text-on-surface/70'}`}>
+                      {layout.dimensions.width}&quot; &times; {layout.dimensions.height}&quot;
+                    </p>
+                  </button>
+                ))}
               </div>
             )}
+
+            {((activeType === 'block' && filteredBlocks.length === 0) ||
+              (activeType === 'layout' && filteredLayouts.length === 0)) && (
+                <div className="py-12 text-center text-[11px] font-black uppercase tracking-[0.2em] text-on-surface/50">
+                  No matches found
+                </div>
+              )}
+          </div>
         </div>
       </div>
 
-      {/* Recommended dimensions modal */}
       {showDimensions && pendingOverlay && (
         <RecommendedDimensionsModal
           onSelect={(width, height) => {

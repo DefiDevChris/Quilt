@@ -215,6 +215,6 @@ export function TiptapRenderer({ content }: TiptapRendererProps) {
   }
 
   return (
-    <div className="prose-quiltcorgi">{doc.content.map((node, i) => renderNode(node, i))}</div>
+    <div className="prose-quilt-studio">{doc.content.map((node, i) => renderNode(node, i))}</div>
   );
 }

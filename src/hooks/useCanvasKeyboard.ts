@@ -55,7 +55,7 @@ export function useCanvasKeyboard() {
               .then(() => {
                 // Show success toast
                 if (typeof window !== 'undefined') {
-                  const event = new CustomEvent('quiltcorgi:save-success');
+                  const event = new CustomEvent('quiltstudio:save-success');
                   window.dispatchEvent(event);
                 }
               })

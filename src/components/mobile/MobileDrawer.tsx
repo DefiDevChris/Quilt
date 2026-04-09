@@ -58,7 +58,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         aria-label="Menu"
       >
         <div className="px-6 pt-14 pb-6">
-          <span className="text-lg font-bold text-on-surface">QuiltCorgi</span>
+          <span className="text-lg font-bold text-on-surface">Quilt Studio</span>
         </div>
         <nav className="flex-1 px-3 space-y-1">
           {/* Home */}

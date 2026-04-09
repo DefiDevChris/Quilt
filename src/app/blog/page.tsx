@@ -51,7 +51,12 @@ export default async function BlogPage() {
               <path d="M8 7h6M8 11h8" />
             </svg>
           </div>
-          <h2 className="text-4xl font-bold text-on-surface mb-4 tracking-tight">No stories yet</h2>
+          <h2
+            className="text-4xl font-bold text-on-surface mb-4 tracking-tight"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            No stories yet
+          </h2>
           <p className="text-secondary leading-relaxed font-light">
             New content is being crafted. Return soon for fresh inspiration.
           </p>

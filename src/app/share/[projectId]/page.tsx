@@ -40,7 +40,6 @@ export async function generateMetadata({ params }: SharePageProps): Promise<Meta
 export default async function SharePage({ params }: SharePageProps) {
   const { projectId } = await params;
 
-  // Verify project exists and is public at the server level
   const [project] = await db
     .select({ id: projects.id, isPublic: projects.isPublic })
     .from(projects)

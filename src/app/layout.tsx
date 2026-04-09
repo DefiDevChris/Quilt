@@ -4,7 +4,7 @@ import { ToastProvider } from '@/components/ui/ToastProvider';
 import { SkipLink } from '@/components/ui/SkipLink';
 import './globals.css';
 
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Quilt Studio';
 const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ||
   (process.env.NODE_ENV === 'production' ? 'https://quiltcorgi.com' : 'http://localhost:3000');

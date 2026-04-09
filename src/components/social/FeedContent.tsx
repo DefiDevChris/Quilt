@@ -128,46 +128,45 @@ export function FeedContent({
 
       {/* Error */}
       {!loading && error && (
-        <div className="social-card rounded-2xl p-10 text-center">
-          <p className="text-secondary text-sm mb-4">{error}</p>
+        <div className="social-card rounded-2xl p-12 text-center border border-error/20 bg-error/5">
+          <p className="text-secondary/80 text-sm mb-6 font-medium">{error}</p>
           <button
             onClick={() => fetchPosts(1, false)}
-            className="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all shadow-elevation-1"
+            className="px-8 py-3 bg-error text-white rounded-full text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-elevation-1"
           >
-            Retry
+            Reconnect Studio
           </button>
         </div>
       )}
 
       {/* Empty */}
       {!loading && !error && posts.length === 0 && (
-        <div className="social-card rounded-2xl p-10 text-center">
-          <div className="w-16 h-16 mx-auto mb-4">
-            <Mascot pose="sitting" size="lg" />
-          </div>
+        <div className="social-card rounded-2xl p-16 text-center border border-outline-variant/30">
           {tab === 'saved' ? (
-            <>
-              <p className="text-base font-semibold text-on-surface mb-1">No saved posts</p>
-              <p className="text-secondary text-sm">Bookmark posts to see them here</p>
-            </>
+            <div className="space-y-4">
+              <p className="text-xl font-black text-on-surface tracking-tight">No archived designs</p>
+              <p className="text-secondary font-medium">Bookmark designs from the community to see them here.</p>
+            </div>
           ) : search || category ? (
-            <>
-              <p className="text-base font-semibold text-on-surface mb-1">No matching posts</p>
-              <p className="text-secondary text-sm">Try a different search or category</p>
-            </>
+            <div className="space-y-4">
+              <p className="text-xl font-black text-on-surface tracking-tight">Zero matches found</p>
+              <p className="text-secondary font-medium">Try refining your filter or search terms.</p>
+            </div>
           ) : (
-            <>
-              <p className="text-base font-semibold text-on-surface mb-1">No designs yet</p>
-              <p className="text-secondary text-sm mb-6">Be the first to share your quilt!</p>
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <p className="text-2xl font-black text-on-surface tracking-tight leading-tight">The forum is quiet</p>
+                <p className="text-secondary font-medium max-w-sm mx-auto">Be the first to publish a work-in-progress or a finished design to the collective.</p>
+              </div>
               {user && (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-elevation-1 hover:shadow-elevation-2"
+                  className="inline-flex items-center gap-2 bg-on-surface text-surface px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-elevation-2 hover:scale-[1.02] active:scale-95"
                 >
-                  Share Your Design
+                  Publish Design
                 </Link>
               )}
-            </>
+            </div>
           )}
         </div>
       )}
@@ -252,94 +251,117 @@ function PostCard({ post }: { post: SocialPost }) {
   };
 
   return (
-    <article className="social-card rounded-2xl overflow-hidden">
+    <article className="glass-panel rounded-3xl overflow-hidden border-outline-variant/30 hover:border-primary/20 transition-all duration-500 group">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex items-center gap-4 px-6 py-5">
         <Link
           href={
             post.creatorUsername ? `/members/${post.creatorUsername}` : `/socialthreads/${post.id}`
           }
-          className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0 overflow-hidden"
+          className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-white shadow-elevation-1 group-hover:shadow-elevation-2 transition-all shrink-0"
         >
           {post.creatorAvatarUrl ? (
             <img
               src={post.creatorAvatarUrl}
               alt={post.creatorName}
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
           ) : (
-            <span className="text-sm font-bold text-primary-dark">
+            <div className="w-full h-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-black text-lg">
               {post.creatorName.charAt(0).toUpperCase()}
-            </span>
+            </div>
           )}
         </Link>
         <div className="min-w-0 flex-1">
           <Link
             href={`/socialthreads/${post.id}`}
-            className="text-sm font-semibold text-on-surface hover:text-primary transition-colors truncate block"
+            className="text-base font-black text-on-surface hover:text-primary transition-colors truncate block tracking-tight"
           >
             {post.creatorName}
           </Link>
-          <p className="text-[11px] text-secondary">
-            {post.creatorUsername && <span className="mr-1.5">@{post.creatorUsername}</span>}
-            <span>{formatRelativeTime(post.createdAt)}</span>
-          </p>
+          <div className="flex items-center gap-2 mt-0.5">
+            {post.creatorUsername && (
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary-dark opacity-60">
+                @{post.creatorUsername}
+              </span>
+            )}
+            <span className="w-1 h-1 rounded-full bg-outline-variant" />
+            <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.1em]">
+              {formatRelativeTime(post.createdAt)}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Description above image */}
       {(post.description || post.title) && (
-        <div className="px-4 pb-3">
-          <p className="text-sm text-on-surface">{post.description || post.title}</p>
+        <div className="px-6 pb-5">
+          <p className="text-base font-medium text-on-surface leading-relaxed line-clamp-3">
+            {post.description || post.title}
+          </p>
         </div>
       )}
 
       {/* Image */}
       {post.thumbnailUrl && (
-        <button onClick={openModal} className="w-full cursor-pointer block">
-          <img
-            src={post.thumbnailUrl}
-            alt={post.title}
-            className="w-full h-auto max-h-[500px] object-cover"
-          />
-        </button>
+        <div className="px-6 pb-6">
+          <button 
+            onClick={openModal} 
+            className="w-full cursor-pointer block relative rounded-2xl overflow-hidden shadow-elevation-2 group/img"
+          >
+            <img
+              src={post.thumbnailUrl}
+              alt={post.title}
+              className="w-full h-auto max-h-[600px] object-cover transition-transform duration-700 group-hover/img:scale-[1.03]"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors" />
+          </button>
+        </div>
       )}
 
       {/* Actions row */}
-      <div className="px-4 py-3 flex items-center border-t border-white/40">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
+      <div className="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 bg-surface-container/30">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-2 transition-all active:scale-90 ${
+              liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
             }`}
-        >
-          <Heart size={18} fill={liked ? 'currentColor' : 'none'} strokeWidth={1.5} />
-          {likeCount > 0 && <span className="text-sm font-medium">{likeCount}</span>}
-        </button>
+          >
+            <Heart size={20} fill={liked ? 'currentColor' : 'none'} strokeWidth={2} />
+            {likeCount > 0 && <span className="text-sm font-black">{likeCount}</span>}
+          </button>
 
-        <button
-          onClick={openModal}
-          className="flex items-center gap-1.5 flex-1 justify-center text-secondary hover:text-on-surface transition-colors"
-        >
-          <MessageCircle size={18} strokeWidth={1.5} />
-          {post.commentCount > 0 && (
-            <span className="text-sm font-medium">{post.commentCount}</span>
-          )}
-        </button>
+          <button
+            onClick={openModal}
+            className="flex items-center gap-2 text-secondary hover:text-on-surface transition-all active:scale-90"
+          >
+            <MessageCircle size={20} strokeWidth={2} />
+            {post.commentCount > 0 && (
+              <span className="text-sm font-black">{post.commentCount}</span>
+            )}
+          </button>
+        </div>
 
-        <button
-          onClick={handleBookmark}
-          className={`flex items-center gap-1.5 flex-1 justify-center transition-colors ${bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleBookmark}
+            className={`transition-all active:scale-90 ${
+              bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
             }`}
-        >
-          <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={1.5} />
-        </button>
+            title="Sace for later"
+          >
+            <Bookmark size={20} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={2} />
+          </button>
 
-        <Link
-          href={`/socialthreads/${post.id}`}
-          className="flex items-center gap-1.5 flex-1 justify-center text-secondary hover:text-on-surface transition-colors"
-        >
-          <Share2 size={18} strokeWidth={1.5} />
-        </Link>
+          <Link
+            href={`/socialthreads/${post.id}`}
+            className="text-secondary hover:text-on-surface transition-all active:scale-90"
+            title="Share design"
+          >
+            <Share2 size={20} strokeWidth={2} />
+          </Link>
+        </div>
       </div>
     </article>
   );
