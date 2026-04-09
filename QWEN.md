@@ -205,7 +205,7 @@ This section is the **single source of truth (SSSOT)** for the studio architectu
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Toolbar (left, 88 px)** — Primary tools: Select, Pan, Easydraw, Bend, Undo, Redo. Pinned (always visible, at bottom): Snap Toggle. Reference Image toggle is in StudioTopBar (not the Toolbar). **No advanced-tier tools** and **no transform tools** (rotate/flip/delete) — those live in inspectors in the right pane.
+- **Toolbar (left, 88 px)** — All tools visible at once in a flat single-column layout (no tiers, no "More Tools" toggle). Tools: Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In, Zoom Out. Reference Image toggle is in StudioTopBar. **No advanced-tier tools**, **no pinned tools**, and **no transform tools** (rotate/flip/delete) — those live in inspectors in the right pane. Snap toggle is in QuiltSettingsDropdown.
 - **CanvasWorkspace (center)** — Single Fabric.js canvas, never unmounted. Pan/zoom is preserved across all worktable mode changes. Canvas dimensions are calculated by `src/lib/quilt-sizing.ts` based on block size, grid dimensions, sashing, and borders.
 - **ContextPanel (right, 320 px)** — Library tabs only (Layouts / Blocks / Fabrics). User-driven — **never auto-switches based on canvas selection.**
 
@@ -265,11 +265,11 @@ A layout is a **fence** — it defines areas where specific things can be placed
 - **`binding`** — accepts fabrics ONLY.
 - **`edging`** — accepts fabrics ONLY.
 
-**Drops outside valid areas are rejected** with cursor `not-allowed` and a toast notification. This is intentional — the fence enforces design constraints so users can't accidentally misalign blocks.
+**Drops outside valid areas are rejected** with cursor `not-allowed` (silent rejection, no toast). Valid targets show a colored highlight glow during drag-over. This is intentional — the fence enforces design constraints so users can't accidentally misalign blocks.
 
 ### The User Flow (canonical)
 
-1. **Create new project** — `NewQuiltSetupModal` prompts for quilt size (preset or custom) and starting point (Freeform or Start with a Layout). Creates an empty canvas at the specified size with a grid.
+1. **Create new project** — `NewProjectWizard` prompts for quilt size (preset or custom) and starting point (Freeform or Start with a Layout). Creates an empty canvas at the specified size with a grid.
 2. **Add layouts** — From the **Layouts** library tab in the right pane, drag layout presets onto the canvas. Layouts are automatically sized to fit the canvas grid perfectly.
 3. **Add blocks into layout cells** — From the **Blocks** library tab, drag any block onto a layout block-cell. `useBlockDrop` snaps the block to the cell's bounding box, scales it to fit, and inherits the cell's rotation. Dropping a new block on an occupied cell replaces the previous one (tracked via `_inFenceCellId` tag).
 4. **Add fabrics to layout chrome** — From the **Fabrics** library tab, drag any fabric swatch onto sashing strips, cornerstones, borders, or binding. `useFabricDrop` applies it as a Fabric.js pattern fill.
@@ -283,21 +283,20 @@ A layout is a **fence** — it defines areas where specific things can be placed
 | `StudioClient` | `src/components/studio/StudioClient.tsx` | Project loader + shell mounter |
 | `StudioDialogsProvider` | `src/components/studio/StudioDialogs.tsx` | Context provider for all studio dialogs. Exposes `useStudioDialogs()` hook |
 | `StudioLayout` | `src/components/studio/StudioLayout.tsx` | Flex shell: TopBar + WorktableTabs + CanvasWorkspace + ContextPanel + BottomBar + dialogs |
-| `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Unified drag-drop dispatcher with `FloatingToolbar` and `CanvasErrorBoundary` |
-| `StudioTopBar` | `src/components/studio/StudioTopBar.tsx` | Top bar: project info, viewport controls, settings dropdown, hamburger menu |
+| `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Unified drag-drop dispatcher with `CanvasErrorBoundary` |
+| `StudioTopBar` | `src/components/studio/StudioTopBar.tsx` | Top bar: project info, viewport controls, settings dropdown (contains Export), hamburger menu |
 | `WorktableTabs` | `src/components/studio/WorktableTabs.tsx` | Tab bar for switching between worktable tabs |
 | `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics) |
-| `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip (2-column grid of ToolIcon buttons) |
-| `FloatingToolbar` | `src/components/studio/FloatingToolbar.tsx` | Floating overlay toolbar with Select, Rectangle, Triangle drawing tools + undo/redo (with depth) + zoom in/out with percentage. Only active for `'quilt'` worktable. |
+| `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip: flat single-column layout (Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In, Zoom Out) |
 | `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state, selection count |
 | `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 600×600 canvas, tools (select/pencil/rectangle/triangle/circle/bend), grid unit slider, Block Library, overlay controls, Save Block |
 | `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
 | `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
-| `NewQuiltSetupModal` | `src/components/studio/NewQuiltSetupModal.tsx` | First-visit quilt setup: pick size (preset or custom) + starting point (Freeform or Start with a Layout) |
+| `NewProjectWizard` | `src/components/projects/NewProjectWizard.tsx` | First-visit quilt setup: pick size (preset or custom) + starting point (Freeform or Start with a Layout) |
 | `DuplicateOptionsPopup` | `src/components/studio/DuplicateOptionsPopup.tsx` | Project duplication options |
 | `ResizeDialog` | `src/components/studio/ResizeDialog.tsx` | Quilt resize dialog |
-| `QuiltSettingsDropdown` | `src/components/studio/QuiltSettingsDropdown.tsx` | Settings dropdown in StudioTopBar |
-| `HamburgerDrawer` | `src/components/studio/HamburgerDrawer.tsx` | Mobile/hamburger side drawer |
+| `QuiltSettingsDropdown` | `src/components/studio/QuiltSettingsDropdown.tsx` | Settings dropdown in StudioTopBar: quilt dimensions, grid cell size, snap toggle, Export (Image/PDF) |
+| `HamburgerDrawer` | `src/components/studio/HamburgerDrawer.tsx` | Side drawer: File actions (Save, Export, Close), Edit (Undo/Redo, Duplicate, Delete, Select All), View (Zoom), Libraries, Help (History, Keyboard Shortcuts) |
 | `HelpPanel` | `src/components/studio/HelpPanel.tsx` | Contextual help with FAQs |
 | `HistoryPanel` | `src/components/studio/HistoryPanel.tsx` | Undo/redo history browser |
 | `CanvasErrorBoundary` | `src/components/studio/CanvasErrorBoundary.tsx` | Error boundary for canvas |
@@ -323,7 +322,7 @@ The fence renderer is the **only** way layout areas appear on canvas:
 2. If target is a `block-cell` fence area → block snaps to exact `(left, top)`, scales to cell `(width, height)`, inherits `angle`
 3. If a previous block occupies the same cell → it's removed (overwrite semantics)
 4. New block tagged with `_inFenceCellId: areaId` and `subTargetCheck: true`
-5. If target is NOT a block-cell → **drop rejected** with toast + `not-allowed` cursor
+5. If target is NOT a block-cell → **drop rejected** with `not-allowed` cursor (silent, no toast). Valid block-cell targets show a blue highlight glow during drag-over.
 
 ### Fabric Drop (Fence-Enforced)
 
@@ -331,7 +330,7 @@ The fence renderer is the **only** way layout areas appear on canvas:
 
 1. On drop, finds target fence area via `canvas.findTarget()`
 2. If target role is in `['sashing', 'cornerstone', 'border', 'binding', 'edging']` → applies fabric as pattern fill, sized to fill entire area
-3. If target is NOT a valid fabric area → **drop rejected** with toast + `not-allowed` cursor
+3. If target is NOT a valid fabric area → **drop rejected** with `not-allowed` cursor (silent, no toast). Valid fabric targets show a green highlight glow during drag-over.
 
 ### Layout Library
 
@@ -354,11 +353,14 @@ Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fe
 
 ### Removed (DO NOT REINTRODUCE)
 
+- `src/components/studio/FloatingToolbar.tsx` — deleted. All tools consolidated into left Toolbar.
+- `src/components/studio/ToolsMenu` — dead sub-component. History + Help moved to HamburgerDrawer.
 - `src/components/studio/LayoutRolePanel.tsx` — superseded by role inspector in Layout Creator worktable
 - `src/components/studio/SelectionPanel.tsx` — superseded by inline selection handling in ContextPanel
 - `src/components/studio/BackgroundColorControl.tsx` — dead component, never imported
 - `src/components/studio/KeyboardShortcutsModal.tsx` — dead component, never imported
 - `src/components/studio/NewBlockSetupModal.tsx` — dead component, never imported
+- `src/components/studio/NewQuiltSetupModal.tsx` — renamed to `NewProjectWizard` at `src/components/projects/NewProjectWizard.tsx`
 - `src/components/studio/PrintOptionsPanel.tsx` — dead component, never imported
 - `src/components/blocks/BlockDraftingErrorBoundary.tsx` — dead component, never imported
 - `src/components/photo-layout/PhotoPatternErrorBoundary.tsx` — dead component, never imported
@@ -405,6 +407,10 @@ Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fe
 - `src/components/social/BlogContent.tsx` — dead component, never imported
 - `src/components/social/ReportModal.tsx` — dead component, never imported
 - Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab
+
+### Dead State (DO NOT REINTRODUCE)
+
+- `projectStore.worktables[]` — legacy worktable system superseded by `canvasStore.worktableTabs[]`. The `Worktable` type and its associated CRUD actions (`addWorktable`, `deleteWorktable`, `renameWorktable`, `duplicateWorktable`, `updateWorktableCanvas`) exist in the store but have no production consumers.
 
 ### Block Library
 
