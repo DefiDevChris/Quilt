@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
 
@@ -210,6 +211,7 @@ export function useBlockDrop() {
         canvas.setActiveObject(group);
         canvas.requestRenderAll();
         setActiveTool('select');
+        useProjectStore.getState().setHasContent(true);
       } catch {
         // Block drop failed silently
       } finally {

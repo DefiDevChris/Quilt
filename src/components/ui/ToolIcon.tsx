@@ -15,7 +15,6 @@ export interface ToolDef {
   isActive?: () => boolean;
   isDisabled?: boolean;
   dataTour?: string;
-  tier?: 'primary' | 'advanced' | 'pinned';
 }
 
 export function ToolIcon({
@@ -37,13 +36,12 @@ export function ToolIcon({
       aria-pressed={isActive}
       aria-disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-all duration-150 py-2 ${
-        disabled
+      className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-all duration-150 py-2 ${disabled
           ? 'text-on-surface/25 cursor-default'
           : isActive
             ? 'text-primary'
             : 'text-on-surface/60 hover:text-on-surface'
-      }`}
+        }`}
     >
       <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
         {tool.icon}

@@ -146,47 +146,38 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
   });
 
   describe('Even Tool Count Preservation (Requirement 4.8)', () => {
-    it('should display toolbar with even tool counts correctly without orphan centering', () => {
-      // Arrange: Set active worktable to 'quilt' (which uses 2-column grid)
+    it('should display toolbar with all tools in single-column without orphan centering', () => {
+      // Arrange: Set active worktable to 'quilt'
       useCanvasStore.setState({ activeWorktable: 'quilt' });
 
       // Act: Render toolbar
       const { container } = render(<Toolbar />);
 
-      // Find all 2-column grid containers
+      // Assert: Should NOT have any 2-column grid containers
       const gridContainers = container.querySelectorAll('.grid.grid-cols-2');
+      expect(gridContainers.length).toBe(0);
 
-      // Assert: For groups with even tool counts, no tools should be centered
-      gridContainers.forEach(gridContainer => {
-        const gridChildren = Array.from(gridContainer.children);
-
-        // If the group has an even number of children, none should be centered
-        if (gridChildren.length % 2 === 0) {
-          const centeredTools = gridChildren.filter(child => {
-            const element = child as HTMLElement;
-            return element.classList.contains('col-span-2') &&
-              element.classList.contains('justify-center');
-          });
-
-          // Even-count groups should have no centered tools
-          expect(centeredTools.length).toBe(0);
-        }
-      });
+      // Assert: All tools should be in single-column layout
+      const toolButtons = container.querySelectorAll('button[aria-label]');
+      expect(toolButtons.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Advanced Tools Toggle Preservation (Requirements 4.5, 4.6)', () => {
-    it('should show only primary and pinned tools when advanced tools are collapsed', () => {
+  describe('Flat Toolbar Preservation (Requirements 4.5, 4.6)', () => {
+    it('should display all tools flat without "More Tools" toggle', () => {
       // Arrange: Set active worktable to 'quilt'
       useCanvasStore.setState({ activeWorktable: 'quilt' });
 
-      // Act: Render toolbar (advanced tools collapsed by default)
+      // Act: Render toolbar
       const { container } = render(<Toolbar />);
 
-      // Assert: Should have "More Tools" toggle button
+      // Assert: Should NOT have "More Tools" toggle button
       const moreToolsButton = container.querySelector('[aria-label*="advanced tools"]');
-      expect(moreToolsButton).toBeTruthy();
-      expect(moreToolsButton?.getAttribute('aria-expanded')).toBe('false');
+      expect(moreToolsButton).toBeNull();
+
+      // Assert: All tool groups should be visible (tools, shapes, history, zoom)
+      const toolButtons = container.querySelectorAll('button[aria-label]');
+      expect(toolButtons.length).toBeGreaterThan(6); // select, pan, easydraw, bend, rectangle, triangle, undo, redo, zoom-in, zoom-out
     });
   });
 
@@ -250,8 +241,9 @@ describe('Property 2: Preservation - Free Canvas and Non-Quilt Worktable Behavio
       //    - No orphan centering occurs for even-count groups
       //    - This behavior must be preserved after the fix
       //
-      // 5. Advanced Tools Toggle (4.5, 4.6):
-      //    - Advanced tools can be collapsed/expanded
+      // 5. Flat Toolbar (4.5, 4.6):
+      //    - All tools are displayed flat without a "More Tools" toggle
+      //    - No tier system (primary/advanced/pinned) — single-column layout
       //    - This behavior must be preserved after the fix
       //
       // 6. Layout Preset Selection (4.7):

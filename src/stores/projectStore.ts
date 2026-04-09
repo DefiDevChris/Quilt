@@ -21,6 +21,7 @@ interface ProjectStoreState {
   canvasWidth: number;
   canvasHeight: number;
   isDirty: boolean;
+  hasContent: boolean;
   lastSavedAt: Date | null;
   fabricPresets: FabricPreset[];
   worktables: Worktable[];
@@ -38,6 +39,7 @@ interface ProjectStoreState {
   setProjectName: (name: string) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setDirty: (dirty: boolean) => void;
+  setHasContent: (has: boolean) => void;
   setLastSavedAt: (date: Date) => void;
   setCanvasDimensions: (width: number, height: number) => void;
   setCanvasWidth: (width: number) => void;
@@ -62,6 +64,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
   isDirty: false,
+  hasContent: false,
   lastSavedAt: null,
   fabricPresets: [],
   worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
@@ -84,6 +87,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   setProjectName: (projectName) => set({ projectName }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
+  setHasContent: (hasContent) => set({ hasContent }),
   setLastSavedAt: (lastSavedAt) => set({ lastSavedAt }),
   setCanvasDimensions: (canvasWidth, canvasHeight) => set({ canvasWidth, canvasHeight }),
   setCanvasWidth: (canvasWidth) => set({ canvasWidth }),
@@ -161,6 +165,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,
       isDirty: false,
+      hasContent: false,
       lastSavedAt: null,
       fabricPresets: [],
       worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],

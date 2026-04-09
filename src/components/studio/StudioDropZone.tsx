@@ -3,7 +3,6 @@
 import { useCallback } from 'react';
 import type { Project } from '@/types/project';
 import { CanvasWorkspace } from '@/components/canvas/CanvasWorkspace';
-import { FloatingToolbar } from '@/components/studio/FloatingToolbar';
 import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
 import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
@@ -129,11 +128,12 @@ export function StudioDropZone({ project }: StudioDropZoneProps) {
             createdAt: Date.now(),
           };
           useCanvasStore.getState().addWorktableTab(tab);
+          useProjectStore.getState().setHasContent(true);
 
-          // Re-center the viewport after resize
-          setTimeout(() => {
+          // Re-center the viewport after React flushes
+          requestAnimationFrame(() => {
             useCanvasStore.getState().centerAndFitViewport();
-          }, 50);
+          });
         });
       } else if (fabricId) {
         handleFabricDrop(e);
@@ -152,7 +152,6 @@ export function StudioDropZone({ project }: StudioDropZoneProps) {
         onDrop={combinedDrop}
       >
         <CanvasWorkspace project={project} />
-        <FloatingToolbar />
       </div>
     </CanvasErrorBoundary>
   );

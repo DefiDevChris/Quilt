@@ -51,7 +51,7 @@ npm run db:push                      # Push schema directly (no migration file)
 npm run db:studio                    # Open Drizzle Studio web UI
 npm run db:seed:blog                 # Seed blog posts
 DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts  # Seed fabric library (2,764 solids)
-DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedBlocksFromFiles.ts  # Seed 35 system blocks from SVG files
+DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedBlocksFromFiles.ts  # Seed 50 system blocks from SVG files
 npm run db:seed:layouts              # Seed 8 default layout templates
 npm run db:local:down                # Stop PostgreSQL container
 # Direct SQL queries (psql not installed locally):
@@ -75,7 +75,7 @@ src/
     studio/[projectId]/  # Design canvas (desktop only)
   components/       # React components, organized by domain
   hooks/            # Bridges between engines and Fabric.js canvas
-  stores/           # Zustand stores (16 total)
+  stores/           # Zustand stores (17 total)
   lib/              # Pure utilities and engines
     *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
     *-utils.ts      # Domain-specific utilities
@@ -118,45 +118,42 @@ src/
 
 ### Styling & Design System
 
-Tailwind CSS v4 with Material 3-inspired glassmorphic design system. **All components use the same token set — no hardcoded grays, slates, or hex borders.**
+Tailwind CSS v4 with the **Studio Atelier** high-contrast editorial design system. **All components use the same token set — no hardcoded hex grays or slates.**
+
+**Typography:**
+- Emphasize uppercase, editorial styling: `font-black uppercase tracking-[0.2em]` for primary labels and headers.
+- Sizes often lean smaller but denser (e.g., `text-[10px]`, `text-[11px]`, `text-[12px]`) to accommodate thick weighting and large tracking.
 
 **Text tokens:**
-
 - `text-on-surface` — primary text (headings, names, labels)
-- `text-secondary` — muted text (captions, timestamps, meta)
-- `text-primary` — accent text (links, highlights)
-- `text-primary-dark` — avatar initials, emphasis
+- `text-secondary` — muted text (captions, timestamps, meta, although mostly migrating toward opacities like `text-on-surface/70`)
+- `text-primary` — accent text
+- `text-surface` — inverted text on dark backgrounds
 
-**Card surfaces:**
-
-- `glass-panel` — standard card (white/blur + subtle border)
-- `glass-elevated` — raised card with more shadow
-- `glass-panel-social` — blog/social variant
-- Cards use `rounded-2xl` corners
+**Surfaces & Containers:**
+- Brutalist blocks: `bg-surface border-2 border-on-surface`
+- Corners: Square corners (`rounded-none`) or sharp (`rounded-sm`). Do not use `rounded-xl`, `rounded-2xl`, etc.
+- Glassmorphism is deprecated in favor of solid colors and hard borders.
 
 **Buttons:**
+- Primary: `bg-on-surface text-surface px-6 py-2 font-black uppercase tracking-[0.2em] transition-all hover:opacity-90`
+- Outline: `border-2 border-on-surface bg-surface text-on-surface transition-colors hover:bg-on-surface hover:text-surface`
+- No pill shapes (`rounded-full`) or gradients.
 
-- Primary: `bg-gradient-to-r from-primary to-primary-dark text-white rounded-full hover:opacity-90`
-- Secondary: `bg-white/50 text-secondary rounded-full`
-- Active chips: `bg-primary text-white shadow-elevation-1`, inactive: `bg-white/50 text-secondary`
+**Borders:** `border-on-surface` (usually `border-2` or `border`)
 
-**Borders:** `border-white/40`, `border-white/60`, or `border-outline-variant` — never hardcoded hex/gray
-
-**Shadows:** `shadow-elevation-1` through `shadow-elevation-4`
-
-**Avatars:** `bg-primary-container` circle with `text-primary-dark` initial
-
-**Skeletons:** `bg-primary-container/40`, `bg-primary-container/20`
-
-**Sidebars:** `bg-white/60 backdrop-blur-xl border-r border-white/40` — fixed, glassmorphic
+**Shadows:** 
+- Hard, flat offset shadows: `shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]` or `shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`.
+- Soft drop shadows (`shadow-elevation-1` through `shadow-elevation-4`) are deprecated.
 
 **Banned patterns — do NOT use:**
-
 - `text-gray-*`, `text-slate-*`, `bg-gray-*`, `bg-slate-*`, `border-gray-*`, `border-slate-*`
 - `border-[#e5e5e5]`, `bg-[#f5f5f5]`
-- `bg-white border border-gray-100` flat cards
-- `bg-gray-900 text-white` dark buttons
-- `bg-primary text-white` on CTA buttons (use gradient instead: `from-primary to-primary-dark`)
+- `rounded-2xl`, `rounded-full`, `rounded-xl` (pills and badges are banned)
+- `bg-gradient-*` (gradients are banned)
+- Glassmorphism (`backdrop-blur` without hard borders, `bg-white/50`, etc)
+- Soft drop shadows (no generic `shadow-md` or `shadow-elevation-*` without a hard black offset)
+- Generative "AI slop" or cliché icons (e.g. `Sparkles` icon for premium features)
 
 ### State Management
 
@@ -227,7 +224,7 @@ export type WorktableType = 'quilt' | 'block-builder';
 
 The canonical user surface is `'quilt'`. The `'block-builder'` type is the dedicated block drafting worktable.
 
-**Note:** The `'layout-creator'` worktable type has been removed. Users configure layouts via the Layout Settings Panel and pick presets from the Layout Selector in the right panel.
+**Note:** The Layout Creator worktable has been removed. Users configure layouts via the Layout Settings Panel and pick presets from the Layout Selector in the right panel.
 
 ### Worktable Tab Management
 
@@ -357,7 +354,7 @@ Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fe
 
 ### Removed (DO NOT REINTRODUCE)
 
-- `src/components/studio/LayoutRolePanel.tsx` — superseded by role inspector in LayoutCreatorWorktable
+- `src/components/studio/LayoutRolePanel.tsx` — superseded by role inspector in Layout Creator worktable
 - `src/components/studio/SelectionPanel.tsx` — superseded by inline selection handling in ContextPanel
 - `src/components/studio/BackgroundColorControl.tsx` — dead component, never imported
 - `src/components/studio/KeyboardShortcutsModal.tsx` — dead component, never imported
@@ -380,7 +377,7 @@ Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fe
 - `src/components/studio/panels/` directory entirely (BlockPlacementPanel, BorderPanel, HedgingPanel, SashingPanel)
 - `src/components/blocks/BlockDraftingShell.tsx` — replaced by `BlockBuilderWorktable`
 - `src/components/blocks/BlockDraftingModal.tsx` — deleted with Shell
-- `src/components/studio/LayoutBuilderShell.tsx` — replaced by `LayoutCreatorWorktable`
+- `src/components/studio/LayoutBuilderShell.tsx` — replaced by Layout Creator worktable
 - `src/components/studio/layout-builder/` directory — replaced by new layout creator
 - `src/components/studio/NewLayoutSetupModal.tsx` — layout selection now via drag from Layouts tab
 - `src/lib/layout-renderer.ts` — replaced by `fence-engine.ts`
@@ -471,22 +468,66 @@ Supporting utilities: `yardage-utils.ts`, `cutting-chart-generator.ts`.
 
 ## Photo-to-Design Pipeline
 
-Upload a photo of any quilt → OpenCV extracts the individual pieces → pieces are placed on the worktable as independent objects. Users can then group pieces into blocks, assign fabrics, create a printlist, or do anything the regular design studio supports.
+Upload a photo of any quilt → OpenCV extracts the individual pieces → shape auto-correction matches block cells to known quilt block SVGs → edge snapping eliminates gaps → clean Fabric.js Groups are placed on the worktable.
 
-**Current state**: The full pipeline is implemented — OpenCV web worker (`src/lib/piece-detection.worker.ts`), 7-step wizard UI, and post-processing structure detection:
+### Pipeline Flow
 
+```
+Photo uploaded
+  ↓
+OpenCV web worker: sharpening, CLAHE, bilateral filter, adaptive thresholding, watershed, contour detection
+  ↓
+detectQuiltStructure: grid → sashing → border → role assignment
+  ↓
+★ orphan-filter: Remove pieces that share no edges with any neighbor (CV artifacts: dust, shadows, noise)
+  ↓
+★ shape-matcher-engine: For each block cell, match against 50 known block SVG signatures
+  → matched cells get BlockMatchResult { blockId, confidence, pieceToPatchMapping }
+  → unmatched cells fall back to raw detected polygons
+  ↓
+★ usePhotoPatternImport: Matched cells → load block SVG as Fabric.js Group
+  → unmatched cells → raw fabric.Polygon from detected contours
+```
+
+### Shape Auto-Correction
+
+After OpenCV detects pieces, each block cell (group of pieces in one grid cell) is matched against the 50 block SVG signatures. Matching uses a weighted multi-stage cascade:
+
+1. **Patch count filter** (fast reject — eliminate blocks with very different patch counts)
+2. **Vertex distribution similarity** (do pieces have the right shape types? triangles vs quads)
+3. **Adjacency graph similarity** (do pieces touch the same neighbors?)
+4. **Relative area similarity** (are patch proportions similar?)
+5. **Curve presence check** (curved blocks like Drunkard's Path vs straight blocks like Nine Patch)
+
+If confidence exceeds the threshold (0.65), the cell's raw polygons are replaced with the block SVG's clean patches, loaded as a `fabric.Group` where each patch is individually fillable.
+
+### Edge Snapping
+
+After shape correction, adjacent piece edges are snapped to shared canonical edges to eliminate gaps and overlaps. Boundary edges are snapped to the canvas border. This ensures 100% coverage with no empty areas between pieces.
+
+### Implemented Engines
+
+- `piece-detection.worker.ts` — OpenCV web worker (15-step pipeline: Laplacian sharpening, CLAHE, morphological opening, bilateral filter, adaptive thresholding, Sobel gradient, watershed, contour detection, polygon approximation, color extraction)
 - `structure-detection-engine.ts` — Orchestrator: grid → sashing → border → role assignment
 - `grid-detection-engine.ts` — Block repeat grid from centroid clustering
 - `sashing-detection-engine.ts` — Sashing strips + cornerstones between blocks
 - `border-detection-engine.ts` — Border layers around the quilt
-
-Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
+- **`block-signature-registry.ts`** — Precomputes structural signatures for all 50 block SVGs (patch count, vertex distribution, adjacency graph, relative areas, curve presence)
+- **`shape-matcher-engine.ts`** — Matches detected block cells to known block signatures via weighted cascade
+- **`edge-snapper-engine.ts`** — Snaps shared edges to canonical positions, eliminates gaps, snaps boundary vertices to canvas edges
+- **`coverage-validator.ts`** — Raster-scan based coverage analysis to verify no gaps/overlaps remain
+- **`block-svg-loader.ts`** — Loads block SVGs from `/quilt_blocks/` as Fabric.js Groups with individually fillable patches
+- **`orphan-filter.ts`** — Removes detected pieces that share no edges with any neighbor (every real quilt patch is sewn to at least one adjacent piece)
 
 ### Photo-to-Design Supporting Modules
 
-- `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow
+- `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow (includes `shapeCorrection` field)
 - `src/lib/photo-layout-*.ts` — photo layout types and utilities
-- `src/hooks/usePhotoLayoutImport.ts` — exports `usePhotoPatternImport()` (hook bridging photo import to canvas); `StudioLayout.tsx` calls it directly
+- `src/lib/photo-layout-types.ts` — Extended types: `BlockSignature`, `BlockMatchResult`, `DetectedBlockCell`, `CorrectedPiece`, `ShapeCorrectionResult`
+- `src/lib/photo-layout-utils.ts` — Pipeline orchestration; runs shape correction after structure detection
+- `src/hooks/usePhotoLayoutImport.ts` — Exports `usePhotoPatternImport()`; loads matched blocks as SVG Groups, unmatched pieces as raw polygons
+
+Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
 
 ## Fabric Library
 

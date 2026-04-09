@@ -19,6 +19,7 @@ interface HamburgerDrawerProps {
   onOpenImageExport?: () => void;
   onOpenPdfExport?: () => void;
   onOpenHelp?: () => void;
+  onOpenHistory?: () => void;
 }
 
 interface MenuItem {
@@ -39,6 +40,7 @@ export function HamburgerDrawer({
   onOpenImageExport,
   onOpenPdfExport,
   onOpenHelp,
+  onOpenHistory,
 }: HamburgerDrawerProps) {
   const router = useRouter();
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
@@ -177,7 +179,10 @@ export function HamburgerDrawer({
     },
     {
       title: 'Help',
-      items: [{ label: 'Keyboard Shortcuts', shortcut: '?', onClick: onOpenHelp }],
+      items: [
+        { label: 'History', onClick: onOpenHistory },
+        { label: 'Keyboard Shortcuts', shortcut: '?', onClick: onOpenHelp },
+      ],
     },
   ];
 

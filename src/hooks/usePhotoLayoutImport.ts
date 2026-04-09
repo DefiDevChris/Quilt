@@ -10,7 +10,13 @@ import type {
   DetectedPieceWithEdgeInfo,
   PieceRole,
   QuiltStructure,
+  ShapeCorrectionResult,
 } from '@/lib/photo-layout-types';
+import {
+  loadBlockGroup,
+  fetchBlockSvg,
+  createBlockFabricGroup,
+} from '@/lib/block-svg-loader';
 
 /**
  * Groups identical pieces by comparing their contours.
@@ -20,7 +26,6 @@ function groupIdenticalPieces(pieces: readonly ScaledPiece[]): Map<string, Scale
   const groups = new Map<string, ScaledPiece[]>();
 
   for (const piece of pieces) {
-    // Create a key from the contour points (rounded to avoid floating point differences)
     const key = piece.contourInches
       .map((p) => `${Math.round(p.x * 100)},${Math.round(p.y * 100)}`)
       .join('|');
@@ -37,12 +42,11 @@ function groupIdenticalPieces(pieces: readonly ScaledPiece[]): Map<string, Scale
 }
 
 /**
- * Generates SVG path data from piece contour.
+ * Generates SVG from piece contour.
  */
 function contourToSvg(contour: readonly { x: number; y: number }[]): string {
   if (contour.length < 3) return '';
 
-  // Compute viewBox from actual contour bounds
   let minX = Infinity,
     minY = Infinity,
     maxX = -Infinity,
@@ -65,30 +69,27 @@ function contourToSvg(contour: readonly { x: number; y: number }[]): string {
 
 /**
  * Builds a role-aware print list name for a piece group.
- *
- * Priority:
- * 1. piece.role (already attached by CV pipeline)
- * 2. quiltStructure.pieceRoles.get(piece.id) (fallback lookup)
- * 3. quiltStructure.blockTemplate label (for block pieces, if available)
- * 4. Existing generic naming ("Piece N …")
  */
 function buildShapeName(
   representative: ScaledPiece,
   groupPieces: readonly ScaledPiece[],
   groupIndex: number,
-  quiltStructure: QuiltStructure | null
+  quiltStructure: QuiltStructure | null,
+  blockName?: string
 ): string {
   const quantity = groupPieces.length;
   const quantitySuffix = quantity > 1 ? ` (${quantity} identical)` : '';
 
-  // Resolve the role from piece or the structure map
   const role: PieceRole | undefined =
     representative.role ?? quiltStructure?.pieceRoles.get(representative.id) ?? undefined;
 
-  // If a block template exists and the piece is a block piece, use its label
+  if (blockName) {
+    return `${blockName}${quantitySuffix}`;
+  }
+
   if (role === 'block' && quiltStructure?.blockTemplate) {
     const templatePiece = quiltStructure.blockTemplate.pieces[groupIndex];
-    const label = templatePiece?.label ?? String.fromCharCode(65 + groupIndex); // A, B, C…
+    const label = templatePiece?.label ?? String.fromCharCode(65 + groupIndex);
     return `Block Piece ${label}${quantitySuffix}`;
   }
 
@@ -106,7 +107,6 @@ function buildShapeName(
     case 'setting-triangle':
       return `Setting Triangle ${groupIndex + 1}${quantitySuffix}`;
     default:
-      // Preserve the original naming when role is unknown/unset
       return quantity > 1 ? `Piece ${groupIndex + 1}${quantitySuffix}` : `Piece ${groupIndex + 1}`;
   }
 }
@@ -128,8 +128,8 @@ const ROLE_FILL_COLORS: Record<PieceRole, string> = {
  * On studio mount, if photoPatternStore has scaledPieces:
  * 1. Load them onto the Fabric.js canvas as polygon objects
  * 2. Set reference photo as background
- * 3. Tag each object with its piece role
- * 4. Group pieces that share a grid cell into a Fabric.js Group
+ * 3. For matched block cells → load SVG block groups from /quilt_blocks/
+ * 4. For unmatched cells → create polygons from detected contours
  * 5. Auto-add unique shapes to print list with quantities
  *
  * Re-runs whenever scaledPieces changes. Store resets after import
@@ -142,6 +142,7 @@ export function usePhotoPatternImport() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const seamAllowance = usePhotoLayoutStore((s) => s.seamAllowance);
   const quiltStructure = usePhotoLayoutStore((s) => s.quiltStructure);
+  const shapeCorrection = usePhotoLayoutStore((s) => s.shapeCorrection);
 
   useEffect(() => {
     if (loadingRef.current || !fabricCanvas || scaledPieces.length === 0) return;
@@ -170,7 +171,7 @@ export function usePhotoPatternImport() {
         }
       }
 
-      // 2. Build a map from piece ID → grid cell key (if grid exists)
+      // 2. Build lookup maps
       const pieceToCellKey = new Map<string, string>();
       if (quiltStructure?.grid) {
         for (const cell of quiltStructure.grid.cells) {
@@ -181,10 +182,55 @@ export function usePhotoPatternImport() {
         }
       }
 
-      // 3. Create polygon objects for each piece
-      const cellPolygons = new Map<string, Array<InstanceType<typeof fabric.Polygon>>>();
+      // 3a. For matched block cells → load SVG block groups
+      const matchedCellKeys = new Set<string>();
+      if (shapeCorrection) {
+        for (const [cellKey, match] of shapeCorrection.blockMatches) {
+          matchedCellKeys.add(cellKey);
 
-      for (const scaledPiece of scaledPieces) {
+          // Find the cell's pieces to determine bounds
+          const cellPieces = scaledPieces.filter(
+            (p) => pieceToCellKey.get(p.id) === cellKey
+          );
+
+          if (cellPieces.length === 0) continue;
+
+          // Compute cell bounds in inches, then convert to canvas pixels
+          const bounds = computeCellBoundsInches(cellPieces);
+          const cellLeft = bounds.minX * PIXELS_PER_INCH;
+          const cellTop = bounds.minY * PIXELS_PER_INCH;
+          const cellWidth = (bounds.maxX - bounds.minX) * PIXELS_PER_INCH;
+          const cellHeight = (bounds.maxY - bounds.minY) * PIXELS_PER_INCH;
+
+          // Load the block SVG and create a Fabric.js Group
+          try {
+            const svgData = await fetchBlockSvg(match.blockId);
+            if (svgData) {
+              const result = await createBlockFabricGroup(
+                svgData,
+                match.blockId,
+                cellLeft,
+                cellTop,
+                cellWidth,
+                cellHeight
+              );
+
+              if (result) {
+                canvas.add(result.group);
+              }
+            }
+          } catch (err) {
+            console.warn(`[usePhotoPatternImport] Failed to load block ${match.blockId}:`, err);
+          }
+        }
+      }
+
+      // 3b. For unmatched pieces → create polygons from contours
+      const unmatchedPieces = scaledPieces.filter(
+        (p) => !matchedCellKeys.has(pieceToCellKey.get(p.id) ?? '')
+      );
+
+      for (const scaledPiece of unmatchedPieces) {
         const points = scaledPiece.contourInches.map((p) => ({
           x: p.x * PIXELS_PER_INCH,
           y: p.y * PIXELS_PER_INCH,
@@ -192,7 +238,6 @@ export function usePhotoPatternImport() {
 
         if (points.length < 3) continue;
 
-        // Resolve role
         const role: PieceRole =
           scaledPiece.role ??
           quiltStructure?.pieceRoles.get(scaledPiece.id) ??
@@ -211,40 +256,13 @@ export function usePhotoPatternImport() {
           objectCaching: false,
         });
 
-        // Tag with piece role via custom property
         (polygon as unknown as Record<string, unknown>).__pieceRole = role;
         (polygon as unknown as Record<string, unknown>).__pieceId = scaledPiece.id;
 
-        // Track polygons by grid cell for grouping
-        const cellKey = pieceToCellKey.get(scaledPiece.id);
-        if (cellKey) {
-          const existing = cellPolygons.get(cellKey);
-          if (existing) {
-            existing.push(polygon);
-          } else {
-            cellPolygons.set(cellKey, [polygon]);
-          }
-        } else {
-          // Non-grid pieces are added directly to canvas
-          canvas.add(polygon);
-        }
+        canvas.add(polygon);
       }
 
-      // 4. Group grid cell polygons into Fabric.js Groups
-      for (const [, polygons] of cellPolygons) {
-        if (polygons.length === 1) {
-          canvas.add(polygons[0]);
-        } else {
-          const group = new fabric.Group(polygons, {
-            selectable: true,
-            objectCaching: false,
-          } as Record<string, unknown>);
-          (group as unknown as Record<string, unknown>).__pieceRole = 'block';
-          canvas.add(group);
-        }
-      }
-
-      // 5. Add to print list grouped by shape
+      // 4. Add to print list grouped by shape
       const pieceGroups = groupIdenticalPieces(scaledPieces);
       let groupIndex = 0;
       for (const [, groupPieces] of pieceGroups) {
@@ -253,14 +271,22 @@ export function usePhotoPatternImport() {
 
         if (representative.contourInches.length < 3) continue;
 
-        // Check if this is an edge piece
-        // Look up in the original detected pieces for edge info
         const originalPiece = detectedPieces.find((p) => p.id === representative.id);
         const edgeInfo = originalPiece as unknown as DetectedPieceWithEdgeInfo | undefined;
         const isEdgePiece = edgeInfo?.isEdgePiece ?? false;
 
-        // Build role-aware name
-        let shapeName = buildShapeName(representative, groupPieces, groupIndex, quiltStructure);
+        // Check if this piece belongs to a matched block
+        const cellKey = pieceToCellKey.get(representative.id);
+        const matchResult = cellKey ? shapeCorrection?.blockMatches.get(cellKey) : undefined;
+        const blockName = matchResult?.displayName;
+
+        let shapeName = buildShapeName(
+          representative,
+          groupPieces,
+          groupIndex,
+          quiltStructure,
+          blockName
+        );
 
         if (isEdgePiece) {
           shapeName += ' [EDGE]';
@@ -273,7 +299,7 @@ export function usePhotoPatternImport() {
           quantity,
           unitSystem: 'imperial',
           seamAllowance: isEdgePiece
-            ? seamAllowance + 0.25 // Edge pieces get extra 1/4" for trimming
+            ? seamAllowance + 0.25
             : seamAllowance,
         });
 
@@ -282,10 +308,10 @@ export function usePhotoPatternImport() {
 
       canvas.renderAll();
 
-      // 6. Set reference image opacity
+      // 5. Set reference image opacity
       useCanvasStore.getState().setReferenceImageOpacity(PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT);
 
-      // 7. Persist original photo URL for the reference panel
+      // 6. Persist original photo URL for the reference panel
       if (originalImageUrl) {
         try {
           const response = await fetch(originalImageUrl);
@@ -297,17 +323,40 @@ export function usePhotoPatternImport() {
         }
       }
 
-      // 8. Open print list panel
+      // 7. Open print list panel
       if (!usePrintlistStore.getState().isPanelOpen) {
         usePrintlistStore.getState().togglePanel();
       }
 
-      // 9. Clean up the store
+      // 8. Clean up the store
       usePhotoLayoutStore.getState().reset();
     }
 
     loadPieces().finally(() => {
       loadingRef.current = false;
     });
-  }, [fabricCanvas, scaledPieces, originalImageUrl, seamAllowance, quiltStructure]);
+  }, [fabricCanvas, scaledPieces, originalImageUrl, seamAllowance, quiltStructure, shapeCorrection]);
+}
+
+/**
+ * Compute the bounding box of a cell's pieces in inches.
+ */
+function computeCellBoundsInches(
+  pieces: readonly ScaledPiece[]
+): { minX: number; minY: number; maxX: number; maxY: number } {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const piece of pieces) {
+    for (const p of piece.contourInches) {
+      minX = Math.min(minX, p.x);
+      minY = Math.min(minY, p.y);
+      maxX = Math.max(maxX, p.x);
+      maxY = Math.max(maxY, p.y);
+    }
+  }
+
+  return { minX, minY, maxX, maxY };
 }

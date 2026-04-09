@@ -158,18 +158,10 @@ export async function POST(request: NextRequest) {
       canvasWidth: bodyWidth,
       canvasHeight: bodyHeight,
       gridSettings,
-      layoutBuilder,
     } = parsed.data;
 
     let canvasWidth = bodyWidth;
     let canvasHeight = bodyHeight;
-
-    // --- Wizard: layout builder path ---
-    if (layoutBuilder) {
-      canvasWidth = layoutBuilder.width;
-      canvasHeight = layoutBuilder.height;
-      gridSettings.size = layoutBuilder.cellSize;
-    }
 
     const [newProject] = await db
       .insert(projects)

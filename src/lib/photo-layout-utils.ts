@@ -58,6 +58,11 @@ export interface PipelineResult {
   readonly downscaleInfo: import('@/lib/photo-layout-types').DownscaleInfo;
   /** Detected quilt structure (grid, sashing, borders, binding). Null if detection failed. */
   readonly quiltStructure: import('@/lib/photo-layout-types').QuiltStructure | null;
+  /**
+   * Shape correction result — matched block cells and corrected pieces.
+   * Null if shape correction was not run or no grid was detected.
+   */
+  readonly shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null;
 }
 
 // ── Web Worker Management ───────────────────────────────────────────────────
@@ -538,8 +543,27 @@ export async function runDetectionPipeline(
 
     advance(5, 'complete');
 
+    // Orphan filter: remove pieces that share no edges with any neighbor.
+    // Real quilt pieces are always sewn to at least one adjacent piece —
+    // isolated detections are CV artifacts (dust, shadows, noise).
+    let cleanPieces: readonly DetectedPiece[] = piecesWithEdgeInfo;
+    try {
+      const { filterOrphanPieces } = await import('@/lib/orphan-filter');
+      const filterResult = filterOrphanPieces(piecesWithEdgeInfo);
+      cleanPieces = filterResult.pieces;
+
+      if (filterResult.orphanCount > 0) {
+        console.log(
+          `[orphan-filter] Removed ${filterResult.orphanCount} orphan pieces: ${filterResult.orphanIds.slice(0, 10).join(', ')}${filterResult.orphanIds.length > 10 ? '...' : ''}`
+        );
+      }
+    } catch {
+      // Non-fatal — continue with all pieces if filter fails
+    }
+
     // Structure detection (pure computation — non-fatal if it fails)
     let quiltStructure: import('@/lib/photo-layout-types').QuiltStructure | null = null;
+    let shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null = null;
     try {
       const { detectQuiltStructure } = await import('@/lib/structure-detection-engine');
 
@@ -569,11 +593,47 @@ export async function runDetectionPipeline(
       if (colorSamplerImageData) {
         const colorSampler = makeColorSampler(colorSamplerImageData);
         quiltStructure = detectQuiltStructure(
-          piecesWithEdgeInfo,
+          cleanPieces,
           correctedMat.cols,
           correctedMat.rows,
           colorSampler
         );
+
+        // Shape correction: match detected block cells to known block SVGs
+        if (quiltStructure.grid && quiltStructure.grid.cells.length > 0) {
+          try {
+            const { getBlockSignatures } = await import('@/lib/block-signature-registry');
+            const {
+              extractBlockCells,
+              runShapeCorrection,
+            } = await import('@/lib/shape-matcher-engine');
+
+            const signatures = await getBlockSignatures();
+            const pieceMap = new Map(
+              cleanPieces.map((p) => [p.id, p])
+            );
+
+            const blockCells = extractBlockCells(quiltStructure.grid, pieceMap);
+
+            if (blockCells.length > 0) {
+              shapeCorrection = runShapeCorrection(
+                blockCells,
+                pieceMap,
+                signatures
+              );
+
+              // Log match summary
+              const matchCount = shapeCorrection.blockMatches.size;
+              const unmatched = shapeCorrection.unmatchedCellKeys.length;
+              console.log(
+                `[shape-matcher] ${matchCount} blocks matched, ${unmatched} cells fell back to raw detection`
+              );
+            }
+          } catch (shapeErr) {
+            console.warn('[shape-matcher] Shape correction failed:', shapeErr);
+            // Non-fatal — continue with raw pieces
+          }
+        }
       }
     } catch {
       // Non-fatal — structure detection failure should not block piece import
@@ -595,11 +655,12 @@ export async function runDetectionPipeline(
     };
 
     return {
-      pieces: piecesWithEdgeInfo,
+      pieces: cleanPieces,
       correctedImageRef,
       perspectiveApplied,
       downscaleInfo,
       quiltStructure,
+      shapeCorrection,
     };
   } catch (error) {
     const runningIndex = steps.findIndex((s) => s.status === 'running');
@@ -622,6 +683,7 @@ export async function runDetectionPipeline(
         reason: 'none',
       },
       quiltStructure: null,
+      shapeCorrection: null,
     };
   } finally {
     // Always delete imageMat if it differs from correctedMat (or if correctedMat is null)

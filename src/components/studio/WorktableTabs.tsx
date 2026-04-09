@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useCanvasStore, type WorktableTab } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -9,7 +9,8 @@ import type { BorderConfig } from '@/lib/layout-utils';
 /**
  * Restore a layout snapshot from a worktable tab into the layoutStore
  * and resize the quilt canvas to match the layout dimensions.
- * Shared by handleCloseTab and handleSwitchTab.
+ * Does NOT re-center the viewport — caller should do that via useEffect
+ * after React state has settled.
  */
 function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
   if (!ls) return;
@@ -48,11 +49,26 @@ function restoreLayoutSnapshot(ls: WorktableTab['layoutSnapshot']) {
 
   useProjectStore.getState().setCanvasWidth(Math.max(1, Math.round(totalW * 100) / 100));
   useProjectStore.getState().setCanvasHeight(Math.max(1, Math.round(totalH * 100) / 100));
+}
 
-  // Re-center the viewport
-  setTimeout(() => {
-    useCanvasStore.getState().centerAndFitViewport();
-  }, 50);
+/**
+ * Re-center the viewport after a tab switch.
+ * Uses requestAnimationFrame to ensure React state has flushed.
+ */
+function useViewportRecenter(activeWorktableId: string | null) {
+  const prevIdRef = useRef(activeWorktableId);
+
+  useEffect(() => {
+    if (prevIdRef.current === activeWorktableId) return;
+    prevIdRef.current = activeWorktableId;
+    if (!activeWorktableId) return;
+
+    // Wait for React to flush state, then re-center
+    const id = requestAnimationFrame(() => {
+      useCanvasStore.getState().centerAndFitViewport();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [activeWorktableId]);
 }
 
 /**
@@ -68,6 +84,9 @@ export function WorktableTabs() {
   const removeWorktableTab = useCanvasStore((s) => s.removeWorktableTab);
   const setActiveWorktableId = useCanvasStore((s) => s.setActiveWorktableId);
   const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
+
+  // Re-center viewport after tab changes
+  useViewportRecenter(activeWorktableId);
 
   const handleAddTab = useCallback(() => {
     // Adding a new tab with no layout (free-draw mode)
