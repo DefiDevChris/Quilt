@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           {/* 1. Information We Collect */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               1. Information We Collect
             </h2>
 
@@ -120,7 +120,7 @@ export default function PrivacyPage() {
           {/* 2. How We Use Your Information */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               2. How We Use Your Information
             </h2>
             <p className="mb-3">We use the information we collect to:</p>
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
           {/* 3. How We Share Your Information */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               3. How We Share Your Information
             </h2>
             <p className="mb-3">
@@ -205,7 +205,7 @@ export default function PrivacyPage() {
           {/* 4. Data Retention */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />4. Data Retention</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />4. Data Retention</h2>
             <p className="mb-3">
               We retain your information for as long as your account is active or as needed to
               provide you the Service. Specifically:
@@ -241,7 +241,7 @@ export default function PrivacyPage() {
           {/* 5. Security */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />5. Data Security</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />5. Data Security</h2>
             <p className="mb-3">
               We take the security of your data seriously. Our security measures include:
             </p>
@@ -283,7 +283,7 @@ export default function PrivacyPage() {
           {/* 6. Your Rights & Choices */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               6. Your Rights &amp; Choices
             </h2>
             <p className="mb-3">
@@ -335,7 +335,7 @@ export default function PrivacyPage() {
           {/* 7. Cookies */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               7. Cookies &amp; Authentication
             </h2>
             <p className="mb-3">
@@ -394,7 +394,7 @@ export default function PrivacyPage() {
           {/* 8. International Data Transfers */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               8. International Data Transfers
             </h2>
             <p className="mb-3">
@@ -413,7 +413,7 @@ export default function PrivacyPage() {
           {/* 9. GDPR Rights (European Economic Area) */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               9. European Economic Area (EEA) &amp; UK Users
             </h2>
             <p className="mb-3">
@@ -462,7 +462,7 @@ export default function PrivacyPage() {
           {/* 10. Children's Privacy */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               10. Children&rsquo;s Privacy
             </h2>
             <p>
@@ -484,7 +484,7 @@ export default function PrivacyPage() {
           {/* 11. Changes to This Policy */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               11. Changes to This Policy
             </h2>
             <p>
@@ -499,7 +499,7 @@ export default function PrivacyPage() {
           {/* 12. Contact */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />12. Contact Us</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />12. Contact Us</h2>
             <p>
               If you have questions, concerns, or requests regarding this Privacy Policy or our data
               practices, please reach out:{' '}

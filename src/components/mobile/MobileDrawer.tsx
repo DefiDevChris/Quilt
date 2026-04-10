@@ -45,27 +45,26 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-on-surface/20"
-        style={{ backdropFilter: 'blur(4px)' }}
+        className="fixed inset-0 z-50 bg-neutral/20"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
         ref={drawerRef}
-        className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-surface shadow-elevation-4 flex flex-col"
+        className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-neutral shadow-elevation-4 flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
       >
         <div className="px-6 pt-14 pb-6">
-          <span className="text-lg font-bold text-on-surface">Quilt Studio</span>
+          <span className="text-lg font-bold text-neutral-800">Quilt Studio</span>
         </div>
         <nav className="flex-1 px-3 space-y-1">
           {/* Home */}
           <Link
             href="/"
             onClick={onClose}
-            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+            className="flex items-center gap-3 px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
           >
             <svg
               width="20"
@@ -89,7 +88,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/socialthreads"
                 onClick={onClose}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+                className="flex items-center gap-3 px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"
@@ -111,7 +110,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/fabrics"
                 onClick={onClose}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+                className="flex items-center gap-3 px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"
@@ -134,7 +133,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/dashboard"
                 onClick={onClose}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+                className="flex items-center gap-3 px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"
@@ -157,7 +156,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/settings"
                 onClick={onClose}
-                className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+                className="flex items-center gap-3 px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"
@@ -182,7 +181,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-error hover:bg-surface-container transition-colors"
+              className="flex items-center gap-3 w-full px-3 py-3 rounded-full text-sm font-medium text-error hover:bg-neutral-100 transition-colors"
             >
               <svg
                 width="20"
@@ -205,7 +204,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/auth/signin"
                 onClick={onClose}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-on-surface hover:bg-surface-container transition-colors"
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-full text-sm font-medium text-neutral-800 hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"
@@ -226,7 +225,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <Link
                 href="/auth/signup"
                 onClick={onClose}
-                className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-primary hover:bg-primary-container transition-colors"
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-full text-sm font-medium text-primary hover:bg-neutral-100 transition-colors"
               >
                 <svg
                   width="20"

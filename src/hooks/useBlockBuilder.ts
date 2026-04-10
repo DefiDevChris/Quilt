@@ -38,9 +38,9 @@ interface UseBlockBuilderReturn {
 }
 
 const SNAP_RADIUS_FRACTION = 0.3;
-const SEAM_LINE_COLOR = '#383831';
+const SEAM_LINE_COLOR = '#4a3f35';
 const SEAM_LINE_WIDTH = 2;
-const PENCIL_PREVIEW_COLOR = '#f97316';
+const PENCIL_PREVIEW_COLOR = '#f9a06b';
 
 export function useBlockBuilder({
   draftCanvasRef,
@@ -237,6 +237,10 @@ export function useBlockBuilder({
     const lineSegments = segments.filter((s): s is Segment => !('center' in s));
     const newPatches = detectPatches(lineSegments, gridCols, gridRows);
     setPatches(newPatches);
+    // Sync counts to store for BottomBar display
+    import('@/stores/blockBuilderStore').then(({ useBlockBuilderStore }) => {
+      useBlockBuilderStore.getState().setCounts(segments.length, newPatches.length);
+    });
   }, [segments, gridCols, gridRows]);
 
   // Set patch fill from fabric

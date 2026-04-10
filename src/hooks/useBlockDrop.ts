@@ -3,10 +3,11 @@
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
 
-const BLOCK_HIGHLIGHT_COLOR = '#6366F1';
+const BLOCK_HIGHLIGHT_COLOR = '#f9a06b';
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -64,7 +65,15 @@ export function useBlockDrop() {
         }
       }
 
-      // Drops outside valid areas are rejected
+      // Freeform mode: allow drops anywhere on the canvas
+      const { hasAppliedLayout } = useLayoutStore.getState();
+      if (!hasAppliedLayout) {
+        e.dataTransfer.dropEffect = 'copy';
+        clearHighlight();
+        return;
+      }
+
+      // Drops outside valid areas are rejected when a layout is applied
       clearHighlight();
       e.dataTransfer.dropEffect = 'none';
     },
@@ -122,51 +131,43 @@ export function useBlockDrop() {
         }
 
         const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
-        let hitTarget: unknown = canvas.findTarget(e.nativeEvent as unknown as import('fabric').TPointerEvent);
+        let hitTarget: unknown = canvas.findTarget(
+          e.nativeEvent as unknown as import('fabric').TPointerEvent
+        );
 
         for (const { obj, prev } of userBlocksToRestore) {
           obj.evented = prev;
         }
 
-        // Only allow drops into block-cell areas
+        const { hasAppliedLayout } = useLayoutStore.getState();
+
+        // Try to find a fence cell target (fallback to containsPoint scan)
         if (!hitTarget) {
-          const fallbackTarget = allObjects.find(o => {
+          const fallbackTarget = allObjects.find((o) => {
             const r = o as unknown as Record<string, unknown>;
-            return r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer);
+            return (
+              r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer)
+            );
           });
-
-          if (!fallbackTarget) return;
-          hitTarget = fallbackTarget;
-        }
-
-        const areaObj = hitTarget as Record<string, unknown>;
-        if (!areaObj['_fenceElement'] || areaObj['_fenceRole'] !== 'block-cell') {
-          return;
-        }
-
-        const fabricObj = hitTarget as unknown as import('fabric').FabricObject;
-        const cellX = fabricObj.left ?? 0;
-        const cellY = fabricObj.top ?? 0;
-        const cellW = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
-        const cellH = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
-        const cellRotation = fabricObj.angle ?? 0;
-        const targetCellId = (areaObj['_fenceAreaId'] as string | undefined) ?? null;
-
-        // Remove existing block in this cell
-        let previousOccupant: import('fabric').FabricObject | null = null;
-        if (targetCellId) {
-          for (const obj of allObjects) {
-            const r = obj as unknown as Record<string, unknown>;
-            if (r['_inFenceCellId'] === targetCellId) {
-              previousOccupant = obj as unknown as import('fabric').FabricObject;
-              break;
-            }
+          if (fallbackTarget) {
+            hitTarget = fallbackTarget;
           }
         }
 
-        const currentJson = JSON.stringify(canvas.toJSON());
-        pushUndoState(currentJson);
+        const areaObj = (hitTarget as Record<string, unknown>) ?? {};
+        const isFenceCell = areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell';
 
+        // If a layout is applied, only allow drops into fence cells
+        if (hasAppliedLayout && !isFenceCell) {
+          return;
+        }
+
+        // In freeform mode with no hit target, we still allow placement at pointer
+        if (!hasAppliedLayout && !hitTarget) {
+          // hitTarget stays null — freeform path below handles it
+        }
+
+        // Build Fabric objects from the block data
         const objects: import('fabric').FabricObject[] = [];
         if (groupData.objects && Array.isArray(groupData.objects)) {
           for (const obj of groupData.objects) {
@@ -174,41 +175,84 @@ export function useBlockDrop() {
             if (fabricObj) objects.push(fabricObj);
           }
         }
-
         if (objects.length === 0) return;
 
-        if (previousOccupant) {
-          canvas.remove(previousOccupant);
+        const currentJson = JSON.stringify(canvas.toJSON());
+        const undoSaved = pushUndoState(currentJson);
+
+        if (isFenceCell) {
+          // ── Fence cell placement: snap to cell, locked ──
+          const cellObj = hitTarget as unknown as import('fabric').FabricObject;
+          const cellX = cellObj.left ?? 0;
+          const cellY = cellObj.top ?? 0;
+          const cellW = (cellObj.width ?? 100) * (cellObj.scaleX ?? 1);
+          const cellH = (cellObj.height ?? 100) * (cellObj.scaleY ?? 1);
+          const cellRotation = cellObj.angle ?? 0;
+          const targetCellId = (areaObj['_fenceAreaId'] as string | undefined) ?? null;
+
+          // Remove existing block in this cell (only if undo can protect the action)
+          if (targetCellId && undoSaved) {
+            for (const obj of allObjects) {
+              const r = obj as unknown as Record<string, unknown>;
+              if (r['_inFenceCellId'] === targetCellId) {
+                canvas.remove(obj);
+                break;
+              }
+            }
+          }
+
+          const group = new fabric.Group(objects, {
+            originX: 'center',
+            originY: 'center',
+            subTargetCheck: true,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingX: true,
+            lockScalingY: true,
+          });
+
+          const groupMeta = group as unknown as Record<string, unknown>;
+          groupMeta.__isBlockGroup = true;
+          groupMeta.__blockId = blockId;
+
+          const tightW = group.width ?? 100;
+          const tightH = group.height ?? 100;
+          group.set({
+            left: cellX + cellW / 2,
+            top: cellY + cellH / 2,
+            scaleX: cellW / tightW,
+            scaleY: cellH / tightH,
+            angle: cellRotation,
+          });
+
+          if (targetCellId) {
+            groupMeta._inFenceCellId = targetCellId;
+          }
+
+          canvas.add(group);
+          canvas.setActiveObject(group);
+        } else {
+          // ── Freeform placement: drop at pointer, movable ──
+          const group = new fabric.Group(objects, {
+            originX: 'center',
+            originY: 'center',
+            subTargetCheck: true,
+          });
+
+          const groupMeta = group as unknown as Record<string, unknown>;
+          groupMeta.__isBlockGroup = true;
+          groupMeta.__blockId = blockId;
+
+          group.set({
+            left: pointer.x,
+            top: pointer.y,
+          });
+
+          canvas.add(group);
+          canvas.setActiveObject(group);
         }
 
-        const group = new fabric.Group(objects, {
-          originX: 'center',
-          originY: 'center',
-          subTargetCheck: true,
-          lockMovementX: true,
-          lockMovementY: true,
-          lockRotation: true,
-          lockScalingX: true,
-          lockScalingY: true,
-        });
-
-        const tightW = group.width ?? 100;
-        const tightH = group.height ?? 100;
-
-        group.set({
-          left: cellX + cellW / 2,
-          top: cellY + cellH / 2,
-          scaleX: cellW / tightW,
-          scaleY: cellH / tightH,
-          angle: cellRotation,
-        });
-
-        if (targetCellId) {
-          (group as unknown as Record<string, unknown>)['_inFenceCellId'] = targetCellId;
-        }
-
-        canvas.add(group);
-        canvas.setActiveObject(group);
         canvas.requestRenderAll();
         setActiveTool('select');
         useProjectStore.getState().setHasContent(true);
@@ -231,13 +275,15 @@ async function createFabricObject(
   obj: Record<string, unknown>
 ): Promise<import('fabric').FabricObject | null> {
   const type = obj.type as string;
-  const fill = (obj.fill as string) ?? '#000';
+  const fill = (obj.fill as string) ?? '#2c2420';
   const stroke = (obj.stroke as string) ?? null;
   const strokeWidth = (obj.strokeWidth as number) ?? 0.5;
 
+  let result: import('fabric').FabricObject | null = null;
+
   switch (type) {
     case 'Rect':
-      return new fabric.Rect({
+      result = new fabric.Rect({
         left: obj.left as number,
         top: obj.top as number,
         width: obj.width as number,
@@ -247,13 +293,15 @@ async function createFabricObject(
         strokeWidth,
         opacity: (obj.opacity as number) ?? 1,
       });
+      break;
     case 'Polygon': {
       const points = obj.points as Array<{ x: number; y: number }>;
       if (!points || points.length === 0) return null;
-      return new fabric.Polygon(points, { fill, stroke, strokeWidth });
+      result = new fabric.Polygon(points, { fill, stroke, strokeWidth });
+      break;
     }
     case 'Circle':
-      return new fabric.Circle({
+      result = new fabric.Circle({
         left: obj.left as number,
         top: obj.top as number,
         radius: obj.radius as number,
@@ -261,19 +309,40 @@ async function createFabricObject(
         stroke,
         strokeWidth,
       });
+      break;
     case 'Path': {
       const pathData = obj.path as string;
       if (!pathData) return null;
-      return new fabric.Path(pathData, { fill: fill || undefined, stroke, strokeWidth });
+      result = new fabric.Path(pathData, { fill: fill || undefined, stroke, strokeWidth });
+      break;
     }
     case 'Line': {
-      const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [number, number, number, number];
-      return new fabric.Line(coords, {
-        stroke: (obj.stroke as string) ?? '#333',
+      const coords = [obj.x1 as number, obj.y1 as number, obj.x2 as number, obj.y2 as number] as [
+        number,
+        number,
+        number,
+        number,
+      ];
+      result = new fabric.Line(coords, {
+        stroke: (obj.stroke as string) ?? '#4a3f35',
         strokeWidth,
       });
+      break;
     }
     default:
       return null;
   }
+
+  // Forward patch metadata so it survives onto the canvas object.
+  // These properties are registered in fabric-custom-props.ts and will
+  // persist through toJSON/loadFromJSON serialization cycles.
+  if (result) {
+    const meta = result as unknown as Record<string, unknown>;
+    if (obj.__shade != null) meta.__shade = obj.__shade;
+    if (obj.__pieceRole != null) meta.__pieceRole = obj.__pieceRole;
+    if (obj.__blockPatchIndex != null) meta.__blockPatchIndex = obj.__blockPatchIndex;
+    if (obj.__blockId != null) meta.__blockId = obj.__blockId;
+  }
+
+  return result;
 }

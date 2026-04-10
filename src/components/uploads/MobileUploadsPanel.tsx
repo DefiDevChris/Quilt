@@ -83,7 +83,7 @@ export function MobileUploadsPanel() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-headline-sm font-semibold text-on-surface">Mobile Uploads</h2>
+        <h2 className="text-headline-sm font-semibold text-neutral-800">Mobile Uploads</h2>
         <p className="text-body-md text-secondary mt-1">
           Photos from your phone. Assign each a type, then process.
         </p>
@@ -103,8 +103,8 @@ export function MobileUploadsPanel() {
               type="button"
               onClick={() => setFilter(chip.value)}
               className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${filter === chip.value
-                  ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
-                  : 'bg-white/50 text-secondary hover:bg-white/80'
+                ? 'bg-neutral text-white shadow-elevation-1'
+                : 'bg-neutral text-secondary hover:bg-neutral-100'
                 }`}
             >
               {chip.label}
@@ -116,7 +116,7 @@ export function MobileUploadsPanel() {
 
       {/* Error */}
       {error && (
-        <div className="px-4 py-3 rounded-xl bg-error/10 border border-error/20">
+        <div className="px-4 py-3 rounded-full bg-error/10 border border-error/20">
           <p className="text-sm text-error">{error}</p>
         </div>
       )}
@@ -125,11 +125,11 @@ export function MobileUploadsPanel() {
       {isLoading && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="glass-panel rounded-2xl overflow-hidden">
-              <div className="aspect-square bg-primary-container/20 animate-pulse" />
+            <div key={i} className="bg-neutral border border-neutral-200 rounded-full overflow-hidden">
+              <div className="aspect-square bg-primary/20 animate-pulse" />
               <div className="p-3 space-y-2">
-                <div className="h-4 bg-primary-container/40 rounded animate-pulse" />
-                <div className="h-6 bg-primary-container/20 rounded animate-pulse" />
+                <div className="h-4 bg-primary/40 rounded-full animate-pulse" />
+                <div className="h-6 bg-primary/20 rounded-full animate-pulse" />
               </div>
             </div>
           ))}
@@ -139,7 +139,7 @@ export function MobileUploadsPanel() {
       {/* Empty state */}
       {!isLoading && filteredUploads.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
             <svg
               width="28"
               height="28"
@@ -154,7 +154,7 @@ export function MobileUploadsPanel() {
               <line x1="12" y1="18" x2="12" y2="18.01" />
             </svg>
           </div>
-          <p className="text-body-lg font-medium text-on-surface mb-1">No uploads waiting</p>
+          <p className="text-body-lg font-medium text-neutral-800 mb-1">No uploads waiting</p>
           <p className="text-body-sm text-secondary max-w-xs">
             Take photos on your phone and they&apos;ll appear here for you to sort and process.
           </p>

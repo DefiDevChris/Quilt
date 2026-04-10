@@ -273,7 +273,7 @@ A layout is a **fence** — it defines areas where specific things can be placed
 2. **Add layouts** — From the **Layouts** library tab in the right pane, drag layout presets onto the canvas. Layouts are automatically sized to fit the canvas grid perfectly.
 3. **Add blocks into layout cells** — From the **Blocks** library tab, drag any block onto a layout block-cell. `useBlockDrop` snaps the block to the cell's bounding box, scales it to fit, and inherits the cell's rotation. Dropping a new block on an occupied cell replaces the previous one (tracked via `_inFenceCellId` tag).
 4. **Add fabrics to layout chrome** — From the **Fabrics** library tab, drag any fabric swatch onto sashing strips, cornerstones, borders, or binding. `useFabricDrop` applies it as a Fabric.js pattern fill.
-5. **Add fabrics to individual block pieces** — Drag a fabric onto a sub-piece of a placed block. `subTargetCheck: true` routes the drop to the inner piece.
+5. **Add fabrics to individual block pieces** — Drag a fabric onto a sub-piece of a placed block. `subTargetCheck: true` routes the drop to the inner piece. Or use "Apply to all [shade]" buttons in the ShadeBreakdownPanel to fill all matching patches at once.
 6. **Block Builder (worktable mode)** — Switch to the Block Builder worktable from the mode tabs. Draft custom blocks on a dedicated 600×600 canvas with grid-snapped drawing tools (pencil, rectangle, triangle, circle, bend). Saved blocks appear in the right-side Block Library and are immediately drag-droppable into the quilt worktable.
 
 ### Studio Components
@@ -286,9 +286,9 @@ A layout is a **fence** — it defines areas where specific things can be placed
 | `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Unified drag-drop dispatcher with `CanvasErrorBoundary` |
 | `StudioTopBar` | `src/components/studio/StudioTopBar.tsx` | Top bar: project info, viewport controls, settings dropdown (contains Export), hamburger menu |
 | `WorktableTabs` | `src/components/studio/WorktableTabs.tsx` | Tab bar for switching between worktable tabs |
-| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics) |
+| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics). Shows ShadeBreakdownPanel above tabs when a block group is selected |
 | `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip: flat single-column layout (Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In, Zoom Out) |
-| `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, snap state, selection count |
+| `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, shade view toggle (quilt mode), snap state, selection count |
 | `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 600×600 canvas, tools (select/pencil/rectangle/triangle/circle/bend), grid unit slider, Block Library, overlay controls, Save Block |
 | `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
 | `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
@@ -328,9 +328,22 @@ The fence renderer is the **only** way layout areas appear on canvas:
 
 `useFabricDrop` (exported from `src/hooks/useFabricLayout.ts`):
 
-1. On drop, finds target fence area via `canvas.findTarget()`
-2. If target role is in `['sashing', 'cornerstone', 'border', 'binding', 'edging']` → applies fabric as pattern fill, sized to fill entire area
-3. If target is NOT a valid fabric area → **drop rejected** with `not-allowed` cursor (silent, no toast). Valid fabric targets show a green highlight glow during drag-over.
+1. On drop, finds target via `canvas.findTarget()`
+2. **Fence chrome** — target role in `['sashing', 'cornerstone', 'border', 'binding', 'edging']` → applies fabric as pattern fill
+3. **Block group** — target has `__isBlockGroup` → transforms pointer to group-local coords, finds the patch under cursor, applies a per-patch `fabric.Pattern` fill. Each patch gets its own Pattern instance.
+4. If target is neither → **drop rejected** (silent, no toast). Valid targets show highlight during drag-over.
+
+### Shade System
+
+Each block patch carries a `__shade` property (`'dark' | 'light' | 'background' | 'unknown'`) set at block creation time — from SVG `data-shade` attributes for system blocks, or auto-detected from fill luminance for user-built blocks.
+
+**Bulk fabric assignment** — `useShadeAssignment` hook (`src/hooks/useShadeAssignment.ts`) bridges the pure engine to the canvas:
+- "Apply to all darks" — applies a fabric pattern to every patch of a given shade across selected block(s). Single undo state for the entire operation.
+- Engine: `src/lib/shade-assignment-engine.ts` — pure functions (`findPatchesByShade`, `getShadeBreakdown`, `hasShadeMetadata`), zero DOM/Fabric deps.
+
+**Shade view toggle** — BottomBar toggle temporarily recolors all patches by shade category (dark → gray, light → light gray, background → near-white). Non-destructive: original fills (including Pattern fills) are saved in a ref map and restored on toggle-off. Auto-deactivates on worktable switch and before undo/redo.
+
+**UI** — `ShadeBreakdownPanel` (`src/components/studio/ShadeBreakdownPanel.tsx`) appears above the ContextPanel tab bar when a block group is selected. Shows patch counts per shade with "Apply [recent fabric]" buttons.
 
 ### Layout Library
 
@@ -474,66 +487,55 @@ Supporting utilities: `yardage-utils.ts`, `cutting-chart-generator.ts`.
 
 ## Photo-to-Design Pipeline
 
-Upload a photo of any quilt → OpenCV extracts the individual pieces → shape auto-correction matches block cells to known quilt block SVGs → edge snapping eliminates gaps → clean Fabric.js Groups are placed on the worktable.
+Upload a photo of any quilt → OpenCV detects individual piece contours → shapes are normalized and clustered → edges are snapped to eliminate gaps → flat `fabric.Polygon` objects are placed on the worktable, filled with their detected dominant color.
 
 ### Pipeline Flow
 
 ```
 Photo uploaded
   ↓
-OpenCV web worker: sharpening, CLAHE, bilateral filter, adaptive thresholding, watershed, contour detection
+Downscale + auto perspective correction (perspective-utils)
   ↓
-detectQuiltStructure: grid → sashing → border → role assignment
+OpenCV web worker: sharpening, CLAHE, bilateral filter, adaptive thresholding, watershed, contour detection
   ↓
 ★ orphan-filter: Remove pieces that share no edges with any neighbor (CV artifacts: dust, shadows, noise)
   ↓
-★ shape-matcher-engine: For each block cell, match against 50 known block SVG signatures
-  → matched cells get BlockMatchResult { blockId, confidence, pieceToPatchMapping }
-  → unmatched cells fall back to raw detected polygons
+★ shape-normalizer-engine: Cluster similar shapes, regularize geometry, equalize sizes within clusters
   ↓
-★ usePhotoPatternImport: Matched cells → load block SVG as Fabric.js Group
-  → unmatched cells → raw fabric.Polygon from detected contours
+★ edge-snapper-engine: Snap shared edges to canonical positions, snap boundary vertices to canvas edges
+  ↓
+★ usePhotoPatternImport: Every piece → fabric.Polygon filled with dominant color → print list with quantities
 ```
 
-### Shape Auto-Correction
+### Shape Normalization
 
-After OpenCV detects pieces, each block cell (group of pieces in one grid cell) is matched against the 50 block SVG signatures. Matching uses a weighted multi-stage cascade:
+After orphan filtering, the shape normalizer clusters similar pieces by vertex count and area ratio, then:
 
-1. **Patch count filter** (fast reject — eliminate blocks with very different patch counts)
-2. **Vertex distribution similarity** (do pieces have the right shape types? triangles vs quads)
-3. **Adjacency graph similarity** (do pieces touch the same neighbors?)
-4. **Relative area similarity** (are patch proportions similar?)
-5. **Curve presence check** (curved blocks like Drunkard's Path vs straight blocks like Nine Patch)
+1. Creates a canonical "master" contour for each cluster with regularized geometry
+2. Equalizes sizes within each cluster
+3. Straightens rotation to nearest cardinal orientation
 
-If confidence exceeds the threshold (0.65), the cell's raw polygons are replaced with the block SVG's clean patches, loaded as a `fabric.Group` where each patch is individually fillable.
+No grid detection, no block matching, no structure classification. Pieces are just "Piece 1", "Piece 2", etc.
 
 ### Edge Snapping
 
-After shape correction, adjacent piece edges are snapped to shared canonical edges to eliminate gaps and overlaps. Boundary edges are snapped to the canvas border. This ensures 100% coverage with no empty areas between pieces.
+After normalization, adjacent piece edges are snapped to shared canonical edges to eliminate gaps and overlaps. Boundary edges are snapped to the canvas border. This ensures 100% coverage with no empty areas between pieces.
 
 ### Implemented Engines
 
 - `piece-detection.worker.ts` — OpenCV web worker (15-step pipeline: Laplacian sharpening, CLAHE, morphological opening, bilateral filter, adaptive thresholding, Sobel gradient, watershed, contour detection, polygon approximation, color extraction)
-- `structure-detection-engine.ts` — Orchestrator: grid → sashing → border → role assignment
-- `grid-detection-engine.ts` — Block repeat grid from centroid clustering
-- `sashing-detection-engine.ts` — Sashing strips + cornerstones between blocks
-- `border-detection-engine.ts` — Border layers around the quilt
-- **`block-signature-registry.ts`** — Precomputes structural signatures for all 50 block SVGs (patch count, vertex distribution, adjacency graph, relative areas, curve presence)
-- **`shape-matcher-engine.ts`** — Matches detected block cells to known block signatures via weighted cascade
+- **`shape-normalizer-engine.ts`** — Clusters similar shapes, regularizes geometry, equalizes sizes within clusters, straightens rotation
 - **`edge-snapper-engine.ts`** — Snaps shared edges to canonical positions, eliminates gaps, snaps boundary vertices to canvas edges
-- **`coverage-validator.ts`** — Raster-scan based coverage analysis to verify no gaps/overlaps remain
-- **`block-svg-loader.ts`** — Loads block SVGs from `/quilt_blocks/` as Fabric.js Groups with individually fillable patches
 - **`orphan-filter.ts`** — Removes detected pieces that share no edges with any neighbor (every real quilt patch is sewn to at least one adjacent piece)
+- **`perspective-utils.ts`** — Auto-detects and corrects perspective distortion from angled photos
 
 ### Photo-to-Design Supporting Modules
 
-- `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow (includes `shapeCorrection` field)
+- `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow
 - `src/lib/photo-layout-*.ts` — photo layout types and utilities
-- `src/lib/photo-layout-types.ts` — Extended types: `BlockSignature`, `BlockMatchResult`, `DetectedBlockCell`, `CorrectedPiece`, `ShapeCorrectionResult`
-- `src/lib/photo-layout-utils.ts` — Pipeline orchestration; runs shape correction after structure detection
-- `src/hooks/usePhotoLayoutImport.ts` — Exports `usePhotoPatternImport()`; loads matched blocks as SVG Groups, unmatched pieces as raw polygons
-
-Piece roles: `block | sashing | cornerstone | border | binding | setting-triangle | unknown`
+- `src/lib/photo-layout-types.ts` — Core types: `DetectedPiece`, `ScaledPiece`, `QuiltDetectionConfig`, `PipelineResult`
+- `src/lib/photo-layout-utils.ts` — Pipeline orchestration: runs normalizer + edge snapper after orphan filter
+- `src/hooks/usePhotoLayoutImport.ts` — Exports `usePhotoPatternImport()`; creates `fabric.Polygon` for each piece, adds to print list with quantities
 
 ## Fabric Library
 

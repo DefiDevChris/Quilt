@@ -1,30 +1,31 @@
 /**
- * Piece Detection Web Worker — Production Quilt Digitization Pipeline
+ * Piece Detection — Production Quilt Digitization Pipeline
+ *
+ * NOTE: Originally a Web Worker, but Turbopack + dynamic WASM imports in
+ * workers causes silent hangs. Now runs on the main thread with async yields
+ * to keep the UI responsive. The exported `detectPiecesOnMainThread` function
+ * is called directly by photo-layout-utils.ts instead of spawning a Worker.
  *
  * All 15 Objectives Implemented:
- * 1. Web Worker Migration — Runs off main thread
- * 2. Shape Standardization — Hu Moments clustering
- * 3. Polygon Offset Seam Allowances — Clipper-lib
- * 4. Dynamic Kernels & Sharpening — Laplacian kernel
- * 5. CLAHE — Illumination normalization
- * 6. Topstitching Removal — Morphological opening
- * 7. Bilateral Filter — Edge-preserving smoothing
- * 8. Sobel Gradient — Wrinkle filtering
- * 9. Watershed — Low-contrast seam detection
- * 10. Nested Shapes — Appliqué support
- * 11. Solidity Filtering — Artifact rejection
- * 12. Sliver Rejection — Aspect ratio filtering
- * 13. Mask-Based Color — Accurate color extraction
- * 14. Color Value — Light/Medium/Dark mapping
- * 15. Memory Management — Aggressive cleanup
+ * 1. Shape Standardization — Hu Moments clustering
+ * 2. Polygon Offset Seam Allowances — Clipper-lib
+ * 3. Dynamic Kernels & Sharpening — Laplacian kernel
+ * 4. CLAHE — Illumination normalization
+ * 5. Topstitching Removal — Morphological opening
+ * 6. Bilateral Filter — Edge-preserving smoothing
+ * 7. Sobel Gradient — Wrinkle filtering
+ * 8. Watershed — Low-contrast seam detection
+ * 9. Nested Shapes — Appliqué support
+ * 10. Solidity Filtering — Artifact rejection
+ * 11. Sliver Rejection — Aspect ratio filtering
+ * 12. Mask-Based Color — Accurate color extraction
+ * 13. Color Value — Light/Medium/Dark mapping
+ * 14. Memory Management — Aggressive cleanup
  */
 
 import {
   DEFAULT_QUILT_DETECTION_CONFIG,
   type DetectedPiece,
-  type WorkerRequestMessage,
-  type WorkerResponseMessage,
-  type WorkerProgressMessage,
   type Point2D,
   type QuiltDetectionConfig,
   type DetectionOptions,
@@ -67,65 +68,14 @@ class MatPool {
   }
 }
 
-let cvInstance: OpenCV | null = null;
-let isLoading = false;
-let loadPromise: Promise<OpenCV> | null = null;
-
-async function loadOpenCv(): Promise<OpenCV> {
-  if (cvInstance) return cvInstance;
-  if (isLoading && loadPromise) return loadPromise;
-
-  isLoading = true;
-  loadPromise = (async (): Promise<OpenCV> => {
-    try {
-      const cv = (await import('@techstark/opencv-js')) as OpenCV;
-      await new Promise<void>((resolve, reject) => {
-        if (cv.Mat) {
-          resolve();
-          return;
-        }
-        const timeout = setTimeout(() => {
-          reject(new Error('OpenCV.js WASM initialization timed out'));
-        }, 30000);
-        cv.onRuntimeInitialized = () => {
-          clearTimeout(timeout);
-          resolve();
-        };
-      });
-      cvInstance = cv;
-      return cv;
-    } catch (error) {
-      isLoading = false;
-      loadPromise = null;
-      throw error;
-    }
-  })();
-  return loadPromise;
-}
-
-function sendProgress(
-  step: number,
-  status: 'running' | 'complete' | 'error',
-  message?: string
-): void {
-  self.postMessage({ type: 'PROGRESS', step, status, message } as WorkerProgressMessage);
-}
-
-function sendError(error: string): void {
-  self.postMessage({ type: 'DETECT_PIECES_ERROR', error } as WorkerResponseMessage);
-}
-
-function sendResult(pieces: DetectedPiece[]): void {
-  self.postMessage({ type: 'DETECT_PIECES_RESULT', pieces } as WorkerResponseMessage);
-}
-
 // ============================================================================
-// QUILT CONFIG HELPERS
+// PIPELINE HELPERS
 // ============================================================================
 
-// ============================================================================
-// PIPELINE FUNCTIONS
-// ============================================================================
+/** Async wrapper that yields to the main thread periodically. */
+function yieldToMain(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
 
 function applyLaplacianSharpening(cv: OpenCV, src: OpenCVMat, intensity: number = 0.5): OpenCVMat {
   const sharpened = new cv.Mat();
@@ -489,33 +439,32 @@ function runDetection(
 }
 
 // ============================================================================
-// MESSAGE HANDLER
+// EXPORTED MAIN-THREAD ENTRY POINT
 // ============================================================================
 
-self.onmessage = async (event: MessageEvent<WorkerRequestMessage & DetectionOptions>) => {
-  const message = event.data;
+/**
+ * Run the full detection pipeline on the main thread.
+ * Yields periodically to keep the UI responsive.
+ *
+ * This replaces the old Web Worker approach which hung silently under
+ * Turbopack (dynamic WASM import inside a Worker never resolved).
+ */
+export async function detectPiecesOnMainThread(
+  cv: OpenCV,
+  imageData: ImageData,
+  options: DetectionOptions = {},
+  onProgress?: (step: number, status: 'running' | 'complete' | 'error', message?: string) => void
+): Promise<DetectedPiece[]> {
+  onProgress?.(0, 'running', 'Initializing OpenCV...');
+  await yieldToMain();
 
-  if (message.type !== 'DETECT_PIECES') {
-    sendError(`Unknown message type: ${(message as { type: string }).type}`);
-    return;
-  }
+  onProgress?.(2, 'running', 'Running detection pipeline...');
+  await yieldToMain();
 
-  const { imageData, sensitivity, ...options } = message;
+  const pieces = runDetection(cv, imageData, options);
 
-  try {
-    sendProgress(0, 'running', 'Loading OpenCV...');
-    const cv = await loadOpenCv();
-
-    sendProgress(2, 'running', 'Running detection pipeline...');
-    const pieces = runDetection(cv, imageData, { sensitivity, ...options });
-
-    sendProgress(4, 'complete', 'Detection complete');
-    sendResult(pieces);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    sendProgress(4, 'error', errorMessage);
-    sendError(errorMessage);
-  }
-};
+  onProgress?.(4, 'complete', 'Detection complete');
+  return pieces;
+}
 
 export { };

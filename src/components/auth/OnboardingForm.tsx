@@ -241,15 +241,15 @@ export function OnboardingForm() {
 
   const usernameBorderColor =
     usernameStatus === 'available'
-      ? 'border-success'
+      ? 'border-green-500'
       : usernameStatus === 'taken'
-        ? 'border-error'
+        ? 'border-red-500'
         : usernameStatus === 'invalid'
-          ? 'border-error'
-          : 'border-outline-variant/30';
+          ? 'border-red-500'
+          : 'border-neutral-200/30';
 
   return (
-    <div className="w-full max-w-[540px] mx-auto glass-elevated rounded-2xl p-[2.75rem]">
+    <div className="w-full max-w-[540px] mx-auto bg-neutral border border-neutral-200 rounded-full p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Image
           src="/logo.png"
@@ -259,7 +259,7 @@ export function OnboardingForm() {
           className="object-contain mb-4"
           priority
         />
-        <h1 className="text-headline-md font-bold text-on-surface text-center">
+        <h1 className="text-headline-md font-bold text-neutral-800 text-center">
           Welcome to QuiltCorgi!
         </h1>
         <p className="mt-2 text-body-md text-secondary text-center">
@@ -269,7 +269,7 @@ export function OnboardingForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-body-sm text-error">
+          <div className="rounded-full bg-error/5 border border-error/20 px-4 py-3 text-body-sm text-error">
             {error}
           </div>
         )}
@@ -288,7 +288,7 @@ export function OnboardingForm() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200"
+            className="w-full bg-neutral-100 border-b border-neutral-200 focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200"
             placeholder="How should we call you?"
             autoComplete="name"
             maxLength={60}
@@ -309,16 +309,15 @@ export function OnboardingForm() {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-surface-container border-b ${usernameBorderColor} focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200`}
+            className={`w-full bg-neutral-100 border-b ${usernameBorderColor} focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200`}
             placeholder="quilter_jane"
             autoComplete="username"
             maxLength={60}
           />
           {usernameMessage && (
             <p
-              className={`mt-1 text-body-sm ${
-                usernameStatus === 'available' ? 'text-success' : 'text-error'
-              }`}
+              className={`mt-1 text-body-sm ${usernameStatus === 'available' ? 'text-success' : 'text-error'
+                }`}
             >
               {usernameMessage}
               {usernameStatus === 'checking' && (
@@ -342,7 +341,7 @@ export function OnboardingForm() {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200 resize-none"
+            className="w-full bg-neutral-100 border-b border-neutral-200 focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200 resize-none"
             placeholder="Tell the community a little about yourself..."
           />
         </div>
@@ -356,11 +355,10 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => setPrivacyMode('public')}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
-                privacyMode === 'public'
-                  ? 'border-primary bg-primary/10 text-on-surface'
-                  : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
-              }`}
+              className={`flex-1 rounded-full border-2 px-4 py-3 text-center transition-all duration-150 ${privacyMode === 'public'
+                ? 'border-primary bg-primary/10 text-neutral-800'
+                : 'border-neutral-200/30 text-secondary hover:border-neutral-200/50'
+                }`}
             >
               <div className="text-body-md font-medium">Public</div>
               <div className="mt-0.5 text-body-sm text-secondary/80">
@@ -370,11 +368,10 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => setPrivacyMode('private')}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-all duration-150 ${
-                privacyMode === 'private'
-                  ? 'border-primary bg-primary/10 text-on-surface'
-                  : 'border-outline-variant/30 text-secondary hover:border-outline-variant/50'
-              }`}
+              className={`flex-1 rounded-full border-2 px-4 py-3 text-center transition-all duration-150 ${privacyMode === 'private'
+                ? 'border-primary bg-primary/10 text-neutral-800'
+                : 'border-neutral-200/30 text-secondary hover:border-neutral-200/50'
+                }`}
             >
               <div className="text-body-md font-medium">Private</div>
               <div className="mt-0.5 text-body-sm text-secondary/80">
@@ -402,11 +399,10 @@ export function OnboardingForm() {
                   setUploadedImage(null);
                   setUploadedFile(null);
                 }}
-                className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${
-                  selectedCorgi === corgi.id
-                    ? 'border-primary shadow-elevation-2 ring-2 ring-primary/30'
-                    : 'border-outline-variant/20 hover:border-outline-variant/40'
-                }`}
+                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${selectedCorgi === corgi.id
+                  ? 'border-primary shadow-elevation-3 ring-2 ring-primary/30'
+                  : 'border-neutral-200/20 hover:border-neutral-200/40'
+                  }`}
                 aria-label={corgi.alt}
               >
                 <Image src={corgi.src} alt={corgi.alt} fill sizes="64px" className="object-cover" />
@@ -448,7 +444,7 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 rounded-lg border border-dashed border-outline-variant/40 hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-on-surface transition-colors w-full"
+              className="flex items-center gap-2 rounded-full border border-dashed border-neutral-200/40 hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-neutral-800 transition-colors w-full"
             >
               <svg
                 className="w-5 h-5 shrink-0"

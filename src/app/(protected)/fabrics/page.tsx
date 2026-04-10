@@ -101,7 +101,7 @@ export default function FabricsPage() {
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
-        <div className="flex gap-2 p-1 bg-surface-container/50 border border-outline-variant/30 rounded-2xl w-fit">
+        <div className="flex gap-2 p-1 bg-neutral-100 border border-neutral-200 rounded-full w-fit">
           {(['system', 'user'] as const).map((s) => (
             <button
               key={s}
@@ -110,11 +110,10 @@ export default function FabricsPage() {
                 setScope(s);
                 setPage(1);
               }}
-              className={`px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
-                scope === s
-                  ? 'bg-on-surface text-surface shadow-elevation-2'
-                  : 'text-secondary hover:bg-surface-container'
-              }`}
+              className={`px-6 py-2 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${scope === s
+                ? 'bg-neutral-800 text-neutral shadow-elevation-2'
+                : 'text-secondary hover:bg-neutral-100'
+                }`}
             >
               {s === 'system' ? 'Studio Archive' : 'Personal Collection'}
             </button>
@@ -131,7 +130,7 @@ export default function FabricsPage() {
             placeholder="Filter archive by name or manufacturer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-14 pr-6 py-4 bg-white border border-outline-variant/30 rounded-2xl text-on-surface placeholder:text-secondary/50 font-medium focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all"
+            className="w-full pl-14 pr-6 py-4 bg-white border border-neutral-200 rounded-full text-neutral-800 placeholder:text-secondary/50 font-medium focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all"
           />
         </div>
 
@@ -141,7 +140,7 @@ export default function FabricsPage() {
             setColorFamily(e.target.value);
             setPage(1);
           }}
-          className="px-6 py-4 bg-white border border-outline-variant/30 rounded-2xl text-on-surface text-sm font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 appearance-none cursor-pointer"
+          className="px-6 py-4 bg-white border border-neutral-200 rounded-full text-neutral-800 text-sm font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 appearance-none cursor-pointer"
         >
           <option value="">Spectrum: All</option>
           {COLOR_FAMILIES.map((c) => (
@@ -153,7 +152,7 @@ export default function FabricsPage() {
       </div>
 
       {/* Results count */}
-      <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+      <div className="flex items-center justify-between border-b border-neutral-200/20 pb-4">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary/60">
           Showing {loading ? '...' : total} Entries
         </p>
@@ -163,12 +162,12 @@ export default function FabricsPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className="aspect-square bg-surface-container/50 rounded-3xl animate-pulse border border-outline-variant/10" />
+            <div key={i} className="aspect-square bg-neutral-100/50 rounded-full animate-pulse border border-neutral-200/10" />
           ))}
         </div>
       ) : fabrics.length === 0 ? (
-        <div className="py-24 text-center glass-panel rounded-[40px] border-dashed border-outline-variant/50">
-          <h3 className="text-xl font-black text-on-surface mb-2 uppercase tracking-tight">
+        <div className="py-24 text-center bg-neutral border border-neutral-200 border-dashed rounded-full">
+          <h3 className="text-xl font-black text-neutral-800 mb-2 uppercase tracking-tight">
             No Entries Found
           </h3>
           <p className="text-secondary text-sm font-medium">
@@ -184,7 +183,7 @@ export default function FabricsPage() {
             return (
               <div
                 key={fabric.id}
-                className="group relative rounded-3xl border border-outline-variant/30 bg-white overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-elevation-3"
+                className="group relative rounded-full border border-neutral-200/30 bg-white overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-elevation-3"
               >
                 <div className="aspect-square relative overflow-hidden">
                   {imgSrc ? (
@@ -195,15 +194,15 @@ export default function FabricsPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-surface-container/30">
-                       <p className="text-[10px] font-black text-secondary/40 uppercase tracking-widest">No Preview</p>
+                    <div className="h-full w-full flex items-center justify-center bg-neutral-100/30">
+                      <p className="text-[10px] font-black text-secondary/40 uppercase tracking-widest">No Preview</p>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                 </div>
-                
+
                 <div className="p-4 bg-white">
-                  <p className="text-xs font-black text-on-surface truncate uppercase tracking-tight">{fabric.name}</p>
+                  <p className="text-xs font-black text-neutral-800 truncate uppercase tracking-tight">{fabric.name}</p>
                   {fabric.manufacturer && (
                     <p className="text-[9px] text-secondary font-bold uppercase tracking-widest mt-1 opacity-60">{fabric.manufacturer}</p>
                   )}
@@ -221,19 +220,19 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-outline-variant/30 rounded-2xl hover:bg-surface-container transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-neutral-200/30 rounded-full hover:bg-neutral-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Previous
           </button>
           <div className="flex flex-col items-center">
-             <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Index</span>
-             <span className="text-sm font-black text-on-surface">{page} <span className="text-secondary/40">/</span> {totalPages}</span>
+            <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Index</span>
+            <span className="text-sm font-black text-neutral-800">{page} <span className="text-secondary/40">/</span> {totalPages}</span>
           </div>
           <button
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-outline-variant/30 rounded-2xl hover:bg-surface-container transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-neutral-200/30 rounded-full hover:bg-neutral-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Next
           </button>

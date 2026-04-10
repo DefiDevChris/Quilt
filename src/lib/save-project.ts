@@ -1,6 +1,7 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { saveTempProject } from '@/lib/temp-project-storage';
 
 const MAX_SAVE_RETRIES = 3;
@@ -65,7 +66,24 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   const isPro = useAuthStore.getState().isPro;
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
-  const { unitSystem, gridSettings } = useCanvasStore.getState();
+
+  // Embed layout store state so the fence can be reconstructed on reload.
+  // Stored inside canvasData to avoid a DB schema change.
+  const layoutState = useLayoutStore.getState();
+  (canvasData as Record<string, unknown>).__layoutState = {
+    layoutType: layoutState.layoutType,
+    selectedPresetId: layoutState.selectedPresetId,
+    rows: layoutState.rows,
+    cols: layoutState.cols,
+    blockSize: layoutState.blockSize,
+    sashing: layoutState.sashing,
+    borders: layoutState.borders,
+    hasCornerstones: layoutState.hasCornerstones,
+    bindingWidth: layoutState.bindingWidth,
+    hasAppliedLayout: layoutState.hasAppliedLayout,
+  };
+
+  const { unitSystem, gridSettings, activeWorktable } = useCanvasStore.getState();
   const { fabricPresets, canvasWidth, canvasHeight, worktables, activeWorktableId, version } =
     useProjectStore.getState();
 
@@ -83,6 +101,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       fabricPresets,
       canvasWidth,
       canvasHeight,
+      activeWorktable,
       worktables: updatedWorktables as unknown as Array<Record<string, unknown>>,
     });
     const store = useProjectStore.getState();
@@ -142,6 +161,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
         fabricPresets,
         canvasWidth,
         canvasHeight,
+        activeWorktable,
         version,
       }),
       signal: controller.signal,
@@ -158,7 +178,10 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
             if (typeof window !== 'undefined') {
               window.dispatchEvent(
                 new CustomEvent('quiltcorgi:save-error', {
-                  detail: { message: 'This project was modified on another device. Please refresh and try again.' },
+                  detail: {
+                    message:
+                      'This project was modified on another device. Please refresh and try again.',
+                  },
                 })
               );
             }

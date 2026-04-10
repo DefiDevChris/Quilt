@@ -33,9 +33,9 @@ const MOCK_SAVED = [
 
 function SavedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
-      {/* Base glass */}
-      <div className="absolute inset-0 glass-panel" />
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
+      {/* Base */}
+      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
 
       {/* Fabric swatch pattern - scattered hearts */}
       <div className="absolute inset-0 opacity-[0.07]">
@@ -49,13 +49,7 @@ function SavedStripVertical() {
               height="32"
               patternUnits="userSpaceOnUse"
             >
-              <rect
-                x="0"
-                y="0"
-                width="32"
-                height="32"
-                fill="var(--color-surface-container-lowest)"
-              />
+              <rect x="0" y="0" width="32" height="32" fill="#fdfaf7" />
               <path
                 d="M16 28 C16 28 4 20 4 12 C4 6 10 4 16 10 C22 4 28 6 28 12 C28 20 16 28 16 28Z"
                 fill="var(--color-primary)"
@@ -86,7 +80,7 @@ function SavedStripVertical() {
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
+        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
           Saved
         </span>
 
@@ -100,7 +94,7 @@ function SavedStripVertical() {
               <img
                 src="/icons/quilt-10-pincushion-Photoroom.png"
                 alt="Saved"
-                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
+                className="w-24 h-24 object-contain relative z-10"
               />
             </div>
           </div>
@@ -108,11 +102,7 @@ function SavedStripVertical() {
 
         {/* Mascot at bottom */}
         <div className="relative mt-3">
-          <img
-            src="/mascots&avatars/corgi20.png"
-            alt=""
-            className="w-20 h-20 object-contain drop-shadow-elevation-2"
-          />
+          <img src="/mascots&avatars/corgi20.png" alt="" className="w-20 h-20 object-contain" />
         </div>
       </div>
     </div>
@@ -121,24 +111,24 @@ function SavedStripVertical() {
 
 function SavedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+            'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 3px, transparent 3px, transparent 7px)',
         }}
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #FB7185 0px, #FB7185 3px, transparent 3px, transparent 7px)',
+            'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 3px, transparent 3px, transparent 7px)',
         }}
       />
       {/* Pincushion icon - NO ring */}
-      <div className="w-10 h-10 rounded-xl bg-transparent shadow-elevation-2 flex items-center justify-center relative shrink-0">
+      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center relative shrink-0">
         <img
           src="/icons/quilt-10-pincushion-Photoroom.png"
           alt="Saved"
@@ -147,7 +137,7 @@ function SavedStripHorizontal() {
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-on-surface tracking-wide">Saved</span>
+      <span className="text-base font-extrabold text-neutral-800 tracking-wide">Saved</span>
 
       {/* Mascot */}
       <img
@@ -163,9 +153,9 @@ function SavedStripHorizontal() {
 
 function FeedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
-      {/* Base glass */}
-      <div className="absolute inset-0 glass-panel" />
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
+      {/* Base */}
+      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
 
       {/* Flying geese pattern - community quilt */}
       <div className="absolute inset-0 opacity-[0.08]">
@@ -181,8 +171,8 @@ function FeedStripVertical() {
             >
               <rect x="0" y="0" width="48" height="48" fill="#FFF9F2" />
               <path d="M0 48 L24 24 L48 48 Z" fill="#FBBF24" opacity="0.6" />
-              <path d="M0 36 L12 24 L24 36 Z" fill="#FB923C" opacity="0.5" />
-              <path d="M24 36 L36 24 L48 36 Z" fill="#F59E0B" opacity="0.5" />
+              <path d="M0 36 L12 24 L24 36 Z" fill="var(--color-primary)" opacity="0.5" />
+              <path d="M24 36 L36 24 L48 36 Z" fill="var(--color-secondary)" opacity="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#feed-geese)" />
@@ -194,21 +184,21 @@ function FeedStripVertical() {
         className="absolute left-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+            'repeating-linear-gradient(to bottom, var(--color-secondary) 0px, var(--color-secondary) 2px, transparent 2px, transparent 6px)',
         }}
       />
       <div
         className="absolute right-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+            'repeating-linear-gradient(to bottom, var(--color-secondary) 0px, var(--color-secondary) 2px, transparent 2px, transparent 6px)',
         }}
       />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
+        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
           Feed
         </span>
 
@@ -222,7 +212,7 @@ function FeedStripVertical() {
               <img
                 src="/icons/quilt-01-spool-Photoroom.png"
                 alt="Feed"
-                className="w-24 h-24 object-contain drop-shadow-elevation-3 relative z-10"
+                className="w-24 h-24 object-contain relative z-10"
               />
             </div>
           </div>
@@ -230,11 +220,7 @@ function FeedStripVertical() {
 
         {/* Mascot at bottom */}
         <div className="relative mt-3">
-          <img
-            src="/mascots&avatars/corgi12.png"
-            alt=""
-            className="w-20 h-20 object-contain drop-shadow-elevation-2"
-          />
+          <img src="/mascots&avatars/corgi12.png" alt="" className="w-20 h-20 object-contain" />
         </div>
       </div>
     </div>
@@ -243,24 +229,24 @@ function FeedStripVertical() {
 
 function FeedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+            'repeating-linear-gradient(to right, var(--color-secondary) 0px, var(--color-secondary) 2px, transparent 2px, transparent 6px)',
         }}
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #F59E0B 0px, #F59E0B 2px, transparent 2px, transparent 6px)',
+            'repeating-linear-gradient(to right, var(--color-secondary) 0px, var(--color-secondary) 2px, transparent 2px, transparent 6px)',
         }}
       />
       {/* Thread spool icon */}
-      <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center shrink-0">
+      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center shrink-0">
         <img
           src="/icons/quilt-01-spool-Photoroom.png"
           alt="Feed"
@@ -269,7 +255,7 @@ function FeedStripHorizontal() {
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-on-surface tracking-wide">Feed</span>
+      <span className="text-base font-extrabold text-neutral-800 tracking-wide">Feed</span>
 
       {/* Mascot */}
       <img
@@ -288,9 +274,9 @@ function ProfileStripVertical() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-white/90 group-hover:shadow-elevation-4">
-      {/* Base glass */}
-      <div className="absolute inset-0 glass-panel" />
+    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
+      {/* Base */}
+      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
 
       {/* Measuring tape pattern - sewing notion */}
       <div className="absolute inset-0 opacity-[0.06]">
@@ -305,28 +291,28 @@ function ProfileStripVertical() {
               patternUnits="userSpaceOnUse"
             >
               <rect x="0" y="0" width="48" height="48" fill="#FFF9F2" />
-              <line x1="8" y1="0" x2="8" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
+              <line x1="8" y1="0" x2="8" y2="12" stroke="var(--color-primary)" strokeWidth="1" opacity="0.4" />
               <line
                 x1="16"
                 y1="0"
                 x2="16"
                 y2="8"
-                stroke="#FB923C"
+                stroke="var(--color-primary)"
                 strokeWidth="0.7"
                 opacity="0.3"
               />
-              <line x1="24" y1="0" x2="24" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
+              <line x1="24" y1="0" x2="24" y2="12" stroke="var(--color-primary)" strokeWidth="1" opacity="0.4" />
               <line
                 x1="32"
                 y1="0"
                 x2="32"
                 y2="8"
-                stroke="#FB923C"
+                stroke="var(--color-primary)"
                 strokeWidth="0.7"
                 opacity="0.3"
               />
-              <line x1="40" y1="0" x2="40" y2="12" stroke="#FB923C" strokeWidth="1" opacity="0.4" />
-              <rect x="0" y="20" width="48" height="8" fill="#FB923C" opacity="0.15" rx="1" />
+              <line x1="40" y1="0" x2="40" y2="12" stroke="var(--color-primary)" strokeWidth="1" opacity="0.4" />
+              <rect x="0" y="20" width="48" height="8" fill="var(--color-primary)" opacity="0.15" rx="1" />
               <circle cx="24" cy="36" r="2" fill="#E76F51" opacity="0.4" />
             </pattern>
           </defs>
@@ -339,21 +325,21 @@ function ProfileStripVertical() {
         className="absolute left-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+            'repeating-linear-gradient(to bottom, var(--color-primary) 0px, var(--color-primary) 4px, transparent 4px, transparent 10px)',
         }}
       />
       <div
         className="absolute right-2 top-0 bottom-0 w-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to bottom, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+            'repeating-linear-gradient(to bottom, var(--color-primary) 0px, var(--color-primary) 4px, transparent 4px, transparent 10px)',
         }}
       />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
         {/* Title at top */}
-        <span className="text-on-surface font-extrabold text-xl tracking-tight text-center drop-shadow-elevation-1">
+        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
           Profile
         </span>
 
@@ -367,17 +353,17 @@ function ProfileStripVertical() {
               <img
                 src={user.image}
                 alt={user.name}
-                className="relative w-24 h-24 rounded-full object-cover shadow-elevation-4"
+                className="relative w-24 h-24 rounded-full object-cover"
               />
             ) : (
-              <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-elevation-4">
+              <div className="relative w-24 h-24 rounded-full bg-orange-200 flex items-center justify-center">
                 <span className="text-4xl font-bold text-orange-600">{initial}</span>
               </div>
             )}
           </div>
           {/* Name and username */}
           <div className="text-center">
-            <p className="text-on-surface font-extrabold text-base leading-tight">
+            <p className="text-neutral-800 font-extrabold text-base leading-tight">
               {user?.name ?? 'Your Name'}
             </p>
             <p className="text-primary font-semibold text-xs leading-tight">
@@ -388,11 +374,7 @@ function ProfileStripVertical() {
 
         {/* Mascot at bottom */}
         <div className="relative mt-3">
-          <img
-            src="/mascots&avatars/corgi28.png"
-            alt=""
-            className="w-20 h-20 object-contain drop-shadow-elevation-2"
-          />
+          <img src="/mascots&avatars/corgi28.png" alt="" className="w-20 h-20 object-contain" />
         </div>
       </div>
     </div>
@@ -404,20 +386,20 @@ function ProfileStripHorizontal() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-surface/80 backdrop-blur-md shadow-elevation-1 group-hover:bg-white/90">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+            'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 4px, transparent 4px, transparent 10px)',
         }}
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-px"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(to right, #FB923C 0px, #FB923C 4px, transparent 4px, transparent 10px)',
+            'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 4px, transparent 4px, transparent 10px)',
         }}
       />
       {/* Avatar */}
@@ -426,17 +408,17 @@ function ProfileStripHorizontal() {
           <img
             src={user.image}
             alt={user.name}
-            className="w-9 h-9 rounded-full object-cover shadow-elevation-2 relative"
+            className="w-9 h-9 rounded-full object-cover relative"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-200 to-rose-200 flex items-center justify-center shadow-elevation-2 relative">
+          <div className="w-9 h-9 rounded-full bg-orange-200 flex items-center justify-center relative">
             <span className="text-sm font-bold text-orange-600">{initial}</span>
           </div>
         )}
       </div>
 
       {/* Title */}
-      <span className="text-base font-extrabold text-on-surface tracking-wide truncate">
+      <span className="text-base font-extrabold text-neutral-800 tracking-wide truncate">
         {user?.name ?? 'Profile'}
       </span>
 
@@ -457,31 +439,31 @@ function SavedContent() {
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Bookmark size={20} className="text-primary" />
-        <h2 className="font-extrabold text-xl text-on-surface">Saved</h2>
-        <span className="text-xs text-secondary/80 font-medium">{MOCK_SAVED.length} posts</span>
+        <h2 className="font-extrabold text-xl text-neutral-800">Saved</h2>
+        <span className="text-xs text-neutral-600 font-medium">{MOCK_SAVED.length} posts</span>
       </div>
 
       <div className="space-y-5">
         {MOCK_SAVED.map((post, i) => (
           <article
             key={i}
-            className="glass-panel feed-post-hover rounded-[1.5rem] overflow-hidden cursor-pointer"
+            className="bg-neutral border border-neutral-200 feed-post-hover rounded-full overflow-hidden cursor-pointer"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
               <img src={post.image} alt="" className="w-full h-full object-cover" />
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-on-surface text-base mb-2">{post.title}</h3>
+              <h3 className="font-semibold text-neutral-800 text-base mb-2">{post.title}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center border border-white shadow-elevation-1">
-                    <span className="text-caption font-bold text-primary-dark">
+                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center border border-white">
+                    <span className="text-caption font-bold text-neutral-800">
                       {post.author.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-xs text-secondary/80 font-medium">{post.author}</span>
+                  <span className="text-xs text-neutral-600 font-medium">{post.author}</span>
                 </div>
-                <div className="flex items-center gap-3 text-secondary/80">
+                <div className="flex items-center gap-3 text-neutral-600">
                   <span className="flex items-center gap-1 text-xs">
                     <Heart size={14} /> {post.likes}
                   </span>
@@ -525,8 +507,8 @@ function ProfileContentPanel() {
     return (
       <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-24 w-24 rounded-full bg-white/50 mx-auto" />
-          <div className="h-6 bg-white/50 rounded-full w-1/3 mx-auto" />
+          <div className="h-24 w-24 rounded-full bg-neutral-100 mx-auto" />
+          <div className="h-6 bg-neutral-100 rounded-full w-1/3 mx-auto" />
         </div>
       </div>
     );
@@ -537,25 +519,25 @@ function ProfileContentPanel() {
 
   return (
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
-      <h2 className="font-extrabold text-xl text-on-surface mb-6">Profile</h2>
+      <h2 className="font-extrabold text-xl text-neutral-800 mb-6">Profile</h2>
 
       {/* Profile Summary Card */}
-      <div className="rounded-[1.5rem] glass-elevated p-6 mb-4">
+      <div className="rounded-full bg-neutral border border-neutral-200 p-6 mb-4">
         <div className="flex items-start gap-4">
           {avatarSrc ? (
             <img
               src={avatarSrc}
               alt={displayName}
-              className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-elevation-1"
+              className="h-16 w-16 rounded-full object-cover border-2 border-white"
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-primary-container border-2 border-white shadow-elevation-1 flex items-center justify-center text-2xl font-bold text-primary-dark">
+            <div className="h-16 w-16 rounded-full bg-primary/20 border-2 border-white flex items-center justify-center text-2xl font-bold text-neutral-800">
               {initial}
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-on-surface truncate">{displayName}</h3>
-            <p className="text-sm text-secondary truncate">{user.email}</p>
+            <h3 className="text-lg font-bold text-neutral-800 truncate">{displayName}</h3>
+            <p className="text-sm text-neutral-600 truncate">{user.email}</p>
           </div>
         </div>
       </div>
@@ -564,36 +546,36 @@ function ProfileContentPanel() {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <Link
           href="/dashboard"
-          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-elevation-3 transition-all"
+          className="rounded-full bg-neutral border border-neutral-200 p-4 hover:shadow-elevation-2 transition-all"
         >
-          <p className="text-2xl font-bold text-on-surface">{stats?.projectCount ?? '\u2014'}</p>
-          <p className="text-sm text-secondary">
+          <p className="text-2xl font-bold text-neutral-800">{stats?.projectCount ?? '\u2014'}</p>
+          <p className="text-sm text-neutral-600">
             {(stats?.projectCount ?? 0) === 1 ? 'Project' : 'Projects'}
           </p>
         </Link>
         <Link
           href="/socialthreads"
-          className="rounded-[1.5rem] glass-elevated p-4 hover:shadow-elevation-3 transition-all"
+          className="rounded-full bg-neutral border border-neutral-200 p-4 hover:shadow-elevation-2 transition-all"
         >
-          <p className="text-2xl font-bold text-on-surface">{stats?.postCount ?? '\u2014'}</p>
-          <p className="text-sm text-secondary">
+          <p className="text-2xl font-bold text-neutral-800">{stats?.postCount ?? '\u2014'}</p>
+          <p className="text-sm text-neutral-600">
             {(stats?.postCount ?? 0) === 1 ? 'Post' : 'Posts'}
           </p>
         </Link>
       </div>
 
       {/* Link to full profile & settings */}
-      <div className="rounded-[1.5rem] glass-elevated divide-y divide-white/30">
+      <div className="rounded-full bg-neutral border border-neutral-200 divide-y divide-neutral-200">
         <Link
           href="/settings"
-          className="flex items-center justify-between p-4 hover:bg-white/40 transition-colors first:rounded-t-[1.5rem] last:rounded-b-[1.5rem]"
+          className="flex items-center justify-between p-4 hover:bg-neutral-100 transition-colors"
         >
           <div>
-            <p className="text-sm font-bold text-on-surface">All Settings</p>
-            <p className="text-xs text-secondary mt-0.5">Edit profile, billing, and account</p>
+            <p className="text-sm font-bold text-neutral-800">All Settings</p>
+            <p className="text-xs text-neutral-600 mt-0.5">Edit profile, billing, and account</p>
           </div>
           <svg
-            className="w-4 h-4 text-tertiary"
+            className="w-4 h-4 text-neutral-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -615,7 +597,7 @@ function StudioDivider() {
       className="relative z-20 shrink-0 w-full aspect-square flex flex-col items-center justify-center gap-2 cursor-pointer overflow-hidden group"
     >
       {/* Gradient background - warm orange to rose */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-400" />
+      <div className="absolute inset-0 bg-primary" />
 
       {/* Ruler grid overlay */}
       <div className="absolute inset-0 opacity-10">
@@ -648,25 +630,25 @@ function StudioDivider() {
       />
 
       {/* Hover lift effect */}
-      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+      <div className="absolute inset-0 bg-neutral-100/0 group-hover:bg-neutral-100/10 transition-all duration-300" />
 
       {/* Content - BIGGER */}
       <div className="relative z-10 flex flex-col items-center gap-2">
         {/* Icon container with glow - BIGGER */}
         <div className="relative">
-          <div className="absolute inset-0 bg-white/40 rounded-3xl blur-xl" />
-          <div className="relative w-20 h-20 rounded-2xl bg-white/25 backdrop-blur-sm border-3 border-white/50 flex items-center justify-center shadow-elevation-4">
+          <div className="absolute inset-0 bg-neutral-100/40 rounded-full blur-xl" />
+          <div className="relative w-20 h-20 rounded-full bg-neutral-100/25 border-2 border-white flex items-center justify-center">
             <img
               src="/icons/quilt-04-scissors-Photoroom.png"
               alt="Design Studio"
-              className="w-12 h-12 object-contain drop-shadow-elevation-3 brightness-0 invert"
+              className="w-12 h-12 object-contain brightness-0 invert"
             />
           </div>
         </div>
 
         {/* Text label - BIGGER */}
         <div className="text-center">
-          <span className="text-white text-lg font-extrabold tracking-wider uppercase drop-shadow-elevation-3 leading-none block">
+          <span className="text-white text-lg font-extrabold tracking-wider uppercase leading-none block">
             Design
           </span>
           <span className="text-white/90 text-base font-bold tracking-widest uppercase leading-none block mt-1">
@@ -676,9 +658,9 @@ function StudioDivider() {
       </div>
 
       {/* Bottom sparkle accents */}
-      <div className="absolute bottom-3 w-1.5 h-1.5 rounded-full bg-white/70" />
-      <div className="absolute bottom-4 right-4 w-1 h-1 rounded-full bg-white/50" />
-      <div className="absolute bottom-6 left-6 w-0.5 h-0.5 rounded-full bg-white/40" />
+      <div className="absolute bottom-3 w-1.5 h-1.5 rounded-full bg-neutral-100/70" />
+      <div className="absolute bottom-4 right-4 w-1 h-1 rounded-full bg-neutral-100/50" />
+      <div className="absolute bottom-6 left-6 w-0.5 h-0.5 rounded-full bg-neutral-100/40" />
     </Link>
   );
 }
@@ -710,7 +692,7 @@ function PanelSlot({
       onClick={!active ? onClick : undefined}
       className={[
         'relative w-full overflow-hidden transition-all duration-700 ease-in-out group',
-        position === 'top' ? 'border-b border-white/40' : '',
+        position === 'top' ? 'border-b border-neutral-200' : '',
         !active ? 'cursor-pointer' : 'cursor-default',
       ].join(' ')}
       style={{ height }}
@@ -757,7 +739,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
     <>
       <div className="hidden lg:flex h-full w-full overflow-hidden">
         <div
-          className="h-full relative flex flex-col border-r border-white/40 flex-shrink-0 transition-all duration-700 ease-in-out"
+          className="h-full relative flex flex-col border-r border-neutral-200 flex-shrink-0 transition-all duration-700 ease-in-out"
           style={{ width: isLeftActive ? '90%' : '10%' }}
         >
           <PanelSlot
@@ -808,14 +790,14 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
       </div>
 
       <div className="lg:hidden flex flex-col h-full">
-        <div className="flex shrink-0 border-b border-outline-variant bg-background/80 backdrop-blur-sm">
+        <div className="flex shrink-0 border-b border-neutral-200 bg-neutral">
           {(['saved', 'feed', 'profile'] as SplitPanelId[]).map((panel) => (
             <button
               key={panel}
               onClick={() => activate(panel)}
               className={[
                 'relative flex-1 py-3 text-sm font-semibold transition-colors capitalize',
-                activePanel === panel ? 'text-primary' : 'text-secondary/80 hover:text-on-surface',
+                activePanel === panel ? 'text-primary' : 'text-neutral-600 hover:text-neutral-800',
               ].join(' ')}
             >
               {panel}

@@ -97,15 +97,15 @@ export function DuplicateOptionsPopup() {
       onClick={() => setShow(false)}
     >
       <div
-        className="bg-surface rounded-lg shadow-elevation-3 p-4 min-w-64"
+        className="bg-neutral rounded-full shadow-elevation-2 p-4 min-w-64"
         onClick={(e) => e.stopPropagation()}
       >
-        <h4 className="text-sm font-semibold text-on-surface mb-3">Duplicate to:</h4>
+        <h4 className="text-sm font-semibold text-neutral-800 mb-3">Duplicate to:</h4>
         <div className="flex flex-col gap-2">
           <button
             type="button"
             onClick={duplicateToCurrent}
-            className="px-4 py-2 text-sm font-medium text-on-surface bg-surface-container hover:bg-surface-container-high rounded-md transition-colors text-left"
+            className="px-4 py-2 text-sm font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-colors text-left"
           >
             Current Worktable
           </button>
@@ -113,7 +113,7 @@ export function DuplicateOptionsPopup() {
             <button
               type="button"
               onClick={duplicateToNew}
-              className="px-4 py-2 text-sm font-medium text-on-surface bg-surface-container hover:bg-surface-container-high rounded-md transition-colors text-left"
+              className="px-4 py-2 text-sm font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-colors text-left"
             >
               New Worktable
             </button>

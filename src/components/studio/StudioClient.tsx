@@ -97,10 +97,10 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-surface">
+      <div className="h-screen flex items-center justify-center bg-neutral">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-secondary">Loading your design...</p>
+          <p className="text-sm text-neutral-500">Loading your design...</p>
         </div>
       </div>
     );
@@ -108,12 +108,12 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   if (error || !project) {
     return (
-      <div className="h-screen flex items-center justify-center bg-surface">
+      <div className="h-screen flex items-center justify-center bg-neutral">
         <div className="text-center">
           <p className="text-sm text-error mb-4">{error || 'Failed to load project.'}</p>
           <Link
             href="/dashboard"
-            className="inline-block rounded-full bg-on-surface px-6 py-2 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-opacity"
+            className="inline-block rounded-full bg-primary px-6 py-2 text-[13px] font-semibold tracking-wide text-white hover:opacity-90 transition-opacity"
           >
             Return to Dashboard
           </Link>

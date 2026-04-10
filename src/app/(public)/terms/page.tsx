@@ -42,7 +42,7 @@ export default function TermsPage() {
           {/* 1. Eligibility */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />1. Eligibility</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />1. Eligibility</h2>
             <p>
               You must be at least 13 years old to create an account or use the Service. If you are
               under 18, you represent that you have your parent or legal guardian&rsquo;s permission
@@ -54,7 +54,7 @@ export default function TermsPage() {
           {/* 2. Accounts & Security */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               2. Accounts &amp; Security
             </h2>
             <p className="mb-3">
@@ -89,7 +89,7 @@ export default function TermsPage() {
           {/* 3. Subscriptions, Payments & Billing */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               3. Subscriptions, Payments &amp; Billing
             </h2>
             <p className="mb-3">
@@ -146,7 +146,7 @@ export default function TermsPage() {
           {/* 4. User Content & Intellectual Property */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               4. User Content &amp; Intellectual Property
             </h2>
             <p className="mb-3">
@@ -177,7 +177,7 @@ export default function TermsPage() {
           {/* 5. Community Guidelines & Acceptable Use */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               5. Community Guidelines &amp; Acceptable Use
             </h2>
             <p className="mb-3">
@@ -219,7 +219,7 @@ export default function TermsPage() {
           {/* 6. DMCA & Copyright */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               6. DMCA &amp; Copyright Infringement
             </h2>
             <p className="mb-3">
@@ -264,7 +264,7 @@ export default function TermsPage() {
           {/* 7. Disclaimers */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />7. Disclaimers</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />7. Disclaimers</h2>
             <p className="mb-3">
               THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo; WITHOUT
               WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
@@ -286,7 +286,7 @@ export default function TermsPage() {
           {/* 8. Limitation of Liability */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               8. Limitation of Liability
             </h2>
             <p className="mb-3">
@@ -307,7 +307,7 @@ export default function TermsPage() {
           {/* 9. Binding Arbitration & Class Action Waiver */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               9. Binding Arbitration &amp; Class Action Waiver
             </h2>
             <p className="mb-3">
@@ -352,7 +352,7 @@ export default function TermsPage() {
           {/* 10. Termination */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />10. Termination</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />10. Termination</h2>
             <p className="mb-3">
               You may stop using the Service and delete your account at any time. Upon account
               deletion, your personal data will be handled in accordance with our Privacy Policy.
@@ -369,7 +369,7 @@ export default function TermsPage() {
           {/* 11. Changes to These Terms */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />
               11. Changes to These Terms
             </h2>
             <p>
@@ -384,7 +384,7 @@ export default function TermsPage() {
           {/* 12. Governing Law */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />12. Governing Law</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />12. Governing Law</h2>
             <p>
               These Terms are governed by and construed in accordance with the laws of the State of
               Wyoming, without regard to its conflict-of-law principles. Subject to the arbitration
@@ -396,7 +396,7 @@ export default function TermsPage() {
           {/* 13. Miscellaneous */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />13. Miscellaneous</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />13. Miscellaneous</h2>
             <p className="mb-3">
               <strong>Entire agreement.</strong> These Terms, together with the Privacy Policy,
               constitute the entire agreement between you and Quilt Studio regarding the Service.
@@ -418,7 +418,7 @@ export default function TermsPage() {
           {/* 14. Contact */}
           <section>
             <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-on-surface rounded-full" />14. Contact Us</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-full" />14. Contact Us</h2>
             <p>
               If you have questions about these Terms, please reach out:{' '}
               <a

@@ -58,7 +58,7 @@ export default function Mascot({
       width={px}
       height={px}
       unoptimized
-      className={`object-contain ${className}`}
+      className={`object-contain bg-transparent ${className}`}
     />
   );
 }

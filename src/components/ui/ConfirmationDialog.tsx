@@ -32,22 +32,22 @@ export function ConfirmationDialog({
       }}
     >
       <div
-        className={`bg-surface rounded-xl shadow-elevation-3 w-[400px] max-w-[90vw] p-6 ${className}`}
+        className={`bg-neutral rounded-full shadow-elevation-3 w-[400px] max-w-[90vw] p-6 ${className}`}
       >
-        <h3 className="text-title-lg text-on-surface font-semibold mb-2">{title}</h3>
-        <div className="text-body-md text-secondary mb-6">{message}</div>
+        <h3 className="text-title-lg text-neutral-800 font-semibold mb-2">{title}</h3>
+        <div className="text-body-md text-neutral-500 mb-6">{message}</div>
         <div className="flex gap-2 justify-end">
           <button
             type="button"
             onClick={onCancel}
-            className="bg-surface-container px-5 py-2 text-[13px] font-medium text-secondary rounded-full hover:bg-surface-container-high transition-colors"
+            className="bg-neutral-100 px-5 py-2 text-[13px] font-medium text-neutral-500 rounded-full hover:bg-neutral-200 transition-colors"
           >
             {cancelLabel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="px-6 py-2 text-[13px] font-semibold tracking-wide text-surface bg-on-surface rounded-full hover:opacity-90 transition-all"
+            className="px-6 py-2 text-[13px] font-semibold tracking-wide text-neutral bg-neutral-800 rounded-full hover:opacity-90 transition-all"
           >
             {confirmLabel}
           </button>

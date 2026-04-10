@@ -89,9 +89,9 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="glass-panel rounded-2xl p-6 animate-pulse">
-          <div className="h-6 bg-primary-container/40 rounded w-1/4 mb-4" />
-          <div className="h-10 bg-primary-container/20 rounded w-1/3" />
+        <div className="bg-neutral border border-neutral-200 rounded-full p-6 animate-pulse">
+          <div className="h-6 bg-primary/10 rounded-full w-1/4 mb-4" />
+          <div className="h-10 bg-primary/5 rounded-full w-1/3" />
         </div>
       </div>
     );
@@ -103,9 +103,9 @@ export default function AdminSettingsPage() {
 
       {message && (
         <div
-          className={`rounded-xl px-4 py-3 text-sm font-medium ${message.type === 'success'
-            ? 'bg-green-50 text-green-800 border border-green-200'
-            : 'bg-red-50 text-red-800 border border-red-200'
+          className={`rounded-full px-4 py-3 text-sm font-medium ${message.type === 'success'
+            ? 'bg-success/10 text-success border border-success/20'
+            : 'bg-error/10 text-error border border-error/20'
             }`}
         >
           {message.text}
@@ -113,10 +113,10 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Shop Toggle Section */}
-      <div className="glass-panel rounded-2xl p-6 space-y-4">
+      <div className="bg-neutral border border-neutral-200 rounded-full p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-on-surface">Fabric Shop</h3>
+            <h3 className="text-lg font-semibold text-neutral-800">Fabric Shop</h3>
             <p className="text-sm text-secondary mt-1">
               When enabled, a &quot;Shop&quot; tab appears in the public navigation and users can
               browse and purchase fabrics.
@@ -125,8 +125,8 @@ export default function AdminSettingsPage() {
           <div className="flex items-center gap-3">
             <span
               className={`text-xs font-semibold px-2.5 py-1 rounded-full ${shopEnabled
-                ? 'bg-green-100 text-green-800'
-                : 'bg-primary-container/40 text-secondary'
+                ? 'bg-success/10 text-success'
+                : 'bg-primary/10 text-secondary'
                 }`}
             >
               {shopEnabled ? 'Enabled' : 'Disabled'}
@@ -135,14 +135,14 @@ export default function AdminSettingsPage() {
               type="button"
               onClick={handleToggle}
               disabled={saving}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 ${shopEnabled ? 'bg-primary' : 'bg-primary-container/60'
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 ${shopEnabled ? 'bg-primary' : 'bg-primary/30'
                 }`}
               role="switch"
               aria-checked={shopEnabled}
               aria-label="Toggle shop"
             >
               <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-elevation-1 transition-transform ${shopEnabled ? 'translate-x-6' : 'translate-x-1'
+                className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${shopEnabled ? 'translate-x-6' : 'translate-x-1'
                   }`}
               />
             </button>
@@ -152,16 +152,16 @@ export default function AdminSettingsPage() {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="glass-elevated rounded-2xl p-6 max-w-md w-full mx-4 space-y-4">
-            <h3 className="text-lg font-semibold text-on-surface">Enable Fabric Shop</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-neutral border border-neutral-200 rounded-full p-6 max-w-md w-full mx-4 space-y-4">
+            <h3 className="text-lg font-semibold text-neutral-800">Enable Fabric Shop</h3>
             <p className="text-sm text-secondary">
               This will make the shop visible to all users. A &quot;Shop&quot; tab will appear in
               the navigation and the <span className="font-mono text-xs">/shop</span> page will
               become accessible.
             </p>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-on-surface">
+              <label className="text-sm font-medium text-neutral-800">
                 Type <span className="font-mono font-bold">ENABLE SHOP</span> to confirm
               </label>
               <input
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="ENABLE SHOP"
-                className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-white/50 text-on-surface font-mono focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral text-neutral-800 font-mono focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 autoFocus
               />
             </div>
@@ -180,7 +180,7 @@ export default function AdminSettingsPage() {
                   setShowConfirm(false);
                   setConfirmText('');
                 }}
-                className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-white/50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-neutral-100 transition-colors"
               >
                 Cancel
               </button>
@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
                 type="button"
                 onClick={handleConfirmEnable}
                 disabled={confirmText !== 'ENABLE SHOP' || saving}
-                className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
+                className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
               >
                 {saving ? 'Enabling...' : 'Enable Shop'}
               </button>

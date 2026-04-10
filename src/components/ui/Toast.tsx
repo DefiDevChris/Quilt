@@ -93,7 +93,7 @@ export function Toast({ id, title, description, type, onDismiss }: ToastProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="relative bg-surface-container-highest text-on-surface shadow-elevation-2 rounded-lg p-4 max-w-sm"
+      className="relative bg-neutral-200 text-neutral-800 shadow-elevation-3 rounded-full p-4 max-w-sm"
       role="alert"
     >
       <div className="flex flex-row items-start gap-3">
@@ -101,14 +101,14 @@ export function Toast({ id, title, description, type, onDismiss }: ToastProps) {
           <ToastIcon type={type} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-on-surface">{title}</p>
-          {description && <p className="text-sm text-secondary mt-1">{description}</p>}
+          <p className="text-sm font-medium text-neutral-800">{title}</p>
+          {description && <p className="text-sm text-neutral-500 mt-1">{description}</p>}
         </div>
       </div>
       <button
         type="button"
         onClick={() => onDismiss(id)}
-        className="absolute top-2 right-2 text-secondary hover:text-on-surface transition-colors"
+        className="absolute top-2 right-2 text-neutral-500 hover:text-neutral-800 transition-colors"
         aria-label="Dismiss notification"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

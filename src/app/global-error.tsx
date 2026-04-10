@@ -10,7 +10,7 @@ export default function GlobalError({
     <html>
       <body>
         <div
-          style={{ padding: '2rem', fontFamily: 'system-ui', maxWidth: '600px', margin: '0 auto' }}
+          style={{ padding: '2rem', fontFamily: 'var(--font-sans)', maxWidth: '600px', margin: '0 auto' }}
         >
           <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Something went wrong</h1>
           <p style={{ marginBottom: '1.5rem', color: 'var(--color-secondary)' }}>

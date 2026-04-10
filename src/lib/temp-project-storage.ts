@@ -17,6 +17,7 @@ export interface TempProjectData {
   canvasWidth: number;
   canvasHeight: number;
   worktables: Array<Record<string, unknown>>;
+  activeWorktable?: 'quilt' | 'block-builder';
   savedAt: number;
   expiresAt: number;
 }

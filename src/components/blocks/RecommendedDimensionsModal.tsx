@@ -163,7 +163,7 @@ export function RecommendedDimensionsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-on-surface/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-on-surface/80">
       <div className="flex w-[600px] max-h-[85vh] flex-col border-2 border-on-surface bg-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-on-surface bg-on-surface p-4 text-surface">
@@ -265,7 +265,7 @@ export function RecommendedDimensionsModal({
                   className="w-full border-2 border-on-surface bg-surface p-3 text-[12px] font-black uppercase tracking-[0.1em] focus:outline-none"
                 />
               </div>
-              
+
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
@@ -287,7 +287,7 @@ export function RecommendedDimensionsModal({
                   )}
                 </svg>
               </button>
-              
+
               <div className="flex-1">
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface mb-2">Height (in)</label>
                 <input
@@ -310,7 +310,7 @@ export function RecommendedDimensionsModal({
                   className="w-full border-2 border-on-surface bg-surface p-3 text-[12px] font-black uppercase tracking-[0.1em] focus:outline-none"
                 />
               </div>
-              
+
               <button
                 type="button"
                 onClick={handleCustomApply}

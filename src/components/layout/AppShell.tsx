@@ -53,9 +53,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen relative">
       <nav
         aria-label="Main navigation"
-        className={`sticky top-0 z-40 backdrop-blur-xl px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${scrolled
-          ? 'bg-white/95 border-outline-variant shadow-elevation-1'
-          : 'bg-white/95 border-transparent'
+        className={`sticky top-0 z-40 px-6 lg:px-12 py-2 flex items-center justify-between transition-all duration-200 border-b ${scrolled
+          ? 'bg-neutral border-neutral-200 shadow-elevation-1'
+          : 'bg-neutral border-transparent'
           }`}
       >
         <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="object-contain w-[52px] h-[52px]"
           />
           <span
-            className="text-[28px] font-bold text-on-surface tracking-tight"
+            className="text-[28px] font-bold text-neutral-800 tracking-tight"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             QuiltCorgi
@@ -77,14 +77,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="hidden lg:flex items-center gap-6">
           <Link
             href="/dashboard"
-            className={`font-medium transition-colors ${isActive('/dashboard') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+            className={`font-medium transition-colors ${isActive('/dashboard') ? 'text-neutral-800' : 'text-secondary hover:text-primary'
               }`}
           >
             Dashboard
           </Link>
           <Link
             href="/socialthreads"
-            className={`font-medium transition-colors ${isActive('/socialthreads') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+            className={`font-medium transition-colors ${isActive('/socialthreads') ? 'text-neutral-800' : 'text-secondary hover:text-primary'
               }`}
           >
             Social Threads
@@ -92,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {shopEnabled && (
             <Link
               href="/shop"
-              className={`font-medium transition-colors ${isActive('/shop') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+              className={`font-medium transition-colors ${isActive('/shop') ? 'text-neutral-800' : 'text-secondary hover:text-primary'
                 }`}
             >
               Shop
@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isAuthenticated && (
             <Link
               href="/profile"
-              className={`font-medium transition-colors ${isActive('/profile') ? 'text-on-surface' : 'text-secondary hover:text-primary'
+              className={`font-medium transition-colors ${isActive('/profile') ? 'text-neutral-800' : 'text-secondary hover:text-primary'
                 }`}
             >
               Profile
@@ -120,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={toggleCartDrawer}
-                  className="relative p-1.5 text-secondary hover:text-on-surface transition-colors"
+                  className="relative p-1.5 text-secondary hover:text-neutral-800 transition-colors"
                   aria-label="Shopping cart"
                 >
                   <ShoppingBag size={20} />
@@ -149,7 +149,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary transition-all"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-primary transition-all">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-primary transition-all">
                     <Image
                       src="/mascots&avatars/corgi1.png"
                       alt="Default Avatar"
@@ -162,14 +162,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute top-12 right-4 z-50 w-48 rounded-xl glass-elevated py-1.5">
-                  <div className="px-4 py-2 border-b border-outline-variant">
-                    <p className="text-sm font-medium text-on-surface truncate">{user?.name}</p>
+                <div className="absolute top-12 right-4 z-50 w-48 rounded-full bg-neutral border border-neutral-200 py-1.5">
+                  <div className="px-4 py-2 border-b border-neutral-200">
+                    <p className="text-sm font-medium text-neutral-800 truncate">{user?.name}</p>
                     <p className="text-xs text-secondary truncate">{user?.email}</p>
                   </div>
                   <Link
                     href="/socialthreads"
-                    className="block px-4 py-2 text-sm text-secondary hover:bg-surface-container transition-colors"
+                    className="block px-4 py-2 text-sm text-secondary hover:bg-neutral-100 transition-colors"
                     onClick={() => setDropdownOpen(false)}
                   >
                     Profile
@@ -181,7 +181,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       router.push('/');
                       router.refresh();
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-error hover:bg-surface-container transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-error hover:bg-neutral-100 transition-colors"
                   >
                     Sign Out
                   </button>
@@ -192,13 +192,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-3">
               <Link
                 href="/auth/signin"
-                className="text-label-lg text-secondary hover:text-on-surface transition-colors"
+                className="text-label-lg text-secondary hover:text-neutral-800 transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
+                className="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-all"
               >
                 Start Designing
               </Link>

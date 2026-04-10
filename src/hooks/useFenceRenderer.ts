@@ -33,24 +33,44 @@ type FabricObject = {
   [key: string]: unknown;
 };
 
-/** Fill colors by fence role. */
+/** Fill colors by fence role — normal (applied) mode. */
 const ROLE_FILLS: Record<LayoutAreaRole, string> = {
   'block-cell': 'rgba(255, 255, 255, 0.6)',
-  sashing: '#E8E2D8',
-  cornerstone: '#D5CFC5',
-  border: '#C8D8E8',
-  binding: '#505050',
-  edging: '#3D3D3D',
+  sashing: '#e8dbcf',
+  cornerstone: '#e5d5c5',
+  border: '#d5c8b8',
+  binding: '#8a7c6f',
+  edging: '#6b5d50',
+};
+
+/** Fill colors by fence role — preview mode (transparent). */
+const PREVIEW_FILLS: Record<LayoutAreaRole, string> = {
+  'block-cell': 'rgba(249, 160, 107, 0.15)',
+  sashing: 'rgba(138, 124, 111, 0.15)',
+  cornerstone: 'rgba(138, 124, 111, 0.12)',
+  border: 'rgba(249, 160, 107, 0.15)',
+  binding: 'rgba(249, 160, 107, 0.10)',
+  edging: 'rgba(0, 0, 0, 0.08)',
 };
 
 /** Stroke colors by fence role. */
 const ROLE_STROKES: Record<LayoutAreaRole, string> = {
-  'block-cell': '#8B8B8B',
-  sashing: '#B0A898',
-  cornerstone: '#A09888',
-  border: '#A0B0C0',
-  binding: '#383838',
-  edging: '#2A2A2A',
+  'block-cell': '#b8a698',
+  sashing: '#b8a698',
+  cornerstone: '#a89888',
+  border: '#b8a698',
+  binding: '#6b5d50',
+  edging: '#4a3f35',
+};
+
+/** Stroke colors for preview mode — dashed, lighter. */
+const PREVIEW_STROKES: Record<LayoutAreaRole, string> = {
+  'block-cell': 'rgba(249, 160, 107, 0.4)',
+  sashing: 'rgba(138, 124, 111, 0.4)',
+  cornerstone: 'rgba(138, 124, 111, 0.35)',
+  border: 'rgba(249, 160, 107, 0.4)',
+  binding: 'rgba(249, 160, 107, 0.3)',
+  edging: 'rgba(0, 0, 0, 0.2)',
 };
 
 /**
@@ -65,6 +85,8 @@ function storeToTemplate(): LayoutTemplate | null {
     grid: 'straight',
     sashing: 'sashing',
     'on-point': 'on-point',
+    strippy: 'strippy',
+    medallion: 'medallion',
   };
 
   const category = categoryMap[s.layoutType];
@@ -77,7 +99,7 @@ function storeToTemplate(): LayoutTemplate | null {
     gridRows: s.rows,
     gridCols: s.cols,
     defaultBlockSize: s.blockSize,
-    sashingWidth: category === 'sashing' ? s.sashing.width : 0,
+    sashingWidth: category === 'sashing' || category === 'strippy' ? s.sashing.width : 0,
     hasCornerstones: s.hasCornerstones,
     borders: s.borders.map((b, i) => ({ width: b.width, position: i })),
     bindingWidth: s.bindingWidth,
@@ -106,6 +128,7 @@ export function useFenceRenderer() {
     if (!fabricCanvas) return;
 
     let disposed = false;
+    let rafId: number | null = null;
 
     const applyFence = async () => {
       if (disposed) return;
@@ -152,20 +175,24 @@ export function useFenceRenderer() {
         return;
       }
 
+      const isPreview = useLayoutStore.getState().previewMode;
       const pxPerUnit = getPixelsPerUnit(unitSystem);
       const areas = computeFenceAreas(template, quiltWidth, quiltHeight, pxPerUnit);
       areasRef.current = areas;
 
       // Render each fence area as a Fabric.js Rect
       for (const area of areas) {
+        const fillMap = isPreview ? PREVIEW_FILLS : ROLE_FILLS;
+        const strokeMap = isPreview ? PREVIEW_STROKES : ROLE_STROKES;
+
         const fill =
-          preservedFills[area.id] !== undefined
+          !isPreview && preservedFills[area.id] !== undefined
             ? preservedFills[area.id]
-            : ROLE_FILLS[area.role];
+            : fillMap[area.role];
         const stroke =
-          preservedStrokes[area.id] !== undefined
+          !isPreview && preservedStrokes[area.id] !== undefined
             ? preservedStrokes[area.id]
-            : ROLE_STROKES[area.role];
+            : strokeMap[area.role];
 
         const rect = new fabric.Rect({
           left: area.x,
@@ -175,9 +202,10 @@ export function useFenceRenderer() {
           fill: fill as string | undefined,
           stroke: stroke as string | undefined,
           strokeWidth: area.role === 'binding' ? 1.5 : 0.5,
+          strokeDashArray: isPreview ? [4, 3] : undefined,
           angle: area.rotation ?? 0,
-          selectable: true,
-          evented: true,
+          selectable: !isPreview,
+          evented: !isPreview,
           hasControls: false,
           hasBorders: true,
           lockMovementX: true,
@@ -185,7 +213,7 @@ export function useFenceRenderer() {
           lockRotation: true,
           lockScalingX: true,
           lockScalingY: true,
-          hoverCursor: 'pointer',
+          hoverCursor: isPreview ? 'default' : 'pointer',
           objectCaching: false,
           perPixelTargeting: false,
         });
@@ -198,6 +226,27 @@ export function useFenceRenderer() {
         canvas.add(rect as unknown as FabricObject);
         // Always keep fence areas in back, behind user blocks
         canvas.sendObjectToBack(rect as unknown as FabricObject);
+
+        // Render label text inside fence area (if large enough)
+        if (area.label && area.width > 20 && area.height > 12) {
+          const labelFontSize = Math.max(7, Math.min(11, Math.min(area.width, area.height) * 0.15));
+          const textObj = new fabric.FabricText(area.label, {
+            left: area.x + area.width / 2,
+            top: area.y + area.height / 2,
+            originX: 'center',
+            originY: 'center',
+            fontSize: labelFontSize,
+            fill: isPreview ? 'rgba(74, 63, 53, 0.25)' : 'rgba(74, 63, 53, 0.12)',
+            fontFamily: 'var(--font-sans)',
+            selectable: false,
+            evented: false,
+          });
+          const lr = textObj as unknown as Record<string, unknown>;
+          lr[FENCE_MARKER] = true;
+          lr[FENCE_AREA_ID_PROP] = `${area.id}-label`;
+          lr[FENCE_ROLE_PROP] = area.role;
+          canvas.add(textObj as unknown as FabricObject);
+        }
       }
 
       // Ensure all user blocks stay on top of fence areas
@@ -210,20 +259,35 @@ export function useFenceRenderer() {
       }
 
       canvas.requestRenderAll();
-      useProjectStore.getState().setDirty(true);
+      if (!isPreview) {
+        useProjectStore.getState().setDirty(true);
+      }
     };
 
+    /**
+     * Debounced fence update via requestAnimationFrame.
+     * Rapid state changes (slider ticks) coalesce into a single render,
+     * preventing flicker during continuous adjustments.
+     */
+    const scheduleFenceUpdate = () => {
+      if (disposed) return;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        applyFence();
+      });
+    };
+
+    // Initial render — immediate, no debounce
     applyFence();
 
-    const unsubLayout = useLayoutStore.subscribe(() => {
-      applyFence();
-    });
-    const unsubProject = useProjectStore.subscribe(() => {
-      applyFence();
-    });
+    // Subsequent changes — debounced via rAF
+    const unsubLayout = useLayoutStore.subscribe(scheduleFenceUpdate);
+    const unsubProject = useProjectStore.subscribe(scheduleFenceUpdate);
 
     return () => {
       disposed = true;
+      if (rafId !== null) cancelAnimationFrame(rafId);
       unsubLayout();
       unsubProject();
     };

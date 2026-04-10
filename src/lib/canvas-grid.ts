@@ -36,7 +36,7 @@ function renderDimensionLabels(
   ctx.font = `500 ${fontSize}px Manrope, system-ui, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
-  ctx.fillStyle = '#6B5A4D';
+  ctx.fillStyle = '#6b5d50';
 
   // Width label centered along top edge
   ctx.fillText(widthLabel, quiltWidthPx / 2, -(LABEL_OFFSET / zoom));
@@ -58,7 +58,7 @@ function renderCornerMarks(
   zoom: number
 ): void {
   const len = CORNER_MARK_LENGTH / zoom;
-  ctx.strokeStyle = '#6B5A4D';
+  ctx.strokeStyle = '#6b5d50';
   ctx.lineWidth = 1 / zoom;
 
   const corners = [
@@ -103,7 +103,7 @@ export function renderGrid(
   const panY = vpt[5];
 
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#EDEBE8';
+  ctx.fillStyle = '#f5ede5';
   ctx.fillRect(0, 0, w, h);
 
   // --- Infinite background grid removed as per user request ---
@@ -115,7 +115,7 @@ export function renderGrid(
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, quiltWidthPx, quiltHeightPx);
 
-  ctx.strokeStyle = '#B0ADA8';
+  ctx.strokeStyle = '#b8a698';
   ctx.lineWidth = 1.5 / zoom;
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 

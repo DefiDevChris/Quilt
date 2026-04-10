@@ -59,8 +59,8 @@ export class CanvasErrorBoundary extends Component<
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="flex-1 flex items-center justify-center bg-surface-container-low">
-          <div className="max-w-sm w-full rounded-xl bg-surface p-8 shadow-elevation-3 text-center">
+        <div className="flex-1 flex items-center justify-center bg-neutral-100">
+          <div className="max-w-sm w-full rounded-full bg-neutral p-8 shadow-elevation-2 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-error/10">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-error">
                 <path
@@ -72,20 +72,20 @@ export class CanvasErrorBoundary extends Component<
                 />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-on-surface mb-2">Something went wrong</h2>
-            <p className="text-sm text-secondary mb-6">
+            <h2 className="text-lg font-semibold text-neutral-800 mb-2">Something went wrong</h2>
+            <p className="text-sm text-neutral-500 mb-6">
               The canvas encountered an error. Your work has been auto-saved. You can try reloading
               the canvas to continue.
             </p>
             {this.state.errorMessage && (
-              <p className="mb-4 rounded-md bg-surface-container p-2 text-xs font-mono text-secondary break-words">
+              <p className="mb-4 rounded-full bg-neutral-100 p-2 text-xs font-mono text-neutral-500 break-words">
                 {this.state.errorMessage}
               </p>
             )}
             <button
               type="button"
               onClick={this.handleReload}
-              className="rounded-full bg-on-surface px-6 py-2.5 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-all shadow-elevation-1"
+              className="rounded-full bg-primary px-6 py-2.5 text-[13px] font-semibold tracking-wide text-white hover:opacity-90 transition-all shadow-elevation-2"
             >
               Reload Canvas
             </button>

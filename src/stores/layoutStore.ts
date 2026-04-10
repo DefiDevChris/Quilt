@@ -7,6 +7,8 @@ import { DEFAULT_SASHING_COLOR, DEFAULT_BORDER_COLOR } from '@/lib/constants';
 interface LayoutStoreState {
   layoutType: LayoutType;
   selectedPresetId: string | null;
+  /** Which layout type card is currently expanded in the selector */
+  expandedCardId: string | null;
   rows: number;
   cols: number;
   blockSize: number;
@@ -14,10 +16,14 @@ interface LayoutStoreState {
   borders: BorderConfig[];
   hasCornerstones: boolean;
   bindingWidth: number;
-  creatorMode: 'preset' | 'custom';
+  /** True when fence overlay is in preview mode (40% opacity) */
+  previewMode: boolean;
+  /** True when a layout has been applied (fence is permanent) */
+  hasAppliedLayout: boolean;
 
   setLayoutType: (type: LayoutType) => void;
   setSelectedPreset: (presetId: string | null) => void;
+  setExpandedCardId: (id: string | null) => void;
   setRows: (rows: number) => void;
   setCols: (cols: number) => void;
   setBlockSize: (size: number) => void;
@@ -28,7 +34,11 @@ interface LayoutStoreState {
   removeBorder: (index: number) => void;
   setHasCornerstones: (value: boolean) => void;
   setBindingWidth: (width: number) => void;
-  setCreatorMode: (mode: 'preset' | 'custom') => void;
+  setPreviewMode: (preview: boolean) => void;
+  /** Apply the current layout preview — makes fence permanent */
+  applyLayout: () => void;
+  /** Clear the applied layout — removes fence and resets state */
+  clearLayout: () => void;
   reset: () => void;
 }
 
@@ -52,6 +62,7 @@ function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
 const INITIAL_STATE = {
   layoutType: 'none' as LayoutType,
   selectedPresetId: null as string | null,
+  expandedCardId: null as string | null,
   rows: 3,
   cols: 3,
   blockSize: 6,
@@ -59,7 +70,8 @@ const INITIAL_STATE = {
   borders: [] as BorderConfig[],
   hasCornerstones: true,
   bindingWidth: 0.25,
-  creatorMode: 'preset' as 'preset' | 'custom',
+  previewMode: false,
+  hasAppliedLayout: false,
 };
 
 export const useLayoutStore = create<LayoutStoreState>((set) => ({
@@ -68,6 +80,8 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
   setLayoutType: (layoutType) => set({ layoutType }),
 
   setSelectedPreset: (selectedPresetId) => set({ selectedPresetId }),
+
+  setExpandedCardId: (expandedCardId) => set({ expandedCardId }),
 
   setRows: (rows) => set({ rows: Math.max(1, Math.min(20, rows)) }),
 
@@ -103,7 +117,14 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
   setBindingWidth: (bindingWidth) =>
     set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
 
-  setCreatorMode: (creatorMode) => set({ creatorMode }),
+  setPreviewMode: (previewMode) => set({ previewMode }),
+
+  applyLayout: () => set({ previewMode: false, hasAppliedLayout: true }),
+
+  clearLayout: () =>
+    set({
+      ...INITIAL_STATE,
+    }),
 
   reset: () => set({ ...INITIAL_STATE }),
 }));

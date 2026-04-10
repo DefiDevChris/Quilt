@@ -200,7 +200,7 @@ export function ProfileEditForm() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-secondary text-[11px] font-black uppercase tracking-widest">Signed out</p>
+        <p className="text-neutral-500 text-[11px] font-black uppercase tracking-widest">Signed out</p>
       </div>
     );
   }
@@ -217,7 +217,7 @@ export function ProfileEditForm() {
     <form onSubmit={handleSubmit} className="space-y-16 py-12">
       <div className="space-y-10">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Identity Studio</p>
-        
+
         <AvatarUpload
           avatarPreview={avatarPreview}
           displayName={form.displayName}
@@ -246,9 +246,9 @@ export function ProfileEditForm() {
         </div>
 
         <div>
-           <div className="flex justify-between items-center mb-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-secondary">Aesthetic & Vision (Bio)</label>
-            <span className="text-[10px] font-bold text-secondary/40">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Aesthetic & Vision (Bio)</label>
+            <span className="text-[10px] font-bold text-neutral-500/40">
               {form.bio.length}/{BIO_MAX}
             </span>
           </div>
@@ -257,7 +257,7 @@ export function ProfileEditForm() {
             onChange={(e) => updateField('bio', e.target.value)}
             maxLength={BIO_MAX}
             rows={4}
-            className="w-full px-5 py-4 rounded-2xl bg-white border border-outline-variant/30 text-on-surface text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-secondary/50"
+            className="w-full px-5 py-4 rounded-full bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-neutral-500/50"
             placeholder="Describe your design principles..."
           />
           {fieldErrors.bio && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-2">{fieldErrors.bio}</p>}
@@ -270,28 +270,26 @@ export function ProfileEditForm() {
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
-            className={`rounded-2xl border px-6 py-5 text-left transition-all duration-300 ${
-              form.privacyMode === 'public'
-                ? 'border-primary bg-primary/5 shadow-elevation-1'
-                : 'border-outline-variant/30 bg-white hover:border-outline-variant/60'
-            }`}
+            className={`rounded-full border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'public'
+              ? 'border-primary bg-primary/5 shadow'
+              : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
+              }`}
           >
-            <div className="font-black text-xs uppercase tracking-widest text-on-surface">Open Studio</div>
-            <div className="mt-1 text-[10px] font-bold text-secondary/60 leading-relaxed">
+            <div className="font-black text-xs uppercase tracking-widest text-neutral-800">Open Studio</div>
+            <div className="mt-1 text-[10px] font-bold text-neutral-500/60 leading-relaxed">
               Enable community feed, shared projects, and collaborative insights.
             </div>
           </button>
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
-            className={`rounded-2xl border px-6 py-5 text-left transition-all duration-300 ${
-              form.privacyMode === 'private'
-                ? 'border-primary bg-primary/5 shadow-elevation-1'
-                : 'border-outline-variant/30 bg-white hover:border-outline-variant/60'
-            }`}
+            className={`rounded-full border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'private'
+              ? 'border-primary bg-primary/5 shadow'
+              : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
+              }`}
           >
-            <div className="font-black text-xs uppercase tracking-widest text-on-surface">Private Workshop</div>
-            <div className="mt-1 text-[10px] font-bold text-secondary/60 leading-relaxed">
+            <div className="font-black text-xs uppercase tracking-widest text-neutral-800">Private Workshop</div>
+            <div className="mt-1 text-[10px] font-bold text-neutral-500/60 leading-relaxed">
               Limit visibility. Focus on solitary design and personal archives.
             </div>
           </button>
@@ -300,7 +298,7 @@ export function ProfileEditForm() {
 
       <div className="space-y-8">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Digital Connections</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-surface-container/30 border border-outline-variant/20 rounded-3xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-neutral-container/30 border border-neutral-200/20 rounded-full">
           <FieldInput
             label="Digital Portfolio (Website)"
             value={form.websiteUrl}
@@ -344,13 +342,13 @@ export function ProfileEditForm() {
 
       <div className="flex flex-col gap-4 pt-4">
         {error && (
-          <div className="p-4 rounded-xl bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-full bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="p-4 rounded-xl bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-full bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
             {success}
           </div>
         )}
@@ -358,7 +356,7 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-2xl bg-on-surface text-surface font-black uppercase tracking-[0.2em] text-xs hover:bg-on-surface/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-2 active:scale-[0.98]"
+          className="w-full h-14 rounded-full bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-1 active:scale-[0.98]"
         >
           {isSaving ? 'Synchronizing...' : 'Finalize Studio Identity'}
         </button>
@@ -387,7 +385,7 @@ function AvatarUpload({
   return (
     <div className="flex items-center gap-8 group">
       <label className="relative cursor-pointer">
-        <div className="w-24 h-24 rounded-3xl overflow-hidden ring-4 ring-white shadow-elevation-2 group-hover:shadow-elevation-3 transition-all bg-surface-container-high relative">
+        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white shadow-elevation-1 group-hover:shadow-elevation-2 transition-all bg-neutral-container-high relative">
           {avatarPreview ? (
             <img
               src={avatarPreview}
@@ -396,7 +394,7 @@ function AvatarUpload({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-2xl font-black text-on-surface opacity-20 uppercase tracking-tighter">
+              <span className="text-2xl font-black text-neutral-800 opacity-20 uppercase tracking-tighter">
                 {initials || '?'}
               </span>
             </div>
@@ -420,8 +418,8 @@ function AvatarUpload({
         />
       </label>
       <div>
-        <p className="text-xs font-black text-on-surface uppercase tracking-widest mb-1.5">Profile Signature</p>
-        <p className="text-[10px] font-bold text-secondary/60 uppercase tracking-widest">
+        <p className="text-xs font-black text-neutral-800 uppercase tracking-widest mb-1.5">Profile Signature</p>
+        <p className="text-[10px] font-bold text-neutral-500/60 uppercase tracking-widest">
           {isUploading ? 'Uploading Archive...' : 'Click portrait to update visual identity'}
         </p>
       </div>
@@ -450,7 +448,7 @@ function FieldInput({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-[10px] font-black uppercase tracking-widest text-secondary">{label}</label>
+      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500">{label}</label>
       <input
         type={type}
         value={value}
@@ -458,7 +456,7 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3.5 rounded-2xl bg-white border border-outline-variant/30 text-on-surface text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-secondary/50"
+        className="w-full px-5 py-3.5 rounded-full bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-neutral-500/50"
       />
       {error && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-1">{error}</p>}
     </div>

@@ -29,6 +29,11 @@ export async function performUndo(canvas?: UndoableCanvas | null): Promise<boole
   const c = canvas ?? getCanvas();
   if (!c) return false;
 
+  // Deactivate shade view before undo to prevent stale Pattern references
+  if (useCanvasStore.getState().shadeViewActive) {
+    useCanvasStore.getState().setShadeViewActive(false);
+  }
+
   const currentJson = JSON.stringify(c.toJSON());
   const prevJson = useCanvasStore.getState().popUndo(currentJson);
   if (!prevJson) return false;
@@ -45,6 +50,11 @@ export async function performUndo(canvas?: UndoableCanvas | null): Promise<boole
 export async function performRedo(canvas?: UndoableCanvas | null): Promise<boolean> {
   const c = canvas ?? getCanvas();
   if (!c) return false;
+
+  // Deactivate shade view before redo to prevent stale Pattern references
+  if (useCanvasStore.getState().shadeViewActive) {
+    useCanvasStore.getState().setShadeViewActive(false);
+  }
 
   const currentJson = JSON.stringify(c.toJSON());
   const nextJson = useCanvasStore.getState().popRedo(currentJson);

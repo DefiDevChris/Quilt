@@ -47,9 +47,9 @@ function FaqSection({
             key={cat}
             type="button"
             onClick={() => onCategoryChange(cat)}
-            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-colors ${selectedCategory === cat
-              ? 'bg-on-surface text-surface'
-              : 'bg-surface-container text-secondary hover:text-on-surface'
+            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${selectedCategory === cat
+              ? 'bg-neutral-800 text-neutral'
+              : 'bg-neutral-100 text-neutral-500 hover:text-neutral-800'
               }`}
           >
             {cat === 'all' ? 'All' : FAQ_CATEGORY_LABELS[cat]}
@@ -60,19 +60,19 @@ function FaqSection({
       {/* FAQ items */}
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <p className="text-sm text-secondary py-4">No matching questions found.</p>
+          <p className="text-sm text-neutral-500 py-4">No matching questions found.</p>
         ) : (
           filtered.map((entry) => {
             const isOpen = openId === entry.id;
             return (
               <div
                 key={entry.id}
-                className="border border-outline-variant bg-surface-container rounded-sm overflow-hidden"
+                className="border border-neutral-200 bg-neutral-100 rounded-full overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => toggle(entry.id)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm text-on-surface hover:bg-surface-container/50 transition-colors text-left"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm text-neutral-800 hover:bg-neutral-100/50 transition-colors text-left"
                 >
                   <span className="font-medium">{entry.title}</span>
                   <svg
@@ -92,7 +92,7 @@ function FaqSection({
                   </svg>
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-3 text-sm text-secondary leading-relaxed">
+                  <div className="px-4 pb-3 text-sm text-neutral-500 leading-relaxed">
                     {entry.content}
                   </div>
                 )}
@@ -111,17 +111,17 @@ function VideoTutorialsSection() {
       {VIDEO_TUTORIALS.map((video) => (
         <div
           key={video.id}
-          className="border border-outline-variant bg-surface-container-low rounded-sm overflow-hidden hover:border-black transition-colors"
+          className="border border-neutral-200 bg-neutral-100 rounded-full overflow-hidden hover:border-neutral-900 transition-colors"
         >
           {/* Thumbnail placeholder */}
-          <div className="aspect-video bg-surface-container flex items-center justify-center">
+          <div className="aspect-video bg-neutral-100 flex items-center justify-center">
             <div className="text-center">
               <svg
                 width="32"
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-secondary mx-auto mb-1"
+                className="text-neutral-500 mx-auto mb-1"
               >
                 <polygon
                   points="5 3 19 12 5 21 5 3"
@@ -133,13 +133,13 @@ function VideoTutorialsSection() {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-xs text-secondary">Coming Soon</p>
+              <p className="text-xs text-neutral-500">Coming Soon</p>
             </div>
           </div>
           <div className="p-3">
-            <h4 className="text-sm font-semibold text-on-surface mb-1">{video.title}</h4>
-            <p className="text-xs text-secondary line-clamp-2">{video.description}</p>
-            <span className="text-xs text-secondary mt-1 inline-block">{video.duration}</span>
+            <h4 className="text-sm font-semibold text-neutral-800 mb-1">{video.title}</h4>
+            <p className="text-xs text-neutral-500 line-clamp-2">{video.description}</p>
+            <span className="text-xs text-neutral-500 mt-1 inline-block">{video.duration}</span>
           </div>
         </div>
       ))}
@@ -149,14 +149,14 @@ function VideoTutorialsSection() {
 
 function ContactSection() {
   return (
-    <div className="bg-on-surface text-surface p-8 rounded-sm">
-      <h3 className="text-sm font-black uppercase tracking-[0.1em] mb-2">Contact Support</h3>
+    <div className="bg-neutral-800 text-neutral p-8 rounded-full">
+      <h3 className="text-sm font-bold uppercase tracking-wider mb-2">Contact Support</h3>
       <p className="text-xs opacity-70 mb-6">
         Can&apos;t find what you need? Reach out and we&apos;ll help you out.
       </p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider transition-all hover:bg-surface hover:text-on-surface bg-surface/10 border border-surface/20"
+        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all hover:bg-neutral-100 hover:text-neutral-800 bg-neutral/10 border border-neutral/20"
       >
         <svg
           width="16"
@@ -197,9 +197,9 @@ export function HelpCenterContent() {
     <div>
       {/* Hero */}
       <div className="text-center mb-12">
-        <h1 className="text-[11px] font-black text-secondary uppercase tracking-[0.3em] mb-4">Support Center</h1>
-        <h2 className="text-4xl md:text-5xl font-black text-on-surface tracking-tighter uppercase mb-4">Documentation</h2>
-        <p className="text-secondary text-sm max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
+        <h1 className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-4">Support Center</h1>
+        <h2 className="text-4xl md:text-5xl font-bold text-neutral-800 tracking-tighter uppercase mb-4">Documentation</h2>
+        <p className="text-neutral-500 text-sm max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
       </div>
 
       {/* Search */}
@@ -209,7 +209,7 @@ export function HelpCenterContent() {
           height="20"
           viewBox="0 0 20 20"
           fill="none"
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
         >
           <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.4" />
           <path d="M13 13L18 18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
@@ -219,13 +219,13 @@ export function HelpCenterContent() {
           placeholder="Search for assistance..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant/60 rounded-sm text-on-surface placeholder:text-secondary focus:outline-none focus:border-black text-sm"
+          className="w-full pl-12 pr-4 py-3 bg-neutral border border-neutral-200/60 rounded-full text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 text-sm"
         />
       </div>
 
       {/* FAQ Section */}
       <section className="mb-16">
-        <h2 className="text-[11px] font-black text-secondary uppercase tracking-[0.2em] mb-6">Frequently Asked Questions</h2>
+        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-6">Frequently Asked Questions</h2>
         <FaqSection
           entries={faqResults}
           selectedCategory={selectedCategory}
@@ -235,7 +235,7 @@ export function HelpCenterContent() {
 
       {/* Video Tutorials */}
       <section className="mb-16">
-        <h2 className="text-[11px] font-black text-secondary uppercase tracking-[0.2em] mb-6">Video Tutorials</h2>
+        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-6">Video Tutorials</h2>
         <VideoTutorialsSection />
       </section>
 

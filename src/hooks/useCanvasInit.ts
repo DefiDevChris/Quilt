@@ -6,6 +6,8 @@ import { useProjectStore } from '@/stores/projectStore';
 import { renderGrid } from '@/lib/canvas-grid';
 import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-utils';
 import { applyCustomControls, applyHoverEffects } from '@/lib/fabric-controls';
+import { registerFabricCustomProperties } from '@/lib/fabric-custom-props';
+import { useLayoutStore } from '@/stores/layoutStore';
 import type { Project } from '@/types/project';
 
 export function useCanvasInit(
@@ -23,6 +25,7 @@ export function useCanvasInit(
     let canvasInstance: import('fabric').Canvas | null = null;
 
     (async () => {
+      registerFabricCustomProperties();
       const fabric = await import('fabric');
       if (disposed || !fabricCanvasRef.current || !containerRef.current || !gridCanvasRef.current)
         return;
@@ -73,6 +76,10 @@ export function useCanvasInit(
       // project dimensions from the first paint, not the store's 48×48 defaults.
       useCanvasStore.getState().setUnitSystem(project.unitSystem);
       useCanvasStore.getState().setGridSettings(project.gridSettings);
+      // Restore worktable mode (quilt vs block-builder) if saved
+      if (project.activeWorktable) {
+        useCanvasStore.getState().setActiveWorktable(project.activeWorktable);
+      }
       useProjectStore.getState().setProject({
         id: project.id,
         name: project.name,
@@ -143,6 +150,7 @@ export function useCanvasInit(
 
       const onSelectionCleared = () => {
         useCanvasStore.getState().setSelectedObjectIds([]);
+        useCanvasStore.getState().setSelectedPatch(null);
       };
 
       const onObjectMoving = (e: { target?: import('fabric').FabricObject }) => {
@@ -220,8 +228,82 @@ export function useCanvasInit(
         useProjectStore.getState().setDirty(true);
       };
 
+      // Sub-target click detection for per-piece fabric assignment.
+      // When a user clicks inside a block group, we identify which patch
+      // was hit via Fabric's subTargets array and store it for the UI.
+      const onMouseDown = (e: { target?: unknown; subTargets?: unknown[] }) => {
+        if (!e.target || !e.subTargets || e.subTargets.length === 0) {
+          // Clicked outside a group or on a non-group object — clear patch
+          useCanvasStore.getState().setSelectedPatch(null);
+          return;
+        }
+
+        const targetMeta = e.target as Record<string, unknown>;
+        if (!targetMeta.__isBlockGroup) {
+          // Clicked a non-block object — clear patch
+          useCanvasStore.getState().setSelectedPatch(null);
+          return;
+        }
+
+        const subTarget = e.subTargets[0] as Record<string, unknown>;
+        if (subTarget.__pieceRole === 'patch') {
+          useCanvasStore.getState().setSelectedPatch(subTarget);
+        } else {
+          useCanvasStore.getState().setSelectedPatch(null);
+        }
+      };
+
+      // Patch hover highlighting — shows which piece the cursor is over
+      // inside block groups. Uses a subtle stroke change, restored on leave.
+      let hoveredPatch: import('fabric').FabricObject | null = null;
+      let hoveredPatchPrevStroke: string | null = null;
+      let hoveredPatchPrevStrokeWidth: number | null = null;
+
+      const PATCH_HOVER_STROKE = '#f9a06b';
+      const PATCH_HOVER_STROKE_WIDTH = 2;
+
+      const onPatchHover = (e: { target?: unknown; subTargets?: unknown[] }) => {
+        const newPatch = (() => {
+          if (!e.target || !e.subTargets || e.subTargets.length === 0) return null;
+          const targetMeta = e.target as Record<string, unknown>;
+          if (!targetMeta.__isBlockGroup) return null;
+          const sub = e.subTargets[0] as Record<string, unknown>;
+          if (sub.__pieceRole !== 'patch') return null;
+          return e.subTargets[0] as import('fabric').FabricObject;
+        })();
+
+        // Same patch — nothing to do
+        if (newPatch === hoveredPatch) return;
+
+        // Restore previous patch
+        if (hoveredPatch) {
+          hoveredPatch.set({
+            stroke: hoveredPatchPrevStroke ?? undefined,
+            strokeWidth: hoveredPatchPrevStrokeWidth ?? 0.5,
+          });
+          hoveredPatch = null;
+          hoveredPatchPrevStroke = null;
+          hoveredPatchPrevStrokeWidth = null;
+        }
+
+        // Apply hover to new patch
+        if (newPatch) {
+          hoveredPatchPrevStroke = (newPatch.stroke as string) ?? null;
+          hoveredPatchPrevStrokeWidth = newPatch.strokeWidth ?? 0.5;
+          newPatch.set({
+            stroke: PATCH_HOVER_STROKE,
+            strokeWidth: PATCH_HOVER_STROKE_WIDTH,
+          });
+          hoveredPatch = newPatch;
+        }
+
+        canvas.requestRenderAll();
+      };
+
       canvas.on('after:render', onAfterRender);
       canvas.on('mouse:move', onMouseMove);
+      canvas.on('mouse:move', onPatchHover as never);
+      canvas.on('mouse:down', onMouseDown as never);
       canvas.on('selection:created', onSelectionCreated);
       canvas.on('selection:updated', onSelectionUpdated);
       canvas.on('selection:cleared', onSelectionCleared);
@@ -247,6 +329,38 @@ export function useCanvasInit(
       const canvasDataToLoad = activeWorktable?.canvasData ?? project.canvasData;
 
       if (canvasDataToLoad && Object.keys(canvasDataToLoad).length > 0) {
+        // Restore layout store state if embedded in the canvas data.
+        // This allows the fence renderer to reconstruct the layout on reload.
+        const layoutData = (canvasDataToLoad as Record<string, unknown>).__layoutState as
+          | Record<string, unknown>
+          | undefined;
+        if (layoutData && layoutData.layoutType && layoutData.layoutType !== 'none') {
+          const ls = useLayoutStore.getState();
+          if (layoutData.layoutType)
+            ls.setLayoutType(
+              layoutData.layoutType as
+                | 'none'
+                | 'free-form'
+                | 'grid'
+                | 'sashing'
+                | 'on-point'
+                | 'strippy'
+                | 'medallion'
+            );
+          if (layoutData.selectedPresetId !== undefined)
+            ls.setSelectedPreset(layoutData.selectedPresetId as string | null);
+          if (typeof layoutData.rows === 'number') ls.setRows(layoutData.rows);
+          if (typeof layoutData.cols === 'number') ls.setCols(layoutData.cols);
+          if (typeof layoutData.blockSize === 'number') ls.setBlockSize(layoutData.blockSize);
+          if (layoutData.sashing) ls.setSashing(layoutData.sashing as Record<string, unknown>);
+          if (Array.isArray(layoutData.borders)) ls.setBorders(layoutData.borders);
+          if (typeof layoutData.hasCornerstones === 'boolean')
+            ls.setHasCornerstones(layoutData.hasCornerstones);
+          if (typeof layoutData.bindingWidth === 'number')
+            ls.setBindingWidth(layoutData.bindingWidth);
+          if (layoutData.hasAppliedLayout) ls.applyLayout();
+        }
+
         await canvas.loadFromJSON(canvasDataToLoad);
       }
       canvas.renderAll();
@@ -259,6 +373,7 @@ export function useCanvasInit(
         // Clean up this orphaned canvas instance
         canvas.off('after:render', onAfterRender);
         canvas.off('mouse:move', onMouseMove);
+        canvas.off('mouse:down', onMouseDown as never);
         canvas.off('selection:created', onSelectionCreated);
         canvas.off('selection:updated', onSelectionUpdated);
         canvas.off('selection:cleared', onSelectionCleared);
@@ -288,6 +403,7 @@ export function useCanvasInit(
       if (canvasInstance) {
         canvasInstance.off('after:render');
         canvasInstance.off('mouse:move');
+        canvasInstance.off('mouse:down');
         canvasInstance.off('selection:created');
         canvasInstance.off('selection:updated');
         canvasInstance.off('selection:cleared');

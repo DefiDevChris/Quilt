@@ -87,6 +87,7 @@ function convertResultToFenceAreas(result: LayoutResult, template: LayoutTemplat
     areas.push({
       id: `cell-${cell.row}-${cell.col}`,
       role: 'block-cell',
+      label: 'Block',
       row: cell.row,
       col: cell.col,
       x: cell.centerX - cell.size / 2,
@@ -113,6 +114,7 @@ function convertResultToFenceAreas(result: LayoutResult, template: LayoutTemplat
     areas.push({
       id: `border-${strip.borderIndex}-${strip.side}`,
       role: 'border',
+      label: `Border ${strip.borderIndex + 1}`,
       borderIndex: strip.borderIndex,
       x: strip.x,
       y: strip.y,
@@ -150,6 +152,7 @@ function separateSashingAndCornerstones(
       cornerstoneAreas.push({
         id: `cornerstone-${csIdx}`,
         role: 'cornerstone',
+        label: 'CS',
         x: strip.x,
         y: strip.y,
         width: strip.width,
@@ -161,6 +164,7 @@ function separateSashingAndCornerstones(
       sashingAreas.push({
         id: `sashing-${sashIdx}`,
         role: 'sashing',
+        label: 'Sashing',
         x: strip.x,
         y: strip.y,
         width: strip.width,
@@ -192,6 +196,7 @@ function computeBindingAreas(result: LayoutResult, template: LayoutTemplate): Fe
     {
       id: 'binding-top',
       role: 'binding',
+      label: 'Binding',
       x: ox - bw,
       y: oy - bw,
       width: tw + bw * 2,
@@ -201,6 +206,7 @@ function computeBindingAreas(result: LayoutResult, template: LayoutTemplate): Fe
     {
       id: 'binding-bottom',
       role: 'binding',
+      label: 'Binding',
       x: ox - bw,
       y: oy + th,
       width: tw + bw * 2,
@@ -210,6 +216,7 @@ function computeBindingAreas(result: LayoutResult, template: LayoutTemplate): Fe
     {
       id: 'binding-left',
       role: 'binding',
+      label: 'Binding',
       x: ox - bw,
       y: oy,
       width: bw,
@@ -219,6 +226,7 @@ function computeBindingAreas(result: LayoutResult, template: LayoutTemplate): Fe
     {
       id: 'binding-right',
       role: 'binding',
+      label: 'Binding',
       x: ox + tw,
       y: oy,
       width: bw,
@@ -295,6 +303,7 @@ function computeStrippyAreas(template: LayoutTemplate, pxPerUnit: number): Fence
         areas.push({
           id: `cell-${r}-${colIdx}`,
           role: 'block-cell',
+          label: 'Block',
           row: r,
           col: colIdx,
           x: xOffset,
@@ -311,6 +320,7 @@ function computeStrippyAreas(template: LayoutTemplate, pxPerUnit: number): Fence
       areas.push({
         id: `sashing-strip-${c}`,
         role: 'sashing',
+        label: 'Strip',
         x: xOffset,
         y: 0,
         width: stripPx,
@@ -336,6 +346,7 @@ function computeMedallionAreas(template: LayoutTemplate, pxPerUnit: number): Fen
   areas.push({
     id: 'cell-0-0',
     role: 'block-cell',
+    label: 'Center',
     row: 0,
     col: 0,
     x: totalBorderWidth,
@@ -386,6 +397,7 @@ function computeMedallionAreas(template: LayoutTemplate, pxPerUnit: number): Fen
       areas.push({
         id: `border-${i}-${side}`,
         role: 'border',
+        label: `Border ${i + 1}`,
         borderIndex: i,
         x,
         y,

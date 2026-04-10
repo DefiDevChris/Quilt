@@ -15,9 +15,9 @@
 // ── Theme tokens (aligned with QuiltCorgi design system) ──
 
 const CONTROL_COLOR = '#FFFFFF';
-const CONTROL_BORDER = '#D4883C'; // primary warm orange
-const CONTROL_BORDER_HOVER = '#E07B67'; // coral accent
-const SELECTION_BORDER = '#D4883C';
+const CONTROL_BORDER = '#f9a06b'; // primary warm orange
+const CONTROL_BORDER_HOVER = '#f9a06b'; // coral accent
+const SELECTION_BORDER = '#f9a06b';
 const SELECTION_BORDER_DASH: number[] = []; // solid line
 
 const CORNER_SIZE = 10;
@@ -27,7 +27,7 @@ const CORNER_PADDING = 6;
 
 const ROTATION_OFFSET_Y = -30;
 const ROTATION_HANDLE_RADIUS = 6;
-const ROTATION_LINE_COLOR = '#D4883C';
+const ROTATION_LINE_COLOR = '#f9a06b';
 const ROTATION_LINE_WIDTH = 1;
 
 const MIDPOINT_WIDTH = 8;

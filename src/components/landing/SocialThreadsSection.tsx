@@ -8,30 +8,30 @@ import Image from 'next/image';
 function SocialThreadsScreenshot() {
   return (
     <div className="relative">
-      <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
+      <div className="bg-surface rounded-full shadow-elevation-4 border border-neutral-200">
         {/* App content */}
-        <div className="bg-warm-surface min-h-[420px] relative overflow-hidden">
+        <div className="bg-surface-container min-h-[420px] relative">
           {/* Background orbs (matching SocialLayout) */}
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-200/50 rounded-full blur-[60px] pointer-events-none" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-red-200/50  pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50  pointer-events-none" />
 
           <div className="relative z-10 p-4 space-y-4 max-w-lg mx-auto">
             {/* Post 1 */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
+            <div className="bg-surface p-5 border border-neutral-200 rounded-full shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-surface bg-primary flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   S
                 </div>
                 <div>
                   <h4 className="font-bold text-on-surface text-sm">Sarah Mitchell</h4>
-                  <p className="text-xs text-secondary/80">@sarah_quilts • 2h ago</p>
+                  <p className="text-xs text-on-surface/50">@sarah_quilts • 2h ago</p>
                 </div>
               </div>
               <p className="text-on-surface mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The fussy cut feature helped me position the
+                Finally finished my Ohio Star quilt! The per-patch fabric assignment helped me position the
                 center motifs perfectly 🌟
               </p>
-              <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
+              <div className="rounded-full border border-neutral-200 mb-3">
                 <Image
                   src="/images/quilts/gallery_quilt_one_1775440540412.png"
                   alt="Ohio Star Quilt"
@@ -41,13 +41,13 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-rose-500 bg-rose-50/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-red-500 bg-red-50/50">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
                   24
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
                   <svg
                     width="18"
                     height="18"
@@ -60,7 +60,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   8
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
                   <svg
                     width="18"
                     height="18"
@@ -81,21 +81,21 @@ function SocialThreadsScreenshot() {
             </div>
 
             {/* Post 2 */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/60 shadow-elevation-1">
+            <div className="bg-surface p-5 border border-neutral-200 rounded-full shadow-elevation-1">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-surface bg-purple-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
                   M
                 </div>
                 <div>
                   <h4 className="font-bold text-on-surface text-sm">Modern Quilter</h4>
-                  <p className="text-xs text-secondary/80">@modern_q • 5h ago</p>
+                  <p className="text-xs text-on-surface/50">@modern_q • 5h ago</p>
                 </div>
               </div>
               <p className="text-on-surface mb-3 text-sm leading-relaxed">
                 Playing with improv piecing on this one. Love how the layout tool lets me visualize
                 different arrangements!
               </p>
-              <div className="rounded-2xl overflow-hidden border border-white/50 mb-3">
+              <div className="rounded-full border border-neutral-200 mb-3">
                 <Image
                   src="/images/quilts/gallery_quilt_five_1775440598069.png"
                   alt="Improv Quilt"
@@ -105,7 +105,7 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
                   <svg
                     width="18"
                     height="18"
@@ -118,7 +118,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   42
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
                   <svg
                     width="18"
                     height="18"
@@ -131,7 +131,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   15
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold text-secondary/80 hover:bg-white/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
                   <svg
                     width="18"
                     height="18"
@@ -167,18 +167,18 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="glass-panel rounded-xl p-4 flex items-start gap-3 hover:shadow-elevation-3 transition-all">
-      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center text-warm-peach flex-shrink-0">
+    <div className="bg-surface rounded-full border border-neutral-200 p-4 flex items-start gap-3 transition-all">
+      <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-primary flex-shrink-0">
         {icon}
       </div>
       <div>
         <h4
-          className="font-bold text-warm-text text-sm mb-1"
+          className="font-bold text-on-surface text-sm mb-1"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           {title}
         </h4>
-        <p className="text-xs text-warm-text-secondary leading-relaxed">{description}</p>
+        <p className="text-xs text-on-surface/70 leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -188,11 +188,11 @@ export default function SocialThreadsSection() {
   return (
     <section
       id="social-threads"
-      className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden"
+      className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative"
     >
       {/* Background gradient orbs */}
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-orange-200/20 to-rose-200/20 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 -translate-x-1/3" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-warm-peach/10 to-warm-golden/10 rounded-full blur-[80px] pointer-events-none translate-y-1/2 translate-x-1/3" />
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-orange-200/20 pointer-events-none -translate-y-1/2 -translate-x-1/3" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 pointer-events-none translate-y-1/2 translate-x-1/3" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -205,16 +205,16 @@ export default function SocialThreadsSection() {
             className="space-y-6"
           >
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-warm-text leading-tight"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-on-surface leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
-              <span className="block bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+              <span className="block text-primary">
                 Who Get It
               </span>
             </h2>
 
-            <p className="text-lg text-warm-text-secondary leading-relaxed">
+            <p className="text-lg text-on-surface/70 leading-relaxed">
               Share your latest creations, discover inspiration from fellow quilters, and build
               connections that spark new ideas. Whether you&apos;re looking for feedback on your
               color palette or just want to show off your finished masterpiece — this is your
@@ -298,7 +298,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-bold text-lg shadow-elevation-3 hover:shadow-elevation-4 hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white rounded-full font-bold text-lg shadow-elevation-3 hover:opacity-90 transition-all"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +310,7 @@ export default function SocialThreadsSection() {
                   />
                 </svg>
               </Link>
-              <span className="text-sm text-warm-text-muted self-center">
+              <span className="text-sm text-on-surface/50 self-center">
                 Join thousands of quilters already sharing
               </span>
             </div>

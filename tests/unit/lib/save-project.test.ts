@@ -286,7 +286,7 @@ describe('save-project', () => {
       expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith(
         'test-project',
         expect.objectContaining({
-          canvasData: { version: '1.0', objects: [] },
+          canvasData: expect.objectContaining({ version: '1.0', objects: [] }),
           unitSystem: 'imperial',
           gridSettings: { enabled: true, size: 1, snapToGrid: true },
         })

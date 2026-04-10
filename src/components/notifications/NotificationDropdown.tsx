@@ -28,7 +28,7 @@ const ERROR_ICON = (
 );
 
 const WARNING_ICON = (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-amber-500 shrink-0">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-warning shrink-0">
     <path
       d="M10 2L1.5 17h17L10 2z"
       stroke="currentColor"
@@ -41,7 +41,7 @@ const WARNING_ICON = (
 );
 
 const INFO_ICON = (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-secondary shrink-0">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-neutral-500 shrink-0">
     <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
     <path d="M10 6v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <circle cx="10" cy="14" r="0.75" fill="currentColor" />
@@ -150,11 +150,11 @@ export function NotificationDropdown() {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-surface shadow-elevation-3 rounded-xl z-50"
+      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-neutral shadow-elevation-3 rounded-full z-50"
       role="menu"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-outline-variant">
-        <h3 className="font-semibold text-on-surface">Notifications</h3>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200">
+        <h3 className="font-semibold text-neutral-800">Notifications</h3>
         <button
           type="button"
           onClick={markAllAsRead}
@@ -165,9 +165,9 @@ export function NotificationDropdown() {
       </div>
 
       {isLoading && notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-secondary text-sm">Loading...</div>
+        <div className="px-4 py-8 text-center text-neutral-500 text-sm">Loading...</div>
       ) : notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-secondary text-sm">No notifications yet</div>
+        <div className="px-4 py-8 text-center text-neutral-500 text-sm">No notifications yet</div>
       ) : (
         <div>
           {notificationsList.map((notification, index) => (
@@ -175,22 +175,20 @@ export function NotificationDropdown() {
               key={notification.id}
               type="button"
               onClick={() => handleNotificationClick(notification)}
-              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-surface-container transition-colors ${
-                !notification.isRead ? 'border-l-2 border-primary' : ''
-              } ${index < notificationsList.length - 1 ? 'border-b border-outline-variant' : ''}`}
+              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-neutral-100 transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
+                } ${index < notificationsList.length - 1 ? 'border-b border-neutral-200' : ''}`}
               role="menuitem"
             >
               <div className="mt-0.5">{getNotificationIcon(notification.type)}</div>
               <div className="flex-1 min-w-0">
                 <p
-                  className={`text-sm ${
-                    notification.isRead ? 'text-secondary' : 'font-medium text-on-surface'
-                  }`}
+                  className={`text-sm ${notification.isRead ? 'text-neutral-500' : 'font-medium text-neutral-800'
+                    }`}
                 >
                   {notification.title}
                 </p>
-                <p className="text-sm text-secondary line-clamp-2 mt-0.5">{notification.message}</p>
-                <p className="text-xs text-secondary mt-1">
+                <p className="text-sm text-neutral-500 line-clamp-2 mt-0.5">{notification.message}</p>
+                <p className="text-xs text-neutral-500 mt-1">
                   {formatRelativeTime(notification.createdAt)}
                 </p>
               </div>

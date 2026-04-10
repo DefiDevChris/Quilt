@@ -15,7 +15,7 @@
  * Pure computation — zero DOM / React / Fabric.js dependencies.
  */
 
-import type { Point2D, CorrectedPiece, Rect } from '@/lib/photo-layout-types';
+import type { Point2D, Rect } from '@/lib/photo-layout-types';
 
 // ============================================================================
 // Configuration
@@ -85,11 +85,7 @@ function extractEdges(contour: readonly Point2D[], pieceIndex: number): Edge[] {
  * Shared if: distance(a0, b1) < tol AND distance(a1, b0) < tol
  * OR: distance(a0, b0) < tol AND distance(a1, b1) < tol
  */
-function edgesAreShared(
-  a: Edge,
-  b: Edge,
-  tolerance: number
-): boolean {
+function edgesAreShared(a: Edge, b: Edge, tolerance: number): boolean {
   const tolSq = tolerance * tolerance;
 
   // Forward match: a.from ≈ b.from and a.to ≈ b.to
@@ -129,10 +125,7 @@ function edgeLength(edge: Edge): number {
  * Find all shared edges between all pieces.
  * Returns an array of shared edges with canonical (averaged) coordinates.
  */
-function findSharedEdges(
-  allEdges: Edge[][],
-  tolerance: number
-): SharedEdge[] {
+function findSharedEdges(allEdges: Edge[][], tolerance: number): SharedEdge[] {
   const sharedEdges: SharedEdge[] = [];
 
   for (let i = 0; i < allEdges.length; i++) {
@@ -143,26 +136,25 @@ function findSharedEdges(
             // Compute canonical edge = average of corresponding endpoints.
             // For forward-matched edges (same direction): a.from ↔ b.from, a.to ↔ b.to
             // For reverse-matched edges (opposite direction): a.from ↔ b.to, a.to ↔ b.from
-            const isReverse =
-              distSq(edgeA.from, edgeB.from) > distSq(edgeA.from, edgeB.to);
+            const isReverse = distSq(edgeA.from, edgeB.from) > distSq(edgeA.from, edgeB.to);
             const canonicalFrom = isReverse
               ? {
-                x: (edgeA.from.x + edgeB.to.x) / 2,
-                y: (edgeA.from.y + edgeB.to.y) / 2,
-              }
+                  x: (edgeA.from.x + edgeB.to.x) / 2,
+                  y: (edgeA.from.y + edgeB.to.y) / 2,
+                }
               : {
-                x: (edgeA.from.x + edgeB.from.x) / 2,
-                y: (edgeA.from.y + edgeB.from.y) / 2,
-              };
+                  x: (edgeA.from.x + edgeB.from.x) / 2,
+                  y: (edgeA.from.y + edgeB.from.y) / 2,
+                };
             const canonicalTo = isReverse
               ? {
-                x: (edgeA.to.x + edgeB.from.x) / 2,
-                y: (edgeA.to.y + edgeB.from.y) / 2,
-              }
+                  x: (edgeA.to.x + edgeB.from.x) / 2,
+                  y: (edgeA.to.y + edgeB.from.y) / 2,
+                }
               : {
-                x: (edgeA.to.x + edgeB.to.x) / 2,
-                y: (edgeA.to.y + edgeB.to.y) / 2,
-              };
+                  x: (edgeA.to.x + edgeB.to.x) / 2,
+                  y: (edgeA.to.y + edgeB.to.y) / 2,
+                };
 
             // Check if this edge is long enough to matter
             const len = Math.sqrt(distSq(canonicalFrom, canonicalTo));
@@ -191,10 +183,7 @@ function findSharedEdges(
  * Snap piece vertices to shared canonical edge vertices.
  * Mutates the contour arrays in place.
  */
-function snapPiecesToSharedEdges(
-  contours: Point2D[][],
-  sharedEdges: readonly SharedEdge[]
-): void {
+function snapPiecesToSharedEdges(contours: Point2D[][], sharedEdges: readonly SharedEdge[]): void {
   for (const shared of sharedEdges) {
     // Snap piece A's edge vertices to canonical
     snapContourVertex(contours[shared.pieceIndexA], shared.canonicalFrom, EDGE_SNAP_TOLERANCE);
@@ -209,11 +198,7 @@ function snapPiecesToSharedEdges(
 /**
  * Snap the closest vertex in a contour to a target point.
  */
-function snapContourVertex(
-  contour: Point2D[],
-  target: Point2D,
-  tolerance: number
-): void {
+function snapContourVertex(contour: Point2D[], target: Point2D, tolerance: number): void {
   let bestIndex = -1;
   let bestDistSq = tolerance * tolerance;
 
@@ -237,10 +222,7 @@ function snapContourVertex(
 /**
  * Snap pieces that touch the canvas boundary to the exact boundary.
  */
-function snapToBoundary(
-  contours: Point2D[][],
-  canvasBounds: Rect
-): void {
+function snapToBoundary(contours: Point2D[][], canvasBounds: Rect): void {
   const { x: bx, y: by, width: bw, height: bh } = canvasBounds;
   const right = bx + bw;
   const bottom = by + bh;
@@ -283,11 +265,7 @@ function snapToBoundary(
  * For the MVP, we use a simpler approach: find pieces with
  * vertices near the gap and push the nearest vertex toward the gap.
  */
-function fillGaps(
-  contours: Point2D[][],
-  canvasBounds: Rect,
-  cellSize: number = 10
-): void {
+function fillGaps(contours: Point2D[][], canvasBounds: Rect, cellSize: number = 10): void {
   // Build a simple occupancy grid
   const gridW = Math.ceil(canvasBounds.width / cellSize);
   const gridH = Math.ceil(canvasBounds.height / cellSize);
@@ -312,7 +290,7 @@ function fillGaps(
         // Check if this cell is surrounded by occupied cells
         // (internal gap, not outside canvas)
         const surrounded =
-          (gx === 0 || gy === 0 || gx === gridW - 1 || gy === gridH - 1)
+          gx === 0 || gy === 0 || gx === gridW - 1 || gy === gridH - 1
             ? false
             : hasOccupiedNeighbor(occupied, gx, gy, gridW, gridH);
 
@@ -370,7 +348,12 @@ function hasOccupiedNeighbor(
   gridW: number,
   gridH: number
 ): boolean {
-  const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  const dirs = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
   for (const [dx, dy] of dirs) {
     const nx = gx + dx;
     const ny = gy + dy;
@@ -428,10 +411,7 @@ function simplifyContours(contours: Point2D[][]): void {
  * @param canvasBounds - Canvas bounding box
  * @returns The same contours array, mutated
  */
-export function snapEdges(
-  contours: Point2D[][],
-  canvasBounds: Rect
-): Point2D[][] {
+export function snapEdges(contours: Point2D[][], canvasBounds: Rect): Point2D[][] {
   // Step 1: Extract all edges
   const allEdges = contours.map((c, i) => extractEdges(c, i));
 
@@ -454,10 +434,7 @@ export function snapEdges(
  * Snap a single piece's contour to a target bounding box.
  * Useful for sashing strips, borders, and binding.
  */
-export function snapToRect(
-  contour: Point2D[],
-  target: Rect
-): Point2D[] {
+export function snapToRect(contour: Point2D[], target: Rect): Point2D[] {
   const { x, y, width, height } = target;
 
   // Snap each vertex to the nearest edge of the target rect

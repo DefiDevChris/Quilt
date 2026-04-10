@@ -8,7 +8,6 @@ import type {
   PipelineStep,
   Point2D,
   QuiltDetectionConfig,
-  QuiltStructure,
 } from '@/lib/photo-layout-types';
 import { DEFAULT_QUILT_DETECTION_CONFIG } from '@/lib/photo-layout-types';
 import {
@@ -17,7 +16,6 @@ import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
-import { terminateDetectionWorker } from '@/lib/photo-layout-utils';
 
 /**
  * Stores a lightweight reference to the corrected image instead of raw ImageData.
@@ -51,8 +49,6 @@ interface PhotoLayoutState {
   lockAspectRatio: boolean;
   scaledPieces: readonly ScaledPiece[];
   scanConfig: QuiltDetectionConfig;
-  quiltStructure: QuiltStructure | null;
-  shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null;
 
   setStep: (step: PhotoLayoutStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
@@ -66,10 +62,6 @@ interface PhotoLayoutState {
   setLockAspectRatio: (locked: boolean) => void;
   setScaledPieces: (pieces: readonly ScaledPiece[]) => void;
   setScanConfig: (config: QuiltDetectionConfig) => void;
-  setQuiltStructure: (structure: QuiltStructure | null) => void;
-  setShapeCorrection: (
-    correction: import('@/lib/photo-layout-types').ShapeCorrectionResult | null
-  ) => void;
   reset: () => void;
 }
 
@@ -88,8 +80,6 @@ const initialState = {
   lockAspectRatio: true,
   scaledPieces: [] as readonly ScaledPiece[],
   scanConfig: DEFAULT_QUILT_DETECTION_CONFIG,
-  quiltStructure: null as QuiltStructure | null,
-  shapeCorrection: null as import('@/lib/photo-layout-types').ShapeCorrectionResult | null,
 };
 
 /**
@@ -136,16 +126,10 @@ export const usePhotoLayoutStore = create<PhotoLayoutState>((set, get) => ({
 
   setScanConfig: (config) => set({ scanConfig: config }),
 
-  setQuiltStructure: (structure) => set({ quiltStructure: structure }),
-
-  setShapeCorrection: (correction: import('@/lib/photo-layout-types').ShapeCorrectionResult | null) =>
-    set({ shapeCorrection: correction }),
-
   reset: () => {
     const { originalImageUrl, correctedImageRef } = get();
     revokeUrl(originalImageUrl);
     revokeUrl(correctedImageRef?.url);
-    terminateDetectionWorker();
     set({ ...initialState });
   },
 }));

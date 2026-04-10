@@ -25,7 +25,7 @@ const csp = [
   "default-src 'self'",
   // Scripts: self + Next.js inline runtime + Stripe.js
   // NEXT_PUBLIC_DEV_CSP is set during development (replaces unreliable NODE_ENV check)
-  `script-src 'self' 'unsafe-inline'${process.env.NEXT_PUBLIC_DEV_CSP === 'true' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${process.env.NEXT_PUBLIC_DEV_CSP === 'true' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
   // Styles: self + inline styles (required by Fabric.js and Tailwind)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Fonts: self + Google Fonts

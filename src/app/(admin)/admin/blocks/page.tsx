@@ -84,14 +84,14 @@ export default function AdminBlocksPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">System Blocks</h1>
+          <h1 className="text-2xl font-bold text-neutral-800">System Blocks</h1>
           <p className="text-sm text-secondary mt-1">
             Manage the quilt block library available to all users
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white font-medium hover:opacity-90 transition-opacity"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -105,14 +105,14 @@ export default function AdminBlocksPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
       ) : blocks.length === 0 ? (
-        <div className="glass-panel rounded-2xl p-12 text-center">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-12 text-center">
           <p className="text-secondary">No blocks yet. Create your first block!</p>
         </div>
       ) : (
         <>
-          <div className="rounded-xl border border-outline-variant overflow-hidden">
+          <div className="rounded-full border border-neutral-200 overflow-hidden">
             <table className="w-full">
-              <thead className="bg-surface-container-high">
+              <thead className="bg-neutral-100">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                     Block
@@ -131,9 +131,9 @@ export default function AdminBlocksPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant/30 bg-surface">
+              <tbody className="divide-y divide-neutral-200/30 bg-neutral">
                 {blocks.map((block) => (
-                  <tr key={block.id} className="hover:bg-surface-container-low transition-colors">
+                  <tr key={block.id} className="hover:bg-neutral-100 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {block.thumbnailUrl ? (
@@ -141,17 +141,17 @@ export default function AdminBlocksPage() {
                           <img
                             src={block.thumbnailUrl}
                             alt=""
-                            className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg bg-primary-container/40 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
                             </svg>
                           </div>
                         )}
                         <div className="min-w-0">
-                          <p className="font-medium text-on-surface truncate">{block.name}</p>
+                          <p className="font-medium text-neutral-800 truncate">{block.name}</p>
                           {block.subcategory && (
                             <p className="text-xs text-secondary">{block.subcategory}</p>
                           )}
@@ -166,7 +166,7 @@ export default function AdminBlocksPage() {
                         {block.tags.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className="text-xs px-1.5 py-0.5 rounded bg-primary-container/40 text-secondary"
+                            className="text-xs px-1.5 py-0.5 rounded-full bg-primary/10 text-secondary"
                           >
                             {tag}
                           </span>
@@ -217,7 +217,7 @@ export default function AdminBlocksPage() {
                     setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-full border border-neutral-200 text-sm font-medium text-secondary hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -229,7 +229,7 @@ export default function AdminBlocksPage() {
                     }))
                   }
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-full border border-neutral-200 text-sm font-medium text-secondary hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -350,16 +350,16 @@ function BlockFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm overflow-y-auto py-8">
-      <div className="glass-elevated rounded-2xl p-6 max-w-2xl w-full mx-4 space-y-5">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 overflow-y-auto py-8">
+      <div className="bg-neutral border border-neutral-200 rounded-full p-6 max-w-2xl w-full mx-4 space-y-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-on-surface">
+          <h3 className="text-lg font-semibold text-neutral-800">
             {isEditing ? 'Edit Block' : 'Create New Block'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-white/50 transition-colors"
+            className="p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
           >
             <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -368,7 +368,7 @@ function BlockFormModal({
         </div>
 
         {error && (
-          <div className="rounded-xl px-4 py-3 text-sm font-medium bg-red-50 text-red-800 border border-red-200">
+          <div className="rounded-full px-4 py-3 text-sm font-medium bg-error/10 text-error border border-error/20">
             {error}
           </div>
         )}
@@ -376,42 +376,42 @@ function BlockFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-on-surface">Name *</label>
+              <label className="text-sm font-medium text-neutral-800">Name *</label>
               <input
                 required
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+                className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-on-surface">Category *</label>
+              <label className="text-sm font-medium text-neutral-800">Category *</label>
               <input
                 required
                 type="text"
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+                className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">Subcategory</label>
+            <label className="text-sm font-medium text-neutral-800">Subcategory</label>
             <input
               type="text"
               name="subcategory"
               value={formData.subcategory}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">
+            <label className="text-sm font-medium text-neutral-800">
               SVG Data {isEditing ? '(leave blank to keep current)' : '*'}
             </label>
             <textarea
@@ -419,31 +419,31 @@ function BlockFormModal({
               value={formData.svgData}
               onChange={handleChange}
               rows={5}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-mono text-sm"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral font-mono text-sm"
               placeholder="<svg viewBox=&quot;0 0 300 300&quot;>...</svg>"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">Tags (comma separated)</label>
+            <label className="text-sm font-medium text-neutral-800">Tags (comma separated)</label>
             <input
               type="text"
               name="tagsStr"
               value={formData.tagsStr}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
               placeholder="traditional, nine-patch, beginner"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">Thumbnail URL</label>
+            <label className="text-sm font-medium text-neutral-800">Thumbnail URL</label>
             <input
               type="text"
               name="thumbnailUrl"
               value={formData.thumbnailUrl}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
             />
           </div>
 
@@ -451,14 +451,14 @@ function BlockFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-white/50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-neutral-100 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
+              className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Block' : 'Create Block'}
             </button>

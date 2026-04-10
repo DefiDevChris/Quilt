@@ -91,43 +91,43 @@ export function BillingSection() {
       </div>
 
       {successMessage && (
-        <div className="rounded-2xl border border-success/30 bg-success/5 p-5 animate-in fade-in slide-in-from-top-2">
-          <p className="text-sm font-black text-success uppercase tracking-widest">{successMessage}</p>
+        <div className="rounded-full border border-success/30 bg-success/5 p-5 animate-in fade-in slide-in-from-top-2">
+          <p className="text-sm font-semibold text-success">{successMessage}</p>
         </div>
       )}
 
       {isPastDue && (
-        <div className="rounded-2xl border border-error/30 bg-error/5 p-6 space-y-4">
+        <div className="rounded-full border border-error/30 bg-error/5 p-6 space-y-4">
           <div>
-            <h3 className="text-xs font-black text-error uppercase tracking-widest mb-1">Administrative Alert: Payment Failed</h3>
-            <p className="text-[11px] font-bold text-secondary leading-relaxed uppercase tracking-wider opacity-70">
-              Your last synchronization with our payment gateway was unsuccessful. Please update your studio record within 7 business days to maintain Pro status.
+            <h3 className="text-sm font-semibold text-error mb-1">Payment Failed</h3>
+            <p className="text-sm text-neutral-700 leading-relaxed">
+              Your last payment was unsuccessful. Please update your payment method within 7 days to maintain Pro status.
             </p>
           </div>
           <button
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="rounded-xl bg-error text-white px-6 py-2.5 text-[10px] font-black uppercase tracking-widest hover:bg-error/90 transition-all disabled:opacity-50"
+            className="rounded-full bg-error text-white px-6 py-2.5 text-sm font-semibold hover:bg-error/90 transition-all disabled:opacity-50"
           >
-            {isPortalLoading ? 'Synchronizing...' : 'Update Records'}
+            {isPortalLoading ? 'Updating...' : 'Update Payment Method'}
           </button>
         </div>
       )}
 
       {/* Current plan status */}
-      <div className="rounded-3xl border border-outline-variant/30 bg-white p-8 space-y-6 shadow-elevation-1">
+      <div className="rounded-full border border-neutral-200 bg-neutral p-8 space-y-6 shadow-elevation-1">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-60">Current Membership</p>
+            <p className="text-xs font-medium text-neutral-600">Current Membership</p>
             <div className="flex items-center gap-3">
-              <span className={`text-2xl font-black uppercase tracking-tighter ${isPro ? 'text-primary' : 'text-on-surface'}`}>
-                {isPro ? 'Pro Member' : 'Standard Member'}
+              <span className={`text-2xl font-semibold ${isPro ? 'text-primary' : 'text-neutral-900'}`}>
+                {isPro ? 'Pro Member' : 'Free Member'}
               </span>
               {isLoading ? (
                 <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               ) : (
-                <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-success animate-pulse' : 'bg-secondary/30'}`} />
+                <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-success animate-pulse' : 'bg-neutral-400'}`} />
               )}
             </div>
           </div>
@@ -137,20 +137,20 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-xl border border-outline-variant/50 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-surface-container transition-all"
+              className="rounded-full border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
             >
-              {isPortalLoading ? 'Opening Portal...' : 'Manage Subscription'}
+              {isPortalLoading ? 'Opening...' : 'Manage Subscription'}
             </button>
           )}
         </div>
 
         {isPro && subscription && (
-          <div className="pt-6 border-t border-outline-variant/10 flex items-center justify-between">
+          <div className="pt-6 border-t border-neutral-200 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-60">
+              <p className="text-xs text-neutral-600">
                 {isCanceling ? 'Access Expiration' : 'Next Billing Cycle'}
               </p>
-              <p className="text-sm font-black text-on-surface">
+              <p className="text-sm font-semibold text-neutral-900">
                 {new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -158,9 +158,8 @@ export function BillingSection() {
                 })}
               </p>
             </div>
-            <div className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${
-              subscription.status === 'active' ? 'bg-success/10 text-success' : 'bg-secondary/10 text-secondary'
-            }`}>
+            <div className={`px-3 py-1 rounded-full text-xs font-medium ${subscription.status === 'active' ? 'bg-success/10 text-success' : 'bg-neutral-100 text-neutral-600'
+              }`}>
               {subscription.status}
             </div>
           </div>
@@ -169,54 +168,52 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-[40px] bg-on-surface text-surface p-10 space-y-8 shadow-elevation-4 relative overflow-hidden group">
+        <div className="rounded-full bg-neutral-900 text-neutral p-10 space-y-8 shadow-elevation-4 relative overflow-hidden">
           {/* Subtle accent line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
             <div className="space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Upgrade Required</p>
-              <h3 className="text-4xl font-black uppercase tracking-tighter leading-none italic">Unveil the Full Studio.</h3>
-              <p className="text-sm font-bold opacity-60 max-w-sm uppercase tracking-wider leading-relaxed">
-                Unlock professional-grade export formats, unlimited archiving, and the complete material library.
+              <p className="text-xs font-semibold tracking-wide text-primary">Upgrade to Pro</p>
+              <h3 className="text-4xl font-bold leading-tight">Unlock the Full Studio.</h3>
+              <p className="text-sm text-neutral-300 max-w-sm leading-relaxed">
+                Unlock professional-grade exports, unlimited projects, and the complete material library.
               </p>
             </div>
 
             <div className="text-right space-y-4">
-               {/* Billing toggle */}
-              <div className="flex items-center gap-1 bg-surface/10 rounded-xl p-1 w-fit ml-auto border border-surface/5">
+              {/* Billing toggle */}
+              <div className="flex items-center gap-1 bg-neutral-800 rounded-full p-1 w-fit ml-auto border border-neutral-700">
                 <button
                   type="button"
                   onClick={() => setBillingInterval('monthly')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                    billingInterval === 'monthly' ? 'bg-surface text-on-surface' : 'text-surface/60 hover:text-surface'
-                  }`}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${billingInterval === 'monthly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                    }`}
                 >
                   Monthly
                 </button>
                 <button
                   type="button"
                   onClick={() => setBillingInterval('yearly')}
-                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                    billingInterval === 'yearly' ? 'bg-surface text-on-surface' : 'text-surface/60 hover:text-surface'
-                  }`}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${billingInterval === 'yearly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                    }`}
                 >
                   Yearly
-                  <span className="ml-2 text-[8px] text-primary">-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
+                  <span className="ml-2 text-[10px] text-primary">-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
                 </button>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-end justify-end gap-1">
-                  <span className="text-4xl font-black">
+                  <span className="text-4xl font-bold">
                     ${billingInterval === 'monthly' ? PRO_PRICE_MONTHLY : PRO_PRICE_YEARLY}
                   </span>
-                  <span className="text-[10px] font-black opacity-40 uppercase tracking-widest mb-2">
+                  <span className="text-xs text-neutral-400 mb-2">
                     /{billingInterval === 'monthly' ? 'mo' : 'yr'}
                   </span>
                 </div>
                 {billingInterval === 'yearly' && (
-                  <p className="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">
+                  <p className="text-xs text-neutral-500">
                     ${(PRO_PRICE_YEARLY / 12).toFixed(2)} / month billed annually
                   </p>
                 )}
@@ -228,9 +225,9 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="w-full h-16 rounded-2xl bg-primary text-on-surface font-black uppercase tracking-[0.3em] text-sm hover:brightness-110 transition-all disabled:opacity-50 shadow-elevation-2 active:scale-[0.98] relative z-10"
+            className="w-full h-16 rounded-full bg-primary text-neutral-900 font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-2 active:scale-[0.98] relative z-10"
           >
-            {isCheckoutLoading ? 'Initializing Secure Payment...' : 'Authorize Pro Access'}
+            {isCheckoutLoading ? 'Processing...' : 'Upgrade to Pro'}
           </button>
         </div>
       )}
@@ -239,28 +236,28 @@ export function BillingSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8">
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <p className="text-[10px] font-black uppercase tracking-widest text-secondary/40">Tier 01</p>
-            <h4 className="text-sm font-black uppercase tracking-widest text-on-surface">Standard Archive</h4>
+            <p className="text-xs font-medium text-neutral-500">Free Plan</p>
+            <h4 className="text-sm font-semibold text-neutral-900">Standard Access</h4>
           </div>
           <ul className="space-y-4">
             {[
-              'Comprehensive Studio Toolset',
-              '20 Essential Layout Blocks',
-              '10 Curated Textures',
-              'Global Studio Feed Access',
-              'Standard Documentation'
+              'Design Studio with core tools',
+              '20 essential layout blocks',
+              '10 curated fabric swatches',
+              'Community feed access',
+              'Local project storage'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-[11px] font-bold text-secondary uppercase tracking-widest opacity-60">
-                <div className="w-1.5 h-1.5 rounded-full bg-outline-variant" />
+              <li key={item} className="flex items-center gap-3 text-sm text-neutral-700">
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                 {item}
               </li>
             ))}
             {[
-              'Unlimited Project Persistence',
-              'High-Resolution Exports',
-              'Full Material Library'
+              'Unlimited projects',
+              'High-resolution exports',
+              'Full 2,700+ fabric library'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-[11px] font-bold text-secondary/20 uppercase tracking-widest line-through decoration-1">
+              <li key={item} className="flex items-center gap-3 text-sm text-neutral-400 line-through">
                 {item}
               </li>
             ))}
@@ -269,21 +266,21 @@ export function BillingSection() {
 
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">Tier 02</p>
-            <h4 className="text-sm font-black uppercase tracking-widest text-primary">Pro Collective</h4>
+            <p className="text-xs font-medium text-primary">Pro Plan</p>
+            <h4 className="text-sm font-semibold text-primary">Pro Collective</h4>
           </div>
           <ul className="space-y-4">
-             <li className="text-[11px] font-black text-on-surface uppercase tracking-widest">Everything in Standard, plus:</li>
+            <li className="text-sm font-semibold text-neutral-900">Everything in Free, plus:</li>
             {[
-              'Unlimited Project persistence',
-              'Complete 500+ Block Library',
-              'Full Material Library + Custom Uploads',
-              'SVG, PDF, & High-Res PNG Exports',
-              'Advanced Photo-to-Quilt Vision AI',
-              'Interactive FPP & Cutting Charts',
-              'Studio Material Estimator'
+              'Unlimited project storage',
+              'Complete 50-block library + custom blocks',
+              'Full 2,700+ fabric library + custom uploads',
+              'SVG, PDF, & high-resolution PNG exports',
+              'Photo-to-Design pipeline',
+              'Print-ready 1:1 scale PDF patterns',
+              'Server-side project sync'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-[11px] font-black text-on-surface uppercase tracking-widest">
+              <li key={item} className="flex items-center gap-3 text-sm font-medium text-neutral-900">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                 {item}
               </li>

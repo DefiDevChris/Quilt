@@ -9,19 +9,6 @@ export interface Rect {
   readonly height: number;
 }
 
-/**
- * Role of a piece within the quilt structure.
- * Used in post-processing after grid detection.
- */
-export type PieceRole =
-  | 'block'
-  | 'sashing'
-  | 'cornerstone'
-  | 'border'
-  | 'binding'
-  | 'setting-triangle'
-  | 'unknown';
-
 export interface DetectedPiece {
   readonly id: string;
   readonly contour: readonly Point2D[];
@@ -40,10 +27,6 @@ export interface DetectedPiece {
    * Luminance value (0-255) used for value classification
    */
   readonly luminance?: number;
-  /** Role of this piece in the quilt structure */
-  readonly role?: PieceRole;
-  /** Grid cell assignment (row/col, 0-indexed) */
-  readonly blockCell?: { readonly row: number; readonly col: number };
 }
 
 export interface ScaledPiece {
@@ -56,8 +39,6 @@ export interface ScaledPiece {
   readonly finishedWidthNum: number;
   readonly finishedHeightNum: number;
   readonly dominantColor: string;
-  /** Role of this piece in the quilt structure */
-  readonly role?: PieceRole;
 }
 
 export type PipelineStepStatus = 'pending' | 'running' | 'complete' | 'error';
@@ -86,17 +67,7 @@ export interface PipelineStep {
   readonly message?: string;
 }
 
-export type PhotoLayoutStep =
-  | 'upload'
-  | 'imagePrep'
-  | 'scanSettings'
-  | 'quiltDetails'
-  | 'correction'
-  | 'processing'
-  | 'results'
-  | 'structureReview'
-  | 'dimensions'
-  | 'complete';
+export type PhotoLayoutStep = 'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'complete';
 
 /**
  * Types of non-rectangular quilt shapes supported.
@@ -132,12 +103,6 @@ export interface DetectedPieceWithEdgeInfo extends DetectedPiece {
   readonly edgeSides: readonly ('top' | 'bottom' | 'left' | 'right' | 'other')[];
   /** Extra seam allowance needed for edge pieces (0.25" for trimming) */
   readonly extraSeamAllowance: number;
-}
-
-export interface QuiltSizePreset {
-  readonly label: string;
-  readonly width: number;
-  readonly height: number;
 }
 
 // ============================================================================
@@ -303,12 +268,6 @@ export interface QuiltDetectionConfig {
    * - 'large': Raises the minimum contour area threshold
    */
   pieceScale: 'tiny' | 'standard' | 'large';
-
-  /**
-   * Shape of the quilt (for non-rectangular quilts).
-   * Used to calculate edge pieces and bounding box.
-   */
-  quiltShape: QuiltShapeType;
 }
 
 /**
@@ -320,7 +279,6 @@ export const DEFAULT_QUILT_DETECTION_CONFIG: QuiltDetectionConfig = {
   hasLowContrastSeams: false,
   hasHeavyTopstitching: false,
   pieceScale: 'standard',
-  quiltShape: 'rectangular',
 };
 
 // ============================================================================
@@ -366,168 +324,4 @@ export interface DetectedPieceWithHierarchy extends DetectedPiece {
   readonly hasChildren: boolean;
   /** True if this piece has a parent (is a child/appliqué) */
   readonly isApplique: boolean;
-}
-
-// ============================================================================
-// Shape Matching & Block Auto-Correction Types
-// ============================================================================
-
-/**
- * Canonical shape signature for a block SVG.
- * Computed once per block, used for fast matching against detected pieces.
- */
-export interface BlockSignature {
-  /** Block ID, e.g. "01_nine_patch" */
-  readonly blockId: string;
-  /** Display name, e.g. "Nine Patch" */
-  readonly displayName: string;
-  /** Number of patches in the block */
-  readonly patchCount: number;
-  /** Distribution of vertex counts: e.g. { 3: 4, 4: 5 } = 4 triangles, 5 quads */
-  readonly vertexDistribution: ReadonlyMap<number, number>;
-  /** Adjacency graph: which patches share edges (pair indices) */
-  readonly adjacencyPairs: readonly Readonly<[number, number]>[];
-  /** Relative areas of each patch (normalized so sum = 1.0) */
-  readonly relativeAreas: readonly number[];
-  /** Whether the block has curved paths (true for Drunkard's Path, Dresden Plate, etc.) */
-  readonly hasCurves: boolean;
-  /** The raw SVG string for this block */
-  readonly svgData: string;
-}
-
-/**
- * Result of matching a detected block cell against the block library.
- */
-export interface BlockMatchResult {
-  /** Matched block ID, e.g. "01_nine_patch" */
-  readonly blockId: string;
-  /** Display name */
-  readonly displayName: string;
-  /** Confidence score 0.0–1.0 */
-  readonly confidence: number;
-  /** Mapping: detected piece index → SVG patch index */
-  readonly pieceToPatchMapping: readonly number[];
-}
-
-/**
- * A block cell — a group of detected pieces that occupy one grid cell.
- */
-export interface DetectedBlockCell {
-  /** Grid cell key, e.g. "0,0" */
-  readonly cellKey: string;
-  /** Row index */
-  readonly row: number;
-  /** Col index */
-  readonly col: number;
-  /** Piece IDs in this cell */
-  readonly pieceIds: readonly string[];
-  /** Cell bounding box in pixels */
-  readonly boundsPx: Rect;
-}
-
-/**
- * Corrected piece after shape matching and edge snapping.
- * Replaces raw detected pieces in the import pipeline.
- */
-export interface CorrectedPiece {
-  readonly id: string;
-  /** Contour in pixels (post-correction) */
-  readonly contourPx: readonly Point2D[];
-  /** Source: 'block-svg' if matched to known block, 'detected' if raw CV */
-  readonly source: 'block-svg' | 'detected' | 'snapped';
-  /** If source is 'block-svg', which block and which patch */
-  readonly blockRef?: {
-    readonly blockId: string;
-    readonly patchIndex: number;
-  };
-  readonly role: PieceRole;
-  readonly dominantColor: string;
-}
-
-/**
- * Result of the shape correction pipeline.
- */
-export interface ShapeCorrectionResult {
-  /** Block cell matches (cell key → match result) */
-  readonly blockMatches: ReadonlyMap<string, BlockMatchResult>;
-  /** Corrected pieces for all cells (matched + unmatched) */
-  readonly correctedPieces: readonly CorrectedPiece[];
-  /** Cells that didn't match any known block (fallback to raw) */
-  readonly unmatchedCellKeys: readonly string[];
-}
-
-// ============================================================================
-// Quilt Structure Detection Types (Post-processing phase)
-// ============================================================================
-
-export interface BlockCell {
-  readonly row: number;
-  readonly col: number;
-  readonly centerPx: Point2D;
-  readonly pieceIds: readonly string[];
-  readonly rotation: 0 | 90 | 180 | 270;
-  readonly mirrored: boolean;
-}
-
-export interface QuiltGrid {
-  readonly rows: number;
-  readonly cols: number;
-  readonly blockWidthPx: number;
-  readonly blockHeightPx: number;
-  readonly isOnPoint: boolean;
-  readonly cells: readonly BlockCell[];
-  readonly gridOrigin: Point2D;
-}
-
-export interface BlockTemplatePiece {
-  readonly label: string;
-  readonly contourRelative: readonly Point2D[];
-  readonly dominantColor: string;
-  readonly role: 'block';
-  readonly quantityPerBlock: number;
-  readonly quantityTotal: number;
-}
-
-export interface BlockTemplate {
-  readonly name: string;
-  readonly pieces: readonly BlockTemplatePiece[];
-  readonly finishedBlockWidth: number;
-  readonly finishedBlockHeight: number;
-  readonly blockCount: number;
-}
-
-export interface SashingInfo {
-  readonly detected: boolean;
-  readonly widthInches: number;
-  readonly color: string;
-  readonly hasCornerStones: boolean;
-  readonly cornerStoneColor?: string;
-  readonly totalSashingLength: number;
-}
-
-export interface BorderLayer {
-  readonly widthInches: number;
-  readonly color: string;
-  readonly cornerStyle: 'mitered' | 'butted' | 'cornerstones';
-}
-
-export interface BorderInfo {
-  readonly detected: boolean;
-  readonly layers: readonly BorderLayer[];
-}
-
-export interface BindingInfo {
-  readonly detected: boolean;
-  readonly color: string;
-  readonly widthInches: number;
-  readonly perimeterInches: number;
-}
-
-export interface QuiltStructure {
-  readonly grid: QuiltGrid | null;
-  readonly sashing: SashingInfo;
-  readonly borders: BorderInfo;
-  readonly binding: BindingInfo;
-  readonly blockTemplate: BlockTemplate | null;
-  readonly pieceRoles: Map<string, PieceRole>;
 }

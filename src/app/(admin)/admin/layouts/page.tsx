@@ -101,14 +101,14 @@ export default function AdminLayoutsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Layout Templates</h1>
+          <h1 className="text-2xl font-bold text-neutral-800">Layout Templates</h1>
           <p className="text-sm text-secondary mt-1">
             Manage quilt layout templates available in the studio
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white font-medium hover:opacity-90 transition-opacity"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -122,14 +122,14 @@ export default function AdminLayoutsPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
       ) : layouts.length === 0 ? (
-        <div className="glass-panel rounded-2xl p-12 text-center">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-12 text-center">
           <p className="text-secondary">No layout templates yet. Create your first layout!</p>
         </div>
       ) : (
         <>
-          <div className="rounded-xl border border-outline-variant overflow-hidden">
+          <div className="rounded-full border border-neutral-200 overflow-hidden">
             <table className="w-full">
-              <thead className="bg-surface-container-high">
+              <thead className="bg-neutral-100">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                     Name
@@ -148,20 +148,20 @@ export default function AdminLayoutsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant/30 bg-surface">
+              <tbody className="divide-y divide-neutral-200/30 bg-neutral">
                 {layouts.map((layout) => (
-                  <tr key={layout.id} className="hover:bg-surface-container-low transition-colors">
+                  <tr key={layout.id} className="hover:bg-neutral-100 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary-container/40 flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
                           </svg>
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-on-surface truncate">{layout.name}</p>
+                          <p className="font-medium text-neutral-800 truncate">{layout.name}</p>
                           {layout.isDefault && (
-                            <span className="text-xs px-1.5 py-0.5 rounded bg-primary-container/40 text-secondary">
+                            <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/10 text-secondary">
                               System
                             </span>
                           )}
@@ -175,13 +175,13 @@ export default function AdminLayoutsPage() {
                       <button
                         type="button"
                         onClick={() => handleTogglePublish(layout.id, layout.isPublished)}
-                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors ${layout.isPublished ? 'bg-primary' : 'bg-primary-container/60'
+                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors ${layout.isPublished ? 'bg-primary' : 'bg-primary/30'
                           }`}
                         role="switch"
                         aria-checked={layout.isPublished}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-elevation-1 transition-transform ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
                             }`}
                         />
                       </button>
@@ -227,7 +227,7 @@ export default function AdminLayoutsPage() {
                     setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-full border border-neutral-200 text-sm font-medium text-secondary hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -239,7 +239,7 @@ export default function AdminLayoutsPage() {
                     }))
                   }
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-lg border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-full border border-neutral-200 text-sm font-medium text-secondary hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -350,16 +350,16 @@ function LayoutFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm overflow-y-auto py-8">
-      <div className="glass-elevated rounded-2xl p-6 max-w-2xl w-full mx-4 space-y-5">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 overflow-y-auto py-8">
+      <div className="bg-neutral border border-neutral-200 rounded-full p-6 max-w-2xl w-full mx-4 space-y-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-on-surface">
+          <h3 className="text-lg font-semibold text-neutral-800">
             {isEditing ? 'Edit Layout' : 'Create New Layout'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-white/50 transition-colors"
+            className="p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
           >
             <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -368,7 +368,7 @@ function LayoutFormModal({
         </div>
 
         {error && (
-          <div className="rounded-xl px-4 py-3 text-sm font-medium bg-red-50 text-red-800 border border-red-200">
+          <div className="rounded-full px-4 py-3 text-sm font-medium bg-error/10 text-error border border-error/20">
             {error}
           </div>
         )}
@@ -376,24 +376,24 @@ function LayoutFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-on-surface">Name *</label>
+              <label className="text-sm font-medium text-neutral-800">Name *</label>
               <input
                 required
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+                className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
                 placeholder="e.g. Classic Nine-Patch"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-on-surface">Category</label>
+              <label className="text-sm font-medium text-neutral-800">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface"
+                className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral"
               >
                 <option value="straight">Straight Set</option>
                 <option value="sashing">Sashing</option>
@@ -406,7 +406,7 @@ function LayoutFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">
+            <label className="text-sm font-medium text-neutral-800">
               Template Data (JSON) *
             </label>
             <textarea
@@ -415,19 +415,19 @@ function LayoutFormModal({
               value={formData.templateDataJson}
               onChange={handleChange}
               rows={6}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-mono text-xs"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral font-mono text-xs"
               placeholder='{"shapes": [...]}'
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-on-surface">Thumbnail SVG</label>
+            <label className="text-sm font-medium text-neutral-800">Thumbnail SVG</label>
             <textarea
               name="thumbnailSvg"
               value={formData.thumbnailSvg}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-mono text-xs"
+              className="w-full px-3 py-2 border border-neutral-200 rounded-full bg-neutral font-mono text-xs"
               placeholder='<svg viewBox="0 0 100 100">...</svg>'
             />
           </div>
@@ -438,18 +438,18 @@ function LayoutFormModal({
                 type="checkbox"
                 checked={formData.isDefault}
                 onChange={(e) => setFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
-                className="rounded border-outline-variant"
+                className="rounded-full border-neutral-200"
               />
-              <span className="text-sm text-on-surface">System Default</span>
+              <span className="text-sm text-neutral-800">System Default</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.isPublished}
                 onChange={(e) => setFormData((prev) => ({ ...prev, isPublished: e.target.checked }))}
-                className="rounded border-outline-variant"
+                className="rounded-full border-neutral-200"
               />
-              <span className="text-sm text-on-surface">Published</span>
+              <span className="text-sm text-neutral-800">Published</span>
             </label>
           </div>
 
@@ -457,14 +457,14 @@ function LayoutFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-white/50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-secondary rounded-full hover:bg-neutral-100 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
+              className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full disabled:opacity-50 hover:opacity-90 transition-opacity"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Layout' : 'Create Layout'}
             </button>

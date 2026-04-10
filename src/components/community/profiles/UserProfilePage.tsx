@@ -48,7 +48,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
   if (error || !profile) {
     return (
       <div className="text-center py-20">
-        <p className="text-secondary">{error ?? 'Profile not found.'}</p>
+        <p className="text-neutral-500">{error ?? 'Profile not found.'}</p>
       </div>
     );
   }
@@ -66,7 +66,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       <header className="relative flex flex-col md:flex-row items-center md:items-start gap-12">
         <div className="relative group shrink-0">
           {profile.avatarUrl ? (
-            <div className="relative w-48 h-48 rounded-3xl overflow-hidden ring-1 ring-outline-variant/30 shadow-elevation-2 transition-all group-hover:shadow-elevation-4 group-hover:-translate-y-1 duration-500">
+            <div className="relative w-48 h-48 rounded-full overflow-hidden ring-1 ring-outline-variant/30 shadow-elevation-1 transition-all group-hover:shadow-elevation-3 group-hover:-translate-y-1 duration-500">
               <Image
                 src={profile.avatarUrl}
                 alt={profile.displayName}
@@ -76,7 +76,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               />
             </div>
           ) : (
-            <div className="w-48 h-48 rounded-3xl bg-surface-container-high border border-outline-variant/30 shadow-elevation-1 flex items-center justify-center text-on-surface ring-1 ring-outline-variant/10 group-hover:shadow-elevation-3 transition-all duration-500">
+            <div className="w-48 h-48 rounded-full bg-neutral-container-high border border-neutral-200/30 shadow-elevation-1 flex items-center justify-center text-neutral-800 ring-1 ring-outline-variant/10 group-hover:shadow-elevation-2 transition-all duration-500">
               <span className="text-6xl font-black uppercase tracking-tighter opacity-20">
                 {getInitials(profile.displayName)}
               </span>
@@ -85,7 +85,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
           {isOwner && (
             <Link
               href="/settings"
-              className="absolute -bottom-2 -right-2 p-3 bg-white rounded-2xl shadow-elevation-2 border border-outline-variant/50 text-primary hover:text-primary-dark transition-all hover:scale-110 z-20 group/edit"
+              className="absolute -bottom-2 -right-2 p-3 bg-neutral rounded-full shadow-elevation-1 border border-neutral-200/50 text-primary hover:text-neutral-800 transition-all hover:scale-110 z-20 group/edit"
               title="Edit Profile"
             >
               <Pencil size={18} strokeWidth={2.5} className="group-hover/edit:rotate-12 transition-transform" />
@@ -100,7 +100,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
             transition={{ duration: 0.5 }}
           >
             <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-8 mb-4">
-              <h1 className="text-5xl font-black text-on-surface tracking-tighter leading-none uppercase">
+              <h1 className="text-4xl font-bold text-neutral-900 tracking-tight leading-tight">
                 {profile.displayName}
               </h1>
               {!isOwner && (
@@ -108,12 +108,12 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               )}
             </div>
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <p className="px-3 py-1 bg-surface-container-high text-primary font-mono text-[10px] tracking-[0.2em] uppercase font-black rounded-lg">
+              <p className="px-3 py-1 bg-neutral-100 text-neutral-700 text-sm font-medium">
                 @{profile.username}
               </p>
               {profile.isPro && (
-                <span className="px-2 py-0.5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest rounded-md">
-                  Pro Collective
+                <span className="px-2 py-0.5 border border-primary/30 text-primary text-xs font-medium">
+                  Pro Member
                 </span>
               )}
             </div>
@@ -126,20 +126,20 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
             className="space-y-6"
           >
             {profile.bio && (
-              <p className="text-on-surface/80 text-lg leading-relaxed max-w-2xl font-medium italic">
-                "{profile.bio}"
+              <p className="text-neutral-700 text-base leading-relaxed max-w-2xl">
+                {profile.bio}
               </p>
             )}
 
-            <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-8 gap-y-4 text-[10px] font-black text-secondary uppercase tracking-[0.2em]">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-6 gap-y-3 text-sm text-neutral-600">
               {profile.location && (
-                <span className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-error/40" />
+                <span className="flex items-center gap-2">
+                  <MapPin size={14} />
                   {profile.location}
                 </span>
               )}
-              <span className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+              <span className="flex items-center gap-2">
+                <Calendar size={14} />
                 Joined {joinDate}
               </span>
               {profile.websiteUrl && (
@@ -147,10 +147,10 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                   href={profile.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-on-surface hover:text-secondary transition-colors group"
+                  className="flex items-center gap-2 text-primary hover:opacity-80 transition-colors"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-on-surface/20 group-hover:bg-on-surface transition-colors" />
-                  Studio Site
+                  <Globe size={14} />
+                  Website
                 </a>
               )}
             </div>
@@ -163,42 +163,42 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         </div>
       </header>
 
-      {/* Studio Analytics Bar */}
-      <div className="grid grid-cols-3 gap-8 py-10 border-y border-outline-variant/20">
+      {/* Stats Bar */}
+      <div className="grid grid-cols-3 gap-8 py-8 border-y border-neutral-200">
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-50">Archives</p>
-          <p className="text-3xl font-black text-on-surface tracking-tighter">{pagination?.total ?? 0}</p>
+          <p className="text-xs font-medium text-neutral-500">Projects</p>
+          <p className="text-3xl font-bold text-neutral-900">{pagination?.total ?? 0}</p>
         </div>
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-50">Collective</p>
-          <p className="text-3xl font-black text-on-surface tracking-tighter">{profile.followerCount}</p>
+          <p className="text-xs font-medium text-neutral-500">Followers</p>
+          <p className="text-3xl font-bold text-neutral-900">{profile.followerCount}</p>
         </div>
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-50">Observing</p>
-          <p className="text-3xl font-black text-on-surface tracking-tighter">{profile.followingCount}</p>
+          <p className="text-xs font-medium text-neutral-500">Following</p>
+          <p className="text-3xl font-bold text-neutral-900">{profile.followingCount}</p>
         </div>
       </div>
 
       {/* Content Navigation */}
-      <div className="flex items-center gap-8 border-b border-outline-variant/10">
+      <div className="flex items-center gap-8 border-b border-neutral-200">
         <button
           onClick={() => setActiveTab('posts')}
-          className={`relative pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'posts' ? 'text-on-surface' : 'text-secondary opacity-40 hover:opacity-100'
+          className={`relative pb-4 text-sm font-medium transition-all ${activeTab === 'posts' ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'
             }`}
         >
-          Studio Feed
+          Projects
           {activeTab === 'posts' && (
-            <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-on-surface" />
+            <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('about')}
-          className={`relative pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'about' ? 'text-on-surface' : 'text-secondary opacity-40 hover:opacity-100'
+          className={`relative pb-4 text-sm font-medium transition-all ${activeTab === 'about' ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'
             }`}
         >
-          Studio Details
+          About
           {activeTab === 'about' && (
-            <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-on-surface" />
+            <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
           )}
         </button>
       </div>
@@ -208,18 +208,18 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         {activeTab === 'posts' && (
           <>
             {posts.length === 0 ? (
-              <div className="text-center py-24 border-2 border-dashed border-outline-variant/20 rounded-[40px] space-y-6">
-                <p className="text-sm font-bold text-secondary uppercase tracking-widest opacity-40">
+              <div className="text-center py-24 border border-dashed border-neutral-200 space-y-6">
+                <p className="text-sm text-neutral-500">
                   {isOwner
-                    ? "The archive is currently empty."
-                    : "No public records found."}
+                    ? "You haven't shared any projects yet."
+                    : "No public projects found."}
                 </p>
                 {isOwner && (
                   <Link
                     href="/dashboard"
-                    className="inline-flex h-14 items-center px-10 bg-on-surface text-surface rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-elevation-2"
+                    className="inline-flex h-12 items-center px-8 bg-primary text-white text-sm font-semibold hover:opacity-90 transition-all"
                   >
-                    Initiate First Design
+                    Start Your First Project
                   </Link>
                 )}
               </div>
@@ -240,9 +240,9 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                     <button
                       onClick={loadMore}
                       disabled={isLoading}
-                      className="px-12 py-4 border border-outline-variant/50 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-on-surface hover:bg-surface-container transition-all disabled:opacity-50"
+                      className="px-8 py-3 border border-neutral-300 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-all disabled:opacity-50"
                     >
-                      {isLoading ? 'Synchronizing...' : 'Load Archived Records'}
+                      {isLoading ? 'Loading...' : 'Load More'}
                     </button>
                   </div>
                 )}
@@ -281,9 +281,9 @@ function FollowButton({ username, initialFollowing }: FollowButtonProps) {
   return (
     <button
       onClick={handleFollow}
-      className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-widest transition-all shadow-elevation-1 ${following
-        ? 'bg-surface-container border border-outline-variant text-secondary hover:bg-error/10 hover:text-error hover:border-error/20'
-        : 'bg-on-surface text-surface hover:bg-on-surface/90'
+      className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all ${following
+        ? 'bg-neutral-100 border border-neutral-300 text-neutral-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200'
+        : 'bg-primary text-white hover:opacity-90'
         }`}
     >
       {following ? 'Following' : 'Follow'}
@@ -310,29 +310,29 @@ interface PostCardProps {
 
 function PostCard({ post }: PostCardProps) {
   return (
-    <article className="bg-surface border border-outline-variant/30 rounded-3xl overflow-hidden hover:shadow-elevation-4 transition-all duration-500 group">
+    <article className="bg-neutral border border-neutral-200 overflow-hidden hover:shadow-elevation-3 transition-all group">
       <Link href={`/socialthreads/${post.id}`} className="block">
         {post.thumbnailUrl ? (
-          <div className="relative w-full aspect-[4/3] bg-surface-container-high overflow-hidden">
+          <div className="relative w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, 384px"
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
               unoptimized
             />
           </div>
         ) : (
-          <div className="w-full aspect-[4/3] bg-surface-container-high flex items-center justify-center">
-            <span className="text-4xl text-on-surface/10 font-black">STUDIO</span>
+          <div className="w-full aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+            <span className="text-2xl text-neutral-300 font-medium">STUDIO</span>
           </div>
         )}
       </Link>
 
       <div className="p-4">
         <Link href={`/socialthreads/${post.id}`}>
-          <h3 className="text-sm font-black text-on-surface uppercase tracking-tight line-clamp-1 mb-1 hover:text-secondary transition-colors">
+          <h3 className="text-sm font-semibold text-neutral-900 line-clamp-1 mb-1 hover:text-primary transition-colors">
             {post.title}
           </h3>
         </Link>
@@ -346,7 +346,7 @@ function PostCard({ post }: PostCardProps) {
           />
           <Link
             href={`/socialthreads/${post.id}`}
-            className="flex items-center gap-1 text-sm text-secondary hover:text-on-surface transition-colors"
+            className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-800 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -358,7 +358,7 @@ function PostCard({ post }: PostCardProps) {
             </svg>
             {post.commentCount}
           </Link>
-          <span className="text-xs text-secondary ml-auto">
+          <span className="text-xs text-neutral-500 ml-auto">
             {formatRelativeTime(post.createdAt)}
           </span>
         </div>
@@ -386,21 +386,21 @@ function AboutTab({
     <div className="space-y-12 max-w-2xl">
       {profile.bio && (
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary opacity-50">Studio Philosophy</h3>
-          <p className="text-lg text-on-surface/80 leading-relaxed font-medium">{profile.bio}</p>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 opacity-50">Studio Philosophy</h3>
+          <p className="text-lg text-neutral-800/80 leading-relaxed font-medium">{profile.bio}</p>
         </div>
       )}
 
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary opacity-50">Operational Details</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 opacity-50">Operational Details</h3>
         <div className="space-y-3">
           {profile.location && (
-            <div className="flex items-center gap-3 text-on-surface text-[11px] font-black uppercase tracking-widest">
-              <div className="w-1 h-1 rounded-full bg-on-surface/30" />
+            <div className="flex items-center gap-3 text-neutral-800 text-[11px] font-black uppercase tracking-widest">
+              <div className="w-1 h-1 rounded-full bg-primary/30" />
               <span>{profile.location}</span>
             </div>
           )}
-          <div className="flex items-center gap-3 text-secondary text-[11px] font-black uppercase tracking-widest">
+          <div className="flex items-center gap-3 text-neutral-500 text-[11px] font-black uppercase tracking-widest">
             <div className="w-1 h-1 rounded-full bg-secondary/30" />
             <span>
               Commissioned{' '}
@@ -414,7 +414,7 @@ function AboutTab({
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary opacity-50">Communication</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 opacity-50">Communication</h3>
         <SocialLinks profile={profile} />
       </div>
     </div>
@@ -461,7 +461,7 @@ function SocialLinks({
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[11px] font-black uppercase tracking-widest text-on-surface border border-outline-variant/30 px-4 py-2 hover:bg-on-surface hover:text-surface transition-all"
+          className="text-[11px] font-black uppercase tracking-widest text-neutral-800 border border-neutral-200/30 px-4 py-2 hover:bg-primary hover:text-white transition-all"
         >
           {link.label}
         </a>

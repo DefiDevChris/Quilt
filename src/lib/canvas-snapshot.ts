@@ -185,7 +185,22 @@ function extractPiece(obj: Record<string, unknown>): PieceSnapshot | null {
     svgData = (obj.toSVG as () => string)();
   }
 
-  const fill = str(obj, 'fill', '#888888');
+  // Handle both string fills and fabric.Pattern objects.
+  // Pattern fills are objects with a `source` property (image element).
+  const rawFill = obj.fill;
+  let fill: string;
+  if (typeof rawFill === 'string') {
+    fill = rawFill || '#b8a698';
+  } else if (rawFill && typeof rawFill === 'object') {
+    // fabric.Pattern — try to extract a representative color.
+    // The actual pattern image renders correctly in captureCanvasPng().
+    // For structured data (yardage, cutting charts), we use fabricId below.
+    const patternObj = rawFill as Record<string, unknown>;
+    const sourceEl = patternObj.source as { src?: string } | undefined;
+    fill = sourceEl?.src ? `pattern:${sourceEl.src}` : '#b8a698';
+  } else {
+    fill = '#b8a698';
+  }
   const fabricId = str(obj, 'fabricId') || undefined;
 
   const width = num(obj, 'width') * num(obj, 'scaleX', 1);

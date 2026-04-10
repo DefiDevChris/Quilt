@@ -25,14 +25,14 @@ function ContextualHelpSection() {
 
   return (
     <section className="mb-5">
-      <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-2">
+      <h3 className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-2">
         About this tool
       </h3>
-      <div className="bg-surface-container rounded-md p-3">
-        <div className="text-body-sm font-medium text-on-surface capitalize mb-1">
+      <div className="bg-neutral-100 rounded-full p-3">
+        <div className="text-body-sm font-medium text-neutral-800 capitalize mb-1">
           {activeTool} tool
         </div>
-        <p className="text-body-sm text-secondary leading-relaxed">{help}</p>
+        <p className="text-body-sm text-neutral-500 leading-relaxed">{help}</p>
       </div>
     </section>
   );
@@ -41,23 +41,23 @@ function ContextualHelpSection() {
 function ShortcutsSection() {
   return (
     <section className="mb-5">
-      <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-2">
+      <h3 className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-2">
         Keyboard Shortcuts
       </h3>
-      <div className="bg-surface-container rounded-md overflow-hidden">
+      <div className="bg-neutral-100 rounded-full overflow-hidden">
         <table className="w-full text-body-sm">
           <tbody>
             {KEYBOARD_SHORTCUTS.map((shortcut) => (
               <tr
                 key={shortcut.key}
-                className="border-b border-outline-variant/[0.08] last:border-0"
+                className="border-b border-neutral-200/[0.08] last:border-0"
               >
-                <td className="px-3 py-1.5 text-secondary w-[120px]">
-                  <span className="font-mono bg-surface-container-high px-1.5 py-0.5 rounded-sm text-on-surface">
+                <td className="px-3 py-1.5 text-neutral-500 w-[120px]">
+                  <span className="font-mono bg-neutral-200 px-1.5 py-0.5 rounded-full text-neutral-800">
                     {shortcut.label}
                   </span>
                 </td>
-                <td className="px-3 py-1.5 text-on-surface">{shortcut.description}</td>
+                <td className="px-3 py-1.5 text-neutral-800">{shortcut.description}</td>
               </tr>
             ))}
           </tbody>
@@ -82,26 +82,26 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
 
   return (
     <section className="mb-5">
-      <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-2">
+      <h3 className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-2">
         FAQ
       </h3>
       {Object.entries(grouped).map(([category, categoryEntries]) => (
         <div key={category} className="mb-3">
-          <div className="text-body-sm font-medium text-on-surface mb-1">
+          <div className="text-body-sm font-medium text-neutral-800 mb-1">
             {FAQ_CATEGORY_LABELS[category as FaqCategory]}
           </div>
-          <div className="bg-surface-container rounded-md overflow-hidden">
+          <div className="bg-neutral-100 rounded-full overflow-hidden">
             {categoryEntries.map((entry) => {
               const isOpen = openId === entry.id;
               return (
                 <div
                   key={entry.id}
-                  className="border-b border-outline-variant/[0.08] last:border-0"
+                  className="border-b border-neutral-200/[0.08] last:border-0"
                 >
                   <button
                     type="button"
                     onClick={() => toggle(entry.id)}
-                    className="w-full flex items-center justify-between px-3 py-2.5 text-body-sm text-on-surface hover:bg-surface-container-high transition-colors text-left"
+                    className="w-full flex items-center justify-between px-3 py-2.5 text-body-sm text-neutral-800 hover:bg-neutral-200 transition-colors text-left"
                   >
                     <span>{entry.title}</span>
                     <svg
@@ -121,7 +121,7 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
                     </svg>
                   </button>
                   {isOpen && (
-                    <div className="px-3 pb-3 text-body-sm text-secondary leading-relaxed">
+                    <div className="px-3 pb-3 text-body-sm text-neutral-500 leading-relaxed">
                       {entry.content}
                     </div>
                   )}
@@ -138,7 +138,7 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
 function LinksSection() {
   return (
     <section className="mb-5">
-      <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mb-2">
+      <h3 className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-2">
         Learn More
       </h3>
       <div className="flex flex-col gap-1">
@@ -150,7 +150,7 @@ function LinksSection() {
         </Link>
       </div>
 
-      <h3 className="text-label-sm uppercase text-secondary tracking-[0.02em] font-medium mt-4 mb-2">
+      <h3 className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mt-4 mb-2">
         Contact Support
       </h3>
       <a
@@ -200,7 +200,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-on-surface/20 z-40"
+            className="fixed inset-0 bg-primary/20 z-40"
             onClick={onClose}
           />
 
@@ -210,15 +210,15 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
             animate={{ x: 0 }}
             exit={{ x: 360 }}
             transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-0 right-0 bottom-0 w-[340px] bg-surface shadow-elevation-3 z-50 flex flex-col"
+            className="fixed top-0 right-0 bottom-0 w-[340px] bg-neutral shadow-elevation-3 z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-outline-variant/[0.08]">
-              <span className="font-semibold text-[1.125rem] text-on-surface">Help</span>
+            <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-neutral-200/[0.08]">
+              <span className="font-semibold text-[1.125rem] text-neutral-800">Help</span>
               <button
                 type="button"
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
                 aria-label="Close help panel"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -240,7 +240,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
                   height="16"
                   viewBox="0 0 16 16"
                   fill="none"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
                 >
                   <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.4" />
                   <path
@@ -255,7 +255,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
                   placeholder="Search help..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-body-sm bg-surface-container rounded-md border-none outline-none placeholder:text-secondary/60 text-on-surface focus:ring-1 focus:ring-primary/40"
+                  className="w-full pl-9 pr-3 py-2 text-body-sm bg-neutral-100 rounded-full border-none outline-none placeholder:text-neutral-500/60 text-neutral-800 focus:ring-1 focus:ring-primary/40"
                 />
               </div>
             </div>

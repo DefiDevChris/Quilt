@@ -68,7 +68,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
     >
       {/* Format Selector */}
       <div className="mb-4">
-        <label className="text-xs font-medium text-on-surface block mb-1">Format</label>
+        <label className="text-xs font-medium text-neutral-800 block mb-1">Format</label>
         <div className="grid grid-cols-3 gap-2">
           {(['png', 'jpeg', 'svg'] as const).map((fmt) => (
             <button
@@ -76,8 +76,8 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               type="button"
               onClick={() => setFormat(fmt)}
               className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
-                ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
-                : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                ? 'border-primary bg-primary text-white'
+                : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                 }`}
             >
               {fmt === 'png' ? 'PNG (lossless)' : fmt === 'jpeg' ? 'JPEG (smaller)' : 'SVG (vector)'}
@@ -89,7 +89,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
       {/* DPI Selector — hidden for SVG */}
       {format !== 'svg' && (
         <div className="mb-4">
-          <label className="text-xs font-medium text-on-surface block mb-1">
+          <label className="text-xs font-medium text-neutral-800 block mb-1">
             Resolution (DPI)
           </label>
           <div className="grid grid-cols-4 gap-2">
@@ -99,15 +99,15 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 type="button"
                 onClick={() => setDpi(opt)}
                 className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
-                  ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
-                  : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                   }`}
               >
                 {opt}
               </button>
             ))}
           </div>
-          <p className="text-caption text-secondary mt-1">
+          <p className="text-caption text-neutral-500 mt-1">
             {dpi === 72 && 'Screen resolution — smallest file'}
             {dpi === 150 && 'Good for sharing online'}
             {dpi === 300 && 'Print quality — recommended'}

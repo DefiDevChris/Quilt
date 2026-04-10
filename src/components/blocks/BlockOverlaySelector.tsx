@@ -42,7 +42,7 @@ export function BlockOverlaySelector({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/80">
       <div className="flex w-[800px] max-h-[85vh] flex-col border-2 border-on-surface bg-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-on-surface bg-on-surface p-4 text-surface">

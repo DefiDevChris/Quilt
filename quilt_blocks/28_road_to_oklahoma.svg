@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <!-- Road to Oklahoma: 3x3 grid (100px cells), 6x6 sub-grid (50px) -->
-  <!-- Different diagonal arrangement than Jacob's Ladder -->
-  <!-- Four-patches at (0,0), (0,2), (2,0) -->
+  <!-- Road to Oklahoma: Traditional 3x3 arrangement with 5 four-patches and 5 HST pairs.
+       Scale: 12" = 300 units. Each cell = 4" = 100 units. Four-patch sub-cells = 2" = 50 units.
+       Four-patches at: (0,0), (2,0), (1,1), (0,2), (2,2) — diagonal chain pattern.
+       HST pairs at: (1,0), (0,1), (2,1), (1,2), and one more.
+       Actually traditional: four-patches on main diagonal + HSTs alternating.
+       Layout row 0: four-patch, HST, four-patch
+       Layout row 1: HST, four-patch, HST
+       Layout row 2: four-patch, HST, four-patch -->
   <!-- Position (0,0) four-patch -->
-  <rect x="0" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="50" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="0" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="50" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Position (0,2) four-patch -->
-  <rect x="0" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="50" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="0" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="50" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Position (2,0) four-patch -->
-  <rect x="200" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="250" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="200" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="250" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- HST pairs at remaining positions -->
+  <rect x="0" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="50" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="50" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
   <!-- Position (1,0): HST -->
-  <polygon points="100,0 200,0 100,100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <polygon points="200,0 200,100 100,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,0 200,0 100,100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="200,0 200,100 100,100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Position (2,0) four-patch -->
+  <rect x="200" y="0" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="250" y="0" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="200" y="50" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="250" y="50" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
   <!-- Position (0,1): HST -->
-  <polygon points="0,100 100,100 0,200" fill="#505050" stroke="#333" stroke-width="1"/>
-  <polygon points="100,100 100,200 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <!-- Position (1,1) center: four-patch -->
-  <rect x="100" y="100" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="150" y="100" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="100" y="150" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="150" y="150" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="0,100 100,100 0,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="100,100 100,200 0,200" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Position (1,1) center four-patch -->
+  <rect x="100" y="100" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="150" y="100" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="100" y="150" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="150" y="150" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
   <!-- Position (2,1): HST -->
-  <polygon points="200,100 300,100 300,200" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <polygon points="200,100 200,200 300,200" fill="#505050" stroke="#333" stroke-width="1"/>
+  <polygon points="200,100 300,100 200,200" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="300,100 300,200 200,200" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <!-- Position (0,2) four-patch -->
+  <rect x="0" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="50" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="0" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="50" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
   <!-- Position (1,2): HST -->
-  <polygon points="100,200 200,200 200,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <polygon points="100,200 100,300 200,300" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Position (2,2): four-patch -->
-  <rect x="200" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <rect x="250" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="200" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="250" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <polygon points="100,200 200,200 100,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <polygon points="200,200 200,300 100,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Position (2,2) four-patch -->
+  <rect x="200" y="200" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="250" y="200" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="200" y="250" width="50" height="50" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="background" data-role="patch"/>
+  <rect x="250" y="250" width="50" height="50" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
 </svg>

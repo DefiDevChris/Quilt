@@ -71,11 +71,11 @@ function StudioMockup() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-elevation-4 border border-warm-border overflow-hidden">
+    <div className="bg-surface rounded-full border border-neutral-200">
       {/* Top Bar */}
-      <div className="h-10 bg-white border-b border-warm-border flex items-center px-3 gap-3 text-[10px]">
+      <div className="h-10 bg-surface border-b border-neutral-200 flex items-center px-3 gap-3 text-[10px]">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-warm-surface flex items-center justify-center text-warm-text-muted">
+          <div className="w-4 h-4 rounded-full bg-neutral-100 flex items-center justify-center text-on-surface/50">
             <svg
               width="10"
               height="10"
@@ -89,26 +89,26 @@ function StudioMockup() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </div>
-          <span className="font-bold text-warm-text hidden sm:inline">QuiltCorgi</span>
+          <span className="font-bold text-on-surface hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 bg-gradient-to-r from-orange-500/20 to-rose-500/20 text-warm-text rounded-full font-bold text-[9px]">
+          <div className="px-3 py-1 bg-primary text-white font-bold text-[9px]">
             Main
           </div>
-          <div className="w-4 h-4 rounded text-warm-text-muted flex items-center justify-center text-[10px]">
+          <div className="w-4 h-4 rounded-full text-on-surface/50 flex items-center justify-center text-[10px]">
             +
           </div>
         </div>
-        <div className="flex-1 text-center text-warm-text-muted truncate hidden sm:block">
-          <span className="font-medium text-warm-text">My Quilt Project</span>
+        <div className="flex-1 text-center text-on-surface/50 truncate hidden sm:block">
+          <span className="font-medium text-on-surface">My Quilt Project</span>
           <span className="mx-1">·</span>
           <span>Quilt Canvas</span>
         </div>
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-warm-text-muted hidden sm:inline">Share</span>
-          <span className="text-warm-text-muted hidden sm:inline">View</span>
-          <span className="text-warm-text-muted hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 bg-gradient-to-r from-primary to-primary-dark text-white rounded-md font-bold text-[9px]">
+          <span className="text-on-surface/50 hidden sm:inline">Share</span>
+          <span className="text-on-surface/50 hidden sm:inline">View</span>
+          <span className="text-on-surface/50 hidden sm:inline">Tools</span>
+          <div className="px-3 py-1 bg-primary text-white font-bold text-[9px]">
             Export
           </div>
         </div>
@@ -116,14 +116,14 @@ function StudioMockup() {
 
       <div className="flex bg-warm-bg relative">
         {/* Left Toolbar with labels */}
-        <div className="w-14 bg-white border-r border-warm-border py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+        <div className="w-14 bg-surface border-r border-neutral-200 py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
           {toolItems.map((tool, i) =>
             tool.divider ? (
-              <div key={i} className="w-8 h-px bg-warm-border my-1" />
+              <div key={i} className="w-8 h-px bg-on-surface/20 my-1" />
             ) : (
               <div
                 key={i}
-                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-orange-500' : 'text-warm-text-muted'
+                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-primary' : 'text-on-surface/50'
                   }`}
               >
                 <svg
@@ -154,11 +154,11 @@ function StudioMockup() {
               opacity: 0.3,
             }}
           />
-          <div className="relative grid grid-cols-3 gap-2 bg-orange-50 p-2 border-[3px] border-rose-400/60 mx-auto max-w-[260px]">
+          <div className="relative grid grid-cols-3 gap-2 bg-surface p-2 border-4 border-primary/60 rounded-full mx-auto max-w-[260px]">
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-white flex items-center justify-center border border-warm-border/30 overflow-hidden"
+                className="aspect-square bg-surface flex items-center justify-center border border-on-surface/20"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <polygon points="0,0 50,50 0,100" fill="#fed7aa" />
@@ -172,11 +172,11 @@ function StudioMockup() {
         </div>
 
         {/* Right Panel - Accordion sections */}
-        <div className="w-44 bg-white border-l border-warm-border shrink-0 hidden sm:flex flex-col">
+        <div className="w-44 bg-surface border-l border-neutral-200 shrink-0 hidden sm:flex flex-col">
           {panelSections.map((section, i) => (
             <button
               key={i}
-              className="flex items-center justify-between px-3 py-2 border-b border-warm-border text-[10px] font-bold text-warm-text tracking-wide hover:bg-warm-surface/50"
+              className="flex items-center justify-between px-3 py-2 border-b border-neutral-200 text-[10px] font-bold text-on-surface tracking-wide hover:bg-neutral-100/50"
             >
               <span>{section.label}</span>
               <svg
@@ -198,11 +198,11 @@ function StudioMockup() {
         </div>
 
         {/* Floating bottom toolbar */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-elevation-4 border border-warm-border px-3 py-1.5 flex items-center gap-2 z-20">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-surface rounded-full shadow-elevation-4 border border-neutral-200 px-3 py-1.5 flex items-center gap-2 z-20">
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-orange-500/15 text-orange-500' : 'text-warm-text-muted'}`}
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-primary/15 text-primary' : 'text-on-surface/50'}`}
             >
               <svg
                 width="10"
@@ -219,8 +219,8 @@ function StudioMockup() {
               </svg>
             </div>
           ))}
-          <div className="w-px h-4 bg-warm-border" />
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-warm-text-muted">
+          <div className="w-px h-4 bg-on-surface/20" />
+          <div className="w-6 h-6 rounded-full flex items-center justify-center text-on-surface/50">
             <svg
               width="10"
               height="10"
@@ -232,13 +232,13 @@ function StudioMockup() {
               <path d="M3 10h4l3-7 4 14 3-7h4" />
             </svg>
           </div>
-          <div className="w-px h-4 bg-warm-border" />
-          <span className="text-[8px] text-warm-text-muted font-mono">48%</span>
+          <div className="w-px h-4 bg-on-surface/20" />
+          <span className="text-[8px] text-on-surface/50 font-mono">48%</span>
         </div>
       </div>
 
       {/* Status bar */}
-      <div className="bg-warm-surface/60 px-4 py-1.5 border-t border-warm-border flex items-center justify-between text-[8px] font-mono text-warm-text-muted">
+      <div className="bg-surface-container rounded-full px-4 py-1.5 border-t border-neutral-200 flex items-center justify-between text-[8px] font-mono text-on-surface/50">
         <span>Mouse H: 12.50&quot; V: 8.25&quot;</span>
         <div className="flex gap-4">
           <span>Snap to Grid: ON</span>
@@ -251,7 +251,7 @@ function StudioMockup() {
 
 export default function HeroSection() {
   return (
-    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative overflow-hidden">
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Text */}
@@ -260,11 +260,11 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-warm-text leading-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               From First Stitch
-              <span className="block bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+              <span className="block text-primary">
                 to Finished Quilt
               </span>
             </motion.h1>
@@ -273,11 +273,10 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-warm-text-secondary max-w-xl leading-relaxed"
+              className="text-lg md:text-xl text-on-surface/70 max-w-xl leading-relaxed"
             >
               Design your quilt, calculate your yardage, and export true-scale patterns with seam
-              allowances built in. Four worktables, a growing block library, and a community of
-              quilters who get it.
+              allowances built in. A growing block library, and a community of quilters who get it.
             </motion.p>
 
             <motion.div
@@ -288,7 +287,7 @@ export default function HeroSection() {
             >
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3 text-center"
+                className="px-8 py-4 bg-primary text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3 text-center"
               >
                 Start Designing Free
               </Link>
@@ -303,12 +302,8 @@ export default function HeroSection() {
             className="relative"
           >
             {/* Mascots around the preview — hide on small screens to avoid overflow */}
-            <div className="absolute -top-8 -left-8 z-10 hidden lg:block">
-              <Mascot pose="jumping" size="md" className="drop-shadow-elevation-3" />
-            </div>
-            <div className="absolute -bottom-6 -right-6 z-10 hidden lg:block">
-              <Mascot pose="fetching" size="lg" className="drop-shadow-elevation-3" />
-            </div>
+            <Mascot pose="jumping" size="md" className="absolute -top-8 -left-8 z-10 hidden lg:block" />
+            <Mascot pose="fetching" size="lg" className="absolute -bottom-6 -right-6 z-10 hidden lg:block" />
 
             <StudioMockup />
           </motion.div>

@@ -23,7 +23,7 @@ function renderMarks(text: string, marks: readonly TiptapMark[]): ReactNode {
         break;
       case 'code':
         result = (
-          <code className="bg-surface-container-high px-1.5 py-0.5 rounded text-sm font-mono">
+          <code className="bg-neutral-container-high px-1.5 py-0.5 rounded text-sm font-mono">
             {result}
           </code>
         );
@@ -73,7 +73,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
   switch (node.type) {
     case 'paragraph':
       return (
-        <p key={key} className="mb-4 text-on-surface leading-relaxed">
+        <p key={key} className="mb-4 text-neutral-800 leading-relaxed">
           {children}
         </p>
       );
@@ -83,25 +83,25 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       switch (level) {
         case 1:
           return (
-            <h1 key={key} className="text-3xl font-bold text-on-surface mt-8 mb-4">
+            <h1 key={key} className="text-3xl font-bold text-neutral-800 mt-8 mb-4">
               {children}
             </h1>
           );
         case 2:
           return (
-            <h2 key={key} className="text-2xl font-bold text-on-surface mt-6 mb-3">
+            <h2 key={key} className="text-2xl font-bold text-neutral-800 mt-6 mb-3">
               {children}
             </h2>
           );
         case 3:
           return (
-            <h3 key={key} className="text-xl font-semibold text-on-surface mt-5 mb-2">
+            <h3 key={key} className="text-xl font-semibold text-neutral-800 mt-5 mb-2">
               {children}
             </h3>
           );
         default:
           return (
-            <h4 key={key} className="text-lg font-semibold text-on-surface mt-4 mb-2">
+            <h4 key={key} className="text-lg font-semibold text-neutral-800 mt-4 mb-2">
               {children}
             </h4>
           );
@@ -124,7 +124,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
 
     case 'listItem':
       return (
-        <li key={key} className="text-on-surface">
+        <li key={key} className="text-neutral-800">
           {children}
         </li>
       );
@@ -133,7 +133,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       return (
         <blockquote
           key={key}
-          className="border-l-4 border-primary/40 pl-4 py-2 mb-4 text-secondary italic"
+          className="border-l-4 border-primary/40 pl-4 py-2 mb-4 text-neutral-500 italic"
         >
           {children}
         </blockquote>
@@ -142,8 +142,8 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
     case 'codeBlock': {
       const language = (node.attrs?.language as string) ?? '';
       return (
-        <pre key={key} className="bg-surface-container-highest rounded-lg p-4 mb-4 overflow-x-auto">
-          <code className="text-sm font-mono text-on-surface" data-language={language}>
+        <pre key={key} className="bg-neutral-container-highest rounded-full p-4 mb-4 overflow-x-auto">
+          <code className="text-sm font-mono text-neutral-800" data-language={language}>
             {children}
           </code>
         </pre>
@@ -158,10 +158,10 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
 
       // Alignment classes for staggered media layout
       const alignClasses = {
-        left: 'float-left mr-6 mb-4 w-1/2 md:w-1/3 rounded-xl',
-        right: 'float-right ml-6 mb-4 w-1/2 md:w-1/3 rounded-xl',
-        center: 'mx-auto mb-4 rounded-xl',
-        full: 'w-full mb-4 rounded-xl',
+        left: 'float-left mr-6 mb-4 w-1/2 md:w-1/3 rounded-full',
+        right: 'float-right ml-6 mb-4 w-1/2 md:w-1/3 rounded-full',
+        center: 'mx-auto mb-4 rounded-full',
+        full: 'w-full mb-4 rounded-full',
       };
 
       return (
@@ -174,13 +174,13 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
             loading="lazy"
           />
           {alt && (
-            <figcaption className="text-sm text-secondary mt-2 text-center">{alt}</figcaption>
+            <figcaption className="text-sm text-neutral-500 mt-2 text-center">{alt}</figcaption>
           )}
         </figure>
       );
     }
     case 'horizontalRule':
-      return <hr key={key} className="border-outline-variant/30 my-6" />;
+      return <hr key={key} className="border-neutral-200/30 my-6" />;
 
     case 'hardBreak':
       return <br key={key} />;
@@ -208,7 +208,7 @@ export function TiptapRenderer({ content }: TiptapRendererProps) {
     // Handle simple text-only content
     if ('text' in doc && typeof (doc as { text?: string }).text === 'string') {
       return (
-        <p className="mb-4 text-on-surface leading-relaxed">{(doc as { text: string }).text}</p>
+        <p className="mb-4 text-neutral-800 leading-relaxed">{(doc as { text: string }).text}</p>
       );
     }
     return null;

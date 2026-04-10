@@ -183,8 +183,8 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
 
   if (mode === 'processing') {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-        <div className="glass-elevated rounded-2xl p-8 flex flex-col items-center gap-4 max-w-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-8 flex flex-col items-center gap-4 max-w-sm">
           <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-body-md text-secondary">Loading image...</p>
         </div>
@@ -193,15 +193,15 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="glass-elevated rounded-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-neutral border border-neutral-200 rounded-full p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-headline-sm font-semibold text-on-surface">Photo to Design</h2>
+          <h2 className="text-headline-sm font-semibold text-neutral-800">Photo to Design</h2>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-on-surface/50 hover:bg-surface-container transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800/50 hover:bg-neutral-100 transition-colors"
             aria-label="Close"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -227,7 +227,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
               <button
                 type="button"
                 onClick={() => setMode('upload')}
-                className="glass-panel rounded-xl p-4 flex items-center gap-4 text-left hover:bg-surface-container transition-colors group"
+                className="bg-neutral border border-neutral-200 rounded-full p-4 flex items-center gap-4 text-left hover:bg-neutral-100 transition-colors group"
               >
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
@@ -248,7 +248,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                   </svg>
                 </div>
                 <div>
-                  <p className="text-body-md font-medium text-on-surface">Upload from Computer</p>
+                  <p className="text-body-md font-medium text-neutral-800">Upload from Computer</p>
                   <p className="text-body-sm text-secondary">Select a photo from your device</p>
                 </div>
               </button>
@@ -257,7 +257,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
               <button
                 type="button"
                 onClick={() => setMode('mobile-uploads')}
-                className="glass-panel rounded-xl p-4 flex items-center gap-4 text-left hover:bg-surface-container transition-colors group"
+                className="bg-neutral border border-neutral-200 rounded-full p-4 flex items-center gap-4 text-left hover:bg-neutral-100 transition-colors group"
               >
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
@@ -273,7 +273,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-body-md font-medium text-on-surface">Choose from Mobile Uploads</p>
+                  <p className="text-body-md font-medium text-neutral-800">Choose from Mobile Uploads</p>
                   <p className="text-body-sm text-secondary">
                     {pendingUploads.length > 0
                       ? `${pendingUploads.length} photo${pendingUploads.length > 1 ? 's' : ''} waiting`
@@ -296,7 +296,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
             <button
               type="button"
               onClick={() => setMode('pick-source')}
-              className="flex items-center gap-2 text-body-sm text-secondary hover:text-on-surface transition-colors"
+              className="flex items-center gap-2 text-body-sm text-secondary hover:text-neutral-800 transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
@@ -313,14 +313,14 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
             {isLoadingUploads ? (
               <div className="grid grid-cols-2 gap-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="glass-panel rounded-xl overflow-hidden">
-                    <div className="aspect-square bg-primary-container/20 animate-pulse" />
+                  <div key={i} className="bg-neutral border border-neutral-200 rounded-full overflow-hidden">
+                    <div className="aspect-square bg-primary/20 animate-pulse" />
                   </div>
                 ))}
               </div>
             ) : pendingUploads.length === 0 ? (
               <div className="flex flex-col items-center py-8 text-center">
-                <div className="w-14 h-14 rounded-full bg-primary-container/20 flex items-center justify-center mb-3">
+                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mb-3">
                   <svg
                     width="24"
                     height="24"
@@ -335,7 +335,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                     <line x1="12" y1="18" x2="12" y2="18.01" />
                   </svg>
                 </div>
-                <p className="text-body-md font-medium text-on-surface mb-1">No uploads waiting</p>
+                <p className="text-body-md font-medium text-neutral-800 mb-1">No uploads waiting</p>
                 <p className="text-body-sm text-secondary max-w-xs">
                   Take photos on your phone and they&apos;ll appear here for processing.
                 </p>
@@ -347,9 +347,9 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                     key={upload.id}
                     type="button"
                     onClick={() => handleMobileUploadSelect(upload)}
-                    className="glass-panel rounded-xl overflow-hidden hover:shadow-elevation-2 transition-all group text-left"
+                    className="bg-neutral border border-neutral-200 rounded-full overflow-hidden hover:shadow-elevation-3 transition-all group text-left"
                   >
-                    <div className="aspect-square bg-surface-container overflow-hidden">
+                    <div className="aspect-square bg-neutral-100 overflow-hidden">
                       <img
                         src={upload.imageUrl}
                         alt={upload.originalFilename || 'Mobile upload'}
@@ -357,7 +357,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                       />
                     </div>
                     <div className="p-2">
-                      <p className="text-label-sm font-medium text-on-surface truncate">
+                      <p className="text-label-sm font-medium text-neutral-800 truncate">
                         {upload.originalFilename || 'Untitled'}
                       </p>
                     </div>
@@ -374,7 +374,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
             <button
               type="button"
               onClick={() => setMode('pick-source')}
-              className="flex items-center gap-2 text-body-sm text-secondary hover:text-on-surface transition-colors"
+              className="flex items-center gap-2 text-body-sm text-secondary hover:text-neutral-800 transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
@@ -402,9 +402,9 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
-              className={`w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${isDragOver
+              className={`w-full rounded-full border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${isDragOver
                 ? 'border-primary bg-primary/5'
-                : 'border-outline-variant/30 hover:border-primary/50'
+                : 'border-neutral-200/30 hover:border-primary/50'
                 }`}
             >
               <input
@@ -440,7 +440,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <p className="text-body-md font-medium text-on-surface">Drop your quilt photo here</p>
+                  <p className="text-body-md font-medium text-neutral-800">Drop your quilt photo here</p>
                   <p className="mt-1 text-body-sm text-secondary">or click to browse</p>
                   <p className="mt-2 text-label-sm text-secondary">PNG, JPEG, or WebP up to 20 MB</p>
                 </>
@@ -449,14 +449,14 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
 
             {/* Error */}
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-error/10 border border-error/20">
+              <div className="px-4 py-3 rounded-full bg-error/5 border border-error/20">
                 <p className="text-body-sm text-error">{error}</p>
               </div>
             )}
 
             {/* Warning */}
             {warning && (
-              <div className="px-4 py-3 rounded-xl bg-warning/10 border border-warning/20">
+              <div className="px-4 py-3 rounded-full bg-warning/5 border border-warning/20">
                 <p className="text-body-sm text-warning">{warning}</p>
               </div>
             )}
