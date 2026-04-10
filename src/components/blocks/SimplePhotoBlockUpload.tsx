@@ -480,7 +480,7 @@ export function SimplePhotoBlockUpload({
         {(['upload', 'imagePrep', 'crop'] as Step[]).map((s, index) => (
           <div key={s}>
             <div
-              className={`rounded-full transition-all ${step === s
+              className={`rounded-full transition-colors duration-150 ${step === s
                 ? 'w-6 h-2 bg-primary'
                 : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
                   ? 'w-2 h-2 bg-primary/50'
@@ -542,7 +542,7 @@ export function SimplePhotoBlockUpload({
                   <img
                     src={originalImageUrl}
                     alt="Preview"
-                    className="max-h-full max-w-full rounded-full object-contain transition-transform duration-200"
+                    className="max-h-full max-w-full rounded-full object-contain transition-colors duration-150"
                     style={{
                       transform: [
                         `rotate(${rotation}deg)`,

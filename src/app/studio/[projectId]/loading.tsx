@@ -1,9 +1,9 @@
 export default function StudioLoading() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-neutral">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#fdfaf7]">
       <div className="text-center space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-        <p className="text-sm text-neutral-600 font-medium">Loading studio...</p>
+        <div className="w-12 h-12 mx-auto rounded-lg bg-[#ffc8a6] animate-pulse" />
+        <p className="text-[16px] leading-[24px] text-[#6b655e]">Loading studio...</p>
       </div>
     </div>
   );

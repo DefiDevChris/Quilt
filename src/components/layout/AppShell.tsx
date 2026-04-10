@@ -53,7 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <div className="min-h-screen relative">
  <nav
  aria-label="Main navigation"
- className={`sticky top-0 z-40 px-6 lg:px-12 py-2 flex items-center justify-between transition-colors duration-150 duration-200 border-b ${scrolled
+ className={`sticky top-0 z-40 px-6 lg:px-12 py-2 flex items-center justify-between transition-colors duration-150 border-b ${scrolled
  ? 'bg-[#fdfaf7] border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
  : 'bg-[#fdfaf7] border-transparent'
  }`}

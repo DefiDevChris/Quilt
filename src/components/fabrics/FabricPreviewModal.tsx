@@ -124,7 +124,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-neutral-800 text-neutral text-sm font-semibold hover:opacity-90 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[#2d2a26] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List
@@ -133,7 +133,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-full bg-neutral-100 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors"
+                className="flex-1 py-2.5 rounded-full bg-[#fdfaf7] text-[16px] leading-[24px] text-[#6b655e] hover:bg-[#ff8d49]/10 transition-colors duration-150"
               >
                 Close
               </button>

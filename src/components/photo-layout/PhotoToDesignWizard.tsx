@@ -282,6 +282,50 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
     router.push('/dashboard');
   };
 
+  /**
+   * Creates a new project sized to match the detected pattern, then navigates
+   * to it. The detected pieces stay in the photoLayoutStore — when the studio
+   * mounts, usePhotoPatternImport picks them up, places them on the canvas,
+   * and calls reset() itself to clear the store.
+   */
+  const handleOpenInStudio = async () => {
+    const { targetWidth, targetHeight } = usePhotoLayoutStore.getState();
+
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Photo Pattern',
+          unitSystem: 'imperial',
+          canvasWidth: targetWidth,
+          canvasHeight: targetHeight,
+          gridSettings: { enabled: true, size: 1, snapToGrid: true },
+        }),
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent('/photo-to-design')}`;
+          return;
+        }
+        setError('Failed to create project. Please try again.');
+        return;
+      }
+
+      const data = (await res.json()) as { data?: { id?: string } };
+      const newId = data?.data?.id;
+      if (!newId) {
+        setError('Server returned no project id');
+        return;
+      }
+
+      router.push(`/studio/${newId}`);
+    } catch {
+      setError('Failed to create project. Please try again.');
+    }
+  };
+
   if (showProUpgrade) {
     return <ProUpgradeModal onClose={() => setShowProUpgrade(false)} />;
   }
@@ -357,6 +401,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 onMobileUploadSelect={handleMobileUploadSelect}
                 onContinue={handleContinue}
                 onClose={handleClose}
+                onOpenInStudio={handleOpenInStudio}
                 setRotation={setRotation}
                 setFlipH={setFlipH}
                 setFlipV={setFlipV}
@@ -416,6 +461,7 @@ interface WizardStepContentProps {
   onMobileUploadSelect: (upload: MobileUpload) => void;
   onContinue: () => void;
   onClose: () => void;
+  onOpenInStudio: () => void;
   setRotation: React.Dispatch<React.SetStateAction<number>>;
   setFlipH: React.Dispatch<React.SetStateAction<boolean>>;
   setFlipV: React.Dispatch<React.SetStateAction<boolean>>;
@@ -437,7 +483,7 @@ function WizardStepContent(props: WizardStepContentProps) {
     case 'processing':
       return <ProcessingStep />;
     case 'complete':
-      return <CompleteStep onClose={props.onClose} />;
+      return <CompleteStep onOpenInStudio={props.onOpenInStudio} />;
     default:
       return <p className="text-body-md text-[#6b655e]">Unknown step: {props.step}</p>;
   }
@@ -455,21 +501,24 @@ function UploadStep(props: WizardStepContentProps) {
       </p>
 
       <div className="space-y-3">
-        {/* Upload from Computer */}
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => props.inputRef.current?.click()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              props.inputRef.current?.click();
-            }
-          }}
+        {/* Upload from Computer — input is a sibling of the label (not nested)
+            so the native htmlFor association works reliably in all browsers.
+            Nesting + htmlFor can cause duplicate click events that cancel the
+            file picker in some browser/React combinations. */}
+        <input
+          id="photo-upload-file-input"
+          ref={props.inputRef}
+          type="file"
+          accept={ACCEPTED_IMAGE_TYPES.join(',')}
+          onChange={props.onFileChange}
+          className="sr-only"
+        />
+        <label
+          htmlFor="photo-upload-file-input"
           onDrop={props.onDrop}
           onDragOver={props.onDragOver}
           onDragLeave={props.onDragLeave}
-          className={`w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
+          className={`block w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
               ? 'border-[#ff8d49] bg-[#ff8d49]/5'
               : 'border-[#e8e1da]/50 hover:border-[#ff8d49]/50'
@@ -479,13 +528,6 @@ function UploadStep(props: WizardStepContentProps) {
           <div className="absolute top-2 right-2 opacity-10 pointer-events-none">
             <QuiltPiece color="primary" size={60} rotation={15} stitch={false} />
           </div>
-          <input
-            ref={props.inputRef}
-            type="file"
-            accept={ACCEPTED_IMAGE_TYPES.join(',')}
-            onChange={props.onFileChange}
-            className="hidden"
-          />
           {props.loading ? (
             <div className="flex flex-col items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#ff8d49]/20 flex items-center justify-center animate-pulse">
@@ -530,7 +572,7 @@ function UploadStep(props: WizardStepContentProps) {
               <p className="mt-2 text-label-sm text-[#6b655e]">PNG, JPEG, or WebP up to 20 MB</p>
             </>
           )}
-        </div>
+        </label>
 
         {/* Or choose from mobile uploads */}
         {props.pendingUploads.length > 0 && (
@@ -850,7 +892,7 @@ function ProcessingStep() {
   );
 }
 
-function CompleteStep({ onClose }: { onClose: () => void }) {
+function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
   return (
     <div className="space-y-6 text-center py-8">
       <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto">
@@ -878,7 +920,7 @@ function CompleteStep({ onClose }: { onClose: () => void }) {
       </div>
       <button
         type="button"
-        onClick={onClose}
+        onClick={onOpenInStudio}
         className="bg-[#ff8d49] text-[#2d2a26] px-8 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Open in Studio

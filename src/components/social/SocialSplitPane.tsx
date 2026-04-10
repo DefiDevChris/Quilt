@@ -33,9 +33,9 @@ const MOCK_SAVED = [
 
 function SavedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
+    <div className="absolute inset-0 overflow-hidden group-hover:bg-[#ff8d49]/5">
       {/* Base */}
-      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
+      <div className="absolute inset-0 bg-[#ffffff] border border-[#e8e1da]" />
 
       {/* Fabric swatch pattern - scattered hearts */}
       <div className="absolute inset-0 opacity-[0.07]">
@@ -79,17 +79,13 @@ function SavedStripVertical() {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
-        {/* Title at top */}
-        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
+        <span className="text-[#2d2a26] text-[24px] leading-[32px] text-center">
           Saved
         </span>
 
-        {/* Big simple graphic - centered */}
         <div className="flex-1 flex items-center justify-center w-full">
           <div className="relative">
-            {/* Warm rose glow */}
-            <div className="absolute inset-0 bg-primary/30 rounded-full blur-2xl scale-[1.8]" />
-            {/* Icon - NO ring */}
+            <div className="absolute inset-0 bg-[#ff8d49]/30 rounded-full blur-2xl scale-[1.8]" />
             <div className="relative w-28 h-28 flex items-center justify-center">
               <img
                 src="/icons/quilt-10-pincushion-Photoroom.png"
@@ -100,7 +96,6 @@ function SavedStripVertical() {
           </div>
         </div>
 
-        {/* Mascot at bottom */}
         <div className="relative mt-3">
           <img src="/mascots&avatars/corgi20.png" alt="" className="w-20 h-20 object-contain" />
         </div>
@@ -111,7 +106,7 @@ function SavedStripVertical() {
 
 function SavedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
+    <div className="absolute inset-0 flex items-center gap-3 px-4 overflow-hidden bg-[#fdfaf7] group-hover:bg-[#ff8d49]/5">
       {/* Stitching top & bottom */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
@@ -127,23 +122,20 @@ function SavedStripHorizontal() {
             'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 3px, transparent 3px, transparent 7px)',
         }}
       />
-      {/* Pincushion icon - NO ring */}
-      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center relative shrink-0">
+      <div className="w-10 h-10 bg-transparent flex items-center justify-center relative shrink-0">
         <img
           src="/icons/quilt-10-pincushion-Photoroom.png"
           alt="Saved"
-          className="w-8 h-8 object-contain drop-shadow"
+          className="w-8 h-8 object-contain"
         />
       </div>
 
-      {/* Title */}
-      <span className="text-base font-extrabold text-neutral-800 tracking-wide">Saved</span>
+      <span className="text-base text-[#2d2a26] tracking-wide">Saved</span>
 
-      {/* Mascot */}
       <img
         src="/mascots&avatars/corgi20.png"
         alt=""
-        className="ml-auto w-14 h-14 object-contain drop-shadow"
+        className="ml-auto w-14 h-14 object-contain"
       />
     </div>
   );
@@ -153,11 +145,9 @@ function SavedStripHorizontal() {
 
 function FeedStripVertical() {
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
-      {/* Base */}
-      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
+    <div className="absolute inset-0 overflow-hidden group-hover:bg-[#ff8d49]/5">
+      <div className="absolute inset-0 bg-[#ffffff] border border-[#e8e1da]" />
 
-      {/* Flying geese pattern - community quilt */}
       <div className="absolute inset-0 opacity-[0.08]">
         <svg width="100%" height="100%">
           <defs>
@@ -179,7 +169,6 @@ function FeedStripVertical() {
         </svg>
       </div>
 
-      {/* Stitching lines */}
       <div
         className="absolute left-2 top-0 bottom-0 w-px"
         style={{
@@ -195,30 +184,24 @@ function FeedStripVertical() {
         }}
       />
 
-      {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
-        {/* Title at top */}
-        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
-          Feed
+        <span className="text-[#2d2a26] text-[24px] leading-[32px] text-center">
+          Thread
         </span>
 
-        {/* Big simple graphic - centered */}
         <div className="flex-1 flex items-center justify-center w-full">
           <div className="relative">
-            {/* Warm amber glow */}
-            <div className="absolute inset-0 bg-amber-300/30 rounded-full blur-2xl scale-[1.8]" />
-            {/* Icon - NO ring */}
+            <div className="absolute inset-0 bg-[#ffc8a6]/30 rounded-full blur-2xl scale-[1.8]" />
             <div className="relative w-28 h-28 flex items-center justify-center">
               <img
                 src="/icons/quilt-01-spool-Photoroom.png"
-                alt="Feed"
+                alt="Thread"
                 className="w-24 h-24 object-contain relative z-10"
               />
             </div>
           </div>
         </div>
 
-        {/* Mascot at bottom */}
         <div className="relative mt-3">
           <img src="/mascots&avatars/corgi12.png" alt="" className="w-20 h-20 object-contain" />
         </div>
@@ -229,8 +212,7 @@ function FeedStripVertical() {
 
 function FeedStripHorizontal() {
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
-      {/* Stitching top & bottom */}
+    <div className="absolute inset-0 flex items-center gap-3 px-4 overflow-hidden bg-[#fdfaf7] group-hover:bg-[#ff8d49]/5">
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
@@ -245,23 +227,20 @@ function FeedStripHorizontal() {
             'repeating-linear-gradient(to right, var(--color-secondary) 0px, var(--color-secondary) 2px, transparent 2px, transparent 6px)',
         }}
       />
-      {/* Thread spool icon */}
-      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center shrink-0">
+      <div className="w-10 h-10 bg-transparent flex items-center justify-center shrink-0">
         <img
           src="/icons/quilt-01-spool-Photoroom.png"
-          alt="Feed"
-          className="w-8 h-8 object-contain drop-shadow"
+          alt="Thread"
+          className="w-8 h-8 object-contain"
         />
       </div>
 
-      {/* Title */}
-      <span className="text-base font-extrabold text-neutral-800 tracking-wide">Feed</span>
+      <span className="text-base text-[#2d2a26] tracking-wide">Thread</span>
 
-      {/* Mascot */}
       <img
         src="/mascots&avatars/corgi12.png"
         alt=""
-        className="ml-auto w-14 h-14 object-contain drop-shadow"
+        className="ml-auto w-14 h-14 object-contain"
       />
     </div>
   );
@@ -274,11 +253,9 @@ function ProfileStripVertical() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 overflow-hidden transition-all duration-500 group-hover:bg-neutral-100 group-hover:shadow-elevation-1">
-      {/* Base */}
-      <div className="absolute inset-0 bg-neutral border border-neutral-200" />
+    <div className="absolute inset-0 overflow-hidden group-hover:bg-[#ff8d49]/5">
+      <div className="absolute inset-0 bg-[#ffffff] border border-[#e8e1da]" />
 
-      {/* Measuring tape pattern - sewing notion */}
       <div className="absolute inset-0 opacity-[0.06]">
         <svg width="100%" height="100%">
           <defs>
@@ -320,7 +297,6 @@ function ProfileStripVertical() {
         </svg>
       </div>
 
-      {/* Stitching lines */}
       <div
         className="absolute left-2 top-0 bottom-0 w-px"
         style={{
@@ -336,19 +312,14 @@ function ProfileStripVertical() {
         }}
       />
 
-      {/* Content */}
       <div className="relative z-10 flex flex-col h-full items-center justify-between py-4 pt-6 pb-6">
-        {/* Title at top */}
-        <span className="text-neutral-800 font-extrabold text-xl tracking-tight text-center">
+        <span className="text-[#2d2a26] text-[24px] leading-[32px] text-center">
           Profile
         </span>
 
-        {/* User avatar and name */}
         <div className="flex-1 flex flex-col items-center justify-center w-full gap-3">
           <div className="relative">
-            {/* Warm glow */}
-            <div className="absolute inset-0 bg-orange-300/30 rounded-full blur-2xl scale-[1.8]" />
-            {/* Avatar */}
+            <div className="absolute inset-0 bg-[#ffc8a6]/30 rounded-full blur-2xl scale-[1.8]" />
             {user?.image ? (
               <img
                 src={user.image}
@@ -356,23 +327,21 @@ function ProfileStripVertical() {
                 className="relative w-24 h-24 rounded-full object-cover"
               />
             ) : (
-              <div className="relative w-24 h-24 rounded-full bg-orange-200 flex items-center justify-center">
-                <span className="text-4xl font-bold text-orange-600">{initial}</span>
+              <div className="relative w-24 h-24 rounded-full bg-[#ffc8a6] flex items-center justify-center">
+                <span className="text-4xl text-[#ff8d49]">{initial}</span>
               </div>
             )}
           </div>
-          {/* Name and username */}
           <div className="text-center">
-            <p className="text-neutral-800 font-extrabold text-base leading-tight">
+            <p className="text-[#2d2a26] text-[18px] leading-[28px]">
               {user?.name ?? 'Your Name'}
             </p>
-            <p className="text-primary font-semibold text-xs leading-tight">
+            <p className="text-[#ff8d49] text-[14px] leading-[20px]">
               @{user?.email?.split('@')[0] ?? 'username'}
             </p>
           </div>
         </div>
 
-        {/* Mascot at bottom */}
         <div className="relative mt-3">
           <img src="/mascots&avatars/corgi28.png" alt="" className="w-20 h-20 object-contain" />
         </div>
@@ -386,8 +355,7 @@ function ProfileStripHorizontal() {
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? 'Q';
 
   return (
-    <div className="absolute inset-0 flex items-center gap-3 px-4 transition-all duration-300 overflow-hidden bg-neutral-100 shadow-elevation-1 group-hover:bg-neutral-200">
-      {/* Stitching top & bottom */}
+    <div className="absolute inset-0 flex items-center gap-3 px-4 overflow-hidden bg-[#fdfaf7] group-hover:bg-[#ff8d49]/5">
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
@@ -402,7 +370,6 @@ function ProfileStripHorizontal() {
             'repeating-linear-gradient(to right, var(--color-primary) 0px, var(--color-primary) 4px, transparent 4px, transparent 10px)',
         }}
       />
-      {/* Avatar */}
       <div className="relative shrink-0">
         {user?.image ? (
           <img
@@ -411,22 +378,20 @@ function ProfileStripHorizontal() {
             className="w-9 h-9 rounded-full object-cover relative"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-orange-200 flex items-center justify-center relative">
-            <span className="text-sm font-bold text-orange-600">{initial}</span>
+          <div className="w-9 h-9 rounded-full bg-[#ffc8a6] flex items-center justify-center relative">
+            <span className="text-sm text-[#ff8d49]">{initial}</span>
           </div>
         )}
       </div>
 
-      {/* Title */}
-      <span className="text-base font-extrabold text-neutral-800 tracking-wide truncate">
+      <span className="text-base text-[#2d2a26] tracking-wide truncate">
         {user?.name ?? 'Profile'}
       </span>
 
-      {/* Mascot */}
       <img
         src="/mascots&avatars/corgi28.png"
         alt=""
-        className="ml-auto w-14 h-14 object-contain drop-shadow"
+        className="ml-auto w-14 h-14 object-contain"
       />
     </div>
   );
@@ -438,36 +403,36 @@ function SavedContent() {
   return (
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Bookmark size={20} className="text-primary" />
-        <h2 className="font-extrabold text-xl text-neutral-800">Saved</h2>
-        <span className="text-xs text-neutral-600 font-medium">{MOCK_SAVED.length} posts</span>
+        <Bookmark size={20} className="text-[#ff8d49]" />
+        <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Saved</h2>
+        <span className="text-[14px] leading-[20px] text-[#6b655e]">{MOCK_SAVED.length} designs</span>
       </div>
 
       <div className="space-y-5">
         {MOCK_SAVED.map((post, i) => (
           <article
             key={i}
-            className="bg-neutral border border-neutral-200 feed-post-hover rounded-full overflow-hidden cursor-pointer"
+            className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden cursor-pointer shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
               <img src={post.image} alt="" className="w-full h-full object-cover" />
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-neutral-800 text-base mb-2">{post.title}</h3>
+              <h3 className="text-[16px] leading-[24px] text-[#2d2a26] mb-2">{post.title}</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center border border-white">
-                    <span className="text-caption font-bold text-neutral-800">
+                  <div className="w-7 h-7 rounded-full bg-[#ff8d49]/20 flex items-center justify-center border border-[#ffffff]">
+                    <span className="text-[14px] leading-[20px] text-[#2d2a26]">
                       {post.author.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-xs text-neutral-600 font-medium">{post.author}</span>
+                  <span className="text-[14px] leading-[20px] text-[#6b655e]">{post.author}</span>
                 </div>
-                <div className="flex items-center gap-3 text-neutral-600">
-                  <span className="flex items-center gap-1 text-xs">
+                <div className="flex items-center gap-3 text-[#6b655e]">
+                  <span className="flex items-center gap-1 text-[14px] leading-[20px]">
                     <Heart size={14} /> {post.likes}
                   </span>
-                  <Bookmark size={14} className="text-primary fill-primary" />
+                  <Bookmark size={14} className="text-[#ff8d49] fill-[#ff8d49]" />
                 </div>
               </div>
             </div>
@@ -507,8 +472,8 @@ function ProfileContentPanel() {
     return (
       <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-24 w-24 rounded-full bg-neutral-100 mx-auto" />
-          <div className="h-6 bg-neutral-100 rounded-full w-1/3 mx-auto" />
+          <div className="h-24 w-24 rounded-full bg-[#fdfaf7] mx-auto" />
+          <div className="h-6 bg-[#fdfaf7] w-1/3 mx-auto rounded-lg" />
         </div>
       </div>
     );
@@ -519,63 +484,60 @@ function ProfileContentPanel() {
 
   return (
     <div className="p-6 lg:p-8 pb-16 max-w-2xl mx-auto">
-      <h2 className="font-extrabold text-xl text-neutral-800 mb-6">Profile</h2>
+      <h2 className="text-[24px] leading-[32px] text-[#2d2a26] mb-6">Profile</h2>
 
-      {/* Profile Summary Card */}
-      <div className="rounded-full bg-neutral border border-neutral-200 p-6 mb-4">
+      <div className="rounded-lg bg-[#ffffff] border border-[#e8e1da] p-6 mb-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-start gap-4">
           {avatarSrc ? (
             <img
               src={avatarSrc}
               alt={displayName}
-              className="h-16 w-16 rounded-full object-cover border-2 border-white"
+              className="h-16 w-16 rounded-full object-cover border-2 border-[#ffffff]"
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-primary/20 border-2 border-white flex items-center justify-center text-2xl font-bold text-neutral-800">
+            <div className="h-16 w-16 rounded-full bg-[#ff8d49]/20 border-2 border-[#ffffff] flex items-center justify-center text-2xl text-[#2d2a26]">
               {initial}
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-neutral-800 truncate">{displayName}</h3>
-            <p className="text-sm text-neutral-600 truncate">{user.email}</p>
+            <h3 className="text-[18px] leading-[28px] text-[#2d2a26] truncate">{displayName}</h3>
+            <p className="text-[14px] leading-[20px] text-[#6b655e] truncate">{user.email}</p>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <Link
           href="/dashboard"
-          className="rounded-full bg-neutral border border-neutral-200 p-4 hover:shadow-elevation-2 transition-all"
+          className="rounded-lg bg-[#ffffff] border border-[#e8e1da] p-4 hover:bg-[#ff8d49]/5 transition-colors duration-150"
         >
-          <p className="text-2xl font-bold text-neutral-800">{stats?.projectCount ?? '\u2014'}</p>
-          <p className="text-sm text-neutral-600">
+          <p className="text-[24px] leading-[32px] text-[#2d2a26]">{stats?.projectCount ?? '\u2014'}</p>
+          <p className="text-[14px] leading-[20px] text-[#6b655e]">
             {(stats?.projectCount ?? 0) === 1 ? 'Project' : 'Projects'}
           </p>
         </Link>
         <Link
           href="/socialthreads"
-          className="rounded-full bg-neutral border border-neutral-200 p-4 hover:shadow-elevation-2 transition-all"
+          className="rounded-lg bg-[#ffffff] border border-[#e8e1da] p-4 hover:bg-[#ff8d49]/5 transition-colors duration-150"
         >
-          <p className="text-2xl font-bold text-neutral-800">{stats?.postCount ?? '\u2014'}</p>
-          <p className="text-sm text-neutral-600">
-            {(stats?.postCount ?? 0) === 1 ? 'Post' : 'Posts'}
+          <p className="text-[24px] leading-[32px] text-[#2d2a26]">{stats?.postCount ?? '\u2014'}</p>
+          <p className="text-[14px] leading-[20px] text-[#6b655e]">
+            {(stats?.postCount ?? 0) === 1 ? 'Design' : 'Designs'}
           </p>
         </Link>
       </div>
 
-      {/* Link to full profile & settings */}
-      <div className="rounded-full bg-neutral border border-neutral-200 divide-y divide-neutral-200">
+      <div className="rounded-lg bg-[#ffffff] border border-[#e8e1da] divide-y divide-[#e8e1da]">
         <Link
           href="/settings"
-          className="flex items-center justify-between p-4 hover:bg-neutral-100 transition-colors"
+          className="flex items-center justify-between p-4 hover:bg-[#ff8d49]/5 transition-colors duration-150"
         >
           <div>
-            <p className="text-sm font-bold text-neutral-800">All Settings</p>
-            <p className="text-xs text-neutral-600 mt-0.5">Edit profile, billing, and account</p>
+            <p className="text-[16px] leading-[24px] text-[#2d2a26]">All Settings</p>
+            <p className="text-[14px] leading-[20px] text-[#6b655e] mt-0.5">Edit profile, billing, and account</p>
           </div>
           <svg
-            className="w-4 h-4 text-neutral-400"
+            className="w-4 h-4 text-[#6b655e]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -596,10 +558,8 @@ function StudioDivider() {
       href="/dashboard"
       className="relative z-20 shrink-0 w-full aspect-square flex flex-col items-center justify-center gap-2 cursor-pointer overflow-hidden group"
     >
-      {/* Gradient background - warm orange to rose */}
-      <div className="absolute inset-0 bg-primary" />
+      <div className="absolute inset-0 bg-[#ff8d49]" />
 
-      {/* Ruler grid overlay */}
       <div className="absolute inset-0 opacity-10">
         <svg width="100%" height="100%">
           <defs>
@@ -620,7 +580,6 @@ function StudioDivider() {
         </svg>
       </div>
 
-      {/* Diagonal stitch lines */}
       <div
         className="absolute inset-0 opacity-15"
         style={{
@@ -629,15 +588,12 @@ function StudioDivider() {
         }}
       />
 
-      {/* Hover lift effect */}
-      <div className="absolute inset-0 bg-neutral-100/0 group-hover:bg-neutral-100/10 transition-all duration-300" />
+      <div className="absolute inset-0 bg-[#ffffff]/0 group-hover:bg-[#ffffff]/10 transition-colors duration-150" />
 
-      {/* Content - BIGGER */}
       <div className="relative z-10 flex flex-col items-center gap-2">
-        {/* Icon container with glow - BIGGER */}
         <div className="relative">
-          <div className="absolute inset-0 bg-neutral-100/40 rounded-full blur-xl" />
-          <div className="relative w-20 h-20 rounded-full bg-neutral-100/25 border-2 border-white flex items-center justify-center">
+          <div className="absolute inset-0 bg-[#ffffff]/40 rounded-full blur-xl" />
+          <div className="relative w-20 h-20 rounded-full bg-[#ffffff]/25 border-2 border-[#ffffff] flex items-center justify-center">
             <img
               src="/icons/quilt-04-scissors-Photoroom.png"
               alt="Design Studio"
@@ -646,21 +602,19 @@ function StudioDivider() {
           </div>
         </div>
 
-        {/* Text label - BIGGER */}
         <div className="text-center">
-          <span className="text-white text-lg font-extrabold tracking-wider uppercase leading-none block">
+          <span className="text-[#ffffff] text-lg tracking-wider uppercase leading-none block">
             Design
           </span>
-          <span className="text-white/90 text-base font-bold tracking-widest uppercase leading-none block mt-1">
+          <span className="text-[#ffffff]/90 text-base tracking-widest uppercase leading-none block mt-1">
             Studio
           </span>
         </div>
       </div>
 
-      {/* Bottom sparkle accents */}
-      <div className="absolute bottom-3 w-1.5 h-1.5 rounded-full bg-neutral-100/70" />
-      <div className="absolute bottom-4 right-4 w-1 h-1 rounded-full bg-neutral-100/50" />
-      <div className="absolute bottom-6 left-6 w-0.5 h-0.5 rounded-full bg-neutral-100/40" />
+      <div className="absolute bottom-3 w-1.5 h-1.5 rounded-full bg-[#ffffff]/70" />
+      <div className="absolute bottom-4 right-4 w-1 h-1 rounded-full bg-[#ffffff]/50" />
+      <div className="absolute bottom-6 left-6 w-0.5 h-0.5 rounded-full bg-[#ffffff]/40" />
     </Link>
   );
 }
@@ -691,15 +645,15 @@ function PanelSlot({
     <div
       onClick={!active ? onClick : undefined}
       className={[
-        'relative w-full overflow-hidden transition-all duration-700 ease-in-out group',
-        position === 'top' ? 'border-b border-neutral-200' : '',
+        'relative w-full overflow-hidden group',
+        position === 'top' ? 'border-b border-[#e8e1da]' : '',
         !active ? 'cursor-pointer' : 'cursor-default',
       ].join(' ')}
       style={{ height }}
     >
       <div
         className={[
-          'absolute inset-0 overflow-y-auto overscroll-contain transition-opacity duration-700',
+          'absolute inset-0 overflow-y-auto overscroll-contain',
           active ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none',
         ].join(' ')}
       >
@@ -708,7 +662,7 @@ function PanelSlot({
 
       <div
         className={[
-          'absolute inset-0 transition-opacity duration-700',
+          'absolute inset-0',
           active ? 'opacity-0 z-0 pointer-events-none' : 'opacity-100 z-10',
         ].join(' ')}
       >
@@ -739,7 +693,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
     <>
       <div className="hidden lg:flex h-full w-full overflow-hidden">
         <div
-          className="h-full relative flex flex-col border-r border-neutral-200 flex-shrink-0 transition-all duration-700 ease-in-out"
+          className="h-full relative flex flex-col border-r border-[#e8e1da] flex-shrink-0"
           style={{ width: isLeftActive ? '90%' : '10%' }}
         >
           <PanelSlot
@@ -756,7 +710,7 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
         </div>
 
         <div
-          className="h-full relative flex flex-col flex-shrink-0 transition-all duration-700 ease-in-out"
+          className="h-full relative flex flex-col flex-shrink-0"
           style={{ width: isRightActive ? '90%' : '10%' }}
         >
           <PanelSlot
@@ -790,19 +744,18 @@ export function SocialSplitPane({ onPanelChange }: SocialSplitPaneProps) {
       </div>
 
       <div className="lg:hidden flex flex-col h-full">
-        <div className="flex shrink-0 border-b border-neutral-200 bg-neutral">
+        <div className="flex shrink-0 border-b border-[#e8e1da] bg-[#fdfaf7]">
           {(['saved', 'feed', 'profile'] as SplitPanelId[]).map((panel) => (
             <button
               key={panel}
               onClick={() => activate(panel)}
-              className={[
-                'relative flex-1 py-3 text-sm font-semibold transition-colors capitalize',
-                activePanel === panel ? 'text-primary' : 'text-neutral-600 hover:text-neutral-800',
-              ].join(' ')}
+              className={`relative flex-1 py-3 text-[16px] leading-[24px] transition-colors capitalize ${
+                activePanel === panel ? 'text-[#ff8d49]' : 'text-[#6b655e] hover:text-[#2d2a26]'
+              }`}
             >
-              {panel}
+              {panel === 'feed' ? 'thread' : panel}
               {activePanel === panel && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ff8d49]" />
               )}
             </button>
           ))}
