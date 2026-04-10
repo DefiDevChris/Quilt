@@ -103,3 +103,19 @@ coverage/
 # PnP
 /.pnp
 .pnp.*
+
+# AI tool configs
+.claude/agents/
+.kilo/
+.qwen/
+.qwencode/
+AGENTS.md
+QUILT_BLOCK_VERIFICATION.md
+
+# Plans/docs (generated)
+docs/plans/
+
+# Test screenshots
+*.png
+!/quilt_blocks/*.svg
+!/public/**
