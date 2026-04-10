@@ -14,11 +14,11 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-900/80 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-neutral rounded-full overflow-hidden shadow-elevation-4 my-8 border border-neutral-200">
+      <div className="relative w-full max-w-4xl bg-neutral rounded-lg overflow-hidden shadow-elevation-4 my-8 border border-neutral-200">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-neutral-900 text-neutral hover:scale-105 transition-all"
+          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-lg bg-neutral-900 text-neutral transition-all"
         >
           <X size={24} />
         </button>

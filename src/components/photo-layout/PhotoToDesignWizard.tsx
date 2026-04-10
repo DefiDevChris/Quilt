@@ -6,13 +6,13 @@ import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { useAuthStore } from '@/stores/authStore';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
+import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 import {
   ACCEPTED_IMAGE_TYPES,
   PHOTO_PATTERN_MAX_FILE_SIZE,
   PHOTO_PATTERN_MIN_DIMENSION,
 } from '@/lib/constants';
 import { runDetectionPipeline } from '@/lib/photo-layout-utils';
-import { loadOpenCv } from '@/lib/opencv-loader';
 import type { MobileUpload } from '@/types/mobile-upload';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
@@ -119,9 +119,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
 
     async function runPipeline() {
       try {
-        const cv = await loadOpenCv();
         const result = await runDetectionPipeline(
-          cv,
           originalImage!,
           (steps: import('@/lib/photo-layout-types').PipelineStep[]) => {
             if (!cancelled) {
@@ -289,13 +287,19 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   }
 
   return (
-    <div className="min-h-screen bg-surface-container-lowest flex flex-col">
+    <div className="min-h-screen bg-[#fdfaf7] flex flex-col relative overflow-hidden">
+      {/* Decorative quilt-piece backgrounds */}
+      <QuiltPiece color="primary" size={200} rotation={12} top={-30} right={-40} opacity={8} />
+      <QuiltPiece color="secondary" size={150} rotation={-8} bottom={80} left={-30} opacity={10} />
+      <QuiltPiece color="accent" size={100} rotation={25} top="40%" right={60} opacity={12} />
+      <QuiltPiece color="primary" size={80} rotation={-15} bottom={200} right="20%" opacity={6} />
+
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e1da] relative z-10">
         <button
           type="button"
           onClick={handleClose}
-          className="inline-flex items-center gap-2 text-body-sm text-secondary hover:text-on-surface transition-colors"
+          className="inline-flex items-center gap-2 text-body-sm text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150"
           aria-label="Close"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -309,56 +313,68 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
           </svg>
           Back to Dashboard
         </button>
-        <h2 className="text-headline-sm font-semibold text-on-surface">Photo to Design</h2>
+        <div className="flex items-center gap-3">
+          <QuiltPieceRow count={3} size={10} gap={4} />
+          <h2 className="text-headline-sm font-semibold text-[#2d2a26]">Photo to Design</h2>
+          <QuiltPieceRow count={3} size={10} gap={4} colors={['accent', 'secondary', 'primary']} />
+        </div>
         <div className="w-24" /> {/* Spacer for centering */}
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-auto px-6 py-8">
+      <div className="flex-1 overflow-auto px-6 py-8 relative z-10">
         <div className="max-w-2xl mx-auto">
-          <div data-testid="photo-pattern-wizard" className="glass-elevated rounded-2xl p-6">
-            <WizardStepContent
-              step={step}
-              originalImage={originalImage}
-              originalImageUrl={originalImageUrl}
-              isDragOver={isDragOver}
-              loading={loading}
-              error={error}
-              warning={warning}
-              rotation={rotation}
-              flipH={flipH}
-              flipV={flipV}
-              curvedSeams={curvedSeams}
-              applique={applique}
-              touchingFabrics={touchingFabrics}
-              heavyQuilting={heavyQuilting}
-              pieceScale={pieceScale}
-              pendingUploads={pendingUploads}
-              inputRef={inputRef}
-              onFileChange={handleFileChange}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onMobileUploadSelect={handleMobileUploadSelect}
-              onContinue={handleContinue}
-              onClose={handleClose}
-              setRotation={setRotation}
-              setFlipH={setFlipH}
-              setFlipV={setFlipV}
-              setCurvedSeams={setCurvedSeams}
-              setApplique={setApplique}
-              setTouchingFabrics={setTouchingFabrics}
-              setHeavyQuilting={setHeavyQuilting}
-              setPieceScale={setPieceScale}
-            />
+          <div
+            data-testid="photo-pattern-wizard"
+            className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
+          >
+            {/* Quilt-piece accent strip at top of card */}
+            <div className="h-2 bg-gradient-to-r from-[#ff8d49]/20 via-[#ffc8a6]/20 to-[#ffc7c7]/20" />
+
+            <div className="p-6">
+              <WizardStepContent
+                step={step}
+                originalImage={originalImage}
+                originalImageUrl={originalImageUrl}
+                isDragOver={isDragOver}
+                loading={loading}
+                error={error}
+                warning={warning}
+                rotation={rotation}
+                flipH={flipH}
+                flipV={flipV}
+                curvedSeams={curvedSeams}
+                applique={applique}
+                touchingFabrics={touchingFabrics}
+                heavyQuilting={heavyQuilting}
+                pieceScale={pieceScale}
+                pendingUploads={pendingUploads}
+                inputRef={inputRef}
+                onFileChange={handleFileChange}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onMobileUploadSelect={handleMobileUploadSelect}
+                onContinue={handleContinue}
+                onClose={handleClose}
+                setRotation={setRotation}
+                setFlipH={setFlipH}
+                setFlipV={setFlipV}
+                setCurvedSeams={setCurvedSeams}
+                setApplique={setApplique}
+                setTouchingFabrics={setTouchingFabrics}
+                setHeavyQuilting={setHeavyQuilting}
+                setPieceScale={setPieceScale}
+              />
+            </div>
 
             {/* Step indicator dots */}
-            <div className="pb-4 mt-6 flex justify-center gap-2">
+            <div className="pb-4 mt-2 flex justify-center gap-2">
               {STEP_KEYS.map((key, i) => (
                 <div
                   key={key}
                   className={`rounded-full w-2 h-2 transition-colors ${
-                    i === currentStepIndex ? 'bg-primary' : 'bg-primary-container/30'
+                    i === currentStepIndex ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
                   }`}
                   aria-label={STEP_LABELS[i]}
                 />
@@ -423,7 +439,7 @@ function WizardStepContent(props: WizardStepContentProps) {
     case 'complete':
       return <CompleteStep onClose={props.onClose} />;
     default:
-      return <p className="text-body-md text-secondary">Unknown step: {props.step}</p>;
+      return <p className="text-body-md text-[#6b655e]">Unknown step: {props.step}</p>;
   }
 }
 
@@ -434,7 +450,7 @@ function WizardStepContent(props: WizardStepContentProps) {
 function UploadStep(props: WizardStepContentProps) {
   return (
     <div className="space-y-4">
-      <p className="text-body-md text-secondary text-center">
+      <p className="text-body-md text-[#6b655e] text-center">
         Extract quilt pieces from a photo using AI. Choose a source:
       </p>
 
@@ -453,12 +469,16 @@ function UploadStep(props: WizardStepContentProps) {
           onDrop={props.onDrop}
           onDragOver={props.onDragOver}
           onDragLeave={props.onDragLeave}
-          className={`w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${
+          className={`w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
-              ? 'border-primary bg-primary/5'
-              : 'border-outline-variant/30 hover:border-primary/50'
+              ? 'border-[#ff8d49] bg-[#ff8d49]/5'
+              : 'border-[#e8e1da]/50 hover:border-[#ff8d49]/50'
           }`}
         >
+          {/* Subtle quilt-piece decoration in drop zone */}
+          <div className="absolute top-2 right-2 opacity-10 pointer-events-none">
+            <QuiltPiece color="primary" size={60} rotation={15} stitch={false} />
+          </div>
           <input
             ref={props.inputRef}
             type="file"
@@ -468,8 +488,18 @@ function UploadStep(props: WizardStepContentProps) {
           />
           {props.loading ? (
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-body-md text-secondary">Processing image...</p>
+              <div className="w-10 h-10 rounded-full bg-[#ff8d49]/20 flex items-center justify-center animate-pulse">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="text-[#ff8d49]"
+                >
+                  <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="2" fill="none" />
+                </svg>
+              </div>
+              <p className="text-body-md text-[#6b655e]">Processing image...</p>
             </div>
           ) : (
             <>
@@ -478,7 +508,7 @@ function UploadStep(props: WizardStepContentProps) {
                 height="40"
                 viewBox="0 0 40 40"
                 fill="none"
-                className="mx-auto mb-3 text-secondary"
+                className="mx-auto mb-3 text-[#6b655e]"
               >
                 <path
                   d="M20 6V24M20 6L14 12M20 6L26 12"
@@ -495,9 +525,9 @@ function UploadStep(props: WizardStepContentProps) {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-body-md font-medium text-on-surface">Drop your quilt photo here</p>
-              <p className="mt-1 text-body-sm text-secondary">or click to browse</p>
-              <p className="mt-2 text-label-sm text-secondary">PNG, JPEG, or WebP up to 20 MB</p>
+              <p className="text-body-md font-medium text-[#2d2a26]">Drop your quilt photo here</p>
+              <p className="mt-1 text-body-sm text-[#6b655e]">or click to browse</p>
+              <p className="mt-2 text-label-sm text-[#6b655e]">PNG, JPEG, or WebP up to 20 MB</p>
             </>
           )}
         </div>
@@ -505,24 +535,27 @@ function UploadStep(props: WizardStepContentProps) {
         {/* Or choose from mobile uploads */}
         {props.pendingUploads.length > 0 && (
           <div>
-            <p className="text-body-sm text-secondary mb-2">Or choose from mobile uploads:</p>
+            <div className="flex items-center gap-2 mb-2">
+              <QuiltPieceRow count={2} size={8} gap={4} />
+              <p className="text-body-sm text-[#6b655e]">Or choose from mobile uploads:</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               {props.pendingUploads.slice(0, 4).map((upload) => (
                 <button
                   key={upload.id}
                   type="button"
                   onClick={() => props.onMobileUploadSelect(upload)}
-                  className="glass-panel rounded-xl overflow-hidden hover:shadow-elevation-2 transition-all group text-left"
+                  className="bg-[#ffffff] border border-[#e8e1da] rounded-xl overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
                 >
-                  <div className="aspect-square bg-surface-container overflow-hidden">
+                  <div className="aspect-square bg-[#fdfaf7] overflow-hidden">
                     <img
                       src={upload.imageUrl}
                       alt={upload.originalFilename || 'Mobile upload'}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-2">
-                    <p className="text-label-sm font-medium text-on-surface truncate">
+                    <p className="text-label-sm font-medium text-[#2d2a26] truncate">
                       {upload.originalFilename || 'Untitled'}
                     </p>
                   </div>
@@ -534,13 +567,13 @@ function UploadStep(props: WizardStepContentProps) {
       </div>
 
       {props.error && (
-        <div className="px-4 py-3 rounded-xl bg-error/10 border border-error/20">
-          <p className="text-body-sm text-error">{props.error}</p>
+        <div className="px-4 py-3 rounded-xl bg-[#ff8d49]/10 border border-[#ff8d49]/20">
+          <p className="text-body-sm text-[#ff8d49]">{props.error}</p>
         </div>
       )}
       {props.warning && (
-        <div className="px-4 py-3 rounded-xl bg-warning/10 border border-warning/20">
-          <p className="text-body-sm text-warning">{props.warning}</p>
+        <div className="px-4 py-3 rounded-xl bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
+          <p className="text-body-sm text-[#6b655e]">{props.warning}</p>
         </div>
       )}
 
@@ -554,7 +587,7 @@ function UploadStep(props: WizardStepContentProps) {
           <button
             type="button"
             onClick={props.onContinue}
-            className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+            className="w-full bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             Continue
           </button>
@@ -567,12 +600,16 @@ function UploadStep(props: WizardStepContentProps) {
 function ImagePrepStep(props: WizardStepContentProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-headline-sm font-semibold text-on-surface">
+      <h3 className="text-headline-sm font-semibold text-[#2d2a26]">
         Straighten &amp; adjust your image
       </h3>
 
       {/* Preview */}
-      <div className="rounded-xl overflow-hidden bg-surface-container aspect-video flex items-center justify-center">
+      <div className="rounded-xl overflow-hidden bg-[#fdfaf7] aspect-video flex items-center justify-center border border-[#e8e1da] relative">
+        {/* Subtle stitch decoration */}
+        <div className="absolute top-2 left-2 opacity-8 pointer-events-none">
+          <QuiltPiece color="accent" size={40} rotation={-10} stitch={true} />
+        </div>
         <img
           src={props.originalImageUrl}
           alt="Image to adjust"
@@ -585,7 +622,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
 
       {/* Rotation slider */}
       <div className="space-y-2">
-        <label className="text-body-sm font-medium text-on-surface">
+        <label className="text-body-sm font-medium text-[#2d2a26]">
           Straighten: {props.rotation}°
         </label>
         <input
@@ -603,24 +640,24 @@ function ImagePrepStep(props: WizardStepContentProps) {
         <button
           type="button"
           onClick={() => props.setRotation((r) => r - 90)}
-          className="rounded-full bg-white/50 px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+          className="rounded-lg bg-[#fdfaf7] border border-[#e8e1da] px-4 py-2 text-sm font-medium text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150"
         >
           -90°
         </button>
         <button
           type="button"
           onClick={() => props.setRotation((r) => r + 90)}
-          className="rounded-full bg-white/50 px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container transition-colors"
+          className="rounded-lg bg-[#fdfaf7] border border-[#e8e1da] px-4 py-2 text-sm font-medium text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150"
         >
           +90°
         </button>
         <button
           type="button"
           onClick={() => props.setFlipH((f) => !f)}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
             props.flipH
-              ? 'bg-primary text-white'
-              : 'bg-white/50 text-secondary hover:bg-surface-container'
+              ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]'
+              : 'bg-[#fdfaf7] border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da]'
           }`}
         >
           Flip H
@@ -628,10 +665,10 @@ function ImagePrepStep(props: WizardStepContentProps) {
         <button
           type="button"
           onClick={() => props.setFlipV((f) => !f)}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
             props.flipV
-              ? 'bg-primary text-white'
-              : 'bg-white/50 text-secondary hover:bg-surface-container'
+              ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]'
+              : 'bg-[#fdfaf7] border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da]'
           }`}
         >
           Flip V
@@ -641,7 +678,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+        className="w-full bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Continue
       </button>
@@ -652,37 +689,44 @@ function ImagePrepStep(props: WizardStepContentProps) {
 function ScanSettingsStep(props: WizardStepContentProps) {
   return (
     <div className="space-y-6">
-      <h3 className="text-headline-sm font-semibold text-on-surface">Tell us about your quilt</h3>
+      <div className="flex items-center gap-2">
+        <QuiltPieceRow count={3} size={10} gap={4} />
+        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Tell us about your quilt</h3>
+      </div>
 
       {/* Curved seams */}
       <button
         type="button"
         onClick={() => props.setCurvedSeams((v) => !v)}
-        className={`w-full glass-panel rounded-xl p-4 text-left transition-colors ${
-          props.curvedSeams ? 'border-primary' : ''
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.curvedSeams
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-on-surface">
+        <p className="text-body-md font-medium text-[#2d2a26]">
           Does this quilt have curved seams?
         </p>
-        <p className="text-body-sm text-secondary mt-1">
+        <p className="text-body-sm text-[#6b655e] mt-1">
           Drunkard&apos;s Path, Orange Peel, Wedding Ring, Clamshell
         </p>
       </button>
 
-      {/* Appliqu\u00e9 */}
+      {/* Applique */}
       <button
         type="button"
         onClick={() => props.setApplique((v) => !v)}
-        className={`w-full glass-panel rounded-xl p-4 text-left transition-colors ${
-          props.applique ? 'border-primary' : ''
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.applique
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-on-surface">
+        <p className="text-body-md font-medium text-[#2d2a26]">
           Are there shapes sewn on top of the background?
         </p>
-        <p className="text-body-sm text-secondary mt-1">
-          Needle-turn appliqu\u00e9, raw-edge appliqu\u00e9, fused shapes
+        <p className="text-body-sm text-[#6b655e] mt-1">
+          Needle-turn applique, raw-edge applique, fused shapes
         </p>
       </button>
 
@@ -690,11 +734,13 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={() => props.setTouchingFabrics((v) => !v)}
-        className={`w-full glass-panel rounded-xl p-4 text-left transition-colors ${
-          props.touchingFabrics ? 'border-primary' : ''
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.touchingFabrics
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-on-surface">
+        <p className="text-body-md font-medium text-[#2d2a26]">
           Are there pieces of the exact same fabric sewn touching each other?
         </p>
       </button>
@@ -703,64 +749,68 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={() => props.setHeavyQuilting((v) => !v)}
-        className={`w-full glass-panel rounded-xl p-4 text-left transition-colors ${
-          props.heavyQuilting ? 'border-primary' : ''
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.heavyQuilting
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-on-surface">
+        <p className="text-body-md font-medium text-[#2d2a26]">
           Is there heavy quilting or embroidery over the pieces?
         </p>
       </button>
 
       {/* Piece scale selector */}
       <div className="space-y-2">
-        <p className="text-body-md font-medium text-on-surface">
-          How big are the pieces generally?
-        </p>
+        <p className="text-body-md font-medium text-[#2d2a26]">How big are the pieces generally?</p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => props.setPieceScale('tiny')}
-            className={`glass-panel rounded-xl p-3 text-center transition-colors ${
-              props.pieceScale === 'tiny' ? 'border-primary' : ''
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'tiny'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-on-surface">Tiny / Postage Stamp</p>
-            <p className="text-label-xs text-secondary mt-1">Pieces under 2&quot;</p>
+            <p className="text-body-sm font-medium text-[#2d2a26]">Tiny</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">Under 2&quot;</p>
           </button>
           <button
             type="button"
             onClick={() => props.setPieceScale('standard')}
-            className={`glass-panel rounded-xl p-3 text-center transition-colors ${
-              props.pieceScale === 'standard' ? 'border-primary' : ''
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'standard'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-on-surface">Standard</p>
-            <p className="text-label-xs text-secondary mt-1">Pieces 2&quot;-6&quot;</p>
+            <p className="text-body-sm font-medium text-[#2d2a26]">Standard</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">2&quot;-6&quot;</p>
           </button>
           <button
             type="button"
             onClick={() => props.setPieceScale('large')}
-            className={`glass-panel rounded-xl p-3 text-center transition-colors ${
-              props.pieceScale === 'large' ? 'border-primary' : ''
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'large'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-on-surface">Large / Chunky</p>
-            <p className="text-label-xs text-secondary mt-1">
-              Big pieces, 6&quot;+ — like modern quilt blocks
-            </p>
+            <p className="text-body-sm font-medium text-[#2d2a26]">Large</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">6&quot;+</p>
           </button>
         </div>
       </div>
 
-      <p className="text-body-sm text-secondary text-center">
+      <p className="text-body-sm text-[#6b655e] text-center">
         Default settings work well for most quilts.
       </p>
 
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+        className="w-full bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Analyze Quilt
       </button>
@@ -771,12 +821,30 @@ function ScanSettingsStep(props: WizardStepContentProps) {
 function ProcessingStep() {
   return (
     <div className="space-y-6 text-center py-8">
-      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto animate-pulse">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
+          <circle
+            cx="16"
+            cy="16"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeDasharray="4 3"
+          />
+        </svg>
+      </div>
       <div className="space-y-2">
-        <h3 className="text-headline-sm font-semibold text-on-surface">Analyzing your quilt</h3>
-        <p className="text-body-md text-secondary">
+        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Analyzing your quilt</h3>
+        <p className="text-body-md text-[#6b655e]">
           Detecting pieces and extracting the pattern...
         </p>
+      </div>
+      {/* Quilt-piece decoration */}
+      <div className="flex justify-center gap-2 opacity-20">
+        <QuiltPiece color="primary" size={24} rotation={8} stitch={false} />
+        <QuiltPiece color="secondary" size={20} rotation={-12} stitch={false} />
+        <QuiltPiece color="accent" size={16} rotation={20} stitch={false} />
       </div>
     </div>
   );
@@ -785,8 +853,8 @@ function ProcessingStep() {
 function CompleteStep({ onClose }: { onClose: () => void }) {
   return (
     <div className="space-y-6 text-center py-8">
-      <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-success">
+      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
           <path
             d="M8 16L14 22L24 10"
             stroke="currentColor"
@@ -796,14 +864,22 @@ function CompleteStep({ onClose }: { onClose: () => void }) {
           />
         </svg>
       </div>
-      <h3 className="text-headline-sm font-semibold text-on-surface">Pattern extracted!</h3>
-      <p className="text-body-md text-secondary">
+      <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Pattern extracted!</h3>
+      <p className="text-body-md text-[#6b655e]">
         Your quilt pieces have been detected. You can now assign fabrics and export to the studio.
       </p>
+      {/* Quilt-piece celebration */}
+      <div className="flex justify-center gap-3 opacity-30">
+        <QuiltPiece color="accent" size={20} rotation={-15} stitch={false} />
+        <QuiltPiece color="primary" size={24} rotation={5} stitch={false} />
+        <QuiltPiece color="secondary" size={18} rotation={12} stitch={false} />
+        <QuiltPiece color="primary" size={22} rotation={-8} stitch={false} />
+        <QuiltPiece color="accent" size={16} rotation={20} stitch={false} />
+      </div>
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+        className="bg-[#ff8d49] text-[#2d2a26] px-8 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Open in Studio
       </button>

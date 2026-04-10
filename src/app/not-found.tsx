@@ -11,24 +11,24 @@ export default function NotFound() {
   return (
     <>
       <PublicNav />
-      <main className="min-h-[60vh] flex items-center justify-center px-6 bg-background">
+      <main className="min-h-[60vh] flex items-center justify-center px-6 bg-[#fdfaf7]">
         <div className="text-center max-w-md">
-          <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
-          <h2 className="text-2xl font-semibold text-neutral-800 mb-4">Page Not Found</h2>
-          <p className="text-secondary mb-8">
+          <h1 className="text-[40px] leading-[52px] font-normal text-[#ff8d49] mb-4" style={{ fontFamily: 'var(--font-display)' }}>404</h1>
+          <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-4">Page Not Found</h2>
+          <p className="text-[18px] leading-[28px] text-[#6b655e] mb-8">
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved,
             deleted, or never existed.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-full font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center px-6 py-2 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-normal hover:bg-[#e67d3f] transition-colors duration-150"
             >
               Go to Dashboard
             </Link>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-6 py-3 border border-neutral-200 text-neutral-800 rounded-full font-semibold hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-2 border-2 border-[#ff8d49] text-[#ff8d49] rounded-lg font-normal hover:bg-[#ff8d49]/10 transition-colors duration-150"
             >
               Back to Home
             </Link>

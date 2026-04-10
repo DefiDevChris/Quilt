@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { X, Image as ImageIcon, Send, Loader2, Upload } from 'lucide-react';
+import { X, Image as ImageIcon, Send, Upload } from 'lucide-react';
 import { AuthGateModal } from '@/components/auth/AuthGateModal';
 
 interface CreatePostComposerProps {
@@ -202,7 +202,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
               className="composer-option"
             >
               {isUploading ? (
-                <Loader2 size={16} className="animate-spin" />
+                <div className="w-4 h-4 animate-pulse rounded-full bg-[#e8e1da]" />
               ) : (
                 <ImageIcon size={16} />
               )}
@@ -242,7 +242,7 @@ export function CreatePostComposer({ onSuccess, onCancel }: CreatePostComposerPr
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin" />
+                <div className="w-4 h-4 animate-pulse rounded-full bg-[#fdfaf7]" />
                 Posting...
               </span>
             ) : (

@@ -2,31 +2,56 @@
 
 import Link from 'next/link';
 import Mascot from './Mascot';
+import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 export default function CtaSection() {
   return (
-    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-background">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-primary/10 p-10 md:p-16 text-center border border-neutral-200 rounded-full relative">
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
+      {/* Decorative quilt-piece backgrounds */}
+      <QuiltPiece color="primary" size={100} rotation={10} top={-20} left="10%" opacity={8} />
+      <QuiltPiece color="accent" size={80} rotation={-15} bottom={20} right="15%" opacity={6} />
+
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="bg-[#ff8d49]/10 p-10 md:p-16 text-center border border-[#e8e1da] rounded-xl relative overflow-hidden">
+          {/* Decorative stitch outline via SVG overlay */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+            <rect
+              x="8"
+              y="8"
+              width="calc(100% - 16px)"
+              height="calc(100% - 16px)"
+              fill="none"
+              stroke="#ff8d49"
+              strokeWidth="2"
+              strokeDasharray="8 6"
+              strokeLinecap="round"
+              rx="8"
+              opacity="0.15"
+            />
+          </svg>
+
           {/* Mascots */}
-          <Mascot pose="jumping" size="md" className="absolute top-4 left-6 hidden sm:block" />
-          <Mascot pose="fetching" size="md" className="absolute bottom-4 right-6 hidden sm:block" />
+          <Mascot pose="jumping" size="md" className="absolute top-4 left-6 z-10 hidden sm:block" />
+          <Mascot pose="fetching" size="md" className="absolute bottom-4 right-6 z-10 hidden sm:block" />
 
           <div className="relative z-10">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <QuiltPieceRow count={3} size={8} gap={4} />
+            </div>
             <h2
-              className="text-3xl md:text-4xl font-bold text-on-surface mb-4"
+              className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[#2d2a26] mb-4"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Ready to Start Your Next Quilting Adventure?
             </h2>
-            <p className="text-lg text-on-surface/70 mb-8 max-w-xl mx-auto">
+            <p className="text-[18px] leading-[28px] text-[#6b655e] mb-8 max-w-xl mx-auto">
               Explore QuiltCorgi today and experience the joy of effortless, digital quilt design.
-              No credit card, no commitment — just you and your next great quilt.
+              No credit card, no commitment &mdash; just you and your next great quilt.
             </p>
 
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-primary text-white rounded-full font-bold text-lg hover:opacity-90 transition-all shadow-elevation-3"
+              className="px-8 py-4 bg-[#ff8d49] text-[#2d2a26] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] inline-block"
             >
               Start Designing Free
             </Link>

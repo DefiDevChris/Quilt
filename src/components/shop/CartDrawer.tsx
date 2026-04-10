@@ -98,7 +98,7 @@ export function CartDrawer() {
 
         {/* Error */}
         {error && (
-          <div className="mx-5 mt-3 px-3 py-2 rounded-full bg-error/5 border border-error/20 text-xs text-error">
+          <div className="mx-5 mt-3 px-3 py-2 rounded-lg bg-error/5 border border-error/20 text-xs text-error">
             {error}
           </div>
         )}
@@ -137,7 +137,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={handleCopyList}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-neutral-100 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-neutral-100 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors"
               >
                 <Copy size={14} />
                 Copy List
@@ -147,7 +147,7 @@ export function CartDrawer() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:opacity-90 transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-all"
                 >
                   {isLoading ? 'Loading...' : 'Checkout'}
                 </a>
@@ -155,7 +155,7 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={handleCopyList}
-                  className="flex-1 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:opacity-90 transition-all"
+                  className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-all"
                 >
                   Copy Shopping List
                 </button>
@@ -188,9 +188,9 @@ function CartItemRow({
   const lineTotal = item.pricePerYard * item.quantityInYards;
 
   return (
-    <div className="flex gap-3 p-3 bg-neutral border border-neutral-200 rounded-full">
+    <div className="flex gap-3 p-3 bg-neutral border border-neutral-200 rounded-lg">
       {/* Swatch */}
-      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border border-neutral-200">
+      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-neutral-200">
         {item.fabricImageUrl ? (
           <img
             src={item.fabricImageUrl}

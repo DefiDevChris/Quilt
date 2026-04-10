@@ -91,13 +91,13 @@ export function BillingSection() {
       </div>
 
       {successMessage && (
-        <div className="rounded-full border border-success/30 bg-success/5 p-5 animate-in fade-in slide-in-from-top-2">
+        <div className="rounded-lg border border-success/30 bg-success/5 p-5 animate-in fade-in slide-in-from-top-2">
           <p className="text-sm font-semibold text-success">{successMessage}</p>
         </div>
       )}
 
       {isPastDue && (
-        <div className="rounded-full border border-error/30 bg-error/5 p-6 space-y-4">
+        <div className="rounded-lg border border-error/30 bg-error/5 p-6 space-y-4">
           <div>
             <h3 className="text-sm font-semibold text-error mb-1">Payment Failed</h3>
             <p className="text-sm text-neutral-700 leading-relaxed">
@@ -108,7 +108,7 @@ export function BillingSection() {
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="rounded-full bg-error text-white px-6 py-2.5 text-sm font-semibold hover:bg-error/90 transition-all disabled:opacity-50"
+            className="rounded-lg bg-error text-white px-6 py-2.5 text-sm font-semibold hover:bg-error/90 transition-all disabled:opacity-50"
           >
             {isPortalLoading ? 'Updating...' : 'Update Payment Method'}
           </button>
@@ -116,7 +116,7 @@ export function BillingSection() {
       )}
 
       {/* Current plan status */}
-      <div className="rounded-full border border-neutral-200 bg-neutral p-8 space-y-6 shadow-elevation-1">
+      <div className="rounded-lg border border-neutral-200 bg-neutral p-8 space-y-6 shadow-elevation-1">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-neutral-600">Current Membership</p>
@@ -137,7 +137,7 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-full border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
+              className="rounded-lg border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
             >
               {isPortalLoading ? 'Opening...' : 'Manage Subscription'}
             </button>
@@ -158,7 +158,7 @@ export function BillingSection() {
                 })}
               </p>
             </div>
-            <div className={`px-3 py-1 rounded-full text-xs font-medium ${subscription.status === 'active' ? 'bg-success/10 text-success' : 'bg-neutral-100 text-neutral-600'
+            <div className={`px-3 py-1 rounded-lg text-xs font-medium ${subscription.status === 'active' ? 'bg-success/10 text-success' : 'bg-neutral-100 text-neutral-600'
               }`}>
               {subscription.status}
             </div>
@@ -168,7 +168,7 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-full bg-neutral-900 text-neutral p-10 space-y-8 shadow-elevation-4 relative overflow-hidden">
+        <div className="rounded-lg bg-neutral-900 text-neutral p-10 space-y-8 shadow-elevation-4 relative overflow-hidden">
           {/* Subtle accent line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
 
@@ -183,11 +183,11 @@ export function BillingSection() {
 
             <div className="text-right space-y-4">
               {/* Billing toggle */}
-              <div className="flex items-center gap-1 bg-neutral-800 rounded-full p-1 w-fit ml-auto border border-neutral-700">
+              <div className="flex items-center gap-1 bg-neutral-800 rounded-lg p-1 w-fit ml-auto border border-neutral-700">
                 <button
                   type="button"
                   onClick={() => setBillingInterval('monthly')}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${billingInterval === 'monthly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                  className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${billingInterval === 'monthly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
                     }`}
                 >
                   Monthly
@@ -195,7 +195,7 @@ export function BillingSection() {
                 <button
                   type="button"
                   onClick={() => setBillingInterval('yearly')}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${billingInterval === 'yearly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                  className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${billingInterval === 'yearly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
                     }`}
                 >
                   Yearly
@@ -225,7 +225,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="w-full h-16 rounded-full bg-primary text-neutral-900 font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-2 active:scale-[0.98] relative z-10"
+            className="w-full h-16 rounded-lg bg-primary text-neutral-900 font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-2 active:scale-[0.98] relative z-10"
           >
             {isCheckoutLoading ? 'Processing...' : 'Upgrade to Pro'}
           </button>

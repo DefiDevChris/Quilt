@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="bg-surface-container border-t border-neutral-200">
+    <footer className="bg-[#fdfaf7] border-t border-[#e8e1da]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
           {/* Brand */}
@@ -18,13 +18,13 @@ export default function Footer() {
                 className="object-contain"
               />
               <span
-                className="text-xl font-bold text-on-surface"
+                className="text-xl font-bold text-[#2d2a26]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 QuiltCorgi
               </span>
             </div>
-            <p className="text-on-surface/70 text-sm leading-relaxed max-w-xs">
+            <p className="text-[#6b655e] text-sm leading-relaxed max-w-xs">
               Design your quilts, calculate your yardage, and print patterns ready for the sewing
               room. A growing block library, and a community of quilters who get it.
             </p>
@@ -33,19 +33,19 @@ export default function Footer() {
           {/* Product */}
           <div>
             <h4
-              className="font-bold text-on-surface mb-4 text-sm uppercase tracking-wider"
+              className="font-bold text-[#2d2a26] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Product
             </h4>
-            <ul className="space-y-3 text-on-surface/70 text-sm">
+            <ul className="space-y-3 text-[#6b655e] text-sm">
               <li>
-                <a href="#features" className="hover:text-primary transition-colors">
+                <a href="#features" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Design Studio
                 </a>
               </li>
               <li>
-                <a href="#features" className="hover:text-primary transition-colors">
+                <a href="#features" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Yardage Calculator
                 </a>
               </li>
@@ -55,19 +55,19 @@ export default function Footer() {
           {/* Social */}
           <div>
             <h4
-              className="font-bold text-on-surface mb-4 text-sm uppercase tracking-wider"
+              className="font-bold text-[#2d2a26] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Social
             </h4>
-            <ul className="space-y-3 text-on-surface/70 text-sm">
+            <ul className="space-y-3 text-[#6b655e] text-sm">
               <li>
-                <Link href="/socialthreads" className="hover:text-primary transition-colors">
+                <Link href="/socialthreads" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Gallery
                 </Link>
               </li>
               <li>
-                <Link href="/socialthreads" className="hover:text-primary transition-colors">
+                <Link href="/socialthreads" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Discussions
                 </Link>
               </li>
@@ -77,29 +77,29 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4
-              className="font-bold text-on-surface mb-4 text-sm uppercase tracking-wider"
+              className="font-bold text-[#2d2a26] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Company
             </h4>
-            <ul className="space-y-3 text-on-surface/70 text-sm">
+            <ul className="space-y-3 text-[#6b655e] text-sm">
               <li>
-                <Link href="/about" className="hover:text-primary transition-colors">
+                <Link href="/about" className="hover:text-[#ff8d49] transition-colors duration-150">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-primary transition-colors">
+                <Link href="/contact" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-primary transition-colors">
+                <Link href="/privacy" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-primary transition-colors">
+                <Link href="/terms" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Terms of Service
                 </Link>
               </li>
@@ -107,13 +107,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-on-surface/50">&copy; 2026 QuiltCorgi. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-sm text-on-surface/50">
-            <Link href="/privacy" className="hover:text-primary transition-colors">
+        <div className="pt-8 border-t border-[#e8e1da] flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-[#6b655e]">&copy; 2026 QuiltCorgi. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-[#6b655e]">
+            <Link href="/privacy" className="hover:text-[#ff8d49] transition-colors duration-150">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-primary transition-colors">
+            <Link href="/terms" className="hover:text-[#ff8d49] transition-colors duration-150">
               Terms
             </Link>
           </div>

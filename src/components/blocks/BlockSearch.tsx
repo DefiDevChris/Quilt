@@ -47,12 +47,12 @@ export function BlockSearch() {
         value={localSearch}
         onChange={(e) => setLocalSearch(e.target.value)}
         placeholder="Search blocks..."
-        className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-primary focus:outline-none"
+        className="w-full rounded-lg border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-primary focus:outline-none"
       />
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-primary focus:outline-none"
+        className="w-full rounded-lg border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-primary focus:outline-none"
       >
         {CATEGORIES.map((cat) => (
           <option key={cat} value={cat}>

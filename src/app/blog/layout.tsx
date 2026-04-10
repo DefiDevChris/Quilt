@@ -3,7 +3,7 @@ import Footer from '@/components/landing/Footer';
 
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col selection:bg-primary-golden/20">
+    <div className="min-h-screen flex flex-col selection:bg-[#ff8d49]/20">
       <PublicNav />
       <main className="flex-grow w-full flex flex-col">{children}</main>
       <Footer />

@@ -89,8 +89,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-neutral-800">Welcome back, Admin</h2>
-        <p className="text-sm text-secondary mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
+        <h2 className="text-xl font-semibold text-[#2d2a26]">Welcome back, Admin</h2>
+        <p className="text-sm text-[#6b655e] mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
       </div>
 
       {/* Stat cards */}
@@ -110,7 +110,7 @@ export default async function AdminDashboardPage() {
 
       {/* Quick actions */}
       <div>
-        <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
+        <h3 className="text-sm font-semibold text-[#6b655e] mb-4">
           Quick Actions
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -180,20 +180,20 @@ export default async function AdminDashboardPage() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent blog posts */}
-        <div className="bg-neutral border border-neutral-200 rounded-full p-6">
+        <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-[#6b655e]">
               Recent Blog Posts
             </h3>
             <Link
               href="/admin/blog"
-              className="text-xs font-medium text-primary hover:text-primary-dark"
+              className="text-xs font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
             >
               View all
             </Link>
           </div>
           {recentPosts.length === 0 ? (
-            <p className="text-sm text-secondary py-8 text-center">No blog posts yet</p>
+            <p className="text-sm text-[#6b655e] py-8 text-center">No blog posts yet</p>
           ) : (
             <ul className="space-y-3">
               {recentPosts.map((post) => (
@@ -201,18 +201,18 @@ export default async function AdminDashboardPage() {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/admin/blog/${post.id}`}
-                      className="text-sm font-medium text-neutral-800 truncate hover:text-primary transition-colors"
+                      className="text-sm font-medium text-[#2d2a26] truncate hover:text-[#ff8d49] transition-colors duration-150"
                     >
                       {post.title}
                     </Link>
-                    <p className="text-xs text-secondary mt-0.5">
+                    <p className="text-xs text-[#6b655e] mt-0.5">
                       {new Date(post.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <span
-                    className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-full ${post.status === 'published'
-                      ? 'bg-success/10 text-success'
-                      : 'bg-neutral-100 text-secondary'
+                    className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${post.status === 'published'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-[#fdfaf7] text-[#6b655e]'
                       }`}
                   >
                     {post.status}
@@ -224,31 +224,31 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent social posts */}
-        <div className="bg-neutral border border-neutral-200 rounded-full p-6">
+        <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-[#6b655e]">
               Recent Social Posts
             </h3>
             <Link
               href="/admin/moderation"
-              className="text-xs font-medium text-primary hover:text-primary-dark"
+              className="text-xs font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
             >
               Moderate
             </Link>
           </div>
           {recentSocial.length === 0 ? (
-            <p className="text-sm text-secondary py-8 text-center">No social posts yet</p>
+            <p className="text-sm text-[#6b655e] py-8 text-center">No social posts yet</p>
           ) : (
             <ul className="space-y-3">
               {recentSocial.map((post) => (
                 <li key={post.id} className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-neutral-800 truncate">{post.title}</p>
-                    <p className="text-xs text-secondary mt-0.5">
-                      by {post.creatorName} · {post.likeCount} likes
+                    <p className="text-sm font-medium text-[#2d2a26] truncate">{post.title}</p>
+                    <p className="text-xs text-[#6b655e] mt-0.5">
+                      by {post.creatorName} &middot; {post.likeCount} likes
                     </p>
                   </div>
-                  <span className="text-xs text-secondary">
+                  <span className="text-xs text-[#6b655e]">
                     {new Date(post.createdAt).toLocaleDateString()}
                   </span>
                 </li>
@@ -273,13 +273,13 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="bg-neutral border border-neutral-200 rounded-full p-5 hover:shadow-elevation-3 transition-shadow block"
+      className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-5 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-shadow block"
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg font-bold">
+        <div className="w-10 h-10 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] text-lg font-bold">
           {value}
         </div>
-        <p className="text-sm font-medium text-secondary">{label}</p>
+        <p className="text-sm font-medium text-[#6b655e]">{label}</p>
       </div>
     </Link>
   );
@@ -299,13 +299,13 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="bg-neutral border border-neutral-200 rounded-full p-5 hover:shadow-elevation-3 transition-shadow block group"
+      className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-5 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-shadow block group"
     >
       <div className="flex items-start gap-3">
-        <div className="text-secondary group-hover:text-primary transition-colors">{icon}</div>
+        <div className="text-[#6b655e] group-hover:text-[#ff8d49] transition-colors duration-150">{icon}</div>
         <div>
-          <p className="text-sm font-semibold text-neutral-800">{title}</p>
-          <p className="text-xs text-secondary mt-1">{description}</p>
+          <p className="text-sm font-semibold text-[#2d2a26]">{title}</p>
+          <p className="text-xs text-[#6b655e] mt-1">{description}</p>
         </div>
       </div>
     </Link>

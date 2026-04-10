@@ -22,7 +22,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed:blog": "tsx src/db/seed/seed-blog.ts",
     "db:local:up": "docker compose up -d --wait",
-    "db:local:down": "docker compose down"
+    "db:local:down": "docker compose down",
+    "postinstall": "node scripts/extract-opencv-wasm.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "~3.1027.0",

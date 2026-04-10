@@ -7,14 +7,14 @@ import { PostDetail } from '@/components/social/PostDetail';
 
 function PostDetailSkeleton() {
   return (
-    <div className="bg-neutral border border-neutral-200 rounded-full p-6 animate-pulse space-y-4">
-      <div className="h-8 w-3/4 bg-primary/20 rounded-full" />
-      <div className="h-4 w-1/2 bg-primary/10 rounded-full" />
-      <div className="aspect-video bg-primary/10 rounded-full" />
+    <div className="bg-[#fdfaf7] border border-[#e8e1da] rounded-lg p-6 animate-pulse space-y-4">
+      <div className="h-8 w-3/4 bg-[#ff8d49]/20 rounded-lg" />
+      <div className="h-4 w-1/2 bg-[#ff8d49]/10 rounded-lg" />
+      <div className="aspect-video bg-[#ff8d49]/10 rounded-lg" />
       <div className="space-y-2">
-        <div className="h-4 w-full bg-primary/20 rounded-full" />
-        <div className="h-4 w-5/6 bg-primary/10 rounded-full" />
-        <div className="h-4 w-4/6 bg-primary/10 rounded-full" />
+        <div className="h-4 w-full bg-[#ff8d49]/20 rounded-lg" />
+        <div className="h-4 w-5/6 bg-[#ff8d49]/10 rounded-lg" />
+        <div className="h-4 w-4/6 bg-[#ff8d49]/10 rounded-lg" />
       </div>
     </div>
   );

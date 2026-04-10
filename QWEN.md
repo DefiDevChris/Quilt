@@ -1,690 +1,219 @@
-# QWEN.md
+# CLAUDE.md
 
-> **IMPORTANT:** This file MUST stay identical to `CLAUDE.md` at all times. Any change made here must be mirrored in `CLAUDE.md`, and vice versa.
-
-This file provides guidance to Qwen Code when working with code in this repository.
+> **IMPORTANT:** This file MUST stay identical to `QWEN.md` at all times.
 
 ## Project Overview
 
-Next.js 16 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments. Consumer hobbyist tool for designing quilts — users pick layouts, assign blocks and fabrics, and export print-ready PDF patterns.
+Next.js 16 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments. Consumer hobbyist tool — users pick layouts, assign blocks and fabrics, and export print-ready PDF patterns.
 
-**Flagship features:**
-
-- **Design Studio** — Worktable canvas with layout templates (borders, sashing, cornerstones, block cells), block builder, and fabric assignment
-- **Photo-to-Design** — Upload a photo of a quilt, OpenCV extracts individual pieces onto the worktable for redesigning
-- **Block Photo Upload** — Upload a photo of a finished sewn block as a non-editable square image in the block library, placeable in layouts
-- **PDF Pattern Export** — Full pattern documents like commercial quilt patterns (cover, fabric requirements, cutting directions, block assembly, quilt diagram, individual cutting templates with seam allowance)
+**Flagship features:** Design Studio (canvas + fence layouts + block builder), Photo-to-Design (OpenCV piece extraction), Block Photo Upload, PDF Pattern Export (commercial-grade patterns with seam allowance).
 
 ## Development Commands
 
 ```bash
-# Local setup
-cp .env.example .env.local          # Configure AWS Cognito, S3, Stripe creds
-npm install
-npm run db:local:up                  # Start PostgreSQL via Docker (port 5432)
-npm run db:push                      # Push schema to local DB
-npm run dev                          # http://localhost:3000 (uses Turbopack)
-
-# Build & check
-npm run build                        # Production build
-npm run type-check                   # tsc --noEmit
-npm run lint                         # ESLint
-npm run format                       # Prettier
-
-# Unit tests (Vitest)
-npm test                             # Run all unit tests
-npm test -- tests/unit/lib/trust-engine.test.ts   # Single test file
-npm test -- -t "test name pattern"   # Run by test name
-npm run test:watch                   # Watch mode
-npm run test:coverage                # Coverage (thresholds: 70% lines/functions/statements, 60% branches)
-
-# E2E tests (Playwright)
-npm run test:e2e                     # All browsers (chromium, firefox, webkit, mobile-chrome, mobile-safari)
-npx playwright test tests/e2e/studio.spec.ts                # Single spec
-npx playwright test --project=chromium tests/e2e/auth.spec.ts  # Single browser
-
-# Database (Drizzle + PostgreSQL)
-npm run db:generate                  # Generate migration from schema changes (requires DATABASE_URL — see below)
-# drizzle-kit needs DATABASE_URL: DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npm run db:generate
-npm run db:migrate                   # Run pending migrations
-npm run db:push                      # Push schema directly (no migration file)
-npm run db:studio                    # Open Drizzle Studio web UI
-npm run db:seed:blog                 # Seed blog posts
-DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts  # Seed fabric library (2,764 solids)
-DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedBlocksFromFiles.ts  # Seed 50 system blocks from SVG files
-npm run db:seed:layouts              # Seed 8 default layout templates
-npm run db:local:down                # Stop PostgreSQL container
-# Direct SQL queries (psql not installed locally):
-# docker exec -i $(docker ps --filter ancestor=postgres -q | head -1) psql -U quiltcorgi -d quiltcorgi -c "SELECT ..."
+npm install && npm run db:local:up && npm run db:push && npm run dev  # Full local setup
+npm run build              # Production build
+npm run type-check         # tsc --noEmit
+npm run lint && npm run format
+npm test                   # Vitest (coverage: 70% lines/functions/statements, 60% branches)
+npm run test:e2e           # Playwright (chromium, firefox, webkit, mobile-chrome, mobile-safari)
+npm run db:generate        # Needs DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi
+npm run db:migrate         # Run pending migrations
+npm run db:push            # Push schema directly
+npm run db:studio          # Drizzle Studio
+npm run db:seed:blog && npm run db:seed:layouts
+DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts
+DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedBlocksFromFiles.ts
 ```
 
-Set `AWS_SECRET_NAME=skip` in `.env.local` for local development (secrets loaded from `.env.local` instead of Secrets Manager).
+Set `AWS_SECRET_NAME=skip` in `.env.local` for local dev. Direct SQL: `docker exec -i $(docker ps --filter ancestor=postgres -q | head -1) psql -U quiltcorgi -d quiltcorgi -c "SELECT ..."`
 
 ## Architecture
 
 ```
 src/
-  app/              # Next.js App Router — pages and API routes
-    (protected)/    # Auth-gated routes (layout redirects guests)
-    (public)/       # Public marketing pages (about, contact, privacy, terms, shop)
-    admin/          # Admin panel (role-gated)
-    api/            # API route handlers
-    blog/           # Blog/tutorial pages
-    onboarding/     # New user onboarding flow
-    socialthreads/  # Social feed
-    studio/[projectId]/  # Design canvas (desktop only)
-  components/       # React components, organized by domain
+  app/              # App Router (pages + API routes)
+  components/       # React components by domain
   hooks/            # Bridges between engines and Fabric.js canvas
   stores/           # Zustand stores (17 total)
-  lib/              # Pure utilities and engines
-    *-engine.ts     # Pure computation — zero React/Fabric/DOM deps
-    *-utils.ts      # Domain-specific utilities
+  lib/*-engine.ts   # Pure computation — zero DOM deps (testable in Vitest)
+  lib/*-utils.ts    # Domain-specific utilities
   db/schema/        # Drizzle table definitions (21 files)
-  types/            # Shared TypeScript type definitions
+  types/            # Shared TypeScript types
 ```
 
-**Core pattern**: All computational logic goes in `src/lib/*-engine.ts` files with zero DOM dependencies (fully testable in Vitest). Hooks bridge engines to Fabric.js canvas. Components handle UI only — no business logic.
+**Core pattern**: Engines (`*-engine.ts`) are pure computation with zero DOM deps. Hooks bridge engines to Fabric.js. Components handle UI only.
 
-**Path alias**: `@/*` maps to `./src/*` (configured in tsconfig.json and vitest.config.ts).
+**Path alias**: `@/*` maps to `./src/*`.
 
-**Auth flow**: Cognito sign-in sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `src/proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role.
+**Auth**: Cognito sets HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `src/proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup for role. Roles: `free | pro | admin`.
 
-**Route protection**:
-
-- `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
-- `/admin/*` — cookie + role check (`admin` role only)
-- `/dashboard` — public, but protected actions trigger `AuthGateModal`
-
-**Pro gating**: Check `useAuthStore.isPro` client-side. API routes check `session.user.role` and return 403 `PRO_REQUIRED`.
-
-**Roles**: `free | pro | admin` — defined in `src/lib/role-utils.ts`, permissions in `src/lib/trust-utils.ts`.
+**Route protection**: `/studio/*` redirects guests. `/admin/*` requires admin role. `/dashboard` is public but protected actions trigger `AuthGateModal`. Pro gating: `useAuthStore.isPro` client-side, `session.user.role` + 403 `PRO_REQUIRED` server-side.
 
 ## Critical Conventions
 
-### Fabric.js Usage
+### Fabric.js
 
 - Always dynamic import: `const fabric = await import('fabric')`
-- Canvas refs are `useRef<unknown>(null)`, cast as `InstanceType<typeof fabric.Canvas>`
-- Grid lines use `stroke: '#E5E2DD'` — filter these out when extracting user objects
-- Overlay objects use `(obj as unknown as { name?: string }).name === 'overlay-ref'` tag
-- SVG loading: `fabric.loadSVGFromString()` — objects param needs `as unknown as Array<InstanceType<typeof fabric.FabricObject>> | null`
-- Group options need `as Record<string, unknown>` cast for custom props
-- Always maintain aspect ratio: `scaleX === scaleY` for overlays
+- Canvas refs: `useRef<unknown>(null)`, cast as `InstanceType<typeof fabric.Canvas>`
+- Grid lines use `stroke: '#E5E2DD'` — filter out when extracting user objects
+- Overlay objects: `(obj as unknown as { name?: string }).name === 'overlay-ref'`
+- SVG loading objects param: `as unknown as Array<InstanceType<typeof fabric.FabricObject>> | null`
+- Group options: `as Record<string, unknown>` cast for custom props
+- Always `scaleX === scaleY` for overlays
 
 ### TypeScript
 
-- No `any` — use `unknown` with proper casts
-- Type assertions at boundaries only (Fabric.js interop)
+No `any` — use `unknown` with proper casts. Type assertions at boundaries only (Fabric.js interop).
 
 ### Styling & Design System
 
-Tailwind CSS v4 with the **Studio Atelier** high-contrast editorial design system. **All components use the same token set — no hardcoded hex grays or slates.**
+Tailwind CSS v4. Full spec in `brand_config.json`. BrandGuard agent enforces consistency.
 
-**Typography:**
-- Emphasize uppercase, editorial styling: `font-black uppercase tracking-[0.2em]` for primary labels and headers.
-- Sizes often lean smaller but denser (e.g., `text-[10px]`, `text-[11px]`, `text-[12px]`) to accommodate thick weighting and large tracking.
+**Colors:** `--primary: #ff8d49` | `--secondary: #ffc8a6` | `--accent: #ffc7c7` | `--bg: #fdfaf7` | `--surface: #ffffff` | `--text: #2d2a26` | `--text-dim: #6b655e` | `--border: #e8e1da`. Light mode only.
 
-**Text tokens:**
-- `text-on-surface` — primary text (headings, names, labels)
-- `text-secondary` — muted text (captions, timestamps, meta, although mostly migrating toward opacities like `text-on-surface/70`)
-- `text-primary` — accent text
-- `text-surface` — inverted text on dark backgrounds
+**Typography:** Headings: **Spline Sans** (400-700). Body: **Inter** (300-700). Scale: h1 40/52, h2 32/40, h3 24/32, body 18/28, small 16/24, label 14/20.
 
-**Surfaces & Containers:**
-- Brutalist blocks: `bg-surface border-2 border-on-surface`
-- Corners: Square corners (`rounded-none`) or sharp (`rounded-sm`). Do not use `rounded-xl`, `rounded-2xl`, etc.
-- Glassmorphism is deprecated in favor of solid colors and hard borders.
+**Shape:** Buttons/CTAs/tabs/filters/pills: `rounded-full` (pill shape) everywhere. Cards/containers/inputs/dialogs: `rounded-lg` (8px). Avatar containers: `rounded-full`. Shadow: `0 1px 2px rgba(45,42,38,0.08)` only.
 
-**Buttons:**
-- Primary: `bg-on-surface text-surface px-6 py-2 font-black uppercase tracking-[0.2em] transition-all hover:opacity-90`
-- Outline: `border-2 border-on-surface bg-surface text-on-surface transition-colors hover:bg-on-surface hover:text-surface`
-- No pill shapes (`rounded-full`) or gradients.
+**Motion:** Hover changes color/background ONLY. 150ms ease-out on color/opacity. No scale, translate, lift, shift, or transforms. No Framer Motion entry animations. No spinners (use opacity pulse).
 
-**Borders:** `border-on-surface` (usually `border-2` or `border`)
+**Buttons:** Primary: `bg-[#ff8d49] text-[#2d2a26] px-6 py-2 rounded-full hover:bg-[#e67d3f]`. Secondary: `border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10`.
 
-**Shadows:** 
-- Hard, flat offset shadows: `shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]` or `shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`.
-- Soft drop shadows (`shadow-elevation-1` through `shadow-elevation-4`) are deprecated.
-
-**Banned patterns — do NOT use:**
-- `text-gray-*`, `text-slate-*`, `bg-gray-*`, `bg-slate-*`, `border-gray-*`, `border-slate-*`
-- `border-[#e5e5e5]`, `bg-[#f5f5f5]`
-- `rounded-2xl`, `rounded-full`, `rounded-xl` (pills and badges are banned)
-- `bg-gradient-*` (gradients are banned)
-- Glassmorphism (`backdrop-blur` without hard borders, `bg-white/50`, etc)
-- Soft drop shadows (no generic `shadow-md` or `shadow-elevation-*` without a hard black offset)
-- Generative "AI slop" or cliché icons (e.g. `Sparkles` icon for premium features)
+**Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, gradients, glassmorphism, `hover:scale-*`/`hover:-translate-*`, `shadow-elevation-*`, hard offset shadows, `font-black uppercase tracking-[0.2em]`, Framer Motion scale/y transforms, AI slop.
 
 ### State Management
 
-- Zustand stores in `src/stores/`
-- Selectors use `(s) => s.field` pattern
-- New state fields need setters following existing naming: `setFieldName`
+Zustand in `src/stores/`. Selectors: `(s) => s.field`. New fields need `setFieldName` setters.
 
 ### API Routes
 
-- Check `session.user.role` for auth
-- Return 403 `PRO_REQUIRED` for pro-gated endpoints
-- Rate limit all auth endpoints
-- Dynamic route params are async in Next.js 16: `{ params }: { params: Promise<{ id: string }> }` — must `await params`
+Check `session.user.role` for auth. 403 `PRO_REQUIRED` for pro endpoints. Rate limit auth endpoints. Next.js 16 async params: `{ params }: { params: Promise<{ id: string }> }` — must `await params`.
 
-### S3 Upload Purposes
+### Other Conventions
 
-Presigned URL API at `/api/upload/presigned-url` — `purpose` field determines S3 prefix and auth:
+- **S3 uploads**: `/api/upload/presigned-url` — purposes: `fabric|thumbnail|export|block` (Pro), `mobile-upload` (all auth users)
+- **Dashboard**: Bento grid with 6 cards, 3 have in-page sub-views via `DashboardTab`
+- **Git**: Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
 
-- `fabric`, `thumbnail`, `export`, `block` — Pro required
-- `mobile-upload` — all authenticated users (Pro gate applies at processing time)
-
-### Dashboard
-
-Bento grid with 6 cards: My Quiltbook, Browse Templates, Mobile Uploads, Community Threads, My Profile, System Settings. Three have in-page sub-views via `DashboardTab = 'my-quilts' | 'templates' | 'mobile-uploads'` — each renders a full-page panel with "Back to Dashboard" header. The rest are `<Link>` navigations.
-
-### Git
-
-- Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
-
-## Design Studio
-
-This section is the **single source of truth (SSSOT)** for the studio architecture.
+## Design Studio (SSSOT)
 
 ### Three-Pane Workspace
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│ StudioTopBar                                                        │
-├──────┬──────────────────────────────────────┬───────────────────────┤
-│      │                                      │                       │
-│ Tool │       CanvasWorkspace                │  ContextPanel         │
-│ bar  │       + Fence Overlay (if layout)    │  (right, 320 px)      │
-│      │       + User Blocks                  │                       │
-│      │                                      │  Library tabs only    │
-│      │                                      │   Layouts/Blocks/     │
-│      │                                      │   Fabrics             │
-├──────┴──────────────────────────────────────┴───────────────────────┤
-│ BottomBar                                                           │
-└─────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ StudioTopBar                                          │
+├──────┬────────────────────────────┬──────────────────┤
+│ Tool │ CanvasWorkspace            │ ContextPanel     │
+│ bar  │ + Fence Overlay            │ (320px)          │
+│ 88px │ + User Blocks              │ Layouts/Blocks/  │
+│      │                            │ Fabrics          │
+├──────┴────────────────────────────┴──────────────────┤
+│ BottomBar                                             │
+└──────────────────────────────────────────────────────┘
 ```
 
-- **Toolbar (left, 88 px)** — All tools visible at once in a flat single-column layout (no tiers, no "More Tools" toggle). Tools: Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In, Zoom Out. Reference Image toggle is in StudioTopBar. **No advanced-tier tools**, **no pinned tools**, and **no transform tools** (rotate/flip/delete) — those live in inspectors in the right pane. Snap toggle is in QuiltSettingsDropdown.
-- **CanvasWorkspace (center)** — Single Fabric.js canvas, never unmounted. Pan/zoom is preserved across all worktable mode changes. Canvas dimensions are calculated by `src/lib/quilt-sizing.ts` based on block size, grid dimensions, sashing, and borders.
-- **ContextPanel (right, 320 px)** — Library tabs only (Layouts / Blocks / Fabrics). User-driven — **never auto-switches based on canvas selection.**
+- **Toolbar (left, 88px)**: Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In/Out. No advanced tiers, no pinned tools, no transform tools (those live in right-pane inspectors).
+- **CanvasWorkspace**: Single Fabric.js canvas, never unmounted. Dimensions from `src/lib/quilt-sizing.ts`.
+- **ContextPanel (right, 320px)**: Library tabs only. Never auto-switches on selection.
 
 ### Worktable Types
 
-In `canvasStore.ts`:
+`WorktableType = 'quilt' | 'block-builder'` in `canvasStore.ts`. Tabs in `canvasStore.worktableTabs[]`. Layout Creator worktable has been removed — users pick presets from `LayoutSelector` and configure via `LayoutSettingsPanel`.
 
-```typescript
-export type WorktableType = 'quilt' | 'block-builder';
-```
+### Fence System (Layout Mode)
 
-| Mode | Purpose | Canvas |
-|------|---------|--------|
-| **`quilt`** | Primary design canvas. Layout fence (if applied) constrains drops. Blocks→cells, fabrics→structural areas. | Main Fabric.js canvas + fence overlay |
-| **`block-builder`** | Grid-snapped block drafting. Save custom blocks to library. | Dedicated 600×600 mini-canvas |
+A layout is a **fence** — areas that accept specific drop types:
+- `block-cell` → blocks only (snaps to exact position/scale/rotation)
+- `sashing|cornerstone|border|binding|edging` → fabrics only (pattern fill)
+- Drops outside valid areas → rejected silently (`not-allowed` cursor)
 
-The canonical user surface is `'quilt'`. The `'block-builder'` type is the dedicated block drafting worktable.
+**Renderer**: `useFenceRenderer.ts` (hook) + `fence-engine.ts` (pure engine: LayoutTemplate + dimensions → FenceArea[]). Each area tagged with `_fenceElement`, `_fenceAreaId`, `_fenceRole`.
 
-**Note:** The Layout Creator worktable has been removed. Users configure layouts via the Layout Settings Panel and pick presets from the Layout Selector in the right panel.
+**Block drop** (`useBlockDrop.ts`): Temporarily disables `evented` on user blocks → `findTarget()` reads fence cells → snaps block → tags with `_inFenceCellId`. Overwrite semantics on occupied cells.
 
-### Worktable Tab Management
-
-Tabs are stored in `canvasStore.worktableTabs[]`:
-
-```typescript
-interface WorktableTab {
-  id: string;
-  name: string;
-  type: WorktableType;
-  layoutSnapshot: {
-    layoutType: string;
-    rows: number;
-    cols: number;
-    blockSize: number;
-    sashingWidth: number;
-    hasCornerstones: boolean;
-    borders: unknown[];
-    bindingWidth: number;
-    selectedPresetId: string | null;
-  } | null;
-  createdAt: number;
-}
-```
-
-- **Adding a tab**: Creates a new `'quilt'` tab with empty `layoutSnapshot`.
-- **Closing a tab**: Removes from array, falls back to last remaining tab.
-- **Switching tabs**: Activates the new tab. Pan/zoom is preserved because the canvas is never unmounted.
-
-### The Fence Concept (Layout Mode)
-
-A layout is a **fence** — it defines areas where specific things can be placed:
-
-- **`block-cell`** — accepts blocks ONLY. Drag a block onto a cell → it snaps to exact position, scale, and rotation.
-- **`sashing`** — accepts fabrics ONLY. Drag fabric onto sashing → fills the entire strip.
-- **`cornerstone`** — accepts fabrics ONLY.
-- **`border`** — accepts fabrics ONLY.
-- **`binding`** — accepts fabrics ONLY.
-- **`edging`** — accepts fabrics ONLY.
-
-**Drops outside valid areas are rejected** with cursor `not-allowed` (silent rejection, no toast). Valid targets show a colored highlight glow during drag-over. This is intentional — the fence enforces design constraints so users can't accidentally misalign blocks.
-
-### The User Flow (canonical)
-
-1. **Create new project** — `NewProjectWizard` prompts for quilt size (preset or custom) and starting point (Freeform or Start with a Layout). Creates an empty canvas at the specified size with a grid.
-2. **Add layouts** — From the **Layouts** library tab in the right pane, drag layout presets onto the canvas. Layouts are automatically sized to fit the canvas grid perfectly.
-3. **Add blocks into layout cells** — From the **Blocks** library tab, drag any block onto a layout block-cell. `useBlockDrop` snaps the block to the cell's bounding box, scales it to fit, and inherits the cell's rotation. Dropping a new block on an occupied cell replaces the previous one (tracked via `_inFenceCellId` tag).
-4. **Add fabrics to layout chrome** — From the **Fabrics** library tab, drag any fabric swatch onto sashing strips, cornerstones, borders, or binding. `useFabricDrop` applies it as a Fabric.js pattern fill.
-5. **Add fabrics to individual block pieces** — Drag a fabric onto a sub-piece of a placed block. `subTargetCheck: true` routes the drop to the inner piece. Or use "Apply to all [shade]" buttons in the ShadeBreakdownPanel to fill all matching patches at once.
-6. **Block Builder (worktable mode)** — Switch to the Block Builder worktable from the mode tabs. Draft custom blocks on a dedicated 600×600 canvas with grid-snapped drawing tools (pencil, rectangle, triangle, circle, bend). Saved blocks appear in the right-side Block Library and are immediately drag-droppable into the quilt worktable.
-
-### Studio Components
-
-| Component | File | Role |
-| --------- | ---- | ---- |
-| `StudioClient` | `src/components/studio/StudioClient.tsx` | Project loader + shell mounter |
-| `StudioDialogsProvider` | `src/components/studio/StudioDialogs.tsx` | Context provider for all studio dialogs. Exposes `useStudioDialogs()` hook |
-| `StudioLayout` | `src/components/studio/StudioLayout.tsx` | Flex shell: TopBar + WorktableTabs + CanvasWorkspace + ContextPanel + BottomBar + dialogs |
-| `StudioDropZone` | `src/components/studio/StudioDropZone.tsx` | Unified drag-drop dispatcher with `CanvasErrorBoundary` |
-| `StudioTopBar` | `src/components/studio/StudioTopBar.tsx` | Top bar: project info, viewport controls, settings dropdown (contains Export), hamburger menu |
-| `WorktableTabs` | `src/components/studio/WorktableTabs.tsx` | Tab bar for switching between worktable tabs |
-| `ContextPanel` | `src/components/studio/ContextPanel.tsx` | Right-pane: Library tabs (Layouts/Blocks/Fabrics). Shows ShadeBreakdownPanel above tabs when a block group is selected |
-| `Toolbar` | `src/components/studio/Toolbar.tsx` | Left-side tool strip: flat single-column layout (Select, Pan, Easydraw, Bend, Rectangle, Triangle, Undo, Redo, Zoom In, Zoom Out) |
-| `BottomBar` | `src/components/studio/BottomBar.tsx` | Status bar: cursor position, shade view toggle (quilt mode), snap state, selection count |
-| `BlockBuilderWorktable` | `src/components/studio/BlockBuilderWorktable.tsx` | Block drafting: 600×600 canvas, tools (select/pencil/rectangle/triangle/circle/bend), grid unit slider, Block Library, overlay controls, Save Block |
-| `LayoutSelector` | `src/components/studio/LayoutSelector.tsx` | Layout preset browser in ContextPanel |
-| `LayoutSettingsPanel` | `src/components/studio/LayoutSettingsPanel.tsx` | Layout configuration dialog |
-| `NewProjectWizard` | `src/components/projects/NewProjectWizard.tsx` | First-visit quilt setup: pick size (preset or custom) + starting point (Freeform or Start with a Layout) |
-| `DuplicateOptionsPopup` | `src/components/studio/DuplicateOptionsPopup.tsx` | Project duplication options |
-| `ResizeDialog` | `src/components/studio/ResizeDialog.tsx` | Quilt resize dialog |
-| `QuiltSettingsDropdown` | `src/components/studio/QuiltSettingsDropdown.tsx` | Settings dropdown in StudioTopBar: quilt dimensions, grid cell size, snap toggle, Export (Image/PDF) |
-| `HamburgerDrawer` | `src/components/studio/HamburgerDrawer.tsx` | Side drawer: File actions (Save, Export, Close), Edit (Undo/Redo, Duplicate, Delete, Select All), View (Zoom), Libraries, Help (History, Keyboard Shortcuts) |
-| `HelpPanel` | `src/components/studio/HelpPanel.tsx` | Contextual help with FAQs |
-| `HistoryPanel` | `src/components/studio/HistoryPanel.tsx` | Undo/redo history browser |
-| `CanvasErrorBoundary` | `src/components/studio/CanvasErrorBoundary.tsx` | Error boundary for canvas |
-
-### Fence Renderer
-
-The fence renderer is the **only** way layout areas appear on canvas:
-
-- **Hook**: `src/hooks/useFenceRenderer.ts` — bridges `fence-engine.ts` to Fabric.js. Mounted in `CanvasWorkspace.tsx`.
-- **Engine**: `src/lib/fence-engine.ts` — pure computation: `LayoutTemplate + quilt dimensions → FenceArea[]`
-- Each `FenceArea` renders as a selectable, locked `fabric.Rect` tagged with:
-  - `_fenceElement: true`
-  - `_fenceAreaId: string`
-  - `_fenceRole: 'block-cell' | 'sashing' | 'cornerstone' | 'border' | 'binding' | 'edging'`
-- Preserves user-applied fabric/color fills by area ID across rerenders
-- Does NOT remove or modify user blocks on rerender
-
-### Block Drop Snap (Fence-Enforced)
-
-`useBlockDrop` (`src/hooks/useBlockDrop.ts`):
-
-1. On drop, temporarily disable `evented` on user blocks so `canvas.findTarget()` reads fence cells underneath
-2. If target is a `block-cell` fence area → block snaps to exact `(left, top)`, scales to cell `(width, height)`, inherits `angle`
-3. If a previous block occupies the same cell → it's removed (overwrite semantics)
-4. New block tagged with `_inFenceCellId: areaId` and `subTargetCheck: true`
-5. If target is NOT a block-cell → **drop rejected** with `not-allowed` cursor (silent, no toast). Valid block-cell targets show a blue highlight glow during drag-over.
-
-### Fabric Drop (Fence-Enforced)
-
-`useFabricDrop` (exported from `src/hooks/useFabricLayout.ts`):
-
-1. On drop, finds target via `canvas.findTarget()`
-2. **Fence chrome** — target role in `['sashing', 'cornerstone', 'border', 'binding', 'edging']` → applies fabric as pattern fill
-3. **Block group** — target has `__isBlockGroup` → transforms pointer to group-local coords, finds the patch under cursor, applies a per-patch `fabric.Pattern` fill. Each patch gets its own Pattern instance.
-4. If target is neither → **drop rejected** (silent, no toast). Valid targets show highlight during drag-over.
+**Fabric drop** (`useFabricDrop` from `useFabricLayout.ts`): Fence chrome → pattern fill. Block group (`__isBlockGroup`) → per-patch `fabric.Pattern` fill via group-local coords.
 
 ### Shade System
 
-Each block patch carries a `__shade` property (`'dark' | 'light' | 'background' | 'unknown'`) set at block creation time — from SVG `data-shade` attributes for system blocks, or auto-detected from fill luminance for user-built blocks.
-
-**Bulk fabric assignment** — `useShadeAssignment` hook (`src/hooks/useShadeAssignment.ts`) bridges the pure engine to the canvas:
-- "Apply to all darks" — applies a fabric pattern to every patch of a given shade across selected block(s). Single undo state for the entire operation.
-- Engine: `src/lib/shade-assignment-engine.ts` — pure functions (`findPatchesByShade`, `getShadeBreakdown`, `hasShadeMetadata`), zero DOM/Fabric deps.
-
-**Shade view toggle** — BottomBar toggle temporarily recolors all patches by shade category (dark → gray, light → light gray, background → near-white). Non-destructive: original fills (including Pattern fills) are saved in a ref map and restored on toggle-off. Auto-deactivates on worktable switch and before undo/redo.
-
-**UI** — `ShadeBreakdownPanel` (`src/components/studio/ShadeBreakdownPanel.tsx`) appears above the ContextPanel tab bar when a block group is selected. Shows patch counts per shade with "Apply [recent fabric]" buttons.
-
-### Layout Library
-
-- **File**: `src/lib/layout-library.ts`
-- **Structure**: `LAYOUT_PRESETS: LayoutPreset[]` — array of layout template definitions
-- **Currently empty** — user will populate via Layout Creator or admin seeding
-- Each preset has: `id`, `name`, `description`, `config` (rows, cols, blockSize, sashing, borders, binding, cornerstones)
-- Drag payload: `application/quiltcorgi-layout-preset` → creates new worktable tab with that layout as fence
-
-### Layout Configuration
-
-Users configure layouts via:
-
-1. **Layout Settings Panel** (`LayoutSettingsPanel.tsx`) — Modal for configuring layout type, rows/cols, block size, sashing, borders, binding
-2. **Layout Selector** (`LayoutSelector.tsx`) — Right-panel tab showing preset layouts (grid, sashing, on-point)
-
-Drag fabrics onto any area (blocks, sashing, borders) on the main canvas. The fence renderer enforces drop constraints.
-
-**Note:** The Layout Creator worktable has been removed. Users no longer draw custom layout shapes — they pick from presets and configure via the settings panel.
-
-### Removed (DO NOT REINTRODUCE)
-
-- `src/components/studio/FloatingToolbar.tsx` — deleted. All tools consolidated into left Toolbar.
-- `src/components/studio/ToolsMenu` — dead sub-component. History + Help moved to HamburgerDrawer.
-- `src/components/studio/LayoutRolePanel.tsx` — superseded by role inspector in Layout Creator worktable
-- `src/components/studio/SelectionPanel.tsx` — superseded by inline selection handling in ContextPanel
-- `src/components/studio/BackgroundColorControl.tsx` — dead component, never imported
-- `src/components/studio/KeyboardShortcutsModal.tsx` — dead component, never imported
-- `src/components/studio/NewBlockSetupModal.tsx` — dead component, never imported
-- `src/components/studio/NewQuiltSetupModal.tsx` — renamed to `NewProjectWizard` at `src/components/projects/NewProjectWizard.tsx`
-- `src/components/studio/PrintOptionsPanel.tsx` — dead component, never imported
-- `src/components/blocks/BlockDraftingErrorBoundary.tsx` — dead component, never imported
-- `src/components/photo-layout/PhotoPatternErrorBoundary.tsx` — dead component, never imported
-- `src/components/onboarding/TourOverlay.tsx` — dead component, old onboarding tour removed
-- `src/components/community/FollowListModal.tsx` — dead component, never imported
-- `src/components/projects/BlockSizePicker.tsx` — dead component, never imported
-- `src/components/export/ExportOptionsDialog.tsx` — dead component, never imported
-- `src/components/layout/ResponsivePublicShell.tsx` — dead component, never imported
-- `src/components/ui/Checkbox.tsx` — dead component, never imported
-- `src/components/ui/NumberInput.tsx` — dead component, never imported
-- `src/components/ui/SegmentedToggle.tsx` — dead component, only used by deleted test
-- `src/hooks/useLayoutEngine.ts` — replaced by fence engine. Auto-shuffle `rearrangeBlocks` anti-pattern removed.
-- `src/hooks/useLayoutRenderer.ts` — never existed; the canonical renderer is `useFenceRenderer`.
-- `src/hooks/useBlockBuilderCanvas.ts` — never existed; canvas interactions are in `useBlockBuilder.ts`
-- `src/components/studio/QuiltDimensionsPanel.tsx` — modal removed. Quilt dimensions in `QuiltSettingsDropdown`.
-- `src/components/studio/panels/` directory entirely (BlockPlacementPanel, BorderPanel, HedgingPanel, SashingPanel)
-- `src/components/blocks/BlockDraftingShell.tsx` — replaced by `BlockBuilderWorktable`
-- `src/components/blocks/BlockDraftingModal.tsx` — deleted with Shell
-- `src/components/studio/LayoutBuilderShell.tsx` — replaced by Layout Creator worktable
-- `src/components/studio/layout-builder/` directory — replaced by new layout creator
-- `src/components/studio/NewLayoutSetupModal.tsx` — layout selection now via drag from Layouts tab
-- `src/lib/layout-renderer.ts` — replaced by `fence-engine.ts`
-- `src/lib/layout-import-canvas.ts` — orphaned island, no production consumer
-- `src/lib/layout-import-helpers.ts` — orphaned island, no production consumer
-- `src/lib/layout-import-layouts.ts` — orphaned island, no production consumer
-- `src/lib/layout-import-printlist.ts` — orphaned island, no production consumer
-- `src/lib/layout-import-types.ts` — orphaned island, no production consumer
-- `src/lib/layout-block-matcher.ts` — orphaned island, no production consumer
-- `src/lib/layout-fabric-matcher.ts` — orphaned island, no production consumer
-- `src/lib/layout-parser-types.ts` — orphaned island, no production consumer
-- `src/lib/cn.ts` — dead utility, never imported
-- `src/lib/colortheme-utils.ts` — dead utility, never imported
-- `src/lib/logger.ts` — dead utility, never imported
-- `src/types/quilt-ocr.ts` — dead type, never imported
-- `src/types/wizard.ts` — dead type, never imported
-- `src/types/api.ts` — dead types (ApiResponse, PaginatedResponse), never imported
-- `src/components/auth/ProGate.tsx` — dead component, never imported
-- `src/components/community/FollowButton.tsx` — UserProfilePage has its own inline version
-- `src/components/community/comments/CommentInput.tsx` — RedditStyleComments has its own inline version
-- `src/components/export/PrintlistPanel.tsx` — dead component, never imported
-- `src/components/landing/CommunityPreview.tsx` — not used in landing page
-- `src/components/measurement/YardagePanel.tsx` — dead component, never imported
-- `src/components/photo-layout/steps/` directory entirely (CorrectionStep, DimensionsStep, ImagePrepStep, ProcessingStep, ResultsStep, ScanSettingsStep, UploadStep) — old wizard steps
-- `src/components/social/BlogContent.tsx` — dead component, never imported
-- `src/components/social/ReportModal.tsx` — dead component, never imported
-- Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab
-
-### Dead State (DO NOT REINTRODUCE)
-
-- `projectStore.worktables[]` — legacy worktable system superseded by `canvasStore.worktableTabs[]`. The `Worktable` type and its associated CRUD actions (`addWorktable`, `deleteWorktable`, `renameWorktable`, `duplicateWorktable`, `updateWorktableCanvas`) exist in the store but have no production consumers.
+Patches carry `__shade: 'dark' | 'light' | 'background' | 'unknown'`. Bulk assignment via `useShadeAssignment` + `shade-assignment-engine.ts`. Shade view toggle in BottomBar (non-destructive recolor, auto-deactivates on worktable switch/undo). `ShadeBreakdownPanel` appears above ContextPanel tabs when a block group is selected.
 
 ### Block Library
 
-- 50 block SVGs in `/quilt_blocks/` (`01_nine_patch.svg` through `50_*.svg`, `viewBox="0 0 300 300"`, grayscale palette)
-- System blocks are seeded from SVG files via `src/db/seed/seedBlocksFromFiles.ts` — converts SVG to Fabric.js JSON using `fabric.loadSVGFromString()` and stores in `blocks` table with `isDefault=true`
-- Users can also upload photos of sewn blocks — these go into the block library as square image blocks (non-editable, resizable, placeable in layouts like regular blocks)
-- Block types: `'svg'` (system), `'custom'` (user-drawn), `'photo'` (uploaded photo) — tracked via `BlockType` in `src/types/block.ts`
-- My Blocks tab has filter chips: All | Custom | Photo Blocks
-- Photo blocks stored with `fabricJsData: { type: 'photo-block', imageUrl }` and uploaded to S3 via `SimplePhotoBlockUpload`
-- Registry: `src/lib/quilt-overlay-registry.ts`
+50 SVGs in `/quilt_blocks/` (`viewBox="0 0 300 300"`, grayscale). Types: `svg` (system), `custom` (user-drawn), `photo` (uploaded). Photo blocks via `SimplePhotoBlockUpload` → S3. Seeded from `src/db/seed/seedBlocksFromFiles.ts`.
 
-### Block Builder Architecture
+### Block Builder
 
-- Pure engine: `src/lib/block-builder-engine.ts` — shape generators (`generateTriangle`, `generateRectangle`, `generateCircle`, `generateFreeformTriangle`, `generateBend`), grid utilities (`pixelToGridCell`, `findNearestSegment`), grid unit presets
-- Planar graph engine: `src/lib/blockbuilder-utils.ts` — `detectPatches()` uses half-edge face traversal to find closed regions from seam-line segments
-- Hook: `src/hooks/useBlockBuilder.ts` — bridges engines to Fabric.js, manages segments/patches/patchFills state, handles mouse events per tool mode (including bend: click segment → drag to curve), redraws grid on unit change
-- Tools: `BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'triangle' | 'circle' | 'bend'`
-- Worktable: `src/components/studio/BlockBuilderWorktable.tsx` — full worktable mode with left drafting tools, center 600×600 canvas, right Block Library. Replaces the former `BlockDraftingShell` modal.
-- `DraftTabProps` type: defined in `BlockBuilderWorktable.tsx`, shared by `FreeformDraftingTab` and `BlockBuilderTab`
+Engine: `block-builder-engine.ts` (shape generators, grid utils) + `blockbuilder-utils.ts` (`detectPatches()` via half-edge face traversal). Hook: `useBlockBuilder.ts`. Tools: `select|pencil|rectangle|triangle|circle|bend`. Worktable: `BlockBuilderWorktable.tsx` (600x600 canvas).
 
 ### Layout Templates
 
-Layouts are fence definitions: binding, borders, sashing, cornerstones, block-cells. Each area is separately selectable and accepts specific drop types (blocks→cells, fabrics→structural areas).
-
-- Stored in `layout_templates` DB table (`templateData` JSONB column)
-- API at `/api/templates` and `/api/layout-templates` (public GET)
-- Hierarchy: Layout (fence) → Binding → Borders → Sashing/Cornerstones → Block Cells → Blocks → Pieces
-- Layout library file: `src/lib/layout-library.ts` — `LAYOUT_PRESETS` array (currently empty, user populates via Layout Creator or admin seeding)
-- Layout types: `src/types/layout.ts` (LayoutTemplate, TemplateBorderConfig, LayoutArea)
-- Fence engine: `src/lib/fence-engine.ts` (pure engine: LayoutTemplate + quilt dimensions → FenceArea[])
-- Fence hook: `src/hooks/useFenceRenderer.ts` (Fabric.js bridge with selectable areas)
+Stored in `layout_templates` DB table (`templateData` JSONB). API: `/api/templates`, `/api/layout-templates`. Types: `src/types/layout.ts`. Library: `src/lib/layout-library.ts` (`LAYOUT_PRESETS[]`, currently empty).
 
 ### SVG Block Conventions
 
-- Blocks: `viewBox="0 0 300 300"`, grayscale palette (`#F8F8F8` BG, `#E0E0E0` light, `#D0D0D0` med-light, `#B0B0B0` med, `#505050` dark), `stroke="#333" stroke-width="1"`
-- Generator scripts in `scripts/gen_blocks_*.py`
-- Each block must accurately represent real traditional quilting geometry — research before generating
+`viewBox="0 0 300 300"`, palette: `#F8F8F8` BG, `#E0E0E0` light, `#D0D0D0` med-light, `#B0B0B0` med, `#505050` dark. `stroke="#333" stroke-width="1"`. Generator scripts in `scripts/gen_blocks_*.py`. Must represent real traditional quilting geometry.
 
-## PDF Export System
+## PDF Export
 
-**Target output** matches commercial quilt patterns (like Andover/Fat Quarter Shop PDFs):
+Commercial-grade output: cover, fabric requirements, cutting directions, block assembly, quilt diagram, cutting templates (1:1 scale with seam allowance). Solid = cut line, dashed = sew line.
 
-1. **Cover page** — Quilt name, finished dimensions, quilt image, branding
-2. **Fabric requirements** — Yardage table per fabric, fat quarter/WOF cuts
-3. **Cutting directions** — Measurements include seam allowance, organized by fabric
-4. **Block assembly** — Step-by-step diagrams showing how to construct each block
-5. **Quilt diagram** — Full layout showing all blocks assembled together
-6. **Cutting templates** — Each individual piece shape as a black outline with dashed seam allowance line around it, printed at exact 1:1 scale
-
-**Implemented engines:**
-
-- `pdf-generator.ts` — bin-packed pattern pieces at scale
-- `cutlist-pdf-engine.ts` — individual cutting templates with seam allowance, edge dimensions, grain lines
-- `project-pdf-engine.ts` — full pattern document (cover, fabric requirements, cutting directions, block assembly, quilt diagram, cutting templates)
-- `pdf-drawing-utils.ts` — shared branding, tables, drawing utilities
-- `canvas-snapshot.ts` — capture canvas state for PDF embedding
-
-Supporting utilities: `yardage-utils.ts`, `cutting-chart-generator.ts`.
-
-**Line convention**: Solid = cut line (outer, what quilters cut on). Dashed = sew line (inner, finished piece). This matches EQ8 and published patterns.
+Engines: `project-pdf-engine.ts` (full document), `cutlist-pdf-engine.ts` (cutting templates), `pdf-generator.ts` (bin-packed pieces), `pdf-drawing-utils.ts`, `canvas-snapshot.ts`. Supporting: `yardage-utils.ts`, `cutting-chart-generator.ts`.
 
 ## Photo-to-Design Pipeline
 
-Upload a photo of any quilt → OpenCV detects individual piece contours → shapes are normalized and clustered → edges are snapped to eliminate gaps → flat `fabric.Polygon` objects are placed on the worktable, filled with their detected dominant color.
+Photo → OpenCV web worker (15-step: sharpen, CLAHE, bilateral, adaptive threshold, watershed, contours) → `orphan-filter.ts` (remove noise) → `shape-normalizer-engine.ts` (cluster, regularize, equalize) → `edge-snapper-engine.ts` (snap shared edges, eliminate gaps) → `usePhotoPatternImport` (fabric.Polygon per piece with dominant color).
 
-### Pipeline Flow
-
-```
-Photo uploaded
-  ↓
-Downscale + auto perspective correction (perspective-utils)
-  ↓
-OpenCV web worker: sharpening, CLAHE, bilateral filter, adaptive thresholding, watershed, contour detection
-  ↓
-★ orphan-filter: Remove pieces that share no edges with any neighbor (CV artifacts: dust, shadows, noise)
-  ↓
-★ shape-normalizer-engine: Cluster similar shapes, regularize geometry, equalize sizes within clusters
-  ↓
-★ edge-snapper-engine: Snap shared edges to canonical positions, snap boundary vertices to canvas edges
-  ↓
-★ usePhotoPatternImport: Every piece → fabric.Polygon filled with dominant color → print list with quantities
-```
-
-### Shape Normalization
-
-After orphan filtering, the shape normalizer clusters similar pieces by vertex count and area ratio, then:
-
-1. Creates a canonical "master" contour for each cluster with regularized geometry
-2. Equalizes sizes within each cluster
-3. Straightens rotation to nearest cardinal orientation
-
-No grid detection, no block matching, no structure classification. Pieces are just "Piece 1", "Piece 2", etc.
-
-### Edge Snapping
-
-After normalization, adjacent piece edges are snapped to shared canonical edges to eliminate gaps and overlaps. Boundary edges are snapped to the canvas border. This ensures 100% coverage with no empty areas between pieces.
-
-### Implemented Engines
-
-- `piece-detection.worker.ts` — OpenCV web worker (15-step pipeline: Laplacian sharpening, CLAHE, morphological opening, bilateral filter, adaptive thresholding, Sobel gradient, watershed, contour detection, polygon approximation, color extraction)
-- **`shape-normalizer-engine.ts`** — Clusters similar shapes, regularizes geometry, equalizes sizes within clusters, straightens rotation
-- **`edge-snapper-engine.ts`** — Snaps shared edges to canonical positions, eliminates gaps, snaps boundary vertices to canvas edges
-- **`orphan-filter.ts`** — Removes detected pieces that share no edges with any neighbor (every real quilt patch is sewn to at least one adjacent piece)
-- **`perspective-utils.ts`** — Auto-detects and corrects perspective distortion from angled photos
-
-### Photo-to-Design Supporting Modules
-
-- `src/stores/photoLayoutStore.ts` — state for photo-to-layout flow
-- `src/lib/photo-layout-*.ts` — photo layout types and utilities
-- `src/lib/photo-layout-types.ts` — Core types: `DetectedPiece`, `ScaledPiece`, `QuiltDetectionConfig`, `PipelineResult`
-- `src/lib/photo-layout-utils.ts` — Pipeline orchestration: runs normalizer + edge snapper after orphan filter
-- `src/hooks/usePhotoLayoutImport.ts` — Exports `usePhotoPatternImport()`; creates `fabric.Polygon` for each piece, adds to print list with quantities
+No grid detection, no block matching. Pieces are just "Piece 1", "Piece 2", etc. `perspective-utils.ts` handles angled photos.
 
 ## Fabric Library
 
-2,764 solid fabric swatches from 16 manufacturers. Data source: QuiltySolid open-source dataset (MIT license).
-
-- Seed data in `src/db/seed/fabricSwatches.json` (38,224 lines, 16 manufacturers)
-- Seed script: `DATABASE_URL=postgresql://quiltcorgi:localdev@localhost:5432/quiltcorgi npx tsx src/db/seed/seedFabrics.ts`
-- DB columns: `hex` (actual color), `value` (Light/Medium/Dark), `colorFamily`, `manufacturer`, `collection`
-- API supports filtering by manufacturer, colorFamily, value + sorting by name/manufacturer/colorFamily/value
-- System fabrics: `isDefault=true, userId=null`. User uploads: `isDefault=false, userId=<user>`
+2,764 solids from 16 manufacturers (QuiltySolid dataset, MIT). DB columns: `hex`, `value`, `colorFamily`, `manufacturer`, `collection`. System: `isDefault=true`. User: `isDefault=false, userId=<user>`.
 
 ## Shop System
 
-The shop is feature-flagged via the `siteSettings` DB table (`shop_enabled` key). When disabled, `/shop` shows "Coming Soon" and no Shop link appears in navigation.
-
-### Shop Architecture
-
-- **DB toggle**: `siteSettings` table (`src/db/schema/siteSettings.ts`) — key/value store for site-wide settings
-- **Admin toggle**: `/admin/settings` page — toggle switch with type-to-confirm (`ENABLE SHOP`) guard
-- **Admin API**: `POST /api/admin/settings` — requires admin role + confirm string to enable
-- **Public settings API**: `GET /api/shop/settings` — returns `{ enabled: boolean }`
-- **Shop fabrics API**: `GET /api/shop/fabrics` — public, returns only `isPurchasable=true` fabrics with filters (manufacturer, colorFamily, value, price range, inStock, search, sort)
-- **Admin fabric management**: `PATCH /api/admin/fabrics/[id]` — update shop fields (pricePerYard, inStock, isPurchasable, shopifyProductId, shopifyVariantId)
-- **Bulk toggle**: `POST /api/admin/fabrics/bulk` — mark all fabrics from a manufacturer as purchasable/not
-
-### Shop Page (`/shop`)
-
-- Client-side rendered, checks shop settings on load
-- Filtering sidebar: manufacturer, color family, value, in-stock only
-- Search bar, sort (name, price asc/desc, newest)
-- Fabric cards show hex swatch, name, manufacturer, price/yd, stock badge, Add to Cart button
-- Glassmorphic design tokens throughout
-
-### Cart System
-
-- **Store**: `src/stores/cartStore.ts` — Zustand with Shopify sync, localStorage persistence
-- **CartDrawer**: `src/components/shop/CartDrawer.tsx` — slide-out panel with quantity adjusters (¼ yard increments), subtotal, Copy List / Checkout buttons
-- **Cart icon**: Appears in AppShell header when shop is enabled and cart has items
-- Cart items: fabricId, shopifyVariantId, quantityInYards, pricePerYard, fabricName, fabricImageUrl
-
-### Studio Integration
-
-- **Shop tab**: FabricLibrary has a "Shop" tab (visible when shop is enabled) showing purchasable in-stock fabrics
-- **Shop badge**: Small "Shop" badge on purchasable fabric cards in the studio
-- **Preview modal**: `FabricPreviewModal` — click a shop fabric to see large swatch, metadata, price, "Open in Shop" (new tab) and "Add to Cart" buttons
-- **Hook**: `useShopEnabled` (`src/hooks/useShopEnabled.ts`) — client-side hook with in-memory cache
-
-### Fabrics Schema Shop Fields
-
-Already in `src/db/schema/fabrics.ts`: `pricePerYard` (numeric), `inStock` (boolean), `isPurchasable` (boolean), `shopifyProductId` (varchar), `shopifyVariantId` (varchar)
+Feature-flagged via `siteSettings` DB table (`shop_enabled`). Admin toggle at `/admin/settings` with type-to-confirm guard. Shop fabrics: `isPurchasable=true` with price/stock fields. Cart: `cartStore.ts` (Zustand + localStorage). Studio integration: "Shop" tab in FabricLibrary, `FabricPreviewModal`, `useShopEnabled` hook.
 
 ## Social Feed
 
-Social feed at `/socialthreads`. Users can post, like, comment, bookmark, and follow.
+At `/socialthreads`. Tables: `socialPosts`, `likes`, `comments`, `follows`, `reports`, `bookmarks`. API: `GET /api/social` with sort (newest|popular), search, category (`show-and-tell|wip|help|inspiration|general`), tab (discover|saved), pagination. Action buttons update on server success, no optimistic rollback. Toggle endpoints (bookmark, follow): single POST inserts or deletes.
 
-DB table is `socialPosts` (in `src/db/schema/socialPosts.ts`). API at `/api/social`, components in `src/components/social/`. The "community" → "social" rename is complete.
-
-DB tables: `socialPosts`, `likes`, `comments`, `follows`, `reports`, `bookmarks`
-
-### Social API (`GET /api/social`)
-
-- Supports server-side: `sort` (newest|popular), `search` (ilike on title), `category` (enum), `creatorId`, `tab` (discover|saved), `page`, `limit`
-- Category enum values: `show-and-tell` | `wip` | `help` | `inspiration` | `general`
-- Returns `isLikedByUser` and `isBookmarkedByUser` per post for authenticated users
-- `tab=saved` filters to only bookmarked posts
-- Social action buttons update state on server success, ignore on failure — no optimistic+rollback needed
-- Toggle endpoints (bookmark, follow) use single POST: inserts if not exists, deletes if exists
-
-### Social Components
-
-- `SocialFeedPage` — manages sort/category/tab state, renders SocialLayout + filter UI + FeedContent
-- `FeedContent` — fetches and displays posts with pagination, bookmark/like/comment actions
-- `CreatePostComposer` — expandable composer with text/image/project modes and category selector
-- `PostDetail` — full post view with comments (RedditStyleComments)
-- `SocialLayout` — header + sidebar layout
-- `SocialQuickViewModal` — portal modal for quick post/blog/fabric preview
-- `SocialSplitPane` — split-pane layout with saved/feed/profile panels
-
-### User Profiles
-
-- Page at `/members/[username]` was removed — profile components (`UserProfilePage`, `ProfileEditForm`) remain in `src/components/community/profiles/`
-- API at `/api/members/[username]` — returns profile, posts, follower/following counts
-- Follow API at `/api/members/[username]/follow` — POST to follow, DELETE to unfollow
-
-### Blog
-
-- Pages at `/blog` (list) and `/blog/[slug]` (detail)
-- Admin-only creation, published via `blogPosts` DB table
-- Rendered with `TiptapRenderer`
+Blog at `/blog` + `/blog/[slug]`, admin-only, `TiptapRenderer`. Profiles at `/api/members/[username]`.
 
 ## Mobile Uploads
 
-Cross-device photo pipeline: mobile captures photos into a holding queue, desktop triages and processes them.
-
-### Mobile Flow
-
-- `UploadSheet` (`src/components/mobile/UploadSheet.tsx`) — single "Upload Photo" button + "Share to Social" shortcut
-- Compresses via `compressImageForUpload` (HEIC→JPEG, downscale to 2048px, WebP)
-- Uploads to S3 with `purpose: 'mobile-upload'` (allowed for all authenticated users, not just Pro)
-- Creates a `mobile_uploads` DB record via `POST /api/mobile-uploads`
-- Max 50 pending uploads per user (`MOBILE_UPLOADS_MAX_PENDING`)
-
-### Desktop Flow
-
-- Dashboard bento card "Mobile Uploads" shows pending count badge
-- `MobileUploadsPanel` (`src/components/uploads/MobileUploadsPanel.tsx`) — grid of pending uploads
-- Each `UploadCard` lets user assign type (Fabric / Block / Quilt), then click "Process"
-- Processing calls `POST /api/mobile-uploads/[id]/process` (Pro required for all types) then redirects to the appropriate existing pipeline with `preloadUrl` query param
-- After pipeline completes, `POST /api/mobile-uploads/[id]/complete` marks the upload as completed
-
-### Architecture
-
-- DB table: `mobile_uploads` (`src/db/schema/mobileUploads.ts`) — status enum: `pending → processing → completed | failed`
-- API: `src/app/api/mobile-uploads/` — CRUD + `/[id]/process` + `/[id]/complete`
-- Store: `src/stores/mobileUploadStore.ts` — Zustand with fetch, create, updateType, process, complete, delete
-- `SimplePhotoBlockUpload` accepts `preloadedImageUrl` prop to skip the upload step
+Mobile → `UploadSheet` (compress HEIC→JPEG, upload S3 `mobile-upload`) → `mobile_uploads` DB record. Desktop → `MobileUploadsPanel` (assign type, process) → redirects to pipeline with `preloadUrl`. Max 50 pending per user. Status: `pending → processing → completed | failed`.
 
 ## Product Context
 
 - **Photo-to-Design** is the key differentiator — never scale it back
-- Studio is desktop-only (`StudioGate` redirects mobile users)
-- Mobile shell: Home, Upload FAB, Profile/Sign In — 3 items only
-- Onboarding uses simple localStorage flags (no complex tour system)
-- Project templates live at `/templates` — users can browse, preview, and clone starter projects
-- Template library shows only admin-published templates (`isPublished=true`)
+- Studio is desktop-only (`StudioGate` redirects mobile)
+- Mobile shell: Home, Upload FAB, Profile — 3 items only
+- Templates at `/templates` (admin-published only)
 
 ## Key Dependencies
 
-- **Rate limiting**: Upstash Redis + `@upstash/ratelimit` — used on auth endpoints
-- **Geometry**: `clipper-lib` — Clipper.js for seam allowance offset polygons in PDF export
-- **Sanitization**: `isomorphic-dompurify` — HTML sanitization for user content
-- **Photo upload**: `heic2any` — converts iOS HEIC photos to JPEG before upload
-- **Animations**: `framer-motion` — page transitions and UI animations
-- **PDF**: `pdf-lib` — client-side PDF generation at 1:1 scale
+`clipper-lib` (seam allowance geometry), `isomorphic-dompurify` (HTML sanitization), `heic2any` (iOS photo conversion), `framer-motion` (animations), `pdf-lib` (PDF generation), `@upstash/ratelimit` (rate limiting).
 
-## PM2 Services
+## Removed (DO NOT REINTRODUCE)
 
-| Port | Name          | Type                        |
-| ---- | ------------- | --------------------------- |
-| 3000 | quilt-3000    | Next.js                     |
-| 5432 | quiltcorgi-db | PostgreSQL (Docker Compose) |
+**Components:** FloatingToolbar, ToolsMenu, LayoutRolePanel, SelectionPanel, BackgroundColorControl, KeyboardShortcutsModal, NewBlockSetupModal, PrintOptionsPanel, BlockDraftingErrorBoundary, PhotoPatternErrorBoundary, TourOverlay, FollowListModal, BlockSizePicker, ExportOptionsDialog, ResponsivePublicShell, Checkbox, NumberInput, SegmentedToggle, ProGate, PrintlistPanel, CommunityPreview, YardagePanel, BlogContent, ReportModal, BlockDraftingShell, BlockDraftingModal, LayoutBuilderShell, NewLayoutSetupModal, QuiltDimensionsPanel, all `panels/` directory.
 
-```bash
-pm2 start ecosystem.config.cjs   # First time
-pm2 start all                    # After first time
-pm2 stop all / pm2 restart all
-pm2 logs / pm2 status / pm2 monit
-pm2 save                         # Save process list
-pm2 resurrect                    # Restore saved list
-```
+**Hooks:** useLayoutEngine (replaced by fence engine), useLayoutRenderer (never existed — use `useFenceRenderer`), useBlockBuilderCanvas (never existed — use `useBlockBuilder`).
 
-**Note:** PostgreSQL is managed via Docker Compose (`npm run db:local:up`), not PM2.
+**Libs:** layout-renderer (replaced by fence-engine), layout-import-* (6 orphaned files), layout-block-matcher, layout-fabric-matcher, layout-parser-types, cn, colortheme-utils, logger.
+
+**Types:** quilt-ocr, wizard, api (ApiResponse/PaginatedResponse).
+
+**Features:** Minimap, Smart Guides, Symmetry Tool, Serendipity Tool, Fussy Cut Dialog, Image Tracing Panel, Quick Color Palette, old Onboarding Tour, Text Tool, Applique Tab.
+
+**Dead state:** `projectStore.worktables[]` — superseded by `canvasStore.worktableTabs[]`.
+
+## PM2
+
+| Port | Name | Type |
+|------|------|------|
+| 3000 | quilt-3000 | Next.js |
+| 5432 | quiltcorgi-db | PostgreSQL (Docker Compose via `npm run db:local:up`) |
+
+`pm2 start ecosystem.config.cjs` (first time) / `pm2 start all` / `pm2 stop all` / `pm2 logs` / `pm2 monit`

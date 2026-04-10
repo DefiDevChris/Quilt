@@ -179,7 +179,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
               key={mode}
               type="button"
               onClick={() => setExportMode(mode)}
-              className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
+              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
                 ? 'border-primary bg-primary text-white'
                 : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                 }`}
@@ -193,7 +193,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Printlist summary — for pattern-pieces and cut-list modes */}
       {needsPrintlist && (
-        <div className="mb-4 rounded-full border border-neutral-200 bg-white p-3">
+        <div className="mb-4 rounded-lg border border-neutral-200 bg-white p-3">
           <p className="mb-1 text-xs text-neutral-500">
             {items.length} shape{items.length !== 1 ? 's' : ''} in printlist
           </p>
@@ -209,7 +209,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
         <select
           value={paperSize}
           onChange={(e) => setPaperSize(e.target.value as PaperSize)}
-          className="w-full rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800"
+          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800"
         >
           <option value="letter">US Letter (8.5&quot; x 11&quot;)</option>
           <option value="a4">A4 (210mm x 297mm)</option>
@@ -218,7 +218,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Mode-specific options */}
       {exportMode === 'pattern-pieces' && (
-        <div className="mb-4 rounded-full bg-neutral p-3">
+        <div className="mb-4 rounded-lg bg-neutral p-3">
           <p className="text-[11px] leading-relaxed text-neutral-500">
             Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
             included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
@@ -228,7 +228,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
       )}
 
       {exportMode === 'cut-list' && (
-        <div className="mb-4 rounded-full bg-neutral p-3">
+        <div className="mb-4 rounded-lg bg-neutral p-3">
           <p className="text-[11px] leading-relaxed text-neutral-500">
             One page per shape with edge dimensions in{' '}
             {unitSystem === 'imperial' ? 'inches (fractions)' : 'millimeters'}. Includes finished
@@ -238,7 +238,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
       )}
 
       {exportMode === 'print-project' && (
-        <div className="mb-4 rounded-full bg-neutral p-3">
+        <div className="mb-4 rounded-lg bg-neutral p-3">
           <p className="text-[11px] leading-relaxed text-neutral-500">
             Generates a complete pattern document: quilt overview image, block diagrams with piece
             labels, and a totals summary table.

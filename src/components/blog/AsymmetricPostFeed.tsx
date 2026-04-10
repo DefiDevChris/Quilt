@@ -40,26 +40,22 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
 
   return (
     <section className="relative w-full py-16 md:py-24">
-      <motion.header
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      <header
         className="max-w-[1400px] mx-auto px-6 md:px-12 mb-12 md:mb-16"
       >
         <div className="flex items-center gap-4 mb-4">
-          <span className="w-12 h-px bg-primary-golden" />
-          <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
+          <span className="w-12 h-px bg-[#ff8d49]" />
+          <span className="text-[14px] leading-[20px] text-[#6b655e]">
             Stories
           </span>
         </div>
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl text-on-surface tracking-[-0.02em]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] text-[#2d2a26]"
+          style={{ fontFamily: 'Spline Sans, sans-serif' }}
         >
           Recent Explorations
         </h2>
-      </motion.header>
+      </header>
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 auto-rows-auto">
@@ -102,27 +98,27 @@ function PostCard({
     >
       <Link href={`/blog/${post.slug}`} className="block h-full">
         <article className={`h-full flex flex-col ${layout.mobileH} ${layout.h}`}>
-          {/* Image container - shadow intensifies on hover only */}
-          <div className="relative overflow-hidden flex-1 rounded-full transition-shadow duration-300 group-hover:shadow-elevation-2 shadow-elevation-1">
+          {/* Image container */}
+          <div className="relative overflow-hidden flex-1 rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <img src={img} alt={post.title} loading="lazy" className="w-full h-full object-cover" />
           </div>
 
           {/* Content */}
           <div className="pt-4 md:pt-5">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-primary-golden font-medium">
+              <span className="text-[14px] leading-[20px] text-[#ff8d49]">
                 {post.category}
               </span>
-              <span className="w-4 h-px bg-outline-variant" />
-              <time className="text-[9px] uppercase tracking-[0.15em] text-warm-text-muted">
+              <span className="w-4 h-px bg-[#e8e1da]" />
+              <time className="text-[14px] leading-[20px] text-[#6b655e]">
                 {post.createdAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </time>
             </div>
 
             <h3
-              className="text-on-surface leading-[1.15] tracking-[-0.01em] group-hover:text-primary-golden transition-colors duration-300"
+              className="text-[#2d2a26] leading-[1.15] group-hover:text-[#ff8d49] transition-colors duration-150"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'Spline Sans, sans-serif',
                 fontSize:
                   layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
                     ? 'clamp(1.5rem, 2.5vw, 2rem)'
