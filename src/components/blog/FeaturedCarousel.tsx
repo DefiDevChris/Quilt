@@ -61,7 +61,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-surface">
+    <section className="relative w-full h-screen overflow-hidden bg-[#ffffff]">
       <motion.div
         ref={containerRef}
         drag="x"
@@ -89,10 +89,10 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
           <button
             key={i}
             onClick={() => snapTo(i)}
-            className="h-px transition-all duration-500 ease-out"
+            className="h-px transition-colors duration-150"
             style={{
               width: i === active ? 48 : 20,
-              backgroundColor: i === active ? 'var(--color-on-surface)' : 'rgba(58, 46, 38, 0.25)',
+              backgroundColor: i === active ? '#2d2a26' : 'rgba(45, 42, 38, 0.25)',
             }}
             aria-label={`Go to slide ${i + 1}`}
           />
@@ -139,22 +139,16 @@ function Slide({
       </motion.div>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-surface/80" />
-      <div className="absolute inset-0 bg-surface/30" />
+      <div className="absolute inset-0 bg-[#ffffff]/80" />
 
       {/* Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 + index * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl"
-      >
+      <div className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl">
         <div className="flex items-center gap-4 mb-8">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-warm-text-muted font-medium">
+          <span className="text-[14px] leading-[20px] text-[#6b655e]">
             {post.category}
           </span>
-          <span className="w-6 h-px bg-primary-golden" />
-          <time className="text-[10px] uppercase tracking-[0.15em] text-warm-text-muted">
+          <span className="w-6 h-px bg-[#ff8d49]" />
+          <time className="text-[14px] leading-[20px] text-[#6b655e]">
             {post.createdAt?.toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
@@ -164,17 +158,20 @@ function Slide({
         </div>
 
         <Link href={`/blog/${post.slug}`} className="group block">
-          <h2 className="text-5xl md:text-6xl lg:text-7xl text-on-surface leading-[1.05] tracking-tight mb-6 transition-opacity group-hover:opacity-70 font-bold">
+          <h2
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#2d2a26] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
+            style={{ fontFamily: 'Spline Sans, sans-serif' }}
+          >
             {post.title}
           </h2>
         </Link>
 
         {post.excerpt && (
-          <p className="text-base md:text-lg text-secondary leading-relaxed max-w-md font-light">
+          <p className="text-[16px] leading-[24px] text-[#6b655e] max-w-md">
             {post.excerpt}
           </p>
         )}
-      </motion.div>
+      </div>
     </article>
   );
 }

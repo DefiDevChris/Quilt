@@ -76,7 +76,7 @@ export function VerifyEmailForm() {
   }
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-neutral-100 rounded-full shadow-elevation-3 p-[2.75rem]">
+    <div className="w-full max-w-[420px] mx-auto bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-16 h-16 mb-4 relative block">
           <Image
@@ -87,22 +87,22 @@ export function VerifyEmailForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-neutral-800">
+        <h1 className="text-headline-md font-bold text-[#2d2a26]">
           Verify your email
         </h1>
-        <p className="mt-2 text-sm text-neutral-600 text-center">
+        <p className="mt-2 text-sm text-[#6b655e] text-center">
           We sent a verification code to your email. Enter it below to verify your account.
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-full bg-error/5 border border-error/20 px-4 py-3 text-sm text-error">
+        <div className="mb-4 rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-sm text-red-500">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-full bg-success/5 border border-success/20 px-4 py-3 text-sm text-success">
+        <div className="mb-4 rounded-lg bg-green-500/5 border border-green-500/20 px-4 py-3 text-sm text-green-600">
           {success}
         </div>
       )}
@@ -111,7 +111,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="verify-email"
-            className="block text-sm font-medium text-neutral-600 mb-1.5"
+            className="block text-sm font-medium text-[#6b655e] mb-1.5"
           >
             Email
           </label>
@@ -121,7 +121,7 @@ export function VerifyEmailForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-neutral border-b border-neutral-300/30 focus:border-primary rounded-full px-3 py-2.5 text-base text-neutral-800 placeholder:text-neutral-500 outline-none transition-colors duration-200"
+            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150"
             placeholder="you@example.com"
             autoComplete="email"
           />
@@ -130,7 +130,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="code"
-            className="block text-sm font-medium text-neutral-600 mb-1.5"
+            className="block text-sm font-medium text-[#6b655e] mb-1.5"
           >
             Verification Code
           </label>
@@ -143,7 +143,7 @@ export function VerifyEmailForm() {
             maxLength={6}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            className="w-full bg-neutral border-b border-neutral-300/30 focus:border-primary rounded-full px-3 py-2.5 text-base text-neutral-800 placeholder:text-neutral-500 outline-none transition-colors duration-200 tracking-[0.3em] text-center text-lg"
+            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
             placeholder="000000"
           />
         </div>
@@ -162,13 +162,13 @@ export function VerifyEmailForm() {
           type="button"
           onClick={handleResend}
           disabled={isResending}
-          className="text-sm text-primary hover:bg-neutral-100 disabled:opacity-50"
+          className="text-sm text-primary hover:bg-[#fdfaf7] disabled:opacity-50"
         >
           {isResending ? 'Sending...' : "Didn't receive a code? Resend"}
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-neutral-600">
+      <p className="mt-6 text-center text-sm text-[#6b655e]">
         <Link href="/auth/signin" className="text-primary hover:underline font-medium">
           Back to sign in
         </Link>

@@ -7,18 +7,18 @@ import { useAuthStore } from '@/stores/authStore';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
 import {
-  GRID_CELL_SIZE_MIN,
-  GRID_CELL_SIZE_MAX,
-  GRID_CELL_SIZE_STEP,
-  QUILT_SIZE_PRESETS,
+ GRID_CELL_SIZE_MIN,
+ GRID_CELL_SIZE_MAX,
+ GRID_CELL_SIZE_STEP,
+ QUILT_SIZE_PRESETS,
 } from '@/lib/constants';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 
 interface QuiltSettingsDropdownProps {
-  readonly onOpenImageExport?: () => void;
-  readonly onOpenPdfExport?: () => void;
+ readonly onOpenImageExport?: () => void;
+ readonly onOpenPdfExport?: () => void;
 }
 
 /**
@@ -30,409 +30,409 @@ interface QuiltSettingsDropdownProps {
  * Changes trigger confirmation modals before being applied.
  */
 export function QuiltSettingsDropdown({
-  onOpenImageExport,
-  onOpenPdfExport,
+ onOpenImageExport,
+ onOpenPdfExport,
 }: QuiltSettingsDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+ const [isOpen, setIsOpen] = useState(false);
+ const ref = useRef<HTMLDivElement>(null);
 
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
-  const setCanvasWidth = useProjectStore((s) => s.setCanvasWidth);
-  const setCanvasHeight = useProjectStore((s) => s.setCanvasHeight);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const setGridSettings = useCanvasStore((s) => s.setGridSettings);
-  const unitSystem = useCanvasStore((s) => s.unitSystem);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
-  const user = useAuthStore((s) => s.user);
-  const isPro = user?.role === 'pro' || user?.role === 'admin';
-  const dialogs = useStudioDialogs();
-  const unit = getUnitLabel(unitSystem);
+ const canvasWidth = useProjectStore((s) => s.canvasWidth);
+ const canvasHeight = useProjectStore((s) => s.canvasHeight);
+ const setCanvasWidth = useProjectStore((s) => s.setCanvasWidth);
+ const setCanvasHeight = useProjectStore((s) => s.setCanvasHeight);
+ const gridSettings = useCanvasStore((s) => s.gridSettings);
+ const setGridSettings = useCanvasStore((s) => s.setGridSettings);
+ const unitSystem = useCanvasStore((s) => s.unitSystem);
+ const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+ const user = useAuthStore((s) => s.user);
+ const isPro = user?.role === 'pro' || user?.role === 'admin';
+ const dialogs = useStudioDialogs();
+ const unit = getUnitLabel(unitSystem);
 
-  // Local state for inputs
-  const [widthInput, setWidthInput] = useState(String(canvasWidth));
-  const [heightInput, setHeightInput] = useState(String(canvasHeight));
-  const [widthError, setWidthError] = useState('');
-  const [heightError, setHeightError] = useState('');
+ // Local state for inputs
+ const [widthInput, setWidthInput] = useState(String(canvasWidth));
+ const [heightInput, setHeightInput] = useState(String(canvasHeight));
+ const [widthError, setWidthError] = useState('');
+ const [heightError, setHeightError] = useState('');
 
-  // Confirmation state
-  const [pendingWidth, setPendingWidth] = useState<number | null>(null);
-  const [pendingHeight, setPendingHeight] = useState<number | null>(null);
-  const [pendingCellSize, setPendingCellSize] = useState<number | null>(null);
+ // Confirmation state
+ const [pendingWidth, setPendingWidth] = useState<number | null>(null);
+ const [pendingHeight, setPendingHeight] = useState<number | null>(null);
+ const [pendingCellSize, setPendingCellSize] = useState<number | null>(null);
 
-  const triggerRender = useCallback(() => {
-    if (fabricCanvas) {
-      (fabricCanvas as { renderAll: () => void }).renderAll();
-    }
-  }, [fabricCanvas]);
+ const triggerRender = useCallback(() => {
+ if (fabricCanvas) {
+ (fabricCanvas as { renderAll: () => void }).renderAll();
+ }
+ }, [fabricCanvas]);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+ // Close dropdown on outside click
+ useEffect(() => {
+ function handleClickOutside(e: MouseEvent) {
+ if (ref.current && !ref.current.contains(e.target as Node)) {
+ setIsOpen(false);
+ }
+ }
+ document.addEventListener('mousedown', handleClickOutside);
+ return () => document.removeEventListener('mousedown', handleClickOutside);
+ }, []);
 
-  // Sync local state with store when dropdown opens
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    if (isOpen) {
-      setWidthInput(String(canvasWidth));
-      setHeightInput(String(canvasHeight));
-      setWidthError('');
-      setHeightError('');
-    }
-  }, [isOpen, canvasWidth, canvasHeight]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+ // Sync local state with store when dropdown opens
+ /* eslint-disable react-hooks/set-state-in-effect */
+ useEffect(() => {
+ if (isOpen) {
+ setWidthInput(String(canvasWidth));
+ setHeightInput(String(canvasHeight));
+ setWidthError('');
+ setHeightError('');
+ }
+ }, [isOpen, canvasWidth, canvasHeight]);
+ /* eslint-enable react-hooks/set-state-in-effect */
 
-  const commitWidth = useCallback(
-    (raw: string) => {
-      try {
-        const decimal = toDecimal(parseFraction(raw.trim()));
-        if (decimal > 0 && Number.isFinite(decimal)) {
-          setWidthError('');
-          // Show confirmation modal if dimensions changed
-          if (decimal !== canvasWidth) {
-            setPendingWidth(decimal);
-          } else {
-            setWidthInput(String(decimal));
-          }
-        } else {
-          setWidthError('Enter a valid dimension');
-        }
-      } catch {
-        setWidthError('Enter a valid dimension');
-      }
-    },
-    [canvasWidth]
-  );
+ const commitWidth = useCallback(
+ (raw: string) => {
+ try {
+ const decimal = toDecimal(parseFraction(raw.trim()));
+ if (decimal > 0 && Number.isFinite(decimal)) {
+ setWidthError('');
+ // Show confirmation modal if dimensions changed
+ if (decimal !== canvasWidth) {
+ setPendingWidth(decimal);
+ } else {
+ setWidthInput(String(decimal));
+ }
+ } else {
+ setWidthError('Enter a valid dimension');
+ }
+ } catch {
+ setWidthError('Enter a valid dimension');
+ }
+ },
+ [canvasWidth]
+ );
 
-  const commitHeight = useCallback(
-    (raw: string) => {
-      try {
-        const decimal = toDecimal(parseFraction(raw.trim()));
-        if (decimal > 0 && Number.isFinite(decimal)) {
-          setHeightError('');
-          // Show confirmation modal if dimensions changed
-          if (decimal !== canvasHeight) {
-            setPendingHeight(decimal);
-          } else {
-            setHeightInput(String(decimal));
-          }
-        } else {
-          setHeightError('Enter a valid dimension');
-        }
-      } catch {
-        setHeightError('Enter a valid dimension');
-      }
-    },
-    [canvasHeight]
-  );
+ const commitHeight = useCallback(
+ (raw: string) => {
+ try {
+ const decimal = toDecimal(parseFraction(raw.trim()));
+ if (decimal > 0 && Number.isFinite(decimal)) {
+ setHeightError('');
+ // Show confirmation modal if dimensions changed
+ if (decimal !== canvasHeight) {
+ setPendingHeight(decimal);
+ } else {
+ setHeightInput(String(decimal));
+ }
+ } else {
+ setHeightError('Enter a valid dimension');
+ }
+ } catch {
+ setHeightError('Enter a valid dimension');
+ }
+ },
+ [canvasHeight]
+ );
 
-  const applyPreset = useCallback(
-    (w: number, h: number) => {
-      // Always show confirmation for preset changes
-      setPendingWidth(w);
-      setPendingHeight(h);
-    },
-    []
-  );
+ const applyPreset = useCallback(
+ (w: number, h: number) => {
+ // Always show confirmation for preset changes
+ setPendingWidth(w);
+ setPendingHeight(h);
+ },
+ []
+ );
 
-  const commitCellSize = useCallback(
-    (newSize: number) => {
-      if (newSize !== gridSettings.size) {
-        setPendingCellSize(newSize);
-      } else {
-        setGridSettings({ size: newSize });
-        triggerRender();
-      }
-    },
-    [gridSettings.size, setGridSettings, triggerRender]
-  );
+ const commitCellSize = useCallback(
+ (newSize: number) => {
+ if (newSize !== gridSettings.size) {
+ setPendingCellSize(newSize);
+ } else {
+ setGridSettings({ size: newSize });
+ triggerRender();
+ }
+ },
+ [gridSettings.size, setGridSettings, triggerRender]
+ );
 
-  const confirmResize = useCallback(
-    (newWidth: number, newHeight: number) => {
-      setCanvasWidth(newWidth);
-      setCanvasHeight(newHeight);
-      setWidthInput(String(newWidth));
-      setHeightInput(String(newHeight));
-      setWidthError('');
-      setHeightError('');
-      triggerRender();
-      useCanvasStore.getState().centerAndFitViewport();
-      setPendingWidth(null);
-      setPendingHeight(null);
-      setIsOpen(false);
-    },
-    [setCanvasWidth, setCanvasHeight, triggerRender]
-  );
+ const confirmResize = useCallback(
+ (newWidth: number, newHeight: number) => {
+ setCanvasWidth(newWidth);
+ setCanvasHeight(newHeight);
+ setWidthInput(String(newWidth));
+ setHeightInput(String(newHeight));
+ setWidthError('');
+ setHeightError('');
+ triggerRender();
+ useCanvasStore.getState().centerAndFitViewport();
+ setPendingWidth(null);
+ setPendingHeight(null);
+ setIsOpen(false);
+ },
+ [setCanvasWidth, setCanvasHeight, triggerRender]
+ );
 
-  const confirmCellSizeChange = useCallback(
-    (newSize: number) => {
-      setGridSettings({ size: newSize });
-      triggerRender();
-      setPendingCellSize(null);
-    },
-    [setGridSettings, triggerRender]
-  );
+ const confirmCellSizeChange = useCallback(
+ (newSize: number) => {
+ setGridSettings({ size: newSize });
+ triggerRender();
+ setPendingCellSize(null);
+ },
+ [setGridSettings, triggerRender]
+ );
 
-  const cancelPending = useCallback(() => {
-    setPendingWidth(null);
-    setPendingHeight(null);
-    setPendingCellSize(null);
-    // Reset inputs to current values
-    setWidthInput(String(canvasWidth));
-    setHeightInput(String(canvasHeight));
-  }, [canvasWidth, canvasHeight]);
+ const cancelPending = useCallback(() => {
+ setPendingWidth(null);
+ setPendingHeight(null);
+ setPendingCellSize(null);
+ // Reset inputs to current values
+ setWidthInput(String(canvasWidth));
+ setHeightInput(String(canvasHeight));
+ }, [canvasWidth, canvasHeight]);
 
-  return (
-    <div ref={ref} className="relative">
-      {/* Dropdown trigger button */}
-      <TooltipHint
-        name="Quilt Settings"
-        description="Adjust quilt dimensions and grid settings"
-      >
-        <button
-          type="button"
-          onClick={() => setIsOpen((o) => !o)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${isOpen
-            ? 'bg-neutral-200 text-neutral-800'
-            : 'text-neutral-800/70 hover:text-neutral-800 hover:bg-neutral-100'
-            }`}
-          aria-label="Quilt settings"
-          aria-expanded={isOpen}
-        >
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-            <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
-          </svg>
-          Quilt
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path
-              d="M3 4.5L6 7.5L9 4.5"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </TooltipHint>
+ return (
+ <div ref={ref} className="relative">
+ {/* Dropdown trigger button */}
+ <TooltipHint
+ name="Quilt Settings"
+ description="Adjust quilt dimensions and grid settings"
+ >
+ <button
+ type="button"
+ onClick={() => setIsOpen((o) => !o)}
+ className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${isOpen
+ ? 'bg-[#e8e1da] text-[#2d2a26]'
+ : 'text-[#2d2a26]/70 hover:text-[#2d2a26] hover:bg-[#f5f2ef]'
+ }`}
+ aria-label="Quilt settings"
+ aria-expanded={isOpen}
+ >
+ <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+ <rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.4" />
+ <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+ <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
+ </svg>
+ Quilt
+ <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+ <path
+ d="M3 4.5L6 7.5L9 4.5"
+ stroke="currentColor"
+ strokeWidth="1.2"
+ strokeLinecap="round"
+ strokeLinejoin="round"
+ />
+ </svg>
+ </button>
+ </TooltipHint>
 
-      {/* Dropdown panel */}
-      {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-80 bg-neutral border border-neutral-200/20 rounded-full shadow-elevation-2 py-3 z-50">
-          {/* Quilt Size section */}
-          <div className="px-3 pb-3 border-b border-neutral-200/15">
-            <p className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-3">
-              Quilt Size ({unit})
-            </p>
-            <div className="flex gap-3 mb-3">
-              <div className="flex-1">
-                <label htmlFor="quilt-w" className="block text-xs text-neutral-500 mb-1">
-                  Width
-                </label>
-                <input
-                  id="quilt-w"
-                  type="text"
-                  inputMode="decimal"
-                  value={widthInput}
-                  onChange={(e) => {
-                    setWidthInput(e.target.value);
-                    setWidthError('');
-                  }}
-                  onBlur={(e) => commitWidth(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
-                  }}
-                  className={`w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-black focus:outline-none ${widthError ? 'border-error' : ''
-                    }`}
-                />
-                {widthError && <p className="text-xs text-error mt-1">{widthError}</p>}
-              </div>
-              <div className="flex-1">
-                <label htmlFor="quilt-h" className="block text-xs text-neutral-500 mb-1">
-                  Height
-                </label>
-                <input
-                  id="quilt-h"
-                  type="text"
-                  inputMode="decimal"
-                  value={heightInput}
-                  onChange={(e) => {
-                    setHeightInput(e.target.value);
-                    setHeightError('');
-                  }}
-                  onBlur={(e) => commitHeight(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
-                  }}
-                  className={`w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-black focus:outline-none ${heightError ? 'border-error' : ''
-                    }`}
-                />
-                {heightError && <p className="text-xs text-error mt-1">{heightError}</p>}
-              </div>
-            </div>
+ {/* Dropdown panel */}
+ {isOpen && (
+ <div className="absolute right-0 top-full mt-1 w-80 bg-[#fdfaf7] border border-[#e8e1da]/20 rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] py-3 z-50">
+ {/* Quilt Size section */}
+ <div className="px-3 pb-3 border-b border-[#e8e1da]/15">
+ <p className="text-label-sm uppercase text-[#6b655e] font-medium mb-3">
+ Quilt Size ({unit})
+ </p>
+ <div className="flex gap-3 mb-3">
+ <div className="flex-1">
+ <label htmlFor="quilt-w" className="block text-xs text-[#6b655e] mb-1">
+ Width
+ </label>
+ <input
+ id="quilt-w"
+ type="text"
+ inputMode="decimal"
+ value={widthInput}
+ onChange={(e) => {
+ setWidthInput(e.target.value);
+ setWidthError('');
+ }}
+ onBlur={(e) => commitWidth(e.target.value)}
+ onKeyDown={(e) => {
+ if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
+ }}
+ className={`w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#2d2a26] focus:border-black focus:outline-none ${widthError ? 'border-[#ffc7c7]' : ''
+ }`}
+ />
+ {widthError && <p className="text-xs text-[#ffc7c7] mt-1">{widthError}</p>}
+ </div>
+ <div className="flex-1">
+ <label htmlFor="quilt-h" className="block text-xs text-[#6b655e] mb-1">
+ Height
+ </label>
+ <input
+ id="quilt-h"
+ type="text"
+ inputMode="decimal"
+ value={heightInput}
+ onChange={(e) => {
+ setHeightInput(e.target.value);
+ setHeightError('');
+ }}
+ onBlur={(e) => commitHeight(e.target.value)}
+ onKeyDown={(e) => {
+ if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
+ }}
+ className={`w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#2d2a26] focus:border-black focus:outline-none ${heightError ? 'border-[#ffc7c7]' : ''
+ }`}
+ />
+ {heightError && <p className="text-xs text-[#ffc7c7] mt-1">{heightError}</p>}
+ </div>
+ </div>
 
-            {/* Size presets */}
-            <p className="text-[10px] uppercase text-neutral-500 tracking-wider mb-1.5">Presets</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {QUILT_SIZE_PRESETS.map((p) => {
-                const isActive = canvasWidth === p.width && canvasHeight === p.height;
-                return (
-                  <button
-                    key={p.label}
-                    type="button"
-                    onClick={() => applyPreset(p.width, p.height)}
-                    className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors ${isActive
-                      ? 'bg-primary text-white'
-                      : 'bg-neutral text-neutral-800 hover:bg-neutral-200'
-                      }`}
-                  >
-                    <span>{p.label}</span>
-                    <span className={`font-mono text-[10px] ${isActive ? 'text-white/80' : 'text-neutral-500'}`}>
-                      {p.width}×{p.height}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+ {/* Size presets */}
+ <p className="text-[10px] uppercase text-[#6b655e] mb-1.5">Presets</p>
+ <div className="grid grid-cols-2 gap-1.5">
+ {QUILT_SIZE_PRESETS.map((p) => {
+ const isActive = canvasWidth === p.width && canvasHeight === p.height;
+ return (
+ <button
+ key={p.label}
+ type="button"
+ onClick={() => applyPreset(p.width, p.height)}
+ className={`flex items-center justify-between rounded-lg px-2 py-1.5 text-xs font-medium transition-colors ${isActive
+ ? 'bg-[#ff8d49] text-[#2d2a26]'
+ : 'bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#e8e1da]'
+ }`}
+ >
+ <span>{p.label}</span>
+ <span className={`font-mono text-[10px] ${isActive ? 'text-[#2d2a26]/80' : 'text-[#6b655e]'}`}>
+ {p.width}×{p.height}
+ </span>
+ </button>
+ );
+ })}
+ </div>
+ </div>
 
-          {/* Grid section */}
-          <div className="px-3 pt-3">
-            <p className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-3">
-              Cell Grid
-            </p>
-            <div className="mb-2">
-              <div className="flex items-center justify-between mb-1">
-                <label htmlFor="cell-size" className="text-xs text-neutral-500">
-                  Cell size
-                </label>
-                <span className="text-xs text-neutral-800 font-medium font-mono">
-                  {gridSettings.size.toFixed(2)}&quot;
-                </span>
-              </div>
-              <input
-                id="cell-size"
-                type="range"
-                min={GRID_CELL_SIZE_MIN}
-                max={GRID_CELL_SIZE_MAX}
-                step={GRID_CELL_SIZE_STEP}
-                value={gridSettings.size}
-                onChange={(e) => {
-                  const newSize = parseFloat(e.target.value);
-                  commitCellSize(newSize);
-                }}
-                onMouseUp={() => {
-                  // Commit on mouse up for slider
-                }}
-                className="w-full accent-on-surface"
-              />
-            </div>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={gridSettings.snapToGrid}
-                onChange={(e) => setGridSettings({ snapToGrid: e.target.checked })}
-                className="rounded accent-on-surface"
-              />
-              <span className="text-xs text-neutral-500">Snap to grid</span>
-            </label>
-          </div>
+ {/* Grid section */}
+ <div className="px-3 pt-3">
+ <p className="text-label-sm uppercase text-[#6b655e] font-medium mb-3">
+ Cell Grid
+ </p>
+ <div className="mb-2">
+ <div className="flex items-center justify-between mb-1">
+ <label htmlFor="cell-size" className="text-xs text-[#6b655e]">
+ Cell size
+ </label>
+ <span className="text-xs text-[#2d2a26] font-medium font-mono">
+ {gridSettings.size.toFixed(2)}&quot;
+ </span>
+ </div>
+ <input
+ id="cell-size"
+ type="range"
+ min={GRID_CELL_SIZE_MIN}
+ max={GRID_CELL_SIZE_MAX}
+ step={GRID_CELL_SIZE_STEP}
+ value={gridSettings.size}
+ onChange={(e) => {
+ const newSize = parseFloat(e.target.value);
+ commitCellSize(newSize);
+ }}
+ onMouseUp={() => {
+ // Commit on mouse up for slider
+ }}
+ className="w-full accent-[#ff8d49]"
+ />
+ </div>
+ <label className="flex items-center gap-2 cursor-pointer">
+ <input
+ type="checkbox"
+ checked={gridSettings.snapToGrid}
+ onChange={(e) => setGridSettings({ snapToGrid: e.target.checked })}
+ className="rounded accent-[#ff8d49]"
+ />
+ <span className="text-xs text-[#6b655e]">Snap to grid</span>
+ </label>
+ </div>
 
-          {/* Export section */}
-          <div className="px-3 pt-3 mt-3 border-t border-neutral-200/15">
-            <p className="text-label-sm uppercase text-neutral-500 tracking-[0.02em] font-medium mb-2">
-              Export
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  if (!isPro) {
-                    dialogs.promptUpgrade('Image Export');
-                    return;
-                  }
-                  setIsOpen(false);
-                  onOpenImageExport?.();
-                }}
-                className="flex-1 bg-primary text-white rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity"
-              >
-                Image
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (!isPro) {
-                    dialogs.promptUpgrade('PDF Export');
-                    return;
-                  }
-                  setIsOpen(false);
-                  onOpenPdfExport?.();
-                }}
-                className="flex-1 bg-primary text-white rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity"
-              >
-                PDF
-              </button>
-            </div>
-            {!isPro && (
-              <p className="text-[10px] text-primary mt-1.5">Pro required for export</p>
-            )}
-          </div>
-        </div>
-      )}
+ {/* Export section */}
+ <div className="px-3 pt-3 mt-3 border-t border-[#e8e1da]/15">
+ <p className="text-label-sm uppercase text-[#6b655e] font-medium mb-2">
+ Export
+ </p>
+ <div className="flex gap-2">
+ <button
+ type="button"
+ onClick={() => {
+ if (!isPro) {
+ dialogs.promptUpgrade('Image Export');
+ return;
+ }
+ setIsOpen(false);
+ onOpenImageExport?.();
+ }}
+ className="flex-1 bg-[#ff8d49] text-[#2d2a26] rounded-lg px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+ >
+ Image
+ </button>
+ <button
+ type="button"
+ onClick={() => {
+ if (!isPro) {
+ dialogs.promptUpgrade('PDF Export');
+ return;
+ }
+ setIsOpen(false);
+ onOpenPdfExport?.();
+ }}
+ className="flex-1 bg-[#ff8d49] text-[#2d2a26] rounded-lg px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+ >
+ PDF
+ </button>
+ </div>
+ {!isPro && (
+ <p className="text-[10px] text-[#ff8d49] mt-1.5">Pro required for export</p>
+ )}
+ </div>
+ </div>
+ )}
 
-      {/* Confirmation modal for resize */}
-      {pendingWidth !== null && pendingHeight !== null && (
-        <ConfirmationDialog
-          title="Resize Quilt?"
-          message={
-            <>
-              This will change the quilt dimensions from{' '}
-              <span className="font-medium text-neutral-800">
-                {canvasWidth}″ × {canvasHeight}″
-              </span>{' '}
-              to{' '}
-              <span className="font-medium text-neutral-800">
-                {pendingWidth}″ × {pendingHeight}″
-              </span>
-              . This action cannot be undone.
-            </>
-          }
-          confirmLabel="Resize"
-          onConfirm={() => confirmResize(pendingWidth, pendingHeight)}
-          onCancel={cancelPending}
-        />
-      )}
+ {/* Confirmation modal for resize */}
+ {pendingWidth !== null && pendingHeight !== null && (
+ <ConfirmationDialog
+ title="Resize Quilt?"
+ message={
+ <>
+ This will change the quilt dimensions from{' '}
+ <span className="font-medium text-[#2d2a26]">
+ {canvasWidth}″ × {canvasHeight}″
+ </span>{' '}
+ to{' '}
+ <span className="font-medium text-[#2d2a26]">
+ {pendingWidth}″ × {pendingHeight}″
+ </span>
+ . This action cannot be undone.
+ </>
+ }
+ confirmLabel="Resize"
+ onConfirm={() => confirmResize(pendingWidth, pendingHeight)}
+ onCancel={cancelPending}
+ />
+ )}
 
-      {/* Confirmation modal for cell size change */}
-      {pendingCellSize !== null && (
-        <ConfirmationDialog
-          title="Change Grid Cell Size?"
-          message={
-            <>
-              This will change the grid cell size from{' '}
-              <span className="font-medium text-neutral-800">
-                {gridSettings.size.toFixed(2)}″
-              </span>{' '}
-              to{' '}
-              <span className="font-medium text-neutral-800">
-                {pendingCellSize.toFixed(2)}″
-              </span>
-              . This may affect layout positioning.
-            </>
-          }
-          confirmLabel="Change"
-          onConfirm={() => confirmCellSizeChange(pendingCellSize)}
-          onCancel={cancelPending}
-        />
-      )}
-    </div>
-  );
+ {/* Confirmation modal for cell size change */}
+ {pendingCellSize !== null && (
+ <ConfirmationDialog
+ title="Change Grid Cell Size?"
+ message={
+ <>
+ This will change the grid cell size from{' '}
+ <span className="font-medium text-[#2d2a26]">
+ {gridSettings.size.toFixed(2)}″
+ </span>{' '}
+ to{' '}
+ <span className="font-medium text-[#2d2a26]">
+ {pendingCellSize.toFixed(2)}″
+ </span>
+ . This may affect layout positioning.
+ </>
+ }
+ confirmLabel="Change"
+ onConfirm={() => confirmCellSizeChange(pendingCellSize)}
+ onCancel={cancelPending}
+ />
+ )}
+ </div>
+ );
 }

@@ -96,20 +96,20 @@ export default function AdminBlogPage() {
   function getStatusBadgeClass(status: string) {
     switch (status) {
       case 'published':
-        return 'bg-success/10 text-success border-success/20';
+        return 'bg-green-50 text-green-700 border-green-200';
       case 'draft':
-        return 'bg-secondary/10 text-secondary border-secondary/20';
+        return 'bg-[#ffc8a6]/10 text-[#6b655e] border-[#ffc8a6]/20';
       case 'archived':
-        return 'bg-surface-container-highest text-secondary border-outline-variant';
+        return 'bg-[#fdfaf7] text-[#6b655e] border-[#e8e1da]';
       default:
-        return 'bg-surface-container-highest text-secondary border-outline-variant';
+        return 'bg-[#fdfaf7] text-[#6b655e] border-[#e8e1da]';
     }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20"></div>
       </div>
     );
   }
@@ -117,10 +117,10 @@ export default function AdminBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-secondary">Manage your blog content</p>
+        <p className="text-sm text-[#6b655e]">Manage your blog content</p>
         <Link
           href="/admin/blog/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-primary text-white font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -129,51 +129,51 @@ export default function AdminBlogPage() {
         </Link>
       </div>
 
-      <div className="rounded-sm border border-outline-variant overflow-hidden">
+      <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
         <table className="w-full">
-          <thead className="bg-surface-container-high">
+          <thead className="bg-[#fdfaf7]">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
                 Title
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
                 Category
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
                 Published
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e]">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-outline-variant/30 bg-surface">
+          <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-secondary">
+                <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
                   No blog posts yet. Create your first post!
                 </td>
               </tr>
             ) : (
               posts.map((post) => (
-                <tr key={post.id} className="hover:bg-surface-container-low transition-colors">
+                <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                   <td className="px-4 py-3">
                     <div className="max-w-md">
-                      <p className="font-medium text-on-surface truncate">{post.title}</p>
+                      <p className="font-medium text-[#2d2a26] truncate">{post.title}</p>
                       {post.excerpt && (
-                        <p className="text-xs text-secondary mt-0.5 line-clamp-1">{post.excerpt}</p>
+                        <p className="text-xs text-[#6b655e] mt-0.5 line-clamp-1">{post.excerpt}</p>
                       )}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-secondary">{post.category}</span>
+                    <span className="text-sm text-[#6b655e]">{post.category}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium border ${getStatusBadgeClass(
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium border ${getStatusBadgeClass(
                         post.status
                       )}`}
                     >
@@ -182,32 +182,32 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-4 py-3">
                     {post.publishedAt ? (
-                      <span className="text-sm text-secondary">
+                      <span className="text-sm text-[#6b655e]">
                         {new Date(post.publishedAt).toLocaleDateString()}
                       </span>
                     ) : (
-                      <span className="text-sm text-secondary">—</span>
+                      <span className="text-sm text-[#6b655e]">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleTogglePublish(post.id, post.status)}
-                        className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+                        className="text-sm font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
                         disabled={deletingId === post.id}
                       >
                         {post.status === 'published' ? 'Unpublish' : 'Publish'}
                       </button>
                       <Link
                         href={`/admin/blog/${post.id}`}
-                        className={`text-sm font-medium transition-colors ${deletingId === post.id ? 'pointer-events-none opacity-50 text-secondary' : 'text-secondary hover:text-on-surface'}`}
+                        className={`text-sm font-medium transition-colors duration-150 ${deletingId === post.id ? 'pointer-events-none opacity-50 text-[#6b655e]' : 'text-[#6b655e] hover:text-[#2d2a26]'}`}
                         aria-disabled={deletingId === post.id}
                       >
                         Edit
                       </Link>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-sm font-medium text-error hover:text-error/80 transition-colors disabled:opacity-50"
+                        className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-150 disabled:opacity-50"
                         disabled={deletingId === post.id}
                       >
                         {deletingId === post.id ? 'Deleting...' : 'Delete'}
@@ -223,7 +223,7 @@ export default function AdminBlogPage() {
 
       {pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-secondary">
+          <p className="text-sm text-[#6b655e]">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
             posts
@@ -234,7 +234,7 @@ export default function AdminBlogPage() {
                 setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
               }
               disabled={pagination.page === 1}
-              className="px-3 py-1.5 rounded-sm border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 rounded-lg border border-[#e8e1da] text-sm font-medium text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Previous
             </button>
@@ -246,7 +246,7 @@ export default function AdminBlogPage() {
                 }))
               }
               disabled={pagination.page >= pagination.totalPages}
-              className="px-3 py-1.5 rounded-sm border border-outline-variant text-sm font-medium text-secondary hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 rounded-lg border border-[#e8e1da] text-sm font-medium text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Next
             </button>

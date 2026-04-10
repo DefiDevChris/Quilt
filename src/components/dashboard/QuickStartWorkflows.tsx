@@ -44,7 +44,7 @@ export function QuickStartWorkflows({
 
   return (
     <section className="mb-8" aria-label="Quick start workflows">
-      <h2 className="text-sm font-semibold text-neutral-700 mb-4">
+      <h2 className="text-sm font-semibold text-[#2d2a26] mb-4">
         Quick Start
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -52,19 +52,19 @@ export function QuickStartWorkflows({
         <button
           type="button"
           onClick={onNewProject}
-          className="min-h-[140px] rounded-full p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-neutral border border-neutral-200 hover:shadow-elevation-2 flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[#fdfaf7] border border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
           aria-label="Start a new project"
         >
           <div>
-            <p className="text-neutral-800 font-semibold text-lg mb-1">Start New Project</p>
-            <p className="text-neutral-600 text-sm">Pick a size and start designing</p>
+            <p className="text-[#2d2a26] font-semibold text-lg mb-1">Start New Project</p>
+            <p className="text-[#6b655e] text-sm">Pick a size and start designing</p>
           </div>
           <Image
             src="/icons/quilt-13-dashed-squares-Photoroom.png"
             alt=""
             width={72}
             height={72}
-            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-200 group-hover:scale-105"
+            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-colors duration-150"
           />
         </button>
 
@@ -76,11 +76,11 @@ export function QuickStartWorkflows({
             aria-haspopup="listbox"
             aria-expanded={resumeOpen}
             aria-label="Resume a recent project"
-            className="w-full min-h-[140px] rounded-full p-6 text-left overflow-hidden group cursor-pointer transition-all duration-200 bg-neutral border border-neutral-200 hover:shadow-elevation-2 flex items-center justify-between gap-4"
+            className="w-full min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[#fdfaf7] border border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
           >
             <div>
-              <p className="text-neutral-800 font-semibold text-lg mb-1">Resume</p>
-              <p className="text-neutral-600 text-sm">
+              <p className="text-[#2d2a26] font-semibold text-lg mb-1">Resume</p>
+              <p className="text-[#6b655e] text-sm">
                 {recentProjects.length > 0
                   ? `Pick up where you left off (${recentProjects.length})`
                   : 'No projects yet'}
@@ -91,25 +91,25 @@ export function QuickStartWorkflows({
               alt=""
               width={72}
               height={72}
-              className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-200 group-hover:scale-105"
+              className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-colors duration-150"
             />
           </button>
 
           {resumeOpen && (
             <div
               role="listbox"
-              className="absolute left-0 right-0 mt-2 z-30 rounded-full border border-neutral-200 bg-neutral shadow-elevation-3 overflow-hidden"
+              className="absolute left-0 right-0 mt-2 z-30 rounded-lg border border-[#e8e1da] bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] overflow-hidden"
             >
               {recentProjects.length === 0 ? (
                 <div className="px-4 py-6 text-center">
-                  <p className="text-sm text-neutral-600">No projects yet.</p>
+                  <p className="text-sm text-[#6b655e]">No projects yet.</p>
                   <button
                     type="button"
                     onClick={() => {
                       setResumeOpen(false);
                       onNewProject();
                     }}
-                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+                    className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#ff8d49] px-4 py-1.5 text-sm font-medium text-[#2d2a26] hover:bg-[#e67d3f] transition-colors duration-150"
                   >
                     Start your first quilt
                   </button>
@@ -117,19 +117,19 @@ export function QuickStartWorkflows({
               ) : (
                 <ul className="max-h-72 overflow-y-auto">
                   {recentProjects.map((project) => (
-                    <li key={project.id} className="border-b border-neutral-200 last:border-b-0">
+                    <li key={project.id} className="border-b border-[#e8e1da] last:border-b-0">
                       <Link
                         href={`/studio/${project.id}`}
                         role="option"
                         aria-selected="false"
-                        className="flex items-center justify-between px-4 py-3 hover:bg-primary/10 transition-colors"
+                        className="flex items-center justify-between px-4 py-3 hover:bg-[#ff8d49]/10 transition-colors duration-150"
                         onClick={() => setResumeOpen(false)}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-neutral-800 truncate">
+                          <p className="text-sm font-medium text-[#2d2a26] truncate">
                             {project.name}
                           </p>
-                          <p className="text-xs text-neutral-600 mt-0.5">
+                          <p className="text-xs text-[#6b655e] mt-0.5">
                             {formatRelativeTime(project.updatedAt)}
                           </p>
                         </div>
@@ -138,7 +138,7 @@ export function QuickStartWorkflows({
                           height="14"
                           viewBox="0 0 14 14"
                           fill="none"
-                          className="text-neutral-500 ml-3 shrink-0"
+                          className="text-[#6b655e] ml-3 shrink-0"
                           aria-hidden="true"
                         >
                           <path
@@ -157,7 +157,7 @@ export function QuickStartWorkflows({
               <Link
                 href="/projects"
                 onClick={() => setResumeOpen(false)}
-                className="block px-4 py-2.5 text-center text-sm font-medium text-primary hover:bg-primary/10 border-t border-neutral-200"
+                className="block px-4 py-2.5 text-center text-sm font-medium text-[#ff8d49] hover:bg-[#ff8d49]/10 border-t border-[#e8e1da]"
               >
                 View all in My Quiltbook →
               </Link>
@@ -168,19 +168,19 @@ export function QuickStartWorkflows({
         {/* Photo to Design */}
         <Link
           href="/photo-to-design"
-          className="min-h-[140px] rounded-full p-6 text-left overflow-hidden transition-all duration-200 bg-neutral border border-neutral-200 hover:shadow-elevation-2 flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden transition-colors duration-150 bg-[#fdfaf7] border border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
           aria-label="Photo to Design workflow"
         >
           <div>
-            <p className="text-neutral-800 font-semibold text-lg mb-1">Photo to Design</p>
-            <p className="text-neutral-600 text-sm">Extract blocks with AI</p>
+            <p className="text-[#2d2a26] font-semibold text-lg mb-1">Photo to Design</p>
+            <p className="text-[#6b655e] text-sm">Extract blocks with AI</p>
           </div>
           <Image
             src="/icons/quilt-photo-camera.png"
             alt=""
             width={72}
             height={72}
-            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-all duration-200 group-hover:scale-105"
+            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-colors duration-150"
           />
         </Link>
       </div>

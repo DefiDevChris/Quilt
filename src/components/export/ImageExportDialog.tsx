@@ -75,7 +75,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               key={fmt}
               type="button"
               onClick={() => setFormat(fmt)}
-              className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
+              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
                 ? 'border-primary bg-primary text-white'
                 : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                 }`}
@@ -98,7 +98,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 key={opt}
                 type="button"
                 onClick={() => setDpi(opt)}
-                className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
+                className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
                   ? 'border-primary bg-primary text-white'
                   : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                   }`}

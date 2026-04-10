@@ -8,253 +8,253 @@ import { useQuiltResize } from '@/hooks/useQuiltResize';
 import { formatMeasurement, getUnitLabel } from '@/lib/canvas-utils';
 
 interface ResizeDialogProps {
-  readonly isOpen: boolean;
-  readonly onClose: () => void;
+ readonly isOpen: boolean;
+ readonly onClose: () => void;
 }
 
 type ConfirmStep = null | 'confirm';
 
 export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
-  const unitSystem = useCanvasStore((s) => s.unitSystem);
-  const layoutType = useLayoutStore((s) => s.layoutType);
-  const { applyResize } = useQuiltResize();
+ const canvasWidth = useProjectStore((s) => s.canvasWidth);
+ const canvasHeight = useProjectStore((s) => s.canvasHeight);
+ const unitSystem = useCanvasStore((s) => s.unitSystem);
+ const layoutType = useLayoutStore((s) => s.layoutType);
+ const { applyResize } = useQuiltResize();
 
-  const [width, setWidth] = useState(canvasWidth);
-  const [height, setHeight] = useState(canvasHeight);
-  const [lockAspectRatio, setLockAspectRatio] = useState(true);
-  const [tilePattern, setTilePattern] = useState(false);
-  const [step, setStep] = useState<ConfirmStep>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+ const [width, setWidth] = useState(canvasWidth);
+ const [height, setHeight] = useState(canvasHeight);
+ const [lockAspectRatio, setLockAspectRatio] = useState(true);
+ const [tilePattern, setTilePattern] = useState(false);
+ const [step, setStep] = useState<ConfirmStep>(null);
+ const containerRef = useRef<HTMLDivElement>(null);
 
-  const unitLabel = getUnitLabel(unitSystem);
-  const aspectRatio = canvasWidth / canvasHeight;
-  const isSameDimensions = width === canvasWidth && height === canvasHeight;
+ const unitLabel = getUnitLabel(unitSystem);
+ const aspectRatio = canvasWidth / canvasHeight;
+ const isSameDimensions = width === canvasWidth && height === canvasHeight;
 
-  useLayoutEffect(() => {
-    if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setWidth(canvasWidth);
-      setHeight(canvasHeight);
-      setLockAspectRatio(true);
-      setTilePattern(false);
-      setStep(null);
-    }
-  }, [isOpen, canvasWidth, canvasHeight]);
+ useLayoutEffect(() => {
+ if (isOpen) {
+ // eslint-disable-next-line react-hooks/set-state-in-effect
+ setWidth(canvasWidth);
+ setHeight(canvasHeight);
+ setLockAspectRatio(true);
+ setTilePattern(false);
+ setStep(null);
+ }
+ }, [isOpen, canvasWidth, canvasHeight]);
 
-  const handleWidthChange = useCallback(
-    (newWidth: number) => {
-      setWidth(newWidth);
-      if (lockAspectRatio) {
-        setHeight(Math.round((newWidth / aspectRatio) * 100) / 100);
-      }
-    },
-    [lockAspectRatio, aspectRatio]
-  );
+ const handleWidthChange = useCallback(
+ (newWidth: number) => {
+ setWidth(newWidth);
+ if (lockAspectRatio) {
+ setHeight(Math.round((newWidth / aspectRatio) * 100) / 100);
+ }
+ },
+ [lockAspectRatio, aspectRatio]
+ );
 
-  const handleHeightChange = useCallback(
-    (newHeight: number) => {
-      setHeight(newHeight);
-      if (lockAspectRatio) {
-        setWidth(Math.round(newHeight * aspectRatio * 100) / 100);
-      }
-    },
-    [lockAspectRatio, aspectRatio]
-  );
+ const handleHeightChange = useCallback(
+ (newHeight: number) => {
+ setHeight(newHeight);
+ if (lockAspectRatio) {
+ setWidth(Math.round(newHeight * aspectRatio * 100) / 100);
+ }
+ },
+ [lockAspectRatio, aspectRatio]
+ );
 
-  const handleSubmit = useCallback(() => {
-    setStep('confirm');
-  }, []);
+ const handleSubmit = useCallback(() => {
+ setStep('confirm');
+ }, []);
 
-  const getAddBlocksLabel = useCallback(() => {
-    if (layoutType === 'none') return 'Expand Canvas';
-    return 'Add Empty Blocks';
-  }, [layoutType]);
+ const getAddBlocksLabel = useCallback(() => {
+ if (layoutType === 'none') return 'Expand Canvas';
+ return 'Add Empty Blocks';
+ }, [layoutType]);
 
-  const handleConfirm = useCallback(
-    (mode: 'scale' | 'add-blocks') => {
-      const container = containerRef.current?.closest('[data-studio-canvas]');
-      const containerWidth = container?.clientWidth ?? window.innerWidth;
-      const containerHeight = container?.clientHeight ?? window.innerHeight;
-      applyResize(
-        mode,
-        width,
-        height,
-        lockAspectRatio,
-        tilePattern,
-        containerWidth,
-        containerHeight
-      );
-      onClose();
-    },
-    [applyResize, width, height, lockAspectRatio, tilePattern, onClose]
-  );
+ const handleConfirm = useCallback(
+ (mode: 'scale' | 'add-blocks') => {
+ const container = containerRef.current?.closest('[data-studio-canvas]');
+ const containerWidth = container?.clientWidth ?? window.innerWidth;
+ const containerHeight = container?.clientHeight ?? window.innerHeight;
+ applyResize(
+ mode,
+ width,
+ height,
+ lockAspectRatio,
+ tilePattern,
+ containerWidth,
+ containerHeight
+ );
+ onClose();
+ },
+ [applyResize, width, height, lockAspectRatio, tilePattern, onClose]
+ );
 
-  if (!isOpen) return null;
+ if (!isOpen) return null;
 
-  const formattedCurrent = `${formatMeasurement(canvasWidth, unitSystem)} \u00d7 ${formatMeasurement(canvasHeight, unitSystem)}`;
-  const formattedNew = `${formatMeasurement(width, unitSystem)} \u00d7 ${formatMeasurement(height, unitSystem)}`;
+ const formattedCurrent = `${formatMeasurement(canvasWidth, unitSystem)} \u00d7 ${formatMeasurement(canvasHeight, unitSystem)}`;
+ const formattedNew = `${formatMeasurement(width, unitSystem)} \u00d7 ${formatMeasurement(height, unitSystem)}`;
 
-  return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-        className="bg-neutral rounded-full shadow-elevation-2 w-[380px] max-w-[90vw]"
-        role="dialog"
-        aria-label="Resize Quilt"
-      >
-        {step === null ? (
-          <div className="p-6">
-            <h2 className="text-title-lg text-neutral-800 font-semibold mb-4">Resize Quilt</h2>
+ return (
+ <div
+ ref={containerRef}
+ className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+ onClick={(e) => {
+ if (e.target === e.currentTarget) onClose();
+ }}
+ >
+ <div
+ className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] w-[380px] max-w-[90vw]"
+ role="dialog"
+ aria-label="Resize Quilt"
+ >
+ {step === null ? (
+ <div className="p-6">
+ <h2 className="text-title-lg text-[#2d2a26] font-semibold mb-4">Resize Quilt</h2>
 
-            <div className="flex items-end gap-3 mb-4">
-              <div className="flex-1">
-                <label htmlFor="resize-width" className="block text-label-sm text-neutral-500 mb-1">
-                  Width ({unitLabel})
-                </label>
-                <input
-                  id="resize-width"
-                  type="number"
-                  min={1}
-                  max={200}
-                  step={0.25}
-                  value={width}
-                  onChange={(e) => handleWidthChange(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-neutral-100 rounded-full border border-neutral-200/20 text-body-md text-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                />
-              </div>
+ <div className="flex items-end gap-3 mb-4">
+ <div className="flex-1">
+ <label htmlFor="resize-width" className="block text-label-sm text-[#6b655e] mb-1">
+ Width ({unitLabel})
+ </label>
+ <input
+ id="resize-width"
+ type="number"
+ min={1}
+ max={200}
+ step={0.25}
+ value={width}
+ onChange={(e) => handleWidthChange(Number(e.target.value))}
+ className="w-full px-3 py-2 bg-[#f5f2ef] rounded-lg border border-[#e8e1da]/20 text-body-md text-[#2d2a26] focus:outline-none focus:ring-2 focus:ring-primary/30"
+ />
+ </div>
 
-              <button
-                type="button"
-                title={lockAspectRatio ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
-                onClick={() => setLockAspectRatio((prev) => !prev)}
-                className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:text-neutral-800 transition-colors"
-              >
-                {lockAspectRatio ? (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect
-                      x="5"
-                      y="9"
-                      width="10"
-                      height="8"
-                      rx="1.5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                    <path
-                      d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect
-                      x="5"
-                      y="9"
-                      width="10"
-                      height="8"
-                      rx="1.5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                    <path
-                      d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                )}
-              </button>
+ <button
+ type="button"
+ title={lockAspectRatio ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
+ onClick={() => setLockAspectRatio((prev) => !prev)}
+ className="w-10 h-10 flex items-center justify-center text-[#6b655e] hover:text-[#2d2a26] transition-colors"
+ >
+ {lockAspectRatio ? (
+ <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+ <rect
+ x="5"
+ y="9"
+ width="10"
+ height="8"
+ rx="1.5"
+ stroke="currentColor"
+ strokeWidth="1.4"
+ />
+ <path
+ d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+ stroke="currentColor"
+ strokeWidth="1.4"
+ />
+ </svg>
+ ) : (
+ <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+ <rect
+ x="5"
+ y="9"
+ width="10"
+ height="8"
+ rx="1.5"
+ stroke="currentColor"
+ strokeWidth="1.4"
+ />
+ <path
+ d="M13 9V6C13 4.34315 14.3431 3 16 3C17.6569 3 19 4.34315 19 6"
+ stroke="currentColor"
+ strokeWidth="1.4"
+ />
+ </svg>
+ )}
+ </button>
 
-              <div className="flex-1">
-                <label htmlFor="resize-height" className="block text-label-sm text-neutral-500 mb-1">
-                  Height ({unitLabel})
-                </label>
-                <input
-                  id="resize-height"
-                  type="number"
-                  min={1}
-                  max={200}
-                  step={0.25}
-                  value={height}
-                  onChange={(e) => handleHeightChange(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-neutral-100 rounded-full border border-neutral-200/20 text-body-md text-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                />
-              </div>
-            </div>
+ <div className="flex-1">
+ <label htmlFor="resize-height" className="block text-label-sm text-[#6b655e] mb-1">
+ Height ({unitLabel})
+ </label>
+ <input
+ id="resize-height"
+ type="number"
+ min={1}
+ max={200}
+ step={0.25}
+ value={height}
+ onChange={(e) => handleHeightChange(Number(e.target.value))}
+ className="w-full px-3 py-2 bg-[#f5f2ef] rounded-lg border border-[#e8e1da]/20 text-body-md text-[#2d2a26] focus:outline-none focus:ring-2 focus:ring-primary/30"
+ />
+ </div>
+ </div>
 
-            <p className="text-body-sm text-neutral-500 mb-4">Current: {formattedCurrent}</p>
+ <p className="text-body-sm text-[#6b655e] mb-4">Current: {formattedCurrent}</p>
 
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="bg-neutral px-4 py-2 text-body-md text-neutral-500 rounded-full"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={isSameDimensions}
-                onClick={handleSubmit}
-                className="px-6 py-2 text-[13px] font-semibold tracking-wide text-white bg-primary rounded-full hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="p-6">
-            <h2 className="text-title-lg text-neutral-800 font-semibold mb-2">Confirm Resize</h2>
-            <p className="text-body-md text-neutral-500 mb-6">
-              This changes the entire quilt dimensions from {formattedCurrent} to {formattedNew}.
-            </p>
+ <div className="flex justify-end gap-2">
+ <button
+ type="button"
+ onClick={onClose}
+ className="bg-[#fdfaf7] px-4 py-2 text-body-md text-[#6b655e] rounded-lg"
+ >
+ Cancel
+ </button>
+ <button
+ type="button"
+ disabled={isSameDimensions}
+ onClick={handleSubmit}
+ className="px-6 py-2 text-[13px] font-semibold text-[#2d2a26] bg-[#ff8d49] rounded-lg hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+ >
+ Continue
+ </button>
+ </div>
+ </div>
+ ) : (
+ <div className="p-6">
+ <h2 className="text-title-lg text-[#2d2a26] font-semibold mb-2">Confirm Resize</h2>
+ <p className="text-body-md text-[#6b655e] mb-6">
+ This changes the entire quilt dimensions from {formattedCurrent} to {formattedNew}.
+ </p>
 
-            {layoutType !== 'none' && (
-              <label className="flex items-center gap-2 mb-4 text-body-sm text-neutral-500 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={tilePattern}
-                  onChange={(e) => setTilePattern(e.target.checked)}
-                  className="rounded border-neutral-200"
-                />
-                Tile existing pattern into new blocks
-              </label>
-            )}
+ {layoutType !== 'none' && (
+ <label className="flex items-center gap-2 mb-4 text-body-sm text-[#6b655e] cursor-pointer">
+ <input
+ type="checkbox"
+ checked={tilePattern}
+ onChange={(e) => setTilePattern(e.target.checked)}
+ className="rounded border-[#e8e1da]"
+ />
+ Tile existing pattern into new blocks
+ </label>
+ )}
 
-            <div className="flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => handleConfirm('scale')}
-                className="w-full px-4 py-2.5 text-[13px] font-semibold tracking-wide text-white bg-primary rounded-full hover:opacity-90 transition-all"
-              >
-                Resize Current Pattern
-              </button>
-              <button
-                type="button"
-                onClick={() => handleConfirm('add-blocks')}
-                className="w-full px-4 py-2.5 text-body-md text-neutral-800 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors border border-neutral-200/20"
-              >
-                {getAddBlocksLabel()}
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="bg-neutral w-full px-4 py-2.5 text-body-md text-neutral-500 rounded-full"
-              >
-                Keep {formattedCurrent}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+ <div className="flex flex-col gap-2">
+ <button
+ type="button"
+ onClick={() => handleConfirm('scale')}
+ className="w-full px-4 py-2.5 text-[13px] font-semibold text-[#2d2a26] bg-[#ff8d49] rounded-lg hover:bg-[#e67d3f] transition-colors duration-150"
+ >
+ Resize Current Pattern
+ </button>
+ <button
+ type="button"
+ onClick={() => handleConfirm('add-blocks')}
+ className="w-full px-4 py-2.5 text-body-md text-[#2d2a26] rounded-lg hover:bg-[#e8e1da] transition-colors border border-[#e8e1da]/20"
+ >
+ {getAddBlocksLabel()}
+ </button>
+ <button
+ type="button"
+ onClick={onClose}
+ className="bg-[#fdfaf7] w-full px-4 py-2.5 text-body-md text-[#2d2a26] rounded-lg"
+ >
+ Keep {formattedCurrent}
+ </button>
+ </div>
+ </div>
+ )}
+ </div>
+ </div>
+ );
 }

@@ -77,7 +77,7 @@ export function ShadeBreakdownPanel({
                 type="button"
                 disabled={isApplying}
                 onClick={() => onBulkApply(shade)}
-                className="rounded-full bg-primary/10 text-primary text-[10px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-primary/10 text-primary text-[10px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isApplying ? 'Applying\u2026' : `Apply ${truncatedName}`}
               </button>

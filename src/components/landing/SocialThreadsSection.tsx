@@ -1,37 +1,37 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 // Real screenshot-like mockup using actual app styling
 function SocialThreadsScreenshot() {
   return (
     <div className="relative">
-      <div className="bg-surface rounded-full shadow-elevation-4 border border-neutral-200">
+      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da]">
         {/* App content */}
-        <div className="bg-surface-container min-h-[420px] relative">
-          {/* Background orbs (matching SocialLayout) */}
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-red-200/50  pointer-events-none" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-200/50  pointer-events-none" />
+        <div className="bg-[#fdfaf7] min-h-[420px] relative">
+          {/* Background subtle accents */}
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#ffc7c7]/30 pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#ff8d49]/10 pointer-events-none" />
 
           <div className="relative z-10 p-4 space-y-4 max-w-lg mx-auto">
             {/* Post 1 */}
-            <div className="bg-surface p-5 border border-neutral-200 rounded-full shadow-elevation-1">
+            <div className="bg-[#ffffff] p-5 border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-surface bg-primary flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-[#ffffff] bg-[#ff8d49] flex items-center justify-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] text-[#ffffff] text-sm font-bold">
                   S
                 </div>
                 <div>
-                  <h4 className="font-bold text-on-surface text-sm">Sarah Mitchell</h4>
-                  <p className="text-xs text-on-surface/50">@sarah_quilts • 2h ago</p>
+                  <h4 className="font-bold text-[#2d2a26] text-sm">Sarah Mitchell</h4>
+                  <p className="text-xs text-[#6b655e]">@sarah_quilts &middot; 2h ago</p>
                 </div>
               </div>
-              <p className="text-on-surface mb-3 text-sm leading-relaxed">
+              <p className="text-[#2d2a26] mb-3 text-sm leading-relaxed">
                 Finally finished my Ohio Star quilt! The per-patch fabric assignment helped me position the
-                center motifs perfectly 🌟
+                center motifs perfectly.
               </p>
-              <div className="rounded-full border border-neutral-200 mb-3">
+              <div className="rounded-lg border border-[#e8e1da] mb-3 overflow-hidden">
                 <Image
                   src="/images/quilts/gallery_quilt_one_1775440540412.png"
                   alt="Ohio Star Quilt"
@@ -41,13 +41,13 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-red-500 bg-red-50/50">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#f43f5e] bg-[#f43f5e]/5 hover:bg-[#f43f5e]/10 transition-colors duration-150">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
                   24
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#6b655e] hover:bg-[#fdfaf7] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -60,7 +60,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   8
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#6b655e] hover:bg-[#fdfaf7] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -81,21 +81,21 @@ function SocialThreadsScreenshot() {
             </div>
 
             {/* Post 2 */}
-            <div className="bg-surface p-5 border border-neutral-200 rounded-full shadow-elevation-1">
+            <div className="bg-[#ffffff] p-5 border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-surface bg-purple-400 flex items-center justify-center shadow-elevation-1 text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-[#ffffff] bg-[#c084fc] flex items-center justify-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] text-[#ffffff] text-sm font-bold">
                   M
                 </div>
                 <div>
-                  <h4 className="font-bold text-on-surface text-sm">Modern Quilter</h4>
-                  <p className="text-xs text-on-surface/50">@modern_q • 5h ago</p>
+                  <h4 className="font-bold text-[#2d2a26] text-sm">Modern Quilter</h4>
+                  <p className="text-xs text-[#6b655e]">@modern_q &middot; 5h ago</p>
                 </div>
               </div>
-              <p className="text-on-surface mb-3 text-sm leading-relaxed">
+              <p className="text-[#2d2a26] mb-3 text-sm leading-relaxed">
                 Playing with improv piecing on this one. Love how the layout tool lets me visualize
                 different arrangements!
               </p>
-              <div className="rounded-full border border-neutral-200 mb-3">
+              <div className="rounded-lg border border-[#e8e1da] mb-3 overflow-hidden">
                 <Image
                   src="/images/quilts/gallery_quilt_five_1775440598069.png"
                   alt="Improv Quilt"
@@ -105,7 +105,7 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#6b655e] hover:bg-[#fdfaf7] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -118,7 +118,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   42
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#6b655e] hover:bg-[#fdfaf7] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -131,7 +131,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   15
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold text-on-surface/50 hover:bg-surface-container">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[#6b655e] hover:bg-[#fdfaf7] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -167,18 +167,18 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-surface rounded-full border border-neutral-200 p-4 flex items-start gap-3 transition-all">
-      <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-primary flex-shrink-0">
+    <div className="bg-[#ffffff] rounded-xl border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 flex items-start gap-3 transition-colors duration-150 hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)]">
+      <div className="w-10 h-10 rounded-full bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] flex-shrink-0">
         {icon}
       </div>
       <div>
         <h4
-          className="font-bold text-on-surface text-sm mb-1"
+          className="font-bold text-[#2d2a26] text-sm mb-1"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           {title}
         </h4>
-        <p className="text-xs text-on-surface/70 leading-relaxed">{description}</p>
+        <p className="text-xs text-[#6b655e] leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -188,41 +188,37 @@ export default function SocialThreadsSection() {
   return (
     <section
       id="social-threads"
-      className="px-6 lg:px-12 py-16 lg:py-24 bg-warm-bg relative"
+      className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden"
     >
-      {/* Background gradient orbs */}
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-orange-200/20 pointer-events-none -translate-y-1/2 -translate-x-1/3" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 pointer-events-none translate-y-1/2 translate-x-1/3" />
+      {/* Decorative quilt-piece backgrounds */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#ff8d49]/5 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#ff8d49]/5 pointer-events-none" />
+      <QuiltPiece color="secondary" size={200} rotation={8} top={-40} right="30%" opacity={8} />
+      <QuiltPiece color="accent" size={150} rotation={-12} bottom={100} left="5%" opacity={6} />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left - Text content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
+          <div>
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-on-surface leading-tight"
+              className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] lg:text-[48px] lg:leading-[56px] font-bold text-[#2d2a26] leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
-              <span className="block text-primary">
+              <span className="block text-[#ff8d49]">
                 Who Get It
               </span>
             </h2>
 
-            <p className="text-lg text-on-surface/70 leading-relaxed">
+            <p className="text-[18px] leading-[28px] text-[#6b655e] mt-4 leading-relaxed">
               Share your latest creations, discover inspiration from fellow quilters, and build
               connections that spark new ideas. Whether you&apos;re looking for feedback on your
-              color palette or just want to show off your finished masterpiece — this is your
+              color palette or just want to show off your finished masterpiece &mdash; this is your
               creative home.
             </p>
 
             {/* Feature grid */}
-            <div className="grid sm:grid-cols-2 gap-3 pt-2">
+            <div className="grid sm:grid-cols-2 gap-3 pt-6">
               <FeatureCard
                 icon={
                   <svg
@@ -272,7 +268,7 @@ export default function SocialThreadsSection() {
                   </svg>
                 }
                 title="Discover Trends"
-                description="See what's popular and find new techniques to try"
+                description="See what&apos;s popular and find new techniques to try"
               />
               <FeatureCard
                 icon={
@@ -295,10 +291,10 @@ export default function SocialThreadsSection() {
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white rounded-full font-bold text-lg shadow-elevation-3 hover:opacity-90 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-[#ff8d49] text-[#2d2a26] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,22 +306,23 @@ export default function SocialThreadsSection() {
                   />
                 </svg>
               </Link>
-              <span className="text-sm text-on-surface/50 self-center">
+              <span className="text-sm text-[#6b655e] self-center">
                 Join thousands of quilters already sharing
               </span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right - Screenshot mockup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
-          >
+          <div className="relative">
+            {/* Decorative quilt pieces */}
+            <div className="absolute -top-8 -right-8 opacity-12 pointer-events-none">
+              <QuiltPiece color="primary" size={80} rotation={10} stitch={true} />
+            </div>
+            <div className="absolute -bottom-6 -left-6 opacity-8 pointer-events-none">
+              <QuiltPiece color="accent" size={60} rotation={-15} stitch={true} />
+            </div>
             <SocialThreadsScreenshot />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

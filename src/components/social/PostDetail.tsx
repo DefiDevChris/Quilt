@@ -179,10 +179,10 @@ export function PostDetail({ postId }: PostDetailProps) {
         {post.projectId && post.projectName && (
           <Link
             href={`/studio/${post.projectId}`}
-            className="block mx-4 mb-4 p-3 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors"
+            className="block mx-4 mb-4 p-3 bg-[#e8e1da] rounded-lg hover:bg-[#d4cdc4] transition-colors duration-150"
           >
-            <p className="text-xs text-neutral-600 mb-1">Project</p>
-            <p className="text-sm font-semibold text-neutral-800">{post.projectName}</p>
+            <p className="text-xs text-[#6b655e] mb-1">Project</p>
+            <p className="text-sm font-semibold text-[#2d2a26]">{post.projectName}</p>
           </Link>
         )}
       </article>

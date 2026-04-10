@@ -171,7 +171,7 @@ export function LayoutAdjuster() {
             setState(DEFAULT_STATE);
             updatePatternTransform(1, 1, 0, 0, 0);
           }}
-          className="w-full rounded-full bg-neutral px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-200"
+          className="w-full rounded-lg bg-neutral px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-200"
         >
           Reset Pattern Transform
         </button>

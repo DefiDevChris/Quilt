@@ -230,7 +230,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="rounded-full px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
+                  className="rounded-lg px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
                 >
                   ← Prev
                 </button>
@@ -241,7 +241,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="rounded-full px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
+                  className="rounded-lg px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
                 >
                   Next →
                 </button>
@@ -361,7 +361,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <button
                   type="button"
                   onClick={onOpenUpload}
-                  className="w-full rounded-full bg-neutral-800 px-4 py-2 text-[11px] font-semibold tracking-wide text-neutral hover:opacity-90 transition-all"
+                  className="w-full rounded-lg bg-neutral-800 px-4 py-2 text-[11px] font-semibold tracking-wide text-neutral hover:opacity-90 transition-all"
                 >
                   + Import Fabric
                 </button>

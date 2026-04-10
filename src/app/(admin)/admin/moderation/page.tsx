@@ -125,10 +125,10 @@ export default function AdminModerationPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-secondary">Review reports and moderate community content</p>
+      <p className="text-sm text-[#6b655e]">Review reports and moderate community content</p>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-outline-variant">
+      <div className="flex gap-2 border-b border-[#e8e1da]">
         {[
           { id: 'reports', label: 'Reports' },
           { id: 'posts', label: 'Posts' },
@@ -138,9 +138,9 @@ export default function AdminModerationPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as Tab)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
-              ? 'border-primary text-primary'
-              : 'border-transparent text-secondary hover:text-on-surface'
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-150 ${activeTab === tab.id
+              ? 'border-[#ff8d49] text-[#ff8d49]'
+              : 'border-transparent text-[#6b655e] hover:text-[#2d2a26]'
               }`}
           >
             {tab.label}
@@ -150,58 +150,58 @@ export default function AdminModerationPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20"></div>
         </div>
       ) : (
         <>
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="rounded-sm border border-outline-variant overflow-hidden">
+            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-surface-container-high">
+                <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Type
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Reason
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Reporter
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant/30 bg-surface">
+                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
                   {reports.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-secondary">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
                         No reports to review
                       </td>
                     </tr>
                   ) : (
                     reports.map((report) => (
-                      <tr key={report.id} className="hover:bg-surface-container-low">
+                      <tr key={report.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <span className="text-sm">{report.postId ? 'Post' : 'Comment'}</span>
+                          <span className="text-sm text-[#2d2a26]">{report.postId ? 'Post' : 'Comment'}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm text-on-surface max-w-md truncate">
+                          <p className="text-sm text-[#2d2a26] max-w-md truncate">
                             {report.reason}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {report.reporterName || report.reporterEmail || 'Anonymous'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {new Date(report.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -209,7 +209,7 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleDismissReport(report.id)}
                             disabled={actionInProgress === report.id}
-                            className="text-sm font-medium text-primary hover:text-primary-dark disabled:opacity-50"
+                            className="text-sm font-medium text-[#ff8d49] hover:text-[#e67d3f] disabled:opacity-50 transition-colors duration-150"
                           >
                             {actionInProgress === report.id ? '...' : 'Dismiss'}
                           </button>
@@ -224,57 +224,57 @@ export default function AdminModerationPage() {
 
           {/* Posts Tab */}
           {activeTab === 'posts' && (
-            <div className="rounded-sm border border-outline-variant overflow-hidden">
+            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-surface-container-high">
+                <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Creator
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Likes
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant/30 bg-surface">
+                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
                   {posts.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-secondary">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
                         No posts found
                       </td>
                     </tr>
                   ) : (
                     posts.map((post) => (
-                      <tr key={post.id} className="hover:bg-surface-container-low">
+                      <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <div className="max-w-md">
-                            <p className="font-medium text-on-surface truncate">{post.title}</p>
+                            <p className="font-medium text-[#2d2a26] truncate">{post.title}</p>
                             {post.description && (
-                              <p className="text-xs text-secondary mt-0.5 line-clamp-1">
+                              <p className="text-xs text-[#6b655e] mt-0.5 line-clamp-1">
                                 {post.description}
                               </p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {formatCreatorName(post.creatorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">{post.likeCount}</span>
+                          <span className="text-sm text-[#6b655e]">{post.likeCount}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {new Date(post.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -282,7 +282,7 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleRemovePost(post.id)}
                             disabled={actionInProgress === post.id}
-                            className="text-sm font-medium text-error hover:text-error/80 disabled:opacity-50"
+                            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors duration-150"
                           >
                             {actionInProgress === post.id ? '...' : 'Remove'}
                           </button>
@@ -297,54 +297,54 @@ export default function AdminModerationPage() {
 
           {/* Comments Tab */}
           {activeTab === 'comments' && (
-            <div className="rounded-sm border border-outline-variant overflow-hidden">
+            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-surface-container-high">
+                <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Comment
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Author
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       On Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant/30 bg-surface">
+                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
                   {comments.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-secondary">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
                         No reported comments
                       </td>
                     </tr>
                   ) : (
                     comments.map((comment) => (
-                      <tr key={comment.id} className="hover:bg-surface-container-low">
+                      <tr key={comment.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <p className="text-sm text-on-surface max-w-md truncate">
+                          <p className="text-sm text-[#2d2a26] max-w-md truncate">
                             {comment.content}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {formatCreatorName(comment.authorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary max-w-xs truncate block">
+                          <span className="text-sm text-[#6b655e] max-w-xs truncate block">
                             {comment.postTitle || 'Deleted Post'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-secondary">
+                          <span className="text-sm text-[#6b655e]">
                             {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -352,7 +352,7 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleRemoveComment(comment.id)}
                             disabled={actionInProgress === comment.id}
-                            className="text-sm font-medium text-error hover:text-error/80 disabled:opacity-50"
+                            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors duration-150"
                           >
                             {actionInProgress === comment.id ? '...' : 'Remove'}
                           </button>
@@ -367,7 +367,7 @@ export default function AdminModerationPage() {
 
           {/* Users Tab - Placeholder */}
           {activeTab === 'users' && (
-            <div className="p-8 text-center text-secondary bg-surface-container-low rounded-sm">
+            <div className="p-8 text-center text-[#6b655e] bg-[#fdfaf7] rounded-lg">
               <p>User management coming soon. Use the role update API for now.</p>
             </div>
           )}

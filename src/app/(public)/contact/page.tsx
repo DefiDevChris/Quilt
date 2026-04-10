@@ -22,31 +22,31 @@ export default function ContactPage() {
         <div className="mt-16 max-w-2xl mx-auto">
           <a
             href="mailto:support@quiltcorgi.com"
-            className="group block p-12 bg-on-surface text-surface hover:bg-on-surface/90 transition-all duration-300"
+            className="block p-12 bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
           >
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-16 h-16 bg-surface text-on-surface flex items-center justify-center">
+              <div className="w-16 h-16 bg-[#ff8d49]/10 text-[#ff8d49] flex items-center justify-center rounded-lg">
                 <Mail className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Channel</h3>
-                <p className="text-xl font-black uppercase tracking-tight">Email Support</p>
+                <p className="text-[14px] leading-[20px] font-normal text-[#6b655e] mb-1">Channel</p>
+                <p className="text-[24px] leading-[32px] font-normal text-[#2d2a26]">Email Support</p>
               </div>
             </div>
             <div className="space-y-4">
-              <p className="text-lg opacity-80 leading-relaxed font-medium">
-                Have a question about your subscription, a feature request, or need help with a project? 
+              <p className="text-[18px] leading-[28px] text-[#6b655e]">
+                Have a question about your subscription, a feature request, or need help with a project?
                 Our team is standing by to assist you.
               </p>
-              <div className="flex items-center gap-2 text-[13px] font-black uppercase tracking-widest mt-8 group-hover:gap-4 transition-all">
+              <div className="flex items-center gap-2 text-[18px] leading-[28px] text-[#2d2a26] mt-8">
                 support@quiltcorgi.com
                 <span className="text-lg">→</span>
               </div>
             </div>
           </a>
-          
-          <div className="mt-20 pt-10 border-t border-outline-variant/30 text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">
+
+          <div className="mt-20 pt-10 border-t border-[#e8e1da]/30 text-center">
+            <p className="text-[14px] leading-[20px] font-normal text-[#6b655e]">
               Response time: Typically under 24 hours
             </p>
           </div>

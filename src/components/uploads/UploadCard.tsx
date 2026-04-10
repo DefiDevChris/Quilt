@@ -12,10 +12,10 @@ const TYPE_OPTIONS: { value: MobileUploadAssignedType; label: string }[] = [
 ];
 
 const TYPE_COLORS: Record<MobileUploadAssignedType, string> = {
-  unassigned: 'bg-neutral-300/30 text-secondary',
-  fabric: 'bg-primary/10 text-primary',
-  block: 'bg-success/10 text-success',
-  quilt: 'bg-warning/10 text-warning',
+  unassigned: 'bg-[#e8e1da]/50 text-[#6b655e]',
+  fabric: 'bg-[#ff8d49]/10 text-[#ff8d49]',
+  block: 'bg-[#ff8d49]/10 text-[#ff8d49]',
+  quilt: 'bg-[#ff8d49]/10 text-[#ff8d49]',
 };
 
 interface UploadCardProps {
@@ -51,9 +51,9 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
   }
 
   return (
-    <div className="bg-neutral border border-neutral-200 rounded-full overflow-hidden group">
+    <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden group shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
       {/* Thumbnail */}
-      <div className="relative aspect-square bg-neutral-100 overflow-hidden">
+      <div className="relative aspect-square bg-[#fdfaf7] overflow-hidden">
         <Image
           src={upload.imageUrl}
           alt={displayName}
@@ -63,25 +63,15 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
           sizes="(max-width: 768px) 50vw, 25vw"
         />
         {upload.status === 'processing' && (
-          <div className="absolute inset-0 bg-neutral-800/40 flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" className="animate-spin text-white">
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeDasharray="40 20"
-              />
-            </svg>
+          <div className="absolute inset-0 bg-[#2d2a26]/40 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#ffffff]/20 animate-pulse" />
           </div>
         )}
       </div>
 
       {/* Details */}
       <div className="p-3 space-y-2.5">
-        <p className="text-sm font-medium text-neutral-800 truncate" title={displayName}>
+        <p className="text-sm font-medium text-[#2d2a26] truncate" title={displayName}>
           {displayName}
         </p>
 
@@ -93,9 +83,9 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
               type="button"
               onClick={() => onUpdateType(upload.id, opt.value)}
               disabled={upload.status !== 'pending'}
-              className={`px-2 py-0.5 text-xs font-medium rounded-full transition-colors ${upload.assignedType === opt.value
+              className={`px-2 py-0.5 text-xs font-medium rounded-lg transition-colors ${upload.assignedType === opt.value
                 ? TYPE_COLORS[opt.value]
-                : 'bg-transparent text-secondary/60 hover:bg-neutral-100'
+                : 'bg-transparent text-[#6b655e]/60 hover:bg-[#e8e1da]/50'
                 } disabled:opacity-50`}
             >
               {opt.label}
@@ -109,16 +99,16 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleProcess}
             disabled={!canProcess || processing}
-            className="flex-1 px-3 py-1.5 text-xs font-medium rounded-full bg-neutral text-white disabled:opacity-40 hover:opacity-90 transition-all"
+            className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#ff8d49] text-[#2d2a26] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
           >
             {processing ? 'Opening...' : 'Process'}
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${confirmDelete
-              ? 'bg-error/10 text-error'
-              : 'bg-neutral text-secondary hover:text-error hover:bg-error/10'
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150 ${confirmDelete
+              ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
+              : 'bg-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
               }`}
           >
             {confirmDelete ? 'Confirm?' : 'Delete'}

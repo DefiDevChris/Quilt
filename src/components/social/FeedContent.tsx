@@ -156,7 +156,7 @@ export function FeedContent({ tab = 'discover' }: FeedContentProps) {
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="text-sm font-medium text-neutral-600 hover:text-neutral-800 disabled:opacity-50"
+                className="text-sm font-medium text-[#6b655e] hover:text-[#2d2a26] disabled:opacity-50 transition-colors duration-150"
               >
                 {loadingMore ? 'Loading...' : 'Load More'}
               </button>

@@ -20,18 +20,18 @@ export default async function SettingsPage() {
       />
       <div className="max-w-2xl">
         <ProfileEditForm />
-        <hr className="border-neutral-200" />
+        <hr className="border-[#e8e1da]" />
         <Suspense
           fallback={
-            <div className="animate-pulse space-y-4 py-8">
-              <div className="h-6 bg-neutral-container rounded w-32" />
-              <div className="h-24 bg-neutral-container rounded-full" />
+            <div className="space-y-4 py-8">
+              <div className="h-6 bg-[#e8e1da] rounded-lg w-32" />
+              <div className="h-24 bg-[#e8e1da] rounded-lg" />
             </div>
           }
         >
           <BillingSection />
         </Suspense>
-        <hr className="border-neutral-200" />
+        <hr className="border-[#e8e1da]" />
         <DeleteAccountSection />
       </div>
     </div>

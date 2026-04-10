@@ -23,10 +23,10 @@ export default function PublicNav() {
 
   return (
     <header
-      className="sticky top-0 z-50 bg-surface transition-all duration-200"
+      className="sticky top-0 z-50 bg-[#ffffff] transition-colors duration-150"
       style={{
-        boxShadow: scrolled ? '0 1px 2px 0 rgb(0 0 0 / 0.05)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--color-neutral-200)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 1px 2px rgba(45,42,38,0.08)' : 'none',
+        borderBottom: scrolled ? '1px solid #e8e1da' : '1px solid transparent',
       }}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-3">
@@ -40,7 +40,7 @@ export default function PublicNav() {
             className="object-contain"
           />
           <span
-            className="text-2xl font-bold text-on-surface"
+            className="text-2xl font-bold text-[#2d2a26]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             QuiltCorgi
@@ -50,13 +50,13 @@ export default function PublicNav() {
         <div className="hidden lg:flex items-center gap-6">
           <a
             href="#features"
-            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
+            className="text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 font-medium"
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
+            className="text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 font-medium"
           >
             Social Threads
           </a>
@@ -64,14 +64,14 @@ export default function PublicNav() {
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
+            className="text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 font-medium"
           >
             Blog
           </a>
           {shopEnabled && (
             <Link
               href="/shop"
-              className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
+              className="text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 font-medium"
             >
               Shop
             </Link>
@@ -80,7 +80,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-5 py-2 bg-primary text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+              className="px-6 py-2 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
             >
               Go to Dashboard
             </Link>
@@ -88,13 +88,13 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signin"
-                className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
+                className="text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 font-medium"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-5 py-2 bg-primary text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+                className="px-6 py-2 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
               >
                 Start Designing
               </Link>
@@ -103,7 +103,7 @@ export default function PublicNav() {
         </div>
 
         <button
-          className="lg:hidden p-2 text-on-surface"
+          className="lg:hidden p-2 text-[#2d2a26]"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation menu"
         >
@@ -128,17 +128,17 @@ export default function PublicNav() {
       </nav>
 
       {menuOpen && (
-        <div className="lg:hidden border-t border-neutral-200 bg-surface px-6 py-4 space-y-3">
+        <div className="lg:hidden border-t border-[#e8e1da] bg-[#ffffff] px-6 py-4 space-y-3">
           <a
             href="#features"
-            className="block text-on-surface/70 font-medium py-2"
+            className="block text-[#6b655e] font-medium py-2 hover:text-[#ff8d49] transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="block text-on-surface/70 font-medium py-2"
+            className="block text-[#6b655e] font-medium py-2 hover:text-[#ff8d49] transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Social Threads
@@ -147,7 +147,7 @@ export default function PublicNav() {
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-on-surface/70 font-medium py-2"
+            className="block text-[#6b655e] font-medium py-2 hover:text-[#ff8d49] transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Blog
@@ -155,7 +155,7 @@ export default function PublicNav() {
           {shopEnabled && (
             <Link
               href="/shop"
-              className="block text-on-surface/70 font-medium py-2"
+              className="block text-[#6b655e] font-medium py-2 hover:text-[#ff8d49] transition-colors duration-150"
               onClick={() => setMenuOpen(false)}
             >
               Shop
@@ -164,7 +164,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-3 bg-primary text-white rounded-full font-semibold"
+              className="block text-center px-6 py-2 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -173,14 +173,14 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-3 bg-primary text-white rounded-full font-semibold"
+                className="block text-center px-6 py-2 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing
               </Link>
               <Link
                 href="/auth/signin"
-                className="block text-center text-on-surface/70 font-medium py-2 hover:text-primary transition-colors"
+                className="block text-center text-[#6b655e] font-medium py-2 hover:text-[#ff8d49] transition-colors duration-150"
                 onClick={() => setMenuOpen(false)}
               >
                 Sign In

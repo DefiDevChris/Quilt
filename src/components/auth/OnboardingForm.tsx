@@ -246,10 +246,10 @@ export function OnboardingForm() {
         ? 'border-red-500'
         : usernameStatus === 'invalid'
           ? 'border-red-500'
-          : 'border-neutral-200/30';
+          : 'border-[#e8e1da]';
 
   return (
-    <div className="w-full max-w-[540px] mx-auto bg-neutral border border-neutral-200 rounded-full p-[2.75rem]">
+    <div className="w-full max-w-[540px] mx-auto bg-[#ffffff] border border-[#e8e1da] rounded-lg p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Image
           src="/logo.png"
@@ -259,7 +259,7 @@ export function OnboardingForm() {
           className="object-contain mb-4"
           priority
         />
-        <h1 className="text-headline-md font-bold text-neutral-800 text-center">
+        <h1 className="text-headline-md font-bold text-[#2d2a26] text-center">
           Welcome to QuiltCorgi!
         </h1>
         <p className="mt-2 text-body-md text-secondary text-center">
@@ -269,7 +269,7 @@ export function OnboardingForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-full bg-error/5 border border-error/20 px-4 py-3 text-body-sm text-error">
+          <div className="rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-body-sm text-red-500">
             {error}
           </div>
         )}
@@ -288,7 +288,7 @@ export function OnboardingForm() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-neutral-100 border-b border-neutral-200 focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200"
+            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150"
             placeholder="How should we call you?"
             autoComplete="name"
             maxLength={60}
@@ -309,7 +309,7 @@ export function OnboardingForm() {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-neutral-100 border-b ${usernameBorderColor} focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200`}
+            className={`w-full bg-[#fdfaf7] border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150`}
             placeholder="quilter_jane"
             autoComplete="username"
             maxLength={60}
@@ -321,7 +321,7 @@ export function OnboardingForm() {
             >
               {usernameMessage}
               {usernameStatus === 'checking' && (
-                <span className="inline-block w-3 h-3 ml-1 border-2 border-secondary border-t-transparent rounded-full animate-spin align-middle" />
+                <span className="inline-block w-3 h-3 ml-1 bg-[#ffc8a6] rounded-lg animate-pulse align-middle" />
               )}
             </p>
           )}
@@ -341,7 +341,7 @@ export function OnboardingForm() {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full bg-neutral-100 border-b border-neutral-200 focus:border-primary rounded-t-full px-3 py-2.5 text-body-md text-neutral-800 placeholder:text-tertiary outline-none transition-colors duration-200 resize-none"
+            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150 resize-none"
             placeholder="Tell the community a little about yourself..."
           />
         </div>
@@ -355,9 +355,9 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => setPrivacyMode('public')}
-              className={`flex-1 rounded-full border-2 px-4 py-3 text-center transition-all duration-150 ${privacyMode === 'public'
-                ? 'border-primary bg-primary/10 text-neutral-800'
-                : 'border-neutral-200/30 text-secondary hover:border-neutral-200/50'
+              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'public'
+                ? 'border-primary bg-primary/10 text-[#2d2a26]'
+                : 'border-[#e8e1da] text-secondary hover:border-[#e8e1da]'
                 }`}
             >
               <div className="text-body-md font-medium">Public</div>
@@ -368,9 +368,9 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => setPrivacyMode('private')}
-              className={`flex-1 rounded-full border-2 px-4 py-3 text-center transition-all duration-150 ${privacyMode === 'private'
-                ? 'border-primary bg-primary/10 text-neutral-800'
-                : 'border-neutral-200/30 text-secondary hover:border-neutral-200/50'
+              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'private'
+                ? 'border-primary bg-primary/10 text-[#2d2a26]'
+                : 'border-[#e8e1da] text-secondary hover:border-[#e8e1da]'
                 }`}
             >
               <div className="text-body-md font-medium">Private</div>
@@ -399,9 +399,9 @@ export function OnboardingForm() {
                   setUploadedImage(null);
                   setUploadedFile(null);
                 }}
-                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-all duration-150 hover:scale-105 ${selectedCorgi === corgi.id
-                  ? 'border-primary shadow-elevation-3 ring-2 ring-primary/30'
-                  : 'border-neutral-200/20 hover:border-neutral-200/40'
+                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors duration-150 ${selectedCorgi === corgi.id
+                  ? 'border-primary shadow-[0_1px_2px_rgba(45,42,38,0.08)] ring-2 ring-primary/30'
+                  : 'border-[#e8e1da] hover:border-primary/50'
                   }`}
                 aria-label={corgi.alt}
               >
@@ -444,7 +444,7 @@ export function OnboardingForm() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 rounded-full border border-dashed border-neutral-200/40 hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-neutral-800 transition-colors w-full"
+              className="flex items-center gap-2 rounded-lg border border-dashed border-[#e8e1da] hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-[#2d2a26] transition-colors duration-150 w-full"
             >
               <svg
                 className="w-5 h-5 shrink-0"

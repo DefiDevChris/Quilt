@@ -52,7 +52,7 @@ export function SocialLayout({ children }: SocialLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral">
+    <div className="min-h-screen bg-[#fdfaf7]">
       <AuthGateModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
@@ -80,7 +80,7 @@ export function SocialLayout({ children }: SocialLayoutProps) {
                 sizes="28px"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-neutral-600">
+              <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-[#6b655e]">
                 ?
               </div>
             )}
@@ -88,9 +88,9 @@ export function SocialLayout({ children }: SocialLayoutProps) {
 
           {dropdownOpen && user && (
             <div className="user-dropdown">
-              <div className="px-4 py-3 border-b border-neutral-200">
-                <p className="text-sm font-semibold text-neutral-800 truncate">{user.name}</p>
-                <p className="text-xs text-neutral-600 truncate">{user.email}</p>
+              <div className="px-4 py-3 border-b border-[#e8e1da]">
+                <p className="text-sm font-semibold text-[#2d2a26] truncate">{user.name}</p>
+                <p className="text-xs text-[#6b655e] truncate">{user.email}</p>
               </div>
               <Link
                 href="/settings"

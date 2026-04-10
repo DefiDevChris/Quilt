@@ -71,8 +71,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               style={{ objectPosition: '20% 50%' }}
             />
           </div>
-          <div className="absolute inset-0 bg-surface/30" />
-          <div className="absolute inset-0 bg-surface/10" />
+          <div className="absolute inset-0 bg-[#fdfaf7]/60" />
         </div>
       )}
 
@@ -82,21 +81,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="absolute -top-16 left-6 md:left-12 z-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-3 text-sm text-secondary hover:text-on-surface transition-colors group"
+            className="inline-flex items-center gap-3 text-sm text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 group"
           >
-            <span className="w-6 h-px bg-current transition-all duration-300 group-hover:w-10" />
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Stories</span>
+            <span className="w-6 h-px bg-current" />
+            <span className="text-[14px] leading-[20px]">Stories</span>
           </Link>
         </div>
 
         {/* Header */}
         <header className="max-w-3xl mx-auto px-6 md:px-12 pt-12 md:pt-20 pb-12">
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-primary-golden font-medium">
+            <span className="text-[14px] leading-[20px] text-[#ff8d49]">
               {post.category}
             </span>
-            <span className="w-6 h-px bg-outline-variant" />
-            <time className="text-[10px] uppercase tracking-[0.15em] text-warm-text-muted">
+            <span className="w-6 h-px bg-[#e8e1da]" />
+            <time className="text-[14px] leading-[20px] text-[#6b655e]">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
                   month: 'long',
@@ -107,7 +106,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </time>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl text-on-surface leading-[1.08] tracking-tight mb-10 font-bold">
+          <h1
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#2d2a26] mb-10"
+            style={{ fontFamily: 'Spline Sans, sans-serif' }}
+          >
             {post.title}
           </h1>
 
@@ -116,10 +118,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <img
                 src={post.authorAvatarUrl}
                 alt={post.authorName ?? 'Author'}
-                className="w-10 h-10 rounded-full bg-primary/20 object-cover"
+                className="w-10 h-10 rounded-full bg-[#ff8d49]/10 object-cover"
               />
             )}
-            <span className="text-sm text-secondary font-medium">{post.authorName}</span>
+            <span className="text-[14px] leading-[20px] text-[#2d2a26]">{post.authorName}</span>
           </div>
         </header>
 

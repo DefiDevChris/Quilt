@@ -257,7 +257,7 @@ export function ProfileEditForm() {
             onChange={(e) => updateField('bio', e.target.value)}
             maxLength={BIO_MAX}
             rows={4}
-            className="w-full px-5 py-4 rounded-full bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-neutral-500/50"
+            className="w-full px-5 py-4 rounded-lg bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-neutral-500/50"
             placeholder="Describe your design principles..."
           />
           {fieldErrors.bio && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-2">{fieldErrors.bio}</p>}
@@ -270,7 +270,7 @@ export function ProfileEditForm() {
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
-            className={`rounded-full border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'public'
+            className={`rounded-lg border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'public'
               ? 'border-primary bg-primary/5 shadow'
               : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
               }`}
@@ -283,7 +283,7 @@ export function ProfileEditForm() {
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
-            className={`rounded-full border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'private'
+            className={`rounded-lg border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'private'
               ? 'border-primary bg-primary/5 shadow'
               : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
               }`}
@@ -298,7 +298,7 @@ export function ProfileEditForm() {
 
       <div className="space-y-8">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Digital Connections</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-neutral-container/30 border border-neutral-200/20 rounded-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-neutral-container/30 border border-neutral-200/20 rounded-lg">
           <FieldInput
             label="Digital Portfolio (Website)"
             value={form.websiteUrl}
@@ -342,13 +342,13 @@ export function ProfileEditForm() {
 
       <div className="flex flex-col gap-4 pt-4">
         {error && (
-          <div className="p-4 rounded-full bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-lg bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="p-4 rounded-full bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-lg bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
             {success}
           </div>
         )}
@@ -356,7 +356,7 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-full bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-1 active:scale-[0.98]"
+          className="w-full h-14 rounded-lg bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-1 active:scale-[0.98]"
         >
           {isSaving ? 'Synchronizing...' : 'Finalize Studio Identity'}
         </button>
@@ -456,7 +456,7 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3.5 rounded-full bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-neutral-500/50"
+        className="w-full px-5 py-3.5 rounded-lg bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-neutral-500/50"
       />
       {error && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-1">{error}</p>}
     </div>
