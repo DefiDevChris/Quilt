@@ -138,9 +138,9 @@ function Slide({
         />
       </motion.div>
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-surface/40 via-transparent to-transparent" />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-surface/80" />
+      <div className="absolute inset-0 bg-surface/30" />
 
       {/* Content */}
       <motion.div

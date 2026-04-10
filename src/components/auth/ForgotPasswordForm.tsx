@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-surface-container-low rounded-xl shadow-elevation-2 p-[2.75rem]">
+    <div className="w-full max-w-[420px] mx-auto bg-neutral-100 rounded-full shadow-elevation-3 p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-16 h-16 mb-4 relative block">
           <Image
@@ -87,10 +87,10 @@ export function ForgotPasswordForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-on-surface">
+        <h1 className="text-headline-md font-bold text-neutral-800">
           {step === 'request' ? 'Reset your password' : 'Enter reset code'}
         </h1>
-        <p className="mt-2 text-body-sm text-secondary text-center">
+        <p className="mt-2 text-sm text-neutral-600 text-center">
           {step === 'request'
             ? "Enter your email and we'll send you a reset code."
             : 'Enter the code we sent to your email and choose a new password.'}
@@ -98,13 +98,13 @@ export function ForgotPasswordForm() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-sm bg-error/10 border border-error/20 px-4 py-3 text-body-sm text-error">
+        <div className="mb-4 rounded-full bg-error/5 border border-error/20 px-4 py-3 text-sm text-error">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-sm bg-green-50 border border-green-200 px-4 py-3 text-body-sm text-green-800">
+        <div className="mb-4 rounded-full bg-success/5 border border-success/20 px-4 py-3 text-sm text-success">
           {success}
         </div>
       )}
@@ -114,7 +114,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="reset-email"
-              className="block text-body-sm font-medium text-secondary mb-1.5"
+              className="block text-sm font-medium text-neutral-600 mb-1.5"
             >
               Email
             </label>
@@ -124,7 +124,7 @@ export function ForgotPasswordForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200"
+              className="w-full bg-neutral border-b border-neutral-300/30 focus:border-primary rounded-full px-3 py-2.5 text-base text-neutral-800 placeholder:text-neutral-500 outline-none transition-colors duration-200"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -143,7 +143,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="reset-code"
-              className="block text-body-sm font-medium text-secondary mb-1.5"
+              className="block text-sm font-medium text-neutral-600 mb-1.5"
             >
               Reset Code
             </label>
@@ -156,7 +156,7 @@ export function ForgotPasswordForm() {
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200 tracking-[0.3em] text-center text-lg"
+              className="w-full bg-neutral border-b border-neutral-300/30 focus:border-primary rounded-full px-3 py-2.5 text-base text-neutral-800 placeholder:text-neutral-500 outline-none transition-colors duration-200 tracking-[0.3em] text-center text-lg"
               placeholder="000000"
             />
           </div>
@@ -164,7 +164,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="new-password"
-              className="block text-body-sm font-medium text-secondary mb-1.5"
+              className="block text-sm font-medium text-neutral-600 mb-1.5"
             >
               New Password
             </label>
@@ -176,14 +176,14 @@ export function ForgotPasswordForm() {
                 minLength={8}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full bg-surface-container border-b border-outline-variant/30 focus:border-primary rounded-t-sm px-3 py-2.5 pr-10 text-body-md text-on-surface placeholder:text-tertiary outline-none transition-colors duration-200"
+                className="w-full bg-neutral border-b border-neutral-300/30 focus:border-primary rounded-full px-3 py-2.5 pr-10 text-base text-neutral-800 placeholder:text-neutral-500 outline-none transition-colors duration-200"
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-secondary hover:text-on-surface transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-neutral-600 hover:text-neutral-800 transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -214,7 +214,7 @@ export function ForgotPasswordForm() {
                 )}
               </button>
             </div>
-            <p className="mt-1.5 text-body-sm text-secondary">
+            <p className="mt-1.5 text-sm text-neutral-600">
               Must include uppercase, lowercase, and numbers
             </p>
           </div>
@@ -229,7 +229,7 @@ export function ForgotPasswordForm() {
         </form>
       )}
 
-      <p className="mt-6 text-center text-body-sm text-secondary">
+      <p className="mt-6 text-center text-sm text-neutral-600">
         <Link href="/auth/signin" className="text-primary hover:underline font-medium">
           Back to sign in
         </Link>

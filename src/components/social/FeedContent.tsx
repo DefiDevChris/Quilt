@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
-import Mascot from '@/components/landing/Mascot';
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { formatRelativeTime } from '@/lib/format-time';
@@ -33,18 +32,10 @@ interface PaginationInfo {
 }
 
 interface FeedContentProps {
-  sort?: 'newest' | 'popular';
-  search?: string;
-  category?: string;
   tab?: 'discover' | 'saved';
 }
 
-export function FeedContent({
-  sort = 'newest',
-  search = '',
-  category,
-  tab = 'discover',
-}: FeedContentProps) {
+export function FeedContent({ tab = 'discover' }: FeedContentProps) {
   const user = useAuthStore((s) => s.user);
   const [posts, setPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,11 +54,9 @@ export function FeedContent({
       try {
         const params = new URLSearchParams();
         params.set('tab', tab);
-        params.set('sort', sort);
+        params.set('sort', 'newest');
         params.set('page', String(page));
         params.set('limit', '24');
-        if (search) params.set('search', search);
-        if (category) params.set('category', category);
 
         const res = await fetch(`/api/social?${params.toString()}`);
         const json = await res.json();
@@ -86,7 +75,7 @@ export function FeedContent({
         setLoadingMore(false);
       }
     },
-    [sort, search, category, tab]
+    [tab]
   );
 
   useEffect(() => {
@@ -101,25 +90,26 @@ export function FeedContent({
   const hasMore = pagination ? pagination.page < pagination.totalPages : false;
 
   return (
-    <div className="space-y-5">
+    <div>
       {tab === 'discover' && <CreatePostComposer onSuccess={() => fetchPosts(1, false)} />}
 
       {/* Loading */}
       {loading && (
-        <div className="space-y-5">
+        <div>
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="social-card rounded-2xl overflow-hidden animate-pulse">
-              <div className="flex items-center gap-3 p-4">
-                <div className="w-10 h-10 rounded-full bg-primary-container/40" />
-                <div className="space-y-1.5">
-                  <div className="h-3.5 bg-primary-container/30 rounded w-28" />
-                  <div className="h-3 bg-primary-container/20 rounded w-16" />
+            <div key={i} className="post-skeleton">
+              <div className="post-skeleton-header">
+                <div className="post-skeleton-avatar" />
+                <div className="post-skeleton-user">
+                  <div className="post-skeleton-user-line" />
+                  <div className="post-skeleton-user-line short" />
                 </div>
               </div>
-              <div className="h-72 bg-primary-container/20" />
-              <div className="p-4 space-y-2">
-                <div className="h-4 bg-primary-container/30 rounded w-24" />
-                <div className="h-3 bg-primary-container/20 rounded w-48" />
+              <div className="post-skeleton-image" />
+              <div className="post-skeleton-actions">
+                <div className="post-skeleton-action" />
+                <div className="post-skeleton-action" />
+                <div className="post-skeleton-action" />
               </div>
             </div>
           ))}
@@ -128,63 +118,45 @@ export function FeedContent({
 
       {/* Error */}
       {!loading && error && (
-        <div className="social-card rounded-2xl p-12 text-center border border-error/20 bg-error/5">
-          <p className="text-secondary/80 text-sm mb-6 font-medium">{error}</p>
-          <button
-            onClick={() => fetchPosts(1, false)}
-            className="px-8 py-3 bg-error text-white rounded-full text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-elevation-1"
-          >
-            Reconnect Studio
+        <div className="error-state">
+          <p className="error-state-title">Couldn't load the feed</p>
+          <p className="error-state-text">{error}</p>
+          <button onClick={() => fetchPosts(1, false)} className="error-state-btn">
+            Try Again
           </button>
         </div>
       )}
 
       {/* Empty */}
       {!loading && !error && posts.length === 0 && (
-        <div className="social-card rounded-2xl p-16 text-center border border-outline-variant/30">
-          {tab === 'saved' ? (
-            <div className="space-y-4">
-              <p className="text-xl font-black text-on-surface tracking-tight">No archived designs</p>
-              <p className="text-secondary font-medium">Bookmark designs from the community to see them here.</p>
-            </div>
-          ) : search || category ? (
-            <div className="space-y-4">
-              <p className="text-xl font-black text-on-surface tracking-tight">Zero matches found</p>
-              <p className="text-secondary font-medium">Try refining your filter or search terms.</p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="space-y-3">
-                <p className="text-2xl font-black text-on-surface tracking-tight leading-tight">The forum is quiet</p>
-                <p className="text-secondary font-medium max-w-sm mx-auto">Be the first to publish a work-in-progress or a finished design to the collective.</p>
-              </div>
-              {user && (
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 bg-on-surface text-surface px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-elevation-2 hover:scale-[1.02] active:scale-95"
-                >
-                  Publish Design
-                </Link>
-              )}
-            </div>
-          )}
+        <div className="empty-state">
+          <div className="empty-state-icon">
+            {tab === 'saved' ? <Bookmark size={28} /> : <Heart size={28} />}
+          </div>
+          <p className="empty-state-title">
+            {tab === 'saved' ? 'No saved posts' : 'Nothing here yet'}
+          </p>
+          <p className="empty-state-text">
+            {tab === 'saved'
+              ? 'Save posts you love to find them easily later.'
+              : 'Be the first to share a quilt design with the community.'}
+          </p>
         </div>
       )}
 
       {/* Posts */}
       {!loading && !error && posts.length > 0 && (
-        <div className="space-y-5">
+        <div>
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
 
-          {/* Load more */}
           {hasMore && (
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-center py-6">
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="glass-panel rounded-full px-6 py-2.5 text-sm font-medium text-on-surface hover:shadow-elevation-1 transition-all disabled:opacity-50"
+                className="text-sm font-medium text-neutral-600 hover:text-neutral-800 disabled:opacity-50"
               >
                 {loadingMore ? 'Loading...' : 'Load More'}
               </button>
@@ -201,6 +173,7 @@ function PostCard({ post }: { post: SocialPost }) {
   const [liked, setLiked] = useState(post.isLikedByUser);
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [bookmarked, setBookmarked] = useState(post.isBookmarkedByUser);
+  const [shareCopied, setShareCopied] = useState(false);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -230,6 +203,20 @@ function PostCard({ post }: { post: SocialPost }) {
     }
   };
 
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/socialthreads/${post.id}`
+      );
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
+
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -250,119 +237,82 @@ function PostCard({ post }: { post: SocialPost }) {
     });
   };
 
+  const profileHref = post.creatorUsername ? `/members/${post.creatorUsername}` : '#';
+
   return (
-    <article className="glass-panel rounded-3xl overflow-hidden border-outline-variant/30 hover:border-primary/20 transition-all duration-500 group">
+    <article className="post-card">
       {/* Header */}
-      <div className="flex items-center gap-4 px-6 py-5">
-        <Link
-          href={
-            post.creatorUsername ? `/members/${post.creatorUsername}` : `/socialthreads/${post.id}`
-          }
-          className="relative w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-white shadow-elevation-1 group-hover:shadow-elevation-2 transition-all shrink-0"
-        >
+      <div className="post-card-header">
+        <Link href={profileHref} className="post-card-avatar">
           {post.creatorAvatarUrl ? (
-            <img
-              src={post.creatorAvatarUrl}
-              alt={post.creatorName}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
+            <img src={post.creatorAvatarUrl} alt={post.creatorName} />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-black text-lg">
+            <div className="post-card-avatar-placeholder">
               {post.creatorName.charAt(0).toUpperCase()}
             </div>
           )}
         </Link>
-        <div className="min-w-0 flex-1">
-          <Link
-            href={`/socialthreads/${post.id}`}
-            className="text-base font-black text-on-surface hover:text-primary transition-colors truncate block tracking-tight"
-          >
+        <div className="post-card-user-info">
+          <Link href={profileHref} className="post-card-username">
             {post.creatorName}
           </Link>
-          <div className="flex items-center gap-2 mt-0.5">
-            {post.creatorUsername && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-dark opacity-60">
-                @{post.creatorUsername}
-              </span>
-            )}
-            <span className="w-1 h-1 rounded-full bg-outline-variant" />
-            <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.1em]">
-              {formatRelativeTime(post.createdAt)}
-            </span>
-          </div>
+          <span className="post-card-time">{formatRelativeTime(post.createdAt)}</span>
         </div>
       </div>
-
-      {/* Description above image */}
-      {(post.description || post.title) && (
-        <div className="px-6 pb-5">
-          <p className="text-base font-medium text-on-surface leading-relaxed line-clamp-3">
-            {post.description || post.title}
-          </p>
-        </div>
-      )}
 
       {/* Image */}
       {post.thumbnailUrl && (
-        <div className="px-6 pb-6">
-          <button 
-            onClick={openModal} 
-            className="w-full cursor-pointer block relative rounded-2xl overflow-hidden shadow-elevation-2 group/img"
-          >
-            <img
-              src={post.thumbnailUrl}
-              alt={post.title}
-              className="w-full h-auto max-h-[600px] object-cover transition-transform duration-700 group-hover/img:scale-[1.03]"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors" />
-          </button>
+        <button onClick={openModal} className="post-card-image-container">
+          <img src={post.thumbnailUrl} alt={post.title} />
+        </button>
+      )}
+
+      {/* Actions */}
+      <div className="post-card-actions">
+        <button
+          onClick={handleLike}
+          className={`post-card-action-btn ${liked ? 'liked' : ''}`}
+        >
+          <Heart size={24} fill={liked ? 'currentColor' : 'none'} strokeWidth={2} />
+        </button>
+        <button onClick={openModal} className="post-card-action-btn">
+          <MessageCircle size={24} strokeWidth={2} />
+        </button>
+        <button
+          onClick={handleShare}
+          className="post-card-action-btn"
+          title={shareCopied ? 'Link copied!' : 'Share'}
+        >
+          <Share2 size={24} strokeWidth={2} />
+        </button>
+        <div className="post-card-action-spacer" />
+        <button
+          onClick={handleBookmark}
+          className={`post-card-action-btn ${bookmarked ? 'bookmarked' : ''}`}
+        >
+          <Bookmark size={24} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={2} />
+        </button>
+      </div>
+
+      {/* Likes count */}
+      {likeCount > 0 && <div className="post-card-likes">{likeCount.toLocaleString()} likes</div>}
+
+      {/* Caption */}
+      {(post.description || post.title) && (
+        <div className="post-card-caption">
+          <Link href={profileHref} className="username">
+            {post.creatorName}
+          </Link>
+          {post.description || post.title}
         </div>
       )}
 
-      {/* Actions row */}
-      <div className="px-6 py-4 flex items-center justify-between border-t border-outline-variant/20 bg-surface-container/30">
-        <div className="flex items-center gap-6">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-2 transition-all active:scale-90 ${
-              liked ? 'text-rose-500' : 'text-secondary hover:text-on-surface'
-            }`}
-          >
-            <Heart size={20} fill={liked ? 'currentColor' : 'none'} strokeWidth={2} />
-            {likeCount > 0 && <span className="text-sm font-black">{likeCount}</span>}
-          </button>
-
-          <button
-            onClick={openModal}
-            className="flex items-center gap-2 text-secondary hover:text-on-surface transition-all active:scale-90"
-          >
-            <MessageCircle size={20} strokeWidth={2} />
-            {post.commentCount > 0 && (
-              <span className="text-sm font-black">{post.commentCount}</span>
-            )}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleBookmark}
-            className={`transition-all active:scale-90 ${
-              bookmarked ? 'text-primary' : 'text-secondary hover:text-on-surface'
-            }`}
-            title="Sace for later"
-          >
-            <Bookmark size={20} fill={bookmarked ? 'currentColor' : 'none'} strokeWidth={2} />
-          </button>
-
-          <Link
-            href={`/socialthreads/${post.id}`}
-            className="text-secondary hover:text-on-surface transition-all active:scale-90"
-            title="Share design"
-          >
-            <Share2 size={20} strokeWidth={2} />
-          </Link>
-        </div>
-      </div>
+      {/* Comments link */}
+      {post.commentCount > 0 && (
+        <button onClick={openModal} className="post-card-comments-btn">
+          View all {post.commentCount} comments
+        </button>
+      )}
     </article>
   );
 }

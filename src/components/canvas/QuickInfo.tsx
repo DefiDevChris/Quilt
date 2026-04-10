@@ -155,16 +155,16 @@ export function QuickInfo() {
 
   return (
     <div
-      className="absolute z-40 min-w-[160px] rounded-lg border border-outline-variant bg-surface p-2 shadow-elevation-3"
+      className="absolute z-40 min-w-[160px] rounded-full border border-neutral-200 bg-neutral p-2 shadow-elevation-3"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
-      <div className="mb-1 text-caption font-semibold uppercase tracking-wider text-secondary">
+      <div className="mb-1 text-caption font-semibold uppercase tracking-wider text-neutral-500">
         Quick Info
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
         {fields.map(({ key, label, suffix }) => (
           <div key={key} className="flex items-center gap-1 text-xs">
-            <span className="w-8 text-secondary">{label}</span>
+            <span className="w-8 text-neutral-500">{label}</span>
             {editField === key ? (
               <input
                 ref={inputRef}
@@ -177,11 +177,11 @@ export function QuickInfo() {
                   if (e.key === 'Enter') applyEdit(key, editValue);
                   if (e.key === 'Escape') setEditField(null);
                 }}
-                className="w-16 rounded border border-primary bg-white px-1 py-0 font-mono text-xs text-on-surface outline-none"
+                className="w-16 rounded border border-primary bg-white px-1 py-0 font-mono text-xs text-neutral-800 outline-none"
                 autoFocus
               />
             ) : key === 'area' ? (
-              <span className="font-mono text-on-surface">
+              <span className="font-mono text-neutral-800">
                 {info[key]}
                 {suffix}
               </span>
@@ -192,7 +192,7 @@ export function QuickInfo() {
                   setEditField(key);
                   setEditValue(String(info[key]));
                 }}
-                className="cursor-text rounded px-0.5 font-mono text-on-surface hover:bg-background"
+                className="cursor-text rounded px-0.5 font-mono text-neutral-800 hover:bg-neutral"
                 title="Click to edit"
               >
                 {info[key]}

@@ -13,49 +13,49 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
   const { handleCheckout } = useStripeCheckout();
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-on-surface/80 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-surface rounded-sm overflow-hidden shadow-elevation-5 animate-expandIn my-8 border border-on-surface/10">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-900/80 p-4 overflow-y-auto">
+      <div className="relative w-full max-w-4xl bg-neutral rounded-full overflow-hidden shadow-elevation-4 my-8 border border-neutral-200">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-on-surface text-surface hover:scale-105 transition-all"
+          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-neutral-900 text-neutral hover:scale-105 transition-all"
         >
           <X size={24} />
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Left Column: Editorial Statement */}
-          <div className="bg-on-surface text-surface p-12 flex flex-col justify-center relative overflow-hidden">
+          <div className="bg-neutral-900 text-neutral p-12 flex flex-col justify-center relative overflow-hidden">
             <div className="relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] mb-6 opacity-60">Professional Tier</p>
-              <h2 className="text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-8">
+              <p className="text-xs font-semibold tracking-wide mb-6 text-primary">Professional Tier</p>
+              <h2 className="text-5xl font-bold tracking-tight leading-tight mb-8">
                 The Full <br /> Studio <br /> Experience
               </h2>
-              <div className="h-1 w-20 bg-surface mb-8" />
-              <p className="text-surface/70 font-bold text-sm leading-relaxed max-w-xs">
-                Authorize professional access to unlock advanced pattern generation, 
+              <div className="h-1 w-20 bg-neutral mb-8" />
+              <p className="text-neutral-300 font-medium text-sm leading-relaxed max-w-xs">
+                Unlock professional access to advanced pattern generation,
                 high-resolution exports, and complete fabric calibration tools.
               </p>
             </div>
           </div>
 
           {/* Right Column: Pricing & Benefits */}
-          <div className="bg-surface p-12 flex flex-col justify-between">
+          <div className="bg-neutral p-12 flex flex-col justify-between">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary mb-8">Studio Capabilities</p>
+              <p className="text-xs font-semibold tracking-wide text-neutral-600 mb-8">Pro Features</p>
 
               <ul className="space-y-6 mb-12">
                 {[
-                  'Advanced Block Library (650+ Geometries)',
-                  'AI-Driven Photo-to-Design Engine',
-                  'Unlimited Studio Archives & Projects',
-                  'Print-Ready 1:1 Scale PDF Export',
-                  'FPP Template Generation Systems',
-                  'Digital Fabric Calibration (OpenCV)',
+                  '50 traditional quilt blocks + custom block builder',
+                  'Photo-to-Design extraction pipeline',
+                  'Unlimited projects and archives',
+                  'Print-ready 1:1 scale PDF export',
+                  '2,700+ solid fabric swatches',
+                  'Custom fabric image uploads',
                 ].map((benefit, i) => (
                   <li key={i} className="flex items-center gap-4 group">
-                    <div className="w-1.5 h-1.5 rounded-full bg-on-surface group-hover:scale-150 transition-transform" />
-                    <span className="text-[11px] font-black uppercase tracking-widest text-on-surface">{benefit}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-900 group-hover:scale-150 transition-transform" />
+                    <span className="text-sm font-medium text-neutral-900">{benefit}</span>
                   </li>
                 ))}
               </ul>

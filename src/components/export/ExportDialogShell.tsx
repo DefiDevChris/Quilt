@@ -29,8 +29,8 @@ export function ExportDialogShell({
 }: ExportDialogShellProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[440px] max-w-[90vw] rounded-xl bg-surface p-6 shadow-elevation-3">
-        <h2 className="mb-4 text-lg font-semibold text-on-surface">{title}</h2>
+      <div className="w-[440px] max-w-[90vw] rounded-full bg-neutral p-6 shadow-elevation-2">
+        <h2 className="mb-4 text-lg font-semibold text-neutral-800">{title}</h2>
 
         {children}
 
@@ -43,7 +43,7 @@ export function ExportDialogShell({
             type="button"
             onClick={onClose}
             disabled={isExporting}
-            className="rounded-full border border-outline-variant bg-white px-4 py-2 text-sm text-on-surface hover:bg-background"
+            className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 hover:bg-neutral"
           >
             Cancel
           </button>
@@ -51,7 +51,7 @@ export function ExportDialogShell({
             type="button"
             onClick={onExport}
             disabled={isDisabled}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-2 rounded-full bg-neutral px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 border border-neutral-200"
           >
             {isExporting ? (
               <>

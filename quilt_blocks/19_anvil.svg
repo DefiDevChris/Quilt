@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <!-- Anvil: 3x3 grid resembling an anvil shape -->
-  <!-- Top row -->
-  <!-- Top-left: HST with dark pointing right/down -->
-  <polygon points="0,0 100,0 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <polygon points="100,0 100,100 0,100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Top-center: solid dark -->
-  <rect x="100" y="0" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Top-right: HST with dark pointing left/down -->
-  <polygon points="200,0 300,0 300,100" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
-  <polygon points="200,0 300,100 200,100" fill="#505050" stroke="#333" stroke-width="1"/>
+  <!-- Anvil: Traditional 3x3 grid (100px = 4" finished each).
+       Based on Delaware Quilts pattern. Top and bottom rows have HST corners,
+       middle row is solid dark (the anvil body). Center column has rectangles.
+       Cut sizes: Dark red: one 6⅞" square (for HSTs). Dark purple: two 3½" squares.
+       Medium purple: two 3⅞" squares. Light red: one 6⅞" square.
+       Light purple: two 3½" squares + two 3⅞" squares.
+       Simplified traditional layout: HST corners on top/bottom, solid middle row. -->
+  <!-- Top row: HST corner (light), solid dark center, HST corner (light) -->
+  <!-- Top-left HST: light outer, dark inner pointing toward center -->
+  <polygon points="0,0 100,0 0,100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <polygon points="100,0 100,100 0,100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Top-center: solid dark rectangle (anvil top) -->
+  <rect x="100" y="0" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Top-right HST: light outer, dark inner pointing toward center -->
+  <polygon points="200,0 300,0 300,100" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
+  <polygon points="200,0 300,100 200,100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
   <!-- Middle row: all solid dark (the anvil body) -->
-  <rect x="0" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="100" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <rect x="200" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Bottom row -->
-  <!-- Bottom-left: HST reversed (dark pointing right/up) -->
-  <polygon points="0,200 100,200 100,300" fill="#505050" stroke="#333" stroke-width="1"/>
-  <polygon points="0,200 100,300 0,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="0" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="100" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <rect x="200" y="100" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Bottom row: HST corner (light), solid dark center, HST corner (light) -->
+  <!-- Bottom-left HST: dark pointing up/right -->
+  <polygon points="0,200 100,200 100,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="0,200 100,300 0,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
   <!-- Bottom-center: solid dark -->
-  <rect x="100" y="200" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1"/>
-  <!-- Bottom-right: HST reversed (dark pointing left/up) -->
-  <polygon points="200,200 300,200 200,300" fill="#505050" stroke="#333" stroke-width="1"/>
-  <polygon points="300,200 300,300 200,300" fill="#F8F8F8" stroke="#333" stroke-width="1"/>
+  <rect x="100" y="200" width="100" height="100" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <!-- Bottom-right HST: dark pointing up/left -->
+  <polygon points="200,200 300,200 200,300" fill="#505050" stroke="#333" stroke-width="1" data-shade="dark" data-role="patch"/>
+  <polygon points="300,200 300,300 200,300" fill="#F8F8F8" stroke="#333" stroke-width="1" data-shade="light" data-role="patch"/>
 </svg>

@@ -1,9 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { LayoutSelector } from '@/components/studio/LayoutSelector';
+import { ShadeBreakdownPanel } from '@/components/studio/ShadeBreakdownPanel';
+import { useShadeAssignment } from '@/hooks/useShadeAssignment';
+import { getRecentFabrics } from '@/lib/recent-fabrics';
+import type { Shade } from '@/types/shade';
 
 type LibraryTab = 'layouts' | 'blocks' | 'fabrics';
 
@@ -30,11 +34,43 @@ export function ContextPanel({
   onOpenUpload,
 }: ContextPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>('layouts');
+  const [isApplying, setIsApplying] = useState(false);
+  const { getBreakdown, bulkApply, hasShadeData, isBlockGroupSelected } = useShadeAssignment();
+
+  const showShadePanel = isBlockGroupSelected && hasShadeData;
+  const breakdown = showShadePanel ? getBreakdown('selected') : null;
+
+  const handleBulkApply = useCallback(
+    async (shade: Shade) => {
+      const recents = getRecentFabrics();
+      if (recents.length === 0) {
+        setActiveTab('fabrics');
+        return;
+      }
+      const recent = recents[0];
+      setIsApplying(true);
+      try {
+        await bulkApply(shade, recent.imageUrl, { id: recent.id, name: recent.name });
+      } finally {
+        setIsApplying(false);
+      }
+    },
+    [bulkApply]
+  );
 
   return (
-    <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
+    <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-neutral border-l border-neutral-200/15 overflow-hidden">
+      {/* ── Shade breakdown (contextual, above tabs) ───── */}
+      {showShadePanel && breakdown && (
+        <ShadeBreakdownPanel
+          breakdown={breakdown}
+          onBulkApply={handleBulkApply}
+          isApplying={isApplying}
+        />
+      )}
+
       {/* ── Library tabs ─────────────────────────────────── */}
-      <div className="flex border-b border-outline-variant/40 flex-shrink-0">
+      <div className="flex border-b border-neutral-200/40 flex-shrink-0">
         <LibraryTabButton
           label="Layouts"
           active={activeTab === 'layouts'}
@@ -52,7 +88,13 @@ export function ContextPanel({
         />
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto">
-        {activeTab === 'layouts' && <LayoutSelector onLayoutSelect={() => {/* handled by LayoutSelector */ }} />}
+        {activeTab === 'layouts' && (
+          <LayoutSelector
+            onLayoutSelect={() => {
+              /* handled by LayoutSelector */
+            }}
+          />
+        )}
         {activeTab === 'blocks' && (
           <BlockLibrary
             onBlockDragStart={onBlockDragStart}
@@ -81,10 +123,11 @@ function LibraryTabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${active
-        ? 'border-b-2 border-primary text-primary'
-        : 'text-on-surface/60 hover:text-on-surface'
-        }`}
+      className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${
+        active
+          ? 'border-b-2 border-primary text-primary'
+          : 'text-neutral-800/60 hover:text-neutral-800'
+      }`}
     >
       {label}
     </button>

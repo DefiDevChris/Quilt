@@ -83,14 +83,14 @@ function DashboardPageContent() {
   if (activeTab === 'mobile-uploads') {
     return (
       <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
-        <div className="flex items-center gap-3 px-6 py-4 flex-shrink-0 border-b border-outline-variant bg-white">
+        <div className="flex items-center gap-3 px-6 py-4 flex-shrink-0 border-b border-neutral-200 bg-neutral">
           <button
             type="button"
             onClick={() => setActiveTab('my-quilts')}
-            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 bg-surface-container rounded-xl transition-all hover:bg-on-surface hover:text-surface"
+            className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 bg-neutral border border-neutral-300 rounded-full transition-all hover:bg-neutral-100"
           >
             <ArrowLeft size={14} strokeWidth={3} />
-            Back to Atelier
+            Back to Dashboard
           </button>
         </div>
         <div className="flex-1 overflow-auto px-6 py-8">
@@ -103,7 +103,7 @@ function DashboardPageContent() {
   /* ── Main Workspace layout ───────────────────────────────────────── */
   return (
     <div className="max-w-7xl mx-auto py-12 px-6 relative z-10 w-full">
-      {/* Editorial Header */}
+      {/* Header */}
       <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -112,16 +112,16 @@ function DashboardPageContent() {
           className="space-y-4"
         >
           <div className="flex items-center gap-4">
-            <span className="h-px w-12 bg-on-surface/20" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">
+            <span className="h-px w-12 bg-primary/30" />
+            <p className="text-sm font-medium text-neutral-600">
               {greeting} / Designer Session
             </p>
           </div>
-          <h1 className="text-on-surface text-6xl md:text-7xl font-black tracking-tighter uppercase leading-none">
-            Studio<br />Atelier
+          <h1 className="text-neutral-900 text-5xl md:text-6xl font-bold tracking-tight leading-tight">
+            Design<br />Studio
           </h1>
-          <p className="text-secondary text-base font-medium italic opacity-60">
-            Welcome back, <span className="text-on-surface not-italic font-black decoration-primary decoration-2 underline-offset-4">{displayName}</span>. The workshop is prepared.
+          <p className="text-neutral-700 text-base font-medium">
+            Welcome back, <span className="text-primary font-semibold">{displayName}</span>. The workshop is prepared.
           </p>
         </motion.div>
 
@@ -142,26 +142,26 @@ function DashboardPageContent() {
           {/* Primary Operations */}
           <section>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-[11px] font-black text-on-surface uppercase tracking-[0.2em] flex items-center gap-3">
-                <div className="w-2 h-2 bg-on-surface rounded-full" />
+              <h2 className="text-sm font-semibold text-neutral-800 flex items-center gap-3">
+                <div className="w-2 h-2 bg-primary rounded-full" />
                 Active Workbench
               </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <button
                 type="button"
                 onClick={() => setDialogOpen(true)}
-                className="group relative overflow-hidden rounded-[40px] p-10 text-left bg-on-surface text-surface hover:shadow-elevation-4 transition-all duration-500 hover:-translate-y-1"
+                className="group relative overflow-hidden p-8 text-left bg-primary text-white shadow-elevation-3 hover:shadow-elevation-4 transition-all duration-150 hover:-translate-y-0.5"
               >
                 <div className="relative z-10 space-y-2">
-                  <p className="text-surface font-black text-2xl uppercase tracking-tighter">New Design</p>
-                  <p className="text-surface/60 text-[10px] font-black uppercase tracking-widest max-w-[180px]">Initiate fresh project from archive or scale</p>
+                  <p className="text-white font-semibold text-xl">New Design</p>
+                  <p className="text-white/80 text-sm max-w-[240px]">Start a fresh project from scratch or a template</p>
                 </div>
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 transition-all duration-700 group-hover:rotate-12 group-hover:scale-120">
-                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                     <path d="M12 5v14M5 12h14" />
-                   </svg>
+                <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-all duration-150 group-hover:rotate-12 group-hover:scale-110">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
                 </div>
               </button>
 
@@ -169,30 +169,30 @@ function DashboardPageContent() {
                 type="button"
                 onClick={() => projects[0] && (window.location.href = `/studio/${projects[0].id}`)}
                 disabled={projects.length === 0}
-                className={`group relative overflow-hidden rounded-[40px] p-10 text-left glass-panel border border-outline-variant/30 hover:shadow-elevation-3 transition-all duration-500 hover:-translate-y-1 ${projects.length > 0 ? '' : 'opacity-40 cursor-not-allowed'}`}
+                className={`group relative overflow-hidden p-8 text-left bg-neutral border border-neutral-200 hover:border-primary hover:shadow-elevation-3 transition-all duration-150 hover:-translate-y-0.5 ${projects.length > 0 ? '' : 'opacity-40 cursor-not-allowed'}`}
               >
                 <div className="relative z-10 space-y-2">
-                  <p className="text-on-surface font-black text-2xl uppercase tracking-tighter">Resume Latest</p>
-                  <p className="text-secondary text-[10px] font-black uppercase tracking-widest truncate max-w-[200px]">
-                    {projects[0] ? projects[0].name : "Empty Archive"}
+                  <p className="text-neutral-800 font-semibold text-xl">Resume Latest</p>
+                  <p className="text-neutral-500 text-sm truncate max-w-[240px]">
+                    {projects[0] ? projects[0].name : "No projects yet"}
                   </p>
                 </div>
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-all duration-700 group-hover:scale-110">
-                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                     <path d="M5 12h14M12 5l7 7-7 7" />
-                   </svg>
+                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-all duration-150 group-hover:scale-110">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
                 </div>
               </button>
             </div>
           </section>
 
-          {/* Recent List - Editorial Archive Feel */}
+          {/* Recent List */}
           {projects.length > 0 && (
             <section className="space-y-8">
-              <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4">
-                <h2 className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Recent Records</h2>
-                <Link href="/projects" className="text-[10px] font-black text-on-surface uppercase tracking-widest border-b-2 border-transparent hover:border-black transition-all">
-                  Full Archive →
+              <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
+                <h2 className="text-sm font-semibold text-neutral-700">Recent Projects</h2>
+                <Link href="/projects" className="text-sm font-medium text-primary hover:opacity-80 transition-all">
+                  View All →
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-4">
@@ -200,29 +200,29 @@ function DashboardPageContent() {
                   <Link
                     key={project.id}
                     href={`/studio/${project.id}`}
-                    className="flex items-center gap-6 p-4 rounded-3xl hover:bg-surface-container-high transition-all group border border-outline-variant/10 hover:border-black"
+                    className="flex items-center gap-6 p-4 hover:bg-neutral-50 transition-all group border border-neutral-200 hover:border-primary/30"
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-surface-container-highest border border-outline-variant/30 overflow-hidden shrink-0 shadow-elevation-1 group-hover:shadow-elevation-2 transition-all">
-                       {project.thumbnailUrl ? (
-                         <Image src={project.thumbnailUrl} alt={project.name} width={64} height={64} className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
-                       ) : (
-                         <div className="w-full h-full flex items-center justify-center opacity-10">
-                            <span className="text-xs font-black uppercase">QUILT</span>
-                         </div>
-                       )}
+                    <div className="w-16 h-16 bg-neutral border border-neutral-200 overflow-hidden shrink-0 shadow-elevation-1 group-hover:shadow-elevation-2 transition-all">
+                      {project.thumbnailUrl ? (
+                        <Image src={project.thumbnailUrl} alt={project.name} width={64} height={64} className="object-cover group-hover:scale-105 transition-transform duration-150" unoptimized />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                          <span className="text-xs font-medium">QUILT</span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
-                      <p className="text-on-surface font-black text-lg tracking-tighter uppercase group-hover:underline decoration-thickness-2 underline-offset-4 transition-colors">
+                      <p className="text-neutral-800 font-semibold text-lg group-hover:text-primary transition-colors">
                         {project.name}
                       </p>
-                      <div className="flex items-center gap-4 text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
+                      <div className="flex items-center gap-4 text-xs text-neutral-500">
                         <span>{formatRelativeTime(project.updatedAt)}</span>
-                        <div className="w-1 h-1 rounded-full bg-outline-variant" />
+                        <div className="w-1 h-1 rounded-full bg-neutral-400" />
                         <span>{project.unitSystem}</span>
                       </div>
                     </div>
-                    <div className="mr-4 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-2">
-                       <ArrowLeft size={20} strokeWidth={3} className="rotate-180 text-on-surface" />
+                    <div className="mr-4 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1">
+                      <ArrowLeft size={20} strokeWidth={3} className="rotate-180 text-primary" />
                     </div>
                   </Link>
                 ))}
@@ -233,26 +233,25 @@ function DashboardPageContent() {
 
         {/* RIGHT COLUMN: Studio Tools SideBar */}
         <div className="w-full lg:w-96 space-y-10">
-          <section className="bg-surface-container-low rounded-[40px] p-8 space-y-8 border border-outline-variant/10">
-            <h2 className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] pb-4 border-b border-outline-variant/20 italic">
-              Studio Inventory
+          <section className="bg-neutral border border-neutral-200 p-6 space-y-6">
+            <h2 className="text-sm font-semibold text-neutral-700 pb-4 border-b border-neutral-200">
+              Studio Tools
             </h2>
-            
+
             <nav className="space-y-2">
               {[
-                { label: 'Project Archive', href: '/projects', count: projectCount },
-                { label: 'Material Library', href: '/fabrics' },
-                { label: 'Collective Feed', href: '/socialthreads' },
-                { label: 'Account Matrix', href: '/settings' },
-                { label: 'Mobile Sync', type: 'button', onClick: () => setActiveTab('mobile-uploads'), count: pendingUploads.length },
+                { label: 'Projects', href: '/projects', count: projectCount },
+                { label: 'Fabric Library', href: '/fabrics' },
+                { label: 'Social Threads', href: '/socialthreads' },
+                { label: 'Settings', href: '/settings' },
+                { label: 'Mobile Uploads', type: 'button', onClick: () => setActiveTab('mobile-uploads'), count: pendingUploads.length },
               ].map((item, i) => {
                 const Content = (
                   <>
-                    <span className="flex-1 font-black text-sm text-on-surface/70 group-hover:text-on-surface uppercase tracking-tight transition-all">{item.label}</span>
+                    <span className="flex-1 font-medium text-sm text-neutral-700 group-hover:text-neutral-900 transition-all">{item.label}</span>
                     {item.count !== undefined && item.count !== null && (
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${
-                        (item.label === 'Mobile Sync' && (item.count as number) > 0) ? 'bg-error text-surface' : 'bg-on-surface/10 text-on-surface'
-                      }`}>
+                      <span className={`px-2 py-0.5 text-xs font-medium ${(item.label === 'Mobile Uploads' && (item.count as number) > 0) ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-600'
+                        }`}>
                         {item.count}
                       </span>
                     )}
@@ -264,7 +263,7 @@ function DashboardPageContent() {
                     <button
                       key={i}
                       onClick={item.onClick}
-                      className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-white transition-all group text-left border border-transparent hover:border-outline-variant/20 shadow-none hover:shadow-elevation-1"
+                      className="w-full flex items-center gap-3 p-4 hover:bg-neutral-50 transition-all group text-left border border-transparent hover:border-neutral-200"
                     >
                       {Content}
                     </button>
@@ -275,7 +274,7 @@ function DashboardPageContent() {
                   <Link
                     key={i}
                     href={item.href || '#'}
-                    className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white transition-all group border border-transparent hover:border-outline-variant/20 shadow-none hover:shadow-elevation-1"
+                    className="flex items-center gap-3 p-4 hover:bg-neutral-50 transition-all group border border-transparent hover:border-neutral-200"
                   >
                     {Content}
                   </Link>
@@ -284,24 +283,16 @@ function DashboardPageContent() {
             </nav>
           </section>
 
-          {/* Editorial Note Card */}
-          <section className="relative overflow-hidden rounded-[40px] bg-on-surface p-10 text-surface shadow-elevation-4">
-             <div className="relative z-10 space-y-6">
-                <div className="flex items-center gap-4 opacity-40">
-                  <div className="h-px w-8 bg-surface" />
-                  <p className="text-[9px] font-black uppercase tracking-[0.3em]">Monograph</p>
-                </div>
-                <p className="text-xl font-medium leading-tight tracking-tight italic">
-                  "The details are not the details. They make the design."
-                </p>
-                <div className="pt-4 border-t border-surface/20">
-                  <p className="text-[10px] font-black uppercase tracking-widest opacity-40">— Charles Eames</p>
-                </div>
-             </div>
-             {/* Abstract studio elements */}
-             <div className="absolute -bottom-12 -right-12 w-48 h-48 opacity-5">
-                <div className="w-full h-full border-[20px] border-surface rounded-full" />
-             </div>
+          {/* Quote Card */}
+          <section className="bg-primary p-8 text-white shadow-elevation-3">
+            <div className="space-y-4">
+              <p className="text-sm font-medium leading-relaxed italic">
+                "The details are not the details. They make the design."
+              </p>
+              <div className="pt-4 border-t border-white/20">
+                <p className="text-xs font-medium opacity-70">— Charles Eames</p>
+              </div>
+            </div>
           </section>
         </div>
       </div>

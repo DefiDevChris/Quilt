@@ -23,10 +23,10 @@ export default function PublicNav() {
 
   return (
     <header
-      className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl transition-all duration-200"
+      className="sticky top-0 z-50 bg-surface transition-all duration-200"
       style={{
-        boxShadow: scrolled ? 'var(--shadow-elevation-1)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--color-outline-variant)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 1px 2px 0 rgb(0 0 0 / 0.05)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--color-neutral-200)' : '1px solid transparent',
       }}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-3">
@@ -50,13 +50,13 @@ export default function PublicNav() {
         <div className="hidden lg:flex items-center gap-6">
           <a
             href="#features"
-            className="text-secondary hover:text-on-surface transition-colors font-medium"
+            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="text-secondary hover:text-on-surface transition-colors font-medium"
+            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
           >
             Social Threads
           </a>
@@ -64,14 +64,14 @@ export default function PublicNav() {
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-secondary hover:text-on-surface transition-colors font-medium"
+            className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
           >
             Blog
           </a>
           {shopEnabled && (
             <Link
               href="/shop"
-              className="text-secondary hover:text-on-surface transition-colors font-medium"
+              className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
             >
               Shop
             </Link>
@@ -80,7 +80,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-5 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+              className="px-5 py-2 bg-primary text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
             >
               Go to Dashboard
             </Link>
@@ -88,13 +88,13 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signin"
-                className="text-secondary hover:text-on-surface transition-colors font-medium"
+                className="text-on-surface/70 hover:text-on-surface transition-colors font-medium"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-5 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+                className="px-5 py-2 bg-primary text-white rounded-full font-semibold hover:opacity-90 transition-all whitespace-nowrap"
               >
                 Start Designing
               </Link>
@@ -128,17 +128,17 @@ export default function PublicNav() {
       </nav>
 
       {menuOpen && (
-        <div className="lg:hidden border-t border-outline-variant bg-white px-6 py-4 space-y-3">
+        <div className="lg:hidden border-t border-neutral-200 bg-surface px-6 py-4 space-y-3">
           <a
             href="#features"
-            className="block text-secondary font-medium py-2"
+            className="block text-on-surface/70 font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Features
           </a>
           <a
             href="#social-threads"
-            className="block text-secondary font-medium py-2"
+            className="block text-on-surface/70 font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Social Threads
@@ -147,7 +147,7 @@ export default function PublicNav() {
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-secondary font-medium py-2"
+            className="block text-on-surface/70 font-medium py-2"
             onClick={() => setMenuOpen(false)}
           >
             Blog
@@ -155,7 +155,7 @@ export default function PublicNav() {
           {shopEnabled && (
             <Link
               href="/shop"
-              className="block text-secondary font-medium py-2"
+              className="block text-on-surface/70 font-medium py-2"
               onClick={() => setMenuOpen(false)}
             >
               Shop
@@ -164,7 +164,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold"
+              className="block text-center px-6 py-3 bg-primary text-white rounded-full font-semibold"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -173,14 +173,14 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-semibold"
+                className="block text-center px-6 py-3 bg-primary text-white rounded-full font-semibold"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing
               </Link>
               <Link
                 href="/auth/signin"
-                className="block text-center text-secondary font-medium py-2 hover:text-primary transition-colors"
+                className="block text-center text-on-surface/70 font-medium py-2 hover:text-primary transition-colors"
                 onClick={() => setMenuOpen(false)}
               >
                 Sign In

@@ -59,26 +59,26 @@ export function TooltipHint({
       {children}
       {showTooltip && tooltipPos
         ? createPortal(
-            <div
-              className="fixed bg-surface-container-highest text-on-surface rounded-lg shadow-elevation-4 p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
-              style={{
-                top: `${tooltipPos.top}px`,
-                left: `${tooltipPos.left}px`,
-                transform: 'translateY(-50%)',
-              }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-body-md font-semibold">{name}</span>
-                {shortcut && (
-                  <span className="font-mono text-body-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded-sm">
-                    {shortcut}
-                  </span>
-                )}
-              </div>
-              <p className="text-body-md text-secondary leading-relaxed">{description}</p>
-            </div>,
-            document.body,
-          )
+          <div
+            className="fixed bg-neutral-200 text-neutral-800 rounded-full shadow-elevation-4 p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
+            style={{
+              top: `${tooltipPos.top}px`,
+              left: `${tooltipPos.left}px`,
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-body-md font-semibold">{name}</span>
+              {shortcut && (
+                <span className="font-mono text-sm text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-full">
+                  {shortcut}
+                </span>
+              )}
+            </div>
+            <p className="text-body-md text-neutral-500 leading-relaxed">{description}</p>
+          </div>,
+          document.body,
+        )
         : null}
     </div>
   );

@@ -86,7 +86,7 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
         onDragStart={(e) => onDragStart(e, fabric)}
         onClick={onClick}
         onContextMenu={handleContextMenu}
-        className="group relative cursor-grab rounded-lg border border-outline-variant bg-background overflow-hidden hover:border-primary transition-colors"
+        className="group relative cursor-grab rounded-full border border-neutral-200 bg-neutral overflow-hidden hover:border-primary transition-colors"
         title={fabric.name}
       >
         <div className="aspect-square">
@@ -98,22 +98,22 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
               loading="lazy"
             />
           ) : (
-            <div className="h-full w-full flex items-center justify-center bg-outline-variant">
-              <span className="text-2xl text-secondary">🧵</span>
+            <div className="h-full w-full flex items-center justify-center bg-neutral-200">
+              <span className="text-2xl text-neutral-500">🧵</span>
             </div>
           )}
         </div>
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1.5 pb-1 pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-          <p className="text-caption text-white truncate">{fabric.name}</p>
+        <div className="absolute inset-x-0 bottom-0 bg-neutral px-1.5 pb-1 pt-4">
+          <p className="text-xs text-neutral-800 truncate">{fabric.name}</p>
           {fabric.manufacturer && (
-            <p className="text-[9px] text-white/70 truncate">{fabric.manufacturer}</p>
+            <p className="text-[9px] text-neutral-800/70 truncate">{fabric.manufacturer}</p>
           )}
         </div>
         {onRemove && (
           <button
             type="button"
             onClick={onRemove}
-            className="absolute top-1 right-1 w-5 h-5 rounded bg-error/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-error transition-opacity"
+            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-error/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-error transition-opacity"
             title="Remove from presets"
           >
             ✕
@@ -123,20 +123,20 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
       {showMenu && (
         <div
           ref={menuRef}
-          className="fixed z-50 min-w-[160px] rounded-lg border border-outline-variant bg-surface shadow-elevation-3 py-1"
+          className="fixed z-50 min-w-[160px] rounded-full border border-neutral-200 bg-neutral shadow-elevation-3 py-1"
           style={{ left: menuPos.x, top: menuPos.y }}
         >
           <button
             type="button"
             onClick={handleAddToPresets}
-            className="w-full px-3 py-2 text-left text-sm text-on-surface hover:bg-surface-variant transition-colors"
+            className="w-full px-3 py-2 text-left text-sm text-neutral-800 hover:bg-neutral-200 transition-colors"
           >
             Add to Presets
           </button>
           <button
             type="button"
             onClick={handleWhereUsed}
-            className="w-full px-3 py-2 text-left text-sm text-on-surface hover:bg-surface-variant transition-colors"
+            className="w-full px-3 py-2 text-left text-sm text-neutral-800 hover:bg-neutral-200 transition-colors"
           >
             Where Used
           </button>

@@ -232,24 +232,24 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-lg rounded-xl bg-surface p-6 shadow-elevation-3">
+      <div className="w-full max-w-lg rounded-full bg-neutral p-6 shadow-elevation-3">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-on-surface">Import Fabric</h2>
-          <button type="button" onClick={onClose} className="text-secondary hover:text-on-surface">
+          <h2 className="text-lg font-semibold text-neutral-800">Import Fabric</h2>
+          <button type="button" onClick={onClose} className="text-neutral-500 hover:text-neutral-800">
             ✕
           </button>
         </div>
 
         {error && (
-          <div className="mb-3 rounded-sm bg-error/10 px-3 py-2 text-sm text-error">{error}</div>
+          <div className="mb-3 rounded-full bg-error/5 px-3 py-2 text-sm text-error">{error}</div>
         )}
 
         {step === 'pick' && (
           <div className="text-center py-8">
-            <p className="text-sm text-secondary mb-4">
+            <p className="text-sm text-neutral-500 mb-4">
               Select a fabric image (JPEG, PNG, or WebP, max 10MB)
             </p>
-            <label className="inline-block rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 cursor-pointer">
+            <label className="inline-block rounded-full bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral hover:opacity-90 cursor-pointer">
               Choose File
               <input
                 type="file"
@@ -264,14 +264,14 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
         {step === 'process' && imageDataUrl && (
           <div>
             {/* Preview */}
-            <div className="mb-4 flex justify-center bg-background rounded-lg p-2">
-              <canvas ref={canvasRef} className="max-h-[300px] max-w-full rounded" />
+            <div className="mb-4 flex justify-center bg-neutral rounded-full p-2">
+              <canvas ref={canvasRef} className="max-h-[300px] max-w-full rounded-full" />
             </div>
 
             {/* Controls */}
             <div className="space-y-3 mb-4">
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   Fabric Name *
                 </label>
                 <input
@@ -279,12 +279,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                   value={fabricName}
                   onChange={(e) => setFabricName(e.target.value)}
                   maxLength={255}
-                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:outline-none"
+                  className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-primary focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   Manufacturer
                 </label>
                 <input
@@ -293,12 +293,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                   onChange={(e) => setManufacturer(e.target.value)}
                   maxLength={255}
                   placeholder="e.g. Robert Kaufman"
-                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface placeholder:text-secondary focus:border-primary focus:outline-none"
+                  className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-primary focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   Scale: {Math.round(scale * 100)}%
                 </label>
                 <input
@@ -312,7 +312,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   Straighten: {rotation}°
                 </label>
                 <input
@@ -326,14 +326,14 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">Crop</label>
+                <label className="block text-xs font-medium text-neutral-500 mb-1">Crop</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setCrop(null)}
                     className={`rounded-full px-3 py-1 text-xs ${crop === null
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-                      : 'bg-background text-secondary hover:bg-outline-variant'
+                      ? 'bg-neutral-800 text-neutral'
+                      : 'bg-neutral text-neutral-500 hover:bg-neutral-200'
                       }`}
                   >
                     Full Image
@@ -349,8 +349,8 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                       setCrop({ x, y, width: size, height: size });
                     }}
                     className={`rounded-full px-3 py-1 text-xs ${crop !== null
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white'
-                      : 'bg-background text-secondary hover:bg-outline-variant'
+                      ? 'bg-neutral-800 text-neutral'
+                      : 'bg-neutral text-neutral-500 hover:bg-neutral-200'
                       }`}
                   >
                     Square Crop
@@ -364,7 +364,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               <button
                 type="button"
                 onClick={reset}
-                className="rounded-full px-4 py-2 text-sm text-secondary hover:bg-background"
+                className="rounded-full px-4 py-2 text-sm text-neutral-500 hover:bg-neutral"
               >
                 Back
               </button>
@@ -372,7 +372,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                 type="button"
                 onClick={() => setStep('calibrate')}
                 disabled={!fabricName.trim()}
-                className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-full bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral hover:opacity-90 disabled:opacity-50"
               >
                 Next: Calibrate
               </button>
@@ -382,7 +382,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
         {step === 'calibrate' && (
           <div className="space-y-4">
-            <p className="text-sm text-secondary">
+            <p className="text-sm text-neutral-500">
               Calibrate the scale so fabric prints at the correct physical size.
             </p>
 
@@ -401,20 +401,20 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     onChange={() => setCalibrationMethod(opt.value)}
                     className="accent-primary"
                   />
-                  <span className="text-sm text-on-surface">{opt.label}</span>
+                  <span className="text-sm text-neutral-800">{opt.label}</span>
                 </label>
               ))}
             </div>
 
             {calibrationMethod === 'scanner-preset' && (
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   Scanner Resolution
                 </label>
                 <select
                   value={scannerPreset}
                   onChange={(e) => setScannerPreset(e.target.value as ScannerPreset)}
-                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                  className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800"
                 >
                   {SCANNER_PRESETS.map((p) => (
                     <option key={p} value={p}>
@@ -427,7 +427,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
             {calibrationMethod === 'manual-dpi' && (
               <div>
-                <label className="block text-xs font-medium text-secondary mb-1">
+                <label className="block text-xs font-medium text-neutral-500 mb-1">
                   DPI (72-1200)
                 </label>
                 <input
@@ -436,7 +436,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                   max={1200}
                   value={manualDpi}
                   onChange={(e) => setManualDpi(Number(e.target.value))}
-                  className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                  className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800"
                 />
               </div>
             )}
@@ -444,7 +444,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
             {calibrationMethod === 'ruler-reference' && (
               <div className="space-y-2">
                 <div>
-                  <label className="block text-xs font-medium text-secondary mb-1">
+                  <label className="block text-xs font-medium text-neutral-500 mb-1">
                     Ruler length in pixels
                   </label>
                   <input
@@ -452,11 +452,11 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     min={1}
                     value={rulerPixels}
                     onChange={(e) => setRulerPixels(Number(e.target.value))}
-                    className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                    className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-secondary mb-1">
+                  <label className="block text-xs font-medium text-neutral-500 mb-1">
                     Ruler length in inches
                   </label>
                   <input
@@ -465,7 +465,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     step={0.1}
                     value={rulerInches}
                     onChange={(e) => setRulerInches(Number(e.target.value))}
-                    className="w-full rounded-sm border border-outline-variant bg-surface px-3 py-1.5 text-sm text-on-surface"
+                    className="w-full rounded-full border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800"
                   />
                 </div>
               </div>
@@ -475,7 +475,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               <button
                 type="button"
                 onClick={() => setStep('process')}
-                className="rounded-full px-4 py-2 text-sm text-secondary hover:bg-background"
+                className="rounded-full px-4 py-2 text-sm text-neutral-500 hover:bg-neutral"
               >
                 Back
               </button>
@@ -485,7 +485,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                   setCalibratedPpi(null);
                   handleUpload();
                 }}
-                className="rounded-full px-4 py-2 text-sm text-secondary hover:bg-background"
+                className="rounded-full px-4 py-2 text-sm text-neutral-500 hover:bg-neutral"
               >
                 Skip Calibration
               </button>
@@ -509,7 +509,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                     setError('Invalid calibration input. Check your values.');
                   }
                 }}
-                className="rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                className="rounded-full bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral hover:opacity-90"
               >
                 Calibrate & Upload
               </button>
@@ -520,7 +520,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
         {step === 'uploading' && (
           <div className="py-8 text-center">
             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm text-secondary">{uploadProgress}</p>
+            <p className="text-sm text-neutral-500">{uploadProgress}</p>
           </div>
         )}
       </div>

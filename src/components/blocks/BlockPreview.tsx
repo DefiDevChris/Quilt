@@ -61,20 +61,20 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
       onClick={onClose}
     >
       <div
-        className="relative w-80 rounded-xl bg-surface p-6 shadow-elevation-3"
+        className="relative w-80 rounded-full bg-neutral p-6 shadow-elevation-2"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 text-secondary hover:text-on-surface"
+          className="absolute right-3 top-3 text-neutral-500 hover:text-neutral-800"
         >
           ✕
         </button>
 
-        <h3 className="mb-3 text-lg font-semibold text-on-surface">{block.name}</h3>
+        <h3 className="mb-3 text-lg font-semibold text-neutral-800">{block.name}</h3>
 
-        <div className="mb-4 flex items-center justify-center rounded-lg border border-outline-variant bg-background p-4">
+        <div className="mb-4 flex items-center justify-center rounded-full border border-neutral-200 bg-neutral p-4">
           {loading ? (
             <div className="h-40 w-40 flex items-center justify-center">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -82,12 +82,12 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
           ) : block.isLocked ? (
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <span className="mb-2 text-3xl">🔒</span>
-              <p className="text-sm text-secondary">Upgrade to Pro to use this block</p>
+              <p className="text-sm text-neutral-500">Upgrade to Pro to use this block</p>
               <button
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="mt-3 inline-block rounded-full bg-gradient-to-r from-primary to-primary-dark px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="mt-3 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>
@@ -100,7 +100,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
           ) : error ? (
             <p className="text-sm text-error">{error}</p>
           ) : (
-            <div className="flex h-40 w-40 items-center justify-center text-4xl text-secondary">
+            <div className="flex h-40 w-40 items-center justify-center text-4xl text-neutral-500">
               ◇
             </div>
           )}
@@ -108,13 +108,13 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
 
         <div className="space-y-1.5 text-sm">
           <div className="flex justify-between">
-            <span className="text-secondary">Category</span>
-            <span className="text-on-surface">{block.category}</span>
+            <span className="text-neutral-500">Category</span>
+            <span className="text-neutral-800">{block.category}</span>
           </div>
           {block.subcategory && (
             <div className="flex justify-between">
-              <span className="text-secondary">Subcategory</span>
-              <span className="text-on-surface">{block.subcategory}</span>
+              <span className="text-neutral-500">Subcategory</span>
+              <span className="text-neutral-800">{block.subcategory}</span>
             </div>
           )}
         </div>

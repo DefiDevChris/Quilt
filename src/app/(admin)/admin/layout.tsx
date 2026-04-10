@@ -64,7 +64,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <div className="min-h-screen bg-surface flex">
+    <div className="min-h-screen bg-neutral flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -75,18 +75,18 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen z-50 lg:z-auto w-64 flex-shrink-0 flex flex-col bg-white/60 backdrop-blur-xl border-r border-white/40 transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:sticky top-0 left-0 h-screen z-50 lg:z-auto w-64 flex-shrink-0 flex flex-col bg-white border-r border-outline-variant transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
       >
         {/* Logo */}
-        <div className="px-6 py-5 border-b border-white/40">
+        <div className="px-6 py-5 border-b border-outline-variant">
           <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
               </svg>
             </div>
-            <span className="text-lg font-bold text-on-surface">Admin</span>
+            <span className="text-lg font-bold text-neutral-800">Admin</span>
           </Link>
         </div>
 
@@ -97,9 +97,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               key={item.href}
               href={item.href}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive(item.href)
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-full text-sm font-medium transition-colors ${isActive(item.href)
                 ? 'bg-primary/10 text-primary'
-                : 'text-secondary hover:text-on-surface hover:bg-white/50'
+                : 'text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100'
                 }`}
             >
               {ICONS[item.icon]}
@@ -109,10 +109,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-4 border-t border-white/40">
+        <div className="px-4 py-4 border-t border-outline-variant">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-secondary hover:text-on-surface hover:bg-white/50 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -125,14 +125,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-white/60 backdrop-blur-xl border-b border-white/40 px-6 py-4 flex items-center gap-4">
+        <header className="sticky top-0 z-30 bg-white border-b border-outline-variant px-6 py-4 flex items-center gap-4">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-white/50 transition-colors"
+            className="lg:hidden p-2 rounded-full hover:bg-neutral-100 transition-colors"
             aria-label="Open sidebar"
           >
-            <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -141,7 +141,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 text-sm font-medium text-secondary hover:bg-white/80 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral text-sm font-medium text-neutral-500 hover:bg-neutral-100 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

@@ -89,7 +89,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-on-surface">Welcome back, Admin</h2>
+        <h2 className="text-xl font-semibold text-neutral-800">Welcome back, Admin</h2>
         <p className="text-sm text-secondary mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
       </div>
 
@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent blog posts */}
-        <div className="glass-panel rounded-2xl p-6">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider">
               Recent Blog Posts
@@ -201,7 +201,7 @@ export default async function AdminDashboardPage() {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/admin/blog/${post.id}`}
-                      className="text-sm font-medium text-on-surface truncate hover:text-primary transition-colors"
+                      className="text-sm font-medium text-neutral-800 truncate hover:text-primary transition-colors"
                     >
                       {post.title}
                     </Link>
@@ -210,11 +210,10 @@ export default async function AdminDashboardPage() {
                     </p>
                   </div>
                   <span
-                    className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-full ${
-                      post.status === 'published'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-surface-container text-secondary'
-                    }`}
+                    className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-full ${post.status === 'published'
+                      ? 'bg-success/10 text-success'
+                      : 'bg-neutral-100 text-secondary'
+                      }`}
                   >
                     {post.status}
                   </span>
@@ -225,7 +224,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent social posts */}
-        <div className="glass-panel rounded-2xl p-6">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider">
               Recent Social Posts
@@ -244,7 +243,7 @@ export default async function AdminDashboardPage() {
               {recentSocial.map((post) => (
                 <li key={post.id} className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-on-surface truncate">{post.title}</p>
+                    <p className="text-sm font-medium text-neutral-800 truncate">{post.title}</p>
                     <p className="text-xs text-secondary mt-0.5">
                       by {post.creatorName} · {post.likeCount} likes
                     </p>
@@ -274,10 +273,10 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="glass-panel rounded-2xl p-5 hover:shadow-elevation-2 transition-shadow block"
+      className="bg-neutral border border-neutral-200 rounded-full p-5 hover:shadow-elevation-3 transition-shadow block"
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-lg font-bold">
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg font-bold">
           {value}
         </div>
         <p className="text-sm font-medium text-secondary">{label}</p>
@@ -300,12 +299,12 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="glass-panel rounded-2xl p-5 hover:shadow-elevation-2 transition-shadow block group"
+      className="bg-neutral border border-neutral-200 rounded-full p-5 hover:shadow-elevation-3 transition-shadow block group"
     >
       <div className="flex items-start gap-3">
         <div className="text-secondary group-hover:text-primary transition-colors">{icon}</div>
         <div>
-          <p className="text-sm font-semibold text-on-surface">{title}</p>
+          <p className="text-sm font-semibold text-neutral-800">{title}</p>
           <p className="text-xs text-secondary mt-1">{description}</p>
         </div>
       </div>

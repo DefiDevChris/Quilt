@@ -9,8 +9,8 @@ export function useDrawingTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const stateRef = useRef({
-    fillColor: '#D4883C',
-    strokeColor: '#2D2D2D',
+    fillColor: '#f9a06b',
+    strokeColor: '#4a3f35',
     strokeWidth: 1,
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
@@ -103,7 +103,7 @@ export function useDrawingTool() {
             width: 0,
             height: 0,
             fill: 'transparent',
-            stroke: '#00FF00',
+            stroke: '#f9a06b',
             strokeWidth: 4,
             strokeDashArray: [5, 5],
             selectable: false,
@@ -120,7 +120,7 @@ export function useDrawingTool() {
             ],
             {
               fill: 'transparent',
-              stroke: '#00FF00',
+              stroke: '#f9a06b',
               strokeWidth: 4,
               strokeDashArray: [5, 5],
               selectable: false,

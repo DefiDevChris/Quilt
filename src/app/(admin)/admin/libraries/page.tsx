@@ -24,7 +24,7 @@ export default function AdminLibrariesPage() {
         ))}
       </div>
 
-      <div className="bg-surface rounded-xl border border-outline-variant p-6 shadow-elevation-1">
+      <div className="bg-surface rounded-sm border border-outline-variant p-6 shadow-elevation-1">
         {activeTab === 'fabrics' && <FabricForm />}
         {activeTab === 'blocks' && <BlockForm />}
         {activeTab === 'shop' && <ShopManagement />}
@@ -92,7 +92,7 @@ function FabricForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
+          className="w-full px-3 py-2 border rounded-sm bg-surface"
         />
       </div>
       <div className="space-y-2">
@@ -103,7 +103,7 @@ function FabricForm() {
           name="imageUrl"
           value={formData.imageUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
+          className="w-full px-3 py-2 border rounded-sm bg-surface"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -114,7 +114,7 @@ function FabricForm() {
             name="thumbnailUrl"
             value={formData.thumbnailUrl}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
         <div className="space-y-2">
@@ -124,7 +124,7 @@ function FabricForm() {
             name="manufacturer"
             value={formData.manufacturer}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
         <div className="space-y-2">
@@ -134,7 +134,7 @@ function FabricForm() {
             name="sku"
             value={formData.sku}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
         <div className="space-y-2">
@@ -144,7 +144,7 @@ function FabricForm() {
             name="collection"
             value={formData.collection}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
         <div className="space-y-2">
@@ -154,14 +154,14 @@ function FabricForm() {
             name="colorFamily"
             value={formData.colorFamily}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
       </div>
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-primary text-white rounded-sm font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Fabric'}
       </button>
@@ -242,7 +242,7 @@ function BlockForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
+          className="w-full px-3 py-2 border rounded-sm bg-surface"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -254,7 +254,7 @@ function BlockForm() {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
         <div className="space-y-2">
@@ -264,7 +264,7 @@ function BlockForm() {
             name="subcategory"
             value={formData.subcategory}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg bg-surface"
+            className="w-full px-3 py-2 border rounded-sm bg-surface"
           />
         </div>
       </div>
@@ -276,7 +276,7 @@ function BlockForm() {
           value={formData.svgData}
           onChange={handleChange}
           rows={4}
-          className="w-full px-3 py-2 border rounded-lg bg-surface font-mono text-sm"
+          className="w-full px-3 py-2 border rounded-sm bg-surface font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
@@ -286,7 +286,7 @@ function BlockForm() {
           value={formData.fabricJsDataStr}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 border rounded-lg bg-surface font-mono text-sm"
+          className="w-full px-3 py-2 border rounded-sm bg-surface font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
@@ -296,7 +296,7 @@ function BlockForm() {
           name="tagsStr"
           value={formData.tagsStr}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
+          className="w-full px-3 py-2 border rounded-sm bg-surface"
         />
       </div>
       <div className="space-y-2">
@@ -306,13 +306,13 @@ function BlockForm() {
           name="thumbnailUrl"
           value={formData.thumbnailUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-lg bg-surface"
+          className="w-full px-3 py-2 border rounded-sm bg-surface"
         />
       </div>
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-full font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-primary text-white rounded-sm font-medium disabled:opacity-50"
       >
         {saving ? 'Adding...' : 'Add Block'}
       </button>
@@ -439,7 +439,7 @@ function ShopManagement() {
       </p>
 
       {/* Bulk Toggle */}
-      <div className="border border-outline-variant rounded-xl p-4 space-y-3">
+      <div className="border border-outline-variant rounded-sm p-4 space-y-3">
         <h4 className="text-sm font-semibold text-on-surface">Bulk Toggle by Manufacturer</h4>
         <div className="flex items-end gap-3">
           <div className="flex-1 space-y-1">
@@ -449,14 +449,14 @@ function ShopManagement() {
               value={bulkManufacturer}
               onChange={(e) => setBulkManufacturer(e.target.value)}
               placeholder="e.g. Kona Cotton"
-              className="w-full px-3 py-2 border rounded-lg bg-surface text-sm"
+              className="w-full px-3 py-2 border rounded-sm bg-surface text-sm"
             />
           </div>
           <button
             type="button"
             onClick={() => handleBulkToggle(true)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-green-100 text-green-800 rounded-lg disabled:opacity-50 hover:bg-green-200 transition-colors"
+            className="px-3 py-2 text-xs font-medium bg-success/10 text-success rounded-sm disabled:opacity-50 hover:bg-success/20 transition-colors"
           >
             Mark All Purchasable
           </button>
@@ -464,7 +464,7 @@ function ShopManagement() {
             type="button"
             onClick={() => handleBulkToggle(false)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-red-50 text-red-800 rounded-lg disabled:opacity-50 hover:bg-red-100 transition-colors"
+            className="px-3 py-2 text-xs font-medium bg-error/10 text-error rounded-sm disabled:opacity-50 hover:bg-error/20 transition-colors"
           >
             Remove All
           </button>
@@ -521,11 +521,11 @@ function ShopManagement() {
                     <button
                       type="button"
                       onClick={() => handleToggleField(fabric.id, 'inStock', fabric.inStock)}
-                      className={`w-8 h-5 rounded-full transition-colors ${fabric.inStock ? 'bg-green-500' : 'bg-primary-container/60'
+                      className={`w-8 h-5 rounded-sm transition-colors ${fabric.inStock ? 'bg-success' : 'bg-primary-container/60'
                         }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${fabric.inStock ? 'translate-x-3.5' : 'translate-x-0.5'
+                        className={`block w-3.5 h-3.5 rounded-sm bg-white shadow-elevation-1 transition-transform ${fabric.inStock ? 'translate-x-3.5' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -536,11 +536,11 @@ function ShopManagement() {
                       onClick={() =>
                         handleToggleField(fabric.id, 'isPurchasable', fabric.isPurchasable)
                       }
-                      className={`w-8 h-5 rounded-full transition-colors ${fabric.isPurchasable ? 'bg-primary' : 'bg-primary-container/60'
+                      className={`w-8 h-5 rounded-sm transition-colors ${fabric.isPurchasable ? 'bg-primary' : 'bg-primary-container/60'
                         }`}
                     >
                       <span
-                        className={`block w-3.5 h-3.5 rounded-full bg-white shadow-elevation-1 transition-transform ${fabric.isPurchasable ? 'translate-x-3.5' : 'translate-x-0.5'
+                        className={`block w-3.5 h-3.5 rounded-sm bg-white shadow-elevation-1 transition-transform ${fabric.isPurchasable ? 'translate-x-3.5' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -559,7 +559,7 @@ function ShopManagement() {
             type="button"
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1 text-xs text-secondary rounded-lg hover:bg-white/50 disabled:opacity-30"
+            className="px-3 py-1 text-xs text-secondary rounded-sm hover:bg-surface-container disabled:opacity-30"
           >
             Previous
           </button>
@@ -570,7 +570,7 @@ function ShopManagement() {
             type="button"
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1 text-xs text-secondary rounded-lg hover:bg-white/50 disabled:opacity-30"
+            className="px-3 py-1 text-xs text-secondary rounded-sm hover:bg-surface-container disabled:opacity-30"
           >
             Next
           </button>

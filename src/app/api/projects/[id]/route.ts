@@ -131,6 +131,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       'fabricPresets',
       'thumbnailUrl',
       'isPublic',
+      'activeWorktable',
     ];
     for (const key of ALLOWED_FIELDS) {
       if (key in parsed.data) {

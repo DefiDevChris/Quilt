@@ -1,22 +1,21 @@
 /**
  * Photo Pattern Engine — Orchestrates the photo-to-quilt-pattern pipeline
  *
- * Integrates with Web Worker for heavy processing while keeping
- * DOM-dependent operations on the main thread.
- *
  * Pipeline:
  * 1. Main Thread: DOM canvas operations, image loading, downscaling
  * 2. Main Thread: Perspective correction (requires OpenCV transforms)
- * 3. Web Worker: Full detection pipeline (all 15 objectives)
- * 4. Main Thread: Finalize and return results
+ * 3. Main Thread: Full detection pipeline (OpenCV via WASM, yields to keep UI responsive)
+ * 4. Main Thread: Orphan filter → shape normalization → edge snap → scale
  */
 
 import type {
   PipelineStep,
   PipelineStepStatus,
   DetectedPiece,
-  WorkerResponseMessage,
-  WorkerProgressMessage,
+  ScaledPiece,
+  Rect,
+  Point2D,
+  DownscaleInfo,
   DetectionOptions,
   QuiltDetectionConfig,
 } from '@/lib/photo-layout-types';
@@ -24,13 +23,15 @@ import {
   PHOTO_PATTERN_RESOLUTION_TIERS,
   PHOTO_PATTERN_MAX_IMAGE_DATA_SIZE,
   PHOTO_PATTERN_ABSOLUTE_MAX_DIMENSION,
+  DEFAULT_SEAM_ALLOWANCE_INCHES,
+  DEFAULT_CANVAS_WIDTH,
+  DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
 import {
   autoDetectQuiltBoundary,
   computePerspectiveTransform,
   applyPerspectiveCorrection,
 } from '@/lib/perspective-utils';
-import { detectQuiltShape, detectEdgePieces } from '@/lib/piece-detection-utils';
 import type { OpenCV, OpenCVMat } from '@/lib/opencv-loader';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -55,42 +56,30 @@ export interface PipelineResult {
   readonly correctedImageRef: CorrectedImageRef | null;
   readonly perspectiveApplied: boolean;
   /** Information about any image downscaling that occurred */
-  readonly downscaleInfo: import('@/lib/photo-layout-types').DownscaleInfo;
-  /** Detected quilt structure (grid, sashing, borders, binding). Null if detection failed. */
-  readonly quiltStructure: import('@/lib/photo-layout-types').QuiltStructure | null;
-  /**
-   * Shape correction result — matched block cells and corrected pieces.
-   * Null if shape correction was not run or no grid was detected.
-   */
-  readonly shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null;
+  readonly downscaleInfo: DownscaleInfo;
+  /** Normalized + edge-snapped pieces, ready for canvas placement */
+  readonly scaledPieces: readonly ScaledPiece[];
 }
 
-// ── Web Worker Management ───────────────────────────────────────────────────
+// ── Main-Thread Detection ──────────────────────────────────────────────────
 
-let detectionWorker: Worker | null = null;
-let workerMessageId = 0;
+/**
+ * Runs piece detection on the main thread (OpenCV WASM hangs inside
+ * Turbopack-managed Web Workers).  Yields periodically so the UI
+ * stays responsive.
+ */
+async function detectPiecesWithWorker(
+  imageData: ImageData,
+  options: DetectionOptions,
+  onProgress: (step: number, status: 'running' | 'complete' | 'error', message?: string) => void
+): Promise<DetectedPiece[]> {
+  // Load OpenCV on the main thread (same instance the pipeline already has)
+  const { loadOpenCv } = await import('@/lib/opencv-loader');
+  const cv = await loadOpenCv();
 
-function getDetectionWorker(): Worker {
-  if (detectionWorker) {
-    return detectionWorker;
-  }
+  const { detectPiecesOnMainThread } = await import('@/lib/piece-detection.worker');
 
-  detectionWorker = new Worker(new URL('./piece-detection.worker.ts', import.meta.url), {
-    type: 'module',
-  });
-
-  return detectionWorker;
-}
-
-export function terminateDetectionWorker(): void {
-  if (detectionWorker) {
-    detectionWorker.terminate();
-    detectionWorker = null;
-  }
-}
-
-export function isDetectionWorkerAvailable(): boolean {
-  return typeof Worker !== 'undefined';
+  return detectPiecesOnMainThread(cv, imageData, options, onProgress);
 }
 
 // ── Pipeline Helpers ───────────────────────────────────────────────────────
@@ -209,122 +198,76 @@ export function calculateDownscaleParams(
   };
 }
 
-// ── Worker-based Detection ─────────────────────────────────────────────────
+// ── Scaling Helpers ───────────────────────────────────────────────────────
 
-async function detectPiecesWithWorker(
-  imageData: ImageData,
-  options: DetectionOptions,
-  onProgress: (step: number, status: 'running' | 'complete' | 'error', message?: string) => void
-): Promise<DetectedPiece[]> {
-  const worker = getDetectionWorker();
-  const currentMessageId = ++workerMessageId;
+/**
+ * Convert pixel contours to inch-based ScaledPieces using target dimensions.
+ */
+function buildScaledPieces(
+  pieces: readonly DetectedPiece[],
+  contours: readonly Point2D[][],
+  imageWidth: number,
+  imageHeight: number,
+  targetWidthInches: number,
+  targetHeightInches: number,
+  seamAllowance: number
+): ScaledPiece[] {
+  const scaleX = targetWidthInches / imageWidth;
+  const scaleY = targetHeightInches / imageHeight;
 
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error('Detection worker timed out after 120s'));
-    }, 120_000);
+  return pieces.map((piece, i) => {
+    const contour = contours[i] ?? piece.contour;
+    const contourInches: Point2D[] = contour.map((p) => ({
+      x: p.x * scaleX,
+      y: p.y * scaleY,
+    }));
 
-    const messageHandler = (event: MessageEvent<WorkerResponseMessage | WorkerProgressMessage>) => {
-      const data = event.data;
-
-      if (data.type === 'PROGRESS') {
-        const progressData = data as WorkerProgressMessage;
-        onProgress(progressData.step, progressData.status, progressData.message);
-        return;
-      }
-
-      if (data.type === 'DETECT_PIECES_RESULT') {
-        const response = data as WorkerResponseMessage & { pieces: DetectedPiece[] };
-        cleanup();
-        resolve(response.pieces);
-        return;
-      }
-
-      if (data.type === 'DETECT_PIECES_ERROR') {
-        const response = data as WorkerResponseMessage & { error: string };
-        cleanup();
-        reject(new Error(response.error));
-        return;
-      }
-    };
-
-    const errorHandler = () => {
-      cleanup();
-      reject(new Error('Detection worker encountered an error'));
-    };
-
-    const cleanup = () => {
-      clearTimeout(timeout);
-      worker.removeEventListener('message', messageHandler);
-      worker.removeEventListener('error', errorHandler);
-    };
-
-    worker.addEventListener('message', messageHandler);
-    worker.addEventListener('error', errorHandler);
-
-    // Transfer ImageData's underlying buffer to worker (moves, doesn't copy)
-    // This prevents memory duplication - the main thread loses access to the buffer
-    const transferableObjects: Transferable[] = [];
-    if (imageData.data.buffer) {
-      transferableObjects.push(imageData.data.buffer);
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const p of contourInches) {
+      minX = Math.min(minX, p.x);
+      minY = Math.min(minY, p.y);
+      maxX = Math.max(maxX, p.x);
+      maxY = Math.max(maxY, p.y);
     }
 
-    worker.postMessage(
-      {
-        type: 'DETECT_PIECES',
-        imageData,
-        ...options,
-        _messageId: currentMessageId,
-      },
-      transferableObjects
-    );
+    const finishedW = maxX - minX;
+    const finishedH = maxY - minY;
+    const cutW = finishedW + seamAllowance * 2;
+    const cutH = finishedH + seamAllowance * 2;
+
+    return {
+      id: piece.id,
+      contourInches,
+      finishedWidth: formatInches(finishedW),
+      finishedHeight: formatInches(finishedH),
+      cutWidth: formatInches(cutW),
+      cutHeight: formatInches(cutH),
+      finishedWidthNum: finishedW,
+      finishedHeightNum: finishedH,
+      dominantColor: piece.dominantColor,
+    };
   });
 }
 
-// ── Color Sampler ──────────────────────────────────────────────────────────
-
-/**
- * Creates a ColorSampler function from ImageData.
- * Samples the average color within a rectangle (x, y, w, h) and returns a hex string.
- *
- * For large rectangles (w*h > 10000 px), samples every Nth pixel to avoid
- * performance issues when called many times in structure detection.
- */
-function makeColorSampler(
-  imageData: ImageData
-): (x: number, y: number, w: number, h: number) => string {
-  return (x: number, y: number, w: number, h: number): string => {
-    const x0 = Math.max(0, Math.round(x));
-    const y0 = Math.max(0, Math.round(y));
-    const x1 = Math.min(imageData.width, Math.round(x + w));
-    const y1 = Math.min(imageData.height, Math.round(y + h));
-    const area = (x1 - x0) * (y1 - y0);
-    const stride = area > 10000 ? Math.ceil(area / 10000) : 1;
-    let r = 0;
-    let g = 0;
-    let b = 0;
-    let count = 0;
-    let pixelIndex = 0;
-    for (let py = y0; py < y1; py++) {
-      for (let px = x0; px < x1; px++) {
-        if (pixelIndex % stride === 0) {
-          const i = (py * imageData.width + px) * 4;
-          r += imageData.data[i];
-          g += imageData.data[i + 1];
-          b += imageData.data[i + 2];
-          count++;
-        }
-        pixelIndex++;
-      }
-    }
-    if (count === 0) return '#808080';
-    const toHex = (v: number): string =>
-      Math.round(v / count)
-        .toString(16)
-        .padStart(2, '0');
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+/** Format a decimal inch value to nearest 1/8" fraction string. */
+function formatInches(value: number): string {
+  const eighths = Math.round(value * 8);
+  const whole = Math.floor(eighths / 8);
+  const remainder = eighths % 8;
+  if (remainder === 0) return `${whole}"`;
+  const fractions: Record<number, string> = {
+    1: '1/8',
+    2: '1/4',
+    3: '3/8',
+    4: '1/2',
+    5: '5/8',
+    6: '3/4',
+    7: '7/8',
   };
+  return whole > 0 ? `${whole} ${fractions[remainder]}"` : `${fractions[remainder]}"`;
 }
 
 // ── Detection Pipeline ─────────────────────────────────────────────────────
@@ -504,11 +447,7 @@ export async function runDetectionPipeline(
     outCanvas.width = 0;
     outCanvas.height = 0;
 
-    if (!isDetectionWorkerAvailable()) {
-      throw new Error('Web Workers not supported');
-    }
-
-    // Send to worker with transferable ImageData (buffer is moved, not copied)
+    // Run detection on the main thread (OpenCV WASM hangs in Turbopack workers)
     const pieces = await detectPiecesWithWorker(
       imageData,
       {
@@ -531,116 +470,63 @@ export async function runDetectionPipeline(
     advance(3, 'complete');
     advance(4, 'complete');
 
-    // Step 5: Finalizing
+    // Step 5: Finalizing — orphan filter → normalize → edge snap → scale
     advance(5, 'running');
-
-    // Detect quilt shape and mark edge pieces for non-rectangular quilts
-    let piecesWithEdgeInfo: DetectedPiece[] = pieces;
-    if (scanConfig?.quiltShape && scanConfig.quiltShape !== 'rectangular') {
-      const boundary = detectQuiltShape(pieces, correctedMat.cols, correctedMat.rows);
-      piecesWithEdgeInfo = detectEdgePieces(pieces, boundary);
-    }
-
-    advance(5, 'complete');
 
     // Orphan filter: remove pieces that share no edges with any neighbor.
     // Real quilt pieces are always sewn to at least one adjacent piece —
     // isolated detections are CV artifacts (dust, shadows, noise).
-    let cleanPieces: readonly DetectedPiece[] = piecesWithEdgeInfo;
+    let cleanPieces: readonly DetectedPiece[] = pieces;
     try {
       const { filterOrphanPieces } = await import('@/lib/orphan-filter');
-      const filterResult = filterOrphanPieces(piecesWithEdgeInfo);
+      const filterResult = filterOrphanPieces(pieces);
       cleanPieces = filterResult.pieces;
-
-      if (filterResult.orphanCount > 0) {
-        console.log(
-          `[orphan-filter] Removed ${filterResult.orphanCount} orphan pieces: ${filterResult.orphanIds.slice(0, 10).join(', ')}${filterResult.orphanIds.length > 10 ? '...' : ''}`
-        );
-      }
     } catch {
       // Non-fatal — continue with all pieces if filter fails
     }
 
-    // Structure detection (pure computation — non-fatal if it fails)
-    let quiltStructure: import('@/lib/photo-layout-types').QuiltStructure | null = null;
-    let shapeCorrection: import('@/lib/photo-layout-types').ShapeCorrectionResult | null = null;
+    // Shape normalization: cluster, regularize, equalize, straighten
+    let normalizedContours: Point2D[][] = cleanPieces.map((p) =>
+      p.contour.map((pt) => ({ x: pt.x, y: pt.y }))
+    );
     try {
-      const { detectQuiltStructure } = await import('@/lib/structure-detection-engine');
-
-      // Extract fresh ImageData from correctedMat for color sampling
-      // correctedMat is still alive here (deleted in finally block)
-      let colorSamplerImageData: ImageData | null = null;
-      try {
-        const samplerCanvas = document.createElement('canvas');
-        samplerCanvas.width = correctedMat.cols;
-        samplerCanvas.height = correctedMat.rows;
-        cv.imshow(samplerCanvas, correctedMat);
-        const samplerCtx = samplerCanvas.getContext('2d');
-        if (samplerCtx) {
-          colorSamplerImageData = samplerCtx.getImageData(
-            0,
-            0,
-            samplerCanvas.width,
-            samplerCanvas.height
-          );
-        }
-        samplerCanvas.width = 0;
-        samplerCanvas.height = 0;
-      } catch {
-        // Non-fatal — color sampler unavailable
-      }
-
-      if (colorSamplerImageData) {
-        const colorSampler = makeColorSampler(colorSamplerImageData);
-        quiltStructure = detectQuiltStructure(
-          cleanPieces,
-          correctedMat.cols,
-          correctedMat.rows,
-          colorSampler
-        );
-
-        // Shape correction: match detected block cells to known block SVGs
-        if (quiltStructure.grid && quiltStructure.grid.cells.length > 0) {
-          try {
-            const { getBlockSignatures } = await import('@/lib/block-signature-registry');
-            const {
-              extractBlockCells,
-              runShapeCorrection,
-            } = await import('@/lib/shape-matcher-engine');
-
-            const signatures = await getBlockSignatures();
-            const pieceMap = new Map(
-              cleanPieces.map((p) => [p.id, p])
-            );
-
-            const blockCells = extractBlockCells(quiltStructure.grid, pieceMap);
-
-            if (blockCells.length > 0) {
-              shapeCorrection = runShapeCorrection(
-                blockCells,
-                pieceMap,
-                signatures
-              );
-
-              // Log match summary
-              const matchCount = shapeCorrection.blockMatches.size;
-              const unmatched = shapeCorrection.unmatchedCellKeys.length;
-              console.log(
-                `[shape-matcher] ${matchCount} blocks matched, ${unmatched} cells fell back to raw detection`
-              );
-            }
-          } catch (shapeErr) {
-            console.warn('[shape-matcher] Shape correction failed:', shapeErr);
-            // Non-fatal — continue with raw pieces
-          }
-        }
-      }
+      const { normalizeShapes } = await import('@/lib/shape-normalizer-engine');
+      const normResult = normalizeShapes(cleanPieces);
+      normalizedContours = normResult.normalizedContours.map((c) =>
+        c.map((pt) => ({ x: pt.x, y: pt.y }))
+      );
     } catch {
-      // Non-fatal — structure detection failure should not block piece import
+      // Non-fatal — continue with raw contours
     }
 
+    // Edge snapping: snap shared edges to canonical positions, snap boundary
+    // edges to canvas border. Quilts have no gaps — all shapes touch.
+    const imageW = correctedMat?.cols ?? imageElement.naturalWidth;
+    const imageH = correctedMat?.rows ?? imageElement.naturalHeight;
+    const canvasBounds: Rect = { x: 0, y: 0, width: imageW, height: imageH };
+
+    try {
+      const { snapEdges } = await import('@/lib/edge-snapper-engine');
+      normalizedContours = snapEdges(normalizedContours, canvasBounds);
+    } catch {
+      // Non-fatal — continue with unsnapped contours
+    }
+
+    // Scale pixel contours to inch-based ScaledPieces
+    const scaledPieces = buildScaledPieces(
+      cleanPieces,
+      normalizedContours,
+      imageW,
+      imageH,
+      DEFAULT_CANVAS_WIDTH,
+      DEFAULT_CANVAS_HEIGHT,
+      DEFAULT_SEAM_ALLOWANCE_INCHES
+    );
+
+    advance(5, 'complete');
+
     // Build downscale info for consumer feedback
-    const downscaleInfo: import('@/lib/photo-layout-types').DownscaleInfo = {
+    const downscaleInfo: DownscaleInfo = {
       scaled: downscaleParams?.scaled ?? false,
       originalWidth: downscaleParams?.originalWidth ?? imageElement.naturalWidth,
       originalHeight: downscaleParams?.originalHeight ?? imageElement.naturalHeight,
@@ -659,8 +545,7 @@ export async function runDetectionPipeline(
       correctedImageRef,
       perspectiveApplied,
       downscaleInfo,
-      quiltStructure,
-      shapeCorrection,
+      scaledPieces,
     };
   } catch (error) {
     const runningIndex = steps.findIndex((s) => s.status === 'running');
@@ -682,8 +567,7 @@ export async function runDetectionPipeline(
         scaleFactor: 1,
         reason: 'none',
       },
-      quiltStructure: null,
-      shapeCorrection: null,
+      scaledPieces: [],
     };
   } finally {
     // Always delete imageMat if it differs from correctedMat (or if correctedMat is null)

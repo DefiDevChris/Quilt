@@ -33,7 +33,7 @@ export function BlockBuilderFabricPicker({ onFabricDragStart }: BlockBuilderFabr
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className="aspect-square rounded-lg bg-primary-container/40 animate-pulse"
+              className="aspect-square rounded-full bg-primary/10/40 animate-pulse"
             />
           ))}
         </div>
@@ -44,13 +44,13 @@ export function BlockBuilderFabricPicker({ onFabricDragStart }: BlockBuilderFabr
   return (
     <div className="flex flex-col h-full">
       {/* Search */}
-      <div className="px-3 py-2 border-b border-outline-variant/15">
+      <div className="px-3 py-2 border-b border-neutral-200/15">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search fabrics..."
-          className="w-full rounded-md border border-outline-variant bg-white px-2.5 py-1.5 text-xs focus:border-primary focus:outline-none"
+          className="w-full rounded-full border border-neutral-200 bg-neutral px-2.5 py-1.5 text-xs focus:border-primary focus:outline-none"
         />
       </div>
 
@@ -66,10 +66,10 @@ export function BlockBuilderFabricPicker({ onFabricDragStart }: BlockBuilderFabr
           ))}
         </div>
         {filtered.length === 0 && (
-          <div className="text-center text-xs text-secondary py-8">No fabrics found</div>
+          <div className="text-center text-xs text-neutral-500 py-8">No fabrics found</div>
         )}
         {filtered.length > 60 && (
-          <div className="text-center text-xs text-secondary py-4">
+          <div className="text-center text-xs text-neutral-500 py-4">
             Showing 60 of {filtered.length}
           </div>
         )}
@@ -91,7 +91,7 @@ function FabricSwatch({
     <div
       draggable
       onDragStart={(e) => onDragStart(e, fabric.id)}
-      className="group relative cursor-grab rounded-lg border border-outline-variant overflow-hidden hover:border-primary transition-colors"
+      className="group relative cursor-grab rounded-full border border-neutral-200 overflow-hidden hover:border-primary transition-colors"
       title={fabric.name}
     >
       <div className="aspect-square">
@@ -109,8 +109,8 @@ function FabricSwatch({
           />
         )}
       </div>
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent px-1 pb-0.5 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <p className="text-[9px] text-white truncate">{fabric.name}</p>
+      <div className="absolute inset-x-0 bottom-0 bg-neutral px-1 pb-0.5 pt-2">
+        <p className="text-[9px] text-neutral-800 truncate">{fabric.name}</p>
       </div>
     </div>
   );

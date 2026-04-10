@@ -76,20 +76,19 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
     <>
       <div
         data-testid="upload-sheet-backdrop"
-        className="fixed inset-0 z-50 bg-on-surface/20"
-        style={{ backdropFilter: 'blur(4px)' }}
+        className="fixed inset-0 z-50 bg-neutral/20"
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface rounded-t-2xl pb-10 pt-3 shadow-elevation-4">
-        <div className="w-10 h-1 rounded-full bg-outline-variant mx-auto mb-6" />
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-neutral rounded-t-2xl pb-10 pt-3 shadow-elevation-4">
+        <div className="w-10 h-1 rounded-full bg-neutral-300 mx-auto mb-6" />
         <div className="px-6 space-y-3">
           {/* Upload Photo — primary action */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-primary-golden/10 border border-primary/20 transition-colors text-left disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-full bg-neutral border border-primary/20 transition-colors text-left disabled:opacity-50"
           >
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
@@ -129,7 +128,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               )}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-on-surface">
+              <p className="text-sm font-semibold text-neutral-800">
                 {uploading ? 'Uploading...' : 'Upload Photo'}
               </p>
               <p className="text-xs text-secondary mt-0.5">
@@ -140,7 +139,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
           {/* Success feedback */}
           {uploadSuccess && (
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-success/10 border border-success/20">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-success/10 border border-success/20">
               <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="text-success shrink-0">
                 <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M6 10L9 13L14 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -162,7 +161,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
           <button
             type="button"
             onClick={handleShareToSocial}
-            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container transition-colors text-left"
+            className="w-full flex items-center gap-4 p-4 rounded-full hover:bg-neutral-100 transition-colors text-left"
           >
             <div
               className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
@@ -182,7 +181,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-on-surface">Share to Social</p>
+              <p className="text-sm font-semibold text-neutral-800">Share to Social</p>
               <p className="text-xs text-secondary mt-0.5">Post a quilt photo with your story</p>
             </div>
           </button>

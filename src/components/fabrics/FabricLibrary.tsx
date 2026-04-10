@@ -13,6 +13,16 @@ import type { FabricListItem } from '@/types/fabric';
 
 type TabType = 'library' | 'myfabrics' | 'presets' | 'shop';
 
+/** Neutral solid fabrics that work well for sashing, borders, and binding. */
+const QUICK_APPLY_FABRICS: Array<{ id: string; name: string; hex: string }> = [
+  { id: 'qa-white', name: 'White', hex: '#FFFFFF' },
+  { id: 'qa-cream', name: 'Cream', hex: '#F5F0E8' },
+  { id: 'qa-light-gray', name: 'Light Gray', hex: '#D0D0D0' },
+  { id: 'qa-med-gray', name: 'Medium Gray', hex: '#B0B0B0' },
+  { id: 'qa-black', name: 'Black', hex: '#333333' },
+  { id: 'qa-navy', name: 'Navy', hex: '#2C3E50' },
+];
+
 interface FabricLibraryProps {
   onFabricDragStart: (e: React.DragEvent, fabricId: string) => void;
   onOpenUpload?: () => void;
@@ -128,9 +138,9 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
 
   return (
     <>
-      <div className="flex flex-col w-full flex-1 min-h-0 bg-surface">
+      <div className="flex flex-col w-full flex-1 min-h-0 bg-neutral">
         {/* Tabs */}
-        <div className="flex border-b border-outline-variant">
+        <div className="flex border-b border-neutral-200">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -138,7 +148,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 px-2 py-1.5 text-xs font-medium ${activeTab === tab.key
                 ? 'border-b-2 border-primary text-primary'
-                : 'text-on-surface/60 hover:text-on-surface'
+                : 'text-neutral-800/60 hover:text-neutral-800'
                 }`}
             >
               {tab.label}
@@ -148,7 +158,39 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
 
         {activeTab === 'library' ? (
           <>
-            <div className="px-3 py-1 text-caption text-secondary">{total} fabrics</div>
+            <div className="px-3 py-1 text-xs text-neutral-500">{total} fabrics</div>
+
+            {/* Quick Apply — neutral solids for sashing/borders */}
+            <div className="px-3 py-2 border-b border-neutral-200/20">
+              <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+                Quick Apply — Great for Sashing & Borders
+              </span>
+              <div className="grid grid-cols-6 gap-1.5 mt-1.5">
+                {QUICK_APPLY_FABRICS.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    draggable
+                    onDragStart={(e) => {
+                      // Use the fabric's hex as a pseudo-id for quick apply
+                      e.dataTransfer.setData('application/quiltcorgi-fabric-hex', f.hex);
+                      e.dataTransfer.setData('application/quiltcorgi-fabric-name', f.name);
+                      e.dataTransfer.effectAllowed = 'copy';
+                    }}
+                    className="group flex flex-col items-center gap-0.5"
+                    title={f.name}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full border border-neutral-200/20 group-hover:border-primary/50 transition-colors"
+                      style={{ backgroundColor: f.hex }}
+                    />
+                    <span className="text-[8px] text-neutral-500 truncate w-full text-center">
+                      {f.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="flex-1 overflow-y-auto px-3 py-1">
               {isLoading ? (
@@ -166,7 +208,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 </div>
               ) : fabricItems.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">No fabrics found</p>
+                  <p className="text-sm text-neutral-500">No fabrics found</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -183,23 +225,23 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-outline-variant px-3 py-2">
+              <div className="flex items-center justify-between border-t border-neutral-200 px-3 py-2">
                 <button
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
+                  className="rounded-full px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
                 >
                   ← Prev
                 </button>
-                <span className="text-caption text-on-surface/50">
+                <span className="text-xs text-neutral-800/50">
                   {page} / {totalPages}
                 </span>
                 <button
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="rounded px-2 py-1 text-xs text-on-surface/70 hover:bg-surface-container disabled:opacity-30"
+                  className="rounded-full px-2 py-1 text-xs text-neutral-800/70 hover:bg-neutral-100 disabled:opacity-30"
                 >
                   Next →
                 </button>
@@ -208,14 +250,14 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
           </>
         ) : activeTab === 'presets' ? (
           <>
-            <div className="px-3 py-2 text-caption text-secondary">
+            <div className="px-3 py-2 text-xs text-neutral-500">
               {fabricPresets.length} preset{fabricPresets.length !== 1 ? 's' : ''}
             </div>
             <div className="flex-1 overflow-y-auto px-3 py-1">
               {fabricPresets.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">No presets yet</p>
-                  <p className="text-xs text-secondary mt-1">Right-click any fabric to add</p>
+                  <p className="text-sm text-neutral-500">No presets yet</p>
+                  <p className="text-xs text-neutral-500 mt-1">Right-click any fabric to add</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -236,7 +278,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
           <>
             <div className="px-3 py-2 flex items-center gap-1.5">
               <ShoppingBag size={12} className="text-primary" />
-              <span className="text-caption text-secondary">
+              <span className="text-xs text-neutral-500">
                 {shopFabrics.length} purchasable fabric
                 {shopFabrics.length !== 1 ? 's' : ''}
               </span>
@@ -246,8 +288,8 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <SkeletonGrid count={9} columns={3} />
               ) : shopFabrics.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary mb-1">No shop fabrics available</p>
-                  <p className="text-xs text-secondary">Check back after the shop is stocked.</p>
+                  <p className="text-sm text-neutral-500 mb-1">No shop fabrics available</p>
+                  <p className="text-xs text-neutral-500">Check back after the shop is stocked.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -269,13 +311,13 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">Upgrade to Pro to upload custom fabrics</p>
+                  <p className="text-sm text-neutral-500">Upgrade to Pro to upload custom fabrics</p>
                 </div>
               ) : isLoadingUserFabrics ? (
                 <SkeletonGrid count={6} columns={3} />
               ) : userFabrics.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">No fabrics uploaded yet</p>
+                  <p className="text-sm text-neutral-500">No fabrics uploaded yet</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -302,7 +344,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                             ? 'Click again to confirm delete'
                             : 'Delete fabric'
                         }
-                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-caption text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === fabric.id
+                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-xs text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === fabric.id
                           ? 'bg-error ring-2 ring-error/50 !opacity-100'
                           : 'bg-error'
                           }`}
@@ -315,11 +357,11 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               )}
             </div>
             {isPro && onOpenUpload && (
-              <div className="border-t border-outline-variant px-3 py-2">
+              <div className="border-t border-neutral-200 px-3 py-2">
                 <button
                   type="button"
                   onClick={onOpenUpload}
-                  className="w-full rounded-full bg-on-surface px-4 py-2 text-[11px] font-semibold tracking-wide text-surface hover:opacity-90 shadow-elevation-1 transition-all"
+                  className="w-full rounded-full bg-neutral-800 px-4 py-2 text-[11px] font-semibold tracking-wide text-neutral hover:opacity-90 transition-all"
                 >
                   + Import Fabric
                 </button>

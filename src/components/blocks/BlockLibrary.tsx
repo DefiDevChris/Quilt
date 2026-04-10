@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';
+import { recordBlockUsed, getRecentlyUsedBlocks } from '@/lib/recently-used-blocks';
 import type { BlockListItem } from '@/types/block';
 
 type TabType = 'library' | 'myblocks';
@@ -76,21 +77,29 @@ export function BlockLibrary({
       e.dataTransfer.setData('application/quiltcorgi-block-id', block.id);
       e.dataTransfer.effectAllowed = 'copy';
       onBlockDragStart(e, block.id);
+      // Track as recently used
+      recordBlockUsed(block.id);
+      setRecentlyUsed(getRecentlyUsedBlocks());
     },
     [onBlockDragStart]
   );
 
+  const [recentlyUsed, setRecentlyUsed] = useState<string[]>([]);
+  useEffect(() => {
+    setRecentlyUsed(getRecentlyUsedBlocks());
+  }, []);
+
   return (
     <>
-      <div className="flex flex-1 min-h-0 w-full flex-col bg-surface">
+      <div className="flex flex-1 min-h-0 w-full flex-col bg-neutral">
         {/* Tabs */}
-        <div className="flex border-b border-outline-variant">
+        <div className="flex border-b border-neutral-200">
           <button
             type="button"
             onClick={() => setActiveTab('library')}
             className={`flex-1 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase transition-all ${activeTab === 'library'
-              ? 'border-b-2 border-on-surface text-on-surface'
-              : 'text-secondary hover:text-on-surface'
+              ? 'border-b-2 border-on-surface text-neutral-800'
+              : 'text-neutral-500 hover:text-neutral-800'
               }`}
           >
             Library
@@ -99,8 +108,8 @@ export function BlockLibrary({
             type="button"
             onClick={() => setActiveTab('myblocks')}
             className={`flex-1 px-3 py-2.5 text-[11px] font-semibold tracking-wider uppercase transition-all ${activeTab === 'myblocks'
-              ? 'border-b-2 border-on-surface text-on-surface'
-              : 'text-secondary hover:text-on-surface'
+              ? 'border-b-2 border-on-surface text-neutral-800'
+              : 'text-neutral-500 hover:text-neutral-800'
               }`}
           >
             My Blocks
@@ -112,15 +121,42 @@ export function BlockLibrary({
             {/* Search */}
             <BlockSearch />
 
+            {/* Recently Used section */}
+            {recentlyUsed.length > 0 && (
+              <div className="px-3 py-2 border-b border-neutral-200/15">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+                    Recently Used
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {recentlyUsed.slice(0, 4).map((id) => {
+                    const block = blocks.find((b) => b.id === id);
+                    if (!block) return null;
+                    return (
+                      <BlockCard
+                        key={block.id}
+                        block={block}
+                        onPreview={setPreviewBlock}
+                        onDragStart={handleDragStart}
+                        isSelected={selectedBlockId === block.id}
+                        onSelect={setSelectedBlockId}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Block count */}
-            <div className="px-3 py-1 text-[10px] text-secondary">{total} blocks</div>
+            <div className="px-3 py-1 text-[10px] text-neutral-500">{total} blocks</div>
 
             {/* Block Grid */}
             <div className="flex-1 overflow-y-auto px-3 py-1">
               {isLoading ? (
                 <div className="grid grid-cols-3 gap-2">
                   {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-lg bg-background" />
+                    <div key={i} className="h-24 animate-pulse rounded-full bg-neutral" />
                   ))}
                 </div>
               ) : error ? (
@@ -136,7 +172,7 @@ export function BlockLibrary({
                 </div>
               ) : blocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">No blocks found</p>
+                  <p className="text-sm text-neutral-500">No blocks found</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -156,23 +192,23 @@ export function BlockLibrary({
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-outline-variant px-3 py-2">
+              <div className="flex items-center justify-between border-t border-neutral-200 px-3 py-2">
                 <button
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="bg-white/50 text-secondary rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
+                  className="bg-neutral-container text-neutral-500 rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
                 >
                   {'\u2190'} Prev
                 </button>
-                <span className="text-[10px] text-on-surface/50">
+                <span className="text-[10px] text-neutral-800/50">
                   {page} / {totalPages}
                 </span>
                 <button
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="bg-white/50 text-secondary rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
+                  className="bg-neutral-container text-neutral-500 rounded-full px-2 py-1 text-xs hover:opacity-90 disabled:opacity-30"
                 >
                   Next {'\u2192'}
                 </button>
@@ -183,7 +219,7 @@ export function BlockLibrary({
           <>
             {/* My Blocks section */}
             {isPro && (
-              <div className="flex gap-1 border-b border-outline-variant px-3 py-1.5">
+              <div className="flex gap-1 border-b border-neutral-200 px-3 py-1.5">
                 {(Object.keys(FILTER_LABELS) as BlockFilter[])
                   .filter((f) => f !== 'svg')
                   .map((filter) => (
@@ -192,8 +228,8 @@ export function BlockLibrary({
                       type="button"
                       onClick={() => setBlockFilter(filter)}
                       className={`rounded-full px-3 py-1 text-[10px] font-semibold tracking-wide transition-all ${blockFilter === filter
-                        ? 'bg-on-surface text-surface shadow-elevation-1'
-                        : 'bg-background text-secondary hover:text-on-surface'
+                        ? 'bg-primary text-white shadow'
+                        : 'bg-neutral text-neutral-500 hover:text-neutral-800'
                         }`}
                     >
                       {FILTER_LABELS[filter]}
@@ -205,17 +241,17 @@ export function BlockLibrary({
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">Upgrade to Pro to create custom blocks</p>
+                  <p className="text-sm text-neutral-500">Upgrade to Pro to create custom blocks</p>
                 </div>
               ) : isLoadingUserBlocks ? (
                 <div className="grid grid-cols-3 gap-2">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-lg bg-background" />
+                    <div key={i} className="h-24 animate-pulse rounded-full bg-neutral" />
                   ))}
                 </div>
               ) : filteredUserBlocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-secondary">
+                  <p className="text-sm text-neutral-500">
                     {blockFilter === 'photo'
                       ? 'No photo blocks yet'
                       : blockFilter === 'custom'
@@ -264,12 +300,12 @@ export function BlockLibrary({
               )}
             </div>
             {isPro && (
-              <div className="flex gap-2 border-t border-outline-variant px-3 py-2">
+              <div className="flex gap-2 border-t border-neutral-200 px-3 py-2">
                 {onOpenDrafting && (
                   <button
                     type="button"
                     onClick={onOpenDrafting}
-                    className="flex-1 rounded-full bg-on-surface px-4 py-2 text-[11px] font-semibold tracking-wide text-surface hover:opacity-90 shadow-elevation-1 transition-all"
+                    className="flex-1 rounded-full bg-primary px-4 py-2 text-[11px] font-semibold tracking-wide text-white hover:opacity-90 shadow transition-all"
                   >
                     + Draft Block
                   </button>
@@ -278,7 +314,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenPhotoUpload}
-                    className="flex-1 rounded-full bg-surface border border-outline-variant px-4 py-2 text-[11px] font-semibold tracking-wide text-on-surface hover:bg-surface-container transition-all"
+                    className="flex-1 rounded-full bg-neutral border border-neutral-200 px-4 py-2 text-[11px] font-semibold tracking-wide text-neutral-800 hover:bg-neutral-container transition-all"
                   >
                     + Photo Block
                   </button>

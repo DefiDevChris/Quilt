@@ -80,7 +80,7 @@ export const PATTERN_PREVIEW_STROKE = '#c0b8ae';
 export const PATTERN_PREVIEW_ACCENT = '#8B7355';
 
 export const WHITE_FILL = '#ffffff';
-export const DEFAULT_TEXT_COLOR = '#383831';
+export const DEFAULT_TEXT_COLOR = '#4a3f35';
 export const ON_SURFACE_COLOR = '#4a3b32';
 
 export const REFERENCE_IMAGE_DEFAULT_OPACITY = 0.5;
@@ -207,7 +207,7 @@ export const PHOTO_PATTERN_SENSITIVITY_MIN = 0.2;
 export const PHOTO_PATTERN_SENSITIVITY_MAX = 2.0;
 export const PHOTO_PATTERN_SENSITIVITY_DEFAULT = 1.0;
 export const PHOTO_PATTERN_SENSITIVITY_DEBOUNCE_MS = 300;
-export const PHOTO_PATTERN_OVERLAY_COLOR = '#00E5FF';
+export const PHOTO_PATTERN_OVERLAY_COLOR = 'rgba(249,160,107,0.3)';
 export const PHOTO_PATTERN_OVERLAY_OPACITY = 0.7;
 export const PHOTO_PATTERN_PIECE_MIN_AREA_RATIO = 0.005;
 export const PHOTO_PATTERN_PIECE_MAX_AREA_RATIO = 0.25;
@@ -238,12 +238,12 @@ export const SOCIAL_FALLBACK_IMAGES = {
 } as const;
 
 // Default canvas colors
-export const DEFAULT_FILL_COLOR = '#FFCBA4';
-export const DEFAULT_STROKE_COLOR = '#383831';
+export const DEFAULT_FILL_COLOR = '#ffc8a6';
+export const DEFAULT_STROKE_COLOR = '#4a3f35';
 
 // Default layout colors
-export const DEFAULT_SASHING_COLOR = '#F5F0E8';
-export const DEFAULT_BORDER_COLOR = '#2D2D2D';
+export const DEFAULT_SASHING_COLOR = '#e5d5c5';
+export const DEFAULT_BORDER_COLOR = '#4a3f35';
 
 // ── PDF Page Sizes ──
 

@@ -23,10 +23,10 @@ const features = [
   {
     title: 'Your Design Studio',
     description:
-      'Four worktables, one creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from four layout modes including sashing and on-point.',
+      'One creative flow. Lay out your quilt, draft custom blocks with snap-to-grid precision, and choose from six layout presets including sashing and on-point.',
     iconSrc: '/icons/quilt-13-dashed-squares-Photoroom.png',
     iconAlt: 'Quilt layout squares',
-    checks: ['4 connected worktables', 'Growing block library', '6 layout modes'],
+    checks: ['Single persistent canvas', 'Growing block library', '6 layout presets'],
   },
   {
     title: 'Yardage & Cutting Made Easy',
@@ -43,12 +43,12 @@ const features = [
   {
     title: 'Print-Ready Patterns',
     description:
-      'Export true 1:1 scale PDFs with seam allowances baked right in. Generate Foundation Paper Piecing templates and rotary cutting charts that go straight from your printer to your sewing room.',
+      'Export true 1:1 scale PDFs with seam allowances baked right in. Generate cutting charts and rotary templates that go straight from your printer to your sewing room.',
     iconSrc: '/icons/quilt-04-scissors-Photoroom.png',
     iconAlt: 'Quilting scissors',
     checks: [
       'True-scale PDF with seam allowances',
-      'FPP template generation',
+      'Cutting chart generation',
       'Rotary cutting charts',
     ],
   },
@@ -87,7 +87,7 @@ export default function FeatureHighlights() {
             >
               Your Quilt, Start to Finish
             </h2>
-            <p className="text-lg text-secondary mt-2">
+            <p className="text-lg text-on-surface/70 mt-2">
               Design, calculate, and print — all in one place
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function FeatureHighlights() {
             <motion.div
               key={feature.title}
               variants={itemVariants}
-              className="glass-panel rounded-2xl p-8 hover:shadow-elevation-4 transition-all"
+              className="bg-surface rounded-full border border-neutral-200 p-8 transition-all"
             >
               <div className="w-16 h-16 mb-6">
                 <Image
@@ -121,8 +121,8 @@ export default function FeatureHighlights() {
               >
                 {feature.title}
               </h3>
-              <p className="text-secondary mb-4">{feature.description}</p>
-              <ul className="space-y-2 text-sm text-secondary">
+              <p className="text-on-surface/70 mb-4">{feature.description}</p>
+              <ul className="space-y-2 text-sm text-on-surface/70">
                 {feature.checks.map((check) => (
                   <CheckItem key={check}>{check}</CheckItem>
                 ))}

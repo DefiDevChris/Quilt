@@ -210,7 +210,7 @@ export function HamburgerDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-on-surface/20 z-40"
+            className="fixed inset-0 bg-primary/20 z-40"
             onClick={onClose}
           />
 
@@ -220,15 +220,15 @@ export function HamburgerDrawer({
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-0 left-0 bottom-0 w-[280px] bg-surface shadow-elevation-3 z-50 overflow-y-auto"
+            className="fixed top-0 left-0 bottom-0 w-[280px] bg-neutral shadow-elevation-3 z-50 overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12">
-              <span className="font-semibold text-[1.125rem] text-on-surface">Quilt Studio</span>
+              <span className="font-semibold text-[1.125rem] text-neutral-800">Quilt Studio</span>
               <button
                 type="button"
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
                 aria-label="Close menu"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -247,9 +247,9 @@ export function HamburgerDrawer({
               {menuGroups.map((group, groupIdx) => (
                 <div key={group.title}>
                   {groupIdx > 0 && (
-                    <div className="my-[2.75rem] mx-2 border-t border-outline-variant/15" />
+                    <div className="my-[2.75rem] mx-2 border-t border-neutral-200/15" />
                   )}
-                  <div className="px-2 py-1.5 text-label-sm uppercase text-on-surface/70 tracking-[0.02em] font-medium">
+                  <div className="px-2 py-1.5 text-label-sm uppercase text-neutral-800/70 tracking-[0.02em] font-medium">
                     {group.title}
                   </div>
                   {group.items.map((item) => (
@@ -260,11 +260,11 @@ export function HamburgerDrawer({
                         item.onClick?.();
                         onClose();
                       }}
-                      className="w-full flex items-center justify-between px-2 py-[1rem] text-body-md text-on-surface rounded-md hover:bg-surface-container transition-colors"
+                      className="w-full flex items-center justify-between px-2 py-[1rem] text-body-md text-neutral-800 rounded-full hover:bg-neutral-100 transition-colors"
                     >
                       <span>{item.label}</span>
                       {item.shortcut && (
-                        <span className="font-mono text-secondary text-body-sm">
+                        <span className="font-mono text-neutral-500 text-body-sm">
                           {item.shortcut}
                         </span>
                       )}

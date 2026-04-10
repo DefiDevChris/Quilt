@@ -10,8 +10,8 @@ export function usePolygonTool() {
   const activeTool = useCanvasStore((s) => s.activeTool);
 
   const stateRef = useRef({
-    fillColor: '#D4883C',
-    strokeColor: '#2D2D2D',
+    fillColor: '#f9a06b',
+    strokeColor: '#4a3f35',
     strokeWidth: 1,
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
@@ -67,7 +67,7 @@ export function usePolygonTool() {
           left: x - 4,
           top: y - 4,
           radius: 4,
-          fill: '#8d4f00',
+          fill: '#8a7c6f',
           selectable: false,
           evented: false,
         });
@@ -84,7 +84,7 @@ export function usePolygonTool() {
       ) {
         if (!fabric || !canvas) return;
         const line = new fabric.Line([x1, y1, x2, y2], {
-          stroke: '#383831',
+          stroke: '#4a3f35',
           strokeWidth: 2,
           strokeDashArray: dashArray,
           selectable: false,

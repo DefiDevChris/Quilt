@@ -139,8 +139,8 @@ export default function AdminModerationPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id as Tab)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
-                ? 'border-primary text-primary'
-                : 'border-transparent text-secondary hover:text-on-surface'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-on-surface'
               }`}
           >
             {tab.label}
@@ -150,13 +150,13 @@ export default function AdminModerationPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-primary"></div>
         </div>
       ) : (
         <>
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="rounded-xl border border-outline-variant overflow-hidden">
+            <div className="rounded-sm border border-outline-variant overflow-hidden">
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
@@ -224,7 +224,7 @@ export default function AdminModerationPage() {
 
           {/* Posts Tab */}
           {activeTab === 'posts' && (
-            <div className="rounded-xl border border-outline-variant overflow-hidden">
+            <div className="rounded-sm border border-outline-variant overflow-hidden">
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
@@ -297,7 +297,7 @@ export default function AdminModerationPage() {
 
           {/* Comments Tab */}
           {activeTab === 'comments' && (
-            <div className="rounded-xl border border-outline-variant overflow-hidden">
+            <div className="rounded-sm border border-outline-variant overflow-hidden">
               <table className="w-full">
                 <thead className="bg-surface-container-high">
                   <tr>
@@ -367,7 +367,7 @@ export default function AdminModerationPage() {
 
           {/* Users Tab - Placeholder */}
           {activeTab === 'users' && (
-            <div className="p-8 text-center text-secondary bg-surface-container-low rounded-xl">
+            <div className="p-8 text-center text-secondary bg-surface-container-low rounded-sm">
               <p>User management coming soon. Use the role update API for now.</p>
             </div>
           )}

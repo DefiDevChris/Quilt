@@ -25,7 +25,7 @@ import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
-import { WorktableTabs } from '@/components/studio/WorktableTabs';
+
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 
@@ -119,7 +119,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-surface select-none">
+    <div className="h-screen flex flex-col bg-neutral select-none">
       <StudioTopBar
         onOpenImageExport={dialogs.openImageExport}
         onOpenPdfExport={dialogs.openPdfExport}
@@ -145,10 +145,8 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           />
         )}
 
-        {/* Center: Canvas area with tabs above */}
+        {/* Center: Canvas area */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
-          {/* Worktable tabs */}
-          <WorktableTabs />
           <div className="flex-1 flex overflow-hidden relative">
             {activeWorktable === 'block-builder' ? (
               <BlockBuilderWorktable
@@ -171,15 +169,15 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
                 {/* Reference photo split pane */}
                 {showReferencePanel && referenceImageUrl && (
-                  <div className="w-1/2 border-l border-outline-variant/20 bg-surface-container/30 flex flex-col overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant/15">
-                      <span className="text-[12px] font-semibold text-on-surface/60 uppercase tracking-wider">
+                  <div className="w-1/2 border-l border-neutral-200/20 bg-neutral-container/30 flex flex-col overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200/15">
+                      <span className="text-[12px] font-semibold text-neutral-800/60 uppercase tracking-wider">
                         Reference Photo
                       </span>
                       <button
                         type="button"
                         onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
-                        className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/40 hover:text-on-surface hover:bg-surface-container transition-colors"
+                        className="w-6 h-6 flex items-center justify-center rounded-full text-neutral-800/40 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
                         aria-label="Close reference panel"
                       >
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -197,7 +195,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                       <img
                         src={referenceImageUrl}
                         alt="Original reference photo"
-                        className="max-w-full max-h-full object-contain rounded-lg shadow-elevation-1"
+                        className="max-w-full max-h-full object-contain rounded-full shadow-elevation-2"
                         draggable={false}
                       />
                     </div>

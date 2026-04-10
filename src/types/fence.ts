@@ -18,6 +18,8 @@ export interface FenceArea {
   borderIndex?: number;
   row?: number;
   col?: number;
+  /** Display label rendered inside the fence area (e.g. "Block", "Sashing", "Border 1") */
+  label?: string;
   assignedFabricId?: string | null;
   assignedBlockId?: string | null;
 }

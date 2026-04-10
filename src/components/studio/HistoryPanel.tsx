@@ -43,16 +43,16 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   if (!isOpen) return null;
 
   return (
-    <div className="fixed right-0 top-12 bottom-0 w-64 bg-surface border-l border-outline-variant/15 shadow-elevation-2 z-40 overflow-y-auto">
+    <div className="fixed right-0 top-12 bottom-0 w-64 bg-neutral border-l border-neutral-200/15 shadow-elevation-2 z-40 overflow-y-auto">
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-label-sm uppercase text-on-surface/70 tracking-[0.02em] font-medium">
+          <h3 className="text-label-sm uppercase text-neutral-800/70 tracking-[0.02em] font-medium">
             History
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="w-6 h-6 flex items-center justify-center rounded-md text-on-surface/50 hover:text-on-surface hover:bg-surface-container transition-colors"
+            className="w-6 h-6 flex items-center justify-center rounded-full text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
             aria-label="Close history"
           >
             <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -67,7 +67,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
         </div>
 
         {entries.length === 0 ? (
-          <p className="text-body-sm text-secondary text-center py-8">No history yet</p>
+          <p className="text-body-sm text-neutral-500 text-center py-8">No history yet</p>
         ) : (
           <div className="space-y-2">
             {entries.map((entry, i) => (
@@ -75,10 +75,10 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 key={i}
                 type="button"
                 onClick={() => jumpToState(i)}
-                className="w-full text-left p-2 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors"
+                className="w-full text-left p-2 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
               >
-                <div className="text-body-sm text-on-surface">State {entries.length - i}</div>
-                <div className="text-caption text-secondary">
+                <div className="text-body-sm text-neutral-800">State {entries.length - i}</div>
+                <div className="text-caption text-neutral-500">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </div>
               </button>

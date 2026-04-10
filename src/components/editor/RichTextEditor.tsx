@@ -204,12 +204,12 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
   return (
     <div className="space-y-3">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-surface-container-high rounded-lg border border-outline-variant">
+      <div className="flex flex-wrap items-center gap-1 p-2 bg-neutral-container-high rounded-full border border-neutral-200">
         {/* Block types */}
         <select
           value={blockType}
           onChange={(e) => setBlock(e.target.value)}
-          className="px-2 py-1 text-sm bg-surface border border-outline-variant rounded text-on-surface"
+          className="px-2 py-1 text-sm bg-neutral border border-neutral-200 rounded text-neutral-800"
         >
           <option value="paragraph">Paragraph</option>
           <option value="h1">Heading 1</option>
@@ -226,7 +226,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('bold')}
-          className={`p-1.5 rounded hover:bg-surface-container ${activeMarks.has('bold') ? 'bg-surface-container text-primary' : 'text-secondary'}`}
+          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('bold') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
           title="Bold"
         >
           <span className="font-bold">B</span>
@@ -234,7 +234,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('italic')}
-          className={`p-1.5 rounded hover:bg-surface-container ${activeMarks.has('italic') ? 'bg-surface-container text-primary' : 'text-secondary'}`}
+          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('italic') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
           title="Italic"
         >
           <span className="italic">I</span>
@@ -242,7 +242,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('underline')}
-          className={`p-1.5 rounded hover:bg-surface-container ${activeMarks.has('underline') ? 'bg-surface-container text-primary' : 'text-secondary'}`}
+          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('underline') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
           title="Underline"
         >
           <span className="underline">U</span>
@@ -250,7 +250,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('strikeThrough')}
-          className={`p-1.5 rounded hover:bg-surface-container ${activeMarks.has('strikeThrough') ? 'bg-surface-container text-primary' : 'text-secondary'}`}
+          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('strikeThrough') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
           title="Strikethrough"
         >
           <span className="line-through">S</span>
@@ -262,7 +262,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('insertUnorderedList')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Bullet List"
         >
           • List
@@ -270,7 +270,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('insertOrderedList')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Numbered List"
         >
           1. List
@@ -282,7 +282,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={insertLink}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Insert Link"
         >
           🔗 Link
@@ -290,7 +290,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={insertImage}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Insert Image"
         >
           🖼️ Image
@@ -302,7 +302,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('left')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Float Left"
         >
           ⬅️ Left
@@ -310,7 +310,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('center')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Center"
         >
           ↔️ Center
@@ -318,7 +318,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('right')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Float Right"
         >
           ➡️ Right
@@ -326,7 +326,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('full')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Full Width"
         >
           ⤡ Full
@@ -338,7 +338,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('undo')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Undo"
         >
           ↩️
@@ -346,7 +346,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('redo')}
-          className="p-1.5 rounded hover:bg-surface-container text-secondary"
+          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
           title="Redo"
         >
           ↪️
@@ -359,7 +359,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         contentEditable
         onInput={handleInput}
         onBlur={handleInput}
-        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 prose-quilt-studio"
+        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-neutral border border-neutral-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 prose-quilt-studio"
         suppressContentEditableWarning
         dangerouslySetInnerHTML={{
           __html: tiptapToHtml(content),

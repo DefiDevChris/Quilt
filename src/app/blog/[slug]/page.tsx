@@ -71,8 +71,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               style={{ objectPosition: '20% 50%' }}
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface/10 via-transparent via-[25%] to-transparent" />
+          <div className="absolute inset-0 bg-surface/30" />
+          <div className="absolute inset-0 bg-surface/10" />
         </div>
       )}
 
@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <img
                 src={post.authorAvatarUrl}
                 alt={post.authorName ?? 'Author'}
-                className="w-10 h-10 rounded-full bg-primary-container object-cover"
+                className="w-10 h-10 rounded-full bg-primary/20 object-cover"
               />
             )}
             <span className="text-sm text-secondary font-medium">{post.authorName}</span>

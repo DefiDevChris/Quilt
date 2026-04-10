@@ -121,8 +121,8 @@ export default function ShopPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse space-y-4 text-center">
-          <div className="h-8 bg-primary-container/40 rounded w-48 mx-auto" />
-          <div className="h-4 bg-primary-container/20 rounded w-32 mx-auto" />
+          <div className="h-8 bg-primary/20 rounded-full w-48 mx-auto" />
+          <div className="h-4 bg-primary/10 rounded-full w-32 mx-auto" />
         </div>
       </div>
     );
@@ -132,11 +132,11 @@ export default function ShopPage() {
   if (!shopEnabled) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass-panel rounded-2xl p-12 text-center max-w-md">
-          <div className="w-16 h-16 rounded-full bg-primary-container/40 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-neutral border border-neutral-200 rounded-full p-12 text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={28} className="text-secondary" />
           </div>
-          <h1 className="text-2xl font-bold text-on-surface mb-2">Shop Coming Soon</h1>
+          <h1 className="text-2xl font-bold text-neutral-800 mb-2">Shop Coming Soon</h1>
           <p className="text-secondary">
             Our fabric shop is being set up. Check back soon for a curated selection of quilting
             fabrics!
@@ -148,11 +148,10 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <div className="glass-panel border-b border-white/40">
+      <div className="bg-neutral border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1
-            className="text-3xl font-bold text-on-surface"
+            className="text-3xl font-bold text-neutral-800"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Fabric Shop
@@ -171,7 +170,7 @@ export default function ShopPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search fabrics..."
-              className="w-full pl-10 pr-4 py-2.5 glass-panel rounded-full text-sm text-on-surface placeholder:text-secondary focus:ring-2 focus:ring-primary/50 border border-white/40"
+              className="w-full pl-10 pr-4 py-2.5 bg-neutral border border-neutral-200 rounded-full text-sm text-neutral-800 placeholder:text-secondary focus:ring-2 focus:ring-primary/50"
             />
           </form>
 
@@ -179,8 +178,8 @@ export default function ShopPage() {
             type="button"
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${showFilters || hasActiveFilters
-              ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-elevation-1'
-              : 'bg-white/50 text-secondary hover:bg-white/70'
+              ? 'bg-primary text-white shadow-elevation-1'
+              : 'bg-neutral-100 text-secondary hover:bg-neutral-200'
               }`}
           >
             <SlidersHorizontal size={16} />
@@ -195,7 +194,7 @@ export default function ShopPage() {
               setSort(e.target.value as SortOption);
               setPage(1);
             }}
-            className="px-4 py-2.5 rounded-full bg-white/50 text-sm text-secondary border border-white/40 focus:ring-2 focus:ring-primary/50"
+            className="px-4 py-2.5 rounded-full bg-neutral-100 text-sm text-secondary border border-neutral-200 focus:ring-2 focus:ring-primary/50"
           >
             <option value="name">Name A-Z</option>
             <option value="price-asc">Price: Low to High</option>
@@ -206,9 +205,9 @@ export default function ShopPage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="glass-panel rounded-2xl p-4 mb-6 space-y-4">
+          <div className="bg-neutral border border-neutral-200 rounded-full p-4 mb-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-on-surface">Filters</h3>
+              <h3 className="text-sm font-semibold text-neutral-800">Filters</h3>
               {hasActiveFilters && (
                 <button
                   type="button"
@@ -230,7 +229,7 @@ export default function ShopPage() {
                     setPage(1);
                   }}
                   placeholder="All manufacturers"
-                  className="w-full px-3 py-2 rounded-lg bg-white/50 border border-white/40 text-sm"
+                  className="w-full px-3 py-2 rounded-full bg-neutral-100 border border-neutral-200 text-sm"
                 />
               </div>
               <div className="space-y-1">
@@ -241,7 +240,7 @@ export default function ShopPage() {
                     setColorFamily(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-lg bg-white/50 border border-white/40 text-sm"
+                  className="w-full px-3 py-2 rounded-full bg-neutral-100 border border-neutral-200 text-sm"
                 >
                   <option value="">All colors</option>
                   <option value="red">Red</option>
@@ -265,7 +264,7 @@ export default function ShopPage() {
                     setValueFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-lg bg-white/50 border border-white/40 text-sm"
+                  className="w-full px-3 py-2 rounded-full bg-neutral-100 border border-neutral-200 text-sm"
                 >
                   <option value="">All values</option>
                   <option value="Light">Light</option>
@@ -275,7 +274,7 @@ export default function ShopPage() {
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-secondary font-medium">Availability</label>
-                <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/50 border border-white/40 cursor-pointer">
+                <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-neutral-100 border border-neutral-200 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={inStockOnly}
@@ -283,9 +282,9 @@ export default function ShopPage() {
                       setInStockOnly(e.target.checked);
                       setPage(1);
                     }}
-                    className="rounded border-outline-variant text-primary focus:ring-primary"
+                    className="rounded-full border-neutral-200 text-primary focus:ring-primary"
                   />
-                  <span className="text-sm text-on-surface">In stock only</span>
+                  <span className="text-sm text-neutral-800">In stock only</span>
                 </label>
               </div>
             </div>
@@ -313,19 +312,19 @@ export default function ShopPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="glass-panel rounded-2xl overflow-hidden animate-pulse">
-                <div className="aspect-square bg-primary-container/20" />
+              <div key={i} className="bg-neutral border border-neutral-200 rounded-full overflow-hidden animate-pulse">
+                <div className="aspect-square bg-primary/10" />
                 <div className="p-3 space-y-2">
-                  <div className="h-4 bg-primary-container/40 rounded w-3/4" />
-                  <div className="h-3 bg-primary-container/20 rounded w-1/2" />
-                  <div className="h-8 bg-primary-container/20 rounded mt-2" />
+                  <div className="h-4 bg-primary/20 rounded-full w-3/4" />
+                  <div className="h-3 bg-primary/10 rounded-full w-1/2" />
+                  <div className="h-8 bg-primary/10 rounded-full mt-2" />
                 </div>
               </div>
             ))}
           </div>
         ) : fabrics.length === 0 ? (
-          <div className="glass-panel rounded-2xl p-12 text-center">
-            <p className="text-lg font-medium text-on-surface mb-2">No fabrics found</p>
+          <div className="bg-neutral border border-neutral-200 rounded-full p-12 text-center">
+            <p className="text-lg font-medium text-neutral-800 mb-2">No fabrics found</p>
             <p className="text-sm text-secondary">
               {hasActiveFilters
                 ? 'Try adjusting your filters or search terms.'
@@ -347,7 +346,7 @@ export default function ShopPage() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="px-4 py-2 rounded-full bg-white/50 text-sm text-secondary hover:bg-white/70 disabled:opacity-30 transition-colors"
+              className="px-4 py-2 rounded-full bg-neutral-100 text-sm text-secondary hover:bg-neutral-200 disabled:opacity-30 transition-colors"
             >
               Previous
             </button>
@@ -358,7 +357,7 @@ export default function ShopPage() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="px-4 py-2 rounded-full bg-white/50 text-sm text-secondary hover:bg-white/70 disabled:opacity-30 transition-colors"
+              className="px-4 py-2 rounded-full bg-neutral-100 text-sm text-secondary hover:bg-neutral-200 disabled:opacity-30 transition-colors"
             >
               Next
             </button>
@@ -379,7 +378,7 @@ function ShopFabricCard({
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
-    <div className="group glass-panel rounded-2xl overflow-hidden hover:shadow-elevation-2 transition-all">
+    <div className="group bg-neutral border border-neutral-200 rounded-full overflow-hidden hover:shadow-elevation-2 transition-all">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (
@@ -396,14 +395,14 @@ function ShopFabricCard({
 
       {/* Info */}
       <div className="p-3 space-y-1">
-        <h3 className="text-sm font-medium text-on-surface truncate" title={fabric.name}>
+        <h3 className="text-sm font-medium text-neutral-800 truncate" title={fabric.name}>
           {fabric.name}
         </h3>
         {fabric.manufacturer && (
           <p className="text-xs text-secondary truncate">{fabric.manufacturer}</p>
         )}
         <div className="flex items-center justify-between pt-1">
-          <span className="text-sm font-semibold text-on-surface">{price}</span>
+          <span className="text-sm font-semibold text-neutral-800">{price}</span>
           {fabric.colorFamily && (
             <span className="text-[10px] text-secondary capitalize">{fabric.colorFamily}</span>
           )}
@@ -413,7 +412,7 @@ function ShopFabricCard({
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-primary to-primary-dark text-white hover:opacity-90 shadow-elevation-1 hover:shadow-elevation-2"
+          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-primary text-white hover:opacity-90 shadow-elevation-1 hover:shadow-elevation-2"
         >
           {!fabric.shopifyVariantId
             ? 'Not Available'

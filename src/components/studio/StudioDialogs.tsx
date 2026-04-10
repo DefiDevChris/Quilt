@@ -5,13 +5,14 @@ import { useAuthStore } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
-import { LayoutSettingsPanel } from '@/components/studio/LayoutSettingsPanel';
+
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
 import { ImageExportDialog } from '@/components/export/ImageExportDialog';
 import { PhotoToDesignPromo } from '@/components/photo-layout/PhotoToLayoutPromo';
@@ -33,11 +34,15 @@ interface StudioDialogsApi {
   openHelp: () => void;
   openHistory: () => void;
   openGridDimensions: () => void;
-  openLayoutSettings: () => void;
   openPhotoToDesign: () => void;
   openResize: () => void;
   openPhotoBlockUpload: () => void;
   openFabricUpload: () => void;
+
+  /** Show confirmation before changing to a different layout type (destructive). */
+  confirmChangeLayout: (onConfirm: () => void) => void;
+  /** Show confirmation before clearing the layout entirely. */
+  confirmClearLayout: (onConfirm: () => void) => void;
 
   // Pro upgrade prompt
   promptUpgrade: (featureName: string) => void;
@@ -63,7 +68,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   // Dialog open/close state
   const [isPhotoBlockUploadOpen, setIsPhotoBlockUploadOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
-  const [isLayoutSettingsOpen, setIsLayoutSettingsOpen] = useState(false);
+
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
   const [isImageExportOpen, setIsImageExportOpen] = useState(false);
   const [isPhotoPromoOpen, setIsPhotoPromoOpen] = useState(false);
@@ -74,6 +79,10 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   // Pro upgrade prompt state
   const [proUpgradeFeature, setProUpgradeFeature] = useState<string | null>(null);
   const [isUpgrading, setIsUpgrading] = useState(false);
+
+  // Layout change/clear confirmation state
+  const [pendingChangeLayoutFn, setPendingChangeLayoutFn] = useState<(() => void) | null>(null);
+  const [pendingClearLayoutFn, setPendingClearLayoutFn] = useState<(() => void) | null>(null);
 
   const promptUpgrade = useCallback((feature: string) => {
     setProUpgradeFeature(feature);
@@ -129,17 +138,32 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     setIsFabricUploadOpen(true);
   }, [isPro, promptUpgrade]);
 
+  const confirmChangeLayout = useCallback((onConfirm: () => void) => {
+    const ls = useLayoutStore.getState();
+    // If no layout applied yet, skip confirmation
+    if (!ls.hasAppliedLayout) {
+      onConfirm();
+      return;
+    }
+    setPendingChangeLayoutFn(() => onConfirm);
+  }, []);
+
+  const confirmClearLayout = useCallback((onConfirm: () => void) => {
+    setPendingClearLayoutFn(() => onConfirm);
+  }, []);
+
   const api: StudioDialogsApi = {
     openImageExport,
     openPdfExport,
     openHelp: () => setIsHelpOpen(true),
     openHistory: () => setIsHistoryOpen(true),
     openGridDimensions,
-    openLayoutSettings: () => setIsLayoutSettingsOpen(true),
     openPhotoToDesign: () => setIsPhotoPromoOpen(true),
     openResize: () => setIsResizeOpen(true),
     openPhotoBlockUpload,
     openFabricUpload,
+    confirmChangeLayout,
+    confirmClearLayout,
     promptUpgrade,
   };
 
@@ -150,13 +174,13 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
       {/* ── Photo block upload (pro only) ─────────────────────── */}
       {isPro && isPhotoBlockUploadOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-[560px] rounded-xl bg-surface p-5 shadow-elevation-4">
+          <div className="w-[560px] rounded-full bg-neutral p-5 shadow-elevation-3">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-on-surface">Upload Block Photo</h2>
+              <h2 className="text-lg font-semibold text-neutral-800">Upload Block Photo</h2>
               <button
                 type="button"
                 onClick={() => setIsPhotoBlockUploadOpen(false)}
-                className="text-secondary hover:text-on-surface"
+                className="text-neutral-500 hover:text-neutral-800"
               >
                 {'\u2715'}
               </button>
@@ -178,9 +202,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
             onClose={() => setIsFabricUploadOpen(false)}
             onUploaded={handleFabricUploaded}
           />
-          {isLayoutSettingsOpen && (
-            <LayoutSettingsPanel onClose={() => setIsLayoutSettingsOpen(false)} />
-          )}
+
           <PdfExportDialog isOpen={isPdfExportOpen} onClose={() => setIsPdfExportOpen(false)} />
           <ImageExportDialog
             isOpen={isImageExportOpen}
@@ -208,7 +230,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-secondary mx-auto mb-3"
+                className="text-neutral-500 mx-auto mb-3"
                 aria-hidden="true"
               >
                 <rect
@@ -227,8 +249,8 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
                   strokeLinecap="round"
                 />
               </svg>
-              <p className="text-lg font-semibold text-on-surface mb-1">{proUpgradeFeature}</p>
-              <p className="text-sm text-secondary mb-4">
+              <p className="text-lg font-semibold text-neutral-800 mb-1">{proUpgradeFeature}</p>
+              <p className="text-sm text-neutral-500 mb-4">
                 This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
               </p>
             </div>
@@ -237,6 +259,36 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
           confirmLabel={isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
           onConfirm={handleUpgrade}
           onCancel={() => setProUpgradeFeature(null)}
+        />
+      )}
+
+      {/* ── Change Layout confirmation ───────────────────────── */}
+      {pendingChangeLayoutFn && (
+        <ConfirmationDialog
+          title="Change Layout?"
+          message="This will remove all placed blocks and reconfigure the fence. Fabric assignments will be lost."
+          cancelLabel="Cancel"
+          confirmLabel="Change Layout"
+          onConfirm={() => {
+            pendingChangeLayoutFn();
+            setPendingChangeLayoutFn(null);
+          }}
+          onCancel={() => setPendingChangeLayoutFn(null)}
+        />
+      )}
+
+      {/* ── Clear Layout confirmation ────────────────────────── */}
+      {pendingClearLayoutFn && (
+        <ConfirmationDialog
+          title="Clear Layout?"
+          message="Remove the layout fence and all placed blocks?"
+          cancelLabel="Cancel"
+          confirmLabel="Clear Layout"
+          onConfirm={() => {
+            pendingClearLayoutFn();
+            setPendingClearLayoutFn(null);
+          }}
+          onCancel={() => setPendingClearLayoutFn(null)}
         />
       )}
     </StudioDialogsContext.Provider>

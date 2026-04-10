@@ -41,9 +41,9 @@ function ReferenceImageToggle() {
       <button
         type="button"
         onClick={toggleReferencePanel}
-        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${showReferencePanel
+        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${showReferencePanel
           ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-          : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container'
+          : 'text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100'
           }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
         aria-pressed={showReferencePanel}
@@ -100,6 +100,7 @@ export function StudioTopBar({
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
+  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
@@ -118,13 +119,13 @@ export function StudioTopBar({
 
   return (
     <>
-      <div className="h-12 bg-surface border-b border-outline-variant/15 flex items-center justify-between px-4">
+      <div className="h-12 bg-neutral border-b border-neutral-200/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <TooltipHint name="Menu" description="Access project settings and options">
             <button
               type="button"
               onClick={() => setDrawerOpen((prev) => !prev)}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-on-surface/50 hover:text-on-surface hover:bg-surface-container transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
               aria-label="Open menu"
             >
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -138,9 +139,40 @@ export function StudioTopBar({
             </button>
           </TooltipHint>
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-[15px] text-on-surface tracking-[-0.01em]">
-              Quilt Studio
-            </span>
+            {activeWorktable === 'block-builder' ? (
+              /* Block Builder breadcrumb */
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => useCanvasStore.getState().setActiveWorktable('quilt')}
+                  className="flex items-center gap-1 text-sm text-primary hover:underline transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M9 3L5 7L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Back to Quilt
+                </button>
+                <span className="text-neutral-800/30 text-sm">|</span>
+                <span className="font-semibold text-[15px] text-neutral-800 tracking-[-0.01em]">
+                  Block Builder
+                </span>
+              </div>
+            ) : (
+              /* Quilt mode: project name + dirty indicator */
+              <div className="flex items-center gap-1.5">
+                {isDirty && (
+                  <span className="w-2 h-2 rounded-full bg-primary/80 flex-shrink-0" title="Unsaved changes" />
+                )}
+                <span className="font-semibold text-[15px] text-neutral-800 tracking-[-0.01em]">
+                  {projectName || 'Quilt Studio'}
+                </span>
+                {lastSavedAt && (
+                  <span className="text-[10px] text-neutral-500/60 ml-1">
+                    Saved {formatTimestamp(lastSavedAt)}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -164,8 +196,8 @@ export function StudioTopBar({
               <button
                 type="button"
                 onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
-                className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${isViewportLocked
-                  ? 'hover:bg-surface-container'
+                className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${isViewportLocked
+                  ? 'hover:bg-neutral-100'
                   : 'bg-primary/10 hover:bg-primary/20'
                   }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
@@ -213,7 +245,7 @@ export function StudioTopBar({
                 <button
                   type="button"
                   onClick={() => useCanvasStore.getState().centerAndFitViewport()}
-                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
                   aria-label="Recenter viewport"
                 >
                   <svg
@@ -233,20 +265,6 @@ export function StudioTopBar({
           </div>
 
           <ReferenceImageToggle />
-
-          <div className="text-right">
-            <div className="flex items-center justify-end gap-2">
-              <div className="text-[13px] font-medium text-on-surface truncate max-w-48">
-                {projectName}
-              </div>
-              {isDirty && (
-                <div className="w-1.5 h-1.5 rounded-full bg-warning" title="Unsaved changes" />
-              )}
-            </div>
-            <div className="text-[11px] text-on-surface/45">
-              {lastSavedAt ? `Saved ${formatTimestamp(lastSavedAt)}` : 'Quilt Canvas'}
-            </div>
-          </div>
 
           <div className="h-6 w-px bg-outline-variant/30" />
 

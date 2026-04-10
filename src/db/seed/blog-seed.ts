@@ -72,7 +72,7 @@ const introducingQuiltcorgi: TiptapDoc = {
     heading(2, 'What Can You Do?'),
     bulletList(
       'Design quilts using a drag-and-drop canvas with grid snapping',
-      'Choose from over 650 traditional quilt blocks',
+      'Choose from 50 traditional quilt blocks',
       'Upload and calibrate your own fabrics',
       'Export your designs as high-resolution images or PDFs',
       'Share your work with the QuiltCorgi community'
@@ -146,12 +146,6 @@ const screenToFabric: TiptapDoc = {
         'Every design can be exported as a PNG image at up to 300 DPI. This is perfect for sharing your design on social media, printing a reference copy, or sending to a long-arm quilter.'
       )
     ),
-    heading(2, 'Foundation Paper Piecing (FPP) Templates'),
-    p(
-      text(
-        'For complex blocks, QuiltCorgi generates print-ready FPP templates. Each template includes numbered sections, grain line indicators, and seam allowances. Print them on standard letter or A4 paper and you are ready to sew.'
-      )
-    ),
     heading(2, 'Rotary Cutting Charts'),
     p(
       text(
@@ -219,7 +213,7 @@ const gettingStarted: TiptapDoc = {
     heading(2, 'Step 2: Add Blocks'),
     p(
       text(
-        'Open the block library from the left panel. Browse over 650 blocks across categories like Nine Patch, Log Cabin, Star, and Flying Geese. Click a block to add it to your canvas.'
+        'Open the block library from the left panel. Browse 50 blocks across categories like Nine Patch, Log Cabin, Star, and Flying Geese. Click a block to add it to your canvas.'
       )
     ),
     heading(2, 'Step 3: Apply Fabrics'),
@@ -290,7 +284,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
     excerpt:
       'One of the most common questions we hear is: how do I go from a digital design to actual fabric? We walk through the export tools.',
     category: 'Tutorials',
-    tags: ['export', 'fpp', 'cutting-charts'],
+    tags: ['export', 'pdf', 'cutting-charts'],
     status: 'published',
     publishedAt: new Date('2026-02-05T12:00:00Z'),
   },
@@ -324,7 +318,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
       content: [
         p(
           text(
-            'QuiltCorgi includes over 650 traditional quilt blocks across 20+ categories. Here is how to find the perfect block for your design.'
+            'QuiltCorgi includes 50 traditional quilt blocks across 20+ categories. Here is how to find the perfect block for your design.'
           )
         ),
         heading(2, 'Browsing Blocks'),
@@ -401,118 +395,118 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
     publishedAt: new Date('2026-03-08T12:00:00Z'),
   },
   {
-    title: 'Creating Applique Designs',
-    slug: 'applique-designs-guide',
+    title: 'Uploading Finished Block Photos',
+    slug: 'block-photo-upload-guide',
     content: {
       type: 'doc',
       content: [
         p(
           text(
-            'Applique lets you layer shapes on top of a background block to create pictorial and decorative designs. QuiltCorgi supports both needle-turn and fusible applique workflows.'
+            'Upload a photo of a finished, sewn quilt block to preserve it in your Block Library. Block photos are stored as non-editable square images you can place in any layout.'
           )
         ),
-        heading(2, 'The Applique Canvas'),
-        p(
-          text(
-            'Switch to the Block Worktable and choose "Applique Mode." You get a blank background with shape tools: circle, rectangle, triangle, freeform, and heart. Layer shapes to build your design.'
-          )
-        ),
-        heading(2, 'Working with Layers'),
+        heading(2, 'Photographing Your Block'),
         bulletList(
-          'Drag shapes to position them precisely',
-          'Use the layer panel to reorder shapes (front to back)',
-          'Overlap detection highlights where shapes intersect',
-          'Assign different fabrics to each shape'
+          'Lay your block flat on a solid-color background',
+          'Shoot from directly above to avoid perspective distortion',
+          'Use even, natural lighting to minimize shadows',
+          'Ensure all four edges are visible in the frame'
         ),
-        heading(2, 'Exporting Applique Templates'),
+        heading(2, 'Uploading and Processing'),
         p(
           text(
-            'Export your applique block as a PDF template with seam allowances. Each shape is printed at full size, ready to trace onto fusible web or template plastic.'
+            'From the Block Library, click the upload button and select your photo. The image is cropped to a square and saved as a photo block. Photo blocks can be placed on the canvas just like system blocks, but cannot be edited or have fabrics assigned per patch.'
+          )
+        ),
+        heading(2, 'When to Use Block Photos'),
+        p(
+          text(
+            'Block photos are ideal for documenting your finished work, building a portfolio of sewn projects, or using photographed blocks as reference in future designs.'
           )
         ),
       ],
     },
     excerpt:
-      'Design layered applique blocks with shape tools, overlap detection, fabric assignment, and export options.',
+      'Upload photos of finished, sewn quilt blocks to preserve them in your library and place them in future designs.',
     category: 'Tutorials',
-    tags: ['intermediate', 'applique', 'design', 'tutorial'],
+    tags: ['beginner', 'block-photos', 'documentation', 'tutorial'],
     status: 'published',
     publishedAt: new Date('2026-03-10T12:00:00Z'),
   },
   {
-    title: 'Fabric Management & Fussy Cutting',
-    slug: 'fabric-fussy-cutting-guide',
+    title: 'Managing Your Fabric Library',
+    slug: 'fabric-library-guide',
     content: {
       type: 'doc',
       content: [
         p(
           text(
-            'Upload your own fabric images, calibrate their scale, and use fussy cutting to position specific motifs on individual patches.'
+            'QuiltCorgi includes over 2,700 solid fabric swatches from 16 manufacturers. Pro users can also upload custom fabric images to build their own library.'
           )
         ),
-        heading(2, 'Uploading Fabrics'),
+        heading(2, 'Browsing the Fabric Library'),
         p(
           text(
-            'Click "Upload Fabric" in the Fabric panel. Take a photo of your fabric next to a ruler, upload it, and QuiltCorgi will help you calibrate the scale so your design looks true to life on screen.'
+            'Open the Fabric panel from the right sidebar. Fabrics are organized by color family, manufacturer, and value (light, medium, dark). Use the search bar to find specific fabrics or filter by manufacturer like Moda, Robert Kaufman, or Art Gallery Fabrics.'
           )
         ),
-        heading(2, 'Fabric Calibration'),
+        heading(2, 'Assigning Fabrics to Patches'),
         p(
           text(
-            'After uploading, use the calibration tool to set the real-world scale. Place two markers a known distance apart (like 1 inch on your ruler) and QuiltCorgi maps pixels to inches automatically.'
+            'Drag any fabric onto a patch on the canvas to assign it. Each patch in a block can have its own fabric, giving you precise control over your design. Click a patch to see which fabric is assigned, or drag a new fabric to replace it.'
           )
         ),
-        heading(2, 'Fussy Cutting'),
+        heading(2, 'Uploading Custom Fabrics (Pro)'),
         p(
           text(
-            'Fussy cutting lets you position a specific part of a fabric print on a specific patch. Click any patch in your block, then drag the fabric overlay to align the motif exactly where you want it. This is perfect for centering a flower, animal, or geometric print.'
+            'Pro users can upload fabric photos from their computer or mobile device. Uploaded fabrics appear in the library alongside system fabrics and can be assigned to any patch. Use the scale calibration tool to ensure fabrics render at the correct size on screen.'
           )
         ),
       ],
     },
     excerpt:
-      'Upload fabric images, calibrate scale, and use fussy cutting to position specific motifs on individual patches.',
+      'Browse 2,700+ fabric swatches, assign them per patch, and upload custom fabrics to build your own library.',
     category: 'Tutorials',
-    tags: ['intermediate', 'fabric', 'fussy-cutting', 'tutorial'],
+    tags: ['beginner', 'fabric', 'library', 'tutorial'],
     status: 'published',
     publishedAt: new Date('2026-03-12T12:00:00Z'),
   },
   {
-    title: 'Using Generators: Symmetry & Serendipity',
-    slug: 'generators-symmetry-serendipity',
+    title: 'Drafting Custom Blocks with the Block Builder',
+    slug: 'block-builder-guide',
     content: {
       type: 'doc',
       content: [
         p(
           text(
-            "QuiltCorgi's generator tools help you explore design possibilities you might not discover on your own. Symmetry mirrors your work in real time. Serendipity creates surprising combinations."
+            'The Block Builder lets you draft original quilt blocks from scratch using seam-line drawing tools. Draw lines, edit nodes, and save your creations to the library.'
           )
         ),
-        heading(2, 'Symmetry Tool'),
+        heading(2, 'Getting Started'),
+        p(
+          text(
+            'Switch to the Block Builder worktable from the top bar. You get a 600×600 grid-snapped canvas with drawing tools: pencil for freehand lines, rectangle, triangle, and circle. Every line you draw becomes a seam in your block.'
+          )
+        ),
+        heading(2, 'Editing Your Block'),
         bulletList(
-          'Mirror modes — Horizontal, vertical, and quadrant mirroring',
-          'Radial symmetry — 4-fold, 6-fold, and 8-fold rotational patterns',
-          'Live preview — See changes reflected instantly as you design',
-          'Great for medallion-style designs and kaleidoscope effects'
+          'Draw seam lines connecting grid points to define patch shapes',
+          'Click and drag nodes to adjust line endpoints',
+          'Use the bend tool to curve straight seams for organic shapes',
+          'Delete unwanted lines or patches with the selection tool'
         ),
-        heading(2, 'Serendipity Tool'),
+        heading(2, 'Saving to Your Library'),
         p(
           text(
-            'Serendipity generates random color and block combinations using a seed value. Set a seed number and the tool produces deterministic results — the same seed always gives the same design. Tweak the seed to explore variations.'
-          )
-        ),
-        heading(2, 'Combining Both'),
-        p(
-          text(
-            'Use Serendipity to generate a starting palette, then Symmetry to mirror it across your quilt. This is one of the fastest ways to produce polished, balanced designs.'
+            'When your block is complete, save it with a name. It appears instantly in your Block Library alongside the 50 system blocks. Use it in any project, assign fabrics per patch, and include it in PDF exports.'
           )
         ),
       ],
     },
     excerpt:
-      'Explore mirror modes, radial symmetry, random color generation, and seed values to create surprising quilt designs.',
+      'Draft original quilt blocks from scratch using seam-line drawing tools, node editing, and grid snapping.',
     category: 'Tutorials',
-    tags: ['advanced', 'generators', 'symmetry', 'tutorial'],
+    tags: ['intermediate', 'block-builder', 'custom-blocks', 'tutorial'],
     status: 'published',
     publishedAt: new Date('2026-03-15T12:00:00Z'),
   },
@@ -524,7 +518,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
       content: [
         p(
           text(
-            'QuiltCorgi offers four layout modes to arrange your blocks. Each creates a different visual effect and changes how your quilt comes together.'
+            'QuiltCorgi offers six layout presets to arrange your blocks. Each creates a different visual effect and changes how your quilt comes together.'
           )
         ),
         heading(2, 'Grid Layout'),

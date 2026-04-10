@@ -288,7 +288,7 @@ export function generateCuttingChart(
       groups.set(groupKey, {
         fabricId: item.fabricId ?? null,
         fabricDisplayName: displayName,
-        fillColor: item.fillColor ?? '#888',
+        fillColor: item.fillColor ?? '#b8a698',
         patches: new Map(),
         totalPieces: 0,
       });

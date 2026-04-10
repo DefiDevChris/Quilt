@@ -10,9 +10,9 @@ export default function PostError({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface p-4">
-      <div className="glass-elevated rounded-2xl p-8 max-w-md w-full text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error-container flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-neutral p-4">
+      <div className="bg-neutral border border-neutral-200 rounded-full p-8 max-w-md w-full text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
           <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -22,20 +22,20 @@ export default function PostError({
             />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-on-surface mb-2">Couldn&apos;t load this post</h2>
+        <h2 className="text-lg font-semibold text-neutral-800 mb-2">Couldn&apos;t load this post</h2>
         <p className="text-sm text-secondary mb-6">
           {error.message || 'Something went wrong while loading this thread.'}
         </p>
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Try Again
           </button>
           <Link
             href="/socialthreads"
-            className="px-5 py-2.5 rounded-full border border-outline-variant text-on-surface text-sm font-semibold hover:bg-surface-container transition-colors"
+            className="px-5 py-2.5 rounded-full border border-neutral-200 text-neutral-800 text-sm font-semibold hover:bg-neutral-100 transition-colors"
           >
             Back to Community
           </Link>

@@ -6,10 +6,14 @@ import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockBuilderFabricPicker } from '@/components/blocks/BlockBuilderFabricPicker';
 import { BlockOverlaySelector } from '@/components/blocks/BlockOverlaySelector';
-import { BlockBuilderToolbarUnified, BlockBuilderCallbacks } from '@/components/blocks/BlockBuilderToolbarUnified';
+import {
+  BlockBuilderToolbarUnified,
+  BlockBuilderCallbacks,
+} from '@/components/blocks/BlockBuilderToolbarUnified';
 import { GRID_LINE_COLOR } from '@/lib/constants';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
+import { hexToRgb } from '@/lib/color-math';
 
 /**
  * Shared props for drafting tab components.
@@ -47,7 +51,12 @@ interface BlockBuilderWorktableProps {
   panelOnly?: boolean;
 }
 
-export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOnly }: BlockBuilderWorktableProps) {
+export function BlockBuilderWorktable({
+  onDone,
+  toolbarOnly,
+  canvasOnly,
+  panelOnly,
+}: BlockBuilderWorktableProps) {
   const [blockName, setBlockName] = useState('');
   const [category, setCategory] = useState('Custom');
   const [tags, setTags] = useState('');
@@ -65,6 +74,15 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
   const [rightTab, setRightTab] = useState<'blocks' | 'fabrics'>('blocks');
   const [activeMode, setActiveMode] = useState<BlockBuilderMode>('select');
+
+  // Auto-generate block name when user blocks are fetched
+  const userBlocks = useBlockStore((s) => s.userBlocks);
+  useEffect(() => {
+    if (!blockName) {
+      setBlockName(`Custom Block ${userBlocks.length + 1}`);
+    }
+    // Only run once on mount — eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -227,10 +245,6 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!blockName.trim()) {
-      setError('Block name is required');
-      return;
-    }
     if (!draftCanvasRef.current) return;
 
     setSaving(true);
@@ -242,12 +256,39 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
 
       const objs = canvas.getObjects().filter((o) => {
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
+        // Filter out grid lines — they are visual-only, not part of the block
+        if ((o as unknown as { _isGridLine?: boolean })._isGridLine) return false;
         return true;
       });
       if (objs.length === 0) {
         setError('Draw at least one shape before saving');
         setSaving(false);
         return;
+      }
+
+      // Tag each object with patch metadata before cloning.
+      // Seam lines (Line type) get __pieceRole='seam'; fillable shapes
+      // get __pieceRole='patch' with shade derived from fill luminance.
+      let patchIdx = 0;
+      for (const o of objs) {
+        const meta = o as unknown as Record<string, unknown>;
+        meta.__blockPatchIndex = patchIdx++;
+
+        const objType = (o as unknown as { type: string }).type;
+        if (objType === 'Line' || objType === 'line') {
+          meta.__pieceRole = 'seam';
+        } else {
+          meta.__pieceRole = 'patch';
+          const fillStr = (o as unknown as { fill?: unknown }).fill;
+          if (typeof fillStr === 'string' && fillStr.startsWith('#')) {
+            const rgb = hexToRgb(fillStr);
+            // Relative luminance: 0 = black, 255 = white
+            const lum = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+            meta.__shade = lum < 100 ? 'dark' : lum < 200 ? 'light' : 'background';
+          } else {
+            meta.__shade = 'unknown';
+          }
+        }
       }
 
       const clones = await Promise.all(objs.map((o) => o.clone()));
@@ -263,11 +304,14 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
       };
       const svgData = await generateThumbnailSvg();
 
+      // Auto-name if empty
+      const finalName = blockName.trim() || `Custom Block ${userBlocks.length + 1}`;
+
       const res = await fetch('/api/blocks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: blockName.trim(),
+          name: finalName,
           category: category.trim() || 'Custom',
           svgData,
           fabricJsData,
@@ -285,7 +329,8 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
         return;
       }
 
-      setBlockName('');
+      // Reset form with next auto-generated name
+      setBlockName(`Custom Block ${userBlocks.length + 2}`);
       setTags('');
       setCategory('Custom');
       fetchUserBlocks();
@@ -294,7 +339,16 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
     } finally {
       setSaving(false);
     }
-  }, [blockName, category, tags, blockWidthIn, blockHeightIn, generateThumbnailSvg, fetchUserBlocks]);
+  }, [
+    blockName,
+    category,
+    tags,
+    blockWidthIn,
+    blockHeightIn,
+    generateThumbnailSvg,
+    fetchUserBlocks,
+    userBlocks.length,
+  ]);
 
   const handleClearCanvas = useCallback(async () => {
     hookClearSegments();
@@ -309,13 +363,10 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
     canvas.renderAll();
   }, [hookClearSegments]);
 
-  const handleBlockDragStart = useCallback(
-    (e: React.DragEvent, blockId: string) => {
-      e.dataTransfer.setData('application/quiltcorgi+block-id', blockId);
-      e.dataTransfer.effectAllowed = 'copy';
-    },
-    []
-  );
+  const handleBlockDragStart = useCallback((e: React.DragEvent, blockId: string) => {
+    e.dataTransfer.setData('application/quiltcorgi+block-id', blockId);
+    e.dataTransfer.effectAllowed = 'copy';
+  }, []);
 
   const handleFabricDragStart = useCallback((e: React.DragEvent, fabricId: string) => {
     e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
@@ -371,12 +422,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
   // ── Render: toolbar only ────────────────────────────────────
   if (toolbarOnly) {
     return (
-      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-surface border-r border-outline-variant/15 overflow-y-auto">
+      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-neutral border-r border-neutral-200/15 overflow-y-auto">
         {/* Grid unit slider */}
-        <div className="px-2 pt-3 pb-2 border-b border-outline-variant/15">
+        <div className="px-2 pt-3 pb-2 border-b border-neutral-200/15">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-medium text-secondary">Grid</span>
-            <span className="text-[9px] font-mono text-secondary bg-surface-container py-0.5 px-1 rounded">
+            <span className="text-[10px] font-medium text-neutral-500">Grid</span>
+            <span className="text-[9px] font-mono text-neutral-500 bg-neutral-container py-0.5 px-1 rounded">
               {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
             </span>
           </div>
@@ -402,11 +453,11 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
     return (
       <div
         ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center bg-surface-container/20 overflow-hidden"
+        className="flex-1 flex items-center justify-center bg-neutral-container/20 overflow-hidden"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        <div className="border border-outline-variant/20 bg-white shadow-elevation-1">
+        <div className="border border-neutral-200/20 bg-white shadow">
           <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
         </div>
       </div>
@@ -416,26 +467,28 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
   // ── Render: panel only ────────────────────────────────────
   if (panelOnly) {
     return (
-      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
+      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-neutral border-l border-neutral-200/15 overflow-hidden">
         {/* Tab toggle */}
-        <div className="flex border-b border-outline-variant/15">
+        <div className="flex border-b border-neutral-200/15">
           <button
             type="button"
             onClick={() => setRightTab('blocks')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+              rightTab === 'blocks'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-neutral-500 hover:text-neutral-800'
+            }`}
           >
             My Blocks
           </button>
           <button
             type="button"
             onClick={() => setRightTab('fabrics')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+              rightTab === 'fabrics'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-neutral-500 hover:text-neutral-800'
+            }`}
           >
             Fabrics
           </button>
@@ -454,12 +507,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
         </div>
 
         {/* Block metadata + Save */}
-        <div className="border-t border-outline-variant/15 px-3 py-3 space-y-2">
+        <div className="border-t border-neutral-200/15 px-3 py-3 space-y-2">
           {error && <p className="text-[11px] text-error">{error}</p>}
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">
-              Block Name *
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Block Name
             </label>
             <input
               type="text"
@@ -468,68 +521,53 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
                 setBlockName(e.target.value);
                 setError('');
               }}
-              placeholder="My Custom Block"
+              placeholder="Custom Block 1"
               maxLength={255}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="mb-0.5 block text-[10px] font-medium text-secondary">W (in)</label>
-              <input
-                type="number"
-                min={1}
-                max={48}
-                step={0.5}
-                value={blockWidthIn}
-                onChange={(e) => setBlockWidthIn(parseFloat(e.target.value) || 12)}
-                className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-0.5 block text-[10px] font-medium text-secondary">H (in)</label>
-              <input
-                type="number"
-                min={1}
-                max={48}
-                step={0.5}
-                value={blockHeightIn}
-                onChange={(e) => setBlockHeightIn(parseFloat(e.target.value) || 12)}
-                className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
-              />
-            </div>
+          <div className="flex items-center gap-2 text-[10px] text-neutral-500">
+            <span>Dimensions:</span>
+            <span className="font-mono text-neutral-800/70">
+              {blockWidthIn}″ × {blockHeightIn}″
+            </span>
+            <span className="text-neutral-500/60">(from grid unit)</span>
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">Category</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Category
+            </label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Custom"
               maxLength={100}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">Tags</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Tags <span className="text-neutral-500/50">(optional)</span>
+            </label>
             <input
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="modern, stars"
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
           {/* Overlay controls */}
-          <div className="flex items-center gap-2 pt-1 border-t border-outline-variant/15">
+          <div className="flex items-center gap-2 pt-1 border-t border-neutral-200/15">
             <button
               type="button"
               onClick={() => setShowOverlaySelector(true)}
-              className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-secondary hover:text-on-surface"
+              className="rounded-full bg-neutral px-2.5 py-1 text-[11px] font-medium text-neutral-500 hover:text-neutral-800"
             >
               {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
             </button>
@@ -538,12 +576,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
                 <button
                   type="button"
                   onClick={handleClearOverlay}
-                  className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-error hover:text-red-700"
+                  className="rounded-full bg-neutral px-2.5 py-1 text-[11px] font-medium text-error hover:text-error/80"
                 >
                   Clear
                 </button>
                 {overlayDimensions && (
-                  <span className="text-[10px] text-secondary font-mono">
+                  <span className="text-[10px] text-neutral-500 font-mono">
                     {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
                   </span>
                 )}
@@ -551,7 +589,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             )}
             {activeOverlay && (
               <div className="flex items-center gap-1 ml-auto">
-                <span className="text-[10px] text-secondary">Opacity</span>
+                <span className="text-[10px] text-neutral-500">Opacity</span>
                 <input
                   type="range"
                   min="0.1"
@@ -569,7 +607,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-full bg-on-surface py-2.5 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-1"
+            className="w-full rounded-full bg-primary py-2.5 text-[13px] font-semibold tracking-wide text-white hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-2"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>
@@ -582,12 +620,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
-      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-surface border-r border-outline-variant/15 overflow-y-auto">
+      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-neutral border-r border-neutral-200/15 overflow-y-auto">
         {/* Grid unit slider */}
-        <div className="px-2 pt-3 pb-2 border-b border-outline-variant/15">
+        <div className="px-2 pt-3 pb-2 border-b border-neutral-200/15">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-medium text-secondary">Grid</span>
-            <span className="text-[9px] font-mono text-secondary bg-surface-container py-0.5 px-1 rounded">
+            <span className="text-[10px] font-medium text-neutral-500">Grid</span>
+            <span className="text-[9px] font-mono text-neutral-500 bg-neutral-container py-0.5 px-1 rounded">
               {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
             </span>
           </div>
@@ -609,36 +647,38 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
       {/* ── Center: Canvas (unified styling) ────────────────── */}
       <div
         ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center bg-surface-container/20 overflow-hidden"
+        className="flex-1 flex items-center justify-center bg-neutral-container/20 overflow-hidden"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        <div className="border border-outline-variant/20 bg-white shadow-elevation-1">
+        <div className="border border-neutral-200/20 bg-white shadow">
           <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
         </div>
       </div>
 
       {/* ── Right: Panel (320px, unified) ──────────────────── */}
-      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-surface border-l border-outline-variant/15 overflow-hidden">
+      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-neutral border-l border-neutral-200/15 overflow-hidden">
         {/* Tab toggle */}
-        <div className="flex border-b border-outline-variant/15">
+        <div className="flex border-b border-neutral-200/15">
           <button
             type="button"
             onClick={() => setRightTab('blocks')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'blocks'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+              rightTab === 'blocks'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-neutral-500 hover:text-neutral-800'
+            }`}
           >
             My Blocks
           </button>
           <button
             type="button"
             onClick={() => setRightTab('fabrics')}
-            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightTab === 'fabrics'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-secondary hover:text-on-surface'
-              }`}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+              rightTab === 'fabrics'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-neutral-500 hover:text-neutral-800'
+            }`}
           >
             Fabrics
           </button>
@@ -657,12 +697,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
         </div>
 
         {/* Block metadata + Save */}
-        <div className="border-t border-outline-variant/15 px-3 py-3 space-y-2">
+        <div className="border-t border-neutral-200/15 px-3 py-3 space-y-2">
           {error && <p className="text-[11px] text-error">{error}</p>}
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">
-              Block Name *
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Block Name
             </label>
             <input
               type="text"
@@ -671,68 +711,53 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
                 setBlockName(e.target.value);
                 setError('');
               }}
-              placeholder="My Custom Block"
+              placeholder="Custom Block 1"
               maxLength={255}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="mb-0.5 block text-[10px] font-medium text-secondary">W (in)</label>
-              <input
-                type="number"
-                min={1}
-                max={48}
-                step={0.5}
-                value={blockWidthIn}
-                onChange={(e) => setBlockWidthIn(parseFloat(e.target.value) || 12)}
-                className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-0.5 block text-[10px] font-medium text-secondary">H (in)</label>
-              <input
-                type="number"
-                min={1}
-                max={48}
-                step={0.5}
-                value={blockHeightIn}
-                onChange={(e) => setBlockHeightIn(parseFloat(e.target.value) || 12)}
-                className="w-full font-mono rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
-              />
-            </div>
+          <div className="flex items-center gap-2 text-[10px] text-neutral-500">
+            <span>Dimensions:</span>
+            <span className="font-mono text-neutral-800/70">
+              {blockWidthIn}″ × {blockHeightIn}″
+            </span>
+            <span className="text-neutral-500/60">(from grid unit)</span>
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">Category</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Category
+            </label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Custom"
               maxLength={100}
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-secondary">Tags</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-neutral-500">
+              Tags <span className="text-neutral-500/50">(optional)</span>
+            </label>
             <input
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="modern, stars"
-              className="w-full rounded-sm border border-outline-variant bg-white px-2 py-1 text-xs focus:border-primary focus:outline-none"
+              className="w-full rounded-full border border-neutral-200 bg-neutral px-2 py-1 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
           {/* Overlay controls */}
-          <div className="flex items-center gap-2 pt-1 border-t border-outline-variant/15">
+          <div className="flex items-center gap-2 pt-1 border-t border-neutral-200/15">
             <button
               type="button"
               onClick={() => setShowOverlaySelector(true)}
-              className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-secondary hover:text-on-surface"
+              className="rounded-full bg-neutral px-2.5 py-1 text-[11px] font-medium text-neutral-500 hover:text-neutral-800"
             >
               {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
             </button>
@@ -741,12 +766,12 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
                 <button
                   type="button"
                   onClick={handleClearOverlay}
-                  className="rounded-md bg-background px-2.5 py-1 text-[11px] font-medium text-error hover:text-red-700"
+                  className="rounded-full bg-neutral px-2.5 py-1 text-[11px] font-medium text-error hover:text-error/80"
                 >
                   Clear
                 </button>
                 {overlayDimensions && (
-                  <span className="text-[10px] text-secondary font-mono">
+                  <span className="text-[10px] text-neutral-500 font-mono">
                     {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
                   </span>
                 )}
@@ -754,7 +779,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             )}
             {activeOverlay && (
               <div className="flex items-center gap-1 ml-auto">
-                <span className="text-[10px] text-secondary">Opacity</span>
+                <span className="text-[10px] text-neutral-500">Opacity</span>
                 <input
                   type="range"
                   min="0.1"
@@ -772,7 +797,7 @@ export function BlockBuilderWorktable({ onDone, toolbarOnly, canvasOnly, panelOn
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-full bg-on-surface py-2.5 text-[13px] font-semibold tracking-wide text-surface hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-1"
+            className="w-full rounded-full bg-primary py-2.5 text-[13px] font-semibold tracking-wide text-white hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-elevation-2"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>

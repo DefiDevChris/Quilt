@@ -20,20 +20,14 @@ export function StudioGate() {
         <line x1="8" y1="21" x2="16" y2="21" />
         <line x1="12" y1="17" x2="12" y2="21" />
       </svg>
-      <h1 className="text-xl font-bold text-on-surface mb-3">Your design is waiting</h1>
-      <p className="text-sm text-secondary leading-relaxed max-w-xs mb-8">
+      <h1 className="text-xl font-bold text-neutral-800 mb-3">Your design is waiting</h1>
+      <p className="text-sm text-neutral-500 leading-relaxed max-w-xs mb-8">
         Open Quilt Studio on a desktop to continue editing. The full design studio needs a larger
         screen.
       </p>
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all"
-        style={{
-          background:
-            'linear-gradient(145deg, var(--color-primary-golden), var(--color-primary-golden-light))',
-          color: 'var(--color-primary-on)',
-          boxShadow: 'var(--shadow-golden-glow)',
-        }}
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold transition-all shadow-elevation-1"
       >
         Back to Library
       </Link>

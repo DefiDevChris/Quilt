@@ -103,7 +103,7 @@ function PostCard({
       <Link href={`/blog/${post.slug}`} className="block h-full">
         <article className={`h-full flex flex-col ${layout.mobileH} ${layout.h}`}>
           {/* Image container - shadow intensifies on hover only */}
-          <div className="relative overflow-hidden flex-1 rounded-2xl transition-shadow duration-300 group-hover:shadow-elevation-2 shadow-elevation-1">
+          <div className="relative overflow-hidden flex-1 rounded-full transition-shadow duration-300 group-hover:shadow-elevation-2 shadow-elevation-1">
             <img src={img} alt={post.title} loading="lazy" className="w-full h-full object-cover" />
           </div>
 

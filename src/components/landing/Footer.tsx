@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="bg-surface-container border-t border-outline-variant">
+    <footer className="bg-surface-container border-t border-neutral-200">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
           {/* Brand */}
@@ -24,10 +24,9 @@ export default function Footer() {
                 QuiltCorgi
               </span>
             </div>
-            <p className="text-secondary text-sm leading-relaxed max-w-xs">
+            <p className="text-on-surface/70 text-sm leading-relaxed max-w-xs">
               Design your quilts, calculate your yardage, and print patterns ready for the sewing
-              room. Four worktables, a growing block library, and a community of quilters who get
-              it.
+              room. A growing block library, and a community of quilters who get it.
             </p>
           </div>
 
@@ -39,7 +38,7 @@ export default function Footer() {
             >
               Product
             </h4>
-            <ul className="space-y-3 text-secondary text-sm">
+            <ul className="space-y-3 text-on-surface/70 text-sm">
               <li>
                 <a href="#features" className="hover:text-primary transition-colors">
                   Design Studio
@@ -61,7 +60,7 @@ export default function Footer() {
             >
               Social
             </h4>
-            <ul className="space-y-3 text-secondary text-sm">
+            <ul className="space-y-3 text-on-surface/70 text-sm">
               <li>
                 <Link href="/socialthreads" className="hover:text-primary transition-colors">
                   Gallery
@@ -83,7 +82,7 @@ export default function Footer() {
             >
               Company
             </h4>
-            <ul className="space-y-3 text-secondary text-sm">
+            <ul className="space-y-3 text-on-surface/70 text-sm">
               <li>
                 <Link href="/about" className="hover:text-primary transition-colors">
                   About
@@ -108,9 +107,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-tertiary">&copy; 2026 QuiltCorgi. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-sm text-tertiary">
+        <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-on-surface/50">&copy; 2026 QuiltCorgi. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-on-surface/50">
             <Link href="/privacy" className="hover:text-primary transition-colors">
               Privacy
             </Link>

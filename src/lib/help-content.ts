@@ -76,9 +76,9 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
   {
     id: 'gs-2',
     category: 'getting-started',
-    title: 'What are the four worktables for?',
+    title: 'How do I start a new quilt?',
     content:
-      'Each worktable handles a different part of your quilting workflow. Studio is for full layouts, Block is for drafting individual blocks, Image is for working with fabric photos, and Print is for exporting your finished patterns.',
+      'From the dashboard, click "New Project." Set your quilt dimensions and you\'ll land in the design studio. Use the layout selector to pick a preset (Grid, Sashing, On-Point, Strip, Border + Center) or start free-form.',
   },
   {
     id: 'gs-3',
@@ -107,7 +107,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'design-tools',
     title: 'Can I draw my own custom blocks?',
     content:
-      'Switch to the Block worktable and use BlockBuilder for seam-line block drafting, Freeform for total creative freedom, or Applique for layered shapes.',
+      'Switch to the Block Builder worktable to draft custom blocks using the pencil, rectangle, triangle, and circle tools. Draw seam lines, edit nodes, and save your creation to the library.',
   },
   {
     id: 'dt-5',
@@ -134,9 +134,9 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
   {
     id: 'ex-3',
     category: 'export',
-    title: 'What is foundation paper piecing (FPP)?',
+    title: 'What is included in the PDF export?',
     content:
-      'FPP is a sewing technique that uses paper templates for precise piecing. Quilt Studio generates printable FPP templates with seam allowances and sewing order marked right on them.',
+      'The PDF export generates a complete pattern document with a cover page, fabric requirements, cutting directions, block assembly instructions, quilt diagram, and 1:1 cutting templates with seam allowance.',
   },
   // Account
   {
@@ -144,7 +144,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'account',
     title: 'What do I get with Pro?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Design, FPP template generation, and PDF export.',
+      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Design, PDF export, and server-side project sync.',
   },
   {
     id: 'ac-2',
@@ -258,7 +258,7 @@ export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
     id: 'vt-2',
     title: 'Using Photo-to-Design',
     description:
-      'Turn any photo into a quilt design using our 7-step wizard with OpenCV processing.',
+      'Turn any photo into a quilt design using our 5-step wizard with OpenCV processing.',
     category: 'design-tools',
     duration: '8 min',
     thumbnailUrl: null,
@@ -266,7 +266,7 @@ export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
   {
     id: 'vt-3',
     title: 'Exporting Your Design',
-    description: 'Generate PDFs with cutting charts, yardage estimates, and FPP templates.',
+    description: 'Generate PDFs with cutting charts, yardage estimates, and 1:1 cutting templates.',
     category: 'export',
     duration: '4 min',
     thumbnailUrl: null,
@@ -274,7 +274,7 @@ export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
   {
     id: 'vt-4',
     title: 'Working with the Block Library',
-    description: 'Browse 650+ blocks, create custom blocks, and manage your collection.',
+    description: 'Browse 50 blocks, create custom blocks, and manage your collection.',
     category: 'design-tools',
     duration: '6 min',
     thumbnailUrl: null,

@@ -35,26 +35,6 @@ export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 
 export type WorktableType = 'quilt' | 'block-builder';
 
-/** A single worktable tab with its own isolated layout state. */
-export interface WorktableTab {
-  id: string;
-  name: string;
-  type: WorktableType;
-  layoutSnapshot: {
-    // Snapshot of layoutStore at the time this tab was created
-    layoutType: string;
-    rows: number;
-    cols: number;
-    blockSize: number;
-    sashingWidth: number;
-    hasCornerstones: boolean;
-    borders: unknown[];
-    bindingWidth: number;
-    selectedPresetId: string | null;
-  } | null;
-  createdAt: number;
-}
-
 interface CanvasStoreState {
   fabricCanvas: FabricCanvas | null;
   zoom: number;
@@ -63,8 +43,7 @@ interface CanvasStoreState {
   selectedObjectIds: string[];
   activeTool: ToolType;
   activeWorktable: WorktableType;
-  worktableTabs: WorktableTab[];
-  activeWorktableId: string | null;
+
   cursorPosition: { x: number; y: number };
   isSpacePressed: boolean;
   fillColor: string;
@@ -88,6 +67,12 @@ interface CanvasStoreState {
   referenceImageUrl: string;
   showReferencePanel: boolean;
 
+  /** The currently selected patch sub-object inside a block group, or null. */
+  selectedPatch: unknown | null;
+
+  /** When true, patches are temporarily recolored by shade category. */
+  shadeViewActive: boolean;
+
   setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
@@ -95,10 +80,6 @@ interface CanvasStoreState {
   setSelectedObjectIds: (ids: string[]) => void;
   setActiveTool: (tool: ToolType) => void;
   setActiveWorktable: (worktable: WorktableType) => void;
-  setWorktableTabs: (tabs: WorktableTab[]) => void;
-  setActiveWorktableId: (id: string | null) => void;
-  addWorktableTab: (tab: WorktableTab) => void;
-  removeWorktableTab: (id: string) => void;
   setCursorPosition: (pos: { x: number; y: number }) => void;
   setIsSpacePressed: (pressed: boolean) => void;
   setFillColor: (color: string) => void;
@@ -125,6 +106,9 @@ interface CanvasStoreState {
   setClipboard: (objects: unknown[]) => void;
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
+  setSelectedPatch: (patch: unknown | null) => void;
+  setShadeViewActive: (active: boolean) => void;
+  toggleShadeView: () => void;
   toggleReferencePanel: () => void;
   reset: () => void;
 }
@@ -145,8 +129,7 @@ const INITIAL_STATE = {
   selectedObjectIds: [] as string[],
   activeTool: 'select' as ToolType,
   activeWorktable: 'quilt' as WorktableType,
-  worktableTabs: [] as WorktableTab[],
-  activeWorktableId: null as string | null,
+
   cursorPosition: { x: 0, y: 0 },
   isSpacePressed: false,
   fillColor: DEFAULT_FILL_COLOR,
@@ -169,6 +152,8 @@ const INITIAL_STATE = {
   clipboard: [] as unknown[],
   referenceImageUrl: '',
   showReferencePanel: false,
+  selectedPatch: null as unknown | null,
+  shadeViewActive: false,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -193,28 +178,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     loadToolSettings(tool);
   },
   setActiveWorktable: (worktable) => set({ activeWorktable: worktable }),
-  setWorktableTabs: (tabs) => set({ worktableTabs: tabs }),
-  setActiveWorktableId: (id) => set({ activeWorktableId: id }),
-  addWorktableTab: (tab) =>
-    set((state) => ({
-      worktableTabs: [...state.worktableTabs, tab],
-      activeWorktableId: tab.id,
-    })),
-  removeWorktableTab: (id) =>
-    set((state) => {
-      const remaining = state.worktableTabs.filter((t) => t.id !== id);
-      // If we removed the active tab, switch to the last remaining one
-      const newActiveId =
-        state.activeWorktableId === id
-          ? remaining.length > 0
-            ? remaining[remaining.length - 1].id
-            : null
-          : state.activeWorktableId;
-      return {
-        worktableTabs: remaining,
-        activeWorktableId: newActiveId,
-      };
-    }),
   setCursorPosition: (pos) => set({ cursorPosition: pos }),
   setIsSpacePressed: (pressed) => set({ isSpacePressed: pressed }),
   setFillColor: (color) => set({ fillColor: color }),
@@ -225,8 +188,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     if (json.length > UNDO_SNAPSHOT_SIZE_LIMIT) {
       console.warn(
         `Undo snapshot exceeds size limit (${UNDO_SNAPSHOT_SIZE_LIMIT / 1024 / 1024}MB). ` +
-        `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
-        'Undo disabled for this action. Consider reducing canvas complexity.'
+          `Snapshot size: ${(json.length / 1024 / 1024).toFixed(2)}MB. ` +
+          'Undo disabled for this action. Consider reducing canvas complexity.'
       );
       return false;
     }
@@ -349,6 +312,9 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   },
 
   setClipboard: (clipboard) => set({ clipboard }),
+  setSelectedPatch: (patch) => set({ selectedPatch: patch }),
+  setShadeViewActive: (active) => set({ shadeViewActive: active }),
+  toggleShadeView: () => set((s) => ({ shadeViewActive: !s.shadeViewActive })),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),

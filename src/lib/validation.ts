@@ -100,6 +100,7 @@ export const updateProjectSchema = z.object({
     .optional(),
   thumbnailUrl: assetUrlSchema.optional(),
   isPublic: z.boolean().optional(),
+  activeWorktable: z.enum(['quilt', 'block-builder']).optional(),
   version: z.number().int().min(1).optional(),
 });
 

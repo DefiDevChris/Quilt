@@ -147,6 +147,9 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       fill: a.fill ?? '#000',
       stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
+      __shade: a['data-shade'] ?? 'unknown',
+      __pieceRole: a['data-role'] ?? 'patch',
+      __blockPatchIndex: objects.length,
     });
   }
 
@@ -169,6 +172,9 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       fill: a.fill ?? '#000',
       stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
+      __shade: a['data-shade'] ?? 'unknown',
+      __pieceRole: a['data-role'] ?? 'patch',
+      __blockPatchIndex: objects.length,
     });
   }
 
@@ -183,6 +189,9 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       fill: a.fill === 'none' ? '' : (a.fill ?? '#000'),
       stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
+      __shade: a['data-shade'] ?? 'unknown',
+      __pieceRole: a['data-role'] ?? 'patch',
+      __blockPatchIndex: objects.length,
     });
   }
 
@@ -202,10 +211,13 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       fill: a.fill ?? '#000',
       stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
+      __shade: a['data-shade'] ?? 'unknown',
+      __pieceRole: a['data-role'] ?? 'patch',
+      __blockPatchIndex: objects.length,
     });
   }
 
-  // <line ... />
+  // <line ... /> — structural seam lines, not fillable patches
   const lineRegex = /<line\s+([^>]+?)\/>/g;
   while ((m = lineRegex.exec(svgData)) !== null) {
     const a = parseAttributes(m[1]);
@@ -217,6 +229,8 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       y2: parseFloat(a.y2 ?? '0'),
       stroke: a.stroke ?? '#333',
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
+      __pieceRole: 'seam',
+      __blockPatchIndex: objects.length,
     });
   }
 

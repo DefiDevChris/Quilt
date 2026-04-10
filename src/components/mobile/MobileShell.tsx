@@ -24,19 +24,12 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <header
-        className="sticky top-0 z-40 flex items-center justify-between px-5 py-2"
-        style={{
-          background: 'var(--glass-surface)',
-          backdropFilter: 'blur(var(--glass-blur))',
-          WebkitBackdropFilter: 'blur(var(--glass-blur))',
-        }}
-      >
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-neutral px-5 py-2 bg-neutral">
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
           aria-label="Menu"
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
         >
           <svg
             width="20"

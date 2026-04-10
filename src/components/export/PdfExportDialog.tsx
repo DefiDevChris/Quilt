@@ -172,7 +172,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     >
       {/* Mode selector */}
       <div className="mb-4">
-        <label className="mb-1 block text-xs font-medium text-on-surface">Export Type</label>
+        <label className="mb-1 block text-xs font-medium text-neutral-800">Export Type</label>
         <div className="grid grid-cols-4 gap-2">
           {(Object.keys(MODE_INFO) as ExportMode[]).map((mode) => (
             <button
@@ -180,24 +180,24 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
               type="button"
               onClick={() => setExportMode(mode)}
               className={`rounded-full border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
-                ? 'border-primary bg-gradient-to-r from-primary to-primary-dark text-white'
-                : 'border-outline-variant bg-white text-on-surface hover:bg-background'
+                ? 'border-primary bg-primary text-white'
+                : 'border-neutral-200 bg-white text-neutral-800 hover:bg-neutral'
                 }`}
             >
               {MODE_INFO[mode].label}
             </button>
           ))}
         </div>
-        <p className="mt-1 text-[10px] text-secondary">{MODE_INFO[exportMode].description}</p>
+        <p className="mt-1 text-[10px] text-neutral-500">{MODE_INFO[exportMode].description}</p>
       </div>
 
       {/* Printlist summary — for pattern-pieces and cut-list modes */}
       {needsPrintlist && (
-        <div className="mb-4 rounded-lg border border-outline-variant bg-white p-3">
-          <p className="mb-1 text-xs text-secondary">
+        <div className="mb-4 rounded-full border border-neutral-200 bg-white p-3">
+          <p className="mb-1 text-xs text-neutral-500">
             {items.length} shape{items.length !== 1 ? 's' : ''} in printlist
           </p>
-          <p className="text-xs text-secondary">
+          <p className="text-xs text-neutral-500">
             Total pieces: {items.reduce((sum, i) => sum + i.quantity, 0)}
           </p>
         </div>
@@ -205,11 +205,11 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Paper size */}
       <div className="mb-4">
-        <label className="mb-1 block text-xs font-medium text-on-surface">Paper Size</label>
+        <label className="mb-1 block text-xs font-medium text-neutral-800">Paper Size</label>
         <select
           value={paperSize}
           onChange={(e) => setPaperSize(e.target.value as PaperSize)}
-          className="w-full rounded-sm border border-outline-variant bg-white px-3 py-2 text-sm text-on-surface"
+          className="w-full rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800"
         >
           <option value="letter">US Letter (8.5&quot; x 11&quot;)</option>
           <option value="a4">A4 (210mm x 297mm)</option>
@@ -218,8 +218,8 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Mode-specific options */}
       {exportMode === 'pattern-pieces' && (
-        <div className="mb-4 rounded-lg bg-background p-3">
-          <p className="text-[11px] leading-relaxed text-secondary">
+        <div className="mb-4 rounded-full bg-neutral p-3">
+          <p className="text-[11px] leading-relaxed text-neutral-500">
             Shapes are printed at {printScale.toFixed(1)}x scale. A 1&quot; validation square is
             included on page 1. Print at &quot;Actual Size&quot; or &quot;100%&quot; — do not use
             &quot;Fit to Page&quot;.
@@ -228,8 +228,8 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
       )}
 
       {exportMode === 'cut-list' && (
-        <div className="mb-4 rounded-lg bg-background p-3">
-          <p className="text-[11px] leading-relaxed text-secondary">
+        <div className="mb-4 rounded-full bg-neutral p-3">
+          <p className="text-[11px] leading-relaxed text-neutral-500">
             One page per shape with edge dimensions in{' '}
             {unitSystem === 'imperial' ? 'inches (fractions)' : 'millimeters'}. Includes finished
             piece line, seam allowance, and grain line.
@@ -238,8 +238,8 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
       )}
 
       {exportMode === 'print-project' && (
-        <div className="mb-4 rounded-lg bg-background p-3">
-          <p className="text-[11px] leading-relaxed text-secondary">
+        <div className="mb-4 rounded-full bg-neutral p-3">
+          <p className="text-[11px] leading-relaxed text-neutral-500">
             Generates a complete pattern document: quilt overview image, block diagrams with piece
             labels, and a totals summary table.
           </p>

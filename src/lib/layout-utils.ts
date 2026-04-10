@@ -6,7 +6,7 @@
  * All outputs are in pixels. Callers convert from units using pxPerUnit.
  */
 
-export type LayoutType = 'none' | 'free-form' | 'grid' | 'sashing' | 'on-point';
+export type LayoutType = 'none' | 'free-form' | 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion';
 
 export interface SashingConfig {
   width: number;
@@ -473,7 +473,7 @@ export function getDefaultLayoutConfig(): LayoutConfig {
     blockSize: 6,
     sashing: {
       width: 1,
-      color: '#F5F0E8',
+      color: '#e5d5c5',
       fabricId: null,
     },
     borders: [],
