@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 
 interface ProUpgradeButtonProps {
   /** Extra className for the button element */
   className?: string;
-  /** Visual variant: nav = compact pill, dashboard = gradient-border card, studio = compact pill */
+  /** Visual variant: nav = compact pill, dashboard = card, studio = compact pill */
   variant?: 'nav' | 'dashboard' | 'studio';
 }
 
@@ -24,11 +23,11 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
         <button
           type="button"
           onClick={() => setShowUpgrade(true)}
-          className={`group flex flex-col justify-between border-2 border-on-surface bg-surface p-5 transition-all hover:bg-on-surface hover:text-surface ${className}`}
+          className={`group flex flex-col justify-between border-2 border-[#ff8d49] bg-[#ffffff] p-5 hover:bg-[#ff8d49]/10 transition-colors duration-150 ${className}`}
         >
           <div className="flex flex-col gap-2 text-left">
-            <span className="text-[11px] font-black uppercase tracking-[0.2em]">Studio Pro</span>
-            <p className="text-xs font-bold leading-relaxed opacity-80 decoration-2 underline-offset-4 group-hover:underline">
+            <span className="text-[14px] leading-[20px] text-[#2d2a26]">Studio Pro</span>
+            <p className="text-[14px] leading-[24px] opacity-80 decoration-2 underline-offset-4 group-hover:underline text-[#6b655e]">
               Unlock full library, precise exports, and custom layouts.
             </p>
           </div>
@@ -38,16 +37,16 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
     );
   }
 
-  // Nav and studio variants: text or stark borders
+  // Nav and studio variants: compact pill
   return (
     <>
       <button
         type="button"
         onClick={() => setShowUpgrade(true)}
-        className={`flex items-center border border-on-surface px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-on-surface transition-colors hover:bg-on-surface hover:text-surface ${variant === 'nav' ? 'mr-4' : ''
+        className={`flex items-center border border-[#ff8d49] px-4 py-2 text-[14px] leading-[20px] text-[#ff8d49] hover:bg-[#ff8d49] hover:text-[#ffffff] transition-colors duration-150 rounded-full ${variant === 'nav' ? 'mr-4' : ''
           } ${className}`}
       >
-        Elevate to Pro
+        Go Pro
       </button>
       {showUpgrade && <ProUpgradeModal onClose={() => setShowUpgrade(false)} />}
     </>

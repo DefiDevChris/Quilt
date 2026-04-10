@@ -200,7 +200,7 @@ export function ProfileEditForm() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-neutral-500 text-[11px] font-black uppercase tracking-widest">Signed out</p>
+        <p className="text-[14px] leading-[20px] text-[#6b655e]">Signed out</p>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export function ProfileEditForm() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-on-surface border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 rounded-lg bg-[#ffc8a6] animate-pulse" />
       </div>
     );
   }
@@ -216,7 +216,7 @@ export function ProfileEditForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-16 py-12">
       <div className="space-y-10">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Identity Studio</p>
+        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Your Profile</p>
 
         <AvatarUpload
           avatarPreview={avatarPreview}
@@ -227,17 +227,17 @@ export function ProfileEditForm() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FieldInput
-            label="Display Identity"
+            label="Display Name"
             value={form.displayName}
             maxLength={DISPLAY_NAME_MAX}
             error={fieldErrors.displayName}
             onChange={(v) => updateField('displayName', v)}
             required
-            placeholder="Studio Member"
+            placeholder="Your name"
           />
 
           <FieldInput
-            label="Studio Location"
+            label="Location"
             value={form.location}
             error={fieldErrors.location}
             onChange={(v) => updateField('location', v)}
@@ -247,8 +247,8 @@ export function ProfileEditForm() {
 
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Aesthetic & Vision (Bio)</label>
-            <span className="text-[10px] font-bold text-neutral-500/40">
+            <label className="text-[14px] leading-[20px] text-[#6b655e]">About You</label>
+            <span className="text-[14px] leading-[20px] text-[#6b655e]">
               {form.bio.length}/{BIO_MAX}
             </span>
           </div>
@@ -257,71 +257,71 @@ export function ProfileEditForm() {
             onChange={(e) => updateField('bio', e.target.value)}
             maxLength={BIO_MAX}
             rows={4}
-            className="w-full px-5 py-4 rounded-lg bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all resize-none placeholder:text-neutral-500/50"
-            placeholder="Describe your design principles..."
+            className="w-full px-5 py-4 rounded-lg bg-[#ffffff] border border-[#e8e1da] text-[#2d2a26] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-[#6b655e] transition-colors duration-150"
+            placeholder="Tell the community about your quilting journey..."
           />
-          {fieldErrors.bio && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-2">{fieldErrors.bio}</p>}
+          {fieldErrors.bio && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>}
         </div>
       </div>
 
       <div className="space-y-8">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Gallery Visibility</p>
+        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Visibility</p>
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
-            className={`rounded-lg border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'public'
-              ? 'border-primary bg-primary/5 shadow'
-              : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
+            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'public'
+              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+              : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
               }`}
           >
-            <div className="font-black text-xs uppercase tracking-widest text-neutral-800">Open Studio</div>
-            <div className="mt-1 text-[10px] font-bold text-neutral-500/60 leading-relaxed">
-              Enable community feed, shared projects, and collaborative insights.
+            <div className="text-[16px] leading-[24px] text-[#2d2a26]">Open Studio</div>
+            <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e] leading-relaxed">
+              Share designs with the community and collaborate on ideas.
             </div>
           </button>
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
-            className={`rounded-lg border px-6 py-5 text-left transition-all duration-300 ${form.privacyMode === 'private'
-              ? 'border-primary bg-primary/5 shadow'
-              : 'border-neutral-200/30 bg-white hover:border-neutral-200/60'
+            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'private'
+              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+              : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
               }`}
           >
-            <div className="font-black text-xs uppercase tracking-widest text-neutral-800">Private Workshop</div>
-            <div className="mt-1 text-[10px] font-bold text-neutral-500/60 leading-relaxed">
-              Limit visibility. Focus on solitary design and personal archives.
+            <div className="text-[16px] leading-[24px] text-[#2d2a26]">Private Workshop</div>
+            <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e] leading-relaxed">
+              Keep your designs private. Focus on personal projects.
             </div>
           </button>
         </div>
       </div>
 
       <div className="space-y-8">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Digital Connections</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-neutral-container/30 border border-neutral-200/20 rounded-lg">
+        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Connections</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-[#fdfaf7] border border-[#e8e1da] rounded-lg">
           <FieldInput
-            label="Digital Portfolio (Website)"
+            label="Website"
             value={form.websiteUrl}
             error={fieldErrors.websiteUrl}
             onChange={(v) => updateField('websiteUrl', v)}
             placeholder="https://..."
           />
           <FieldInput
-            label="Instagram Archive"
+            label="Instagram"
             value={form.instagramHandle}
             error={fieldErrors.instagramHandle}
             onChange={(v) => updateField('instagramHandle', v)}
             placeholder="@handle"
           />
           <FieldInput
-            label="Studio Stream (YouTube)"
+            label="YouTube"
             value={form.youtubeHandle}
             error={fieldErrors.youtubeHandle}
             onChange={(v) => updateField('youtubeHandle', v)}
             placeholder="Channel"
           />
           <FieldInput
-            label="Process Feed (TikTok)"
+            label="TikTok"
             value={form.tiktokHandle}
             error={fieldErrors.tiktokHandle}
             onChange={(v) => updateField('tiktokHandle', v)}
@@ -329,11 +329,11 @@ export function ProfileEditForm() {
           />
           <div className="md:col-span-2">
             <FieldInput
-              label="Collaborative Inquiry (Public Email)"
+              label="Public Email"
               value={form.publicEmail}
               error={fieldErrors.publicEmail}
               onChange={(v) => updateField('publicEmail', v)}
-              placeholder="connect@studio.com"
+              placeholder="connect@example.com"
               type="email"
             />
           </div>
@@ -342,13 +342,13 @@ export function ProfileEditForm() {
 
       <div className="flex flex-col gap-4 pt-4">
         {error && (
-          <div className="p-4 rounded-lg bg-error/5 border border-error/20 text-error text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-lg bg-[#ff8d49]/5 border border-[#ff8d49]/20 text-[#ff8d49] text-[14px] leading-[20px] text-center">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="p-4 rounded-lg bg-success/5 border border-success/20 text-success text-[10px] font-black uppercase tracking-widest text-center">
+          <div className="p-4 rounded-lg bg-[#ffc8a6]/10 border border-[#ffc8a6]/30 text-[#6b655e] text-[14px] leading-[20px] text-center">
             {success}
           </div>
         )}
@@ -356,9 +356,9 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-lg bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-elevation-1 active:scale-[0.98]"
+          className="w-full h-14 rounded-full bg-[#ff8d49] text-[#2d2a26] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         >
-          {isSaving ? 'Synchronizing...' : 'Finalize Studio Identity'}
+          {isSaving ? 'Saving...' : 'Save Profile'}
         </button>
       </div>
     </form>
@@ -385,21 +385,21 @@ function AvatarUpload({
   return (
     <div className="flex items-center gap-8 group">
       <label className="relative cursor-pointer">
-        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white shadow-elevation-1 group-hover:shadow-elevation-2 transition-all bg-neutral-container-high relative">
+        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#fdfaf7] relative">
           {avatarPreview ? (
             <img
               src={avatarPreview}
               alt="Avatar preview"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-2xl font-black text-neutral-800 opacity-20 uppercase tracking-tighter">
+              <span className="text-2xl text-[#6b655e] opacity-40">
                 {initials || '?'}
               </span>
             </div>
           )}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="absolute inset-0 bg-[#2d2a26]/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -418,9 +418,9 @@ function AvatarUpload({
         />
       </label>
       <div>
-        <p className="text-xs font-black text-neutral-800 uppercase tracking-widest mb-1.5">Profile Signature</p>
-        <p className="text-[10px] font-bold text-neutral-500/60 uppercase tracking-widest">
-          {isUploading ? 'Uploading Archive...' : 'Click portrait to update visual identity'}
+        <p className="text-[14px] leading-[20px] text-[#2d2a26] mb-1.5">Profile Photo</p>
+        <p className="text-[14px] leading-[20px] text-[#6b655e]">
+          {isUploading ? 'Uploading...' : 'Click to update your photo'}
         </p>
       </div>
     </div>
@@ -448,7 +448,7 @@ function FieldInput({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500">{label}</label>
+      <label className="block text-[14px] leading-[20px] text-[#6b655e]">{label}</label>
       <input
         type={type}
         value={value}
@@ -456,9 +456,9 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3.5 rounded-lg bg-white border border-neutral-200/30 text-neutral-800 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-on-surface/5 focus:border-on-surface/30 transition-all placeholder:text-neutral-500/50"
+        className="w-full px-5 py-3.5 rounded-lg bg-[#ffffff] border border-[#e8e1da] text-[#2d2a26] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#6b655e]"
       />
-      {error && <p className="text-error text-[10px] font-black uppercase tracking-widest mt-1">{error}</p>}
+      {error && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-1">{error}</p>}
     </div>
   );
 }

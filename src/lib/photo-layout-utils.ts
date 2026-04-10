@@ -256,6 +256,7 @@ export async function runDetectionPipeline(
   onProgress: (steps: PipelineStep[]) => void,
   options: RunDetectionPipelineOptions = {}
 ): Promise<PipelineResult> {
+  console.time('[PhotoPipeline] Total');
   const {
     sensitivity = 1.0,
     enableShapeClustering = true,
@@ -316,6 +317,7 @@ export async function runDetectionPipeline(
     advance(0, 'complete');
 
     // Steps 1-4: OpenCV detection in Web Worker
+    console.time('[PhotoPipeline] Worker detection');
     advance(1, 'running');
 
     const workerResult = await detectInWorker(
@@ -342,6 +344,8 @@ export async function runDetectionPipeline(
 
     const pieces = workerResult.pieces;
     const perspectiveApplied = workerResult.perspectiveApplied;
+    console.timeEnd('[PhotoPipeline] Worker detection');
+    console.log('[PhotoPipeline] Worker returned', pieces.length, 'pieces');
 
     advance(1, 'complete');
     advance(2, 'complete');
@@ -400,6 +404,15 @@ export async function runDetectionPipeline(
 
     advance(5, 'complete');
 
+    console.log(
+      '[PhotoPipeline] Final: ',
+      cleanPieces.length,
+      'clean pieces,',
+      scaledPieces.length,
+      'scaled pieces'
+    );
+    console.timeEnd('[PhotoPipeline] Total');
+
     // Build downscale info
     const downscaleInfo: DownscaleInfo = {
       scaled: downscaleParams?.scaled ?? false,
@@ -423,6 +436,7 @@ export async function runDetectionPipeline(
       scaledPieces,
     };
   } catch (error) {
+    console.error('[PhotoPipeline] Pipeline failed:', error);
     const runningIndex = steps.findIndex((s) => s.status === 'running');
     if (runningIndex >= 0) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

@@ -38,18 +38,23 @@ function getWorker(): Worker {
 export function initOpenCvWorker(): Promise<void> {
   if (initPromise) return initPromise;
 
+  console.log('[OpenCVLoader] Initializing worker...');
+
   initPromise = new Promise<void>((resolve, reject) => {
     const w = getWorker();
 
     const onMessage = (e: MessageEvent) => {
+      console.log('[OpenCVLoader] Worker message:', e.data.type, e.data.message || '');
       if (e.data.type === 'ready') {
         w.removeEventListener('message', onMessage);
         w.removeEventListener('error', onError);
+        console.log('[OpenCVLoader] Worker ready');
         resolve();
       } else if (e.data.type === 'error') {
         w.removeEventListener('message', onMessage);
         w.removeEventListener('error', onError);
         initPromise = null;
+        console.error('[OpenCVLoader] Worker error:', e.data.message);
         reject(new Error(e.data.message));
       }
     };
@@ -58,11 +63,13 @@ export function initOpenCvWorker(): Promise<void> {
       w.removeEventListener('message', onMessage);
       w.removeEventListener('error', onError);
       initPromise = null;
+      console.error('[OpenCVLoader] Worker crashed:', e.message);
       reject(new Error(`Worker error: ${e.message}`));
     };
 
     w.addEventListener('message', onMessage);
     w.addEventListener('error', onError);
+    console.log('[OpenCVLoader] Sending init message to worker');
     w.postMessage({ type: 'init' });
   });
 
@@ -95,17 +102,37 @@ export async function detectInWorker(
   const id = ++messageId;
 
   return new Promise<WorkerDetectionResult>((resolve, reject) => {
+    // 60-second timeout so a stuck worker surfaces instead of hanging silently
+    const timeoutHandle = setTimeout(() => {
+      w.removeEventListener('message', onMessage);
+      w.removeEventListener('error', onError);
+      console.error('[OpenCVLoader] Detection timed out after 60s');
+      reject(new Error('Detection timed out after 60s — worker may have hung'));
+    }, 60_000);
+
+    const cleanup = () => {
+      clearTimeout(timeoutHandle);
+      w.removeEventListener('message', onMessage);
+      w.removeEventListener('error', onError);
+    };
+
     const onMessage = (e: MessageEvent) => {
       const msg = e.data;
 
-      if (msg.type === 'progress' && onProgress) {
-        onProgress(msg.step, msg.status, msg.message);
+      if (msg.type === 'progress') {
+        console.log('[OpenCVLoader] progress', msg.step, msg.status, msg.message);
+        if (onProgress) onProgress(msg.step, msg.status, msg.message);
         return;
       }
 
       if (msg.type === 'result') {
-        w.removeEventListener('message', onMessage);
-        w.removeEventListener('error', onError);
+        console.log(
+          '[OpenCVLoader] RESULT received — pieces:',
+          Array.isArray(msg.pieces) ? msg.pieces.length : '(not array)',
+          'perspectiveApplied:',
+          msg.perspectiveApplied
+        );
+        cleanup();
         resolve({
           pieces: msg.pieces,
           perspectiveApplied: msg.perspectiveApplied,
@@ -114,16 +141,18 @@ export async function detectInWorker(
       }
 
       if (msg.type === 'error') {
-        w.removeEventListener('message', onMessage);
-        w.removeEventListener('error', onError);
+        console.error('[OpenCVLoader] Worker error message:', msg.message);
+        cleanup();
         reject(new Error(msg.message));
         return;
       }
+
+      console.warn('[OpenCVLoader] Unhandled worker message type:', msg.type, msg);
     };
 
     const onError = (e: ErrorEvent) => {
-      w.removeEventListener('message', onMessage);
-      w.removeEventListener('error', onError);
+      console.error('[OpenCVLoader] Worker crashed:', e.message, e.filename, e.lineno);
+      cleanup();
       // Worker crashed (OOM, etc.) — reset so next call spawns a fresh one
       worker = null;
       initPromise = null;
@@ -135,6 +164,14 @@ export async function detectInWorker(
 
     // Transfer the underlying ArrayBuffer (zero-copy to worker)
     const buffer = imageData.data.buffer.slice(0);
+    console.log(
+      '[OpenCVLoader] Sending detect message — buffer bytes:',
+      buffer.byteLength,
+      'dims:',
+      imageData.width,
+      'x',
+      imageData.height
+    );
     w.postMessage(
       {
         type: 'detect',

@@ -86,21 +86,21 @@ export function BillingSection() {
   return (
     <div id="billing" className="space-y-12 py-8">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Studio Access</p>
-        <h2 className="text-xl font-black text-on-surface uppercase tracking-tight">Licensing & Plans</h2>
+        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-2">Studio Access</p>
+        <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Licensing & Plans</h2>
       </div>
 
       {successMessage && (
-        <div className="rounded-lg border border-success/30 bg-success/5 p-5 animate-in fade-in slide-in-from-top-2">
-          <p className="text-sm font-semibold text-success">{successMessage}</p>
+        <div className="rounded-lg border border-[#ffc8a6]/30 bg-[#ffc8a6]/10 p-5">
+          <p className="text-[16px] leading-[24px] text-[#2d2a26]">{successMessage}</p>
         </div>
       )}
 
       {isPastDue && (
-        <div className="rounded-lg border border-error/30 bg-error/5 p-6 space-y-4">
+        <div className="rounded-lg border border-[#ff8d49]/30 bg-[#ff8d49]/5 p-6 space-y-4">
           <div>
-            <h3 className="text-sm font-semibold text-error mb-1">Payment Failed</h3>
-            <p className="text-sm text-neutral-700 leading-relaxed">
+            <h3 className="text-[16px] leading-[24px] text-[#ff8d49] mb-1">Payment Failed</h3>
+            <p className="text-[16px] leading-[24px] text-[#6b655e]">
               Your last payment was unsuccessful. Please update your payment method within 7 days to maintain Pro status.
             </p>
           </div>
@@ -108,7 +108,7 @@ export function BillingSection() {
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="rounded-lg bg-error text-white px-6 py-2.5 text-sm font-semibold hover:bg-error/90 transition-all disabled:opacity-50"
+            className="rounded-full bg-[#ff8d49] text-[#2d2a26] px-6 py-2.5 text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50"
           >
             {isPortalLoading ? 'Updating...' : 'Update Payment Method'}
           </button>
@@ -116,18 +116,18 @@ export function BillingSection() {
       )}
 
       {/* Current plan status */}
-      <div className="rounded-lg border border-neutral-200 bg-neutral p-8 space-y-6 shadow-elevation-1">
+      <div className="rounded-lg border border-[#e8e1da] bg-[#fdfaf7] p-8 space-y-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-neutral-600">Current Membership</p>
+            <p className="text-[14px] leading-[20px] text-[#6b655e]">Current Membership</p>
             <div className="flex items-center gap-3">
-              <span className={`text-2xl font-semibold ${isPro ? 'text-primary' : 'text-neutral-900'}`}>
+              <span className={`text-[24px] leading-[32px] ${isPro ? 'text-[#ff8d49]' : 'text-[#2d2a26]'}`}>
                 {isPro ? 'Pro Member' : 'Free Member'}
               </span>
               {isLoading ? (
-                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 rounded-lg bg-[#ffc8a6] animate-pulse" />
               ) : (
-                <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-success animate-pulse' : 'bg-neutral-400'}`} />
+                <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-[#ff8d49] animate-pulse' : 'bg-[#6b655e]'}`} />
               )}
             </div>
           </div>
@@ -137,7 +137,7 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-lg border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-all"
+              className="rounded-full border border-[#e8e1da] px-6 py-3 text-[16px] leading-[24px] text-[#2d2a26] hover:bg-[#ff8d49]/10 transition-colors duration-150"
             >
               {isPortalLoading ? 'Opening...' : 'Manage Subscription'}
             </button>
@@ -145,12 +145,12 @@ export function BillingSection() {
         </div>
 
         {isPro && subscription && (
-          <div className="pt-6 border-t border-neutral-200 flex items-center justify-between">
+          <div className="pt-6 border-t border-[#e8e1da] flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs text-neutral-600">
+              <p className="text-[14px] leading-[20px] text-[#6b655e]">
                 {isCanceling ? 'Access Expiration' : 'Next Billing Cycle'}
               </p>
-              <p className="text-sm font-semibold text-neutral-900">
+              <p className="text-[16px] leading-[24px] text-[#2d2a26]">
                 {new Date(subscription.currentPeriodEnd ?? '').toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -158,7 +158,7 @@ export function BillingSection() {
                 })}
               </p>
             </div>
-            <div className={`px-3 py-1 rounded-lg text-xs font-medium ${subscription.status === 'active' ? 'bg-success/10 text-success' : 'bg-neutral-100 text-neutral-600'
+            <div className={`px-3 py-1 rounded-full text-[14px] leading-[20px] ${subscription.status === 'active' ? 'bg-[#ffc8a6]/20 text-[#ff8d49]' : 'bg-[#fdfaf7] text-[#6b655e]'
               }`}>
               {subscription.status}
             </div>
@@ -168,26 +168,25 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-lg bg-neutral-900 text-neutral p-10 space-y-8 shadow-elevation-4 relative overflow-hidden">
-          {/* Subtle accent line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+        <div className="rounded-lg bg-[#2d2a26] text-[#ffffff] p-10 space-y-8 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#ff8d49]" />
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
             <div className="space-y-4">
-              <p className="text-xs font-semibold tracking-wide text-primary">Upgrade to Pro</p>
-              <h3 className="text-4xl font-bold leading-tight">Unlock the Full Studio.</h3>
-              <p className="text-sm text-neutral-300 max-w-sm leading-relaxed">
+              <p className="text-[14px] leading-[20px] text-[#ff8d49]">Upgrade to Pro</p>
+              <h3 className="text-[32px] leading-[40px] text-[#ffffff]">Unlock the Full Studio.</h3>
+              <p className="text-[16px] leading-[24px] text-[#6b655e] max-w-sm">
                 Unlock professional-grade exports, unlimited projects, and the complete material library.
               </p>
             </div>
 
             <div className="text-right space-y-4">
               {/* Billing toggle */}
-              <div className="flex items-center gap-1 bg-neutral-800 rounded-lg p-1 w-fit ml-auto border border-neutral-700">
+              <div className="flex items-center gap-1 bg-[#2d2a26] border border-[#e8e1da] rounded-full p-1 w-fit ml-auto">
                 <button
                   type="button"
                   onClick={() => setBillingInterval('monthly')}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${billingInterval === 'monthly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'monthly' ? 'bg-[#ff8d49] text-[#2d2a26]' : 'text-[#6b655e] hover:text-[#ffffff]'
                     }`}
                 >
                   Monthly
@@ -195,25 +194,25 @@ export function BillingSection() {
                 <button
                   type="button"
                   onClick={() => setBillingInterval('yearly')}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${billingInterval === 'yearly' ? 'bg-neutral text-neutral-900' : 'text-neutral-400 hover:text-neutral'
+                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'yearly' ? 'bg-[#ff8d49] text-[#2d2a26]' : 'text-[#6b655e] hover:text-[#ffffff]'
                     }`}
                 >
                   Yearly
-                  <span className="ml-2 text-[10px] text-primary">-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
+                  <span className="ml-2 text-[14px] leading-[20px] text-[#ff8d49]">-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
                 </button>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-end justify-end gap-1">
-                  <span className="text-4xl font-bold">
+                  <span className="text-[40px] leading-[52px] text-[#ffffff]">
                     ${billingInterval === 'monthly' ? PRO_PRICE_MONTHLY : PRO_PRICE_YEARLY}
                   </span>
-                  <span className="text-xs text-neutral-400 mb-2">
+                  <span className="text-[14px] leading-[20px] text-[#6b655e] mb-2">
                     /{billingInterval === 'monthly' ? 'mo' : 'yr'}
                   </span>
                 </div>
                 {billingInterval === 'yearly' && (
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-[14px] leading-[20px] text-[#6b655e]">
                     ${(PRO_PRICE_YEARLY / 12).toFixed(2)} / month billed annually
                   </p>
                 )}
@@ -225,7 +224,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="w-full h-16 rounded-lg bg-primary text-neutral-900 font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50 shadow-elevation-2 active:scale-[0.98] relative z-10"
+            className="w-full h-16 rounded-full bg-[#ff8d49] text-[#2d2a26] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative z-10"
           >
             {isCheckoutLoading ? 'Processing...' : 'Upgrade to Pro'}
           </button>
@@ -236,19 +235,19 @@ export function BillingSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8">
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <p className="text-xs font-medium text-neutral-500">Free Plan</p>
-            <h4 className="text-sm font-semibold text-neutral-900">Standard Access</h4>
+            <p className="text-[14px] leading-[20px] text-[#6b655e]">Free Plan</p>
+            <h4 className="text-[16px] leading-[24px] text-[#2d2a26]">Standard Access</h4>
           </div>
           <ul className="space-y-4">
             {[
               'Design Studio with core tools',
               '20 essential layout blocks',
               '10 curated fabric swatches',
-              'Community feed access',
+              'Community thread access',
               'Local project storage'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-neutral-700">
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
+              <li key={item} className="flex items-center gap-3 text-[16px] leading-[24px] text-[#6b655e]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#6b655e]" />
                 {item}
               </li>
             ))}
@@ -257,8 +256,9 @@ export function BillingSection() {
               'High-resolution exports',
               'Full 2,700+ fabric library'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-neutral-400 line-through">
-                {item}
+              <li key={item} className="flex items-center gap-3 text-[16px] leading-[24px] text-[#6b655e] opacity-40">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#6b655e] opacity-40" />
+                <span className="line-through">{item}</span>
               </li>
             ))}
           </ul>
@@ -266,11 +266,11 @@ export function BillingSection() {
 
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <p className="text-xs font-medium text-primary">Pro Plan</p>
-            <h4 className="text-sm font-semibold text-primary">Pro Collective</h4>
+            <p className="text-[14px] leading-[20px] text-[#ff8d49]">Pro Plan</p>
+            <h4 className="text-[16px] leading-[24px] text-[#ff8d49]">Pro Collective</h4>
           </div>
           <ul className="space-y-4">
-            <li className="text-sm font-semibold text-neutral-900">Everything in Free, plus:</li>
+            <li className="text-[16px] leading-[24px] text-[#2d2a26]">Everything in Free, plus:</li>
             {[
               'Unlimited project storage',
               'Complete 50-block library + custom blocks',
@@ -280,8 +280,8 @@ export function BillingSection() {
               'Print-ready 1:1 scale PDF patterns',
               'Server-side project sync'
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm font-medium text-neutral-900">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <li key={item} className="flex items-center gap-3 text-[16px] leading-[24px] text-[#2d2a26]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]" />
                 {item}
               </li>
             ))}

@@ -39,8 +39,6 @@ function findEvenBlockSizes(
     actualHeight: number;
   }> = [];
 
-  // For block overlays, target common finished sizes
-  // For pattern overlays, calculate based on pattern dimensions
   const targetSizes = [6, 8, 9, 10, 12, 14, 16, 18, 20, 24, 30, 36];
 
   for (const blockSize of targetSizes) {
@@ -50,7 +48,6 @@ function findEvenBlockSizes(
     const actualWidth = cols * blockSize;
     const actualHeight = rows * blockSize;
 
-    // Only include if it's within 20% of target
     const widthRatio = actualWidth / width;
     const heightRatio = actualHeight / height;
     if (widthRatio <= 1.2 && heightRatio <= 1.2) {
@@ -86,7 +83,6 @@ function calculateRecommendations(pattern: LayoutOverlay): Array<{
   }> = [];
   const aspectRatio = pattern.dimensions.width / pattern.dimensions.height;
 
-  // Common block sizes
   const blockSizes = [6, 8, 9, 10, 12, 14, 16, 18, 20, 24];
 
   for (const bs of blockSizes) {
@@ -94,7 +90,6 @@ function calculateRecommendations(pattern: LayoutOverlay): Array<{
     const rows = Math.ceil(pattern.dimensions.height / bs);
     const width = cols * bs;
 
-    // Maintain aspect ratio - adjust height to match width's aspect
     const adjustedHeight = Math.round(width / aspectRatio);
     const adjustedRows = Math.ceil(adjustedHeight / bs);
     const finalHeight = adjustedRows * bs;
@@ -163,20 +158,20 @@ export function RecommendedDimensionsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-on-surface/80">
-      <div className="flex w-[600px] max-h-[85vh] flex-col border-2 border-on-surface bg-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#2d2a26]/60">
+      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-on-surface bg-on-surface p-4 text-surface">
+        <div className="flex items-center justify-between border-b border-[#e8e1da] p-4">
           <div>
-            <h2 className="text-[14px] font-black uppercase tracking-[0.2em]">Recommended Dimensions</h2>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-surface/80 mt-1">
+            <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Recommended Dimensions</h2>
+            <p className="text-[14px] leading-[20px] text-[#6b655e] mt-1">
               Maintains exact aspect ratio
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="transition-transform hover:scale-110"
+            className="p-2 rounded-lg hover:bg-[#ff8d49]/10 transition-colors duration-150"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -192,18 +187,18 @@ export function RecommendedDimensionsModal({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Pattern info */}
           {selectedPattern && (
-            <div className="border-2 border-on-surface bg-on-surface/5 p-4 flex flex-col gap-2">
-              <div className="flex items-center justify-between outline-none">
-                <span className="text-[12px] font-black uppercase tracking-[0.1em] text-on-surface">
+            <div className="border border-[#e8e1da] bg-[#fdfaf7] p-4 flex flex-col gap-2 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-[16px] leading-[24px] text-[#2d2a26]">
                   {selectedPattern.displayName}
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface">
+                <span className="text-[14px] leading-[20px] text-[#6b655e]">
                   Original: {selectedPattern.dimensions.width}&quot; &times; {selectedPattern.dimensions.height}&quot;
                 </span>
               </div>
               {selectedPattern.blockLayout && (
-                <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface/70">
-                  Layout: {selectedPattern.blockLayout.cols} × {selectedPattern.blockLayout.rows} blocks
+                <span className="text-[14px] leading-[20px] text-[#6b655e]">
+                  Layout: {selectedPattern.blockLayout.cols} &times; {selectedPattern.blockLayout.rows} blocks
                 </span>
               )}
             </div>
@@ -217,21 +212,21 @@ export function RecommendedDimensionsModal({
                   key={rec.label}
                   type="button"
                   onClick={() => onSelect(rec.width, rec.height)}
-                  className={`group flex flex-col items-start border-2 border-on-surface p-4 text-left transition-all hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${rec.isClosest
-                    ? 'bg-on-surface text-surface'
-                    : 'bg-surface text-on-surface'
+                  className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${rec.isClosest
+                    ? 'border-[#ff8d49] bg-[#ff8d49]/5'
+                    : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
                     }`}
                 >
-                  <span className={`text-[12px] font-black uppercase tracking-[0.1em] ${rec.isClosest ? 'text-surface' : 'text-on-surface'}`}>
+                  <span className="text-[16px] leading-[24px] text-[#2d2a26]">
                     {rec.label}
                   </span>
-                  <div className={`mt-2 text-[11px] font-bold uppercase tracking-wider ${rec.isClosest ? 'text-surface/90' : 'text-on-surface'}`}>
+                  <div className="mt-2 text-[16px] leading-[24px] text-[#2d2a26]">
                     {rec.width}&quot; &times; {rec.height}&quot;
                   </div>
-                  <div className={`mt-1 text-[10px] font-bold uppercase tracking-wider ${rec.isClosest ? 'text-surface/70' : 'text-on-surface/60'}`}>
-                    {rec.cols} × {rec.rows} = {rec.total} blocks
+                  <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e]">
+                    {rec.cols} &times; {rec.rows} = {rec.total} blocks
                   </div>
-                  <div className={`mt-1 text-[10px] font-bold uppercase tracking-wider ${rec.isClosest ? 'text-surface/70' : 'text-on-surface/60'}`}>
+                  <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e]">
                     Each: {rec.blockSize}&quot; &times; {rec.blockSize}&quot;
                   </div>
                 </button>
@@ -240,11 +235,11 @@ export function RecommendedDimensionsModal({
           </div>
 
           {/* Custom dimensions */}
-          <div className="border-t-2 border-on-surface pt-6">
-            <h3 className="text-[12px] font-black uppercase tracking-[0.1em] text-on-surface mb-3">Custom Dimensions</h3>
+          <div className="border-t border-[#e8e1da] pt-6">
+            <h3 className="text-[18px] leading-[28px] text-[#2d2a26] mb-3">Custom Dimensions</h3>
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface mb-2">Width (in)</label>
+                <label className="block text-[14px] leading-[20px] text-[#6b655e] mb-2">Width (in)</label>
                 <input
                   type="number"
                   value={customWidth}
@@ -259,17 +254,17 @@ export function RecommendedDimensionsModal({
                       }
                     }
                   }}
-                  placeholder="WIDTH"
+                  placeholder="Width"
                   min="6"
                   max="200"
-                  className="w-full border-2 border-on-surface bg-surface p-3 text-[12px] font-black uppercase tracking-[0.1em] focus:outline-none"
+                  className="w-full border border-[#e8e1da] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#6b655e]"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
-                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border-2 border-on-surface transition-colors ${lockAspect ? 'bg-on-surface text-surface' : 'bg-surface text-on-surface'
+                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]' : 'bg-[#ffffff] text-[#6b655e] border-[#e8e1da]'
                   }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
@@ -289,7 +284,7 @@ export function RecommendedDimensionsModal({
               </button>
 
               <div className="flex-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface mb-2">Height (in)</label>
+                <label className="block text-[14px] leading-[20px] text-[#6b655e] mb-2">Height (in)</label>
                 <input
                   type="number"
                   value={customHeight}
@@ -304,10 +299,10 @@ export function RecommendedDimensionsModal({
                       }
                     }
                   }}
-                  placeholder="HEIGHT"
+                  placeholder="Height"
                   min="6"
                   max="200"
-                  className="w-full border-2 border-on-surface bg-surface p-3 text-[12px] font-black uppercase tracking-[0.1em] focus:outline-none"
+                  className="w-full border border-[#e8e1da] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#6b655e]"
                 />
               </div>
 
@@ -315,7 +310,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="h-[42px] border-2 border-on-surface bg-on-surface px-6 text-[11px] font-black uppercase tracking-[0.2em] text-surface transition-all hover:opacity-90 disabled:opacity-50"
+                className="h-[42px] border border-[#e8e1da] bg-[#ff8d49] text-[#2d2a26] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 Apply
               </button>

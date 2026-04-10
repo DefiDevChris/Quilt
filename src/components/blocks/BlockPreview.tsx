@@ -57,37 +57,37 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40"
       onClick={onClose}
     >
       <div
-        className="relative w-80 rounded-full bg-neutral p-6 shadow-elevation-2"
+        className="relative w-80 rounded-lg bg-[#ffffff] border border-[#e8e1da] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 text-neutral-500 hover:text-neutral-800"
+          className="absolute right-3 top-3 text-[#6b655e] hover:text-[#2d2a26] transition-colors duration-150"
         >
           ✕
         </button>
 
-        <h3 className="mb-3 text-lg font-semibold text-neutral-800">{block.name}</h3>
+        <h3 className="mb-3 text-[18px] leading-[28px] text-[#2d2a26]">{block.name}</h3>
 
-        <div className="mb-4 flex items-center justify-center rounded-full border border-neutral-200 bg-neutral p-4">
+        <div className="mb-4 flex items-center justify-center rounded-lg border border-[#e8e1da] bg-[#fdfaf7] p-4">
           {loading ? (
             <div className="h-40 w-40 flex items-center justify-center">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="h-6 w-6 rounded-lg bg-[#ffc8a6] animate-pulse" />
             </div>
           ) : block.isLocked ? (
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <span className="mb-2 text-3xl">🔒</span>
-              <p className="text-sm text-neutral-500">Upgrade to Pro to use this block</p>
+              <p className="text-[14px] leading-[20px] text-[#6b655e]">Upgrade to Pro to use this block</p>
               <button
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="mt-3 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="mt-3 rounded-full bg-[#ff8d49] text-[#2d2a26] px-4 py-1.5 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>
@@ -98,23 +98,23 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
               dangerouslySetInnerHTML={{ __html: sanitizeSvg(fullBlock.svgData) }}
             />
           ) : error ? (
-            <p className="text-sm text-error">{error}</p>
+            <p className="text-[14px] leading-[20px] text-[#ff8d49]">{error}</p>
           ) : (
-            <div className="flex h-40 w-40 items-center justify-center text-4xl text-neutral-500">
+            <div className="flex h-40 w-40 items-center justify-center text-[32px] leading-[40px] text-[#6b655e]">
               ◇
             </div>
           )}
         </div>
 
-        <div className="space-y-1.5 text-sm">
+        <div className="space-y-1.5 text-[14px] leading-[20px]">
           <div className="flex justify-between">
-            <span className="text-neutral-500">Category</span>
-            <span className="text-neutral-800">{block.category}</span>
+            <span className="text-[#6b655e]">Category</span>
+            <span className="text-[#2d2a26]">{block.category}</span>
           </div>
           {block.subcategory && (
             <div className="flex justify-between">
-              <span className="text-neutral-500">Subcategory</span>
-              <span className="text-neutral-800">{block.subcategory}</span>
+              <span className="text-[#6b655e]">Subcategory</span>
+              <span className="text-[#2d2a26]">{block.subcategory}</span>
             </div>
           )}
         </div>

@@ -17,13 +17,13 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
 
   return (
     <div
-      className={`group relative flex flex-col items-center rounded-full border p-2 transition-all ${block.isLocked
-          ? 'opacity-70 border-neutral-200 bg-neutral'
+      className={`group relative flex flex-col items-center rounded-lg border p-2 transition-colors duration-150 ${block.isLocked
+          ? 'opacity-70 border-[#e8e1da] bg-[#fdfaf7]'
           : isSelected
-            ? 'border-primary bg-primary/10 ring-2 ring-primary/30 cursor-pointer'
+            ? 'border-[#ff8d49] bg-[#ff8d49]/10 ring-2 ring-[#ff8d49]/30 cursor-pointer'
             : isDragging
-              ? 'opacity-50 scale-95 border-primary bg-primary/5'
-              : 'border-neutral-200 bg-neutral cursor-grab active:cursor-grabbing hover:shadow'
+              ? 'opacity-50 border-[#ff8d49] bg-[#ff8d49]/5'
+              : 'border-[#e8e1da] bg-[#fdfaf7] cursor-grab active:cursor-grabbing hover:border-[#ff8d49]/50'
         }`}
       draggable={!block.isLocked}
       onDragStart={(e) => {
@@ -45,9 +45,8 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
       }}
     >
       {/* Block thumbnail */}
-      <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded bg-neutral">
+      <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-[#fdfaf7]">
         {block.svgData ? (
-          // SVG blocks (system + custom) — always render actual SVG data
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(block.svgData)}`}
@@ -73,13 +72,13 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
             className="h-full w-full object-contain"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-2xl text-neutral-500">
+          <div className="flex h-full w-full items-center justify-center text-2xl text-[#6b655e]">
             ◇
           </div>
         )}
 
         {block.isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center bg-neutral/80">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#fdfaf7]/80">
             <span className="text-lg" title="Pro required">
               🔒
             </span>
@@ -87,7 +86,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
         )}
       </div>
 
-      <span className="mt-1 text-center text-caption leading-tight text-neutral-500 line-clamp-2">
+      <span className="mt-1 text-center text-[14px] leading-[20px] text-[#6b655e] line-clamp-2">
         {block.name}
       </span>
     </div>
