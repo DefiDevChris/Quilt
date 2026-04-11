@@ -78,16 +78,16 @@ export function LayoutAdjuster() {
   if (!state.hasLayout) return null;
 
   return (
-    <div className="border-t border-[#e8e1da] px-3 py-2">
-      <h3 className="text-[12px] leading-[16px] font-medium text-[#6b655e] uppercase tracking-wider mb-2">
+    <div className="border-t border-neutral-200 px-3 py-2">
+      <h3 className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">
         Layout Fill
       </h3>
 
       <div className="space-y-2">
         <div>
-          <label className="flex items-center justify-between text-[12px] leading-[16px] text-[#6b655e]">
+          <label className="flex items-center justify-between text-xs text-neutral-500">
             <span>Scale X</span>
-            <span className="text-[12px] leading-[16px] text-[#6b655e] font-mono">{state.scaleX.toFixed(2)}</span>
+            <span className="text-xs text-neutral-500 font-mono">{state.scaleX.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -100,9 +100,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-[12px] leading-[16px] text-[#6b655e]">
+          <label className="flex items-center justify-between text-xs text-neutral-500">
             <span>Scale Y</span>
-            <span className="text-[12px] leading-[16px] text-[#6b655e] font-mono">{state.scaleY.toFixed(2)}</span>
+            <span className="text-xs text-neutral-500 font-mono">{state.scaleY.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -115,9 +115,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-[12px] leading-[16px] text-[#6b655e]">
+          <label className="flex items-center justify-between text-xs text-neutral-500">
             <span>Rotation</span>
-            <span className="text-[12px] leading-[16px] text-[#6b655e] font-mono">
+            <span className="text-xs text-neutral-500 font-mono">
               {Math.round(state.rotation)}°
             </span>
           </label>
@@ -132,9 +132,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-[12px] leading-[16px] text-[#6b655e]">
+          <label className="flex items-center justify-between text-xs text-neutral-500">
             <span>Offset X</span>
-            <span className="text-[12px] leading-[16px] text-[#6b655e] font-mono">
+            <span className="text-xs text-neutral-500 font-mono">
               {Math.round(state.offsetX)}px
             </span>
           </label>
@@ -149,9 +149,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-[12px] leading-[16px] text-[#6b655e]">
+          <label className="flex items-center justify-between text-xs text-neutral-500">
             <span>Offset Y</span>
-            <span className="text-[12px] leading-[16px] text-[#6b655e] font-mono">
+            <span className="text-xs text-neutral-500 font-mono">
               {Math.round(state.offsetY)}px
             </span>
           </label>
@@ -171,7 +171,7 @@ export function LayoutAdjuster() {
             setState(DEFAULT_STATE);
             updatePatternTransform(1, 1, 0, 0, 0);
           }}
-          className="w-full rounded-lg bg-[#fdfaf7] px-2 py-1 text-[12px] leading-[16px] text-[#6b655e] hover:bg-[#e8e1da]"
+          className="w-full rounded-lg bg-neutral px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-200"
         >
           Reset Pattern Transform
         </button>
