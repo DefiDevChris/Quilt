@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -41,10 +42,11 @@ function ReferenceImageToggle() {
       <button
         type="button"
         onClick={toggleReferencePanel}
-        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${showReferencePanel
-          ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-          : 'text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100'
-          }`}
+        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+          showReferencePanel
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+            : 'text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100'
+        }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
         aria-pressed={showReferencePanel}
       >
@@ -95,6 +97,7 @@ export function StudioTopBar({
   onOpenHistory,
   onSave,
 }: StudioTopBarProps) {
+  const router = useRouter();
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
@@ -104,6 +107,13 @@ export function StudioTopBar({
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
+
+  const handleBackToDashboard = () => {
+    if (isDirty && onSave) {
+      onSave();
+    }
+    router.push('/dashboard');
+  };
 
   useEffect(() => {
     function handleSaveSuccess() {
@@ -138,6 +148,28 @@ export function StudioTopBar({
               </svg>
             </button>
           </TooltipHint>
+          <TooltipHint
+            name="Back to Dashboard"
+            description={isDirty ? 'Save and return to dashboard' : 'Return to dashboard'}
+          >
+            <button
+              type="button"
+              onClick={handleBackToDashboard}
+              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] text-neutral-800/70 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
+              aria-label="Back to Dashboard"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path
+                  d="M9 3L5 7L9 11"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Dashboard
+            </button>
+          </TooltipHint>
           <div className="flex items-center gap-2">
             {activeWorktable === 'block-builder' ? (
               /* Block Builder breadcrumb */
@@ -148,7 +180,13 @@ export function StudioTopBar({
                   className="flex items-center gap-1 text-sm text-primary hover:underline transition-colors"
                 >
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M9 3L5 7L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M9 3L5 7L9 11"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                   Back to Quilt
                 </button>
@@ -161,7 +199,10 @@ export function StudioTopBar({
               /* Quilt mode: project name + dirty indicator */
               <div className="flex items-center gap-1.5">
                 {isDirty && (
-                  <span className="w-2 h-2 rounded-full bg-primary/80 flex-shrink-0" title="Unsaved changes" />
+                  <span
+                    className="w-2 h-2 rounded-full bg-primary/80 flex-shrink-0"
+                    title="Unsaved changes"
+                  />
                 )}
                 <span className="font-semibold text-[15px] text-neutral-800 tracking-[-0.01em]">
                   {projectName || 'Quilt Studio'}
@@ -196,10 +237,9 @@ export function StudioTopBar({
               <button
                 type="button"
                 onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
-                className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${isViewportLocked
-                  ? 'hover:bg-neutral-100'
-                  : 'bg-primary/10 hover:bg-primary/20'
-                  }`}
+                className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                  isViewportLocked ? 'hover:bg-neutral-100' : 'bg-primary/10 hover:bg-primary/20'
+                }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
                 {isViewportLocked ? (

@@ -133,11 +133,6 @@ export default function ShopPage() {
   if (!shopEnabled) {
     return (
       <div className="min-h-screen bg-[#fdfaf7] flex items-center justify-center relative overflow-hidden">
-        {/* Decorative quilt pieces - HUGE, spread out, high opacity, charcoal stitches, flush */}
-        <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-        <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-        <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-
         <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
           <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={28} className="text-[#ff8d49]" />
@@ -159,11 +154,9 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfaf7] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="primary" size={350} rotation={0} bottom={-100} right={-50} opacity={16} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
+      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
 
       {/* Header */}
       <div className="bg-[#ffffff] border-b border-[#e8e1da] relative">
@@ -230,12 +223,8 @@ export default function ShopPage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
-            {/* Subtle quilt-piece decoration */}
-            <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
-              <QuiltPiece color="secondary" size={70} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
-            </div>
-            <div className="flex items-center justify-between relative z-10">
+          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QuiltPieceRow count={2} size={8} gap={3} />
                 <h3 className="text-sm font-semibold text-[#2d2a26]">Filters</h3>
@@ -360,18 +349,13 @@ export default function ShopPage() {
             ))}
           </div>
         ) : fabrics.length === 0 ? (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
-            <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
-              <QuiltPiece color="accent" size={90} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
-            </div>
-            <div className="relative z-10">
-              <p className="text-lg font-medium text-[#2d2a26] mb-2">No fabrics found</p>
-              <p className="text-sm text-[#6b655e]">
-                {hasActiveFilters
-                  ? 'Try adjusting your filters or search terms.'
-                  : 'No purchasable fabrics are available yet.'}
-              </p>
-            </div>
+          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <p className="text-lg font-medium text-[#2d2a26] mb-2">No fabrics found</p>
+            <p className="text-sm text-[#6b655e]">
+              {hasActiveFilters
+                ? 'Try adjusting your filters or search terms.'
+                : 'No purchasable fabrics are available yet.'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
