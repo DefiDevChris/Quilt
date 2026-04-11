@@ -13,18 +13,20 @@ import {
   PHOTO_PATTERN_MIN_DIMENSION,
 } from '@/lib/constants';
 import { runDetectionPipeline } from '@/lib/photo-layout-utils';
+import { PhotoReviewStep } from '@/components/photo-layout/PhotoReviewStep';
 import type { MobileUpload } from '@/types/mobile-upload';
+import type { ScaledPiece, PhotoLayoutStep } from '@/lib/photo-layout-types';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
 
-const STEP_LABELS = ['Upload', 'Image Prep', 'Scan Settings', 'Processing', 'Complete'];
+const STEP_LABELS = ['Upload', 'Image Prep', 'Scan Settings', 'Processing', 'Review'];
 
-const STEP_KEYS: Array<'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'complete'> = [
+const STEP_KEYS: Array<PhotoLayoutStep> = [
   'upload',
   'imagePrep',
   'scanSettings',
   'processing',
-  'complete',
+  'review',
 ];
 
 function validateFile(file: File): string | null {
@@ -49,11 +51,24 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   const originalImage = usePhotoLayoutStore((s) => s.originalImage);
   const originalImageUrl = usePhotoLayoutStore((s) => s.originalImageUrl);
   const sensitivity = usePhotoLayoutStore((s) => s.sensitivity);
+  const detectedPieces = usePhotoLayoutStore((s) => s.detectedPieces);
+  const scaledPieces = usePhotoLayoutStore((s) => s.scaledPieces);
   const setDetectedPieces = usePhotoLayoutStore((s) => s.setDetectedPieces);
   const setScaledPieces = usePhotoLayoutStore((s) => s.setScaledPieces);
   const setCorrectedImageRef = usePhotoLayoutStore((s) => s.setCorrectedImageRef);
   const setPipelineSteps = usePhotoLayoutStore((s) => s.setPipelineSteps);
   const reset = usePhotoLayoutStore((s) => s.reset);
+
+  const targetWidth = usePhotoLayoutStore((s) => s.targetWidth);
+  const targetHeight = usePhotoLayoutStore((s) => s.targetHeight);
+  const seamAllowance = usePhotoLayoutStore((s) => s.seamAllowance);
+
+  // Review step metadata captured from the last pipeline run. Kept in component
+  // state because only the review UI needs it.
+  const [detectionSize, setDetectionSize] = useState<{ w: number; h: number } | null>(null);
+  const [inferredUnitPx, setInferredUnitPx] = useState(0);
+  const [inferredRotationDeg, setInferredRotationDeg] = useState(0);
+  const [classCount, setClassCount] = useState(0);
 
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
@@ -136,10 +151,14 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
 
         setDetectedPieces(result.pieces);
         setScaledPieces(result.scaledPieces);
+        setDetectionSize({ w: result.imageWidthPx, h: result.imageHeightPx });
+        setInferredUnitPx(result.inferredUnitPx);
+        setInferredRotationDeg(result.inferredRotationDeg);
+        setClassCount(result.classCount);
         if (result.correctedImageRef) {
           setCorrectedImageRef(result.correctedImageRef);
         }
-        setStep('complete');
+        setStep('review');
       } catch {
         if (!cancelled) {
           setError('Detection failed. Please try again with a different image.');
@@ -281,6 +300,24 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
     reset();
     router.push('/dashboard');
   };
+
+  // Full OpenCV re-scan from the Review step. Clears current detection results
+  // and routes back through 'processing', which retriggers the pipeline effect.
+  const handleRescan = useCallback(() => {
+    setDetectedPieces([]);
+    setScaledPieces([]);
+    setDetectionSize(null);
+    setInferredUnitPx(0);
+    setInferredRotationDeg(0);
+    setClassCount(0);
+    setStep('processing');
+  }, [setDetectedPieces, setScaledPieces, setStep]);
+
+  // "Back to settings" from the Review step — user wants to change scan
+  // config (e.g. flip the curved seams toggle) and rerun.
+  const handleBackToSettings = useCallback(() => {
+    setStep('scanSettings');
+  }, [setStep]);
 
   /**
    * Creates a new project sized to match the detected pattern, then navigates
@@ -435,6 +472,18 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 setTouchingFabrics={setTouchingFabrics}
                 setHeavyQuilting={setHeavyQuilting}
                 setPieceScale={setPieceScale}
+                detectedPieces={detectedPieces}
+                scaledPieces={scaledPieces}
+                detectionSize={detectionSize}
+                targetWidth={targetWidth}
+                targetHeight={targetHeight}
+                seamAllowance={seamAllowance}
+                inferredUnitPx={inferredUnitPx}
+                inferredRotationDeg={inferredRotationDeg}
+                classCount={classCount}
+                onUpdateScaledPieces={setScaledPieces}
+                onRescan={handleRescan}
+                onBackToSettings={handleBackToSettings}
               />
             </div>
 
@@ -495,6 +544,19 @@ interface WizardStepContentProps {
   setTouchingFabrics: React.Dispatch<React.SetStateAction<boolean>>;
   setHeavyQuilting: React.Dispatch<React.SetStateAction<boolean>>;
   setPieceScale: React.Dispatch<React.SetStateAction<'tiny' | 'standard' | 'large'>>;
+  // Review step
+  detectedPieces: readonly import('@/lib/photo-layout-types').DetectedPiece[];
+  scaledPieces: readonly ScaledPiece[];
+  detectionSize: { w: number; h: number } | null;
+  targetWidth: number;
+  targetHeight: number;
+  seamAllowance: number;
+  inferredUnitPx: number;
+  inferredRotationDeg: number;
+  classCount: number;
+  onUpdateScaledPieces: (pieces: readonly ScaledPiece[]) => void;
+  onRescan: () => void;
+  onBackToSettings: () => void;
 }
 
 function WizardStepContent(props: WizardStepContentProps) {
@@ -507,6 +569,29 @@ function WizardStepContent(props: WizardStepContentProps) {
       return <ScanSettingsStep {...props} />;
     case 'processing':
       return <ProcessingStep />;
+    case 'review':
+      if (!props.detectionSize) {
+        return <ProcessingStep />;
+      }
+      return (
+        <PhotoReviewStep
+          originalImageUrl={props.originalImageUrl}
+          detectedPieces={props.detectedPieces}
+          scaledPieces={props.scaledPieces}
+          imageWidthPx={props.detectionSize.w}
+          imageHeightPx={props.detectionSize.h}
+          targetWidthInches={props.targetWidth}
+          targetHeightInches={props.targetHeight}
+          seamAllowance={props.seamAllowance}
+          inferredUnitPx={props.inferredUnitPx}
+          inferredRotationDeg={props.inferredRotationDeg}
+          classCount={props.classCount}
+          onUpdateScaledPieces={props.onUpdateScaledPieces}
+          onRescan={props.onRescan}
+          onConfirm={props.onOpenInStudio}
+          onBack={props.onBackToSettings}
+        />
+      );
     case 'complete':
       return <CompleteStep onOpenInStudio={props.onOpenInStudio} />;
     default:
