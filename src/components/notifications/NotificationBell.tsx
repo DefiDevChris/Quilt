@@ -18,7 +18,7 @@ export function NotificationBell() {
       onClick={toggleDropdown}
       aria-label="Notifications"
       aria-expanded={isOpen}
-      className="relative p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
+      className="relative p-1.5 rounded-full hover:bg-[#f5f2ef] transition-colors"
     >
       <svg
         width="20"
@@ -29,7 +29,7 @@ export function NotificationBell() {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-neutral-800"
+        className="text-[#2d2a26]"
       >
         <path d="M10 2C7.24 2 5 4.24 5 7v3.5L3.5 13h13L15 10.5V7c0-2.76-2.24-5-5-5z" />
         <path d="M8 15a2 2 0 0 0 4 0" />

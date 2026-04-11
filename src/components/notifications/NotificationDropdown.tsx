@@ -41,7 +41,7 @@ const WARNING_ICON = (
 );
 
 const INFO_ICON = (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-neutral-500 shrink-0">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-[#6b655e] shrink-0">
     <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
     <path d="M10 6v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <circle cx="10" cy="14" r="0.75" fill="currentColor" />
