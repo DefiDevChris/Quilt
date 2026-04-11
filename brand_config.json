@@ -142,7 +142,6 @@
       "Gradients (bg-gradient-*)",
       "Animated color shifts",
       "Hover effects that move, scale, lift, or shift elements (no hover:scale-*, hover:-translate-*, hover:translate-*)",
-      "Framer Motion entry/exit animations with scale or y transforms",
       "Soft drop shadows beyond the single defined shadow",
       "Hard offset shadows (shadow-[4px_4px_0px_0px_...])",
       "rounded-2xl, rounded-xl",
