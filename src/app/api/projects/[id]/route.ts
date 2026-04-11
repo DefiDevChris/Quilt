@@ -103,22 +103,36 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       version: project.version + 1,
     };
 
-    // Upload canvasData to S3 if provided
+    // Upload canvasData to S3 if provided. Fall back to JSONB storage
+    // when S3 is unavailable (e.g., local development without real creds)
+    // so the save path still works end-to-end.
     if (parsed.data.canvasData) {
-      const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.canvasData);
-      updates.canvasDataS3Key = s3Key;
-      updates.canvasData = {}; // Clear JSONB to save space
+      try {
+        const s3Key = await uploadCanvasDataToS3(session.user.id, id, parsed.data.canvasData);
+        updates.canvasDataS3Key = s3Key;
+        updates.canvasData = {}; // Clear JSONB to save space
+      } catch (err) {
+        console.warn('[projects PUT] S3 upload failed, storing canvasData in JSONB:', err);
+        updates.canvasData = parsed.data.canvasData;
+        updates.canvasDataS3Key = null;
+      }
     }
 
-    // Upload worktables to S3 if provided
+    // Upload worktables to S3 if provided (same fallback strategy)
     if (parsed.data.worktables) {
-      const s3Key = await uploadCanvasDataToS3(
-        session.user.id,
-        id,
-        parsed.data.worktables as unknown as Record<string, unknown>
-      );
-      updates.worktablesS3Key = s3Key;
-      updates.worktables = []; // Clear JSONB to save space
+      try {
+        const s3Key = await uploadCanvasDataToS3(
+          session.user.id,
+          id,
+          parsed.data.worktables as unknown as Record<string, unknown>
+        );
+        updates.worktablesS3Key = s3Key;
+        updates.worktables = []; // Clear JSONB to save space
+      } catch (err) {
+        console.warn('[projects PUT] S3 upload failed, storing worktables in JSONB:', err);
+        updates.worktables = parsed.data.worktables;
+        updates.worktablesS3Key = null;
+      }
     }
 
     // Copy allowed fields only (whitelist approach)
@@ -142,7 +156,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const [updated] = await db.update(projects).set(updates).where(eq(projects.id, id)).returning();
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) {
+    console.error('[projects PUT] Failed to update project:', err);
     return errorResponse('Failed to update project', 'INTERNAL_ERROR', 500);
   }
 }
