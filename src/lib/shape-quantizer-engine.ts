@@ -235,12 +235,24 @@ export function quantizeShapes(
       continue;
     }
 
-    // Re-rotate canonical contour back into the source image's frame.
-    const finalContour = rotateContour(canonical.contour, thetaRad, ORIGIN);
+    // Shift by (-ox, -oy) so every vertex is a pure integer multiple of u.
+    // canonicalizeAndSnap produces vertices at (ox + k·u, oy + m·u) because it
+    // snaps bbox corners to an (ox, oy)-offset grid for adjacency smoothness.
+    // Subtracting the origin moves the grid to (0, 0) without disturbing
+    // relative positions — adjacent pieces still share vertices. This is what
+    // lets the downstream inches-per-pixel conversion put every vertex on an
+    // exact cellSize multiple.
+    //
+    // Also: we intentionally drop the re-rotation back to source frame. The
+    // pattern lives in the quilt's own axis-aligned coordinate system, not
+    // in the photo's tilted frame. A small rotation drift in the source
+    // photo would otherwise put vertices on a tilted inch grid, which is
+    // useless to a quilter cutting fabric.
+    const shifted = canonical.contour.map((p) => ({ x: p.x - ox, y: p.y - oy }));
 
     quantized.push({
       id: piece.id,
-      contour: finalContour,
+      contour: shifted,
       shapeClass: canonical.shapeClass,
       unitsW: canonical.unitsW,
       unitsH: canonical.unitsH,
@@ -248,6 +260,32 @@ export function quantizeShapes(
       classKey: canonical.classKey,
       classLabel: canonical.classLabel,
     });
+  }
+
+  // Re-center every piece so the global bounding box starts at (0, 0). The
+  // shift amount is itself an integer multiple of u (because every vertex is
+  // already a u-multiple and min/max of u-multiples is a u-multiple), so the
+  // grid-alignment invariant is preserved.
+  if (quantized.length > 0) {
+    let minX = Infinity;
+    let minY = Infinity;
+    for (const q of quantized) {
+      for (const p of q.contour) {
+        if (p.x < minX) minX = p.x;
+        if (p.y < minY) minY = p.y;
+      }
+    }
+    // Snap the shift to an exact u-multiple in case floating-point drift
+    // moved minX/minY by a sub-unit amount.
+    const shiftX = Math.round(minX / u) * u;
+    const shiftY = Math.round(minY / u) * u;
+    for (let qi = 0; qi < quantized.length; qi++) {
+      const q = quantized[qi];
+      quantized[qi] = {
+        ...q,
+        contour: q.contour.map((p) => ({ x: p.x - shiftX, y: p.y - shiftY })),
+      };
+    }
   }
 
   // Stage 5: Cluster counts.
@@ -271,10 +309,25 @@ export function quantizeShapes(
   // in pixel space becomes a cell-multiple in inch space after scaling.
   const inchesPerPx = cellSizeInches / u;
 
-  // Auto worktable dims: image extent in inches, rounded up to a cell
-  // multiple so pieces never fall off the edge.
-  const rawWidthInches = imageWidthPx * inchesPerPx;
-  const rawHeightInches = imageHeightPx * inchesPerPx;
+  // Auto worktable dims: take whichever is larger of the piece extent and
+  // the source image extent, then round up to a cell multiple. Using the
+  // piece extent guarantees every emitted piece fits on the worktable. The
+  // image extent is a floor so a photo with a small detected region still
+  // produces a sensibly-sized canvas.
+  let maxPieceX = 0;
+  let maxPieceY = 0;
+  for (const q of quantized) {
+    for (const p of q.contour) {
+      if (p.x > maxPieceX) maxPieceX = p.x;
+      if (p.y > maxPieceY) maxPieceY = p.y;
+    }
+  }
+  const pieceWidthInches = maxPieceX * inchesPerPx;
+  const pieceHeightInches = maxPieceY * inchesPerPx;
+  const imageWidthInches = imageWidthPx * inchesPerPx;
+  const imageHeightInches = imageHeightPx * inchesPerPx;
+  const rawWidthInches = Math.max(pieceWidthInches, imageWidthInches);
+  const rawHeightInches = Math.max(pieceHeightInches, imageHeightInches);
   const worktableWidthInches = rawWidthInches > 0 ? ceilToCell(rawWidthInches, cellSizeInches) : 0;
   const worktableHeightInches =
     rawHeightInches > 0 ? ceilToCell(rawHeightInches, cellSizeInches) : 0;

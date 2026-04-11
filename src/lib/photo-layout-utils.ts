@@ -19,14 +19,12 @@ import type {
   DownscaleInfo,
   QuiltDetectionConfig,
 } from '@/lib/photo-layout-types';
-import type { QuantizedPiece, QuantizerConfig } from '@/lib/shape-quantizer-engine';
+import type { QuantizedPiece, QuantizerConfig, CellSizeInches } from '@/lib/shape-quantizer-engine';
 import {
   PHOTO_PATTERN_RESOLUTION_TIERS,
   PHOTO_PATTERN_MAX_IMAGE_DATA_SIZE,
   PHOTO_PATTERN_ABSOLUTE_MAX_DIMENSION,
   DEFAULT_SEAM_ALLOWANCE_INCHES,
-  DEFAULT_CANVAS_WIDTH,
-  DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
 import { detectInWorker } from '@/lib/opencv-loader';
 
