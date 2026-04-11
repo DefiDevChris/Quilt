@@ -92,7 +92,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  >
  <div
  className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
- style={{ background: '#fff0e5' }}
+ style={{ background: 'var(--color-secondary)/20' }}
  >
  {uploading ? (
  <svg
@@ -165,7 +165,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  >
  <div
  className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
- style={{ background: '#fff0e5' }}
+ style={{ background: 'var(--color-secondary)/20' }}
  >
  <svg
  width="20"
