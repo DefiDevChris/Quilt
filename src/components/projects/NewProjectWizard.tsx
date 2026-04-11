@@ -203,7 +203,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#ff8d49]/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40 p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-project-wizard-title"
@@ -211,7 +211,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className={`w-full max-h-[90vh] overflow-y-auto bg-[#ffffff] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] focus:outline-none rounded-full ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
+        className={`w-full max-h-[90vh] overflow-y-auto bg-[#ffffff] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] focus:outline-none rounded-lg ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e1da]">
@@ -229,13 +229,18 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
             aria-label="Close"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path
+                d="M3 3L11 11M11 3L3 11"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
         </div>
 
         {error && (
-          <div className="mx-6 mt-4 bg-[#ffc7c7]/30 border border-[#ffc7c7] px-4 py-2 text-sm text-[#2d2a26] rounded-full">
+          <div className="mx-6 mt-4 bg-[#ffc7c7]/30 border border-[#ffc7c7] px-4 py-2 text-sm text-[#2d2a26] rounded-lg">
             {error}
           </div>
         )}
@@ -259,7 +264,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   onChange={(e) => setName(e.target.value)}
                   maxLength={255}
                   placeholder="e.g. My Next Masterpiece"
-                  className="w-full border border-[#e8e1da] px-4 py-3 text-[18px] leading-[28px] text-[#2d2a26] placeholder:text-[#6b655e] focus:outline-2 focus:outline-[#ff8d49] rounded-full"
+                  className="w-full border border-[#e8e1da] px-4 py-3 text-[18px] leading-[28px] text-[#2d2a26] placeholder:text-[#6b655e] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
                   autoFocus
                 />
               </div>
@@ -282,7 +287,9 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
               <label className="block text-[14px] leading-[20px] font-medium text-[#6b655e] mb-2">
                 Quilt Size
               </label>
-              <div className={`grid ${isStudio ? 'grid-cols-2 gap-2 mb-4' : 'grid-cols-2 md:grid-cols-4 gap-3'}`}>
+              <div
+                className={`grid ${isStudio ? 'grid-cols-2 gap-2 mb-4' : 'grid-cols-2 md:grid-cols-4 gap-3'}`}
+              >
                 {QUILT_SIZE_PRESETS.map((preset) => {
                   const isActive = sizePresetLabel === preset.label;
                   return (
@@ -296,8 +303,16 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                           : 'flex flex-col items-center justify-center p-3 bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full'
                       }
                     >
-                      <span className="text-[16px] leading-[24px] font-medium mb-1">{preset.label}</span>
-                      <span className={isActive ? 'text-[14px] leading-[20px] font-mono text-[#2d2a26]/70' : 'text-[14px] leading-[20px] font-mono text-[#6b655e]'}>
+                      <span className="text-[16px] leading-[24px] font-medium mb-1">
+                        {preset.label}
+                      </span>
+                      <span
+                        className={
+                          isActive
+                            ? 'text-[14px] leading-[20px] font-mono text-[#2d2a26]/70'
+                            : 'text-[14px] leading-[20px] font-mono text-[#6b655e]'
+                        }
+                      >
                         {preset.width}″ × {preset.height}″
                       </span>
                     </button>
@@ -324,19 +339,23 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                 <button
                   type="button"
                   onClick={() => setSizePresetLabel('Custom')}
-                  className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${isCustom
-                    ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                    : 'bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#ffc8a6]/20'
-                    }`}
+                  className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
+                    isCustom
+                      ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                      : 'bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#ffc8a6]/20'
+                  }`}
                 >
                   <span className="text-[16px] leading-[24px] font-medium">Custom Size</span>
                 </button>
               )}
 
               {isCustom && (
-                <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#fdfaf7] border border-[#e8e1da] rounded-full">
+                <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#fdfaf7] border border-[#e8e1da] rounded-lg">
                   <div>
-                    <label htmlFor="wizard-w" className="block text-[14px] leading-[20px] font-medium text-[#6b655e] mb-1">
+                    <label
+                      htmlFor="wizard-w"
+                      className="block text-[14px] leading-[20px] font-medium text-[#6b655e] mb-1"
+                    >
                       Width (inches)
                     </label>
                     <input
@@ -347,12 +366,15 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customWidth}
                       onChange={(e) => setCustomWidth(e.target.value)}
-                      className="w-full border border-[#e8e1da] px-3 py-2 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] rounded-full"
+                      className="w-full border border-[#e8e1da] px-3 py-2 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
                       placeholder="e.g. 60"
                     />
                   </div>
                   <div>
-                    <label htmlFor="wizard-h" className="block text-[14px] leading-[20px] font-medium text-[#6b655e] mb-1">
+                    <label
+                      htmlFor="wizard-h"
+                      className="block text-[14px] leading-[20px] font-medium text-[#6b655e] mb-1"
+                    >
                       Height (inches)
                     </label>
                     <input
@@ -363,7 +385,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customHeight}
                       onChange={(e) => setCustomHeight(e.target.value)}
-                      className="w-full border border-[#e8e1da] px-3 py-2 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] rounded-full"
+                      className="w-full border border-[#e8e1da] px-3 py-2 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
                       placeholder="e.g. 72"
                     />
                   </div>
@@ -382,10 +404,11 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                         key={size}
                         type="button"
                         onClick={() => setCellSize(size)}
-                        className={`px-4 py-2 text-[16px] leading-[24px] font-medium transition-colors duration-150 rounded-full ${Math.abs(cellSize - size) < 0.001
-                          ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                          : 'bg-[#fdfaf7] text-[#6b655e] hover:bg-[#ffc8a6]/20'
-                          }`}
+                        className={`px-4 py-2 text-[16px] leading-[24px] font-medium transition-colors duration-150 rounded-full ${
+                          Math.abs(cellSize - size) < 0.001
+                            ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                            : 'bg-[#fdfaf7] text-[#6b655e] hover:bg-[#ffc8a6]/20'
+                        }`}
                       >
                         {fmtCellSize(size)}
                       </button>
