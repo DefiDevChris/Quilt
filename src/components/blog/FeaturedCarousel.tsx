@@ -61,7 +61,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-[#ffffff]">
+    <section className="relative w-full h-screen overflow-hidden bg-[var(--color-surface)]">
       <motion.div
         ref={containerRef}
         drag="x"
@@ -92,7 +92,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
             className="h-px transition-colors duration-150"
             style={{
               width: i === active ? 48 : 20,
-              backgroundColor: i === active ? '#1a1a1a' : 'rgba(45, 42, 38, 0.25)',
+              backgroundColor: i === active ? 'var(--color-text)' : 'rgba(45, 42, 38, 0.25)',
             }}
             aria-label={`Go to slide ${i + 1}`}
           />
@@ -139,16 +139,16 @@ function Slide({
       </motion.div>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-[#ffffff]/80" />
+      <div className="absolute inset-0 bg-[var(--color-surface)]/80" />
 
       {/* Content */}
       <div className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl">
         <div className="flex items-center gap-4 mb-8">
-          <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+          <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             {post.category}
           </span>
           <span className="w-6 h-px bg-[#ff8d49]" />
-          <time className="text-[14px] leading-[20px] text-[#4a4a4a]">
+          <time className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             {post.createdAt?.toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
@@ -159,7 +159,7 @@ function Slide({
 
         <Link href={`/blog/${post.slug}`} className="group block">
           <h2
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#1a1a1a] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[var(--color-text)] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
             style={{ fontFamily: 'Spline Sans, sans-serif' }}
           >
             {post.title}
@@ -167,7 +167,7 @@ function Slide({
         </Link>
 
         {post.excerpt && (
-          <p className="text-[16px] leading-[24px] text-[#4a4a4a] max-w-md">
+          <p className="text-[16px] leading-[24px] text-[var(--color-text-dim)] max-w-md">
             {post.excerpt}
           </p>
         )}

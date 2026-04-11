@@ -138,7 +138,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  aria-label="User menu"
  aria-expanded={dropdownOpen}
  aria-haspopup="true"
- className="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-[#ff8d49]/30 transition-colors duration-150"
+ className="flex items-center gap-2 rounded-full hover:bg-[#ff8d49]/5 transition-colors duration-150"
  >
  {user?.image ? (
  <Image
@@ -146,10 +146,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  alt={user.name}
  width={32}
  height={32}
- className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-[#ff8d49] transition-colors duration-150"
+ className="h-8 w-8 rounded-full object-cover "
  />
  ) : (
- <div className="h-8 w-8 rounded-lg bg-[#ff8d49]/20 flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-[#ff8d49] transition-colors duration-150">
+ <div className="h-8 w-8 rounded-lg bg-[#ff8d49]/20 flex items-center justify-center overflow-hidden ">
  <Image
  src="/mascots&avatars/corgi1.png"
  alt="Default Avatar"

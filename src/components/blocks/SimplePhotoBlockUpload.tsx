@@ -484,7 +484,7 @@ export function SimplePhotoBlockUpload({
                 ? 'w-6 h-2 bg-primary'
                 : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
                   ? 'w-2 h-2 bg-primary/50'
-                  : 'w-2 h-2 bg-outline-variant/40'
+                  : 'w-2 h-2 bg-[#d4d4d4]/40'
                 }`}
             />
           </div>
@@ -558,7 +558,7 @@ export function SimplePhotoBlockUpload({
               <div className="space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[12px] leading-[16px] font-medium text-[#1a1a1a]/60 uppercase tracking-wider">
+                    <span className="text-[14px] leading-[20px] font-medium text-[#1a1a1a]/60">
                       Straighten
                     </span>
                     <span className="text-[12px] leading-[16px] font-mono text-[#1a1a1a]/50">{rotation}°</span>

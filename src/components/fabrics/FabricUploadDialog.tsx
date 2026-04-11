@@ -231,11 +231,11 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  if (!isOpen) return null;
 
  return (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
- <div className="w-full max-w-lg rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4]">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40">
+ <div className="w-full max-w-lg rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)]">
  <div className="flex items-center justify-between mb-4">
- <h2 className="text-lg font-semibold text-[#1a1a1a]">Import Fabric</h2>
- <button type="button" onClick={onClose} className="text-[#4a4a4a] hover:text-[#1a1a1a]">
+ <h2 className="text-lg font-semibold text-[var(--color-text)]">Import Fabric</h2>
+ <button type="button" onClick={onClose} className="text-[var(--color-text-dim)] hover:text-[var(--color-text)]">
  ✕
  </button>
  </div>
@@ -246,10 +246,10 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
  {step === 'pick' && (
  <div className="text-center py-8">
- <p className="text-sm text-[#4a4a4a] mb-4">
+ <p className="text-sm text-[var(--color-text-dim)] mb-4">
  Select a fabric image (JPEG, PNG, or WebP, max 10MB)
  </p>
- <label className="inline-block rounded-lg bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-[#1a1a1a] hover:opacity-90 cursor-pointer">
+ <label className="inline-block rounded-lg bg-[var(--color-text)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:opacity-90 cursor-pointer">
  Choose File
  <input
  type="file"
@@ -264,14 +264,14 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  {step === 'process' && imageDataUrl && (
  <div>
  {/* Preview */}
- <div className="mb-4 flex justify-center bg-[#fdfaf7] rounded-lg p-2">
+ <div className="mb-4 flex justify-center bg-[var(--color-bg)] rounded-lg p-2">
  <canvas ref={canvasRef} className="max-h-[300px] max-w-full" />
  </div>
 
  {/* Controls */}
  <div className="space-y-3 mb-4">
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Fabric Name *
  </label>
  <input
@@ -279,12 +279,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  value={fabricName}
  onChange={(e) => setFabricName(e.target.value)}
  maxLength={255}
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a] focus:border-[#ff8d49] focus:outline-none"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-[#ff8d49] focus:outline-none"
  />
  </div>
 
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Manufacturer
  </label>
  <input
@@ -293,12 +293,12 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  onChange={(e) => setManufacturer(e.target.value)}
  maxLength={255}
  placeholder="e.g. Robert Kaufman"
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:border-[#ff8d49] focus:outline-none"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[#ff8d49] focus:outline-none"
  />
  </div>
 
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Scale: {Math.round(scale * 100)}%
  </label>
  <input
@@ -312,7 +312,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  </div>
 
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Straighten: {rotation}°
  </label>
  <input
@@ -326,14 +326,14 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  </div>
 
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">Crop</label>
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">Crop</label>
  <div className="flex gap-2">
  <button
  type="button"
  onClick={() => setCrop(null)}
  className={`rounded-lg px-3 py-1 text-xs ${crop === null
- ? 'bg-[#1a1a1a] text-[#1a1a1a]'
- : 'bg-[#fdfaf7] text-[#4a4a4a] hover:bg-[#d4d4d4]'
+ ? 'bg-[var(--color-text)] text-[var(--color-text)]'
+ : 'bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
  }`}
  >
  Full Image
@@ -349,8 +349,8 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  setCrop({ x, y, width: size, height: size });
  }}
  className={`rounded-lg px-3 py-1 text-xs ${crop !== null
- ? 'bg-[#1a1a1a] text-[#1a1a1a]'
- : 'bg-[#fdfaf7] text-[#4a4a4a] hover:bg-[#d4d4d4]'
+ ? 'bg-[var(--color-text)] text-[var(--color-text)]'
+ : 'bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
  }`}
  >
  Square Crop
@@ -364,7 +364,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  <button
  type="button"
  onClick={reset}
- className="rounded-lg px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[#fdfaf7]"
+ className="rounded-lg px-4 py-2 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]"
  >
  Back
  </button>
@@ -372,7 +372,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  type="button"
  onClick={() => setStep('calibrate')}
  disabled={!fabricName.trim()}
- className="rounded-lg bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-[#1a1a1a] hover:opacity-90 disabled:opacity-50"
+ className="rounded-lg bg-[var(--color-text)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:opacity-90 disabled:opacity-50"
  >
  Next: Calibrate
  </button>
@@ -382,7 +382,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
  {step === 'calibrate' && (
  <div className="space-y-4">
- <p className="text-sm text-[#4a4a4a]">
+ <p className="text-sm text-[var(--color-text-dim)]">
  Calibrate the scale so fabric prints at the correct physical size.
  </p>
 
@@ -401,20 +401,20 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  onChange={() => setCalibrationMethod(opt.value)}
  className="accent-[#ff8d49]"
  />
- <span className="text-sm text-[#1a1a1a]">{opt.label}</span>
+ <span className="text-sm text-[var(--color-text)]">{opt.label}</span>
  </label>
  ))}
  </div>
 
  {calibrationMethod === 'scanner-preset' && (
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Scanner Resolution
  </label>
  <select
  value={scannerPreset}
  onChange={(e) => setScannerPreset(e.target.value as ScannerPreset)}
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a]"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
  >
  {SCANNER_PRESETS.map((p) => (
  <option key={p} value={p}>
@@ -427,7 +427,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
  {calibrationMethod === 'manual-dpi' && (
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  DPI (72-1200)
  </label>
  <input
@@ -436,7 +436,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  max={1200}
  value={manualDpi}
  onChange={(e) => setManualDpi(Number(e.target.value))}
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a]"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
  />
  </div>
  )}
@@ -444,7 +444,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  {calibrationMethod === 'ruler-reference' && (
  <div className="space-y-2">
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Ruler length in pixels
  </label>
  <input
@@ -452,11 +452,11 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  min={1}
  value={rulerPixels}
  onChange={(e) => setRulerPixels(Number(e.target.value))}
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a]"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
  />
  </div>
  <div>
- <label className="block text-xs font-medium text-[#4a4a4a] mb-1">
+ <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
  Ruler length in inches
  </label>
  <input
@@ -465,7 +465,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  step={0.1}
  value={rulerInches}
  onChange={(e) => setRulerInches(Number(e.target.value))}
- className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-3 py-1.5 text-sm text-[#1a1a1a]"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
  />
  </div>
  </div>
@@ -475,7 +475,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  <button
  type="button"
  onClick={() => setStep('process')}
- className="rounded-lg px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[#fdfaf7]"
+ className="rounded-lg px-4 py-2 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]"
  >
  Back
  </button>
@@ -485,7 +485,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  setCalibratedPpi(null);
  handleUpload();
  }}
- className="rounded-lg px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[#fdfaf7]"
+ className="rounded-lg px-4 py-2 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]"
  >
  Skip Calibration
  </button>
@@ -509,7 +509,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  setError('Invalid calibration input. Check your values.');
  }
  }}
- className="rounded-lg bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-[#1a1a1a] hover:opacity-90"
+ className="rounded-lg bg-[var(--color-text)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:opacity-90"
  >
  Calibrate & Upload
  </button>
@@ -520,7 +520,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  {step === 'uploading' && (
  <div className="py-8 text-center">
  <div className="w-8 h-8 border-2 border-[#ff8d49] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
- <p className="text-sm text-[#4a4a4a]">{uploadProgress}</p>
+ <p className="text-sm text-[var(--color-text-dim)]">{uploadProgress}</p>
  </div>
  )}
  </div>

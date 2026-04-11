@@ -86,7 +86,7 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  onDragStart={(e) => onDragStart(e, fabric)}
  onClick={onClick}
  onContextMenu={handleContextMenu}
- className="group relative cursor-grab rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] overflow-hidden hover:border-[#ff8d49] transition-colors"
+ className="group relative cursor-grab rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden hover:border-[#ff8d49] transition-colors"
  title={fabric.name}
  >
  <div className="aspect-square">
@@ -98,15 +98,15 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  loading="lazy"
  />
  ) : (
- <div className="h-full w-full flex items-center justify-center bg-[#d4d4d4]">
- <span className="text-2xl text-[#4a4a4a]">🧵</span>
+ <div className="h-full w-full flex items-center justify-center bg-[var(--color-border)]">
+ <span className="text-2xl text-[var(--color-text-dim)]">🧵</span>
  </div>
  )}
  </div>
- <div className="absolute inset-x-0 bottom-0 bg-[#fdfaf7] px-1.5 pb-1 pt-4">
- <p className="text-xs text-[#1a1a1a] truncate">{fabric.name}</p>
+ <div className="absolute inset-x-0 bottom-0 bg-[var(--color-bg)] px-1.5 pb-1 pt-4">
+ <p className="text-xs text-[var(--color-text)] truncate">{fabric.name}</p>
  {fabric.manufacturer && (
- <p className="text-[9px] text-[#1a1a1a]/70 truncate">{fabric.manufacturer}</p>
+ <p className="text-[9px] text-[var(--color-text)]/70 truncate">{fabric.manufacturer}</p>
  )}
  </div>
  {onRemove && (
@@ -123,20 +123,20 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  {showMenu && (
  <div
  ref={menuRef}
- className="fixed z-50 min-w-[160px] rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] py-1"
+ className="fixed z-50 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] py-1"
  style={{ left: menuPos.x, top: menuPos.y }}
  >
  <button
  type="button"
  onClick={handleAddToPresets}
- className="w-full px-3 py-2 text-left text-sm text-[#1a1a1a] hover:bg-[#d4d4d4] transition-colors"
+ className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
  >
  Add to Presets
  </button>
  <button
  type="button"
  onClick={handleWhereUsed}
- className="w-full px-3 py-2 text-left text-sm text-[#1a1a1a] hover:bg-[#d4d4d4] transition-colors"
+ className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
  >
  Where Used
  </button>

@@ -65,7 +65,7 @@ export function PostCard({
   /* ── Grid View ── */
   if (viewMode === 'grid') {
     return (
-      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
+      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:bg-[#fdfaf7] transition-colors duration-150 duration-150">
         <div className="relative aspect-[4/3] cursor-pointer overflow-hidden rounded-t-lg"
           onClick={() => { handleDoubleTapLike(); onImageClick?.(post); }}>
           <img src={post.image} alt="" className="w-full h-full object-cover" />

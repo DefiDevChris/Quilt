@@ -64,7 +64,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfaf7] flex">
+    <div className="min-h-screen bg-[var(--color-bg)] flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -75,7 +75,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen z-50 lg:z-auto w-64 flex-shrink-0 flex flex-col bg-[#ffffff] border-r border-[#d4d4d4] transition-transform duration-150 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:sticky top-0 left-0 h-screen z-50 lg:z-auto w-64 flex-shrink-0 flex flex-col bg-[var(--color-surface)] border-r border-[#d4d4d4] transition-transform duration-150 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
       >
         {/* Logo */}
@@ -99,7 +99,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150 ${isActive(item.href)
                 ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
-                : 'text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[#fdfaf7]'
+                : 'text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[var(--color-bg)]'
                 }`}
             >
               {ICONS[item.icon]}
@@ -112,7 +112,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="px-4 py-4 border-t border-[#d4d4d4]">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[#fdfaf7] transition-colors duration-150"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -125,11 +125,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-[#ffffff] border-b border-[#d4d4d4] px-6 py-4 flex items-center gap-4">
+        <header className="sticky top-0 z-30 bg-[var(--color-surface)] border-b border-[#d4d4d4] px-6 py-4 flex items-center gap-4">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-[#fdfaf7] transition-colors duration-150"
+            className="lg:hidden p-2 rounded-lg hover:bg-[var(--color-bg)] transition-colors duration-150"
             aria-label="Open sidebar"
           >
             <svg className="w-5 h-5 text-[#4a4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +141,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#fdfaf7] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7]/80 transition-colors duration-150"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-bg)] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)]/80 transition-colors duration-150"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

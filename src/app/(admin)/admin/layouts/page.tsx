@@ -108,7 +108,7 @@ export default function AdminLayoutsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-surface)] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -122,14 +122,14 @@ export default function AdminLayoutsPage() {
           <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20" />
         </div>
       ) : layouts.length === 0 ? (
-        <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-12 text-center">
+        <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-12 text-center">
           <p className="text-[#4a4a4a]">No layout templates yet. Create your first layout!</p>
         </div>
       ) : (
         <>
           <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
             <table className="w-full">
-              <thead className="bg-[#fdfaf7]">
+              <thead className="bg-[var(--color-bg)]">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                     Name
@@ -148,9 +148,9 @@ export default function AdminLayoutsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d4d4d4] bg-[#fdfaf7]">
+              <tbody className="divide-y divide-[#d4d4d4] bg-[var(--color-bg)]">
                 {layouts.map((layout) => (
-                  <tr key={layout.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                  <tr key={layout.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0">
@@ -175,13 +175,13 @@ export default function AdminLayoutsPage() {
                       <button
                         type="button"
                         onClick={() => handleTogglePublish(layout.id, layout.isPublished)}
-                        className={`inline-flex h-6 w-11 items-center rounded-lg transition-colors duration-150 ${layout.isPublished ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
+                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ${layout.isPublished ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
                           }`}
                         role="switch"
                         aria-checked={layout.isPublished}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-lg bg-[#ffffff] transition-transform duration-150 ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
+                          className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-surface)] transition-colors duration-150 ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
                             }`}
                         />
                       </button>
@@ -227,7 +227,7 @@ export default function AdminLayoutsPage() {
                     setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Previous
                 </button>
@@ -239,7 +239,7 @@ export default function AdminLayoutsPage() {
                     }))
                   }
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Next
                 </button>
@@ -351,7 +351,7 @@ function LayoutFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#1a1a1a]/40 overflow-y-auto py-8">
-      <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[#1a1a1a]">
             {isEditing ? 'Edit Layout' : 'Create New Layout'}
@@ -359,7 +359,7 @@ function LayoutFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[#fdfaf7] transition-colors duration-150"
+            className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
             <svg className="w-5 h-5 text-[#4a4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -383,7 +383,7 @@ function LayoutFormModal({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
                 placeholder="e.g. Classic Nine-Patch"
               />
             </div>
@@ -393,7 +393,7 @@ function LayoutFormModal({
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
               >
                 <option value="straight">Straight Set</option>
                 <option value="sashing">Sashing</option>
@@ -415,7 +415,7 @@ function LayoutFormModal({
               value={formData.templateDataJson}
               onChange={handleChange}
               rows={6}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-xs"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-xs"
               placeholder='{"shapes": [...]}'
             />
           </div>
@@ -427,7 +427,7 @@ function LayoutFormModal({
               value={formData.thumbnailSvg}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-xs"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-xs"
               placeholder='<svg viewBox="0 0 100 100">...</svg>'
             />
           </div>
@@ -457,14 +457,14 @@ function LayoutFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] transition-colors duration-150"
+              className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-[#ffffff] bg-[#ff8d49] rounded-full disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-[#ff8d49] rounded-full disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Layout' : 'Create Layout'}
             </button>

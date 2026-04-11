@@ -137,8 +137,8 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
         <PublicNav />
         <main className="max-w-4xl mx-auto px-6 py-16">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-[#fdfaf7] rounded w-64" />
-            <div className="h-96 bg-[#fdfaf7] rounded-lg" />
+            <div className="h-8 bg-[var(--color-bg)] rounded w-64" />
+            <div className="h-96 bg-[var(--color-bg)] rounded-lg" />
           </div>
         </main>
         <Footer />
@@ -151,7 +151,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
       <>
         <PublicNav />
         <main className="max-w-4xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-lg bg-[#fdfaf7] flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-lg bg-[var(--color-bg)] flex items-center justify-center">
             <svg
               width="32"
               height="32"
@@ -159,14 +159,14 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
-              className="text-[#4a4a4a]"
+              className="text-[var(--color-text-dim)]"
             >
               <circle cx="12" cy="12" r="10" />
               <path d="M12 8v4M12 16h.01" />
             </svg>
           </div>
-          <h1 className="text-[32px] leading-[40px] font-bold text-[#1a1a1a] mb-2">Design Not Available</h1>
-          <p className="text-[#4a4a4a] mb-6">
+          <h1 className="text-[32px] leading-[40px] font-bold text-[var(--color-text)] mb-2">Design Not Available</h1>
+          <p className="text-[var(--color-text-dim)] mb-6">
             {error ?? 'This design may have been removed or made private.'}
           </p>
           <Link href="/" className="btn-primary-sm">
@@ -184,9 +184,9 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
       <main className="max-w-4xl mx-auto px-6 py-8 lg:py-12">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-[32px] leading-[40px] md:text-[40px] leading-[52px] font-bold text-[#1a1a1a] mb-2">{project.name}</h1>
+          <h1 className="text-[32px] leading-[40px] md:text-[40px] leading-[52px] font-bold text-[var(--color-text)] mb-2">{project.name}</h1>
           {project.description && (
-            <p className="text-[#4a4a4a] leading-relaxed">{project.description}</p>
+            <p className="text-[var(--color-text-dim)] leading-relaxed">{project.description}</p>
           )}
           <div className="flex items-center gap-3 mt-3">
             {project.creator && (
@@ -200,18 +200,18 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#fdfaf7] flex items-center justify-center text-[12px] leading-[16px] font-bold text-[#4a4a4a]">
+                  <div className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[12px] leading-[16px] font-bold text-[var(--color-text-dim)]">
                     {(project.creator.displayName ?? project.creator.username ?? '?')
                       .charAt(0)
                       .toUpperCase()}
                   </div>
                 )}
-                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+                <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                   {project.creator.displayName ?? project.creator.username}
                 </span>
               </div>
             )}
-            <span className="text-[12px] leading-[16px] text-[#4a4a4a]">
+            <span className="text-[12px] leading-[16px] text-[var(--color-text-dim)]">
               {project.canvasWidth}&Prime; &times; {project.canvasHeight}&Prime;
             </span>
           </div>
@@ -220,7 +220,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
         {/* Canvas viewer */}
         <div
           ref={canvasContainerRef}
-          className="rounded-lg overflow-hidden border border-[#d4d4d4] bg-[#fdfaf7]"
+          className="rounded-lg overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg)]"
         >
           <canvas ref={canvasRef} />
           {/* Thumbnail fallback (shown while canvas loads) */}
@@ -246,7 +246,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#fdfaf7] border border-[#d4d4d4] text-[#1a1a1a] rounded-full text-[14px] leading-[20px] font-medium hover:bg-[#fdfaf7]"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-full text-[14px] leading-[20px] font-medium hover:bg-[var(--color-bg)]"
           >
             <svg
               width="16"

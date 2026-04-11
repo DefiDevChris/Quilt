@@ -125,7 +125,7 @@ function DashboardPageContent() {
 
       {/* Quick Actions Grid */}
       <div className="mb-12">
-        <h2 className="text-sm font-semibold text-[#1a1a1a] mb-6 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-[#1a1a1a] mb-6">
           Quick Actions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,7 +197,7 @@ function DashboardPageContent() {
 
       {/* Navigation Grid */}
       <div className="mb-12">
-        <h2 className="text-sm font-semibold text-[#1a1a1a] mb-6 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-[#1a1a1a] mb-6">
           Navigate
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -292,7 +292,7 @@ function DashboardPageContent() {
       {projects.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-sm font-semibold text-[#1a1a1a] uppercase tracking-wide">
+            <h2 className="text-sm font-semibold text-[#1a1a1a]">
               Recent Projects
             </h2>
             <Link
