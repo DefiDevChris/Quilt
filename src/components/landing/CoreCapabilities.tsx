@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Mascot from './Mascot';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
@@ -276,13 +276,6 @@ export default function CoreCapabilities() {
           </div>
 
           <div className="relative">
-            {/* Decorative quilt pieces around the mockup - HUGE, spread out, high opacity, charcoal stitches, flush */}
-            <div className="absolute -top-6 -left-6 opacity-20 pointer-events-none">
-              <QuiltPiece color="accent" size={120} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={3} stitchGap={8} />
-            </div>
-            <div className="absolute -bottom-4 -right-4 opacity-18 pointer-events-none">
-              <QuiltPiece color="secondary" size={100} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={3} stitchGap={8} />
-            </div>
             <StudioPreviewMockup />
           </div>
         </div>

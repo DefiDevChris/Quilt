@@ -2,14 +2,11 @@
 
 import Link from 'next/link';
 import Mascot from './Mascot';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 export default function CtaSection() {
   return (
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} right={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="bg-[#ff8d49]/10 p-10 md:p-16 text-center border border-[#e8e1da] rounded-xl relative overflow-hidden">

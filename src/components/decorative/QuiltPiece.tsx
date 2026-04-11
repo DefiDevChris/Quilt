@@ -77,7 +77,7 @@ export function QuiltPiece({
           width={size}
           height={size}
           fill={fillColor}
-          opacity={opacity / 100}
+          opacity={(opacity / 100) * 0.15}
           rx={8}
           ry={8}
         />
@@ -91,10 +91,10 @@ export function QuiltPiece({
             fill="none"
             stroke={strokeColor}
             strokeWidth={strokeWidth}
-            strokeDasharray="8 6"
+            strokeDasharray="20 24"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={0.6}
+            opacity={0.12}
             rx={6}
             ry={6}
           />

@@ -190,11 +190,9 @@ export default function SocialThreadsSection() {
       id="social-threads"
       className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden"
     >
-      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#ff8d49]/5 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#ff8d49]/5 pointer-events-none" />
-      <QuiltPiece color="secondary" size={450} rotation={0} top={-100} right={-100} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="secondary" size={900} rotation={0} top={-350} right={-300} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
+      <QuiltPiece color="accent" size={800} rotation={0} bottom={-300} left={-200} opacity={32} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -314,13 +312,6 @@ export default function SocialThreadsSection() {
 
           {/* Right - Screenshot mockup */}
           <div className="relative">
-            {/* Decorative quilt pieces - HUGE, spread out, high opacity, charcoal stitches, flush */}
-            <div className="absolute -top-8 -right-8 opacity-18 pointer-events-none">
-              <QuiltPiece color="primary" size={120} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={3} stitchGap={8} />
-            </div>
-            <div className="absolute -bottom-6 -left-6 opacity-20 pointer-events-none">
-              <QuiltPiece color="accent" size={100} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={3} stitchGap={8} />
-            </div>
             <SocialThreadsScreenshot />
           </div>
         </div>

@@ -252,10 +252,9 @@ function StudioMockup() {
 export default function HeroSection() {
   return (
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
-      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
+      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
