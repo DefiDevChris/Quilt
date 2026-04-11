@@ -3,7 +3,7 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className = '' }: SkeletonProps) {
-  return <div className={`animate-pulse bg-[#e8e1da] rounded-lg ${className}`} />;
+  return <div className={`animate-pulse bg-neutral-200 rounded-full ${className}`} />;
 }
 
 interface SkeletonCardProps {
@@ -12,11 +12,11 @@ interface SkeletonCardProps {
 
 export function SkeletonCard({ className = '' }: SkeletonCardProps) {
   return (
-    <div className={`rounded-lg overflow-hidden bg-[#f5f2ef] ${className}`}>
-      <div className="h-40 bg-[#e8e1da] animate-pulse" />
+    <div className={`rounded-full overflow-hidden bg-neutral-100 ${className}`}>
+      <div className="h-40 bg-neutral-200 animate-pulse" />
       <div className="p-4 space-y-3">
-        <div className="h-4 bg-[#e8e1da] animate-pulse rounded-lg w-3/4" />
-        <div className="h-3 bg-[#e8e1da] animate-pulse rounded-lg w-1/2" />
+        <div className="h-4 bg-neutral-200 animate-pulse rounded-full w-3/4" />
+        <div className="h-3 bg-neutral-200 animate-pulse rounded-full w-1/2" />
       </div>
     </div>
   );
@@ -51,6 +51,6 @@ interface SkeletonRowProps {
 
 export function SkeletonRow({ width = '100%', height = '16px' }: SkeletonRowProps) {
   return (
-    <div style={{ width, height }} className="animate-pulse bg-[#e8e1da] rounded-lg" />
+    <div style={{ width, height }} className="animate-pulse bg-neutral-200 rounded-full" />
   );
 }
