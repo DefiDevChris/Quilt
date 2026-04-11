@@ -102,13 +102,13 @@ export function MobileUploadsPanel() {
               key={chip.value}
               type="button"
               onClick={() => setFilter(chip.value)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-150 ${filter === chip.value
+              className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${filter === chip.value
                 ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'bg-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da]/80'
+                : 'border border-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10'
                 }`}
             >
               {chip.label}
-              {count > 0 && <span className="ml-1.5 text-xs opacity-70">{count}</span>}
+              {count > 0 && <span className="ml-1.5 text-[12px] opacity-70">{count}</span>}
             </button>
           );
         })}
@@ -116,8 +116,8 @@ export function MobileUploadsPanel() {
 
       {/* Error */}
       {error && (
-        <div className="px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
-          <p className="text-sm text-error">{error}</p>
+        <div className="px-4 py-3 rounded-full bg-[#ff8d49]/10 border border-[#ff8d49]/20">
+          <p className="text-[14px] text-[#ff8d49]">{error}</p>
         </div>
       )}
 
@@ -128,8 +128,8 @@ export function MobileUploadsPanel() {
             <div key={i} className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               <div className="aspect-square bg-[#fdfaf7] animate-pulse" />
               <div className="p-3 space-y-2">
-                <div className="h-4 bg-[#e8e1da] rounded-lg animate-pulse" />
-                <div className="h-6 bg-[#e8e1da]/50 rounded-lg animate-pulse" />
+                <div className="h-4 bg-[#e8e1da] rounded-full animate-pulse" />
+                <div className="h-6 bg-[#e8e1da]/50 rounded-full animate-pulse" />
               </div>
             </div>
           ))}
@@ -139,7 +139,7 @@ export function MobileUploadsPanel() {
       {/* Empty state */}
       {!isLoading && filteredUploads.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mb-4">
             <svg
               width="28"
               height="28"

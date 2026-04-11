@@ -231,8 +231,8 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  if (!isOpen) return null;
 
  return (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
- <div className="w-full max-w-lg rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
+ <div className="w-full max-w-lg rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da]">
  <div className="flex items-center justify-between mb-4">
  <h2 className="text-lg font-semibold text-[#2d2a26]">Import Fabric</h2>
  <button type="button" onClick={onClose} className="text-[#6b655e] hover:text-[#2d2a26]">

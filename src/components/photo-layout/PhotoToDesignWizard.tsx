@@ -19,11 +19,12 @@ import type { ScaledPiece, PhotoLayoutStep } from '@/lib/photo-layout-types';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
 
-const STEP_LABELS = ['Upload', 'Image Prep', 'Scan Settings', 'Processing', 'Review'];
+const STEP_LABELS = ['Upload', 'Image Prep', 'Crop', 'Scan Settings', 'Processing', 'Review'];
 
 const STEP_KEYS: Array<PhotoLayoutStep> = [
   'upload',
   'imagePrep',
+  'crop',
   'scanSettings',
   'processing',
   'review',
@@ -435,7 +436,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
             className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
           >
             {/* Quilt-piece accent strip at top of card */}
-            <div className="h-2 bg-gradient-to-r from-[#ff8d49]/20 via-[#ffc8a6]/20 to-[#ffc7c7]/20" />
+            <div className="h-2 bg-[#fdfaf7]" />
 
             <div className="p-6">
               <WizardStepContent
@@ -464,6 +465,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 onContinue={handleContinue}
                 onClose={handleClose}
                 onOpenInStudio={handleOpenInStudio}
+                setOriginalImage={setOriginalImage}
                 setRotation={setRotation}
                 setFlipH={setFlipH}
                 setFlipV={setFlipV}
@@ -536,6 +538,7 @@ interface WizardStepContentProps {
   onContinue: () => void;
   onClose: () => void;
   onOpenInStudio: () => void;
+  setOriginalImage: (img: HTMLImageElement, url: string) => void;
   setRotation: React.Dispatch<React.SetStateAction<number>>;
   setFlipH: React.Dispatch<React.SetStateAction<boolean>>;
   setFlipV: React.Dispatch<React.SetStateAction<boolean>>;
@@ -565,6 +568,8 @@ function WizardStepContent(props: WizardStepContentProps) {
       return <UploadStep {...props} />;
     case 'imagePrep':
       return <ImagePrepStep {...props} />;
+    case 'crop':
+      return <CropStep {...props} />;
     case 'scanSettings':
       return <ScanSettingsStep {...props} />;
     case 'processing':
@@ -831,6 +836,282 @@ function ImagePrepStep(props: WizardStepContentProps) {
       >
         Continue
       </button>
+    </div>
+  );
+}
+
+interface CropRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+type CropDragMode = 'move' | 'nw' | 'ne' | 'sw' | 'se';
+
+function CropStep(props: WizardStepContentProps) {
+  const {
+    originalImage,
+    rotation,
+    flipH,
+    flipV,
+    setOriginalImage,
+    setRotation,
+    setFlipH,
+    setFlipV,
+    onContinue,
+  } = props;
+
+  // The image with rotation + flip baked in, used both for preview and as the
+  // source we crop from. Kept as an object URL so it can be passed to an <img>
+  // element and revoked on unmount.
+  const [transformedUrl, setTransformedUrl] = useState<string | null>(null);
+  const [transformedSize, setTransformedSize] = useState<{ w: number; h: number } | null>(null);
+  const [crop, setCrop] = useState<CropRect>({ x: 0.05, y: 0.05, w: 0.9, h: 0.9 });
+  const [baking, setBaking] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Bake rotation + flip into an offscreen canvas once on entry (or whenever
+  // the user navigates back after changing rotation). We translate the
+  // transform center to the midpoint so rotation is around the image center,
+  // then expand the target canvas to fit the rotated AABB.
+  useEffect(() => {
+    if (!originalImage) return;
+
+    const rad = (rotation * Math.PI) / 180;
+    const absCos = Math.abs(Math.cos(rad));
+    const absSin = Math.abs(Math.sin(rad));
+    const w = originalImage.naturalWidth;
+    const h = originalImage.naturalHeight;
+    const newW = Math.max(1, Math.round(w * absCos + h * absSin));
+    const newH = Math.max(1, Math.round(w * absSin + h * absCos));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = newW;
+    canvas.height = newH;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.translate(newW / 2, newH / 2);
+    ctx.rotate(rad);
+    ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+    ctx.drawImage(originalImage, -w / 2, -h / 2);
+
+    let objectUrl: string | null = null;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      objectUrl = URL.createObjectURL(blob);
+      setTransformedUrl(objectUrl);
+      setTransformedSize({ w: newW, h: newH });
+    }, 'image/png');
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [originalImage, rotation, flipH, flipV]);
+
+  const startDrag = useCallback(
+    (mode: CropDragMode) => (e: React.PointerEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const start: CropRect = { ...crop };
+      const MIN = 0.05;
+
+      const onMove = (ev: PointerEvent) => {
+        const dx = (ev.clientX - startX) / rect.width;
+        const dy = (ev.clientY - startY) / rect.height;
+
+        let { x, y, w, h } = start;
+
+        if (mode === 'move') {
+          x = Math.max(0, Math.min(1 - w, x + dx));
+          y = Math.max(0, Math.min(1 - h, y + dy));
+        } else if (mode === 'nw') {
+          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
+          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
+          w = w + (x - nx);
+          h = h + (y - ny);
+          x = nx;
+          y = ny;
+        } else if (mode === 'ne') {
+          const nw = Math.max(MIN, Math.min(1 - x, w + dx));
+          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
+          h = h + (y - ny);
+          y = ny;
+          w = nw;
+        } else if (mode === 'sw') {
+          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
+          const nh = Math.max(MIN, Math.min(1 - y, h + dy));
+          w = w + (x - nx);
+          x = nx;
+          h = nh;
+        } else if (mode === 'se') {
+          w = Math.max(MIN, Math.min(1 - x, w + dx));
+          h = Math.max(MIN, Math.min(1 - y, h + dy));
+        }
+
+        setCrop({ x, y, w, h });
+      };
+
+      const onUp = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    },
+    [crop]
+  );
+
+  const handleReset = useCallback(() => {
+    setCrop({ x: 0, y: 0, w: 1, h: 1 });
+  }, []);
+
+  const handleApplyAndContinue = useCallback(() => {
+    if (!transformedUrl || !transformedSize) return;
+
+    setBaking(true);
+
+    const src = new Image();
+    src.onload = () => {
+      const cropPxX = Math.round(crop.x * transformedSize.w);
+      const cropPxY = Math.round(crop.y * transformedSize.h);
+      const cropPxW = Math.max(1, Math.round(crop.w * transformedSize.w));
+      const cropPxH = Math.max(1, Math.round(crop.h * transformedSize.h));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = cropPxW;
+      canvas.height = cropPxH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setBaking(false);
+        return;
+      }
+      ctx.drawImage(src, cropPxX, cropPxY, cropPxW, cropPxH, 0, 0, cropPxW, cropPxH);
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          setBaking(false);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const finalImg = new Image();
+        finalImg.onload = () => {
+          setOriginalImage(finalImg, url);
+          // Rotation + flip are now baked into the new image, so reset the
+          // prep state to avoid double-applying them on later steps.
+          setRotation(0);
+          setFlipH(false);
+          setFlipV(false);
+          setBaking(false);
+          onContinue();
+        };
+        finalImg.onerror = () => setBaking(false);
+        finalImg.src = url;
+      }, 'image/png');
+    };
+    src.onerror = () => setBaking(false);
+    src.src = transformedUrl;
+  }, [
+    transformedUrl,
+    transformedSize,
+    crop,
+    setOriginalImage,
+    setRotation,
+    setFlipH,
+    setFlipV,
+    onContinue,
+  ]);
+
+  if (!originalImage || !transformedUrl || !transformedSize) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-body-md text-[#6b655e]">Preparing image...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Crop to the quilt</h3>
+      <p className="text-body-sm text-[#6b655e]">
+        Drag the corners to trim the photo down to just the quilt. Extra background can throw off
+        piece detection.
+      </p>
+
+      <div className="flex items-center justify-center">
+        <div
+          ref={containerRef}
+          className="relative bg-[#fdfaf7] border border-[#e8e1da] rounded-xl overflow-hidden select-none touch-none"
+          style={{
+            width: '100%',
+            maxWidth: `${Math.min(600, transformedSize.w)}px`,
+            aspectRatio: `${transformedSize.w} / ${transformedSize.h}`,
+          }}
+        >
+          <img
+            src={transformedUrl}
+            alt="Crop preview"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
+          <div
+            className="absolute border-2 border-[#ff8d49] cursor-move"
+            style={{
+              left: `${crop.x * 100}%`,
+              top: `${crop.y * 100}%`,
+              width: `${crop.w * 100}%`,
+              height: `${crop.h * 100}%`,
+              boxShadow: '0 0 0 9999px rgba(45, 42, 38, 0.5)',
+            }}
+            onPointerDown={startDrag('move')}
+          >
+            <div
+              className="absolute -left-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
+              onPointerDown={startDrag('nw')}
+            />
+            <div
+              className="absolute -right-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
+              onPointerDown={startDrag('ne')}
+            />
+            <div
+              className="absolute -left-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
+              onPointerDown={startDrag('sw')}
+            />
+            <div
+              className="absolute -right-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
+              onPointerDown={startDrag('se')}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded-lg bg-[#fdfaf7] border border-[#e8e1da] px-4 py-2 text-sm font-medium text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150"
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          onClick={handleApplyAndContinue}
+          disabled={baking}
+          className="flex-1 bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {baking ? 'Applying crop...' : 'Continue'}
+        </button>
+      </div>
     </div>
   );
 }

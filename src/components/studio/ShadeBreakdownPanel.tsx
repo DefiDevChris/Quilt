@@ -51,8 +51,8 @@ export function ShadeBreakdownPanel({
     : null;
 
   return (
-    <div className="px-3 py-2 border-b border-neutral-200/40 bg-neutral flex-shrink-0">
-      <p className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+    <div className="px-3 py-2 border-b border-[#e8e1da]/40 bg-[#fdfaf7] flex-shrink-0">
+      <p className="text-[12px] leading-[16px] font-medium text-[#6b655e] mb-1.5">
         Shade Breakdown
       </p>
 
@@ -61,13 +61,13 @@ export function ShadeBreakdownPanel({
           <div key={shade} className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span
-                className="inline-block w-3 h-3 rounded-full border border-neutral-300/50 flex-shrink-0"
+                className="inline-block w-3 h-3 rounded-full border border-[#e8e1da]/50 flex-shrink-0"
                 style={{ backgroundColor: SHADE_SWATCH_COLORS[shade] }}
               />
-              <span className="text-[11px] text-neutral-700">
+              <span className="text-[12px] leading-[16px] text-[#2d2a26]">
                 {SHADE_LABELS[shade]}
               </span>
-              <span className="text-[10px] text-neutral-400">
+              <span className="text-[12px] leading-[16px] text-[#6b655e]">
                 {breakdown[shade]}
               </span>
             </div>
@@ -77,12 +77,12 @@ export function ShadeBreakdownPanel({
                 type="button"
                 disabled={isApplying}
                 onClick={() => onBulkApply(shade)}
-                className="rounded-lg bg-primary/10 text-primary text-[10px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-primary/10 text-primary text-[12px] leading-[16px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isApplying ? 'Applying\u2026' : `Apply ${truncatedName}`}
               </button>
             ) : (
-              <span className="text-[10px] text-neutral-400 italic">
+              <span className="text-[12px] leading-[16px] text-[#6b655e] italic">
                 Select fabric first
               </span>
             )}
@@ -91,7 +91,7 @@ export function ShadeBreakdownPanel({
       </div>
 
       {!recentFabric && (
-        <p className="text-[9px] text-neutral-400 mt-1.5">
+        <p className="text-[12px] leading-[16px] text-[#6b655e] mt-1.5">
           Drag a fabric onto the canvas first, then use these buttons to fill all matching patches.
         </p>
       )}

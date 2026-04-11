@@ -71,7 +71,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
 
       {/* Details */}
       <div className="p-3 space-y-2.5">
-        <p className="text-sm font-medium text-[#2d2a26] truncate" title={displayName}>
+        <p className="text-[14px] font-medium text-[#2d2a26] truncate" title={displayName}>
           {displayName}
         </p>
 
@@ -83,7 +83,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
               type="button"
               onClick={() => onUpdateType(upload.id, opt.value)}
               disabled={upload.status !== 'pending'}
-              className={`px-2 py-0.5 text-xs font-medium rounded-lg transition-colors ${upload.assignedType === opt.value
+              className={`px-2 py-0.5 text-[12px] font-medium rounded-full transition-colors ${upload.assignedType === opt.value
                 ? TYPE_COLORS[opt.value]
                 : 'bg-transparent text-[#6b655e]/60 hover:bg-[#e8e1da]/50'
                 } disabled:opacity-50`}
@@ -99,16 +99,16 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleProcess}
             disabled={!canProcess || processing}
-            className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#ff8d49] text-[#2d2a26] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
+            className="flex-1 px-3 py-1.5 text-[12px] font-medium rounded-full bg-[#ff8d49] text-[#2d2a26] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
           >
             {processing ? 'Opening...' : 'Process'}
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150 ${confirmDelete
+            className={`px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors duration-150 ${confirmDelete
               ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
-              : 'bg-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
+              : 'border border-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
               }`}
           >
             {confirmDelete ? 'Confirm?' : 'Delete'}

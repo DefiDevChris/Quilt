@@ -350,7 +350,7 @@ function LayoutFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 overflow-y-auto py-8">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#2d2a26]/40 overflow-y-auto py-8">
       <div className="bg-[#fdfaf7] border border-[#e8e1da] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[#2d2a26]">

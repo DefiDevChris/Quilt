@@ -763,7 +763,7 @@ export default function WorkspacePreview() {
 
           {/* Mockup Container */}
           <div className="relative">
-            <div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#ffffff] rounded-xl">
+            <div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#ffffff] rounded-lg">
               <div className="absolute inset-0 bg-[#ffffff]/50">
                 {tabs[activeTab].component}
               </div>

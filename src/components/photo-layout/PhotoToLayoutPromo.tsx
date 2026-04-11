@@ -199,7 +199,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/50">
       <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
         {/* Quilt-piece accent strip at top */}
-        <div className="h-2 bg-gradient-to-r from-[#ff8d49]/20 via-[#ffc8a6]/20 to-[#ffc7c7]/20" />
+        <div className="h-2 bg-[#fdfaf7]" />
 
         <div className="p-6 relative z-10">
           {/* Header */}

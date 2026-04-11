@@ -71,25 +71,25 @@ export function CartDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/30"
+        className="fixed inset-0 z-40 bg-[#2d2a26]/30"
         onClick={() => setDrawerOpen(false)}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-neutral border-l border-neutral-200 flex flex-col">
+      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-[#fdfaf7] border-l border-[#e8e1da] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e1da]">
           <div className="flex items-center gap-2">
-            <ShoppingBag size={20} className="text-neutral-800" />
-            <h2 className="text-lg font-semibold text-neutral-800">Shopping Cart</h2>
-            <span className="text-xs text-neutral-600">
+            <ShoppingBag size={20} className="text-[#2d2a26]" />
+            <h2 className="text-[16px] leading-[24px] font-semibold text-[#2d2a26]">Shopping Cart</h2>
+            <span className="text-[12px] leading-[16px] text-[#6b655e]">
               ({items.length} item{items.length !== 1 ? 's' : ''})
             </span>
           </div>
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
-            className="p-1.5 text-neutral-600 hover:text-neutral-800 transition-colors"
+            className="p-1.5 text-[#6b655e] hover:text-[#2d2a26] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
             aria-label="Close cart"
           >
             <X size={20} />
@@ -108,10 +108,10 @@ export function CartDrawer() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-14 h-14 rounded-full bg-primary/40 flex items-center justify-center mb-3">
-                <ShoppingBag size={24} className="text-neutral-600" />
+                <ShoppingBag size={24} className="text-[#6b655e]" />
               </div>
-              <p className="text-sm font-medium text-neutral-800 mb-1">Your cart is empty</p>
-              <p className="text-xs text-neutral-600">Add fabrics from the shop to get started.</p>
+              <p className="text-[14px] leading-[20px] font-medium text-[#2d2a26] mb-1">Your cart is empty</p>
+              <p className="text-[12px] leading-[16px] text-[#6b655e]">Add fabrics from the shop to get started.</p>
             </div>
           ) : (
             items.map((item) => (
@@ -127,17 +127,17 @@ export function CartDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-neutral-200 px-5 py-4 space-y-3">
+          <div className="border-t border-[#e8e1da] px-5 py-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-neutral-600">Subtotal</span>
-              <span className="text-lg font-bold text-neutral-800">${subtotal.toFixed(2)}</span>
+              <span className="text-[14px] leading-[20px] font-medium text-[#6b655e]">Subtotal</span>
+              <span className="text-[16px] leading-[24px] font-bold text-[#2d2a26]">${subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleCopyList}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-neutral-100 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border-2 border-[#e8e1da] text-[14px] leading-[20px] font-medium text-[#6b655e] hover:bg-[#f5f2ef] transition-colors duration-150"
               >
                 <Copy size={14} />
                 Copy List
@@ -165,7 +165,7 @@ export function CartDrawer() {
             <button
               type="button"
               onClick={clearCart}
-              className="w-full text-center text-xs text-neutral-600 hover:text-error transition-colors"
+              className="w-full text-center text-[12px] leading-[16px] text-[#6b655e] hover:text-[#ff8d49] transition-colors"
             >
               Clear Cart
             </button>
@@ -188,9 +188,9 @@ function CartItemRow({
   const lineTotal = item.pricePerYard * item.quantityInYards;
 
   return (
-    <div className="flex gap-3 p-3 bg-neutral border border-neutral-200 rounded-lg">
+    <div className="flex gap-3 p-3 bg-[#fdfaf7] border border-[#e8e1da] rounded-lg">
       {/* Swatch */}
-      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-neutral-200">
+      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-[#e8e1da]">
         {item.fabricImageUrl ? (
           <img
             src={item.fabricImageUrl}
@@ -206,8 +206,8 @@ function CartItemRow({
 
       {/* Details */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-medium text-neutral-800 truncate">{item.fabricName}</h4>
-        <p className="text-xs text-neutral-600">${item.pricePerYard.toFixed(2)}/yd</p>
+        <h4 className="text-[14px] leading-[20px] font-medium text-[#2d2a26] truncate">{item.fabricName}</h4>
+        <p className="text-[12px] leading-[16px] text-[#6b655e]">${item.pricePerYard.toFixed(2)}/yd</p>
 
         {/* Quantity controls */}
         <div className="flex items-center gap-2 mt-1.5">
@@ -215,17 +215,17 @@ function CartItemRow({
             type="button"
             onClick={() => onQuantityChange(item.fabricId, -0.25)}
             disabled={item.quantityInYards <= 0.25}
-            className="w-6 h-6 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-600 hover:bg-neutral-300 disabled:opacity-30 transition-colors"
+            className="w-6 h-6 rounded-full bg-[#e8e1da] flex items-center justify-center text-[#6b655e] hover:bg-[#d4ccc4] disabled:opacity-30 transition-colors"
           >
             <Minus size={12} />
           </button>
-          <span className="text-xs font-medium text-neutral-800 min-w-[3rem] text-center">
+          <span className="text-[12px] leading-[16px] font-medium text-[#2d2a26] min-w-[3rem] text-center">
             {item.quantityInYards} yd{item.quantityInYards !== 1 ? 's' : ''}
           </span>
           <button
             type="button"
             onClick={() => onQuantityChange(item.fabricId, 0.25)}
-            className="w-6 h-6 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-600 hover:bg-neutral-300 transition-colors"
+            className="w-6 h-6 rounded-full bg-[#e8e1da] flex items-center justify-center text-[#6b655e] hover:bg-[#d4ccc4] transition-colors"
           >
             <Plus size={12} />
           </button>
@@ -234,11 +234,11 @@ function CartItemRow({
 
       {/* Line total + remove */}
       <div className="flex flex-col items-end justify-between">
-        <span className="text-sm font-semibold text-neutral-800">${lineTotal.toFixed(2)}</span>
+        <span className="text-[14px] leading-[20px] font-semibold text-[#2d2a26]">${lineTotal.toFixed(2)}</span>
         <button
           type="button"
           onClick={() => onRemove(item.fabricId)}
-          className="p-1 text-neutral-600 hover:text-error transition-colors"
+          className="p-1 text-[#6b655e] hover:text-[#ff8d49] transition-colors"
           aria-label={`Remove ${item.fabricName}`}
         >
           <Trash2 size={14} />

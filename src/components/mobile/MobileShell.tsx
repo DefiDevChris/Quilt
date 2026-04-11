@@ -23,13 +23,13 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-neutral px-5 py-2 bg-neutral">
+    <div className="min-h-screen bg-[#fdfaf7] pb-24">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#e8e1da] px-5 py-2 bg-[#fdfaf7]">
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
           aria-label="Menu"
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#f5f2ef] transition-colors"
         >
           <svg
             width="20"
@@ -45,7 +45,7 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
             <line x1="4" y1="17" x2="16" y2="17" />
           </svg>
         </button>
-        <Link href="/dashboard" className="text-base font-bold text-on-surface tracking-wide">
+        <Link href="/dashboard" className="text-[16px] leading-[24px] font-bold text-[#2d2a26] tracking-wide">
           Quilt Studio
         </Link>
         {isAuthenticated ? (

@@ -167,7 +167,7 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-[#ffffff] rounded-xl border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 flex items-start gap-3 transition-colors duration-150 hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)]">
+    <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 flex items-start gap-3 transition-colors duration-150 hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)]">
       <div className="w-10 h-10 rounded-full bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] flex-shrink-0">
         {icon}
       </div>

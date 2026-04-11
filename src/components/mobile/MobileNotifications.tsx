@@ -64,12 +64,12 @@ export function MobileNotifications() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral flex flex-col">
+    <div className="fixed inset-0 z-50 bg-[#fdfaf7] flex flex-col">
       <div className="flex items-center justify-between px-5 py-4">
         <button
           type="button"
           onClick={handleClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#f5f2ef] transition-colors"
           aria-label="Close notifications"
         >
           <svg
@@ -85,12 +85,11 @@ export function MobileNotifications() {
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        <h1 className="text-base font-bold text-neutral-800">Notifications</h1>
+        <h1 className="text-[16px] leading-[24px] font-bold text-[#2d2a26]">Notifications</h1>
         <button
           type="button"
           onClick={markAllAsRead}
-          className="text-xs font-semibold"
-          style={{ color: 'var(--color-primary-golden)' }}
+          className="text-[12px] leading-[16px] font-semibold text-[#ff8d49]"
         >
           Read all
         </button>
@@ -107,7 +106,7 @@ export function MobileNotifications() {
                 key={notification.id}
                 type="button"
                 onClick={() => handleNotificationClick(notification)}
-                className={`w-full text-left px-5 py-4 flex gap-3 hover:bg-neutral-100 transition-colors ${!notification.isRead ? 'bg-neutral-100' : ''
+                className={`w-full text-left px-5 py-4 flex gap-3 hover:bg-[#f5f2ef] transition-colors ${!notification.isRead ? 'bg-[#f5f2ef]' : ''
                   }`}
               >
                 {!notification.isRead && (
@@ -118,14 +117,14 @@ export function MobileNotifications() {
                 )}
                 <div className={`flex-1 min-w-0 ${notification.isRead ? 'pl-5' : ''}`}>
                   <p
-                    className={`text-sm ${notification.isRead ? 'text-secondary' : 'font-medium text-neutral-800'}`}
+                    className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-[#ffc8a6]' : 'font-medium text-[#2d2a26]'}`}
                   >
                     {notification.title}
                   </p>
-                  <p className="text-sm text-secondary line-clamp-2 mt-0.5">
+                  <p className="text-[14px] leading-[20px] text-[#ffc8a6] line-clamp-2 mt-0.5">
                     {notification.message}
                   </p>
-                  <p className="text-xs text-outline-variant mt-1">
+                  <p className="text-[12px] leading-[16px] text-[#6b655e] mt-1">
                     {formatRelativeTime(notification.createdAt)}
                   </p>
                 </div>

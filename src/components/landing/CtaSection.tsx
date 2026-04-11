@@ -9,7 +9,7 @@ export default function CtaSection() {
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="bg-[#ff8d49]/10 p-10 md:p-16 text-center border border-[#e8e1da] rounded-xl relative overflow-hidden">
+        <div className="bg-[#ff8d49]/10 p-10 md:p-16 text-center border border-[#e8e1da] rounded-lg relative overflow-hidden">
           {/* Decorative stitch outline via SVG overlay */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
             <rect
