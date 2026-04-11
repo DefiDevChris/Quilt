@@ -49,6 +49,21 @@ export interface QuantizedPiece {
   readonly classLabel: string;
 }
 
+/**
+ * Cell size for the quilter-friendly inch grid.
+ *
+ * Quilters cut fabric in quarter-inch increments — a pattern with fractional
+ * cell sizes like 0.64" is unusable at the cutting table. We restrict the
+ * cell-size vocabulary to {1/4", 1/2", 1"} so every emitted piece ends up
+ * with cut dimensions a quilter can actually produce with a rotary ruler.
+ */
+export type CellSizeInches = 0.25 | 0.5 | 1.0;
+
+export const CELL_SIZE_VOCABULARY: readonly CellSizeInches[] = [0.25, 0.5, 1.0];
+
+/** Default cell size when nothing else is known. */
+export const DEFAULT_CELL_SIZE_INCHES: CellSizeInches = 1.0;
+
 export interface QuantizerConfig {
   /** Minimum candidate base unit in pixels — filters detection noise. */
   readonly minUnitPx: number;
@@ -60,6 +75,14 @@ export interface QuantizerConfig {
   readonly rotationOffsetDeg: number;
   /** Minimum area (in px²) a piece must have to survive quantization. */
   readonly minAreaPx: number;
+  /**
+   * User-selected piece scale from the scan settings step. Drives cell-size
+   * selection: 'large'/'standard' → 1", 'tiny' → 0.5" (or 0.25" when the
+   * smallest piece is genuinely fine-grained). Defaults to 'standard'.
+   */
+  readonly pieceScale: 'tiny' | 'standard' | 'large';
+  /** Hard override for cell size in inches (bypasses pieceScale heuristic). */
+  readonly cellSizeOverrideInches: CellSizeInches | null;
 }
 
 export const DEFAULT_QUANTIZER_CONFIG: QuantizerConfig = {
@@ -68,6 +91,8 @@ export const DEFAULT_QUANTIZER_CONFIG: QuantizerConfig = {
   unitOverridePx: null,
   rotationOffsetDeg: 0,
   minAreaPx: 25,
+  pieceScale: 'standard',
+  cellSizeOverrideInches: null,
 };
 
 export interface QuantizerResult {
@@ -82,23 +107,62 @@ export interface QuantizerResult {
   readonly classCounts: ReadonlyMap<string, number>;
   /** Pieces dropped during quantization (below minAreaPx, degenerate, etc.). */
   readonly droppedIds: readonly string[];
+  /**
+   * Inch-grid cell size chosen for this quilt from the restricted vocabulary
+   * {1/4", 1/2", 1"}. Every vertex of every emitted piece (after scaling by
+   * inchesPerPx) lands on an integer multiple of this value.
+   */
+  readonly cellSizeInches: CellSizeInches;
+  /**
+   * Pixel-to-inch conversion factor. Pieces in `.pieces` are still in pixel
+   * space; multiply every coordinate by `inchesPerPx` to convert to the
+   * cell-aligned inch grid.
+   */
+  readonly inchesPerPx: number;
+  /**
+   * Auto-inferred worktable width in inches. Always an integer multiple of
+   * cellSizeInches. Derived from the source image width × inchesPerPx, then
+   * rounded up so pieces never fall off the edge.
+   */
+  readonly worktableWidthInches: number;
+  /** Auto-inferred worktable height, also a multiple of cellSizeInches. */
+  readonly worktableHeightInches: number;
 }
 
 // ============================================================================
 // Public API
 // ============================================================================
 
+export interface QuantizeShapesOptions {
+  /**
+   * Source image width in pixels (post-downscale) — used to compute the
+   * auto worktable width. Pass 0 to fall back to an image-less default.
+   */
+  readonly imageWidthPx?: number;
+  /** Source image height in pixels. */
+  readonly imageHeightPx?: number;
+}
+
 /**
  * Quantize detected pieces onto an inferred integer grid.
  *
+ * The inferred pixel unit is treated as exactly ONE inch cell, which fixes
+ * the px→inch scale by construction (scaleInchesPerPx = cellSizeInches / u).
+ * Because every emitted vertex is a multiple of u in pixel space, scaling by
+ * that factor puts every vertex on the inch grid exactly — no rounding.
+ *
  * @param pieces - Detected pieces from the orphan filter
  * @param config - Optional partial config (merged with defaults)
+ * @param imageDims - Optional image dimensions for worktable auto-sizing
  */
 export function quantizeShapes(
   pieces: readonly DetectedPiece[],
-  config?: Partial<QuantizerConfig>
+  config?: Partial<QuantizerConfig>,
+  imageDims?: QuantizeShapesOptions
 ): QuantizerResult {
   const cfg: QuantizerConfig = { ...DEFAULT_QUANTIZER_CONFIG, ...config };
+  const imageWidthPx = imageDims?.imageWidthPx ?? 0;
+  const imageHeightPx = imageDims?.imageHeightPx ?? 0;
 
   if (pieces.length === 0) {
     return {
@@ -108,6 +172,10 @@ export function quantizeShapes(
       classCount: 0,
       classCounts: new Map(),
       droppedIds: [],
+      cellSizeInches: cfg.cellSizeOverrideInches ?? DEFAULT_CELL_SIZE_INCHES,
+      inchesPerPx: 0,
+      worktableWidthInches: 0,
+      worktableHeightInches: 0,
     };
   }
 
@@ -188,6 +256,29 @@ export function quantizeShapes(
     classCounts.set(q.classKey, (classCounts.get(q.classKey) ?? 0) + 1);
   }
 
+  // Stage 6: Inch-grid sizing.
+  //
+  // Pick a quilter-friendly cell size from {1/4", 1/2", 1"}. The mapping is
+  // driven primarily by pieceScale (the single user-facing knob on the scan
+  // settings step): 'large'/'standard' → 1", 'tiny' → 0.5". Drop to 0.5"
+  // even on 'standard' when the smallest real piece is genuinely small
+  // relative to u (≥3 cells across its shorter dimension means piecing is
+  // fine-grained). 0.25" is only used when the user explicitly overrides.
+  const cellSizeInches = chooseCellSize(cfg, quantized, u);
+
+  // Treat the inferred pixel unit as exactly ONE inch cell. This fixes the
+  // px→inch scale by construction — every vertex that was on a u-multiple
+  // in pixel space becomes a cell-multiple in inch space after scaling.
+  const inchesPerPx = cellSizeInches / u;
+
+  // Auto worktable dims: image extent in inches, rounded up to a cell
+  // multiple so pieces never fall off the edge.
+  const rawWidthInches = imageWidthPx * inchesPerPx;
+  const rawHeightInches = imageHeightPx * inchesPerPx;
+  const worktableWidthInches = rawWidthInches > 0 ? ceilToCell(rawWidthInches, cellSizeInches) : 0;
+  const worktableHeightInches =
+    rawHeightInches > 0 ? ceilToCell(rawHeightInches, cellSizeInches) : 0;
+
   return {
     pieces: quantized,
     unitPx: u,
@@ -195,7 +286,61 @@ export function quantizeShapes(
     classCount: classCounts.size,
     classCounts,
     droppedIds: dropped,
+    cellSizeInches,
+    inchesPerPx,
+    worktableWidthInches,
+    worktableHeightInches,
   };
+}
+
+/**
+ * Round up to the nearest multiple of `cell`.
+ *
+ * Used for worktable dims so the canvas is always cell-aligned and pieces
+ * that touch the edge have a grid intersection at exactly (W, 0), (W, H),
+ * etc. — no sub-cell slivers.
+ */
+function ceilToCell(value: number, cell: number): number {
+  if (cell <= 0) return value;
+  return Math.ceil(value / cell - 1e-9) * cell;
+}
+
+/**
+ * Pick a cell size from {1/4", 1/2", 1"} for this quilt.
+ *
+ * Rules (in priority order):
+ *   1. Explicit override → use it directly.
+ *   2. pieceScale='large' → 1" (big pieces don't need fine resolution).
+ *   3. pieceScale='tiny' → 0.5" by default. Drops to 0.25" only when the
+ *      smallest piece is itself barely more than a cell wide — that means
+ *      the user is really piecing at sub-half-inch resolution.
+ *   4. pieceScale='standard' → 1" unless the smallest piece is tiny
+ *      relative to u (its shorter bbox side is <1.5 × u), in which case
+ *      the 1" assumption would collapse distinct pieces into the same cell
+ *      and we drop to 0.5".
+ */
+function chooseCellSize(
+  cfg: QuantizerConfig,
+  quantized: readonly QuantizedPiece[],
+  unitPx: number
+): CellSizeInches {
+  if (cfg.cellSizeOverrideInches) return cfg.cellSizeOverrideInches;
+
+  const smallestShortSideUnits = quantized.length
+    ? Math.min(...quantized.map((q) => Math.min(q.unitsW, q.unitsH)))
+    : Number.POSITIVE_INFINITY;
+
+  if (cfg.pieceScale === 'large') return 1.0;
+
+  if (cfg.pieceScale === 'tiny') {
+    // Tiny scale + smallest piece ≤1 cell → user is piecing in 1/4" units.
+    if (smallestShortSideUnits <= 1 && unitPx > 0) return 0.25;
+    return 0.5;
+  }
+
+  // 'standard' — default to 1" unless the finest pieces hug the grid resolution.
+  if (smallestShortSideUnits <= 1) return 0.5;
+  return 1.0;
 }
 
 // ============================================================================
