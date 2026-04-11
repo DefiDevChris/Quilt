@@ -123,10 +123,12 @@ export function usePhotoPatternImport() {
 
         if (points.length < 3) continue;
 
+        // According to guidelines, imported patterns should be outlines
+        // #ffffff fill allows hit-testing without obscuring layout beneath
         const polygon = new fabric.Polygon(points, {
-          fill: resolveFillColor(scaledPiece.dominantColor),
-          stroke: '#4A3B32',
-          strokeWidth: 1,
+          fill: '#ffffff',
+          stroke: '#2d2a26',
+          strokeWidth: 1.5,
           selectable: true,
           objectCaching: false,
         });

@@ -17,13 +17,14 @@ import type { MobileUpload } from '@/types/mobile-upload';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
 
-const STEP_LABELS = ['Upload', 'Image Prep', 'Scan Settings', 'Processing', 'Complete'];
+const STEP_LABELS = ['Upload', 'Image Prep', 'Scan Settings', 'Processing', 'Review', 'Complete'];
 
-const STEP_KEYS: Array<'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'complete'> = [
+const STEP_KEYS: Array<'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'review' | 'complete'> = [
   'upload',
   'imagePrep',
   'scanSettings',
   'processing',
+  'review',
   'complete',
 ];
 
@@ -507,6 +508,8 @@ function WizardStepContent(props: WizardStepContentProps) {
       return <ScanSettingsStep {...props} />;
     case 'processing':
       return <ProcessingStep />;
+    case 'review':
+      return <ReviewStep onContinue={props.onContinue} />;
     case 'complete':
       return <CompleteStep onOpenInStudio={props.onOpenInStudio} />;
     default:
@@ -903,6 +906,87 @@ function ProcessingStep() {
         <p className="text-body-md text-[#6b655e]">
           Detecting pieces and extracting the pattern...
         </p>
+      </div>
+    </div>
+  );
+}
+
+function ReviewStep({ onContinue }: { onContinue: () => void }) {
+  const scaledPieces = usePhotoLayoutStore((s) => s.scaledPieces);
+  const correctedImageRef = usePhotoLayoutStore((s) => s.correctedImageRef);
+  const setStep = usePhotoLayoutStore((s) => s.setStep);
+  const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
+
+  // Create an SVG viewBox matching the original corrected image if available
+  const viewBox = correctedImageRef
+    ? `0 0 ${correctedImageRef.width} ${correctedImageRef.height}`
+    : "0 0 1000 1000";
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center space-y-2">
+        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Review Pattern</h3>
+        <p className="text-body-md text-[#6b655e]">
+          Check the detected pieces. If things look messy, you can rescan with different settings.
+        </p>
+      </div>
+
+      <div className="relative aspect-square sm:aspect-video w-full bg-[#f4ece1] rounded-xl overflow-hidden border border-[#d4ccc4]">
+        {correctedImageRef && (
+          <img
+            src={correctedImageRef.url}
+            alt="Straightened Quilt"
+            className="absolute inset-0 w-full h-full object-contain opacity-50"
+          />
+        )}
+
+        {/* SVG Overlay for the detected pieces */}
+        <svg
+          viewBox={viewBox}
+          className="absolute inset-0 w-full h-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {scaledPieces.map((piece, i) => {
+            // Because the scaled pieces are in inches based on target width,
+            // we'd need a transform to match the background image perfectly.
+            // For this quick review overlay, we'll draw an abstract representation
+            // using the original pixel contours if available, or just standard SVG
+            // scaled to fit. Since the wizard only has ScaledPiece right now,
+            // we will approximate or leave it empty if we don't have pixel contours here.
+            // A more robust implementation would use raw pixel contours from state.
+            const pts = piece.contourInches.map(p => `${p.x * 100},${p.y * 100}`).join(' ');
+            return (
+              <polygon
+                key={piece.id}
+                points={pts}
+                fill="rgba(255, 255, 255, 0.4)"
+                stroke="#ff8d49"
+                strokeWidth={selectedPieceId === piece.id ? "3" : "1"}
+                onClick={() => setSelectedPieceId(piece.id)}
+                className="cursor-pointer transition-all hover:fill-white/60"
+                style={{
+                  transform: `scale(${correctedImageRef ? correctedImageRef.width / 50 : 20})`,
+                  transformOrigin: '0 0'
+                }}
+              />
+            );
+          })}
+        </svg>
+      </div>
+
+      <div className="flex gap-4">
+        <button
+          onClick={() => setStep('scanSettings')}
+          className="flex-1 px-4 py-3 border border-[#d4ccc4] text-[#4A3B32] rounded-full font-semibold hover:bg-[#f4ece1] transition-colors"
+        >
+          Rescan Settings
+        </button>
+        <button
+          onClick={onContinue}
+          className="flex-1 px-4 py-3 bg-[#ff8d49] text-white rounded-full font-semibold hover:bg-[#e67a3a] transition-colors"
+        >
+          Send to Studio
+        </button>
       </div>
     </div>
   );

@@ -365,31 +365,25 @@ export async function runDetectionPipeline(
       // Non-fatal
     }
 
-    // Shape normalization
+    // Shape quantization (replaces normalizer and edge snapper)
     let normalizedContours: Point2D[][] = cleanPieces.map((p) =>
       p.contour.map((pt) => ({ x: pt.x, y: pt.y }))
     );
+    let shapeClasses: string[] = Array(cleanPieces.length).fill('polygon');
+    let canonicalDimsList: Array<{width: number, height: number, type: string} | undefined> = Array(cleanPieces.length).fill(undefined);
+
     try {
-      const { normalizeShapes } = await import('@/lib/shape-normalizer-engine');
-      const normResult = normalizeShapes(cleanPieces);
-      normalizedContours = normResult.normalizedContours.map((c) =>
-        c.map((pt) => ({ x: pt.x, y: pt.y }))
-      );
-    } catch {
-      // Non-fatal
+      const { quantizeShapes } = await import('@/lib/shape-quantization-engine');
+      const qResult = quantizeShapes(cleanPieces);
+      normalizedContours = qResult.pieces.map((p) => p.quantizedContour);
+      shapeClasses = qResult.pieces.map((p) => p.shapeClass);
+      canonicalDimsList = qResult.pieces.map((p) => p.canonicalDims);
+    } catch (e) {
+      console.warn('[PhotoPipeline] Quantization failed, falling back to raw contours', e);
     }
 
-    // Edge snapping
     const imageW = downscaleParams.width;
     const imageH = downscaleParams.height;
-    const canvasBounds: Rect = { x: 0, y: 0, width: imageW, height: imageH };
-
-    try {
-      const { snapEdges } = await import('@/lib/edge-snapper-engine');
-      normalizedContours = snapEdges(normalizedContours, canvasBounds);
-    } catch {
-      // Non-fatal
-    }
 
     // Scale pixel contours to inch-based ScaledPieces
     const scaledPieces = buildScaledPieces(
@@ -400,7 +394,11 @@ export async function runDetectionPipeline(
       DEFAULT_CANVAS_WIDTH,
       DEFAULT_CANVAS_HEIGHT,
       DEFAULT_SEAM_ALLOWANCE_INCHES
-    );
+    ).map((sp, i) => ({
+      ...sp,
+      shapeClass: shapeClasses[i],
+      canonicalDims: canonicalDimsList[i]
+    }));
 
     advance(5, 'complete');
 

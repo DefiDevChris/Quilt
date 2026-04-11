@@ -39,6 +39,8 @@ export interface ScaledPiece {
   readonly finishedWidthNum: number;
   readonly finishedHeightNum: number;
   readonly dominantColor: string;
+  readonly shapeClass?: string;
+  readonly canonicalDims?: { width: number; height: number; type: string };
 }
 
 export type PipelineStepStatus = 'pending' | 'running' | 'complete' | 'error';
@@ -67,7 +69,7 @@ export interface PipelineStep {
   readonly message?: string;
 }
 
-export type PhotoLayoutStep = 'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'complete';
+export type PhotoLayoutStep = 'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'review' | 'complete';
 
 /**
  * Types of non-rectangular quilt shapes supported.

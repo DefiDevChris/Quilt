@@ -113,7 +113,7 @@ describe('layoutStore', () => {
       const borders = useLayoutStore.getState().borders;
       expect(borders.length).toBe(1);
       expect(borders[0].width).toBe(2);
-      expect(borders[0].color).toBe('#2D2D2D');
+      expect(borders[0].color).toBe('#4a3f35'); // DEFAULT_BORDER_COLOR
       expect(borders[0].fabricId).toBeNull();
     });
 
@@ -129,7 +129,7 @@ describe('layoutStore', () => {
       useLayoutStore.getState().addBorder();
       useLayoutStore.getState().updateBorder(1, { color: '#00FF00', width: 3 });
       const borders = useLayoutStore.getState().borders;
-      expect(borders[0].color).toBe('#2D2D2D');
+      expect(borders[0].color).toBe('#4a3f35');
       expect(borders[1].color).toBe('#00FF00');
       expect(borders[1].width).toBe(3);
     });

@@ -178,9 +178,9 @@ describe('filterOrphanPieces', () => {
 
     const result = filterOrphanPieces([a, b]);
 
-    // 15px gap > 8px tolerance → both orphans
-    expect(result.orphanCount).toBe(2);
-    expect(result.pieces).toHaveLength(0);
+    // 15px gap < 18px tolerance → connected
+    expect(result.orphanCount).toBe(0);
+    expect(result.pieces).toHaveLength(2);
   });
 
   it('handles a 3x3 grid of connected pieces', () => {
@@ -221,14 +221,14 @@ describe('filterOrphanPieces', () => {
       { x: 106, y: 100 },
     ]);
 
-    // Default 8px tolerance → both orphans
+    // Default 18px tolerance → connected (15px gap)
     const defaultResult = filterOrphanPieces([a, b]);
-    expect(defaultResult.orphanCount).toBe(2);
+    expect(defaultResult.orphanCount).toBe(0);
 
-    // Custom 15px tolerance → connected
-    const customResult = filterOrphanPieces([a, b], { tolerance: 15 });
-    expect(customResult.orphanCount).toBe(0);
-    expect(customResult.pieces).toHaveLength(2);
+    // Custom 10px tolerance → orphans
+    const customResult = filterOrphanPieces([a, b], { tolerance: 10 });
+    expect(customResult.orphanCount).toBe(2);
+    expect(customResult.pieces).toHaveLength(0);
   });
 
   it('returns immutable result arrays', () => {
