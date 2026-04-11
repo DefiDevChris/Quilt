@@ -68,9 +68,9 @@ No `any` — use `unknown` with proper casts. Type assertions at boundaries only
 
 ### Styling & Design System
 
-Tailwind CSS v4. Full spec in `brand_config.json`. BrandGuard agent enforces consistency.
+Tailwind CSS v4. Full spec in `brand_config.json`.
 
-**Colors:** `--primary: #ff8d49` | `--secondary: #ffc8a6` | `--accent: #ffc7c7` | `--bg: #fdfaf7` | `--surface: #ffffff` | `--text: #2d2a26` | `--text-dim: #6b655e` | `--border: #e8e1da`. Light mode only.
+**Colors:** `--primary: #ff8d49` | `--secondary: #ffc8a6` | `--accent: #ffc7c7` | `--bg: #fdfaf7` | `--surface: #ffffff` | `--text: #1a1a1a` | `--text-dim: #4a4a4a` | `--border: #d4d4d4`. Light mode only.
 
 **Typography:** Headings: **Spline Sans** (400-700). Body: **Inter** (300-700). Scale: h1 40/52, h2 32/40, h3 24/32, body 18/28, small 16/24, label 14/20.
 
@@ -78,9 +78,9 @@ Tailwind CSS v4. Full spec in `brand_config.json`. BrandGuard agent enforces con
 
 **Motion:** Hover changes color/background ONLY. 150ms ease-out on color/opacity. No scale, translate, lift, shift, or transforms on hover. Framer Motion is allowed for entry/exit animations, drawer slides, and component transitions. No spinners (use opacity pulse).
 
-**Buttons:** Primary: `bg-[#ff8d49] text-[#2d2a26] px-6 py-2 rounded-full hover:bg-[#e67d3f]`. Secondary: `border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10`.
+**Buttons:** Primary: `bg-[#ff8d49] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#e67d3f]`. Secondary: `border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10`.
 
-**Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, gradients, glassmorphism, `hover:scale-*`/`hover:-translate-*`, `shadow-elevation-*`, hard offset shadows, `font-black uppercase tracking-[0.2em]`, AI slop.
+**Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, `font-black uppercase tracking-[0.2em]`, AI slop.
 
 ### State Management
 
