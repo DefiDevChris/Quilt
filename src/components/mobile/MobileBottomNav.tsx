@@ -9,7 +9,7 @@ interface MobileBottomNavProps {
 }
 
 function HomeIcon({ active }: { active: boolean }) {
-  const stroke = active ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)';
+  const stroke = active ? '#ff8d49' : '#d4d4d4';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -29,7 +29,7 @@ function HomeIcon({ active }: { active: boolean }) {
 }
 
 function ProfileIcon({ active }: { active: boolean }) {
-  const stroke = active ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)';
+  const stroke = active ? '#ff8d49' : '#d4d4d4';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -49,7 +49,7 @@ function ProfileIcon({ active }: { active: boolean }) {
 }
 
 function SignInIcon({ active }: { active: boolean }) {
-  const stroke = active ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)';
+  const stroke = active ? '#ff8d49' : '#d4d4d4';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -92,9 +92,9 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
       >
         <HomeIcon active={homeActive} />
         <span
-          className="text-label-sm font-semibold uppercase tracking-wide"
+          className="text-[14px] leading-[20px] font-semibold"
           style={{
-            color: homeActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
+            color: homeActive ? '#ff8d49' : '#d4d4d4',
           }}
         >
           Home
@@ -111,9 +111,8 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
         <div
           className="w-[46px] h-[46px] rounded-full flex items-center justify-center"
           style={{
-            background:
-              'linear-gradient(145deg, var(--color-primary-golden), var(--color-primary-golden-light))',
-            boxShadow: 'var(--shadow-fab)',
+            background: 'linear-gradient(145deg, #ff8d49, #ffc8a6)',
+            boxShadow: '0 1px 2px rgba(45,42,38,0.08)',
           }}
         >
           <svg
@@ -121,7 +120,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
             height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--color-primary-on)"
+            stroke="#1a1a1a"
             strokeWidth={2}
             strokeLinecap="round"
           >
@@ -143,9 +142,9 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
           <SignInIcon active={profileActive} />
         )}
         <span
-          className="text-label-sm font-semibold uppercase tracking-wide"
+          className="text-[14px] leading-[20px] font-semibold"
           style={{
-            color: profileActive ? 'var(--color-primary-golden)' : 'var(--color-outline-variant)',
+            color: profileActive ? '#ff8d49' : '#d4d4d4',
           }}
         >
           {isAuthenticated ? 'Profile' : 'Sign In'}

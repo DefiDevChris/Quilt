@@ -161,7 +161,7 @@ function FabricForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-lg font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
       >
         {saving ? 'Adding...' : 'Add Fabric'}
       </button>
@@ -312,7 +312,7 @@ function BlockForm() {
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-lg font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
       >
         {saving ? 'Adding...' : 'Add Block'}
       </button>
@@ -456,7 +456,7 @@ function ShopManagement() {
             type="button"
             onClick={() => handleBulkToggle(true)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-green-50 text-green-700 rounded-lg disabled:opacity-50 hover:bg-green-100 transition-colors duration-150"
+            className="px-3 py-2 text-xs font-medium bg-green-50 text-green-700 rounded-full disabled:opacity-50 hover:bg-green-100 transition-colors duration-150"
           >
             Mark All Purchasable
           </button>
@@ -464,7 +464,7 @@ function ShopManagement() {
             type="button"
             onClick={() => handleBulkToggle(false)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-red-50 text-red-700 rounded-lg disabled:opacity-50 hover:bg-red-100 transition-colors duration-150"
+            className="px-3 py-2 text-xs font-medium bg-red-50 text-red-700 rounded-full disabled:opacity-50 hover:bg-red-100 transition-colors duration-150"
           >
             Remove All
           </button>
@@ -521,11 +521,11 @@ function ShopManagement() {
                     <button
                       type="button"
                       onClick={() => handleToggleField(fabric.id, 'inStock', fabric.inStock)}
-                      className={`inline-flex h-5 w-9 items-center rounded-lg transition-colors duration-150 ${fabric.inStock ? 'bg-green-500' : 'bg-[#ffc8a6]/60'
+                      className={`inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150 ${fabric.inStock ? 'bg-green-500' : 'bg-[#ffc8a6]/60'
                         }`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-lg bg-[#ffffff] transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[#ffffff] transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -536,11 +536,11 @@ function ShopManagement() {
                       onClick={() =>
                         handleToggleField(fabric.id, 'isPurchasable', fabric.isPurchasable)
                       }
-                      className={`inline-flex h-5 w-9 items-center rounded-lg transition-colors duration-150 ${fabric.isPurchasable ? 'bg-[#ff8d49]' : 'bg-[#ffc8a6]/60'
+                      className={`inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150 ${fabric.isPurchasable ? 'bg-[#ff8d49]' : 'bg-[#ffc8a6]/60'
                         }`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-lg bg-[#ffffff] transition-transform duration-150 ${fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[#ffffff] transition-transform duration-150 ${fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -559,7 +559,7 @@ function ShopManagement() {
             type="button"
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
           >
             Previous
           </button>
@@ -570,7 +570,7 @@ function ShopManagement() {
             type="button"
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
           >
             Next
           </button>

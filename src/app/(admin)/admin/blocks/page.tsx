@@ -91,7 +91,7 @@ export default function AdminBlocksPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-surface)] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -105,14 +105,14 @@ export default function AdminBlocksPage() {
           <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20" />
         </div>
       ) : blocks.length === 0 ? (
-        <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-12 text-center">
+        <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-12 text-center">
           <p className="text-[#4a4a4a]">No blocks yet. Create your first block!</p>
         </div>
       ) : (
         <>
           <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
             <table className="w-full">
-              <thead className="bg-[#fdfaf7]">
+              <thead className="bg-[var(--color-bg)]">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                     Block
@@ -131,9 +131,9 @@ export default function AdminBlocksPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d4d4d4] bg-[#fdfaf7]">
+              <tbody className="divide-y divide-[#d4d4d4] bg-[var(--color-bg)]">
                 {blocks.map((block) => (
-                  <tr key={block.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                  <tr key={block.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {block.thumbnailUrl ? (
@@ -217,7 +217,7 @@ export default function AdminBlocksPage() {
                     setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Previous
                 </button>
@@ -229,7 +229,7 @@ export default function AdminBlocksPage() {
                     }))
                   }
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Next
                 </button>
@@ -351,7 +351,7 @@ function BlockFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#1a1a1a]/40 overflow-y-auto py-8">
-      <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[#1a1a1a]">
             {isEditing ? 'Edit Block' : 'Create New Block'}
@@ -359,7 +359,7 @@ function BlockFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[#fdfaf7] transition-colors duration-150"
+            className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
             <svg className="w-5 h-5 text-[#4a4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -383,7 +383,7 @@ function BlockFormModal({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
               />
             </div>
             <div>
@@ -394,7 +394,7 @@ function BlockFormModal({
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
               />
             </div>
           </div>
@@ -406,7 +406,7 @@ function BlockFormModal({
               name="subcategory"
               value={formData.subcategory}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
             />
           </div>
 
@@ -419,7 +419,7 @@ function BlockFormModal({
               value={formData.svgData}
               onChange={handleChange}
               rows={5}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-sm"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-sm"
               placeholder="<svg viewBox=&quot;0 0 300 300&quot;>...</svg>"
             />
           </div>
@@ -431,7 +431,7 @@ function BlockFormModal({
               name="tagsStr"
               value={formData.tagsStr}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
               placeholder="traditional, nine-patch, beginner"
             />
           </div>
@@ -443,7 +443,7 @@ function BlockFormModal({
               name="thumbnailUrl"
               value={formData.thumbnailUrl}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
             />
           </div>
 
@@ -451,14 +451,14 @@ function BlockFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] transition-colors duration-150"
+              className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-[#ffffff] bg-[#ff8d49] rounded-full disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-[#ff8d49] rounded-full disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Block' : 'Create Block'}
             </button>

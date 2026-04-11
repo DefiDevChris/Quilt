@@ -328,7 +328,7 @@ body {
   background: var(--color-primary);
   color: var(--color-text);
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
   padding: 8px 20px;
   font-size: 14px;
   font-weight: 600;

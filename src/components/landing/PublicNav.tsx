@@ -80,7 +80,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
+              className="px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
             >
               Go to Dashboard
             </Link>
@@ -94,7 +94,7 @@ export default function PublicNav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
+                className="px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-semibold hover:bg-[#e67d3f] transition-colors duration-150 whitespace-nowrap"
               >
                 Start Designing
               </Link>
@@ -164,7 +164,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
+              className="block text-center px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -173,7 +173,7 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-lg font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
+                className="block text-center px-6 py-2 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-semibold hover:bg-[#e67d3f] transition-colors duration-150"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing

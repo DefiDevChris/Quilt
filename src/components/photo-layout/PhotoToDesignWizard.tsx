@@ -376,7 +376,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   }
 
   return (
-    <div className="min-h-screen bg-[#fdfaf7] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col relative overflow-hidden">
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
       <QuiltPiece
         color="primary"
@@ -387,7 +387,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         opacity={35}
         strokeWidth={5}
         stitchGap={16}
-        stitchColor="#1a1a1a"
+        stitchColor="var(--color-text)"
       />
       <QuiltPiece
         color="secondary"
@@ -398,15 +398,15 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         opacity={30}
         strokeWidth={5}
         stitchGap={16}
-        stitchColor="#1a1a1a"
+        stitchColor="var(--color-text)"
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#d4d4d4] relative z-10">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] relative z-10">
         <button
           type="button"
           onClick={handleClose}
-          className="inline-flex items-center gap-2 text-body-sm text-[#4a4a4a] hover:text-[#ff8d49] transition-colors duration-150"
+          className="inline-flex items-center gap-2 text-body-sm text-[var(--color-text-dim)] hover:text-[#ff8d49] transition-colors duration-150"
           aria-label="Close"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -422,7 +422,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         </button>
         <div className="flex items-center gap-3">
           <QuiltPieceRow count={3} size={10} gap={4} />
-          <h2 className="text-headline-sm font-semibold text-[#1a1a1a]">Photo to Design</h2>
+          <h2 className="text-headline-sm font-semibold text-[var(--color-text)]">Photo to Design</h2>
           <QuiltPieceRow count={3} size={10} gap={4} colors={['accent', 'secondary', 'primary']} />
         </div>
         <div className="w-24" /> {/* Spacer for centering */}
@@ -433,10 +433,10 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         <div className="max-w-2xl mx-auto">
           <div
             data-testid="photo-pattern-wizard"
-            className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
+            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
           >
             {/* Quilt-piece accent strip at top of card */}
-            <div className="h-2 bg-[#fdfaf7]" />
+            <div className="h-2 bg-[var(--color-bg)]" />
 
             <div className="p-6">
               <WizardStepContent
@@ -600,7 +600,7 @@ function WizardStepContent(props: WizardStepContentProps) {
     case 'complete':
       return <CompleteStep onOpenInStudio={props.onOpenInStudio} />;
     default:
-      return <p className="text-body-md text-[#4a4a4a]">Unknown step: {props.step}</p>;
+      return <p className="text-body-md text-[var(--color-text-dim)]">Unknown step: {props.step}</p>;
   }
 }
 
@@ -611,7 +611,7 @@ function WizardStepContent(props: WizardStepContentProps) {
 function UploadStep(props: WizardStepContentProps) {
   return (
     <div className="space-y-4">
-      <p className="text-body-md text-[#4a4a4a] text-center">
+      <p className="text-body-md text-[var(--color-text-dim)] text-center">
         Extract quilt pieces from a photo using AI. Choose a source:
       </p>
 
@@ -641,7 +641,7 @@ function UploadStep(props: WizardStepContentProps) {
           className={`block w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
               ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-              : 'border-[#d4d4d4]/50 hover:border-[#ff8d49]/50'
+              : 'border-[var(--color-border)]/50 hover:border-[#ff8d49]/50'
           }`}
         >
           {props.loading ? (
@@ -657,7 +657,7 @@ function UploadStep(props: WizardStepContentProps) {
                   <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="2" fill="none" />
                 </svg>
               </div>
-              <p className="text-body-md text-[#4a4a4a]">Processing image...</p>
+              <p className="text-body-md text-[var(--color-text-dim)]">Processing image...</p>
             </div>
           ) : (
             <>
@@ -666,7 +666,7 @@ function UploadStep(props: WizardStepContentProps) {
                 height="40"
                 viewBox="0 0 40 40"
                 fill="none"
-                className="mx-auto mb-3 text-[#4a4a4a]"
+                className="mx-auto mb-3 text-[var(--color-text-dim)]"
               >
                 <path
                   d="M20 6V24M20 6L14 12M20 6L26 12"
@@ -683,9 +683,9 @@ function UploadStep(props: WizardStepContentProps) {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-body-md font-medium text-[#1a1a1a]">Drop your quilt photo here</p>
-              <p className="mt-1 text-body-sm text-[#4a4a4a]">or click to browse</p>
-              <p className="mt-2 text-label-sm text-[#4a4a4a]">PNG, JPEG, or WebP up to 20 MB</p>
+              <p className="text-body-md font-medium text-[var(--color-text)]">Drop your quilt photo here</p>
+              <p className="mt-1 text-body-sm text-[var(--color-text-dim)]">or click to browse</p>
+              <p className="mt-2 text-label-sm text-[var(--color-text-dim)]">PNG, JPEG, or WebP up to 20 MB</p>
             </>
           )}
         </button>
@@ -695,7 +695,7 @@ function UploadStep(props: WizardStepContentProps) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <QuiltPieceRow count={2} size={8} gap={4} />
-              <p className="text-body-sm text-[#4a4a4a]">Or choose from mobile uploads:</p>
+              <p className="text-body-sm text-[var(--color-text-dim)]">Or choose from mobile uploads:</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {props.pendingUploads.slice(0, 4).map((upload) => (
@@ -703,9 +703,9 @@ function UploadStep(props: WizardStepContentProps) {
                   key={upload.id}
                   type="button"
                   onClick={() => props.onMobileUploadSelect(upload)}
-                  className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
                 >
-                  <div className="aspect-square bg-[#fdfaf7] overflow-hidden">
+                  <div className="aspect-square bg-[var(--color-bg)] overflow-hidden">
                     <img
                       src={upload.imageUrl}
                       alt={upload.originalFilename || 'Mobile upload'}
@@ -713,7 +713,7 @@ function UploadStep(props: WizardStepContentProps) {
                     />
                   </div>
                   <div className="p-2">
-                    <p className="text-label-sm font-medium text-[#1a1a1a] truncate">
+                    <p className="text-label-sm font-medium text-[var(--color-text)] truncate">
                       {upload.originalFilename || 'Untitled'}
                     </p>
                   </div>
@@ -731,7 +731,7 @@ function UploadStep(props: WizardStepContentProps) {
       )}
       {props.warning && (
         <div className="px-4 py-3 rounded-lg bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
-          <p className="text-body-sm text-[#4a4a4a]">{props.warning}</p>
+          <p className="text-body-sm text-[var(--color-text-dim)]">{props.warning}</p>
         </div>
       )}
 
@@ -745,7 +745,7 @@ function UploadStep(props: WizardStepContentProps) {
           <button
             type="button"
             onClick={props.onContinue}
-            className="w-full bg-[#ff8d49] text-[#1a1a1a] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             Continue
           </button>
@@ -758,12 +758,12 @@ function UploadStep(props: WizardStepContentProps) {
 function ImagePrepStep(props: WizardStepContentProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">
+      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">
         Straighten &amp; adjust your image
       </h3>
 
       {/* Preview */}
-      <div className="rounded-lg overflow-hidden bg-[#fdfaf7] aspect-video flex items-center justify-center border border-[#d4d4d4]">
+      <div className="rounded-lg overflow-hidden bg-[var(--color-bg)] aspect-video flex items-center justify-center border border-[var(--color-border)]">
         <img
           src={props.originalImageUrl}
           alt="Image to adjust"
@@ -776,7 +776,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
 
       {/* Rotation slider */}
       <div className="space-y-2">
-        <label className="text-body-sm font-medium text-[#1a1a1a]">
+        <label className="text-body-sm font-medium text-[var(--color-text)]">
           Straighten: {props.rotation}°
         </label>
         <input
@@ -794,14 +794,14 @@ function ImagePrepStep(props: WizardStepContentProps) {
         <button
           type="button"
           onClick={() => props.setRotation((r) => r - 90)}
-          className="rounded-full bg-[#fdfaf7] border border-[#d4d4d4] px-4 py-2 text-sm font-medium text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150"
+          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
         >
           -90°
         </button>
         <button
           type="button"
           onClick={() => props.setRotation((r) => r + 90)}
-          className="rounded-full bg-[#fdfaf7] border border-[#d4d4d4] px-4 py-2 text-sm font-medium text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150"
+          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
         >
           +90°
         </button>
@@ -810,8 +810,8 @@ function ImagePrepStep(props: WizardStepContentProps) {
           onClick={() => props.setFlipH((f) => !f)}
           className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
             props.flipH
-              ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]'
-              : 'bg-[#fdfaf7] border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4]'
+              ? 'bg-[#ff8d49] text-[var(--color-text)] border-[#ff8d49]'
+              : 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
           }`}
         >
           Flip H
@@ -821,8 +821,8 @@ function ImagePrepStep(props: WizardStepContentProps) {
           onClick={() => props.setFlipV((f) => !f)}
           className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
             props.flipV
-              ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]'
-              : 'bg-[#fdfaf7] border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4]'
+              ? 'bg-[#ff8d49] text-[var(--color-text)] border-[#ff8d49]'
+              : 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
           }`}
         >
           Flip V
@@ -832,7 +832,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[#1a1a1a] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Continue
       </button>
@@ -1035,15 +1035,15 @@ function CropStep(props: WizardStepContentProps) {
   if (!originalImage || !transformedUrl || !transformedSize) {
     return (
       <div className="py-12 text-center">
-        <p className="text-body-md text-[#4a4a4a]">Preparing image...</p>
+        <p className="text-body-md text-[var(--color-text-dim)]">Preparing image...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">Crop to the quilt</h3>
-      <p className="text-body-sm text-[#4a4a4a]">
+      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Crop to the quilt</h3>
+      <p className="text-body-sm text-[var(--color-text-dim)]">
         Drag the corners to trim the photo down to just the quilt. Extra background can throw off
         piece detection.
       </p>
@@ -1051,7 +1051,7 @@ function CropStep(props: WizardStepContentProps) {
       <div className="flex items-center justify-center">
         <div
           ref={containerRef}
-          className="relative bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg overflow-hidden select-none touch-none"
+          className="relative bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden select-none touch-none"
           style={{
             width: '100%',
             maxWidth: `${Math.min(600, transformedSize.w)}px`,
@@ -1099,7 +1099,7 @@ function CropStep(props: WizardStepContentProps) {
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-full bg-[#fdfaf7] border border-[#d4d4d4] px-4 py-2 text-sm font-medium text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150"
+          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
         >
           Reset
         </button>
@@ -1107,7 +1107,7 @@ function CropStep(props: WizardStepContentProps) {
           type="button"
           onClick={handleApplyAndContinue}
           disabled={baking}
-          className="flex-1 bg-[#ff8d49] text-[#1a1a1a] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {baking ? 'Applying crop...' : 'Continue'}
         </button>
@@ -1121,23 +1121,23 @@ function ScanSettingsStep(props: WizardStepContentProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <QuiltPieceRow count={3} size={10} gap={4} />
-        <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">Tell us about your quilt</h3>
+        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Tell us about your quilt</h3>
       </div>
 
       {/* Curved seams */}
       <button
         type="button"
         onClick={() => props.setCurvedSeams((v) => !v)}
-        className={`w-full bg-[#ffffff] border rounded-full p-4 text-left transition-colors duration-150 ${
+        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.curvedSeams
             ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-[#1a1a1a]">
+        <p className="text-body-md font-medium text-[var(--color-text)]">
           Does this quilt have curved seams?
         </p>
-        <p className="text-body-sm text-[#4a4a4a] mt-1">
+        <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
           Drunkard&apos;s Path, Orange Peel, Wedding Ring, Clamshell
         </p>
       </button>
@@ -1146,16 +1146,16 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={() => props.setApplique((v) => !v)}
-        className={`w-full bg-[#ffffff] border rounded-full p-4 text-left transition-colors duration-150 ${
+        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.applique
             ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-[#1a1a1a]">
+        <p className="text-body-md font-medium text-[var(--color-text)]">
           Are there shapes sewn on top of the background?
         </p>
-        <p className="text-body-sm text-[#4a4a4a] mt-1">
+        <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
           Needle-turn applique, raw-edge applique, fused shapes
         </p>
       </button>
@@ -1164,13 +1164,13 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={() => props.setTouchingFabrics((v) => !v)}
-        className={`w-full bg-[#ffffff] border rounded-full p-4 text-left transition-colors duration-150 ${
+        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.touchingFabrics
             ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-[#1a1a1a]">
+        <p className="text-body-md font-medium text-[var(--color-text)]">
           Are there pieces of the exact same fabric sewn touching each other?
         </p>
       </button>
@@ -1179,68 +1179,68 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={() => props.setHeavyQuilting((v) => !v)}
-        className={`w-full bg-[#ffffff] border rounded-full p-4 text-left transition-colors duration-150 ${
+        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.heavyQuilting
             ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
       >
-        <p className="text-body-md font-medium text-[#1a1a1a]">
+        <p className="text-body-md font-medium text-[var(--color-text)]">
           Is there heavy quilting or embroidery over the pieces?
         </p>
       </button>
 
       {/* Piece scale selector */}
       <div className="space-y-2">
-        <p className="text-body-md font-medium text-[#1a1a1a]">How big are the pieces generally?</p>
+        <p className="text-body-md font-medium text-[var(--color-text)]">How big are the pieces generally?</p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => props.setPieceScale('tiny')}
-            className={`bg-[#ffffff] border rounded-full p-3 text-center transition-colors duration-150 ${
+            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'tiny'
                 ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-[#1a1a1a]">Tiny</p>
-            <p className="text-label-xs text-[#4a4a4a] mt-1">Under 2&quot;</p>
+            <p className="text-body-sm font-medium text-[var(--color-text)]">Tiny</p>
+            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">Under 2&quot;</p>
           </button>
           <button
             type="button"
             onClick={() => props.setPieceScale('standard')}
-            className={`bg-[#ffffff] border rounded-full p-3 text-center transition-colors duration-150 ${
+            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'standard'
                 ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-[#1a1a1a]">Standard</p>
-            <p className="text-label-xs text-[#4a4a4a] mt-1">2&quot;-6&quot;</p>
+            <p className="text-body-sm font-medium text-[var(--color-text)]">Standard</p>
+            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">2&quot;-6&quot;</p>
           </button>
           <button
             type="button"
             onClick={() => props.setPieceScale('large')}
-            className={`bg-[#ffffff] border rounded-full p-3 text-center transition-colors duration-150 ${
+            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'large'
                 ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
             }`}
           >
-            <p className="text-body-sm font-medium text-[#1a1a1a]">Large</p>
-            <p className="text-label-xs text-[#4a4a4a] mt-1">6&quot;+</p>
+            <p className="text-body-sm font-medium text-[var(--color-text)]">Large</p>
+            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">6&quot;+</p>
           </button>
         </div>
       </div>
 
-      <p className="text-body-sm text-[#4a4a4a] text-center">
+      <p className="text-body-sm text-[var(--color-text-dim)] text-center">
         Default settings work well for most quilts.
       </p>
 
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[#1a1a1a] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Analyze Quilt
       </button>
@@ -1265,8 +1265,8 @@ function ProcessingStep() {
         </svg>
       </div>
       <div className="space-y-2">
-        <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">Analyzing your quilt</h3>
-        <p className="text-body-md text-[#4a4a4a]">
+        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Analyzing your quilt</h3>
+        <p className="text-body-md text-[var(--color-text-dim)]">
           Detecting pieces and extracting the pattern...
         </p>
       </div>
@@ -1288,14 +1288,14 @@ function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
           />
         </svg>
       </div>
-      <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">Pattern extracted!</h3>
-      <p className="text-body-md text-[#4a4a4a]">
+      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Pattern extracted!</h3>
+      <p className="text-body-md text-[var(--color-text-dim)]">
         Your quilt pieces have been detected. You can now assign fabrics and export to the studio.
       </p>
       <button
         type="button"
         onClick={onOpenInStudio}
-        className="bg-[#ff8d49] text-[#1a1a1a] px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="bg-[#ff8d49] text-[var(--color-text)] px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       >
         Open in Studio
       </button>

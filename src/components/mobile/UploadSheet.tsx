@@ -76,11 +76,11 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  <>
  <div
  data-testid="upload-sheet-backdrop"
- className="fixed inset-0 z-50 bg-[#fdfaf7]/20"
+ className="fixed inset-0 z-50 bg-[var(--color-bg)]/20"
  onClick={onClose}
  aria-hidden="true"
  />
- <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#fdfaf7] rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+ <div className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-bg)] rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
  <div className="w-10 h-1 rounded-lg bg-[#d8d1ca] mx-auto mb-6" />
  <div className="px-6 space-y-3">
  {/* Upload Photo — primary action */}
@@ -88,7 +88,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={uploading}
- className="w-full flex items-center gap-4 p-4 rounded-lg bg-[#fdfaf7] border border-[#ff8d49]/20 transition-colors text-left disabled:opacity-50"
+ className="w-full flex items-center gap-4 p-4 rounded-lg bg-[var(--color-bg)] border border-[#ff8d49]/20 transition-colors text-left disabled:opacity-50"
  >
  <div
  className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
@@ -128,10 +128,10 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  )}
  </div>
  <div className="flex-1">
- <p className="text-sm font-semibold text-[#1a1a1a]">
+ <p className="text-sm font-semibold text-[var(--color-text)]">
  {uploading ? 'Uploading...' : 'Upload Photo'}
  </p>
- <p className="text-xs text-[#4a4a4a] mt-0.5">
+ <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
  Take or pick a photo — assign it on desktop
  </p>
  </div>
@@ -152,7 +152,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
  {/* Pending count */}
  {pendingCount > 0 && !uploadSuccess && (
- <p className="text-xs text-[#4a4a4a] text-center">
+ <p className="text-xs text-[var(--color-text-dim)] text-center">
  {pendingCount} photo{pendingCount !== 1 ? 's' : ''} waiting on desktop
  </p>
  )}
@@ -161,7 +161,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  <button
  type="button"
  onClick={handleShareToSocial}
- className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-[#fdfaf7] transition-colors text-left"
+ className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--color-bg)] transition-colors text-left"
  >
  <div
  className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
@@ -181,8 +181,8 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  </svg>
  </div>
  <div>
- <p className="text-sm font-semibold text-[#1a1a1a]">Share to Social</p>
- <p className="text-xs text-[#4a4a4a] mt-0.5">Post a quilt photo with your story</p>
+ <p className="text-sm font-semibold text-[var(--color-text)]">Share to Social</p>
+ <p className="text-xs text-[var(--color-text-dim)] mt-0.5">Post a quilt photo with your story</p>
  </div>
  </button>
  </div>

@@ -407,7 +407,7 @@ function ShopFabricCard({
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
-    <div className="group bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
+    <div className="group bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:bg-[#fdfaf7] transition-colors duration-150 duration-150">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (

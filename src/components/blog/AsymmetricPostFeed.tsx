@@ -45,12 +45,12 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
       >
         <div className="flex items-center gap-4 mb-4">
           <span className="w-12 h-px bg-[#ff8d49]" />
-          <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+          <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             Stories
           </span>
         </div>
         <h2
-          className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] text-[#1a1a1a]"
+          className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] text-[var(--color-text)]"
           style={{ fontFamily: 'Spline Sans, sans-serif' }}
         >
           Recent Explorations
@@ -109,14 +109,14 @@ function PostCard({
               <span className="text-[14px] leading-[20px] text-[#ff8d49]">
                 {post.category}
               </span>
-              <span className="w-4 h-px bg-[#d4d4d4]" />
-              <time className="text-[14px] leading-[20px] text-[#4a4a4a]">
+              <span className="w-4 h-px bg-[var(--color-border)]" />
+              <time className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                 {post.createdAt?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </time>
             </div>
 
             <h3
-              className="text-[#1a1a1a] leading-[1.15] group-hover:text-[#ff8d49] transition-colors duration-150"
+              className="text-[var(--color-text)] leading-[1.15] group-hover:text-[#ff8d49] transition-colors duration-150"
               style={{
                 fontFamily: 'Spline Sans, sans-serif',
                 fontSize:

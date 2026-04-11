@@ -491,7 +491,7 @@ export function ContextMenu() {
 
         {recentFabrics.length > 0 && (
           <>
-            <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#4a4a4a]/60">
+            <div className="px-3 py-1 text-caption font-medium text-[#4a4a4a]/60">
               Recent
             </div>
             {recentFabrics.map((rf) => (
@@ -537,7 +537,7 @@ export function ContextMenu() {
           </>
         )}
 
-        <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#4a4a4a]/60">
+        <div className="px-3 py-1 text-caption font-medium text-[#4a4a4a]/60">
           Library
         </div>
         {libraryFabrics.length === 0 && (

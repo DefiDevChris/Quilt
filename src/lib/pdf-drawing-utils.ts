@@ -43,10 +43,10 @@ export interface LineOptions {
 
 // ── Brand Colors ───────────────────────────────────────────────────
 
-const BRAND_PRIMARY = rgb(0.976, 0.627, 0.42); // warm amber
-const BRAND_DARK = rgb(0.29, 0.247, 0.208); // on-surface
-const BRAND_MUTED = rgb(0.4, 0.4, 0.4);
-const BRAND_LIGHT_BG = rgb(0.9, 0.835, 0.773); // warm border
+const BRAND_PRIMARY = rgb(1, 0.553, 0.286); // warm amber (#ff8d49)
+const BRAND_DARK = rgb(0.102, 0.102, 0.102); // charcoal text (#1a1a1a)
+const BRAND_MUTED = rgb(0.29, 0.29, 0.29); // dim charcoal (#4a4a4a)
+const BRAND_LIGHT_BG = rgb(0.831, 0.831, 0.831); // neutral border (#d4d4d4)
 
 // ── Logo Embedding ─────────────────────────────────────────────────
 

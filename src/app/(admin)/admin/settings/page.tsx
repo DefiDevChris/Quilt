@@ -89,7 +89,7 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-6 animate-pulse">
+        <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 animate-pulse">
           <div className="h-6 bg-[#ff8d49]/10 rounded-lg w-1/4 mb-4" />
           <div className="h-10 bg-[#ff8d49]/5 rounded-lg w-1/3" />
         </div>
@@ -113,7 +113,7 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Shop Toggle Section */}
-      <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-[#1a1a1a]">Fabric Shop</h3>
@@ -135,14 +135,14 @@ export default function AdminSettingsPage() {
               type="button"
               onClick={handleToggle}
               disabled={saving}
-              className={`relative inline-flex h-7 w-12 items-center rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/50 disabled:opacity-50 ${shopEnabled ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/50 disabled:opacity-50 ${shopEnabled ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
                 }`}
               role="switch"
               aria-checked={shopEnabled}
               aria-label="Toggle shop"
             >
               <span
-                className={`inline-block h-5 w-5 transform rounded-lg bg-[#ffffff] transition-transform duration-150 ${shopEnabled ? 'translate-x-6' : 'translate-x-1'
+                className={`inline-block h-5 w-5 transform rounded-full bg-[var(--color-surface)] transition-colors duration-150 ${shopEnabled ? 'translate-x-6' : 'translate-x-1'
                   }`}
               />
             </button>
@@ -153,7 +153,7 @@ export default function AdminSettingsPage() {
       {/* Confirmation Modal */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
-          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <h3 className="text-lg font-semibold text-[#1a1a1a]">Enable Fabric Shop</h3>
             <p className="text-sm text-[#4a4a4a]">
               This will make the shop visible to all users. A &quot;Shop&quot; tab will appear in
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="ENABLE SHOP"
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#fdfaf7] text-[#1a1a1a] font-mono focus:ring-2 focus:ring-[#ff8d49]/50 focus:border-[#ff8d49] transition-colors duration-150"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-bg)] text-[#1a1a1a] font-mono focus:ring-2 focus:ring-[#ff8d49]/50 focus:border-[#ff8d49] transition-colors duration-150"
                 autoFocus
               />
             </div>
@@ -180,7 +180,7 @@ export default function AdminSettingsPage() {
                   setShowConfirm(false);
                   setConfirmText('');
                 }}
-                className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] transition-colors duration-150"
+                className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-lg hover:bg-[var(--color-bg)] transition-colors duration-150"
               >
                 Cancel
               </button>
@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
                 type="button"
                 onClick={handleConfirmEnable}
                 disabled={confirmText !== 'ENABLE SHOP' || saving}
-                className="px-5 py-2 text-sm font-semibold text-[#ffffff] bg-[#ff8d49] rounded-lg disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+                className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-[#ff8d49] rounded-lg disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
               >
                 {saving ? 'Enabling...' : 'Enable Shop'}
               </button>

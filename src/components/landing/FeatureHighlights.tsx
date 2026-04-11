@@ -83,7 +83,7 @@ export default function FeatureHighlights() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150"
+              className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:bg-[#fdfaf7] transition-colors duration-150 duration-150"
             >
               <div className="relative z-10">
                 <div className="w-16 h-16 mb-6">

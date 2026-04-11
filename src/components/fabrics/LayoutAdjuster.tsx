@@ -79,7 +79,7 @@ export function LayoutAdjuster() {
 
   return (
     <div className="border-t border-[var(--color-border)] px-3 py-2">
-      <h3 className="text-xs font-medium text-[var(--color-text-dim)] uppercase tracking-wider mb-2">
+      <h3 className="text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)] mb-2">
         Layout Fill
       </h3>
 

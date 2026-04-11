@@ -40,13 +40,13 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-[#1a1a1a]/40" onClick={onClose} />
-      <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="fixed inset-0 z-50 bg-[var(--color-text)]/40" onClick={onClose} />
+      <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         {/* Close */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-[#fdfaf7] text-[#4a4a4a] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
           aria-label="Close preview"
         >
           <X size={16} />
@@ -68,38 +68,38 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         {/* Info */}
         <div className="p-5 space-y-3">
           <div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">{fabric.name}</h3>
-            {fabric.manufacturer && <p className="text-sm text-[#4a4a4a]">{fabric.manufacturer}</p>}
-            {fabric.collection && <p className="text-xs text-[#4a4a4a]">{fabric.collection}</p>}
+            <h3 className="text-lg font-semibold text-[var(--color-text)]">{fabric.name}</h3>
+            {fabric.manufacturer && <p className="text-sm text-[var(--color-text-dim)]">{fabric.manufacturer}</p>}
+            {fabric.collection && <p className="text-xs text-[var(--color-text-dim)]">{fabric.collection}</p>}
           </div>
 
           {/* Price + Stock (purchasable only) */}
           {isPurchasable && (
             <div className="flex items-center gap-3">
-              {price && <span className="text-xl font-bold text-[#1a1a1a]">{price}</span>}
+              {price && <span className="text-xl font-bold text-[var(--color-text)]">{price}</span>}
             </div>
           )}
 
           {/* Quantity selector (purchasable + in stock) */}
           {isPurchasable && fabric.inStock && fabric.shopifyVariantId && (
             <div className="flex items-center gap-3">
-              <span className="text-xs text-[#4a4a4a]">Quantity:</span>
+              <span className="text-xs text-[var(--color-text-dim)]">Quantity:</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(0.25, quantity - 0.25))}
                   disabled={quantity <= 0.25}
-                  className="w-7 h-7 rounded-full bg-[#fdfaf7] flex items-center justify-center text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-30 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 disabled:opacity-30 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <Minus size={14} />
                 </button>
-                <span className="text-sm font-medium text-[#1a1a1a] min-w-[3.5rem] text-center">
+                <span className="text-sm font-medium text-[var(--color-text)] min-w-[3.5rem] text-center">
                   {quantity} yd{quantity !== 1 ? 's' : ''}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity(quantity + 0.25)}
-                  className="w-7 h-7 rounded-full bg-[#fdfaf7] flex items-center justify-center text-[#4a4a4a] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <Plus size={14} />
                 </button>
@@ -114,7 +114,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
                 href="/shop"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#fdfaf7] text-sm font-medium text-[#4a4a4a] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
               >
                 <ExternalLink size={14} />
                 View in Store
@@ -124,7 +124,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List
@@ -133,7 +133,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-full bg-[#fdfaf7] text-[16px] leading-[24px] text-[#4a4a4a] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                className="flex-1 py-2.5 rounded-full bg-[var(--color-bg)] text-[16px] leading-[24px] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
               >
                 Close
               </button>
