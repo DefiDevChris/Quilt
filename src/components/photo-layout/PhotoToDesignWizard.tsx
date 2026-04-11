@@ -433,7 +433,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         <div className="max-w-2xl mx-auto">
           <div
             data-testid="photo-pattern-wizard"
-            className="bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
+            className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
           >
             {/* Quilt-piece accent strip at top of card */}
             <div className="h-2 bg-[#fdfaf7]" />
@@ -638,7 +638,7 @@ function UploadStep(props: WizardStepContentProps) {
           onDragOver={props.onDragOver}
           onDragLeave={props.onDragLeave}
           aria-label="Drop your quilt photo here or click to browse. PNG, JPEG, or WebP up to 20 MB"
-          className={`block w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
+          className={`block w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
               ? 'border-[#ff8d49] bg-[#ff8d49]/5'
               : 'border-[#e8e1da]/50 hover:border-[#ff8d49]/50'
@@ -703,7 +703,7 @@ function UploadStep(props: WizardStepContentProps) {
                   key={upload.id}
                   type="button"
                   onClick={() => props.onMobileUploadSelect(upload)}
-                  className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="bg-[#ffffff] border border-[#e8e1da] rounded-xl overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
                 >
                   <div className="aspect-square bg-[#fdfaf7] overflow-hidden">
                     <img
@@ -725,12 +725,12 @@ function UploadStep(props: WizardStepContentProps) {
       </div>
 
       {props.error && (
-        <div className="px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
+        <div className="px-4 py-3 rounded-xl bg-[#ff8d49]/10 border border-[#ff8d49]/20">
           <p className="text-body-sm text-[#ff8d49]">{props.error}</p>
         </div>
       )}
       {props.warning && (
-        <div className="px-4 py-3 rounded-lg bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
+        <div className="px-4 py-3 rounded-xl bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
           <p className="text-body-sm text-[#6b655e]">{props.warning}</p>
         </div>
       )}
@@ -740,7 +740,7 @@ function UploadStep(props: WizardStepContentProps) {
           <img
             src={props.originalImageUrl}
             alt="Uploaded quilt photo preview"
-            className="w-full rounded-lg object-contain max-h-96"
+            className="w-full rounded-xl object-contain max-h-96"
           />
           <button
             type="button"
@@ -763,7 +763,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
       </h3>
 
       {/* Preview */}
-      <div className="rounded-lg overflow-hidden bg-[#fdfaf7] aspect-video flex items-center justify-center border border-[#e8e1da]">
+      <div className="rounded-xl overflow-hidden bg-[#fdfaf7] aspect-video flex items-center justify-center border border-[#e8e1da]">
         <img
           src={props.originalImageUrl}
           alt="Image to adjust"
@@ -934,4 +934,371 @@ function CropStep(props: WizardStepContentProps) {
         if (mode === 'move') {
           x = Math.max(0, Math.min(1 - w, x + dx));
           y = Math.max(0, Math.min(1 - h, y + dy));
-        } e
+        } else if (mode === 'nw') {
+          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
+          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
+          w = w + (x - nx);
+          h = h + (y - ny);
+          x = nx;
+          y = ny;
+        } else if (mode === 'ne') {
+          const nw = Math.max(MIN, Math.min(1 - x, w + dx));
+          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
+          h = h + (y - ny);
+          y = ny;
+          w = nw;
+        } else if (mode === 'sw') {
+          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
+          const nh = Math.max(MIN, Math.min(1 - y, h + dy));
+          w = w + (x - nx);
+          x = nx;
+          h = nh;
+        } else if (mode === 'se') {
+          w = Math.max(MIN, Math.min(1 - x, w + dx));
+          h = Math.max(MIN, Math.min(1 - y, h + dy));
+        }
+
+        setCrop({ x, y, w, h });
+      };
+
+      const onUp = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    },
+    [crop]
+  );
+
+  const handleReset = useCallback(() => {
+    setCrop({ x: 0, y: 0, w: 1, h: 1 });
+  }, []);
+
+  const handleApplyAndContinue = useCallback(() => {
+    if (!transformedUrl || !transformedSize) return;
+
+    setBaking(true);
+
+    const src = new Image();
+    src.onload = () => {
+      const cropPxX = Math.round(crop.x * transformedSize.w);
+      const cropPxY = Math.round(crop.y * transformedSize.h);
+      const cropPxW = Math.max(1, Math.round(crop.w * transformedSize.w));
+      const cropPxH = Math.max(1, Math.round(crop.h * transformedSize.h));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = cropPxW;
+      canvas.height = cropPxH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setBaking(false);
+        return;
+      }
+      ctx.drawImage(src, cropPxX, cropPxY, cropPxW, cropPxH, 0, 0, cropPxW, cropPxH);
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          setBaking(false);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const finalImg = new Image();
+        finalImg.onload = () => {
+          setOriginalImage(finalImg, url);
+          // Rotation + flip are now baked into the new image, so reset the
+          // prep state to avoid double-applying them on later steps.
+          setRotation(0);
+          setFlipH(false);
+          setFlipV(false);
+          setBaking(false);
+          onContinue();
+        };
+        finalImg.onerror = () => setBaking(false);
+        finalImg.src = url;
+      }, 'image/png');
+    };
+    src.onerror = () => setBaking(false);
+    src.src = transformedUrl;
+  }, [
+    transformedUrl,
+    transformedSize,
+    crop,
+    setOriginalImage,
+    setRotation,
+    setFlipH,
+    setFlipV,
+    onContinue,
+  ]);
+
+  if (!originalImage || !transformedUrl || !transformedSize) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-body-md text-[#6b655e]">Preparing image...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Crop to the quilt</h3>
+      <p className="text-body-sm text-[#6b655e]">
+        Drag the corners to trim the photo down to just the quilt. Extra background can throw off
+        piece detection.
+      </p>
+
+      <div className="flex items-center justify-center">
+        <div
+          ref={containerRef}
+          className="relative bg-[#fdfaf7] border border-[#e8e1da] rounded-xl overflow-hidden select-none touch-none"
+          style={{
+            width: '100%',
+            maxWidth: `${Math.min(600, transformedSize.w)}px`,
+            aspectRatio: `${transformedSize.w} / ${transformedSize.h}`,
+          }}
+        >
+          <img
+            src={transformedUrl}
+            alt="Crop preview"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
+          <div
+            className="absolute border-2 border-[#ff8d49] cursor-move"
+            style={{
+              left: `${crop.x * 100}%`,
+              top: `${crop.y * 100}%`,
+              width: `${crop.w * 100}%`,
+              height: `${crop.h * 100}%`,
+              boxShadow: '0 0 0 9999px rgba(45, 42, 38, 0.5)',
+            }}
+            onPointerDown={startDrag('move')}
+          >
+            <div
+              className="absolute -left-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
+              onPointerDown={startDrag('nw')}
+            />
+            <div
+              className="absolute -right-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
+              onPointerDown={startDrag('ne')}
+            />
+            <div
+              className="absolute -left-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
+              onPointerDown={startDrag('sw')}
+            />
+            <div
+              className="absolute -right-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
+              onPointerDown={startDrag('se')}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded-lg bg-[#fdfaf7] border border-[#e8e1da] px-4 py-2 text-sm font-medium text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150"
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          onClick={handleApplyAndContinue}
+          disabled={baking}
+          className="flex-1 bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {baking ? 'Applying crop...' : 'Continue'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ScanSettingsStep(props: WizardStepContentProps) {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <QuiltPieceRow count={3} size={10} gap={4} />
+        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Tell us about your quilt</h3>
+      </div>
+
+      {/* Curved seams */}
+      <button
+        type="button"
+        onClick={() => props.setCurvedSeams((v) => !v)}
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.curvedSeams
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        }`}
+      >
+        <p className="text-body-md font-medium text-[#2d2a26]">
+          Does this quilt have curved seams?
+        </p>
+        <p className="text-body-sm text-[#6b655e] mt-1">
+          Drunkard&apos;s Path, Orange Peel, Wedding Ring, Clamshell
+        </p>
+      </button>
+
+      {/* Applique */}
+      <button
+        type="button"
+        onClick={() => props.setApplique((v) => !v)}
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.applique
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        }`}
+      >
+        <p className="text-body-md font-medium text-[#2d2a26]">
+          Are there shapes sewn on top of the background?
+        </p>
+        <p className="text-body-sm text-[#6b655e] mt-1">
+          Needle-turn applique, raw-edge applique, fused shapes
+        </p>
+      </button>
+
+      {/* Touching fabrics */}
+      <button
+        type="button"
+        onClick={() => props.setTouchingFabrics((v) => !v)}
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.touchingFabrics
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        }`}
+      >
+        <p className="text-body-md font-medium text-[#2d2a26]">
+          Are there pieces of the exact same fabric sewn touching each other?
+        </p>
+      </button>
+
+      {/* Heavy quilting */}
+      <button
+        type="button"
+        onClick={() => props.setHeavyQuilting((v) => !v)}
+        className={`w-full bg-[#ffffff] border rounded-xl p-4 text-left transition-colors duration-150 ${
+          props.heavyQuilting
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        }`}
+      >
+        <p className="text-body-md font-medium text-[#2d2a26]">
+          Is there heavy quilting or embroidery over the pieces?
+        </p>
+      </button>
+
+      {/* Piece scale selector */}
+      <div className="space-y-2">
+        <p className="text-body-md font-medium text-[#2d2a26]">How big are the pieces generally?</p>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            onClick={() => props.setPieceScale('tiny')}
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'tiny'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            }`}
+          >
+            <p className="text-body-sm font-medium text-[#2d2a26]">Tiny</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">Under 2&quot;</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.setPieceScale('standard')}
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'standard'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            }`}
+          >
+            <p className="text-body-sm font-medium text-[#2d2a26]">Standard</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">2&quot;-6&quot;</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.setPieceScale('large')}
+            className={`bg-[#ffffff] border rounded-lg p-3 text-center transition-colors duration-150 ${
+              props.pieceScale === 'large'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border-[#e8e1da] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            }`}
+          >
+            <p className="text-body-sm font-medium text-[#2d2a26]">Large</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">6&quot;+</p>
+          </button>
+        </div>
+      </div>
+
+      <p className="text-body-sm text-[#6b655e] text-center">
+        Default settings work well for most quilts.
+      </p>
+
+      <button
+        type="button"
+        onClick={props.onContinue}
+        className="w-full bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      >
+        Analyze Quilt
+      </button>
+    </div>
+  );
+}
+
+function ProcessingStep() {
+  return (
+    <div className="space-y-6 text-center py-8">
+      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto animate-pulse">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
+          <circle
+            cx="16"
+            cy="16"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeDasharray="4 3"
+          />
+        </svg>
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Analyzing your quilt</h3>
+        <p className="text-body-md text-[#6b655e]">
+          Detecting pieces and extracting the pattern...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
+  return (
+    <div className="space-y-6 text-center py-8">
+      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
+          <path
+            d="M8 16L14 22L24 10"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Pattern extracted!</h3>
+      <p className="text-body-md text-[#6b655e]">
+        Your quilt pieces have been detected. You can now assign fabrics and export to the studio.
+      </p>
+      <button
+        type="button"
+        onClick={onOpenInStudio}
+        className="bg-[#ff8d49] text-[#2d2a26] px-8 py-3 rounded-lg text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      >
+        Open in Studio
+      </button>
+    </div>
+  );
+}
