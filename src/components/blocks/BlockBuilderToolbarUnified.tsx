@@ -219,7 +219,7 @@ export function BlockBuilderToolbarUnified({
       <div className="flex flex-col items-center gap-0.5 px-1">
         {groups.map((group, groupIdx) => (
           <div key={group.name}>
-            {groupIdx > 0 && <div className="my-1 w-full border-t border-neutral-200/15" />}
+            {groupIdx > 0 && <div className="my-1 w-full border-t border-[#e8e1da]/15" />}
             <div className="flex flex-col items-center gap-0.5">
               {group.items.map((tool) => {
                 const isActive = tool.isActive ? tool.isActive() : false;
@@ -255,7 +255,7 @@ export function BlockBuilderToolbarUnified({
 
       {/* Seam count badge */}
       <div className="mt-auto px-2 pb-2">
-        <div className="w-full rounded-full bg-neutral-container px-2 py-1 text-[10px] font-mono text-neutral-500 text-center">
+        <div className="w-full rounded-lg bg-[#fdfaf7] px-2 py-1 text-[10px] font-mono text-[#6b655e] text-center">
           {segmentCount} seam{segmentCount !== 1 ? 's' : ''}
         </div>
       </div>
