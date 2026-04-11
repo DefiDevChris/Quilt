@@ -54,10 +54,6 @@ export interface QuantizerConfig {
   readonly minUnitPx: number;
   /** Simplification tolerance as fraction of u. Vertices closer than this collapse. */
   readonly simplifyFrac: number;
-  /** Angle tolerance (deg) for classifying a quad as a rectangle. */
-  readonly rectAngleTolDeg: number;
-  /** Angle tolerance (deg) for classifying a triangle as right-angled. */
-  readonly rightTriAngleTolDeg: number;
   /** Manual override for base unit in pixels (null = auto-infer). */
   readonly unitOverridePx: number | null;
   /** Manual rotation offset in degrees (added to auto-inferred θ). */
@@ -69,8 +65,6 @@ export interface QuantizerConfig {
 export const DEFAULT_QUANTIZER_CONFIG: QuantizerConfig = {
   minUnitPx: 6,
   simplifyFrac: 0.25,
-  rectAngleTolDeg: 15,
-  rightTriAngleTolDeg: 15,
   unitOverridePx: null,
   rotationOffsetDeg: 0,
   minAreaPx: 25,
@@ -167,7 +161,7 @@ export function quantizeShapes(
       continue;
     }
 
-    const canonical = canonicalizeAndSnap(simplified, u, ox, oy, cfg);
+    const canonical = canonicalizeAndSnap(simplified, u, ox, oy);
     if (!canonical) {
       dropped.push(piece.id);
       continue;
@@ -346,8 +340,7 @@ function canonicalizeAndSnap(
   contour: readonly Point2D[],
   u: number,
   ox: number,
-  oy: number,
-  cfg: QuantizerConfig
+  oy: number
 ): CanonicalResult | null {
   // Compute axis-aligned bounding box in the de-rotated frame.
   const bb = boundingBox(contour);
@@ -362,38 +355,25 @@ function canonicalizeAndSnap(
   const w = unitsW * u;
   const h = unitsH * u;
 
-  // Classify: look at the simplified vertex count + angles.
-  const n = contour.length;
-
-  if (n === 3) {
-    // Quilts almost always use right triangles (HSTs, QSTs) for 3-vertex
-    // pieces. Force every 3v contour into the canonical right-triangle
-    // template regardless of angle noise — pick whichever vertex is closest
-    // to 90° as the right-angle corner and pin the legs to the bbox edges.
-    // This collapses noisy triangles that would otherwise spill into the
-    // generic polygon bucket.
+  // Output vocabulary is intentionally restricted to {square, rectangle,
+  // right-triangle}. The contour-detection stage produces noisy 5/6-sided
+  // polygons and irregular quads from segmentation artifacts — those are
+  // not real piece geometries the quilter wants in the print list, so we
+  // collapse them into the closest regular shape:
+  //
+  //   - 3 vertices → canonical right triangle (HST/QST)
+  //   - any other vertex count → grid-snapped rectangle pinned to bbox
+  //
+  // This guarantees every emitted piece is a regular geometric shape, which
+  // is what the renderer outlines as edges on the studio canvas. True
+  // irregular shapes (diamonds, hexagons, applique) would need a separate
+  // detection path; the current pipeline targets traditional pieced quilts.
+  if (contour.length === 3) {
     const rightIdx = findBestRightAngleVertex(contour);
     return emitRightTriangle(contour, rightIdx, x0, y0, w, h, unitsW, unitsH);
   }
 
-  if (n === 4) {
-    // Fast path: all angles within tolerance of 90°.
-    if (allAnglesNearRight(contour, cfg.rectAngleTolDeg)) {
-      return emitRectangle(x0, y0, w, h, unitsW, unitsH);
-    }
-    // Fallback: the strict angle test misses noisy rectangles whose corners
-    // drifted by more than the tolerance during detection. Check whether
-    // each vertex is near a bbox corner instead — a cleaner geometric test
-    // that recovers most real rectangles from the "4-sided polygon" bucket.
-    if (isQuadNearRectangle(contour, bb, u)) {
-      return emitRectangle(x0, y0, w, h, unitsW, unitsH);
-    }
-    // True irregular quad (diamond, parallelogram, etc.) — grid-snap vertices.
-    return emitGeneralPolygon(contour, u, ox, oy);
-  }
-
-  // 5+ vertices: general polygon with grid-snapped vertices.
-  return emitGeneralPolygon(contour, u, ox, oy);
+  return emitRectangle(x0, y0, w, h, unitsW, unitsH);
 }
 
 function emitRectangle(
@@ -484,55 +464,6 @@ function emitRightTriangle(
     unitsW,
     unitsH,
     orientationDeg,
-    classKey,
-    classLabel,
-  };
-}
-
-function emitGeneralPolygon(
-  contour: readonly Point2D[],
-  u: number,
-  ox: number,
-  oy: number
-): CanonicalResult {
-  // Snap each vertex to the nearest (ox, oy)-origin grid intersection. Using
-  // the global inferred origin ensures adjacent polygon pieces fall on the
-  // same grid points → shared edges have identical endpoints → no gaps.
-  const snapped: Point2D[] = contour.map((p) => ({
-    x: ox + Math.round((p.x - ox) / u) * u,
-    y: oy + Math.round((p.y - oy) / u) * u,
-  }));
-
-  // Drop consecutive duplicates after snapping.
-  const deduped: Point2D[] = [];
-  for (const p of snapped) {
-    const last = deduped[deduped.length - 1];
-    if (!last || last.x !== p.x || last.y !== p.y) {
-      deduped.push(p);
-    }
-  }
-  // Close-loop dedupe
-  if (deduped.length > 1) {
-    const first = deduped[0];
-    const last = deduped[deduped.length - 1];
-    if (first.x === last.x && first.y === last.y) deduped.pop();
-  }
-
-  const finalContour = deduped.length >= 3 ? deduped : contour.map((p) => ({ x: p.x, y: p.y }));
-  const finalBb = boundingBox(finalContour);
-  const n = finalContour.length;
-  const unitsW = Math.max(1, Math.round(finalBb.width / u));
-  const unitsH = Math.max(1, Math.round(finalBb.height / u));
-
-  const classKey = `polygon-${n}v-${unitsW}x${unitsH}`;
-  const classLabel = `${n}-sided Polygon`;
-
-  return {
-    contour: finalContour,
-    shapeClass: 'polygon',
-    unitsW,
-    unitsH,
-    orientationDeg: 0,
     classKey,
     classLabel,
   };
@@ -677,44 +608,6 @@ function findBestRightAngleVertex(contour: readonly Point2D[]): number {
 }
 
 /**
- * Fallback rectangle test for 4-vertex quads. Returns true when every vertex
- * sits within 0.75·u of a distinct bbox corner — i.e., the four vertices are
- * a permutation of the four bbox corners plus noise. Catches rectangles that
- * the strict-angle `allAnglesNearRight` check misses because of corner drift.
- */
-function isQuadNearRectangle(
-  contour: readonly Point2D[],
-  bb: { x: number; y: number; width: number; height: number },
-  u: number
-): boolean {
-  if (contour.length !== 4) return false;
-  const corners = [
-    { x: bb.x, y: bb.y },
-    { x: bb.x + bb.width, y: bb.y },
-    { x: bb.x + bb.width, y: bb.y + bb.height },
-    { x: bb.x, y: bb.y + bb.height },
-  ];
-  const tol2 = (u * 0.75) ** 2;
-  const used = new Set<number>();
-  for (const v of contour) {
-    let best = -1;
-    let bestDist = Infinity;
-    for (let i = 0; i < 4; i++) {
-      if (used.has(i)) continue;
-      const c = corners[i];
-      const d = (v.x - c.x) ** 2 + (v.y - c.y) ** 2;
-      if (d < bestDist) {
-        bestDist = d;
-        best = i;
-      }
-    }
-    if (best < 0 || bestDist > tol2) return false;
-    used.add(best);
-  }
-  return used.size === 4;
-}
-
-/**
  * Infer a 1D grid origin offset in [0, u) that minimizes the residual error
  * when snapping the provided coordinates to the nearest grid multiple. The
  * optimal ox makes the bulk of piece bbox edges land on integer multiples of
@@ -773,19 +666,6 @@ function inferGridOrigin(
     ox: inferGridOriginAxis(xs, u),
     oy: inferGridOriginAxis(ys, u),
   };
-}
-
-function allAnglesNearRight(contour: readonly Point2D[], tolDeg: number): boolean {
-  const tolRad = (tolDeg * Math.PI) / 180;
-  const n = contour.length;
-  for (let i = 0; i < n; i++) {
-    const prev = contour[(i - 1 + n) % n];
-    const curr = contour[i];
-    const next = contour[(i + 1) % n];
-    const angle = interiorAngle(prev, curr, next);
-    if (Math.abs(angle - Math.PI / 2) > tolRad) return false;
-  }
-  return true;
 }
 
 function interiorAngle(prev: Point2D, curr: Point2D, next: Point2D): number {
