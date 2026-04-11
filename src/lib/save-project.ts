@@ -67,6 +67,17 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
 
+  // Drop transient backgroundImage references (e.g., blob: URLs from the
+  // photo-to-design pipeline) before persisting. Blob URLs are session-bound
+  // and fail with ERR_FILE_NOT_FOUND on reload, causing loadFromJSON to throw
+  // and the entire canvas to appear empty.
+  const bgImage = (canvasData as Record<string, unknown>).backgroundImage as
+    | { src?: string }
+    | undefined;
+  if (bgImage && typeof bgImage.src === 'string' && bgImage.src.startsWith('blob:')) {
+    delete (canvasData as Record<string, unknown>).backgroundImage;
+  }
+
   // Embed layout store state so the fence can be reconstructed on reload.
   // Stored inside canvasData to avoid a DB schema change.
   const layoutState = useLayoutStore.getState();

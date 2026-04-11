@@ -361,7 +361,21 @@ export function useCanvasInit(
           if (layoutData.hasAppliedLayout) ls.applyLayout();
         }
 
-        await canvas.loadFromJSON(canvasDataToLoad);
+        // Defensively drop any backgroundImage whose src is a blob: URL —
+        // those are session-bound and fail to load across reloads, which
+        // would otherwise cause loadFromJSON to throw and the canvas to
+        // silently render empty.
+        const sanitized = canvasDataToLoad as Record<string, unknown>;
+        const bgImage = sanitized.backgroundImage as { src?: string } | undefined;
+        if (bgImage && typeof bgImage.src === 'string' && bgImage.src.startsWith('blob:')) {
+          delete sanitized.backgroundImage;
+        }
+
+        try {
+          await canvas.loadFromJSON(sanitized);
+        } catch (err) {
+          console.error('Failed to load canvas state from JSON:', err);
+        }
       }
       canvas.renderAll();
 

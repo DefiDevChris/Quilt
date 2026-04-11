@@ -3,7 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
+import { saveProject } from '@/lib/save-project';
 import { PIXELS_PER_INCH, PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT } from '@/lib/constants';
 import type { ScaledPiece } from '@/lib/photo-layout-types';
 
@@ -180,7 +182,26 @@ export function usePhotoPatternImport() {
         usePrintlistStore.getState().togglePanel();
       }
 
-      // 7. Clean up the store
+      // 7. Mark project as having content, dirty it, and save immediately
+      // so the imported polygons survive a page reload. Without this, the
+      // autosave loop skips (isDirty=false) and the studio boots with an
+      // empty canvas, popping the New Quilt setup modal.
+      const projectStore = useProjectStore.getState();
+      projectStore.setHasContent(true);
+      projectStore.setDirty(true);
+      if (projectStore.projectId) {
+        try {
+          await saveProject({
+            projectId: projectStore.projectId,
+            fabricCanvas: canvas,
+            source: 'manual',
+          });
+        } catch (err) {
+          console.error('Failed to persist photo-imported polygons:', err);
+        }
+      }
+
+      // 8. Clean up the store
       usePhotoLayoutStore.getState().reset();
     }
 
