@@ -274,114 +274,116 @@ function extractColorWithValue(
 // MAIN DETECTION
 // ============================================================================
 
+function clusterLinesAndDraw(cv: OpenCV, lines: OpenCVMat, mask: OpenCVMat, width: number, height: number) {
+  if (lines.rows === 0) return;
+  const hBuckets: {rho: number, theta: number}[] = [];
+  const vBuckets: {rho: number, theta: number}[] = [];
+  const dBuckets: {rho: number, theta: number}[] = [];
+
+  for (let i = 0; i < lines.rows; ++i) {
+    const p = lines.data32S;
+    const x1 = p[i * 4];
+    const y1 = p[i * 4 + 1];
+    const x2 = p[i * 4 + 2];
+    const y2 = p[i * 4 + 3];
+
+    let theta = Math.atan2(y2 - y1, x2 - x1);
+    if (theta < 0) theta += Math.PI;
+    const rho = x1 * Math.cos(theta) + y1 * Math.sin(theta);
+
+    const deg = (theta * 180) / Math.PI;
+    if (deg < 10 || deg > 170) {
+      hBuckets.push({rho, theta});
+    } else if (deg > 80 && deg < 100) {
+      vBuckets.push({rho, theta});
+    } else {
+      dBuckets.push({rho, theta});
+    }
+  }
+
+  const drawLine = (r: number, t: number) => {
+    const a = Math.cos(t), b = Math.sin(t);
+    const x0 = a * r, y0 = b * r;
+    const pt1 = new cv.Point(Math.round(x0 + 2000 * (-b)), Math.round(y0 + 2000 * (a)));
+    const pt2 = new cv.Point(Math.round(x0 - 2000 * (-b)), Math.round(y0 - 2000 * (a)));
+    cv.line(mask, pt1, pt2, new cv.Scalar(255), 2, cv.LINE_8, 0);
+  };
+
+  const binAndDraw = (buckets: {rho: number, theta: number}[]) => {
+    const bins: {r: number, t: number, count: number}[] = [];
+    for (const b of buckets) {
+      let found = false;
+      for (const bin of bins) {
+        if (Math.abs(bin.r - b.rho) < 20 && Math.abs(bin.t - b.theta) < (10 * Math.PI / 180)) {
+          bin.r = (bin.r * bin.count + b.rho) / (bin.count + 1);
+          bin.t = (bin.t * bin.count + b.theta) / (bin.count + 1);
+          bin.count++;
+          found = true;
+          break;
+        }
+      }
+      if (!found) bins.push({r: b.rho, t: b.theta, count: 1});
+    }
+    for (const bin of bins) {
+      drawLine(bin.r, bin.t);
+    }
+  };
+
+  binAndDraw(hBuckets);
+  binAndDraw(vBuckets);
+  binAndDraw(dBuckets);
+}
+
 function runDetection(
   cv: OpenCV,
   imageData: ImageData,
   options: DetectionOptions = {}
 ): DetectedPiece[] {
-  // Extract quiltConfig from options
   const { quiltConfig, ...baseOptions } = options;
   const effectiveConfig = quiltConfig ?? DEFAULT_QUILT_DETECTION_CONFIG;
-
-  // Apply quiltConfig priors to derive effective options
   const mergedOptions = applyQuiltConfigToOptions(baseOptions, effectiveConfig);
-
-  const opts = {
-    sensitivity: 1.0,
-    enableShapeClustering: true,
-    detectNestedShapes: false,
-    enableCLAHE: true,
-    claheClipLimit: 2.0,
-    enableSharpening: true,
-    sharpeningIntensity: 0.5,
-    removeTopstitching: true,
-    topstitchingKernelFactor: 0.002,
-    useSobelGradient: true,
-    sobelThresholdMultiplier: 1.0,
-    enableWatershed: true,
-    watershedDistanceThreshold: 5,
-    minSolidity: 0.5,
-    maxAspectRatio: 20,
-    ...mergedOptions,
-  };
+  const opts = { sensitivity: 1.0, minSolidity: 0.5, maxAspectRatio: 20, ...mergedOptions };
 
   const pool = new MatPool();
-
   const src = pool.add(new cv.Mat(imageData.height, imageData.width, cv.CV_8UC4));
   src.data.set(imageData.data);
 
+  // 1. Grayscale + Gaussian blur
   const gray = pool.add(new cv.Mat());
   cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
 
-  let processed: OpenCVMat = gray;
-  if (opts.enableSharpening) {
-    const sharpened = applyLaplacianSharpening(cv, gray, opts.sharpeningIntensity);
-    pool.add(sharpened);
-    processed = sharpened;
-  }
+  const blurred = pool.add(new cv.Mat());
+  cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
 
-  if (opts.enableCLAHE) {
-    const equalized = applyCLAHE(cv, processed, opts.claheClipLimit);
-    pool.add(equalized);
-    processed = equalized;
-  }
+  // 2. Canny edge detection
+  const edges = pool.add(new cv.Mat());
+  const cannyLow = 40;
+  const cannyHigh = 120;
+  cv.Canny(blurred, edges, cannyLow, cannyHigh);
 
-  if (opts.removeTopstitching) {
-    const topstitchRemoved = removeTopstitching(
-      cv,
-      processed,
-      imageData.width,
-      opts.topstitchingKernelFactor
-    );
-    pool.add(topstitchRemoved);
-    processed = topstitchRemoved;
-  }
+  // 3. Morphological closing
+  const closedEdges = pool.add(new cv.Mat());
+  const morphKernel = cv.getStructuringElement(cv.MORPH_CROSS, new cv.Size(3, 3));
+  pool.add(morphKernel);
+  cv.morphologyEx(edges, closedEdges, cv.MORPH_CLOSE, morphKernel);
 
-  const filtered = pool.add(applyBilateralFilter(cv, processed, opts.sensitivity));
+  // 4. HoughLinesP to extract lines
+  const lines = pool.add(new cv.Mat());
+  cv.HoughLinesP(closedEdges, lines, 1, Math.PI / 180, 30, 20, 10);
 
-  const thresh = pool.add(new cv.Mat());
-  const blockSize = Math.max(3, Math.round(11 * opts.sensitivity) | 1);
-  cv.adaptiveThreshold(
-    filtered,
-    thresh,
-    255,
-    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-    cv.THRESH_BINARY_INV,
-    blockSize,
-    2
-  );
+  // 5. Cluster and planar subdivision
+  const mask = pool.add(cv.Mat.zeros(imageData.height, imageData.width, cv.CV_8UC1));
+  clusterLinesAndDraw(cv, lines, mask, imageData.width, imageData.height);
 
-  const morphed = pool.add(new cv.Mat());
-  const kernel = cv.getStructuringElement(
-    cv.MORPH_RECT,
-    new cv.Size(dynamicKernelSize(imageData.width), dynamicKernelSize(imageData.width))
-  );
-  pool.add(kernel);
-  cv.morphologyEx(thresh, morphed, cv.MORPH_CLOSE, kernel);
+  // Draw image borders to close outer cells
+  cv.rectangle(mask, new cv.Point(0, 0), new cv.Point(imageData.width - 1, imageData.height - 1), new cv.Scalar(255), 2);
 
-  let edges = pool.add(new cv.Mat());
-  if (opts.useSobelGradient) {
-    const { edges: sobelResult } = applySobelGradient(cv, filtered, opts.sobelThresholdMultiplier);
-    pool.add(sobelResult);
-    cv.bitwise_or(morphed, sobelResult, edges);
-  } else {
-    const cannyLow = Math.round(50 / opts.sensitivity);
-    const cannyHigh = Math.round(150 / opts.sensitivity);
-    cv.Canny(morphed, edges, cannyLow, cannyHigh);
-  }
-
-  if (opts.enableWatershed) {
-    const watershedResult = applyWatershed(cv, filtered, edges, opts.watershedDistanceThreshold);
-    pool.add(watershedResult);
-    const combined = pool.add(new cv.Mat());
-    cv.bitwise_or(edges, watershedResult, combined);
-    edges = combined;
-  }
+  const invertedMask = pool.add(new cv.Mat());
+  cv.bitwise_not(mask, invertedMask);
 
   const hierarchy = pool.add(new cv.Mat());
   const contours = new cv.MatVector();
-  const retrievalMode = opts.detectNestedShapes ? cv.RETR_CCOMP : cv.RETR_EXTERNAL;
-  cv.findContours(edges, contours, hierarchy, retrievalMode, cv.CHAIN_APPROX_SIMPLE);
+  cv.findContours(invertedMask, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
 
   const imageArea = imageData.width * imageData.height;
   const minAreaRatio = getMinAreaRatioForPieceScale(effectiveConfig.pieceScale);
@@ -397,8 +399,7 @@ function runDetection(
     if (area < minArea || area > maxArea) continue;
 
     const cvRect = cv.boundingRect(contour);
-    const aspectRatio =
-      Math.max(cvRect.width, cvRect.height) / Math.min(cvRect.width, cvRect.height);
+    const aspectRatio = Math.max(cvRect.width, cvRect.height) / Math.min(cvRect.width, cvRect.height);
     if (aspectRatio > opts.maxAspectRatio) continue;
 
     const solidity = calculateSolidity(cv, contour);
@@ -413,7 +414,30 @@ function runDetection(
       y: moments.m00 !== 0 ? moments.m01 / moments.m00 : 0,
     };
 
-    const { color, value, luminance } = extractColorWithValue(cv, src, contour);
+    // Sample color from inset
+    const cellMask = cv.Mat.zeros(imageData.height, imageData.width, cv.CV_8UC1);
+    const maskContours = new cv.MatVector();
+    maskContours.push_back(contour);
+    cv.drawContours(cellMask, maskContours, 0, new cv.Scalar(255), -1);
+
+    const erodedMask = new cv.Mat();
+    const erodeKernel = cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(3, 3));
+    cv.erode(cellMask, erodedMask, erodeKernel);
+
+    const meanColor = cv.mean(src, erodedMask);
+    const r = meanColor[0], g = meanColor[1], b = meanColor[2];
+    const luminance = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    let value: 'Light' | 'Medium' | 'Dark';
+    if (luminance > 180) value = 'Light';
+    else if (luminance < 70) value = 'Dark';
+    else value = 'Medium';
+    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+    const color = `#${toHex(Math.round(r))}${toHex(Math.round(g))}${toHex(Math.round(b))}`;
+
+    cellMask.delete();
+    maskContours.delete();
+    erodedMask.delete();
+    erodeKernel.delete();
 
     rawPieces.push({
       id: `piece-${i}`,

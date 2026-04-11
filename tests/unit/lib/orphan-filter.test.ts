@@ -176,7 +176,7 @@ describe('filterOrphanPieces', () => {
       { x: 105, y: 100 },
     ]);
 
-    const result = filterOrphanPieces([a, b]);
+    const result = filterOrphanPieces([a, b], { tolerance: 8 });
 
     // 15px gap > 8px tolerance → both orphans
     expect(result.orphanCount).toBe(2);
@@ -222,7 +222,7 @@ describe('filterOrphanPieces', () => {
     ]);
 
     // Default 8px tolerance → both orphans
-    const defaultResult = filterOrphanPieces([a, b]);
+    const defaultResult = filterOrphanPieces([a, b], { tolerance: 8 });
     expect(defaultResult.orphanCount).toBe(2);
 
     // Custom 15px tolerance → connected

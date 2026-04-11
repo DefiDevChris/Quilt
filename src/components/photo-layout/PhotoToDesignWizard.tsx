@@ -56,6 +56,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   const scaledPieces = usePhotoLayoutStore((s) => s.scaledPieces);
   const setDetectedPieces = usePhotoLayoutStore((s) => s.setDetectedPieces);
   const setScaledPieces = usePhotoLayoutStore((s) => s.setScaledPieces);
+  const setTargetDimensions = usePhotoLayoutStore((s) => s.setTargetDimensions);
   const setCorrectedImageRef = usePhotoLayoutStore((s) => s.setCorrectedImageRef);
   const setPipelineSteps = usePhotoLayoutStore((s) => s.setPipelineSteps);
   const reset = usePhotoLayoutStore((s) => s.reset);
@@ -150,6 +151,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
 
         if (cancelled) return;
 
+        setTargetDimensions(result.worktableWidthInches, result.worktableHeightInches);
         setDetectedPieces(result.pieces);
         setScaledPieces(result.scaledPieces);
         setDetectionSize({ w: result.imageWidthPx, h: result.imageHeightPx });
@@ -484,6 +486,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 inferredRotationDeg={inferredRotationDeg}
                 classCount={classCount}
                 onUpdateScaledPieces={setScaledPieces}
+                onUpdateTargetDimensions={setTargetDimensions}
                 onRescan={handleRescan}
                 onBackToSettings={handleBackToSettings}
               />
@@ -558,6 +561,7 @@ interface WizardStepContentProps {
   inferredRotationDeg: number;
   classCount: number;
   onUpdateScaledPieces: (pieces: readonly ScaledPiece[]) => void;
+  onUpdateTargetDimensions?: (w: number, h: number) => void;
   onRescan: () => void;
   onBackToSettings: () => void;
 }
@@ -1204,7 +1208,7 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             }`}
           >
             <p className="text-body-sm font-medium text-[#2d2a26]">Tiny</p>
-            <p className="text-label-xs text-[#6b655e] mt-1">Under 2&quot;</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">1/2&quot; cells</p>
           </button>
           <button
             type="button"
@@ -1216,7 +1220,7 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             }`}
           >
             <p className="text-body-sm font-medium text-[#2d2a26]">Standard</p>
-            <p className="text-label-xs text-[#6b655e] mt-1">2&quot;-6&quot;</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">1&quot; cells</p>
           </button>
           <button
             type="button"
@@ -1228,7 +1232,7 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             }`}
           >
             <p className="text-body-sm font-medium text-[#2d2a26]">Large</p>
-            <p className="text-label-xs text-[#6b655e] mt-1">6&quot;+</p>
+            <p className="text-label-xs text-[#6b655e] mt-1">1&quot; cells</p>
           </button>
         </div>
       </div>

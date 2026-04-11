@@ -28,6 +28,7 @@ interface PhotoReviewStepProps {
   classCount: number;
   /** Called after a re-quantize pass to hand new ScaledPieces back to the store. */
   onUpdateScaledPieces: (pieces: readonly ScaledPiece[]) => void;
+  onUpdateTargetDimensions?: (w: number, h: number) => void;
   /** Triggers a full OpenCV re-scan (expensive). */
   onRescan: () => void;
   /** Called when the user confirms the pattern is ready. */
@@ -73,6 +74,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
     inferredRotationDeg,
     classCount,
     onUpdateScaledPieces,
+    onUpdateTargetDimensions,
     onRescan,
     onConfirm,
     onBack,
@@ -132,6 +134,9 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
         }
       );
       onUpdateScaledPieces(result.scaledPieces);
+      if (onUpdateTargetDimensions) {
+        onUpdateTargetDimensions(result.worktableWidthInches, result.worktableHeightInches);
+      }
       setSelectedIds(new Set());
       setMessage(
         `Re-quantized: ${result.scaledPieces.length} pieces, ${result.classCount} classes, u=${result.unitPx.toFixed(1)}px`

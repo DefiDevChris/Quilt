@@ -60,14 +60,24 @@ export interface QuantizerConfig {
   readonly rotationOffsetDeg: number;
   /** Minimum area (in px²) a piece must have to survive quantization. */
   readonly minAreaPx: number;
+
+  /** Original image width in pixels. */
+  readonly imageWidthPx?: number;
+  /** Original image height in pixels. */
+  readonly imageHeightPx?: number;
+  /** The piece scale picked by user. */
+  readonly pieceScale?: 'tiny' | 'standard' | 'large';
 }
 
 export const DEFAULT_QUANTIZER_CONFIG: QuantizerConfig = {
-  minUnitPx: 6,
+  minUnitPx: 10,
   simplifyFrac: 0.25,
   unitOverridePx: null,
   rotationOffsetDeg: 0,
-  minAreaPx: 25,
+  minAreaPx: 100,
+  imageWidthPx: 1000,
+  imageHeightPx: 1000,
+  pieceScale: 'standard',
 };
 
 export interface QuantizerResult {
@@ -82,6 +92,13 @@ export interface QuantizerResult {
   readonly classCounts: ReadonlyMap<string, number>;
   /** Pieces dropped during quantization (below minAreaPx, degenerate, etc.). */
   readonly droppedIds: readonly string[];
+
+  /** The picked cell size in inches (0.25, 0.5, 1.0) */
+  readonly cellSizeInches: number;
+  /** The auto-inferred worktable width in inches */
+  readonly worktableWidthInches: number;
+  /** The auto-inferred worktable height in inches */
+  readonly worktableHeightInches: number;
 }
 
 // ============================================================================
@@ -108,6 +125,9 @@ export function quantizeShapes(
       classCount: 0,
       classCounts: new Map(),
       droppedIds: [],
+      cellSizeInches: 1.0,
+      worktableWidthInches: Math.ceil(cfg.imageWidthPx! / 1.0) * 1.0,
+      worktableHeightInches: Math.ceil(cfg.imageHeightPx! / 1.0) * 1.0,
     };
   }
 
@@ -131,6 +151,25 @@ export function quantizeShapes(
   // Safety: if inference fails entirely, fall back to a reasonable default
   // so we still produce something renderable.
   const u = unitPx > 0 ? unitPx : 16;
+  // --- INCH GRID COMPUTATION ---
+  let minPieceDim = Infinity;
+  for (const c of rotatedContours) {
+    const box = boundingBox(c);
+    minPieceDim = Math.min(minPieceDim, Math.min(box.width, box.height));
+  }
+
+  let cellSizeInches = 1.0;
+  if (cfg.pieceScale === 'tiny' || minPieceDim < 1.5 * u) {
+    cellSizeInches = 0.5;
+    if (cfg.pieceScale === 'tiny' && minPieceDim < 0.75 * u) {
+      cellSizeInches = 0.25;
+    }
+  }
+
+  const scaleInchesPerPx = cellSizeInches / u;
+  const worktableWidthInches = Math.ceil((cfg.imageWidthPx ?? 1000) * scaleInchesPerPx / cellSizeInches) * cellSizeInches;
+  const worktableHeightInches = Math.ceil((cfg.imageHeightPx ?? 1000) * scaleInchesPerPx / cellSizeInches) * cellSizeInches;
+
 
   // Stage 2.5: Infer global grid origin (ox, oy) in the de-rotated frame.
   // Without this, every piece is snapped to a (0, 0)-origin grid — which can
@@ -170,9 +209,15 @@ export function quantizeShapes(
     // Re-rotate canonical contour back into the source image's frame.
     const finalContour = rotateContour(canonical.contour, thetaRad, ORIGIN);
 
+    // Convert snapped canonical contour to absolute inches
+    const scaledContour = finalContour.map((pt) => ({
+      x: pt.x * scaleInchesPerPx,
+      y: pt.y * scaleInchesPerPx,
+    }));
+
     quantized.push({
       id: piece.id,
-      contour: finalContour,
+      contour: scaledContour,
       shapeClass: canonical.shapeClass,
       unitsW: canonical.unitsW,
       unitsH: canonical.unitsH,
@@ -195,6 +240,9 @@ export function quantizeShapes(
     classCount: classCounts.size,
     classCounts,
     droppedIds: dropped,
+    cellSizeInches,
+    worktableWidthInches,
+    worktableHeightInches,
   };
 }
 

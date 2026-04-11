@@ -87,6 +87,9 @@ export function usePhotoPatternImport() {
       const canvas = fabricCanvas!;
       const { targetWidth, targetHeight } = usePhotoLayoutStore.getState();
 
+      // 0. Resize canvas to target dimensions
+      useProjectStore.getState().setCanvasDimensions(targetWidth, targetHeight);
+
       // 1. Set reference image as background
       if (originalImageUrl) {
         try {

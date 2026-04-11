@@ -279,10 +279,9 @@ export interface QuiltDetectionConfig {
 
   /**
    * General size of the quilt pieces.
-   * - 'tiny': Lowers the noise filter threshold so small pieces aren't
-   discarded as lint
-   * - 'standard': Default filtering thresholds
-   * - 'large': Raises the minimum contour area threshold
+   * - 'tiny': 1/2" cell size (or 1/4" if very small pieces). Lowers the noise filter threshold.
+   * - 'standard': 1" cell size. Default filtering thresholds
+   * - 'large': 1" cell size. Raises the minimum contour area threshold
    */
   pieceScale: 'tiny' | 'standard' | 'large';
 }

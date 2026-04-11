@@ -64,6 +64,10 @@ export interface PipelineResult {
   readonly inferredRotationDeg: number;
   /** Number of distinct canonical classes discovered. */
   readonly classCount: number;
+  /** Auto-inferred worktable width in inches. */
+  readonly worktableWidthInches: number;
+  /** Auto-inferred worktable height in inches. */
+  readonly worktableHeightInches: number;
 }
 
 // ── Pipeline Helpers ───────────────────────────────────────────────────────
@@ -187,13 +191,12 @@ function buildScaledPieces(
   targetHeightInches: number,
   seamAllowance: number
 ): ScaledPiece[] {
-  const scaleX = targetWidthInches / imageWidth;
-  const scaleY = targetHeightInches / imageHeight;
-
+  // Vertices are already in exact inches direct from the quantizer,
+  // so scaleX/scaleY mapping is no longer needed.
   return quantized.map((q) => {
     const contourInches: Point2D[] = q.contour.map((p) => ({
-      x: p.x * scaleX,
-      y: p.y * scaleY,
+      x: p.x,
+      y: p.y,
     }));
 
     let minX = Infinity;
@@ -286,6 +289,8 @@ export async function requantizeDetectedPieces(
   rotationDeg: number;
   classCount: number;
   droppedIds: readonly string[];
+  worktableWidthInches: number;
+  worktableHeightInches: number;
 }> {
   const { quantizeShapes } = await import('@/lib/shape-quantizer-engine');
   const { filterOrphanPieces } = await import('@/lib/orphan-filter');
@@ -297,7 +302,12 @@ export async function requantizeDetectedPieces(
     // Non-fatal
   }
 
-  const quantResult = quantizeShapes(cleanPieces, quantizerConfig);
+  const quantResult = quantizeShapes(cleanPieces, {
+      ...quantizerConfig,
+      imageWidthPx,
+      imageHeightPx,
+      pieceScale: quantizerConfig?.pieceScale,
+    });
 
   const colorById = new Map<string, string>();
   for (const p of cleanPieces) colorById.set(p.id, p.dominantColor);
@@ -307,8 +317,8 @@ export async function requantizeDetectedPieces(
     colorById,
     imageWidthPx,
     imageHeightPx,
-    targetWidthInches,
-    targetHeightInches,
+    quantResult.worktableWidthInches,
+    quantResult.worktableHeightInches,
     seamAllowance
   );
 
@@ -318,6 +328,8 @@ export async function requantizeDetectedPieces(
     rotationDeg: quantResult.rotationDeg,
     classCount: quantResult.classCount,
     droppedIds: quantResult.droppedIds,
+    worktableWidthInches: quantResult.worktableWidthInches,
+    worktableHeightInches: quantResult.worktableHeightInches,
   };
 }
 
@@ -441,7 +453,12 @@ export async function runDetectionPipeline(
     const imageH = downscaleParams.height;
 
     const { quantizeShapes } = await import('@/lib/shape-quantizer-engine');
-    const quantResult = quantizeShapes(cleanPieces, quantizerConfig);
+    const quantResult = quantizeShapes(cleanPieces, {
+      ...quantizerConfig,
+      imageWidthPx: imageW,
+      imageHeightPx: imageH,
+      pieceScale: scanConfig?.pieceScale,
+    });
     console.log(
       '[PhotoPipeline] Quantized:',
       quantResult.pieces.length,
@@ -464,8 +481,8 @@ export async function runDetectionPipeline(
       colorById,
       imageW,
       imageH,
-      DEFAULT_CANVAS_WIDTH,
-      DEFAULT_CANVAS_HEIGHT,
+      quantResult.worktableWidthInches,
+      quantResult.worktableHeightInches,
       DEFAULT_SEAM_ALLOWANCE_INCHES
     );
 
@@ -506,6 +523,8 @@ export async function runDetectionPipeline(
       inferredUnitPx: quantResult.unitPx,
       inferredRotationDeg: quantResult.rotationDeg,
       classCount: quantResult.classCount,
+      worktableWidthInches: quantResult.worktableWidthInches,
+      worktableHeightInches: quantResult.worktableHeightInches,
     };
   } catch (error) {
     console.error('[PhotoPipeline] Pipeline failed:', error);
@@ -534,6 +553,8 @@ export async function runDetectionPipeline(
       inferredUnitPx: 0,
       inferredRotationDeg: 0,
       classCount: 0,
+      worktableWidthInches: DEFAULT_CANVAS_WIDTH,
+      worktableHeightInches: DEFAULT_CANVAS_HEIGHT,
     };
   }
 }
