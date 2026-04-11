@@ -720,9 +720,9 @@ export default function WorkspacePreview() {
 
   return (
     <section className="py-16 lg:py-24 bg-[#fdfaf7] px-6 lg:px-12 text-center overflow-hidden relative">
-      {/* Decorative quilt-piece backgrounds */}
-      <QuiltPiece color="primary" size={140} rotation={10} top={30} left="3%" opacity={6} />
-      <QuiltPiece color="accent" size={100} rotation={-12} bottom={80} right="5%" opacity={8} />
+      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} right={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div>

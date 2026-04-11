@@ -7,7 +7,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { FabricCard } from '@/components/fabrics/FabricCard';
 import { FabricPreviewModal } from '@/components/fabrics/FabricPreviewModal';
-import { SkeletonGrid } from '@/components/ui/Skeleton';
+import { SkeletonGrid } from '@/components/ui/skeleton';
 import { ShoppingBag } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
 

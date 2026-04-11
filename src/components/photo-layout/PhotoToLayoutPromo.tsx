@@ -185,11 +185,11 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/50">
         <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-8 flex flex-col items-center gap-4 max-w-sm shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
           {/* Decorative quilt pieces */}
-          <div className="absolute -top-4 -right-4 opacity-10 pointer-events-none">
-            <QuiltPiece color="primary" size={60} rotation={12} stitch={false} />
+          <div className="absolute -top-4 -right-4 opacity-15 pointer-events-none">
+            <QuiltPiece color="primary" size={80} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
           </div>
-          <div className="absolute -bottom-4 -left-4 opacity-10 pointer-events-none">
-            <QuiltPiece color="secondary" size={50} rotation={-8} stitch={false} />
+          <div className="absolute -bottom-4 -left-4 opacity-15 pointer-events-none">
+            <QuiltPiece color="secondary" size={70} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
           </div>
           <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center animate-pulse">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
@@ -209,11 +209,11 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
         <div className="h-2 bg-gradient-to-r from-[#ff8d49]/20 via-[#ffc8a6]/20 to-[#ffc7c7]/20" />
 
         {/* Decorative quilt pieces in background */}
-        <div className="absolute -top-6 -right-6 opacity-8 pointer-events-none">
-          <QuiltPiece color="primary" size={100} rotation={15} stitch={false} />
+        <div className="absolute -top-6 -right-6 opacity-12 pointer-events-none">
+          <QuiltPiece color="primary" size={120} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
         </div>
-        <div className="absolute bottom-8 -left-4 opacity-6 pointer-events-none">
-          <QuiltPiece color="accent" size={80} rotation={-12} stitch={false} />
+        <div className="absolute bottom-8 -left-4 opacity-10 pointer-events-none">
+          <QuiltPiece color="accent" size={100} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
         </div>
 
         <div className="p-6 relative z-10">
@@ -433,8 +433,8 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                   }`}
               >
                 {/* Subtle quilt-piece decoration */}
-                <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
-                  <QuiltPiece color="primary" size={50} rotation={10} stitch={false} />
+                <div className="absolute top-2 right-2 opacity-12 pointer-events-none">
+                  <QuiltPiece color="primary" size={70} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
                 </div>
                 <input
                   ref={inputRef}

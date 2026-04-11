@@ -20,6 +20,8 @@ interface QuiltPieceProps {
   strokeWidth?: number;
   /** Extra gap between stitch line and edge */
   stitchGap?: number;
+  /** Color of the stitch line (defaults to same as fill color) */
+  stitchColor?: string;
 }
 
 const COLOR_MAP: Record<string, string> = {
@@ -47,8 +49,10 @@ export function QuiltPiece({
   stitch = true,
   strokeWidth = 2.5,
   stitchGap = 4,
+  stitchColor,
 }: QuiltPieceProps) {
   const fillColor = COLOR_MAP[color] || COLOR_MAP.primary;
+  const strokeColor = stitchColor || fillColor;
   const innerSize = size - stitchGap * 2;
   const innerOffset = stitchGap;
 
@@ -85,12 +89,12 @@ export function QuiltPiece({
             width={innerSize}
             height={innerSize}
             fill="none"
-            stroke={fillColor}
+            stroke={strokeColor}
             strokeWidth={strokeWidth}
             strokeDasharray="8 6"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={0.4}
+            opacity={0.6}
             rx={6}
             ry={6}
           />

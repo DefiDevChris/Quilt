@@ -133,10 +133,10 @@ export default function ShopPage() {
   if (!shopEnabled) {
     return (
       <div className="min-h-screen bg-[#fdfaf7] flex items-center justify-center relative overflow-hidden">
-        {/* Decorative quilt pieces */}
-        <QuiltPiece color="primary" size={180} rotation={10} top={-30} right={-40} opacity={8} />
-        <QuiltPiece color="secondary" size={120} rotation={-15} bottom={-20} left={-20} opacity={10} />
-        <QuiltPiece color="accent" size={80} rotation={25} top="60%" right="15%" opacity={6} />
+        {/* Decorative quilt pieces - HUGE, spread out, high opacity, charcoal stitches, flush */}
+        <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+        <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+        <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
         <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
           <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mx-auto mb-4">
@@ -159,11 +159,11 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfaf7] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds */}
-      <QuiltPiece color="primary" size={160} rotation={12} top={40} right={-30} opacity={6} />
-      <QuiltPiece color="secondary" size={120} rotation={-10} top={200} left={-20} opacity={8} />
-      <QuiltPiece color="accent" size={90} rotation={20} bottom={100} right="10%" opacity={7} />
-      <QuiltPiece color="primary" size={70} rotation={-15} bottom={40} left="20%" opacity={5} />
+      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="primary" size={350} rotation={0} bottom={-100} right={-50} opacity={16} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
       {/* Header */}
       <div className="bg-[#ffffff] border-b border-[#e8e1da] relative">
@@ -232,8 +232,8 @@ export default function ShopPage() {
         {showFilters && (
           <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
             {/* Subtle quilt-piece decoration */}
-            <div className="absolute top-2 right-2 opacity-5 pointer-events-none">
-              <QuiltPiece color="secondary" size={50} rotation={15} stitch={false} />
+            <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
+              <QuiltPiece color="secondary" size={70} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
             </div>
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-2">
@@ -361,8 +361,8 @@ export default function ShopPage() {
           </div>
         ) : fabrics.length === 0 ? (
           <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
-            <div className="absolute top-2 right-2 opacity-5 pointer-events-none">
-              <QuiltPiece color="accent" size={80} rotation={10} stitch={false} />
+            <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
+              <QuiltPiece color="accent" size={90} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
             </div>
             <div className="relative z-10">
               <p className="text-lg font-medium text-[#2d2a26] mb-2">No fabrics found</p>
