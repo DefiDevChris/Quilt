@@ -101,6 +101,7 @@ interface CanvasStoreState {
   setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: () => void;
   zoomAndCenter: (newZoom: number) => void;
+  zoomAtPoint: (newZoom: number, screenX?: number, screenY?: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
@@ -287,6 +288,32 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     fabricCanvas.setViewportTransform([vp.zoom, 0, 0, vp.zoom, vp.panX, vp.panY]);
     set({ zoom: vp.zoom });
     fabricCanvas.renderAll();
+  },
+
+  /**
+   * Zoom toward a specific screen point (defaults to viewport center) without
+   * recentering the canvas. Preserves the user's pan position so successive
+   * zoom clicks feel smooth instead of jumping back to center.
+   */
+  zoomAtPoint: (newZoom: number, screenX?: number, screenY?: number) => {
+    const { fabricCanvas } = get();
+    if (!fabricCanvas) return;
+    const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
+    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    if (!el) return;
+    const px = screenX ?? el.clientWidth / 2;
+    const py = screenY ?? el.clientHeight / 2;
+    // Lazy import to avoid pulling fabric into the store at module load
+    void import('fabric').then((fabric) => {
+      (
+        fabricCanvas as unknown as {
+          zoomToPoint: (point: import('fabric').Point, zoom: number) => void;
+          renderAll: () => void;
+        }
+      ).zoomToPoint(new fabric.Point(px, py), clamped);
+      set({ zoom: clamped });
+      (fabricCanvas as unknown as { renderAll: () => void }).renderAll();
+    });
   },
 
   saveToolSettings: (tool) => {

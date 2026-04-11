@@ -4,7 +4,19 @@ import { usePrintlistStore } from '@/stores/printlistStore';
 
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
-import { MousePointer2, Hand, Pencil, Wand2, Grid3x3, Undo2, Redo2, Square, Triangle, ZoomIn, ZoomOut } from 'lucide-react';
+import {
+  MousePointer2,
+  Hand,
+  Pencil,
+  Wand2,
+  Grid3x3,
+  Undo2,
+  Redo2,
+  Square,
+  Triangle,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
 import { ZOOM_FACTOR } from '@/lib/constants';
 
 export interface ToolbarCallbacks {
@@ -115,7 +127,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+=',
       description: 'Zoom in on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAndCenter(zoom * ZOOM_FACTOR),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom * ZOOM_FACTOR),
       isActive: () => false,
       icon: <ZoomIn size={20} />,
     },
@@ -125,7 +137,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+-',
       description: 'Zoom out on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAndCenter(zoom / ZOOM_FACTOR),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom / ZOOM_FACTOR),
       isActive: () => false,
       icon: <ZoomOut size={20} />,
     },
@@ -289,4 +301,3 @@ export function useBlockTools(
     },
   ];
 }
-

@@ -1,8 +1,8 @@
-export const ZOOM_MIN = 0.1;
-export const ZOOM_MAX = 0.2;
-export const ZOOM_DEFAULT = 0.15;
+export const ZOOM_MIN = 0.05;
+export const ZOOM_MAX = 8;
+export const ZOOM_DEFAULT = 0.2;
 export const ZOOM_STEP = 0.1;
-export const ZOOM_FACTOR = 1.05;
+export const ZOOM_FACTOR = 1.2;
 
 export const GRID_DEFAULT_SIZE = 1;
 export const GRID_DEFAULT_ENABLED = true;
@@ -218,13 +218,13 @@ export const QUILT_SIZE_PRESETS: readonly {
   readonly width: number;
   readonly height: number;
 }[] = [
-    { label: 'Baby', width: 36, height: 52 },
-    { label: 'Throw', width: 50, height: 65 },
-    { label: 'Twin', width: 68, height: 90 },
-    { label: 'Full/Double', width: 81, height: 96 },
-    { label: 'Queen', width: 90, height: 108 },
-    { label: 'King', width: 108, height: 108 },
-  ];
+  { label: 'Baby', width: 36, height: 52 },
+  { label: 'Throw', width: 50, height: 65 },
+  { label: 'Twin', width: 68, height: 90 },
+  { label: 'Full/Double', width: 81, height: 96 },
+  { label: 'Queen', width: 90, height: 108 },
+  { label: 'King', width: 108, height: 108 },
+];
 
 // Support contact
 export const SUPPORT_EMAIL = 'support@quilt.studio';
