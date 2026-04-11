@@ -50,7 +50,7 @@ function FaqSection({
             className={`px-3 py-1.5 rounded-full text-[14px] leading-[20px] font-normal transition-colors duration-150 ${
               selectedCategory === cat
                 ? 'bg-[#ff8d49] text-[#1a1a1a]'
-                : 'bg-[#fdfaf7] text-[#4a4a4a] hover:bg-[#ff8d49]/10'
+                : 'bg-[var(--color-bg)] text-[#4a4a4a] hover:bg-[#ff8d49]/10'
             }`}
           >
             {cat === 'all' ? 'All' : FAQ_CATEGORY_LABELS[cat]}
@@ -68,7 +68,7 @@ function FaqSection({
             return (
               <div
                 key={entry.id}
-                className="border border-[#d4d4d4] bg-[#ffffff] rounded-lg overflow-hidden"
+                className="border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg overflow-hidden"
               >
                 <button
                   type="button"
@@ -112,10 +112,10 @@ function VideoTutorialsSection() {
       {VIDEO_TUTORIALS.map((video) => (
         <div
           key={video.id}
-          className="border border-[#d4d4d4] bg-[#ffffff] rounded-lg overflow-hidden hover:border-[#ff8d49] transition-colors duration-150"
+          className="border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg overflow-hidden hover:border-[#ff8d49] transition-colors duration-150"
         >
           {/* Thumbnail placeholder */}
-          <div className="aspect-video bg-[#fdfaf7] flex items-center justify-center">
+          <div className="aspect-video bg-[var(--color-bg)] flex items-center justify-center">
             <div className="text-center">
               <svg
                 width="32"
@@ -150,7 +150,7 @@ function VideoTutorialsSection() {
 
 function ContactSection() {
   return (
-    <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8">
+    <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8">
       <h3 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-2">Contact Support</h3>
       <p className="text-[14px] leading-[20px] text-[#4a4a4a] mb-6">
         Can&apos;t find what you need? Reach out and we&apos;ll help you out.
@@ -221,7 +221,7 @@ export function HelpCenterContent() {
           placeholder="Search for assistance..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] text-[16px] leading-[24px]"
+          className="w-full pl-12 pr-4 py-3 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] text-[16px] leading-[24px]"
         />
       </div>
 

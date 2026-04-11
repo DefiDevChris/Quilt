@@ -8,18 +8,18 @@ import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 function SocialThreadsScreenshot() {
   return (
     <div className="relative">
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)]">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)]">
         {/* App content */}
-        <div className="bg-[#fdfaf7] min-h-[420px] relative">
+        <div className="bg-[var(--color-bg)] min-h-[420px] relative">
           {/* Background subtle accents */}
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#ffc7c7]/30 pointer-events-none" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#ff8d49]/10 pointer-events-none" />
 
           <div className="relative z-10 p-4 space-y-4 max-w-lg mx-auto">
             {/* Post 1 */}
-            <div className="bg-[#ffffff] p-5 border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-[#ffffff] bg-[#ff8d49] flex items-center justify-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] text-[#ffffff] text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-[var(--color-surface)] bg-[#ff8d49] flex items-center justify-center shadow-[0_1px_2px_rgba(26,26,26,0.08)] text-[var(--color-surface)] text-sm font-bold">
                   S
                 </div>
                 <div>
@@ -47,7 +47,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   24
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[#fdfaf7] transition-colors duration-150">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -60,7 +60,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   8
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[#fdfaf7] transition-colors duration-150">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -81,9 +81,9 @@ function SocialThreadsScreenshot() {
             </div>
 
             {/* Post 2 */}
-            <div className="bg-[#ffffff] p-5 border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full border-2 border-[#ffffff] bg-[#c084fc] flex items-center justify-center shadow-[0_1px_2px_rgba(45,42,38,0.08)] text-[#ffffff] text-sm font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-[var(--color-surface)] bg-[#c084fc] flex items-center justify-center shadow-[0_1px_2px_rgba(26,26,26,0.08)] text-[var(--color-surface)] text-sm font-bold">
                   M
                 </div>
                 <div>
@@ -105,7 +105,7 @@ function SocialThreadsScreenshot() {
                 />
               </div>
               <div className="flex gap-1 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[#fdfaf7] transition-colors duration-150">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -118,7 +118,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   42
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[#fdfaf7] transition-colors duration-150">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -131,7 +131,7 @@ function SocialThreadsScreenshot() {
                   </svg>
                   15
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[#fdfaf7] transition-colors duration-150">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors duration-150">
                   <svg
                     width="18"
                     height="18"
@@ -167,7 +167,7 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 flex items-start gap-3 transition-colors duration-150 hover:bg-[#fdfaf7]">
+    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-4 flex items-start gap-3 transition-colors duration-150 hover:bg-[var(--color-bg)]">
       <div className="w-10 h-10 rounded-full bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] flex-shrink-0">
         {icon}
       </div>
@@ -188,7 +188,7 @@ export default function SocialThreadsSection() {
   return (
     <section
       id="social-threads"
-      className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden"
+      className="px-6 lg:px-12 py-16 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden"
     >
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
       <QuiltPiece color="secondary" size={900} rotation={0} top={-350} right={-300} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
@@ -292,7 +292,7 @@ export default function SocialThreadsSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Link
                 href="/socialthreads"
-                className="inline-flex items-center justify-center px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="inline-flex items-center justify-center px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 Explore Social Threads
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

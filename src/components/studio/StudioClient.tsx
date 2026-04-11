@@ -97,7 +97,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
  if (loading) {
  return (
- <div className="h-screen flex items-center justify-center bg-[#fdfaf7]">
+ <div className="h-screen flex items-center justify-center bg-[var(--color-bg)]">
  <div className="text-center">
  <div className="w-8 h-8 border-2 border-[#ff8d49] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
  <p className="text-sm text-[#4a4a4a]">Loading your design...</p>
@@ -108,7 +108,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
  if (error || !project) {
  return (
- <div className="h-screen flex items-center justify-center bg-[#fdfaf7]">
+ <div className="h-screen flex items-center justify-center bg-[var(--color-bg)]">
  <div className="text-center">
  <p className="text-sm text-[#ffc7c7] mb-4">{error || 'Failed to load project.'}</p>
  <Link

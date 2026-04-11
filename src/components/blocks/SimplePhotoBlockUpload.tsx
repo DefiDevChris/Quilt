@@ -495,7 +495,7 @@ export function SimplePhotoBlockUpload({
         <div className="space-y-4">
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#d4d4d4] bg-[#fdfaf7] hover:bg-[#fdfaf7]"
+            className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#d4d4d4] bg-[var(--color-bg)] hover:bg-[var(--color-bg)]"
           >
             <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Click to upload or drag and drop</p>
             <p className="mt-1 text-[12px] leading-[16px] text-[#4a4a4a]">PNG, JPEG, or WebP (max 20MB)</p>
@@ -512,12 +512,12 @@ export function SimplePhotoBlockUpload({
 
       {step === 'imagePrep' && (
         <div className="space-y-4">
-          <div className="flex items-center gap-1 bg-[#fdfaf7] rounded-full p-1">
+          <div className="flex items-center gap-1 bg-[var(--color-bg)] rounded-full p-1">
             <button
               type="button"
               onClick={() => setPrepMode('straighten')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'straighten'
-                ? 'bg-[#fdfaf7] text-[#1a1a1a] shadow'
+                ? 'bg-[var(--color-bg)] text-[#1a1a1a] shadow'
                 : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
                 }`}
             >
@@ -527,7 +527,7 @@ export function SimplePhotoBlockUpload({
               type="button"
               onClick={() => setPrepMode('perspective')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'perspective'
-                ? 'bg-[#fdfaf7] text-[#1a1a1a] shadow'
+                ? 'bg-[var(--color-bg)] text-[#1a1a1a] shadow'
                 : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
                 }`}
             >
@@ -537,7 +537,7 @@ export function SimplePhotoBlockUpload({
 
           {prepMode === 'straighten' ? (
             <>
-              <div className="flex justify-center items-center rounded-lg border border-[#d4d4d4]/20 bg-[#fdfaf7] p-4 overflow-hidden h-80">
+              <div className="flex justify-center items-center rounded-lg border border-[#d4d4d4]/20 bg-[var(--color-bg)] p-4 overflow-hidden h-80">
                 {originalImageUrl && (
                   <img
                     src={originalImageUrl}
@@ -577,28 +577,28 @@ export function SimplePhotoBlockUpload({
                   <button
                     type="button"
                     onClick={() => setRotation((r) => r - 90)}
-                    className="flex-1 bg-[#fdfaf7] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[#fdfaf7]"
+                    className="flex-1 bg-[var(--color-bg)] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[var(--color-bg)]"
                   >
                     -90°
                   </button>
                   <button
                     type="button"
                     onClick={() => setRotation((r) => r + 90)}
-                    className="flex-1 bg-[#fdfaf7] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[#fdfaf7]"
+                    className="flex-1 bg-[var(--color-bg)] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[var(--color-bg)]"
                   >
                     +90°
                   </button>
                   <button
                     type="button"
                     onClick={() => setFlipH((v) => !v)}
-                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#1a1a1a] hover:bg-[#fdfaf7]'}`}
+                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[var(--color-bg)] text-[#1a1a1a] hover:bg-[var(--color-bg)]'}`}
                   >
                     Flip H
                   </button>
                   <button
                     type="button"
                     onClick={() => setFlipV((v) => !v)}
-                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#1a1a1a] hover:bg-[#fdfaf7]'}`}
+                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[var(--color-bg)] text-[#1a1a1a] hover:bg-[var(--color-bg)]'}`}
                   >
                     Flip V
                   </button>
@@ -610,7 +610,7 @@ export function SimplePhotoBlockUpload({
                         setFlipH(false);
                         setFlipV(false);
                       }}
-                      className="px-3 rounded-full py-2 text-xs font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[#fdfaf7] hover:bg-[#fdfaf7]"
+                      className="px-3 rounded-full py-2 text-xs font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[var(--color-bg)] hover:bg-[var(--color-bg)]"
                     >
                       Reset
                     </button>
@@ -625,7 +625,7 @@ export function SimplePhotoBlockUpload({
               </p>
               <div
                 ref={containerRef}
-                className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[#fdfaf7]"
+                className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)]"
               >
                 <canvas
                   ref={canvasRef}
@@ -651,7 +651,7 @@ export function SimplePhotoBlockUpload({
                       { x: margin, y: h - margin },
                     ]);
                   }}
-                  className="self-start px-3 py-1.5 text-[12px] leading-[16px] font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[#fdfaf7] rounded-full hover:bg-[#fdfaf7]"
+                  className="self-start px-3 py-1.5 text-[12px] leading-[16px] font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[var(--color-bg)] rounded-full hover:bg-[var(--color-bg)]"
                 >
                   Reset Corners
                 </button>
@@ -686,7 +686,7 @@ export function SimplePhotoBlockUpload({
           </p>
           <div
             ref={containerRef}
-            className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[#fdfaf7]"
+            className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)]"
           >
             <canvas
               ref={canvasRef}
@@ -706,7 +706,7 @@ export function SimplePhotoBlockUpload({
                 onChange={(e) => setBlockName(e.target.value)}
                 placeholder="My Block"
                 maxLength={255}
-                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
             <div>
@@ -717,7 +717,7 @@ export function SimplePhotoBlockUpload({
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Custom"
                 maxLength={100}
-                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
             <div className="col-span-2">
@@ -727,7 +727,7 @@ export function SimplePhotoBlockUpload({
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="modern, geometric"
-                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
           </div>

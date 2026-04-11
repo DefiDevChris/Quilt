@@ -587,7 +587,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-full bg-[#ff8d49] py-2.5 text-[13px] font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="w-full rounded-full bg-[#ff8d49] py-2.5 text-[13px] font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>

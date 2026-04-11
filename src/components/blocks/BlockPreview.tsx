@@ -61,7 +61,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
       onClick={onClose}
     >
       <div
-        className="relative w-80 rounded-lg bg-[#ffffff] border border-[#d4d4d4] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="relative w-80 rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -74,7 +74,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
 
         <h3 className="mb-3 text-[18px] leading-[28px] text-[#1a1a1a]">{block.name}</h3>
 
-        <div className="mb-4 flex items-center justify-center rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] p-4">
+        <div className="mb-4 flex items-center justify-center rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)] p-4">
           {loading ? (
             <div className="h-40 w-40 flex items-center justify-center">
               <div className="h-6 w-6 rounded-lg bg-[#ffc8a6] animate-pulse" />
@@ -87,7 +87,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="mt-3 rounded-full bg-[#ff8d49] text-[#1a1a1a] px-4 py-1.5 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="mt-3 rounded-full bg-[#ff8d49] text-[#1a1a1a] px-4 py-1.5 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>

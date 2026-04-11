@@ -43,7 +43,7 @@ export function BlockOverlaySelector({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/60">
-      <div className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
           <h2 className="text-[24px] leading-[32px] text-[#1a1a1a]">Overlay Templates</h2>
@@ -66,7 +66,7 @@ export function BlockOverlaySelector({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Type tabs and search */}
           <div className="flex flex-col gap-4">
-            <div className="flex bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg">
+            <div className="flex bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg">
               <button
                 type="button"
                 onClick={() => setActiveType('block')}
@@ -94,7 +94,7 @@ export function BlockOverlaySelector({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search blocks and layouts..."
-              className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-4 text-[16px] leading-[24px] text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150"
+              className="w-full border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg p-4 text-[16px] leading-[24px] text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function BlockOverlaySelector({
                   onClick={() => setDifficultyFilter(d)}
                   className={`border border-[#d4d4d4] px-4 py-2 text-[14px] leading-[20px] rounded-full transition-colors duration-150 ${difficultyFilter === d
                     ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]'
-                    : 'bg-[#ffffff] text-[#4a4a4a] hover:border-[#ff8d49]/50'
+                    : 'bg-[var(--color-surface)] text-[#4a4a4a] hover:border-[#ff8d49]/50'
                     }`}
                 >
                   {d}
@@ -128,10 +128,10 @@ export function BlockOverlaySelector({
                     onClick={() => onSelect(block.svgPath, 'block')}
                     className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === block.svgPath
                       ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                      : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                      : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
                       }`}
                   >
-                    <div className="mb-4 w-full aspect-square border border-[#d4d4d4] bg-[#ffffff] rounded-lg">
+                    <div className="mb-4 w-full aspect-square border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg">
                       <img
                         src={block.svgPath}
                         alt={block.displayName}
@@ -159,10 +159,10 @@ export function BlockOverlaySelector({
                     }}
                     className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === layout.svgPath
                       ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                      : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                      : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
                       }`}
                   >
-                    <div className="mb-4 w-full aspect-[3/4] border border-[#d4d4d4] bg-[#ffffff] rounded-lg">
+                    <div className="mb-4 w-full aspect-[3/4] border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg">
                       <img
                         src={layout.svgPath}
                         alt={layout.displayName}

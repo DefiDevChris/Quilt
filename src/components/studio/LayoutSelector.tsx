@@ -133,10 +133,10 @@ function LayoutCard({
     <div
       className={`rounded-lg border-2 overflow-hidden transition-colors duration-150 ${
         isApplied
-          ? 'border-[#ff8d49] bg-[#ff8d49]/5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+          ? 'border-[#ff8d49] bg-[#ff8d49]/5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
           : isExpanded
-            ? 'border-[#ff8d49]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[#ff8d49]/30 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[#ff8d49]/30 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
       }`}
     >
       <button

@@ -58,7 +58,7 @@ const features = [
 
 export default function FeatureHighlights() {
   return (
-    <section id="features" className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
+    <section id="features" className="px-6 lg:px-12 py-16 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex items-center gap-4 mb-16">
@@ -83,7 +83,7 @@ export default function FeatureHighlights() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:bg-[#fdfaf7] transition-colors duration-150 duration-150"
+              className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8 relative overflow-hidden hover:bg-[var(--color-bg)] transition-colors duration-150 duration-150"
             >
               <div className="relative z-10">
                 <div className="w-16 h-16 mb-6">

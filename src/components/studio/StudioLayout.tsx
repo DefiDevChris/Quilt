@@ -187,7 +187,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                       <img
                         src={referenceImageUrl}
                         alt="Original reference photo"
-                        className="max-w-full max-h-full object-contain rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                         draggable={false}
                       />
                     </div>

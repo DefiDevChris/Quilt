@@ -71,11 +71,11 @@ function StudioMockup() {
   ];
 
   return (
-    <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)]">
+    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)]">
       {/* Top Bar */}
-      <div className="h-10 bg-[#ffffff] border-b border-[var(--color-border)] flex items-center px-3 gap-3 text-[10px]">
+      <div className="h-10 bg-[var(--color-surface)] border-b border-[var(--color-border)] flex items-center px-3 gap-3 text-[10px]">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-lg bg-[#fdfaf7] flex items-center justify-center text-[var(--color-text-dim)]">
+          <div className="w-4 h-4 rounded-lg bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)]">
             <svg
               width="10"
               height="10"
@@ -114,9 +114,9 @@ function StudioMockup() {
         </div>
       </div>
 
-      <div className="flex bg-[#fdfaf7] relative">
+      <div className="flex bg-[var(--color-bg)] relative">
         {/* Left Toolbar with labels */}
-        <div className="w-14 bg-[#ffffff] border-r border-[var(--color-border)] py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+        <div className="w-14 bg-[var(--color-surface)] border-r border-[var(--color-border)] py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
           {toolItems.map((tool, i) =>
             tool.divider ? (
               <div key={i} className="w-8 h-px bg-[var(--color-text)]/20 my-1" />
@@ -154,11 +154,11 @@ function StudioMockup() {
               opacity: 0.3,
             }}
           />
-          <div className="relative grid grid-cols-3 gap-2 bg-[#ffffff] p-2 border-4 border-[#ff8d49]/60 rounded-lg mx-auto max-w-[260px]">
+          <div className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 border-[#ff8d49]/60 rounded-lg mx-auto max-w-[260px]">
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-[#ffffff] flex items-center justify-center border border-[var(--color-border)]/20"
+                className="aspect-square bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)]/20"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <polygon points="0,0 50,50 0,100" fill="#fed7aa" />
@@ -172,11 +172,11 @@ function StudioMockup() {
         </div>
 
         {/* Right Panel - Accordion sections */}
-        <div className="w-44 bg-[#ffffff] border-l border-[var(--color-border)] shrink-0 hidden sm:flex flex-col">
+        <div className="w-44 bg-[var(--color-surface)] border-l border-[var(--color-border)] shrink-0 hidden sm:flex flex-col">
           {panelSections.map((section, i) => (
             <button
               key={i}
-              className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)] text-[10px] font-bold text-[var(--color-text)] hover:bg-[#fdfaf7]"
+              className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)] text-[10px] font-bold text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             >
               <span>{section.label}</span>
               <svg
@@ -198,7 +198,7 @@ function StudioMockup() {
         </div>
 
         {/* Floating bottom toolbar */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 flex items-center gap-2 z-20">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 flex items-center gap-2 z-20">
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
@@ -238,7 +238,7 @@ function StudioMockup() {
       </div>
 
       {/* Status bar */}
-      <div className="bg-[#fdfaf7] rounded-b-lg px-4 py-1.5 border-t border-[var(--color-border)] flex items-center justify-between text-[8px] font-mono text-[var(--color-text-dim)]">
+      <div className="bg-[var(--color-bg)] rounded-b-lg px-4 py-1.5 border-t border-[var(--color-border)] flex items-center justify-between text-[8px] font-mono text-[var(--color-text-dim)]">
         <span>Mouse H: 12.50&quot; V: 8.25&quot;</span>
         <div className="flex gap-4">
           <span>Snap to Grid: ON</span>
@@ -251,7 +251,7 @@ function StudioMockup() {
 
 export default function HeroSection() {
   return (
-    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
+    <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
       <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
       <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
@@ -283,7 +283,7 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 text-center shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 Start Designing Free
               </Link>

@@ -103,7 +103,7 @@ export function MobileUploadsPanel() {
               type="button"
               onClick={() => setFilter(chip.value)}
               className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${filter === chip.value
-                ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                 : 'border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10'
                 }`}
             >
@@ -125,7 +125,7 @@ export function MobileUploadsPanel() {
       {isLoading && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               <div className="aspect-square bg-[var(--color-bg)] animate-pulse" />
               <div className="p-3 space-y-2">
                 <div className="h-4 bg-[var(--color-border)] rounded-full animate-pulse" />

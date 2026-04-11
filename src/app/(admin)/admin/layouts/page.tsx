@@ -351,7 +351,7 @@ function LayoutFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#1a1a1a]/40 overflow-y-auto py-8">
-      <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[#1a1a1a]">
             {isEditing ? 'Edit Layout' : 'Create New Layout'}

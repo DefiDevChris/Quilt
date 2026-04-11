@@ -65,7 +65,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       <header className="flex flex-col md:flex-row items-center md:items-start gap-12">
         <div className="relative group shrink-0">
           {profile.avatarUrl ? (
-            <div className="relative w-48 h-48 rounded-full overflow-hidden ring-2 ring-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="relative w-48 h-48 rounded-full overflow-hidden ring-2 ring-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               <Image
                 src={profile.avatarUrl}
                 alt={profile.displayName}
@@ -75,7 +75,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               />
             </div>
           ) : (
-            <div className="w-48 h-48 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-center text-[#4a4a4a]">
+            <div className="w-48 h-48 rounded-full bg-[var(--color-bg)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-center text-[#4a4a4a]">
               <span className="text-6xl opacity-40">
                 {getInitials(profile.displayName)}
               </span>
@@ -84,7 +84,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
           {isOwner && (
             <Link
               href="/settings"
-              className="absolute -bottom-2 -right-2 p-3 bg-[#ffffff] rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4] text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150 z-20"
+              className="absolute -bottom-2 -right-2 p-3 bg-[var(--color-surface)] rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[#d4d4d4] text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150 z-20"
               title="Edit Profile"
             >
               <Pencil size={18} strokeWidth={2.5} />
@@ -103,7 +103,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               )}
             </div>
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <p className="px-3 py-1 bg-[#fdfaf7] text-[#4a4a4a] text-[16px] leading-[24px]">
+              <p className="px-3 py-1 bg-[var(--color-bg)] text-[#4a4a4a] text-[16px] leading-[24px]">
                 @{profile.username}
               </p>
               {profile.isPro && (
@@ -200,7 +200,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                 {isOwner && (
                   <Link
                     href="/dashboard"
-                    className="inline-flex h-12 items-center px-8 bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                    className="inline-flex h-12 items-center px-8 bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                   >
                     Start Your First Project
                   </Link>
@@ -265,8 +265,8 @@ function FollowButton({ username, initialFollowing }: FollowButtonProps) {
     <button
       onClick={handleFollow}
       className={`inline-flex items-center gap-2 px-4 py-2 text-[16px] leading-[24px] transition-colors duration-150 rounded-full ${following
-        ? 'bg-[#fdfaf7] border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49] hover:border-[#ff8d49]/30'
-        : 'bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        ? 'bg-[var(--color-bg)] border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49] hover:border-[#ff8d49]/30'
+        : 'bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
         }`}
     >
       {following ? 'Following' : 'Follow'}
@@ -293,10 +293,10 @@ interface ProjectCardProps {
 
 function ProjectCard({ post }: ProjectCardProps) {
   return (
-    <article className="bg-[#ffffff] border border-[#d4d4d4] overflow-hidden rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <article className="bg-[var(--color-surface)] border border-[#d4d4d4] overflow-hidden rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
       <Link href={`/socialthreads/${post.id}`} className="block">
         {post.thumbnailUrl ? (
-          <div className="relative w-full aspect-[4/3] bg-[#fdfaf7] overflow-hidden rounded-t-lg">
+          <div className="relative w-full aspect-[4/3] bg-[var(--color-bg)] overflow-hidden rounded-t-lg">
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
@@ -307,7 +307,7 @@ function ProjectCard({ post }: ProjectCardProps) {
             />
           </div>
         ) : (
-          <div className="w-full aspect-[4/3] bg-[#fdfaf7] flex items-center justify-center">
+          <div className="w-full aspect-[4/3] bg-[var(--color-bg)] flex items-center justify-center">
             <span className="text-[24px] leading-[32px] text-[#4a4a4a] opacity-40">STUDIO</span>
           </div>
         )}
@@ -444,7 +444,7 @@ function SocialLinks({
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[14px] leading-[20px] text-[#1a1a1a] border border-[#d4d4d4] px-4 py-2 rounded-full hover:bg-[#ff8d49] hover:text-[#ffffff] transition-colors duration-150"
+          className="text-[14px] leading-[20px] text-[#1a1a1a] border border-[#d4d4d4] px-4 py-2 rounded-full hover:bg-[#ff8d49] hover:text-[var(--color-surface)] transition-colors duration-150"
         >
           {link.label}
         </a>

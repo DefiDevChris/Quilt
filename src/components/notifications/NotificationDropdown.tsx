@@ -150,7 +150,7 @@ export function NotificationDropdown() {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] rounded-lg z-50 border border-[var(--color-border)]"
+      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-lg z-50 border border-[var(--color-border)]"
       role="menu"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
@@ -175,7 +175,7 @@ export function NotificationDropdown() {
               key={notification.id}
               type="button"
               onClick={() => handleNotificationClick(notification)}
-              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-[#fdfaf7] transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
+              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-[var(--color-bg)] transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
                 } ${index < notificationsList.length - 1 ? 'border-b border-[#d4d4d4]' : ''}`}
               role="menuitem"
             >

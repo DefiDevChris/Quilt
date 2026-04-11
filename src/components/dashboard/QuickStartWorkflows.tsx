@@ -52,7 +52,7 @@ export function QuickStartWorkflows({
         <button
           type="button"
           onClick={onNewProject}
-          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[#fdfaf7] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           aria-label="Start a new project"
         >
           <div>
@@ -76,7 +76,7 @@ export function QuickStartWorkflows({
             aria-haspopup="listbox"
             aria-expanded={resumeOpen}
             aria-label="Resume a recent project"
-            className="w-full min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[#fdfaf7] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
+            className="w-full min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           >
             <div>
               <p className="text-[#1a1a1a] font-semibold text-lg mb-1">Resume</p>
@@ -98,7 +98,7 @@ export function QuickStartWorkflows({
           {resumeOpen && (
             <div
               role="listbox"
-              className="absolute left-0 right-0 mt-2 z-30 rounded-lg border border-[#d4d4d4] bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] overflow-hidden"
+              className="absolute left-0 right-0 mt-2 z-30 rounded-lg border border-[#d4d4d4] bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] overflow-hidden"
             >
               {recentProjects.length === 0 ? (
                 <div className="px-4 py-6 text-center">
@@ -168,7 +168,7 @@ export function QuickStartWorkflows({
         {/* Photo to Design */}
         <Link
           href="/photo-to-design"
-          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden transition-colors duration-150 bg-[#fdfaf7] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           aria-label="Photo to Design workflow"
         >
           <div>

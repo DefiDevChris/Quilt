@@ -86,8 +86,8 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
   }
 
   const inputClassName = compact
-    ? 'w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2 text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150'
-    : 'w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150';
+    ? 'w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2 text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150'
+    : 'w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

@@ -81,7 +81,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-end justify-around pb-7 pt-2 px-3 bg-[#fdfaf7]"
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-end justify-around pb-7 pt-2 px-3 bg-[var(--color-bg)]"
       aria-label="Mobile navigation"
     >
       {/* Home */}
@@ -112,7 +112,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
           className="w-[46px] h-[46px] rounded-full flex items-center justify-center"
           style={{
             background: 'linear-gradient(145deg, #ff8d49, #ffc8a6)',
-            boxShadow: '0 1px 2px rgba(45,42,38,0.08)',
+            boxShadow: '0 1px 2px rgba(26,26,26,0.08)',
           }}
         >
           <svg

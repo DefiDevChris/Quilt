@@ -24,7 +24,7 @@ export default function AdminLibrariesPage() {
         ))}
       </div>
 
-      <div className="bg-[#ffffff] rounded-lg border border-[#d4d4d4] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-surface)] rounded-lg border border-[#d4d4d4] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         {activeTab === 'fabrics' && <FabricForm />}
         {activeTab === 'blocks' && <BlockForm />}
         {activeTab === 'shop' && <ShopManagement />}
@@ -92,7 +92,7 @@ function FabricForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
         />
       </div>
       <div className="space-y-2">
@@ -103,7 +103,7 @@ function FabricForm() {
           name="imageUrl"
           value={formData.imageUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -114,7 +114,7 @@ function FabricForm() {
             name="thumbnailUrl"
             value={formData.thumbnailUrl}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
         <div className="space-y-2">
@@ -124,7 +124,7 @@ function FabricForm() {
             name="manufacturer"
             value={formData.manufacturer}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
         <div className="space-y-2">
@@ -134,7 +134,7 @@ function FabricForm() {
             name="sku"
             value={formData.sku}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
         <div className="space-y-2">
@@ -144,7 +144,7 @@ function FabricForm() {
             name="collection"
             value={formData.collection}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
         <div className="space-y-2">
@@ -154,14 +154,14 @@ function FabricForm() {
             name="colorFamily"
             value={formData.colorFamily}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
       </div>
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+        className="px-4 py-2 bg-[#ff8d49] text-[var(--color-surface)] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
       >
         {saving ? 'Adding...' : 'Add Fabric'}
       </button>
@@ -242,7 +242,7 @@ function BlockForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -254,7 +254,7 @@ function BlockForm() {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
         <div className="space-y-2">
@@ -264,7 +264,7 @@ function BlockForm() {
             name="subcategory"
             value={formData.subcategory}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
           />
         </div>
       </div>
@@ -276,7 +276,7 @@ function BlockForm() {
           value={formData.svgData}
           onChange={handleChange}
           rows={4}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-sm"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
@@ -286,7 +286,7 @@ function BlockForm() {
           value={formData.fabricJsDataStr}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-sm"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
@@ -296,7 +296,7 @@ function BlockForm() {
           name="tagsStr"
           value={formData.tagsStr}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
         />
       </div>
       <div className="space-y-2">
@@ -306,13 +306,13 @@ function BlockForm() {
           name="thumbnailUrl"
           value={formData.thumbnailUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
         />
       </div>
       <button
         type="submit"
         disabled={saving}
-        className="px-4 py-2 bg-[#ff8d49] text-[#ffffff] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+        className="px-4 py-2 bg-[#ff8d49] text-[var(--color-surface)] rounded-full font-medium disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
       >
         {saving ? 'Adding...' : 'Add Block'}
       </button>
@@ -449,7 +449,7 @@ function ShopManagement() {
               value={bulkManufacturer}
               onChange={(e) => setBulkManufacturer(e.target.value)}
               placeholder="e.g. Kona Cotton"
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] text-sm"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] text-sm"
             />
           </div>
           <button
@@ -514,7 +514,7 @@ function ShopManagement() {
                       defaultValue={fabric.pricePerYard ?? ''}
                       onBlur={(e) => handlePriceUpdate(fabric.id, e.target.value)}
                       placeholder="0.00"
-                      className="w-20 px-2 py-1 border border-[#d4d4d4] rounded-lg bg-[#ffffff] text-xs"
+                      className="w-20 px-2 py-1 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] text-xs"
                     />
                   </td>
                   <td className="py-2 text-center">
@@ -525,7 +525,7 @@ function ShopManagement() {
                         }`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[#ffffff] transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[var(--color-surface)] transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -540,7 +540,7 @@ function ShopManagement() {
                         }`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[#ffffff] transition-transform duration-150 ${fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-[var(--color-surface)] transition-transform duration-150 ${fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
                           }`}
                       />
                     </button>
@@ -559,7 +559,7 @@ function ShopManagement() {
             type="button"
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150"
           >
             Previous
           </button>
@@ -570,7 +570,7 @@ function ShopManagement() {
             type="button"
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-full hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150"
           >
             Next
           </button>

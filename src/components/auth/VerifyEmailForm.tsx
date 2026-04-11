@@ -76,7 +76,7 @@ export function VerifyEmailForm() {
   }
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-[2.75rem]">
+    <div className="w-full max-w-[420px] mx-auto bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-16 h-16 mb-4 relative block">
           <Image
@@ -121,7 +121,7 @@ export function VerifyEmailForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
+            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
             placeholder="you@example.com"
             autoComplete="email"
           />
@@ -143,7 +143,7 @@ export function VerifyEmailForm() {
             maxLength={6}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
+            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
             placeholder="000000"
           />
         </div>
@@ -162,7 +162,7 @@ export function VerifyEmailForm() {
           type="button"
           onClick={handleResend}
           disabled={isResending}
-          className="text-sm text-primary hover:bg-[#fdfaf7] disabled:opacity-50"
+          className="text-sm text-primary hover:bg-[var(--color-bg)] disabled:opacity-50"
         >
           {isResending ? 'Sending...' : "Didn't receive a code? Resend"}
         </button>

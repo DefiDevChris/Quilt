@@ -183,7 +183,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
   if (mode === 'processing') {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/50">
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 flex flex-col items-center gap-4 max-w-sm shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 flex flex-col items-center gap-4 max-w-sm shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
           <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center animate-pulse">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
               <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="4 3" />
@@ -197,7 +197,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/50">
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
+      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative overflow-hidden">
         {/* Quilt-piece accent strip at top */}
         <div className="h-2 bg-[var(--color-bg)]" />
 
@@ -237,7 +237,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                 <button
                   type="button"
                   onClick={() => setMode('upload')}
-                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 group"
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 group"
                 >
                   <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ff8d49]/20 transition-colors duration-150">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
@@ -267,7 +267,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                 <button
                   type="button"
                   onClick={() => setMode('mobile-uploads')}
-                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 group"
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 group"
                 >
                   <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ff8d49]/20 transition-colors duration-150">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
@@ -357,7 +357,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                       key={upload.id}
                       type="button"
                       onClick={() => handleMobileUploadSelect(upload)}
-                      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 group text-left"
+                      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 group text-left"
                     >
                       <div className="aspect-square bg-[var(--color-bg)] overflow-hidden">
                         <img

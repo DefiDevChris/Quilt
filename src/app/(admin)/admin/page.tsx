@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent blog posts */}
-        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#4a4a4a]">
               Recent Blog Posts
@@ -224,7 +224,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent social posts */}
-        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#4a4a4a]">
               Recent Social Posts
@@ -273,7 +273,7 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[#fdfaf7] transition-colors duration-150 block"
+      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block"
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] text-lg font-bold">
@@ -299,7 +299,7 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[#fdfaf7] transition-colors duration-150 block group"
+      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block group"
     >
       <div className="flex items-start gap-3">
         <div className="text-[#4a4a4a] group-hover:text-[#ff8d49] transition-colors duration-150">{icon}</div>

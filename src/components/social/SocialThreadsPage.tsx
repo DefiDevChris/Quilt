@@ -108,7 +108,7 @@ export function SocialThreadsPage() {
   const hasMorePosts = displayedPostsCount < filteredPosts.length;
 
   return (
-    <div className="min-h-screen bg-[#faf7f4]">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <Header onSavedClick={() => setShowSavedPanel(!showSavedPanel)} savedCount={savedPosts.size} searchQuery={searchQuery} />
 
       <div className="flex">
@@ -121,7 +121,7 @@ export function SocialThreadsPage() {
             <FilterBar viewMode={viewMode} filterMode={filterMode} onViewModeChange={setViewMode} onFilterModeChange={setFilterMode} />
 
             {showSavedPanel && (
-              <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg p-5">
+              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-semibold text-[var(--color-text)]">Saved Posts ({savedPostsData.length})</h3>
                   <button onClick={() => setShowSavedPanel(false)} className="text-sm text-[var(--color-text-dim)]">Close</button>

@@ -257,7 +257,7 @@ export function ProfileEditForm() {
             onChange={(e) => updateField('bio', e.target.value)}
             maxLength={BIO_MAX}
             rows={4}
-            className="w-full px-5 py-4 rounded-lg bg-[#ffffff] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-[#4a4a4a] transition-colors duration-150"
+            className="w-full px-5 py-4 rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-[#4a4a4a] transition-colors duration-150"
             placeholder="Tell the community about your quilting journey..."
           />
           {fieldErrors.bio && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>}
@@ -271,8 +271,8 @@ export function ProfileEditForm() {
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
             className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'public'
-              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-              : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
+              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+              : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
               }`}
           >
             <div className="text-[16px] leading-[24px] text-[#1a1a1a]">Open Studio</div>
@@ -284,8 +284,8 @@ export function ProfileEditForm() {
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
             className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'private'
-              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-              : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
+              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+              : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
               }`}
           >
             <div className="text-[16px] leading-[24px] text-[#1a1a1a]">Private Workshop</div>
@@ -298,7 +298,7 @@ export function ProfileEditForm() {
 
       <div className="space-y-8">
         <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Connections</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg">
           <FieldInput
             label="Website"
             value={form.websiteUrl}
@@ -356,7 +356,7 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+          className="w-full h-14 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         >
           {isSaving ? 'Saving...' : 'Save Profile'}
         </button>
@@ -385,7 +385,7 @@ function AvatarUpload({
   return (
     <div className="flex items-center gap-8 group">
       <label className="relative cursor-pointer">
-        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#fdfaf7] relative">
+        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#ffffff] shadow-[0_1px_2px_rgba(26,26,26,0.08)] bg-[var(--color-bg)] relative">
           {avatarPreview ? (
             <img
               src={avatarPreview}
@@ -456,7 +456,7 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3.5 rounded-lg bg-[#ffffff] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+        className="w-full px-5 py-3.5 rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
       />
       {error && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-1">{error}</p>}
     </div>

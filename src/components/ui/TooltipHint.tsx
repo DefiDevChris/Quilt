@@ -60,7 +60,7 @@ export function TooltipHint({
  {showTooltip && tooltipPos
  ? createPortal(
  <div
- className="fixed bg-[var(--color-border)] text-[var(--color-text)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
+ className="fixed bg-[var(--color-border)] text-[var(--color-text)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
  style={{
  top: `${tooltipPos.top}px`,
  left: `${tooltipPos.left}px`,

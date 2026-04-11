@@ -220,7 +220,7 @@ export function HamburgerDrawer({
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-50 overflow-y-auto"
+            className="fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12">

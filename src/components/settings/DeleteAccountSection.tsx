@@ -45,7 +45,7 @@ Thank you`);
 
             <button
               onClick={handleDeleteRequest}
-              className="group flex items-center gap-4 px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="group flex items-center gap-4 px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             >
               <Mail size={16} />
               Request Account Deletion

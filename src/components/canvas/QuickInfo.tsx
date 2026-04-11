@@ -155,7 +155,7 @@ export function QuickInfo() {
 
   return (
     <div
-      className="absolute z-40 min-w-[160px] rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] p-2 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      className="absolute z-40 min-w-[160px] rounded-lg border border-[#d4d4d4] bg-[var(--color-bg)] p-2 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
       <div className="mb-1 text-caption font-semibold text-[#4a4a4a]">
@@ -177,7 +177,7 @@ export function QuickInfo() {
                   if (e.key === 'Enter') applyEdit(key, editValue);
                   if (e.key === 'Escape') setEditField(null);
                 }}
-                className="w-16 rounded-lg border border-[#d4d4d4] bg-[#ffffff] px-1 py-0 font-mono text-xs text-[#1a1a1a] outline-none focus:outline-2 focus:outline-[#ff8d49]"
+                className="w-16 rounded-lg border border-[#d4d4d4] bg-[var(--color-surface)] px-1 py-0 font-mono text-xs text-[#1a1a1a] outline-none focus:outline-2 focus:outline-[#ff8d49]"
                 autoFocus
               />
             ) : key === 'area' ? (

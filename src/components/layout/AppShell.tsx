@@ -54,8 +54,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <nav
  aria-label="Main navigation"
  className={`sticky top-0 z-40 px-6 lg:px-12 py-2 flex items-center justify-between transition-colors duration-150 border-b ${scrolled
- ? 'bg-[#fdfaf7] border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
- : 'bg-[#fdfaf7] border-transparent'
+ ? 'bg-[var(--color-bg)] border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+ : 'bg-[var(--color-bg)] border-transparent'
  }`}
  >
  <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -162,14 +162,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  </button>
 
  {dropdownOpen && (
- <div className="absolute top-12 right-4 z-50 w-48 rounded-lg bg-[#fdfaf7] border border-[#d4d4d4] py-1.5">
+ <div className="absolute top-12 right-4 z-50 w-48 rounded-lg bg-[var(--color-bg)] border border-[#d4d4d4] py-1.5">
  <div className="px-4 py-2 border-b border-[#d4d4d4]">
  <p className="text-sm font-medium text-[#1a1a1a] truncate">{user?.name}</p>
  <p className="text-xs text-[#4a4a4a] truncate">{user?.email}</p>
  </div>
  <Link
  href="/socialthreads"
- className="block px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[#fdfaf7] transition-colors"
+ className="block px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[var(--color-bg)] transition-colors"
  onClick={() => setDropdownOpen(false)}
  >
  Profile
@@ -181,7 +181,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  router.push('/');
  router.refresh();
  }}
- className="w-full text-left px-4 py-2 text-sm text-[#ffc7c7] hover:bg-[#fdfaf7] transition-colors"
+ className="w-full text-left px-4 py-2 text-sm text-[#ffc7c7] hover:bg-[var(--color-bg)] transition-colors"
  >
  Sign Out
  </button>

@@ -27,7 +27,7 @@ export function StudioGate() {
  </p>
  <Link
  href="/dashboard"
- className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-sm font-semibold transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+ className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-sm font-semibold transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
  >
  Back to Library
  </Link>

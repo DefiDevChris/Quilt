@@ -43,7 +43,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
  if (!isOpen) return null;
 
  return (
- <div className="fixed right-0 top-12 bottom-0 w-64 bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-40 overflow-y-auto">
+ <div className="fixed right-0 top-12 bottom-0 w-64 bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-40 overflow-y-auto">
  <div className="p-4">
  <div className="flex items-center justify-between mb-4">
  <h3 className="text-label-sm uppercase text-[var(--color-text)]/70 font-medium">

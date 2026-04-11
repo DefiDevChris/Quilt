@@ -45,11 +45,11 @@ function StudioPreviewMockup() {
 
   return (
     <div className="relative group">
-      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex flex-col">
+      <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] flex flex-col">
         {/* Top Bar -- matches real studio */}
-        <div className="h-9 border-b border-[var(--color-border)] flex items-center px-3 gap-2 bg-[#ffffff] shrink-0 text-[9px]">
+        <div className="h-9 border-b border-[var(--color-border)] flex items-center px-3 gap-2 bg-[var(--color-surface)] shrink-0 text-[9px]">
           <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-dim)]">
+            <div className="w-3.5 h-3.5 bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-dim)]">
               <svg
                 width="8"
                 height="8"
@@ -80,7 +80,7 @@ function StudioPreviewMockup() {
             <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
             <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
             <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
-            <div className="px-2 py-0.5 bg-[var(--color-text)] text-[#ffffff] font-bold text-[8px]">
+            <div className="px-2 py-0.5 bg-[var(--color-text)] text-[var(--color-surface)] font-bold text-[8px]">
               Export
             </div>
           </div>
@@ -88,7 +88,7 @@ function StudioPreviewMockup() {
 
         <div className="flex" style={{ minHeight: '280px' }}>
           {/* Left Toolbar with labels */}
-          <div className="w-12 border-r border-[var(--color-border)] bg-[#ffffff] py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+          <div className="w-12 border-r border-[var(--color-border)] bg-[var(--color-surface)] py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
             {[
               { label: 'Select', icon: <path d="M5 3l14 9-6 2-4 7-4-18z" />, active: true },
               { label: 'Curved', icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4" /> },
@@ -148,7 +148,7 @@ function StudioPreviewMockup() {
           </div>
 
           {/* Canvas area */}
-          <div className="flex-1 flex items-center justify-center p-5 bg-[#fdfaf7] relative">
+          <div className="flex-1 flex items-center justify-center p-5 bg-[var(--color-bg)] relative">
             <div
               className="absolute inset-0"
               style={{
@@ -157,7 +157,7 @@ function StudioPreviewMockup() {
                 opacity: 0.3,
               }}
             />
-            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[var(--color-border)]/30 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[var(--color-border)]/30 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               {QUILT_GRID.flat().map((color, i) => (
                 <div
                   key={i}
@@ -167,7 +167,7 @@ function StudioPreviewMockup() {
               ))}
             </div>
             {/* Floating toolbar */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1.5 z-10">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
@@ -194,7 +194,7 @@ function StudioPreviewMockup() {
           </div>
 
           {/* Right panel -- accordion sections */}
-          <div className="w-[120px] border-l border-[var(--color-border)] bg-[#ffffff] hidden md:flex flex-col shrink-0">
+          <div className="w-[120px] border-l border-[var(--color-border)] bg-[var(--color-surface)] hidden md:flex flex-col shrink-0">
             {panelSections.map((section, i) => (
               <div
                 key={i}
@@ -221,7 +221,7 @@ function StudioPreviewMockup() {
         </div>
 
         {/* Status bar */}
-        <div className="h-5 bg-[#fdfaf7] border-t border-[var(--color-border)] flex items-center justify-between px-3 text-[7px] font-mono text-[var(--color-text-dim)] shrink-0">
+        <div className="h-5 bg-[var(--color-bg)] border-t border-[var(--color-border)] flex items-center justify-between px-3 text-[7px] font-mono text-[var(--color-text-dim)] shrink-0">
           <span>Mouse H: 27.00&quot; V: 27.00&quot;</span>
           <div className="flex gap-3">
             <span>Snap to Grid: ON</span>
@@ -234,7 +234,7 @@ function StudioPreviewMockup() {
 
 export default function CoreCapabilities() {
   return (
-    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-[#fdfaf7]">
+    <section className="py-16 lg:py-24 px-6 lg:px-12 relative bg-[var(--color-bg)]">
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -269,7 +269,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-[#ff8d49] text-[var(--color-text)] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="inline-flex items-center justify-center bg-[#ff8d49] text-[var(--color-text)] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             >
               See What You Can Create
             </Link>

@@ -65,7 +65,7 @@ export function PostCard({
   /* ── Grid View ── */
   if (viewMode === 'grid') {
     return (
-      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:bg-[#fdfaf7] transition-colors duration-150 duration-150">
+      <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] hover:bg-[var(--color-bg)] transition-colors duration-150 duration-150">
         <div className="relative aspect-[4/3] cursor-pointer overflow-hidden rounded-t-lg"
           onClick={() => { handleDoubleTapLike(); onImageClick?.(post); }}>
           <img src={post.image} alt="" className="w-full h-full object-cover" />
@@ -76,7 +76,7 @@ export function PostCard({
           )}
           <div className="absolute top-2 right-2">
             <button onClick={(e) => { e.stopPropagation(); handleLike(); }}
-              className={cn('p-2 rounded-full', liked ? 'bg-[#ff8d49] text-white' : 'bg-[#ffffff] text-[var(--color-text-dim)]')}>
+              className={cn('p-2 rounded-full', liked ? 'bg-[#ff8d49] text-white' : 'bg-[var(--color-surface)] text-[var(--color-text-dim)]')}>
               <Heart className={cn('h-4 w-4', liked && 'fill-current')} />
             </button>
           </div>
@@ -104,7 +104,7 @@ export function PostCard({
 
   /* ── Full View ── */
   return (
-    <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
       {/* Header */}
       <div className="flex items-center gap-3 p-5 pb-3">
         <Avatar className="h-11 w-11 cursor-pointer shrink-0" onClick={() => onUserClick?.(post.user)}>
@@ -124,7 +124,7 @@ export function PostCard({
         {isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1.5 rounded-full hover:bg-[#fdfaf7]"><MoreHorizontal className="h-5 w-5 text-[var(--color-text-dim)]" /></button>
+              <button className="p-1.5 rounded-full hover:bg-[var(--color-bg)]"><MoreHorizontal className="h-5 w-5 text-[var(--color-text-dim)]" /></button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
               <DropdownMenuItem className="text-red-500">Delete</DropdownMenuItem>

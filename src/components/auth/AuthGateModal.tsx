@@ -36,7 +36,7 @@ export function AuthGateModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 p-2 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors duration-150 rounded-lg hover:bg-[#fdfaf7]"
+          className="absolute right-4 top-4 z-10 p-2 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors duration-150 rounded-lg hover:bg-[var(--color-bg)]"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@ export function AuthGateModal({
           </svg>
         </button>
 
-        <div className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4] p-8">
+        <div className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[#d4d4d4] p-8">
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 relative">

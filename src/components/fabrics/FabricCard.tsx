@@ -123,7 +123,7 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  {showMenu && (
  <div
  ref={menuRef}
- className="fixed z-50 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] py-1"
+ className="fixed z-50 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] py-1"
  style={{ left: menuPos.x, top: menuPos.y }}
  >
  <button

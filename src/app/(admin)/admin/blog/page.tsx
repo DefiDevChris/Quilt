@@ -100,9 +100,9 @@ export default function AdminBlogPage() {
       case 'draft':
         return 'bg-[#ffc8a6]/10 text-[#4a4a4a] border-[#ffc8a6]/20';
       case 'archived':
-        return 'bg-[#fdfaf7] text-[#4a4a4a] border-[#d4d4d4]';
+        return 'bg-[var(--color-bg)] text-[#4a4a4a] border-[#d4d4d4]';
       default:
-        return 'bg-[#fdfaf7] text-[#4a4a4a] border-[#d4d4d4]';
+        return 'bg-[var(--color-bg)] text-[#4a4a4a] border-[#d4d4d4]';
     }
   }
 
@@ -120,7 +120,7 @@ export default function AdminBlogPage() {
         <p className="text-sm text-[#4a4a4a]">Manage your blog content</p>
         <Link
           href="/admin/blog/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-surface)] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -131,7 +131,7 @@ export default function AdminBlogPage() {
 
       <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
         <table className="w-full">
-          <thead className="bg-[#fdfaf7]">
+          <thead className="bg-[var(--color-bg)]">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                 Title
@@ -150,7 +150,7 @@ export default function AdminBlogPage() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
+          <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
             {posts.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
@@ -159,7 +159,7 @@ export default function AdminBlogPage() {
               </tr>
             ) : (
               posts.map((post) => (
-                <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                <tr key={post.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                   <td className="px-4 py-3">
                     <div className="max-w-md">
                       <p className="font-medium text-[#1a1a1a] truncate">{post.title}</p>
@@ -234,7 +234,7 @@ export default function AdminBlogPage() {
                 setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
               }
               disabled={pagination.page === 1}
-              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Previous
             </button>
@@ -246,7 +246,7 @@ export default function AdminBlogPage() {
                 }))
               }
               disabled={pagination.page >= pagination.totalPages}
-              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Next
             </button>

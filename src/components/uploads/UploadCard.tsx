@@ -51,7 +51,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
   }
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden group shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden group shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
       {/* Thumbnail */}
       <div className="relative aspect-square bg-[var(--color-bg)] overflow-hidden">
         <Image
