@@ -87,10 +87,10 @@ export function ForgotPasswordForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-[#2d2a26]">
+        <h1 className="text-headline-md font-bold text-[#1a1a1a]">
           {step === 'request' ? 'Reset your password' : 'Enter reset code'}
         </h1>
-        <p className="mt-2 text-sm text-[#6b655e] text-center">
+        <p className="mt-2 text-sm text-[#4a4a4a] text-center">
           {step === 'request'
             ? "Enter your email and we'll send you a reset code."
             : 'Enter the code we sent to your email and choose a new password.'}
@@ -114,7 +114,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="reset-email"
-              className="block text-sm font-medium text-[#6b655e] mb-1.5"
+              className="block text-sm font-medium text-[#4a4a4a] mb-1.5"
             >
               Email
             </label>
@@ -124,7 +124,7 @@ export function ForgotPasswordForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150"
+              className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -143,7 +143,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="reset-code"
-              className="block text-sm font-medium text-[#6b655e] mb-1.5"
+              className="block text-sm font-medium text-[#4a4a4a] mb-1.5"
             >
               Reset Code
             </label>
@@ -156,7 +156,7 @@ export function ForgotPasswordForm() {
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
+              className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
               placeholder="000000"
             />
           </div>
@@ -164,7 +164,7 @@ export function ForgotPasswordForm() {
           <div>
             <label
               htmlFor="new-password"
-              className="block text-sm font-medium text-[#6b655e] mb-1.5"
+              className="block text-sm font-medium text-[#4a4a4a] mb-1.5"
             >
               New Password
             </label>
@@ -176,14 +176,14 @@ export function ForgotPasswordForm() {
                 minLength={8}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 pr-10 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150"
+                className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 pr-10 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#6b655e] hover:text-[#2d2a26] transition-colors duration-150"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors duration-150"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -214,7 +214,7 @@ export function ForgotPasswordForm() {
                 )}
               </button>
             </div>
-            <p className="mt-1.5 text-sm text-[#6b655e]">
+            <p className="mt-1.5 text-sm text-[#4a4a4a]">
               Must include uppercase, lowercase, and numbers
             </p>
           </div>
@@ -229,7 +229,7 @@ export function ForgotPasswordForm() {
         </form>
       )}
 
-      <p className="mt-6 text-center text-sm text-[#6b655e]">
+      <p className="mt-6 text-center text-sm text-[#4a4a4a]">
         <Link href="/auth/signin" className="text-primary hover:underline font-medium">
           Back to sign in
         </Link>

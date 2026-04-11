@@ -15,18 +15,18 @@ export default function TermsPage() {
       <main className="max-w-3xl mx-auto px-6 py-16 lg:py-24">
         <div className="mb-20">
           <h1
-            className="text-[40px] leading-[52px] font-normal text-[#2d2a26] mb-6"
+            className="text-[40px] leading-[52px] font-normal text-[#1a1a1a] mb-6"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Terms of Service
           </h1>
           <div className="flex items-center gap-4">
-            <div className="h-0.5 w-12 bg-[#2d2a26]" />
-            <p className="text-[14px] leading-[20px] font-normal text-[#6b655e]">Effective: March 30, 2026</p>
+            <div className="h-0.5 w-12 bg-[#1a1a1a]" />
+            <p className="text-[14px] leading-[20px] font-normal text-[#4a4a4a]">Effective: March 30, 2026</p>
           </div>
         </div>
 
-        <div className="text-[#6b655e] space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
+        <div className="text-[#4a4a4a] space-y-10 max-w-2xl mx-auto text-[0.95rem] leading-relaxed">
           <p>
             Welcome to Quilt Studio! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
             to and use of the Quilt Studio website, design studio, community features, and related
@@ -41,7 +41,7 @@ export default function TermsPage() {
 
           {/* 1. Eligibility */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />1. Eligibility</h2>
             <p>
               You must be at least 13 years old to create an account or use the Service. If you are
@@ -53,7 +53,7 @@ export default function TermsPage() {
 
           {/* 2. Accounts & Security */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               2. Accounts &amp; Security
             </h2>
@@ -73,7 +73,7 @@ export default function TermsPage() {
                 You must notify us immediately at{' '}
                 <a
                   href="mailto:support@quiltcorgi.com"
-                  className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                  className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
                 >
                   support@quiltcorgi.com
                 </a>{' '}
@@ -88,7 +88,7 @@ export default function TermsPage() {
 
           {/* 3. Subscriptions, Payments & Billing */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               3. Subscriptions, Payments &amp; Billing
             </h2>
@@ -116,7 +116,7 @@ export default function TermsPage() {
                 href="https://stripe.com/legal/ssa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
               >
                 Services Agreement
               </a>{' '}
@@ -125,7 +125,7 @@ export default function TermsPage() {
                 href="https://stripe.com/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
               >
                 Privacy Policy
               </a>
@@ -145,7 +145,7 @@ export default function TermsPage() {
 
           {/* 4. User Content & Intellectual Property */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               4. User Content &amp; Intellectual Property
             </h2>
@@ -176,7 +176,7 @@ export default function TermsPage() {
 
           {/* 5. Community Guidelines & Acceptable Use */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               5. Community Guidelines &amp; Acceptable Use
             </h2>
@@ -218,7 +218,7 @@ export default function TermsPage() {
 
           {/* 6. DMCA & Copyright */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               6. DMCA &amp; Copyright Infringement
             </h2>
@@ -250,7 +250,7 @@ export default function TermsPage() {
               Send DMCA notices to:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
               >
                 support@quiltcorgi.com
               </a>
@@ -263,7 +263,7 @@ export default function TermsPage() {
 
           {/* 7. Disclaimers */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />7. Disclaimers</h2>
             <p className="mb-3">
               THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo; WITHOUT
@@ -285,7 +285,7 @@ export default function TermsPage() {
 
           {/* 8. Limitation of Liability */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               8. Limitation of Liability
             </h2>
@@ -306,7 +306,7 @@ export default function TermsPage() {
 
           {/* 9. Binding Arbitration & Class Action Waiver */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               9. Binding Arbitration &amp; Class Action Waiver
             </h2>
@@ -341,7 +341,7 @@ export default function TermsPage() {
               of first accepting these Terms by sending written notice to{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
               >
                 support@quiltcorgi.com
               </a>{' '}
@@ -351,7 +351,7 @@ export default function TermsPage() {
 
           {/* 10. Termination */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />10. Termination</h2>
             <p className="mb-3">
               You may stop using the Service and delete your account at any time. Upon account
@@ -368,7 +368,7 @@ export default function TermsPage() {
 
           {/* 11. Changes to These Terms */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />
               11. Changes to These Terms
             </h2>
@@ -383,7 +383,7 @@ export default function TermsPage() {
 
           {/* 12. Governing Law */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />12. Governing Law</h2>
             <p>
               These Terms are governed by and construed in accordance with the laws of the State of
@@ -395,7 +395,7 @@ export default function TermsPage() {
 
           {/* 13. Miscellaneous */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />13. Miscellaneous</h2>
             <p className="mb-3">
               <strong>Entire agreement.</strong> These Terms, together with the Privacy Policy,
@@ -417,13 +417,13 @@ export default function TermsPage() {
 
           {/* 14. Contact */}
           <section>
-            <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6 flex items-center gap-3">
+            <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6 flex items-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#ff8d49]/60 rounded-lg" />14. Contact Us</h2>
             <p>
               If you have questions about these Terms, please reach out:{' '}
               <a
                 href="mailto:support@quiltcorgi.com"
-                className="text-[#2d2a26] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-[#ff8d49] transition-colors duration-150"
               >
                 support@quiltcorgi.com
               </a>

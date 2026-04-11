@@ -71,11 +71,11 @@ function StudioMockup() {
   ];
 
   return (
-    <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da]">
+    <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)]">
       {/* Top Bar */}
-      <div className="h-10 bg-[#ffffff] border-b border-[#e8e1da] flex items-center px-3 gap-3 text-[10px]">
+      <div className="h-10 bg-[#ffffff] border-b border-[var(--color-border)] flex items-center px-3 gap-3 text-[10px]">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-lg bg-[#fdfaf7] flex items-center justify-center text-[#6b655e]">
+          <div className="w-4 h-4 rounded-lg bg-[#fdfaf7] flex items-center justify-center text-[var(--color-text-dim)]">
             <svg
               width="10"
               height="10"
@@ -89,26 +89,26 @@ function StudioMockup() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </div>
-          <span className="font-bold text-[#2d2a26] hidden sm:inline">QuiltCorgi</span>
+          <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 bg-[#ff8d49] text-[#2d2a26] font-bold text-[9px]">
+          <div className="px-3 py-1 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[9px]">
             Main
           </div>
-          <div className="w-4 h-4 rounded-lg text-[#6b655e] flex items-center justify-center text-[10px]">
+          <div className="w-4 h-4 rounded-lg text-[var(--color-text-dim)] flex items-center justify-center text-[10px]">
             +
           </div>
         </div>
-        <div className="flex-1 text-center text-[#6b655e] truncate hidden sm:block">
-          <span className="font-medium text-[#2d2a26]">My Quilt Project</span>
+        <div className="flex-1 text-center text-[var(--color-text-dim)] truncate hidden sm:block">
+          <span className="font-medium text-[var(--color-text)]">My Quilt Project</span>
           <span className="mx-1">&middot;</span>
           <span>Quilt Canvas</span>
         </div>
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-[#6b655e] hidden sm:inline">Share</span>
-          <span className="text-[#6b655e] hidden sm:inline">View</span>
-          <span className="text-[#6b655e] hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 bg-[#ff8d49] text-[#2d2a26] font-bold text-[9px]">
+          <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
+          <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
+          <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
+          <div className="px-3 py-1 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[9px]">
             Export
           </div>
         </div>
@@ -116,14 +116,14 @@ function StudioMockup() {
 
       <div className="flex bg-[#fdfaf7] relative">
         {/* Left Toolbar with labels */}
-        <div className="w-14 bg-[#ffffff] border-r border-[#e8e1da] py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+        <div className="w-14 bg-[#ffffff] border-r border-[var(--color-border)] py-2 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
           {toolItems.map((tool, i) =>
             tool.divider ? (
-              <div key={i} className="w-8 h-px bg-[#2d2a26]/20 my-1" />
+              <div key={i} className="w-8 h-px bg-[var(--color-text)]/20 my-1" />
             ) : (
               <div
                 key={i}
-                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-[#ff8d49]' : 'text-[#6b655e]'
+                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
                   }`}
               >
                 <svg
@@ -158,7 +158,7 @@ function StudioMockup() {
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-[#ffffff] flex items-center justify-center border border-[#2d2a26]/20"
+                className="aspect-square bg-[#ffffff] flex items-center justify-center border border-[var(--color-border)]/20"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <polygon points="0,0 50,50 0,100" fill="#fed7aa" />
@@ -172,11 +172,11 @@ function StudioMockup() {
         </div>
 
         {/* Right Panel - Accordion sections */}
-        <div className="w-44 bg-[#ffffff] border-l border-[#e8e1da] shrink-0 hidden sm:flex flex-col">
+        <div className="w-44 bg-[#ffffff] border-l border-[var(--color-border)] shrink-0 hidden sm:flex flex-col">
           {panelSections.map((section, i) => (
             <button
               key={i}
-              className="flex items-center justify-between px-3 py-2 border-b border-[#e8e1da] text-[10px] font-bold text-[#2d2a26] hover:bg-[#fdfaf7]"
+              className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)] text-[10px] font-bold text-[var(--color-text)] hover:bg-[#fdfaf7]"
             >
               <span>{section.label}</span>
               <svg
@@ -198,11 +198,11 @@ function StudioMockup() {
         </div>
 
         {/* Floating bottom toolbar */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] rounded-lg px-3 py-1.5 flex items-center gap-2 z-20">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 flex items-center gap-2 z-20">
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
-              className={`w-6 h-6 rounded-lg flex items-center justify-center text-[7px] ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[#6b655e]'}`}
+              className={`w-6 h-6 rounded-lg flex items-center justify-center text-[7px] ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
             >
               <svg
                 width="10"
@@ -219,8 +219,8 @@ function StudioMockup() {
               </svg>
             </div>
           ))}
-          <div className="w-px h-4 bg-[#2d2a26]/20" />
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[#6b655e]">
+          <div className="w-px h-4 bg-[var(--color-text)]/20" />
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[var(--color-text-dim)]">
             <svg
               width="10"
               height="10"
@@ -232,13 +232,13 @@ function StudioMockup() {
               <path d="M3 10h4l3-7 4 14 3-7h4" />
             </svg>
           </div>
-          <div className="w-px h-4 bg-[#2d2a26]/20" />
-          <span className="text-[8px] text-[#6b655e] font-mono">48%</span>
+          <div className="w-px h-4 bg-[var(--color-text)]/20" />
+          <span className="text-[8px] text-[var(--color-text-dim)] font-mono">48%</span>
         </div>
       </div>
 
       {/* Status bar */}
-      <div className="bg-[#fdfaf7] rounded-b-lg px-4 py-1.5 border-t border-[#e8e1da] flex items-center justify-between text-[8px] font-mono text-[#6b655e]">
+      <div className="bg-[#fdfaf7] rounded-b-lg px-4 py-1.5 border-t border-[var(--color-border)] flex items-center justify-between text-[8px] font-mono text-[var(--color-text-dim)]">
         <span>Mouse H: 12.50&quot; V: 8.25&quot;</span>
         <div className="flex gap-4">
           <span>Snap to Grid: ON</span>
@@ -253,8 +253,8 @@ export default function HeroSection() {
   return (
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
-      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
+      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
+      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -265,7 +265,7 @@ export default function HeroSection() {
                 <QuiltPieceRow count={3} size={8} gap={4} />
               </div>
               <h1
-                className="text-[40px] leading-[52px] md:text-[48px] md:leading-[56px] lg:text-[56px] lg:leading-[64px] font-bold text-[#2d2a26]"
+                className="text-[40px] leading-[52px] md:text-[48px] md:leading-[56px] lg:text-[56px] lg:leading-[64px] font-bold text-[var(--color-text)]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 From First Stitch
@@ -275,7 +275,7 @@ export default function HeroSection() {
               </h1>
             </div>
 
-            <p className="text-[18px] leading-[28px] md:text-[20px] md:leading-[30px] text-[#6b655e] max-w-xl leading-relaxed">
+            <p className="text-[18px] leading-[28px] md:text-[20px] md:leading-[30px] text-[var(--color-text-dim)] max-w-xl leading-relaxed">
               Design your quilt, calculate your yardage, and export true-scale patterns with seam
               allowances built in. A growing block library, and a community of quilters who get it.
             </p>
@@ -283,7 +283,7 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-[#ff8d49] text-[#2d2a26] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 Start Designing Free
               </Link>

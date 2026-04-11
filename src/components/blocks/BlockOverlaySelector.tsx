@@ -42,11 +42,11 @@ export function BlockOverlaySelector({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/60">
-      <div className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/60">
+      <div className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e8e1da] p-4">
-          <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Overlay Templates</h2>
+        <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
+          <h2 className="text-[24px] leading-[32px] text-[#1a1a1a]">Overlay Templates</h2>
           <button
             type="button"
             onClick={onClose}
@@ -66,13 +66,13 @@ export function BlockOverlaySelector({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Type tabs and search */}
           <div className="flex flex-col gap-4">
-            <div className="flex bg-[#fdfaf7] border border-[#e8e1da] rounded-lg">
+            <div className="flex bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg">
               <button
                 type="button"
                 onClick={() => setActiveType('block')}
                 className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-l-lg ${activeType === 'block'
-                  ? 'bg-[#ff8d49] text-[#2d2a26]'
-                  : 'text-[#6b655e] hover:bg-[#ff8d49]/10'
+                  ? 'bg-[#ff8d49] text-[#1a1a1a]'
+                  : 'text-[#4a4a4a] hover:bg-[#ff8d49]/10'
                   }`}
               >
                 Blocks ({BLOCK_OVERLAYS.length})
@@ -81,8 +81,8 @@ export function BlockOverlaySelector({
                 type="button"
                 onClick={() => setActiveType('layout')}
                 className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-r-lg ${activeType === 'layout'
-                  ? 'bg-[#ff8d49] text-[#2d2a26]'
-                  : 'text-[#6b655e] hover:bg-[#ff8d49]/10'
+                  ? 'bg-[#ff8d49] text-[#1a1a1a]'
+                  : 'text-[#4a4a4a] hover:bg-[#ff8d49]/10'
                   }`}
               >
                 Layouts ({LAYOUT_OVERLAYS.length})
@@ -94,7 +94,7 @@ export function BlockOverlaySelector({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search blocks and layouts..."
-              className="w-full border border-[#e8e1da] bg-[#ffffff] rounded-lg p-4 text-[16px] leading-[24px] text-[#2d2a26] placeholder:text-[#6b655e] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150"
+              className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-4 text-[16px] leading-[24px] text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150"
             />
           </div>
 
@@ -106,9 +106,9 @@ export function BlockOverlaySelector({
                   key={d}
                   type="button"
                   onClick={() => setDifficultyFilter(d)}
-                  className={`border border-[#e8e1da] px-4 py-2 text-[14px] leading-[20px] rounded-full transition-colors duration-150 ${difficultyFilter === d
-                    ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]'
-                    : 'bg-[#ffffff] text-[#6b655e] hover:border-[#ff8d49]/50'
+                  className={`border border-[#d4d4d4] px-4 py-2 text-[14px] leading-[20px] rounded-full transition-colors duration-150 ${difficultyFilter === d
+                    ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]'
+                    : 'bg-[#ffffff] text-[#4a4a4a] hover:border-[#ff8d49]/50'
                     }`}
                 >
                   {d}
@@ -128,20 +128,20 @@ export function BlockOverlaySelector({
                     onClick={() => onSelect(block.svgPath, 'block')}
                     className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === block.svgPath
                       ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                      : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                      : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
                       }`}
                   >
-                    <div className="mb-4 w-full aspect-square border border-[#e8e1da] bg-[#ffffff] rounded-lg">
+                    <div className="mb-4 w-full aspect-square border border-[#d4d4d4] bg-[#ffffff] rounded-lg">
                       <img
                         src={block.svgPath}
                         alt={block.displayName}
                         className="h-full w-full object-contain p-2"
                       />
                     </div>
-                    <span className="text-[16px] leading-[24px] text-[#2d2a26]">
+                    <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
                       {block.displayName}
                     </span>
-                    <p className="mt-2 text-[14px] leading-[20px] text-[#6b655e]">
+                    <p className="mt-2 text-[14px] leading-[20px] text-[#4a4a4a]">
                       {block.commonSizes.join(', ')}
                     </p>
                   </button>
@@ -159,20 +159,20 @@ export function BlockOverlaySelector({
                     }}
                     className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === layout.svgPath
                       ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                      : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                      : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
                       }`}
                   >
-                    <div className="mb-4 w-full aspect-[3/4] border border-[#e8e1da] bg-[#ffffff] rounded-lg">
+                    <div className="mb-4 w-full aspect-[3/4] border border-[#d4d4d4] bg-[#ffffff] rounded-lg">
                       <img
                         src={layout.svgPath}
                         alt={layout.displayName}
                         className="h-full w-full object-contain p-2"
                       />
                     </div>
-                    <span className="text-[16px] leading-[24px] text-[#2d2a26]">
+                    <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
                       {layout.displayName}
                     </span>
-                    <p className="mt-2 text-[14px] leading-[20px] text-[#6b655e]">
+                    <p className="mt-2 text-[14px] leading-[20px] text-[#4a4a4a]">
                       {layout.dimensions.width}&quot; &times; {layout.dimensions.height}&quot;
                     </p>
                   </button>
@@ -182,7 +182,7 @@ export function BlockOverlaySelector({
 
             {((activeType === 'block' && filteredBlocks.length === 0) ||
               (activeType === 'layout' && filteredLayouts.length === 0)) && (
-                <div className="py-12 text-center text-[16px] leading-[24px] text-[#6b655e]">
+                <div className="py-12 text-center text-[16px] leading-[24px] text-[#4a4a4a]">
                   No matches found
                 </div>
               )}

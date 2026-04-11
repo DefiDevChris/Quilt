@@ -173,14 +173,14 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
 
  {/* ── Photo block upload (pro only) ─────────────────────── */}
  {isPro && isPhotoBlockUploadOpen && (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
  <div className="w-[560px] rounded-lg bg-[#fdfaf7] p-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
  <div className="mb-4 flex items-center justify-between">
- <h2 className="text-lg font-semibold text-[#2d2a26]">Upload Block Photo</h2>
+ <h2 className="text-lg font-semibold text-[#1a1a1a]">Upload Block Photo</h2>
  <button
  type="button"
  onClick={() => setIsPhotoBlockUploadOpen(false)}
- className="text-[#6b655e] hover:text-[#2d2a26]"
+ className="text-[#4a4a4a] hover:text-[#1a1a1a]"
  >
  {'\u2715'}
  </button>
@@ -230,7 +230,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
  height="32"
  viewBox="0 0 24 24"
  fill="none"
- className="text-[#6b655e] mx-auto mb-3"
+ className="text-[#4a4a4a] mx-auto mb-3"
  aria-hidden="true"
  >
  <rect
@@ -249,8 +249,8 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
  strokeLinecap="round"
  />
  </svg>
- <p className="text-lg font-semibold text-[#2d2a26] mb-1">{proUpgradeFeature}</p>
- <p className="text-sm text-[#6b655e] mb-4">
+ <p className="text-lg font-semibold text-[#1a1a1a] mb-1">{proUpgradeFeature}</p>
+ <p className="text-sm text-[#4a4a4a] mb-4">
  This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
  </p>
  </div>

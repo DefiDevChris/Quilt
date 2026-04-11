@@ -97,15 +97,15 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
       })}
 
       {hasAppliedLayout && (
-        <div className="pt-3 border-t border-[#e8e1da]/20">
+        <div className="pt-3 border-t border-[var(--color-border)]/20">
           <button
             type="button"
             onClick={handleClearLayout}
-            className="w-full rounded-lg border border-[#ffc7c7]/30 bg-[#ffc7c7]/5 px-4 py-2.5 text-xs font-medium text-[#2d2a26] hover:bg-[#ffc7c7]/10 transition-colors duration-150"
+            className="w-full rounded-full border border-[#ffc7c7]/30 bg-[#ffc7c7]/5 px-4 py-2.5 text-xs font-medium text-[var(--color-text)] hover:bg-[#ffc7c7]/10 transition-colors duration-150"
           >
             Clear Layout
           </button>
-          <p className="text-[10px] text-[#6b655e] mt-1 text-center">
+          <p className="text-[10px] text-[var(--color-text-dim)] mt-1 text-center">
             Removes fence and placed blocks
           </p>
         </div>
@@ -135,16 +135,16 @@ function LayoutCard({
         isApplied
           ? 'border-[#ff8d49] bg-[#ff8d49]/5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
           : isExpanded
-            ? 'border-[#ff8d49]/40 bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[#e8e1da]/20 bg-[#fdfaf7] hover:border-[#ff8d49]/30 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[#ff8d49]/30 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
       }`}
     >
       <button
         type="button"
         onClick={onSelect}
-        className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[#fdfaf7]"
+        className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--color-bg)]"
       >
-        <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-[#fdfaf7] border border-[#e8e1da]/10 flex items-center justify-center overflow-hidden p-1">
+        <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]/10 flex items-center justify-center overflow-hidden p-1">
           {svgContent ? (
             <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: svgContent }} />
           ) : (
@@ -154,7 +154,7 @@ function LayoutCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm font-semibold text-[#2d2a26]">{card.name}</span>
+            <span className="text-sm font-semibold text-[var(--color-text)]">{card.name}</span>
             {isApplied && (
               <div className="w-4 h-4 rounded-full bg-[#ff8d49] flex items-center justify-center flex-shrink-0">
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -169,7 +169,7 @@ function LayoutCard({
               </div>
             )}
           </div>
-          <p className="text-[11px] text-[#6b655e] leading-tight mt-0.5">{card.description}</p>
+          <p className="text-[11px] text-[var(--color-text-dim)] leading-tight mt-0.5">{card.description}</p>
         </div>
 
         <svg
@@ -177,7 +177,7 @@ function LayoutCard({
           height="14"
           viewBox="0 0 14 14"
           fill="none"
-          className={`flex-shrink-0 text-[#6b655e]/50 transition-colors duration-150 ${isExpanded ? 'rotate-180' : ''}`}
+          className={`flex-shrink-0 text-[var(--color-text-dim)]/50 transition-colors duration-150 ${isExpanded ? 'rotate-180' : ''}`}
         >
           <path
             d="M3 5L7 9L11 5"
@@ -217,14 +217,14 @@ function FreeFormApply({
   }, [card.defaultPresetId, onLayoutSelect]);
 
   return (
-    <div className="px-3 pb-3 border-t border-[#e8e1da]/10">
-      <p className="text-[11px] text-[#6b655e] py-2">
+    <div className="px-3 pb-3 border-t border-[var(--color-border)]/10">
+      <p className="text-[11px] text-[var(--color-text-dim)] py-2">
         No layout fence — place blocks and shapes anywhere on the canvas with snap-to-grid.
       </p>
       <button
         type="button"
         onClick={handleApply}
-        className="w-full rounded-lg bg-[#ff8d49] py-2 text-xs font-semibold text-[#2d2a26] hover:bg-[#e67d3f] transition-colors duration-150"
+        className="w-full rounded-full bg-[#ff8d49] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150"
       >
         Apply
       </button>
@@ -291,9 +291,9 @@ function LayoutConfigForm({
   }, [size, selectedPresetId, card.defaultPresetId, onLayoutSelect]);
 
   return (
-    <div className="px-3 pb-3 space-y-3 border-t border-[#e8e1da]/10">
+    <div className="px-3 pb-3 space-y-3 border-t border-[var(--color-border)]/10">
       <div className="pt-2">
-        <h4 className="text-[11px] font-semibold text-[#2d2a26]/70 mb-2">
+        <h4 className="text-[11px] font-semibold text-[var(--color-text)]/70 mb-2">
           {card.icon} {card.name} Layout
         </h4>
 
@@ -312,7 +312,7 @@ function LayoutConfigForm({
         )}
 
         {card.hasCornerstones && (
-          <div className="mt-2 rounded-lg border border-[#e8e1da]/15 p-2">
+          <div className="mt-2 rounded-lg border border-[var(--color-border)]/15 p-2">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -320,7 +320,7 @@ function LayoutConfigForm({
                 onChange={(e) => setHasCornerstones(e.target.checked)}
                 className="rounded accent-[#ff8d49]"
               />
-              <span className="text-[11px] text-[#2d2a26]">
+              <span className="text-[11px] text-[var(--color-text)]">
                 Cornerstones at sashing intersections
               </span>
             </label>
@@ -331,7 +331,7 @@ function LayoutConfigForm({
           <div className="mt-2 space-y-1.5">
             {borders.map((border: BorderConfig, i: number) => (
               <div key={border.id ?? i} className="flex items-center gap-2">
-                <span className="text-[10px] text-[#6b655e] w-12 flex-shrink-0">
+                <span className="text-[10px] text-[var(--color-text-dim)] w-12 flex-shrink-0">
                   Border {i + 1}
                 </span>
                 <input
@@ -343,7 +343,7 @@ function LayoutConfigForm({
                   onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })}
                   className="flex-1 accent-[#ff8d49] h-1"
                 />
-                <span className="text-[10px] font-mono text-[#6b655e] w-8 text-right">
+                <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-8 text-right">
                   {border.width}\u2033
                 </span>
                 <button
@@ -373,16 +373,16 @@ function LayoutConfigForm({
           </div>
         )}
 
-        <div className="mt-3 rounded-lg bg-[#fdfaf7] border border-[#e8e1da]/15 p-2.5">
+        <div className="mt-3 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]/15 p-2.5">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-[#6b655e]">Total finished size</span>
-            <span className="font-semibold text-[#2d2a26] font-mono">
+            <span className="text-[var(--color-text-dim)]">Total finished size</span>
+            <span className="font-semibold text-[var(--color-text)] font-mono">
               {size.width}\u2033 \u00d7 {size.height}\u2033
             </span>
           </div>
           <div className="flex items-center justify-between text-[10px] mt-1">
-            <span className="text-[#6b655e]">Perimeter: {size.perimeter}\u2033</span>
-            <span className="text-[#6b655e]">Binding: {size.bindingYardage} yd</span>
+            <span className="text-[var(--color-text-dim)]">Perimeter: {size.perimeter}\u2033</span>
+            <span className="text-[var(--color-text-dim)]">Binding: {size.bindingYardage} yd</span>
           </div>
         </div>
 
@@ -391,10 +391,10 @@ function LayoutConfigForm({
             type="button"
             onClick={handlePreview}
             disabled={previewMode}
-            className={`flex-1 rounded-lg border py-2 text-xs font-medium transition-colors duration-150 ${
+            className={`flex-1 rounded-full border py-2 text-xs font-medium transition-colors duration-150 ${
               previewMode
                 ? 'border-[#ff8d49]/30 bg-[#ff8d49]/10 text-[#ff8d49]'
-                : 'border-[#e8e1da]/30 text-[#2d2a26] hover:bg-[#fdfaf7]'
+                : 'border-[var(--color-border)]/30 text-[var(--color-text)] hover:bg-[var(--color-bg)]'
             }`}
           >
             {previewMode ? 'Previewing\u2026' : 'Preview'}
@@ -402,7 +402,7 @@ function LayoutConfigForm({
           <button
             type="button"
             onClick={handleApply}
-            className="flex-1 rounded-lg bg-[#ff8d49] py-2 text-xs font-semibold text-[#2d2a26] hover:bg-[#e67d3f] transition-colors duration-150"
+            className="flex-1 rounded-full bg-[#ff8d49] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150"
           >
             Apply
           </button>
@@ -431,7 +431,7 @@ function SliderRow({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[11px] text-[#6b655e] w-16 flex-shrink-0">{label}</span>
+      <span className="text-[11px] text-[var(--color-text-dim)] w-16 flex-shrink-0">{label}</span>
       <input
         type="range"
         min={min}
@@ -441,7 +441,7 @@ function SliderRow({
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className="flex-1 accent-[#ff8d49] h-1"
       />
-      <span className="text-[10px] font-mono text-[#2d2a26]/70 w-16 text-right flex-shrink-0">
+      <span className="text-[10px] font-mono text-[var(--color-text)]/70 w-16 text-right flex-shrink-0">
         {suffix}
       </span>
     </div>

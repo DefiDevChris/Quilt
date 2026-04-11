@@ -43,16 +43,16 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
  if (!isOpen) return null;
 
  return (
- <div className="fixed right-0 top-12 bottom-0 w-64 bg-[#fdfaf7] border-l border-[#e8e1da]/15 shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-40 overflow-y-auto">
+ <div className="fixed right-0 top-12 bottom-0 w-64 bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-40 overflow-y-auto">
  <div className="p-4">
  <div className="flex items-center justify-between mb-4">
- <h3 className="text-label-sm uppercase text-[#2d2a26]/70 font-medium">
+ <h3 className="text-label-sm uppercase text-[var(--color-text)]/70 font-medium">
  History
  </h3>
  <button
  type="button"
  onClick={onClose}
- className="w-6 h-6 flex items-center justify-center rounded-lg text-[#2d2a26]/50 hover:text-[#2d2a26] hover:bg-[#f5f2ef] transition-colors"
+ className="w-6 h-6 flex items-center justify-center rounded-lg text-[var(--color-text)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
  aria-label="Close history"
  >
  <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -67,7 +67,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
  </div>
 
  {entries.length === 0 ? (
- <p className="text-body-sm text-[#6b655e] text-center py-8">No history yet</p>
+ <p className="text-body-sm text-[var(--color-text-dim)] text-center py-8">No history yet</p>
  ) : (
  <div className="space-y-2">
  {entries.map((entry, i) => (
@@ -75,10 +75,10 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
  key={i}
  type="button"
  onClick={() => jumpToState(i)}
- className="w-full text-left p-2 rounded-lg bg-[#f5f2ef] hover:bg-[#e8e1da] transition-colors"
+ className="w-full text-left p-2 rounded-lg bg-[var(--color-bg)] hover:bg-[var(--color-border)] transition-colors"
  >
- <div className="text-body-sm text-[#2d2a26]">State {entries.length - i}</div>
- <div className="text-caption text-[#6b655e]">
+ <div className="text-body-sm text-[var(--color-text)]">State {entries.length - i}</div>
+ <div className="text-caption text-[var(--color-text-dim)]">
  {new Date(entry.timestamp).toLocaleTimeString()}
  </div>
  </button>

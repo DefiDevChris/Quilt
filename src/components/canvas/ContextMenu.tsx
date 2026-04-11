@@ -476,22 +476,22 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#e8e1da] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
           type="button"
           onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
         >
           <span className="w-5 text-center">←</span>
           Back
         </button>
-        <div className="my-1 border-t border-[#e8e1da]" />
+        <div className="my-1 border-t border-[#d4d4d4]" />
 
         {recentFabrics.length > 0 && (
           <>
-            <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#6b655e]/60">
+            <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#4a4a4a]/60">
               Recent
             </div>
             {recentFabrics.map((rf) => (
@@ -524,24 +524,24 @@ export function ContextMenu() {
                     setIsExecuting(false);
                   }
                 }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50"
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50"
               >
                 <div
-                  className="h-5 w-5 rounded-full border border-[#e8e1da] bg-cover bg-center"
+                  className="h-5 w-5 rounded-full border border-[#d4d4d4] bg-cover bg-center"
                   style={{ backgroundImage: `url(${rf.imageUrl})` }}
                 />
                 <span className="truncate">{rf.name}</span>
               </button>
             ))}
-            <div className="my-1 border-t border-[#e8e1da]" />
+            <div className="my-1 border-t border-[#d4d4d4]" />
           </>
         )}
 
-        <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#6b655e]/60">
+        <div className="px-3 py-1 text-caption font-medium uppercase tracking-wide text-[#4a4a4a]/60">
           Library
         </div>
         {libraryFabrics.length === 0 && (
-          <div className="px-3 py-3 text-xs text-[#6b655e]/60">
+          <div className="px-3 py-3 text-xs text-[#4a4a4a]/60">
             No fabrics available. Drag from the Fabric Library to add.
           </div>
         )}
@@ -575,10 +575,10 @@ export function ContextMenu() {
                 setIsExecuting(false);
               }
             }}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50"
           >
             <div
-              className="h-5 w-5 rounded-full border border-[#e8e1da] bg-cover bg-center"
+              className="h-5 w-5 rounded-full border border-[#d4d4d4] bg-cover bg-center"
               style={{ backgroundImage: `url(${lf.imageUrl})` }}
             />
             <span className="truncate">{lf.name}</span>
@@ -592,24 +592,24 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#e8e1da] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
           type="button"
           onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
         >
           <span className="w-5 text-center">←</span>
           Back
         </button>
-        <div className="my-1 border-t border-[#e8e1da]" />
+        <div className="my-1 border-t border-[#d4d4d4]" />
 
         <button
           type="button"
           disabled={isExecuting}
           onClick={() => executeAction('duplicateBlock')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="w-5 text-center">⧉</span>
           Duplicate Block
@@ -618,7 +618,7 @@ export function ContextMenu() {
           type="button"
           disabled={isExecuting}
           onClick={() => executeAction('flipBlockH')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="w-5 text-center">↔</span>
           Flip Block Horizontal
@@ -627,7 +627,7 @@ export function ContextMenu() {
           type="button"
           disabled={isExecuting}
           onClick={() => executeAction('flipBlockV')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="w-5 text-center">↕</span>
           Flip Block Vertical
@@ -636,19 +636,19 @@ export function ContextMenu() {
           type="button"
           disabled={isExecuting}
           onClick={() => executeAction('rotateBlock90')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="w-5 text-center">↻</span>
           Rotate Block 90°
         </button>
         {sameBlockCount > 0 && (
           <>
-            <div className="my-1 border-t border-[#e8e1da]" />
+            <div className="my-1 border-t border-[#d4d4d4]" />
             <button
               type="button"
               disabled={isExecuting}
               onClick={handleSelectAllSameBlocks}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="w-5 text-center">⊞</span>
               Select All {sameBlockCount + 1} Matching Blocks
@@ -677,32 +677,32 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#e8e1da] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
           type="button"
           onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
         >
           <span className="w-5 text-center">←</span>
           Back
         </button>
-        <div className="my-1 border-t border-[#e8e1da]" />
+        <div className="my-1 border-t border-[#d4d4d4]" />
         {modes.map((mode) => (
           <button
             key={mode}
             type="button"
             disabled={isExecuting}
             onClick={() => handleSelectSimilar(mode)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50"
           >
             <span className="w-5 text-center">{modeIcons[mode]}</span>
             {modeLabels[mode]}
           </button>
         ))}
         {modes.length === 0 && (
-          <div className="px-3 py-3 text-xs text-[#6b655e]/60">No similarity criteria found</div>
+          <div className="px-3 py-3 text-xs text-[#4a4a4a]/60">No similarity criteria found</div>
         )}
       </div>
     );
@@ -761,12 +761,12 @@ export function ContextMenu() {
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-[180px] rounded-full border border-[#e8e1da] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      className="fixed z-50 min-w-[180px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       style={{ left: position.x, top: position.y }}
     >
       {menuItems.map((item, i) =>
         item.action === 'divider' ? (
-          <div key={i} className="my-1 border-t border-[#e8e1da]" />
+          <div key={i} className="my-1 border-t border-[#d4d4d4]" />
         ) : item.action === 'printlist' ? (
           <div key={item.action}>
             {!showQuantityInput ? (
@@ -774,7 +774,7 @@ export function ContextMenu() {
                 type="button"
                 disabled={isExecuting}
                 onClick={() => setShowQuantityInput(true)}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="w-5 text-center">{item.icon}</span>
                 {item.label}
@@ -788,7 +788,7 @@ export function ContextMenu() {
                   max={999}
                   value={quantity}
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-14 rounded border border-[#e8e1da] bg-white px-1.5 py-0.5 text-xs"
+                  className="w-14 rounded border border-[#d4d4d4] bg-white px-1.5 py-0.5 text-xs"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleAddToPrintlist();
@@ -811,7 +811,7 @@ export function ContextMenu() {
             key={item.action}
             type="button"
             onClick={() => setSubMenu('fabric')}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
           >
             <span className="w-5 text-center">{item.icon}</span>
             {item.label}
@@ -822,7 +822,7 @@ export function ContextMenu() {
               <button
                 type="button"
                 onClick={() => setSubMenu('fabric')}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
               >
                 <span className="w-5 text-center">{item.icon}</span>
                 {item.label}
@@ -834,7 +834,7 @@ export function ContextMenu() {
             key={item.action}
             type="button"
             onClick={() => setSubMenu('block')}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10"
           >
             <span className="w-5 text-center">{item.icon}</span>
             {item.label}
@@ -866,7 +866,7 @@ export function ContextMenu() {
                 executeAction(item.action);
               }
             }}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#6b655e] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[#4a4a4a] hover:bg-[#ff8d49]/10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="w-5 text-center">{item.icon}</span>
             {item.label}

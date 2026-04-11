@@ -6,7 +6,7 @@ import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
-    <li className="flex items-start gap-4 text-[#6b655e] font-medium">
+    <li className="flex items-start gap-4 text-[var(--color-text-dim)] font-medium">
       <div className="w-6 h-6 rounded-full bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] mt-0.5 flex-shrink-0">
         <svg
           width="14"
@@ -45,11 +45,11 @@ function StudioPreviewMockup() {
 
   return (
     <div className="relative group">
-      <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da] flex flex-col">
+      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex flex-col">
         {/* Top Bar -- matches real studio */}
-        <div className="h-9 border-b border-[#e8e1da] flex items-center px-3 gap-2 bg-[#ffffff] shrink-0 text-[9px]">
+        <div className="h-9 border-b border-[var(--color-border)] flex items-center px-3 gap-2 bg-[#ffffff] shrink-0 text-[9px]">
           <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 bg-[#ffffff] rounded-lg border border-[#e8e1da] flex items-center justify-center text-[#6b655e]">
+            <div className="w-3.5 h-3.5 bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-dim)]">
               <svg
                 width="8"
                 height="8"
@@ -63,24 +63,24 @@ function StudioPreviewMockup() {
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
             </div>
-            <span className="font-bold text-[#2d2a26] hidden sm:inline">QuiltCorgi</span>
+            <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="px-2 py-0.5 bg-[#ff8d49] text-[#2d2a26] font-bold text-[8px]">
+            <div className="px-2 py-0.5 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[8px]">
               Main
             </div>
-            <span className="text-[#6b655e] text-[10px]">+</span>
+            <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
           </div>
-          <div className="flex-1 text-center text-[#6b655e] truncate hidden sm:block">
-            <span className="font-medium text-[#2d2a26]">Ohio Star Throw</span>
+          <div className="flex-1 text-center text-[var(--color-text-dim)] truncate hidden sm:block">
+            <span className="font-medium text-[var(--color-text)]">Ohio Star Throw</span>
             <span className="mx-1">&middot;</span>
             <span>Quilt Canvas</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
-            <span className="text-[#6b655e] hidden sm:inline">Share</span>
-            <span className="text-[#6b655e] hidden sm:inline">View</span>
-            <span className="text-[#6b655e] hidden sm:inline">Tools</span>
-            <div className="px-2 py-0.5 bg-[#2d2a26] text-[#ffffff] font-bold text-[8px]">
+            <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
+            <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
+            <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
+            <div className="px-2 py-0.5 bg-[var(--color-text)] text-[#ffffff] font-bold text-[8px]">
               Export
             </div>
           </div>
@@ -88,7 +88,7 @@ function StudioPreviewMockup() {
 
         <div className="flex" style={{ minHeight: '280px' }}>
           {/* Left Toolbar with labels */}
-          <div className="w-12 border-r border-[#e8e1da] bg-[#ffffff] py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
+          <div className="w-12 border-r border-[var(--color-border)] bg-[#ffffff] py-1 hidden sm:flex flex-col items-center gap-0.5 shrink-0">
             {[
               { label: 'Select', icon: <path d="M5 3l14 9-6 2-4 7-4-18z" />, active: true },
               { label: 'Curved', icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4" /> },
@@ -122,11 +122,11 @@ function StudioPreviewMockup() {
               { label: 'Triangle', icon: <polygon points="12 2 22 20 2 20" /> },
             ].map((tool, i) =>
               (tool as { divider?: boolean }).divider ? (
-                <div key={i} className="w-7 h-px bg-[#2d2a26]/20 my-0.5" />
+                <div key={i} className="w-7 h-px bg-[var(--color-text)]/20 my-0.5" />
               ) : (
                 <div
                   key={i}
-                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${(tool as { active?: boolean }).active ? 'text-[#ff8d49]' : 'text-[#6b655e]'
+                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${(tool as { active?: boolean }).active ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
                     }`}
                 >
                   <svg
@@ -157,7 +157,7 @@ function StudioPreviewMockup() {
                 opacity: 0.3,
               }}
             />
-            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[#2d2a26]/10 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[var(--color-border)]/30 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               {QUILT_GRID.flat().map((color, i) => (
                 <div
                   key={i}
@@ -167,11 +167,11 @@ function StudioPreviewMockup() {
               ))}
             </div>
             {/* Floating toolbar */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] rounded-lg px-2 py-1 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#ffffff] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1.5 z-10">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className={`w-5 h-5 flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[#6b655e]'}`}
+                  className={`w-5 h-5 flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
                 >
                   <svg
                     width="8"
@@ -188,17 +188,17 @@ function StudioPreviewMockup() {
                   </svg>
                 </div>
               ))}
-              <div className="w-px h-3 bg-[#2d2a26]/20" />
-              <span className="text-[7px] text-[#6b655e] font-mono">54%</span>
+              <div className="w-px h-3 bg-[var(--color-text)]/20" />
+              <span className="text-[7px] text-[var(--color-text-dim)] font-mono">54%</span>
             </div>
           </div>
 
           {/* Right panel -- accordion sections */}
-          <div className="w-[120px] border-l border-[#e8e1da] bg-[#ffffff] hidden md:flex flex-col shrink-0">
+          <div className="w-[120px] border-l border-[var(--color-border)] bg-[#ffffff] hidden md:flex flex-col shrink-0">
             {panelSections.map((section, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between px-2 py-1.5 border-b border-[#e8e1da] text-[7px] font-bold text-[#2d2a26]"
+                className="flex items-center justify-between px-2 py-1.5 border-b border-[var(--color-border)] text-[7px] font-bold text-[var(--color-text)]"
               >
                 <span>{section.label}</span>
                 <svg
@@ -221,7 +221,7 @@ function StudioPreviewMockup() {
         </div>
 
         {/* Status bar */}
-        <div className="h-5 bg-[#fdfaf7] border-t border-[#e8e1da] flex items-center justify-between px-3 text-[7px] font-mono text-[#6b655e] shrink-0">
+        <div className="h-5 bg-[#fdfaf7] border-t border-[var(--color-border)] flex items-center justify-between px-3 text-[7px] font-mono text-[var(--color-text-dim)] shrink-0">
           <span>Mouse H: 27.00&quot; V: 27.00&quot;</span>
           <div className="flex gap-3">
             <span>Snap to Grid: ON</span>
@@ -241,7 +241,7 @@ export default function CoreCapabilities() {
             <div className="flex items-center gap-4 mb-6">
               <Mascot pose="sitting" size="lg" />
               <h2
-                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[#2d2a26] leading-tight"
+                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[var(--color-text)] leading-tight"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Tools quilters actually need.
@@ -250,7 +250,7 @@ export default function CoreCapabilities() {
               </h2>
             </div>
 
-            <p className="text-[18px] leading-[28px] text-[#6b655e] mb-8">
+            <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-8">
               Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
               positioning fabric motifs with precision, or drafting custom blocks in the Block Builder
               &mdash; every tool is made to help you create something you&apos;ll be proud of.
@@ -269,7 +269,7 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-[#ff8d49] text-[#2d2a26] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="inline-flex items-center justify-center bg-[#ff8d49] text-[var(--color-text)] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             >
               See What You Can Create
             </Link>

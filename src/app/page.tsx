@@ -25,7 +25,7 @@ import Footer from '@/components/landing/Footer';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] relative overflow-hidden">
       <PublicNav />
       <main className="flex-1 relative z-10">
         <HeroSection />

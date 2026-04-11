@@ -12,7 +12,7 @@ const TYPE_OPTIONS: { value: MobileUploadAssignedType; label: string }[] = [
 ];
 
 const TYPE_COLORS: Record<MobileUploadAssignedType, string> = {
-  unassigned: 'bg-[#e8e1da]/50 text-[#6b655e]',
+  unassigned: 'bg-[#d4d4d4]/50 text-[#4a4a4a]',
   fabric: 'bg-[#ff8d49]/10 text-[#ff8d49]',
   block: 'bg-[#ff8d49]/10 text-[#ff8d49]',
   quilt: 'bg-[#ff8d49]/10 text-[#ff8d49]',
@@ -51,7 +51,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
   }
 
   return (
-    <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden group shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden group shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
       {/* Thumbnail */}
       <div className="relative aspect-square bg-[#fdfaf7] overflow-hidden">
         <Image
@@ -63,7 +63,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
           sizes="(max-width: 768px) 50vw, 25vw"
         />
         {upload.status === 'processing' && (
-          <div className="absolute inset-0 bg-[#2d2a26]/40 flex items-center justify-center">
+          <div className="absolute inset-0 bg-[#1a1a1a]/40 flex items-center justify-center">
             <div className="w-8 h-8 rounded-lg bg-[#ffffff]/20 animate-pulse" />
           </div>
         )}
@@ -71,7 +71,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
 
       {/* Details */}
       <div className="p-3 space-y-2.5">
-        <p className="text-[14px] font-medium text-[#2d2a26] truncate" title={displayName}>
+        <p className="text-[14px] font-medium text-[#1a1a1a] truncate" title={displayName}>
           {displayName}
         </p>
 
@@ -85,7 +85,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
               disabled={upload.status !== 'pending'}
               className={`px-2 py-0.5 text-[12px] font-medium rounded-full transition-colors ${upload.assignedType === opt.value
                 ? TYPE_COLORS[opt.value]
-                : 'bg-transparent text-[#6b655e]/60 hover:bg-[#e8e1da]/50'
+                : 'bg-transparent text-[#4a4a4a]/60 hover:bg-[#d4d4d4]/50'
                 } disabled:opacity-50`}
             >
               {opt.label}
@@ -99,7 +99,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleProcess}
             disabled={!canProcess || processing}
-            className="flex-1 px-3 py-1.5 text-[12px] font-medium rounded-full bg-[#ff8d49] text-[#2d2a26] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
+            className="flex-1 px-3 py-1.5 text-[12px] font-medium rounded-full bg-[#ff8d49] text-[#1a1a1a] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
           >
             {processing ? 'Opening...' : 'Process'}
           </button>
@@ -108,7 +108,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             onClick={handleDelete}
             className={`px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors duration-150 ${confirmDelete
               ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
-              : 'border border-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
+              : 'border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
               }`}
           >
             {confirmDelete ? 'Confirm?' : 'Delete'}

@@ -47,7 +47,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
   if (error || !profile) {
     return (
       <div className="text-center py-20">
-        <p className="text-[#6b655e]">{error ?? 'Profile not found.'}</p>
+        <p className="text-[#4a4a4a]">{error ?? 'Profile not found.'}</p>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       <header className="flex flex-col md:flex-row items-center md:items-start gap-12">
         <div className="relative group shrink-0">
           {profile.avatarUrl ? (
-            <div className="relative w-48 h-48 rounded-full overflow-hidden ring-2 ring-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="relative w-48 h-48 rounded-full overflow-hidden ring-2 ring-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               <Image
                 src={profile.avatarUrl}
                 alt={profile.displayName}
@@ -75,7 +75,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               />
             </div>
           ) : (
-            <div className="w-48 h-48 rounded-full bg-[#fdfaf7] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-center text-[#6b655e]">
+            <div className="w-48 h-48 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)] flex items-center justify-center text-[#4a4a4a]">
               <span className="text-6xl opacity-40">
                 {getInitials(profile.displayName)}
               </span>
@@ -84,7 +84,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
           {isOwner && (
             <Link
               href="/settings"
-              className="absolute -bottom-2 -right-2 p-3 bg-[#ffffff] rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150 z-20"
+              className="absolute -bottom-2 -right-2 p-3 bg-[#ffffff] rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4] text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150 z-20"
               title="Edit Profile"
             >
               <Pencil size={18} strokeWidth={2.5} />
@@ -95,7 +95,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         <div className="flex-1 text-center md:text-left space-y-6">
           <div>
             <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-8 mb-4">
-              <h1 className="text-[32px] leading-[40px] text-[#2d2a26]">
+              <h1 className="text-[32px] leading-[40px] text-[#1a1a1a]">
                 {profile.displayName}
               </h1>
               {!isOwner && (
@@ -103,7 +103,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
               )}
             </div>
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <p className="px-3 py-1 bg-[#fdfaf7] text-[#6b655e] text-[16px] leading-[24px]">
+              <p className="px-3 py-1 bg-[#fdfaf7] text-[#4a4a4a] text-[16px] leading-[24px]">
                 @{profile.username}
               </p>
               {profile.isPro && (
@@ -116,12 +116,12 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
 
           <div className="space-y-6">
             {profile.bio && (
-              <p className="text-[#2d2a26] text-[18px] leading-[28px] max-w-2xl">
+              <p className="text-[#1a1a1a] text-[18px] leading-[28px] max-w-2xl">
                 {profile.bio}
               </p>
             )}
 
-            <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-6 gap-y-3 text-[16px] leading-[24px] text-[#6b655e]">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-6 gap-y-3 text-[16px] leading-[24px] text-[#4a4a4a]">
               {profile.location && (
                 <span className="flex items-center gap-2">
                   <MapPin size={14} />
@@ -153,33 +153,33 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
       </header>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-3 gap-8 py-8 border-y border-[#e8e1da]">
+      <div className="grid grid-cols-3 gap-8 py-8 border-y border-[#d4d4d4]">
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[14px] leading-[20px] text-[#6b655e]">Projects</p>
-          <p className="text-[24px] leading-[32px] text-[#2d2a26]">{pagination?.total ?? 0}</p>
+          <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Projects</p>
+          <p className="text-[24px] leading-[32px] text-[#1a1a1a]">{pagination?.total ?? 0}</p>
         </div>
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[14px] leading-[20px] text-[#6b655e]">Followers</p>
-          <p className="text-[24px] leading-[32px] text-[#2d2a26]">{profile.followerCount}</p>
+          <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Followers</p>
+          <p className="text-[24px] leading-[32px] text-[#1a1a1a]">{profile.followerCount}</p>
         </div>
         <div className="text-center md:text-left space-y-1">
-          <p className="text-[14px] leading-[20px] text-[#6b655e]">Following</p>
-          <p className="text-[24px] leading-[32px] text-[#2d2a26]">{profile.followingCount}</p>
+          <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Following</p>
+          <p className="text-[24px] leading-[32px] text-[#1a1a1a]">{profile.followingCount}</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-8 border-b border-[#e8e1da]">
+      <div className="flex items-center gap-8 border-b border-[#d4d4d4]">
         <button
           onClick={() => setActiveTab('projects')}
-          className={`relative pb-4 text-[16px] leading-[24px] transition-colors duration-150 ${activeTab === 'projects' ? 'text-[#2d2a26] border-b-2 border-[#ff8d49]' : 'text-[#6b655e] hover:text-[#2d2a26]'
+          className={`relative pb-4 text-[16px] leading-[24px] transition-colors duration-150 ${activeTab === 'projects' ? 'text-[#1a1a1a] border-b-2 border-[#ff8d49]' : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
             }`}
         >
           Projects
         </button>
         <button
           onClick={() => setActiveTab('about')}
-          className={`relative pb-4 text-[16px] leading-[24px] transition-colors duration-150 ${activeTab === 'about' ? 'text-[#2d2a26] border-b-2 border-[#ff8d49]' : 'text-[#6b655e] hover:text-[#2d2a26]'
+          className={`relative pb-4 text-[16px] leading-[24px] transition-colors duration-150 ${activeTab === 'about' ? 'text-[#1a1a1a] border-b-2 border-[#ff8d49]' : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
             }`}
         >
           About
@@ -191,8 +191,8 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
         {activeTab === 'projects' && (
           <>
             {posts.length === 0 ? (
-              <div className="text-center py-24 border border-dashed border-[#e8e1da] space-y-6">
-                <p className="text-[16px] leading-[24px] text-[#6b655e]">
+              <div className="text-center py-24 border border-dashed border-[#d4d4d4] space-y-6">
+                <p className="text-[16px] leading-[24px] text-[#4a4a4a]">
                   {isOwner
                     ? "You haven't shared any projects yet."
                     : "No public projects found."}
@@ -200,7 +200,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                 {isOwner && (
                   <Link
                     href="/dashboard"
-                    className="inline-flex h-12 items-center px-8 bg-[#ff8d49] text-[#2d2a26] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                    className="inline-flex h-12 items-center px-8 bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
                   >
                     Start Your First Project
                   </Link>
@@ -223,7 +223,7 @@ export function UserProfilePage({ username }: UserProfilePageProps) {
                     <button
                       onClick={loadMore}
                       disabled={isLoading}
-                      className="px-8 py-3 border border-[#e8e1da] text-[16px] leading-[24px] text-[#2d2a26] hover:bg-[#ff8d49]/10 transition-colors duration-150 rounded-full disabled:opacity-50"
+                      className="px-8 py-3 border border-[#d4d4d4] text-[16px] leading-[24px] text-[#1a1a1a] hover:bg-[#ff8d49]/10 transition-colors duration-150 rounded-full disabled:opacity-50"
                     >
                       {isLoading ? 'Loading...' : 'Load More'}
                     </button>
@@ -265,8 +265,8 @@ function FollowButton({ username, initialFollowing }: FollowButtonProps) {
     <button
       onClick={handleFollow}
       className={`inline-flex items-center gap-2 px-4 py-2 text-[16px] leading-[24px] transition-colors duration-150 rounded-full ${following
-        ? 'bg-[#fdfaf7] border border-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49] hover:border-[#ff8d49]/30'
-        : 'bg-[#ff8d49] text-[#2d2a26] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+        ? 'bg-[#fdfaf7] border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49] hover:border-[#ff8d49]/30'
+        : 'bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
         }`}
     >
       {following ? 'Following' : 'Follow'}
@@ -293,7 +293,7 @@ interface ProjectCardProps {
 
 function ProjectCard({ post }: ProjectCardProps) {
   return (
-    <article className="bg-[#ffffff] border border-[#e8e1da] overflow-hidden rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <article className="bg-[#ffffff] border border-[#d4d4d4] overflow-hidden rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
       <Link href={`/socialthreads/${post.id}`} className="block">
         {post.thumbnailUrl ? (
           <div className="relative w-full aspect-[4/3] bg-[#fdfaf7] overflow-hidden rounded-t-lg">
@@ -308,14 +308,14 @@ function ProjectCard({ post }: ProjectCardProps) {
           </div>
         ) : (
           <div className="w-full aspect-[4/3] bg-[#fdfaf7] flex items-center justify-center">
-            <span className="text-[24px] leading-[32px] text-[#6b655e] opacity-40">STUDIO</span>
+            <span className="text-[24px] leading-[32px] text-[#4a4a4a] opacity-40">STUDIO</span>
           </div>
         )}
       </Link>
 
       <div className="p-4">
         <Link href={`/socialthreads/${post.id}`}>
-          <h3 className="text-[16px] leading-[24px] text-[#2d2a26] line-clamp-1 mb-1 hover:text-[#ff8d49] transition-colors duration-150">
+          <h3 className="text-[16px] leading-[24px] text-[#1a1a1a] line-clamp-1 mb-1 hover:text-[#ff8d49] transition-colors duration-150">
             {post.title}
           </h3>
         </Link>
@@ -329,7 +329,7 @@ function ProjectCard({ post }: ProjectCardProps) {
           />
           <Link
             href={`/socialthreads/${post.id}`}
-            className="flex items-center gap-1 text-[14px] leading-[20px] text-[#6b655e] hover:text-[#2d2a26] transition-colors duration-150"
+            className="flex items-center gap-1 text-[14px] leading-[20px] text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors duration-150"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -341,7 +341,7 @@ function ProjectCard({ post }: ProjectCardProps) {
             </svg>
             {post.commentCount}
           </Link>
-          <span className="text-[14px] leading-[20px] text-[#6b655e] ml-auto">
+          <span className="text-[14px] leading-[20px] text-[#4a4a4a] ml-auto">
             {formatRelativeTime(post.createdAt)}
           </span>
         </div>
@@ -369,21 +369,21 @@ function AboutTab({
     <div className="space-y-12 max-w-2xl">
       {profile.bio && (
         <div className="space-y-4">
-          <h3 className="text-[18px] leading-[28px] text-[#2d2a26]">About</h3>
-          <p className="text-[18px] leading-[28px] text-[#6b655e]">{profile.bio}</p>
+          <h3 className="text-[18px] leading-[28px] text-[#1a1a1a]">About</h3>
+          <p className="text-[18px] leading-[28px] text-[#4a4a4a]">{profile.bio}</p>
         </div>
       )}
 
       <div className="space-y-4">
-        <h3 className="text-[18px] leading-[28px] text-[#2d2a26]">Details</h3>
+        <h3 className="text-[18px] leading-[28px] text-[#1a1a1a]">Details</h3>
         <div className="space-y-3">
           {profile.location && (
-            <div className="flex items-center gap-3 text-[#2d2a26] text-[16px] leading-[24px]">
+            <div className="flex items-center gap-3 text-[#1a1a1a] text-[16px] leading-[24px]">
               <div className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]/50" />
               <span>{profile.location}</span>
             </div>
           )}
-          <div className="flex items-center gap-3 text-[#6b655e] text-[16px] leading-[24px]">
+          <div className="flex items-center gap-3 text-[#4a4a4a] text-[16px] leading-[24px]">
             <div className="w-1.5 h-1.5 rounded-full bg-[#ffc8a6]/50" />
             <span>
               Joined{' '}
@@ -397,7 +397,7 @@ function AboutTab({
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-[18px] leading-[28px] text-[#2d2a26]">Connections</h3>
+        <h3 className="text-[18px] leading-[28px] text-[#1a1a1a]">Connections</h3>
         <SocialLinks profile={profile} />
       </div>
     </div>
@@ -444,7 +444,7 @@ function SocialLinks({
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[14px] leading-[20px] text-[#2d2a26] border border-[#e8e1da] px-4 py-2 rounded-full hover:bg-[#ff8d49] hover:text-[#ffffff] transition-colors duration-150"
+          className="text-[14px] leading-[20px] text-[#1a1a1a] border border-[#d4d4d4] px-4 py-2 rounded-full hover:bg-[#ff8d49] hover:text-[#ffffff] transition-colors duration-150"
         >
           {link.label}
         </a>

@@ -28,9 +28,9 @@ export function ExportDialogShell({
  children,
 }: ExportDialogShellProps) {
  return (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
- <div className="w-[440px] max-w-[90vw] rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da]">
- <h2 className="mb-4 text-lg font-semibold text-[#2d2a26]">{title}</h2>
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
+ <div className="w-[440px] max-w-[90vw] rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4]">
+ <h2 className="mb-4 text-lg font-semibold text-[#1a1a1a]">{title}</h2>
 
  {children}
 
@@ -43,7 +43,7 @@ export function ExportDialogShell({
  type="button"
  onClick={onClose}
  disabled={isExporting}
- className="rounded-lg border border-[#e8e1da] bg-[#ffffff] px-4 py-2 text-sm text-[#2d2a26] hover:bg-[#fdfaf7]"
+ className="rounded-full border border-[#d4d4d4] bg-[#ffffff] px-4 py-2 text-sm text-[#1a1a1a] hover:bg-[#fdfaf7]"
  >
  Cancel
  </button>
@@ -51,7 +51,7 @@ export function ExportDialogShell({
  type="button"
  onClick={onExport}
  disabled={isDisabled}
- className="flex items-center gap-2 rounded-lg bg-[#ff8d49] px-4 py-2 text-sm font-medium text-[#2d2a26] hover:bg-[#e67d3f] disabled:cursor-not-allowed disabled:opacity-40 transition-colors duration-150"
+ className="flex items-center gap-2 rounded-full bg-[#ff8d49] px-4 py-2 text-sm font-medium text-[#1a1a1a] hover:bg-[#e67d3f] disabled:cursor-not-allowed disabled:opacity-40 transition-colors duration-150"
  >
  {isExporting ? (
  <>

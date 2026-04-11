@@ -67,13 +67,13 @@ export default function FeatureHighlights() {
             <div className="flex items-center gap-2 mb-2">
               <QuiltPieceRow count={3} size={8} gap={4} />
               <h2
-                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[#2d2a26]"
+                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[var(--color-text)]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Your Quilt, Start to Finish
               </h2>
             </div>
-            <p className="text-[18px] leading-[28px] text-[#6b655e] mt-2">
+            <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mt-2">
               Design, calculate, and print &mdash; all in one place
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function FeatureHighlights() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-[#ffffff] rounded-lg border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150"
+              className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150"
             >
               <div className="relative z-10">
                 <div className="w-16 h-16 mb-6">
@@ -96,13 +96,13 @@ export default function FeatureHighlights() {
                   />
                 </div>
                 <h3
-                  className="text-[24px] leading-[32px] font-bold text-[#2d2a26] mb-3"
+                  className="text-[24px] leading-[32px] font-bold text-[var(--color-text)] mb-3"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-[#6b655e] mb-4">{feature.description}</p>
-                <ul className="space-y-2 text-[14px] leading-[20px] text-[#6b655e]">
+                <p className="text-[var(--color-text-dim)] mb-4">{feature.description}</p>
+                <ul className="space-y-2 text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                   {feature.checks.map((check) => (
                     <CheckItem key={check}>{check}</CheckItem>
                   ))}

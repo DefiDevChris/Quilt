@@ -158,13 +158,13 @@ export function RecommendedDimensionsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#2d2a26]/60">
-      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1a1a1a]/60">
+      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e8e1da] p-4">
+        <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
           <div>
-            <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Recommended Dimensions</h2>
-            <p className="text-[14px] leading-[20px] text-[#6b655e] mt-1">
+            <h2 className="text-[24px] leading-[32px] text-[#1a1a1a]">Recommended Dimensions</h2>
+            <p className="text-[14px] leading-[20px] text-[#4a4a4a] mt-1">
               Maintains exact aspect ratio
             </p>
           </div>
@@ -187,17 +187,17 @@ export function RecommendedDimensionsModal({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Pattern info */}
           {selectedPattern && (
-            <div className="border border-[#e8e1da] bg-[#fdfaf7] p-4 flex flex-col gap-2 rounded-lg">
+            <div className="border border-[#d4d4d4] bg-[#fdfaf7] p-4 flex flex-col gap-2 rounded-lg">
               <div className="flex items-center justify-between">
-                <span className="text-[16px] leading-[24px] text-[#2d2a26]">
+                <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
                   {selectedPattern.displayName}
                 </span>
-                <span className="text-[14px] leading-[20px] text-[#6b655e]">
+                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
                   Original: {selectedPattern.dimensions.width}&quot; &times; {selectedPattern.dimensions.height}&quot;
                 </span>
               </div>
               {selectedPattern.blockLayout && (
-                <span className="text-[14px] leading-[20px] text-[#6b655e]">
+                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
                   Layout: {selectedPattern.blockLayout.cols} &times; {selectedPattern.blockLayout.rows} blocks
                 </span>
               )}
@@ -214,19 +214,19 @@ export function RecommendedDimensionsModal({
                   onClick={() => onSelect(rec.width, rec.height)}
                   className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${rec.isClosest
                     ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                    : 'border-[#e8e1da] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                    : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
                     }`}
                 >
-                  <span className="text-[16px] leading-[24px] text-[#2d2a26]">
+                  <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
                     {rec.label}
                   </span>
-                  <div className="mt-2 text-[16px] leading-[24px] text-[#2d2a26]">
+                  <div className="mt-2 text-[16px] leading-[24px] text-[#1a1a1a]">
                     {rec.width}&quot; &times; {rec.height}&quot;
                   </div>
-                  <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e]">
+                  <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a]">
                     {rec.cols} &times; {rec.rows} = {rec.total} blocks
                   </div>
-                  <div className="mt-1 text-[14px] leading-[20px] text-[#6b655e]">
+                  <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a]">
                     Each: {rec.blockSize}&quot; &times; {rec.blockSize}&quot;
                   </div>
                 </button>
@@ -235,11 +235,11 @@ export function RecommendedDimensionsModal({
           </div>
 
           {/* Custom dimensions */}
-          <div className="border-t border-[#e8e1da] pt-6">
-            <h3 className="text-[18px] leading-[28px] text-[#2d2a26] mb-3">Custom Dimensions</h3>
+          <div className="border-t border-[#d4d4d4] pt-6">
+            <h3 className="text-[18px] leading-[28px] text-[#1a1a1a] mb-3">Custom Dimensions</h3>
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label className="block text-[14px] leading-[20px] text-[#6b655e] mb-2">Width (in)</label>
+                <label className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Width (in)</label>
                 <input
                   type="number"
                   value={customWidth}
@@ -257,14 +257,14 @@ export function RecommendedDimensionsModal({
                   placeholder="Width"
                   min="6"
                   max="200"
-                  className="w-full border border-[#e8e1da] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#6b655e]"
+                  className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
-                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]' : 'bg-[#ffffff] text-[#6b655e] border-[#e8e1da]'
+                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]' : 'bg-[#ffffff] text-[#4a4a4a] border-[#d4d4d4]'
                   }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
@@ -284,7 +284,7 @@ export function RecommendedDimensionsModal({
               </button>
 
               <div className="flex-1">
-                <label className="block text-[14px] leading-[20px] text-[#6b655e] mb-2">Height (in)</label>
+                <label className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Height (in)</label>
                 <input
                   type="number"
                   value={customHeight}
@@ -302,7 +302,7 @@ export function RecommendedDimensionsModal({
                   placeholder="Height"
                   min="6"
                   max="200"
-                  className="w-full border border-[#e8e1da] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#6b655e]"
+                  className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
                 />
               </div>
 
@@ -310,7 +310,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="h-[42px] border border-[#e8e1da] bg-[#ff8d49] text-[#2d2a26] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="h-[42px] border border-[#d4d4d4] bg-[#ff8d49] text-[#1a1a1a] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
               >
                 Apply
               </button>

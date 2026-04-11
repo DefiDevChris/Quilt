@@ -26,8 +26,8 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
           className={`group flex flex-col justify-between border-2 border-[#ff8d49] bg-[#ffffff] p-5 hover:bg-[#ff8d49]/10 transition-colors duration-150 ${className}`}
         >
           <div className="flex flex-col gap-2 text-left">
-            <span className="text-[14px] leading-[20px] text-[#2d2a26]">Studio Pro</span>
-            <p className="text-[14px] leading-[24px] opacity-80 decoration-2 underline-offset-4 group-hover:underline text-[#6b655e]">
+            <span className="text-[14px] leading-[20px] text-[#1a1a1a]">Studio Pro</span>
+            <p className="text-[14px] leading-[24px] opacity-80 decoration-2 underline-offset-4 group-hover:underline text-[#4a4a4a]">
               Unlock full library, precise exports, and custom layouts.
             </p>
           </div>

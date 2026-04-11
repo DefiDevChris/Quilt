@@ -233,10 +233,10 @@ export function BlockBuilderToolbarUnified({
                     aria-disabled={tool.isDisabled ?? false}
                     onClick={tool.isDisabled ? undefined : tool.onClick}
                     className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${tool.isDisabled
-                      ? 'text-[#6b655e]/25 cursor-default'
+                      ? 'text-[#4a4a4a]/25 cursor-default'
                       : isActive
                         ? 'text-[#ff8d49]'
-                        : 'text-[#6b655e] hover:text-[#2d2a26]'
+                        : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
                       }`}
                   >
                     <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
@@ -255,7 +255,7 @@ export function BlockBuilderToolbarUnified({
 
       {/* Seam count badge */}
       <div className="mt-auto px-2 pb-2">
-        <div className="w-full rounded-full bg-neutral-container px-2 py-1 text-[10px] font-mono text-neutral-500 text-center">
+        <div className="w-full rounded-full bg-[var(--color-bg)] px-2 py-1 text-[10px] font-mono text-[var(--color-text-dim)] text-center">
           {segmentCount} seam{segmentCount !== 1 ? 's' : ''}
         </div>
       </div>

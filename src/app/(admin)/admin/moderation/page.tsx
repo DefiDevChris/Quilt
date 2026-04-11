@@ -125,10 +125,10 @@ export default function AdminModerationPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-[#6b655e]">Review reports and moderate community content</p>
+      <p className="text-sm text-[#4a4a4a]">Review reports and moderate community content</p>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#e8e1da]">
+      <div className="flex gap-2 border-b border-[#d4d4d4]">
         {[
           { id: 'reports', label: 'Reports' },
           { id: 'posts', label: 'Posts' },
@@ -140,7 +140,7 @@ export default function AdminModerationPage() {
             onClick={() => setActiveTab(tab.id as Tab)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-150 ${activeTab === tab.id
               ? 'border-[#ff8d49] text-[#ff8d49]'
-              : 'border-transparent text-[#6b655e] hover:text-[#2d2a26]'
+              : 'border-transparent text-[#4a4a4a] hover:text-[#1a1a1a]'
               }`}
           >
             {tab.label}
@@ -156,31 +156,31 @@ export default function AdminModerationPage() {
         <>
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
+            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
                 <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Type
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Reason
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Reporter
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
                   {reports.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
                         No reports to review
                       </td>
                     </tr>
@@ -188,20 +188,20 @@ export default function AdminModerationPage() {
                     reports.map((report) => (
                       <tr key={report.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#2d2a26]">{report.postId ? 'Post' : 'Comment'}</span>
+                          <span className="text-sm text-[#1a1a1a]">{report.postId ? 'Post' : 'Comment'}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm text-[#2d2a26] max-w-md truncate">
+                          <p className="text-sm text-[#1a1a1a] max-w-md truncate">
                             {report.reason}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {report.reporterName || report.reporterEmail || 'Anonymous'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {new Date(report.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -224,31 +224,31 @@ export default function AdminModerationPage() {
 
           {/* Posts Tab */}
           {activeTab === 'posts' && (
-            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
+            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
                 <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Creator
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Likes
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
                   {posts.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
                         No posts found
                       </td>
                     </tr>
@@ -257,24 +257,24 @@ export default function AdminModerationPage() {
                       <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <div className="max-w-md">
-                            <p className="font-medium text-[#2d2a26] truncate">{post.title}</p>
+                            <p className="font-medium text-[#1a1a1a] truncate">{post.title}</p>
                             {post.description && (
-                              <p className="text-xs text-[#6b655e] mt-0.5 line-clamp-1">
+                              <p className="text-xs text-[#4a4a4a] mt-0.5 line-clamp-1">
                                 {post.description}
                               </p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {formatCreatorName(post.creatorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">{post.likeCount}</span>
+                          <span className="text-sm text-[#4a4a4a]">{post.likeCount}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {new Date(post.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -297,31 +297,31 @@ export default function AdminModerationPage() {
 
           {/* Comments Tab */}
           {activeTab === 'comments' && (
-            <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
+            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
                 <thead className="bg-[#fdfaf7]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Comment
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Author
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       On Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
                   {comments.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
                         No reported comments
                       </td>
                     </tr>
@@ -329,22 +329,22 @@ export default function AdminModerationPage() {
                     comments.map((comment) => (
                       <tr key={comment.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <p className="text-sm text-[#2d2a26] max-w-md truncate">
+                          <p className="text-sm text-[#1a1a1a] max-w-md truncate">
                             {comment.content}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {formatCreatorName(comment.authorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e] max-w-xs truncate block">
+                          <span className="text-sm text-[#4a4a4a] max-w-xs truncate block">
                             {comment.postTitle || 'Deleted Post'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#6b655e]">
+                          <span className="text-sm text-[#4a4a4a]">
                             {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -367,7 +367,7 @@ export default function AdminModerationPage() {
 
           {/* Users Tab - Placeholder */}
           {activeTab === 'users' && (
-            <div className="p-8 text-center text-[#6b655e] bg-[#fdfaf7] rounded-lg">
+            <div className="p-8 text-center text-[#4a4a4a] bg-[#fdfaf7] rounded-lg">
               <p>User management coming soon. Use the role update API for now.</p>
             </div>
           )}

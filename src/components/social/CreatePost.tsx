@@ -39,7 +39,7 @@ export function CreatePost({ onPost }: CreatePostProps) {
   };
 
   return (
-    <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-5">
+    <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-5">
       <div className="flex gap-3">
         <Avatar className="h-10 w-10 shrink-0">
           <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
@@ -52,13 +52,13 @@ export function CreatePost({ onPost }: CreatePostProps) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onFocus={() => setIsExpanded(true)}
-              className="min-h-[50px] resize-none border-none bg-transparent text-sm placeholder:text-[#6b655e] focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              className="min-h-[50px] resize-none border-none bg-transparent text-sm placeholder:text-[var(--color-text-dim)] focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
             />
           </div>
           {selectedImage && (
             <div className="relative mt-3 rounded-lg overflow-hidden">
               <img src={selectedImage} alt="Selected" className="w-full h-48 object-cover" />
-              <button onClick={() => setSelectedImage(null)} className="absolute top-2 right-2 p-1 bg-[#2d2a26]/50 rounded-full text-white">
+              <button onClick={() => setSelectedImage(null)} className="absolute top-2 right-2 p-1 bg-[var(--color-text)]/50 rounded-full text-white">
                 <X className="h-4 w-4" />
               </button>
             </div>

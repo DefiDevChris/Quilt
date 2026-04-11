@@ -59,7 +59,7 @@ export function ContextPanel({
   );
 
   return (
-    <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[#fdfaf7] border-l border-[#e8e1da]/15 overflow-hidden">
+    <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
       {/* ── Shade breakdown (contextual, above tabs) ───── */}
       {showShadePanel && breakdown && (
         <ShadeBreakdownPanel
@@ -70,7 +70,7 @@ export function ContextPanel({
       )}
 
       {/* ── Library tabs ─────────────────────────────────── */}
-      <div className="flex border-b border-[#e8e1da]/40 flex-shrink-0">
+      <div className="flex border-b border-[var(--color-border)]/40 flex-shrink-0">
         <LibraryTabButton
           label="Layouts"
           active={activeTab === 'layouts'}
@@ -126,7 +126,7 @@ function LibraryTabButton({
       className={`flex-1 px-3 py-2 text-[12px] leading-[16px] font-medium transition-colors ${
         active
           ? 'border-b-2 border-primary text-primary'
-          : 'text-[#2d2a26]/60 hover:text-[#2d2a26]'
+          : 'text-[var(--color-text)]/60 hover:text-[var(--color-text)]'
       }`}
     >
       {label}

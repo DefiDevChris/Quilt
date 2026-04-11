@@ -52,11 +52,11 @@ export default function AllProjectsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 bg-[#e8e1da] rounded-lg w-48"></div>
-        <div className="h-12 bg-[#e8e1da] rounded-lg"></div>
+        <div className="h-8 bg-[#d4d4d4] rounded-lg w-48"></div>
+        <div className="h-12 bg-[#d4d4d4] rounded-lg"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-48 bg-[#e8e1da] rounded-lg"></div>
+            <div key={i} className="h-48 bg-[#d4d4d4] rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -71,12 +71,12 @@ export default function AllProjectsPage() {
         description={`${projects.length} ${projects.length === 1 ? 'curated design' : 'curated designs'}`}
         action={
           <div className="flex items-center gap-4">
-            <div className="flex items-center bg-[#e8e1da] rounded-lg p-1 border border-[#e8e1da]">
+            <div className="flex items-center bg-[#d4d4d4] rounded-lg p-1 border border-[#d4d4d4]">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors duration-150 ${viewMode === 'grid'
+                className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'grid'
                   ? 'bg-[#ffffff] text-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                  : 'text-[#ffc8a6] hover:text-[#2d2a26]'
+                  : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
                   }`}
                 title="Grid View"
               >
@@ -84,9 +84,9 @@ export default function AllProjectsPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors duration-150 ${viewMode === 'list'
+                className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'list'
                   ? 'bg-[#ffffff] text-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                  : 'text-[#ffc8a6] hover:text-[#2d2a26]'
+                  : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
                   }`}
                 title="List View"
               >
@@ -95,7 +95,7 @@ export default function AllProjectsPage() {
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             >
               <Plus size={16} strokeWidth={3} />
               Create New
@@ -106,19 +106,19 @@ export default function AllProjectsPage() {
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center py-32 text-center">
-          <div className="w-24 h-24 rounded-lg bg-[#e8e1da] flex items-center justify-center mb-8 border border-[#e8e1da]">
+          <div className="w-24 h-24 rounded-lg bg-[#d4d4d4] flex items-center justify-center mb-8 border border-[#d4d4d4]">
             <Grid size={40} className="text-[#ffc8a6] opacity-50" />
           </div>
 
-          <h3 className="text-3xl font-bold text-[#2d2a26] mb-3">
+          <h3 className="text-3xl font-bold text-[#1a1a1a] mb-3">
             The workspace is empty
           </h3>
-          <p className="text-[#6b655e] mb-10 max-w-sm leading-relaxed">
+          <p className="text-[#4a4a4a] mb-10 max-w-sm leading-relaxed">
             Begin your next creative journey by starting a new project or exploring studio templates.
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff8d49] text-[#2d2a26] rounded-lg font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             <Plus size={20} strokeWidth={3} />
             Initialize Blank Canvas
@@ -137,8 +137,8 @@ export default function AllProjectsPage() {
               key={project.id}
               href={`/studio/${project.id}`}
               className={`group block ${viewMode === 'grid'
-                ? 'bg-[#ffffff] border border-[#e8e1da] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150'
-                : 'bg-[#ffffff] border border-[#e8e1da] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 flex items-center gap-4'
+                ? 'bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150'
+                : 'bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 flex items-center gap-4'
                 }`}
             >
               <div
@@ -150,10 +150,10 @@ export default function AllProjectsPage() {
                     alt={project.name}
                     width={viewMode === 'grid' ? 200 : 64}
                     height={viewMode === 'grid' ? 200 : 64}
-                    className="w-full h-full object-cover rounded-lg bg-[#e8e1da]"
+                    className="w-full h-full object-cover rounded-lg bg-[#d4d4d4]"
                   />
                 ) : (
-                  <div className="w-full h-full bg-[#e8e1da] rounded-lg flex items-center justify-center">
+                  <div className="w-full h-full bg-[#d4d4d4] rounded-lg flex items-center justify-center">
                     <span className="text-[#ffc8a6]/50 font-bold text-lg">
                       {project.name.charAt(0).toUpperCase()}
                     </span>
@@ -162,10 +162,10 @@ export default function AllProjectsPage() {
               </div>
 
               <div className="flex-1">
-                <h3 className="font-bold text-[#2d2a26] group-hover:text-[#ff8d49] transition-colors duration-150 line-clamp-2">
+                <h3 className="font-bold text-[#1a1a1a] group-hover:text-[#ff8d49] transition-colors duration-150 line-clamp-2">
                   {project.name}
                 </h3>
-                <div className="flex items-center gap-1 mt-2 text-xs text-[#6b655e]">
+                <div className="flex items-center gap-1 mt-2 text-xs text-[#4a4a4a]">
                   <Calendar size={12} />
                   <span>Updated {formatDate(project.updatedAt)}</span>
                 </div>

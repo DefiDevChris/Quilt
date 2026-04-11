@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#fdfaf7] border-t border-[#e8e1da]">
+    <footer className="bg-[var(--color-bg)] border-t border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
           {/* Brand */}
@@ -18,13 +18,13 @@ export default function Footer() {
                 className="object-contain"
               />
               <span
-                className="text-xl font-bold text-[#2d2a26]"
+                className="text-xl font-bold text-[var(--color-text)]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 QuiltCorgi
               </span>
             </div>
-            <p className="text-[#6b655e] text-sm leading-relaxed max-w-xs">
+            <p className="text-[var(--color-text-dim)] text-sm leading-relaxed max-w-xs">
               Design your quilts, calculate your yardage, and print patterns ready for the sewing
               room. A growing block library, and a community of quilters who get it.
             </p>
@@ -33,12 +33,12 @@ export default function Footer() {
           {/* Product */}
           <div>
             <h4
-              className="font-bold text-[#2d2a26] mb-4 text-sm"
+              className="font-bold text-[var(--color-text)] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Product
             </h4>
-            <ul className="space-y-3 text-[#6b655e] text-sm">
+            <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
                 <a href="#features" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Design Studio
@@ -55,12 +55,12 @@ export default function Footer() {
           {/* Social */}
           <div>
             <h4
-              className="font-bold text-[#2d2a26] mb-4 text-sm"
+              className="font-bold text-[var(--color-text)] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Social
             </h4>
-            <ul className="space-y-3 text-[#6b655e] text-sm">
+            <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
                 <Link href="/socialthreads" className="hover:text-[#ff8d49] transition-colors duration-150">
                   Gallery
@@ -77,12 +77,12 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4
-              className="font-bold text-[#2d2a26] mb-4 text-sm"
+              className="font-bold text-[var(--color-text)] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Company
             </h4>
-            <ul className="space-y-3 text-[#6b655e] text-sm">
+            <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
                 <Link href="/about" className="hover:text-[#ff8d49] transition-colors duration-150">
                   About
@@ -107,9 +107,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-[#e8e1da] flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-[#6b655e]">&copy; 2026 QuiltCorgi. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-sm text-[#6b655e]">
+        <div className="pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-[var(--color-text-dim)]">&copy; 2026 QuiltCorgi. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-[var(--color-text-dim)]">
             <Link href="/privacy" className="hover:text-[#ff8d49] transition-colors duration-150">
               Privacy
             </Link>

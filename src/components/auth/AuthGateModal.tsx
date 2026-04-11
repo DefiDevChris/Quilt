@@ -26,7 +26,7 @@ export function AuthGateModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[#2d2a26]/50"
+        className="absolute inset-0 bg-[#1a1a1a]/50"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -36,7 +36,7 @@ export function AuthGateModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 p-2 text-[#6b655e] hover:text-[#2d2a26] transition-colors duration-150 rounded-lg hover:bg-[#fdfaf7]"
+          className="absolute right-4 top-4 z-10 p-2 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors duration-150 rounded-lg hover:bg-[#fdfaf7]"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@ export function AuthGateModal({
           </svg>
         </button>
 
-        <div className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] p-8">
+        <div className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#d4d4d4] p-8">
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 relative">
@@ -59,10 +59,10 @@ export function AuthGateModal({
 
           {/* Header */}
           <div className="text-center mb-6">
-            <h2 className="text-headline-sm font-bold text-[#2d2a26]">
+            <h2 className="text-headline-sm font-bold text-[#1a1a1a]">
               {mode === 'signup' ? title : 'Welcome back'}
             </h2>
-            <p className="text-sm text-[#6b655e] mt-2">
+            <p className="text-sm text-[#4a4a4a] mt-2">
               {mode === 'signup' ? description : 'Sign in to continue designing quilts.'}
             </p>
           </div>
@@ -71,7 +71,7 @@ export function AuthGateModal({
           <AuthFormInner mode={mode} onSuccess={onClose} compact />
 
           {/* Toggle mode */}
-          <p className="mt-6 text-center text-sm text-[#6b655e]">
+          <p className="mt-6 text-center text-sm text-[#4a4a4a]">
             {mode === 'signup' ? (
               <>
                 Already have an account?{' '}
@@ -96,8 +96,8 @@ export function AuthGateModal({
           </p>
 
           {/* Alternative option */}
-          <div className="mt-6 pt-6 border-t border-[#e8e1da] text-center">
-            <p className="text-sm text-[#6b655e]">
+          <div className="mt-6 pt-6 border-t border-[#d4d4d4] text-center">
+            <p className="text-sm text-[#4a4a4a]">
               Want to explore first?{' '}
               <Link
                 href="/socialthreads"

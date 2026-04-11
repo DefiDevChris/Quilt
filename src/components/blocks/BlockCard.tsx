@@ -18,12 +18,12 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
   return (
     <div
       className={`group relative flex flex-col items-center rounded-lg border p-2 transition-colors duration-150 ${block.isLocked
-          ? 'opacity-70 border-[#e8e1da] bg-[#fdfaf7]'
+          ? 'opacity-70 border-[#d4d4d4] bg-[#fdfaf7]'
           : isSelected
             ? 'border-[#ff8d49] bg-[#ff8d49]/10 ring-2 ring-[#ff8d49]/30 cursor-pointer'
             : isDragging
               ? 'opacity-50 border-[#ff8d49] bg-[#ff8d49]/5'
-              : 'border-[#e8e1da] bg-[#fdfaf7] cursor-grab active:cursor-grabbing hover:border-[#ff8d49]/50'
+              : 'border-[#d4d4d4] bg-[#fdfaf7] cursor-grab active:cursor-grabbing hover:border-[#ff8d49]/50'
         }`}
       draggable={!block.isLocked}
       onDragStart={(e) => {
@@ -72,7 +72,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
             className="h-full w-full object-contain"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-2xl text-[#6b655e]">
+          <div className="flex h-full w-full items-center justify-center text-2xl text-[#4a4a4a]">
             ◇
           </div>
         )}
@@ -86,7 +86,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
         )}
       </div>
 
-      <span className="mt-1 text-center text-[14px] leading-[20px] text-[#6b655e] line-clamp-2">
+      <span className="mt-1 text-center text-[14px] leading-[20px] text-[#4a4a4a] line-clamp-2">
         {block.name}
       </span>
     </div>
