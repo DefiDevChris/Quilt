@@ -118,9 +118,25 @@ export function useCanvasZoomPan() {
         }
       });
 
+      // Wheel zoom — zooms toward the cursor without snapping back to center.
+      // Skipped while the viewport is locked.
+      function onMouseWheel(e: { e: WheelEvent }) {
+        if (isViewportLocked()) return;
+        const evt = e.e;
+        evt.preventDefault();
+        evt.stopPropagation();
+        const delta = evt.deltaY;
+        // Smooth, screen-relative zoom: ~10% per notch.
+        const factor = Math.exp(-delta * 0.001);
+        const currentZoom = useCanvasStore.getState().zoom;
+        const nextZoom = currentZoom * factor;
+        useCanvasStore.getState().zoomAtPoint(nextZoom, evt.offsetX, evt.offsetY);
+      }
+
       canvas.on('mouse:down', onMouseDown as never);
       canvas.on('mouse:move', onMouseMove as never);
       canvas.on('mouse:up', onMouseUp as never);
+      canvas.on('mouse:wheel', onMouseWheel as never);
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyUp);
 
@@ -129,6 +145,7 @@ export function useCanvasZoomPan() {
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);
+        canvas.off('mouse:wheel', onMouseWheel as never);
         window.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('keyup', onKeyUp);
       };

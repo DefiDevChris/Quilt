@@ -108,7 +108,7 @@
       "hover": "Color or background change ONLY. No scale, translate, lift, shift, or transform.",
       "focus": "2px solid --primary outline. No glow.",
       "loading": "Subtle opacity pulse. No spinners, no animated corgi.",
-      "entry_exit": "None. No Framer Motion slide/scale/fade page transitions."
+      "entry_exit": "Allowed. Framer Motion animations are permitted for page transitions, drawer slides, and component entrances/exits."
     },
     "buttons": {
       "primary": "bg-[#ff8d49] text-[#2d2a26] px-6 py-2 rounded-full hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]",

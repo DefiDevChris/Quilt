@@ -68,15 +68,15 @@ export function useCanvasKeyboard() {
 
         if (isCtrl && (e.key === '=' || e.key === '+')) {
           e.preventDefault();
-          const { zoom, zoomAndCenter } = useCanvasStore.getState();
-          zoomAndCenter(zoom * ZOOM_FACTOR);
+          const { zoom, zoomAtPoint } = useCanvasStore.getState();
+          zoomAtPoint(zoom * ZOOM_FACTOR);
           return;
         }
 
         if (isCtrl && e.key === '-') {
           e.preventDefault();
-          const { zoom, zoomAndCenter } = useCanvasStore.getState();
-          zoomAndCenter(zoom / ZOOM_FACTOR);
+          const { zoom, zoomAtPoint } = useCanvasStore.getState();
+          zoomAtPoint(zoom / ZOOM_FACTOR);
           return;
         }
 
