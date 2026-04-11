@@ -39,6 +39,16 @@ export interface ScaledPiece {
   readonly finishedWidthNum: number;
   readonly finishedHeightNum: number;
   readonly dominantColor: string;
+  /** Canonical shape classification from the quantizer (optional). */
+  readonly shapeClass?: 'square' | 'rectangle' | 'right-triangle' | 'polygon';
+  /** Stable cluster key like "square-1x1" or "right-triangle-2x2-r90". */
+  readonly classKey?: string;
+  /** Human-readable class label for the print list. */
+  readonly classLabel?: string;
+  /** Canonical width in units of the inferred base unit `u`. */
+  readonly unitsW?: number;
+  /** Canonical height in units of the inferred base unit `u`. */
+  readonly unitsH?: number;
 }
 
 export type PipelineStepStatus = 'pending' | 'running' | 'complete' | 'error';
@@ -67,7 +77,13 @@ export interface PipelineStep {
   readonly message?: string;
 }
 
-export type PhotoLayoutStep = 'upload' | 'imagePrep' | 'scanSettings' | 'processing' | 'complete';
+export type PhotoLayoutStep =
+  | 'upload'
+  | 'imagePrep'
+  | 'scanSettings'
+  | 'processing'
+  | 'review'
+  | 'complete';
 
 /**
  * Types of non-rectangular quilt shapes supported.
