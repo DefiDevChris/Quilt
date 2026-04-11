@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
         />
       </head>
-      <body className="font-sans antialiased bg-background text-on-surface">
+      <body className="font-sans antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
         <SkipLink />
         <Providers>
           <ToastProvider>{children}</ToastProvider>

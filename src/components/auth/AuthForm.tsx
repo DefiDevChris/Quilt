@@ -12,7 +12,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const isSignUp = mode === 'signup';
 
   return (
-    <div className="w-full max-w-[500px] mx-auto bg-[#ffffff] border border-[#e8e1da] rounded-lg p-[2.75rem]">
+    <div className="w-full max-w-[500px] mx-auto bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-[2.75rem]">
       {/* Logo + Brand + Heading */}
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-24 h-24 mb-3 relative block">
@@ -26,7 +26,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           />
         </Link>
         <span
-          className="text-2xl font-bold text-[#2d2a26] mb-1"
+          className="text-2xl font-bold text-[#1a1a1a] mb-1"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           QuiltCorgi

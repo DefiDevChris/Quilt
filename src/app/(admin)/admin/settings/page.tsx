@@ -89,7 +89,7 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="bg-[#fdfaf7] border border-[#e8e1da] rounded-lg p-6 animate-pulse">
+        <div className="bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg p-6 animate-pulse">
           <div className="h-6 bg-[#ff8d49]/10 rounded-lg w-1/4 mb-4" />
           <div className="h-10 bg-[#ff8d49]/5 rounded-lg w-1/3" />
         </div>
@@ -99,7 +99,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-[#6b655e]">Manage site-wide feature settings.</p>
+      <p className="text-sm text-[#4a4a4a]">Manage site-wide feature settings.</p>
 
       {message && (
         <div
@@ -113,11 +113,11 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Shop Toggle Section */}
-      <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-[#2d2a26]">Fabric Shop</h3>
-            <p className="text-sm text-[#6b655e] mt-1">
+            <h3 className="text-lg font-semibold text-[#1a1a1a]">Fabric Shop</h3>
+            <p className="text-sm text-[#4a4a4a] mt-1">
               When enabled, a &quot;Shop&quot; tab appears in the public navigation and users can
               browse and purchase fabrics.
             </p>
@@ -126,7 +126,7 @@ export default function AdminSettingsPage() {
             <span
               className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${shopEnabled
                 ? 'bg-green-50 text-green-700'
-                : 'bg-[#ff8d49]/10 text-[#6b655e]'
+                : 'bg-[#ff8d49]/10 text-[#4a4a4a]'
                 }`}
             >
               {shopEnabled ? 'Enabled' : 'Disabled'}
@@ -152,16 +152,16 @@ export default function AdminSettingsPage() {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
-            <h3 className="text-lg font-semibold text-[#2d2a26]">Enable Fabric Shop</h3>
-            <p className="text-sm text-[#6b655e]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
+          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <h3 className="text-lg font-semibold text-[#1a1a1a]">Enable Fabric Shop</h3>
+            <p className="text-sm text-[#4a4a4a]">
               This will make the shop visible to all users. A &quot;Shop&quot; tab will appear in
               the navigation and the <span className="font-mono text-xs">/shop</span> page will
               become accessible.
             </p>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#2d2a26]">
+              <label className="text-sm font-medium text-[#1a1a1a]">
                 Type <span className="font-mono font-bold">ENABLE SHOP</span> to confirm
               </label>
               <input
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="ENABLE SHOP"
-                className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#fdfaf7] text-[#2d2a26] font-mono focus:ring-2 focus:ring-[#ff8d49]/50 focus:border-[#ff8d49] transition-colors duration-150"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#fdfaf7] text-[#1a1a1a] font-mono focus:ring-2 focus:ring-[#ff8d49]/50 focus:border-[#ff8d49] transition-colors duration-150"
                 autoFocus
               />
             </div>
@@ -180,7 +180,7 @@ export default function AdminSettingsPage() {
                   setShowConfirm(false);
                   setConfirmText('');
                 }}
-                className="px-4 py-2 text-sm font-medium text-[#6b655e] rounded-lg hover:bg-[#fdfaf7] transition-colors duration-150"
+                className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] transition-colors duration-150"
               >
                 Cancel
               </button>

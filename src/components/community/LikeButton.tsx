@@ -40,7 +40,7 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
  disabled={!user}
  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors duration-150 ${isLikedByUser
  ? 'bg-[#ffc7c7]/10 text-[#ffc7c7] hover:bg-[#ffc7c7]/20'
- : 'hover:bg-[#f5f2ef] text-[#6b655e]'
+ : 'hover:bg-[#fdfaf7] text-[#4a4a4a]'
  } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
  title={!user ? 'Sign in to like' : isLikedByUser ? 'Unlike' : 'Like'}
  >
@@ -60,7 +60,7 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
  viewBox="0 0 24 24"
  strokeWidth={1.5}
  stroke="currentColor"
- className={`${iconSize} text-[#6b655e]`}
+ className={`${iconSize} text-[#4a4a4a]`}
  >
  <path
  strokeLinecap="round"
@@ -70,7 +70,7 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
  </svg>
  )}
  <span
- className={`${textSize} ${isLikedByUser ? 'text-[#ffc7c7] font-medium' : 'text-[#6b655e]'}`}
+ className={`${textSize} ${isLikedByUser ? 'text-[#ffc7c7] font-medium' : 'text-[#4a4a4a]'}`}
  >
  {likeCount}
  </span>

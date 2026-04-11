@@ -55,7 +55,7 @@ function contourToSvg(contour: readonly { x: number; y: number }[]): string {
 }
 
 /** Brand text color used as the pattern outline stroke. */
-const PATTERN_STROKE_COLOR = '#2d2a26';
+const PATTERN_STROKE_COLOR = '#1a1a1a';
 /** Stroke width for pattern outlines (in canvas pixels). */
 const PATTERN_STROKE_WIDTH = 1.5;
 

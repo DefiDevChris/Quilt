@@ -65,7 +65,7 @@ export function PostCard({
   /* ── Grid View ── */
   if (viewMode === 'grid') {
     return (
-      <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
+      <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
         <div className="relative aspect-[4/3] cursor-pointer overflow-hidden rounded-t-lg"
           onClick={() => { handleDoubleTapLike(); onImageClick?.(post); }}>
           <img src={post.image} alt="" className="w-full h-full object-cover" />
@@ -76,7 +76,7 @@ export function PostCard({
           )}
           <div className="absolute top-2 right-2">
             <button onClick={(e) => { e.stopPropagation(); handleLike(); }}
-              className={cn('p-2 rounded-full', liked ? 'bg-[#ff8d49] text-white' : 'bg-[#ffffff] text-[#6b655e]')}>
+              className={cn('p-2 rounded-full', liked ? 'bg-[#ff8d49] text-white' : 'bg-[#ffffff] text-[var(--color-text-dim)]')}>
               <Heart className={cn('h-4 w-4', liked && 'fill-current')} />
             </button>
           </div>
@@ -86,14 +86,14 @@ export function PostCard({
             <Avatar className="h-7 w-7 cursor-pointer" onClick={() => onUserClick?.(post.user)}>
               <AvatarImage src={post.user.avatar} /><AvatarFallback>{post.user.name[0]}</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium text-[#2d2a26]">{post.user.name}</span>
-            <span className="text-xs text-[#6b655e] ml-auto">{formatTimeAgo(post.createdAt)}</span>
+            <span className="text-sm font-medium text-[var(--color-text)]">{post.user.name}</span>
+            <span className="text-xs text-[var(--color-text-dim)] ml-auto">{formatTimeAgo(post.createdAt)}</span>
           </div>
-          <p className="text-sm text-[#6b655e] line-clamp-2">{post.content}</p>
-          <div className="flex items-center gap-4 mt-2.5 pt-2.5 border-t border-[#f0ebe6] text-[#6b655e] text-xs">
+          <p className="text-sm text-[var(--color-text-dim)] line-clamp-2">{post.content}</p>
+          <div className="flex items-center gap-4 mt-2.5 pt-2.5 border-t border-[var(--color-border)]/30 text-[var(--color-text-dim)] text-xs">
             <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> {likes}</span>
             <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> {post.comments.length}</span>
-            <button onClick={handleSave} className={cn('ml-auto flex items-center gap-1', saved ? 'text-[#ff8d49]' : 'text-[#6b655e]')}>
+            <button onClick={handleSave} className={cn('ml-auto flex items-center gap-1', saved ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
               <Bookmark className={cn('h-3.5 w-3.5', saved && 'fill-current')} />
             </button>
           </div>
@@ -104,17 +104,17 @@ export function PostCard({
 
   /* ── Full View ── */
   return (
-    <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+    <div className="bg-[#ffffff] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
       {/* Header */}
       <div className="flex items-center gap-3 p-5 pb-3">
         <Avatar className="h-11 w-11 cursor-pointer shrink-0" onClick={() => onUserClick?.(post.user)}>
           <AvatarImage src={post.user.avatar} /><AvatarFallback>{post.user.name[0]}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-[#2d2a26] truncate cursor-pointer" onClick={() => onUserClick?.(post.user)}>
+          <h4 className="font-semibold text-[var(--color-text)] truncate cursor-pointer" onClick={() => onUserClick?.(post.user)}>
             {post.user.name}
           </h4>
-          <p className="text-xs text-[#6b655e]">@{post.user.username} · {formatTimeAgo(post.createdAt)}</p>
+          <p className="text-xs text-[var(--color-text-dim)]">@{post.user.username} · {formatTimeAgo(post.createdAt)}</p>
         </div>
         {post.isFeatured && (
           <span className="shrink-0 flex items-center gap-1 px-3 py-1 text-xs font-medium bg-[#ff8d49] text-white rounded-full">
@@ -124,7 +124,7 @@ export function PostCard({
         {isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1.5 rounded-full hover:bg-[#fdfaf7]"><MoreHorizontal className="h-5 w-5 text-[#6b655e]" /></button>
+              <button className="p-1.5 rounded-full hover:bg-[#fdfaf7]"><MoreHorizontal className="h-5 w-5 text-[var(--color-text-dim)]" /></button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
               <DropdownMenuItem className="text-red-500">Delete</DropdownMenuItem>
@@ -134,7 +134,7 @@ export function PostCard({
       </div>
 
       {/* Content */}
-      <p className="text-sm text-[#2d2a26] leading-relaxed px-5 pb-4">{post.content}</p>
+      <p className="text-sm text-[var(--color-text)] leading-relaxed px-5 pb-4">{post.content}</p>
 
       {/* Image + Comments */}
       <div className="flex gap-5 px-5 pb-4">
@@ -153,8 +153,8 @@ export function PostCard({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between px-5 py-3 border-t border-[#f0ebe6]">
-        <div className="flex items-center gap-5 text-[#6b655e] text-sm">
+      <div className="flex items-center justify-between px-5 py-3 border-t border-[var(--color-border)]/30">
+        <div className="flex items-center gap-5 text-[var(--color-text-dim)] text-sm">
           <button onClick={handleLike} className="flex items-center gap-1.5">
             <ThumbsUp className={cn('h-4 w-4', liked && 'fill-current text-[#ff8d49]')} />
             {likes}
@@ -166,7 +166,7 @@ export function PostCard({
             <Share2 className="h-4 w-4" />Share
           </button>
         </div>
-        <button onClick={handleSave} className={cn('flex items-center gap-1', saved ? 'text-[#ff8d49]' : 'text-[#6b655e]')}>
+        <button onClick={handleSave} className={cn('flex items-center gap-1', saved ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
           <Bookmark className={cn('h-4 w-4', saved && 'fill-current')} />
           {saved && <span className="text-xs">Saved</span>}
         </button>

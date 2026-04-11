@@ -50,55 +50,55 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-[#2d2a26]/70" onClick={onClose} />
-      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden flex">
+      <div className="absolute inset-0 bg-[var(--color-text)]/70" onClick={onClose} />
+      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-[#ffffff] border border-[var(--color-border)] rounded-lg overflow-hidden flex">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 p-1.5 bg-[#2d2a26]/30 rounded-full text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
+          className="absolute top-3 right-3 z-10 p-1.5 bg-[var(--color-text)]/30 rounded-full text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
         >
           <X className="h-4 w-4" />
         </button>
 
         {/* Author Info */}
-        <div className="w-1/4 border-r border-[#e8e1da] p-6 flex flex-col">
+        <div className="w-1/4 border-r border-[var(--color-border)] p-6 flex flex-col">
           <div className="flex flex-col items-center text-center">
             <Avatar className="h-16 w-16 mb-3">
               <AvatarImage src={post.user.avatar} />
               <AvatarFallback>{post.user.name[0]}</AvatarFallback>
             </Avatar>
-            <h3 className="font-semibold text-[#2d2a26]">{post.user.name}</h3>
-            <p className="text-xs text-[#6b655e]">@{post.user.username}</p>
-            {post.user.bio && <p className="text-xs text-[#6b655e] mt-2 px-2">{post.user.bio}</p>}
+            <h3 className="font-semibold text-[var(--color-text)]">{post.user.name}</h3>
+            <p className="text-xs text-[var(--color-text-dim)]">@{post.user.username}</p>
+            {post.user.bio && <p className="text-xs text-[var(--color-text-dim)] mt-2 px-2">{post.user.bio}</p>}
             <div className="flex gap-6 mt-3">
-              <div><p className="font-semibold text-sm text-[#2d2a26]">{post.user.followers.toLocaleString()}</p><p className="text-[10px] text-[#6b655e]">Followers</p></div>
-              <div><p className="font-semibold text-sm text-[#2d2a26]">{post.user.following.toLocaleString()}</p><p className="text-[10px] text-[#6b655e]">Following</p></div>
+              <div><p className="font-semibold text-sm text-[var(--color-text)]">{post.user.followers.toLocaleString()}</p><p className="text-[10px] text-[var(--color-text-dim)]">Followers</p></div>
+              <div><p className="font-semibold text-sm text-[var(--color-text)]">{post.user.following.toLocaleString()}</p><p className="text-[10px] text-[var(--color-text-dim)]">Following</p></div>
             </div>
           </div>
-          <div className="mt-auto pt-5 border-t border-[#e8e1da]">
+          <div className="mt-auto pt-5 border-t border-[var(--color-border)]">
             <div className="flex items-center justify-around mb-3">
-              <button onClick={() => setLikedDelta((p) => (p === 0 ? 1 : 0))} className={cn('flex flex-col items-center gap-0.5', isLiked ? 'text-[#ff8d49]' : 'text-[#6b655e]')}>
+              <button onClick={() => setLikedDelta((p) => (p === 0 ? 1 : 0))} className={cn('flex flex-col items-center gap-0.5', isLiked ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
                 <Heart className={cn('h-5 w-5', isLiked && 'fill-current')} /><span className="text-xs font-medium">{displayLikes}</span>
               </button>
-              <div className="flex flex-col items-center gap-0.5 text-[#6b655e]">
+              <div className="flex flex-col items-center gap-0.5 text-[var(--color-text-dim)]">
                 <MessageCircle className="h-5 w-5" /><span className="text-xs font-medium">{post.comments.length}</span>
               </div>
-              <button onClick={() => setSaved(!saved)} className={cn('flex flex-col items-center gap-0.5', saved ? 'text-[#ff8d49]' : 'text-[#6b655e]')}>
+              <button onClick={() => setSaved(!saved)} className={cn('flex flex-col items-center gap-0.5', saved ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
                 <Bookmark className={cn('h-5 w-5', saved && 'fill-current')} />
               </button>
             </div>
-            <p className="text-[10px] text-[#6b655e] text-center">Posted {formatTimeAgo(post.createdAt)}</p>
+            <p className="text-[10px] text-[var(--color-text-dim)] text-center">Posted {formatTimeAgo(post.createdAt)}</p>
           </div>
         </div>
 
         {/* Image */}
         <div className="w-1/2 p-6 flex flex-col items-center justify-center bg-[#fdfaf7]">
           <img src={post.image} alt="" className="max-h-[65vh] w-auto object-contain rounded-lg" />
-          <p className="mt-4 text-center text-sm text-[#2d2a26] max-w-sm">{post.content}</p>
+          <p className="mt-4 text-center text-sm text-[var(--color-text)] max-w-sm">{post.content}</p>
           {post.isFeatured && <span className="mt-2 px-2.5 py-1 text-[10px] font-medium bg-[#ff8d49] text-white rounded-full">Featured</span>}
         </div>
 
         {/* Comments */}
-        <div className="w-1/4 border-l border-[#e8e1da] p-5 flex flex-col">
+        <div className="w-1/4 border-l border-[var(--color-border)] p-5 flex flex-col">
           <Comments comments={post.comments} onAddComment={(content) => onAddComment?.(post.id, content)} className="flex-1" />
         </div>
       </div>

@@ -92,13 +92,13 @@ export function BlockLibrary({
     <>
       <div className="flex flex-1 min-h-0 w-full flex-col bg-[#fdfaf7]">
         {/* Tabs */}
-        <div className="flex border-b border-[#e8e1da]">
+        <div className="flex border-b border-[#d4d4d4]">
           <button
             type="button"
             onClick={() => setActiveTab('library')}
             className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${activeTab === 'library'
-              ? 'border-b-2 border-[#ff8d49] text-[#2d2a26]'
-              : 'text-[#6b655e] hover:text-[#2d2a26]'
+              ? 'border-b-2 border-[#ff8d49] text-[#1a1a1a]'
+              : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
               }`}
           >
             Library
@@ -107,8 +107,8 @@ export function BlockLibrary({
             type="button"
             onClick={() => setActiveTab('myblocks')}
             className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${activeTab === 'myblocks'
-              ? 'border-b-2 border-[#ff8d49] text-[#2d2a26]'
-              : 'text-[#6b655e] hover:text-[#2d2a26]'
+              ? 'border-b-2 border-[#ff8d49] text-[#1a1a1a]'
+              : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
               }`}
           >
             My Blocks
@@ -120,9 +120,9 @@ export function BlockLibrary({
             <BlockSearch />
 
             {recentlyUsed.length > 0 && (
-              <div className="px-3 py-2 border-b border-[#e8e1da]">
+              <div className="px-3 py-2 border-b border-[#d4d4d4]">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[14px] leading-[20px] text-[#6b655e]">
+                  <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
                     Recently Used
                   </span>
                 </div>
@@ -145,7 +145,7 @@ export function BlockLibrary({
               </div>
             )}
 
-            <div className="px-3 py-1 text-[14px] leading-[20px] text-[#6b655e]">{total} blocks</div>
+            <div className="px-3 py-1 text-[14px] leading-[20px] text-[#4a4a4a]">{total} blocks</div>
 
             <div className="flex-1 overflow-y-auto px-3 py-1">
               {isLoading ? (
@@ -167,7 +167,7 @@ export function BlockLibrary({
                 </div>
               ) : blocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-[#6b655e]">No blocks found</p>
+                  <p className="text-[14px] leading-[20px] text-[#4a4a4a]">No blocks found</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -186,23 +186,23 @@ export function BlockLibrary({
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-[#e8e1da] px-3 py-2">
+              <div className="flex items-center justify-between border-t border-[#d4d4d4] px-3 py-2">
                 <button
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="bg-[#fdfaf7] text-[#6b655e] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
+                  className="bg-[#fdfaf7] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
                 >
                   {'\u2190'} Prev
                 </button>
-                <span className="text-[14px] leading-[20px] text-[#6b655e]">
+                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
                   {page} / {totalPages}
                 </span>
                 <button
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="bg-[#fdfaf7] text-[#6b655e] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
+                  className="bg-[#fdfaf7] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
                 >
                   Next {'\u2192'}
                 </button>
@@ -212,7 +212,7 @@ export function BlockLibrary({
         ) : (
           <>
             {isPro && (
-              <div className="flex gap-1 border-b border-[#e8e1da] px-3 py-1.5">
+              <div className="flex gap-1 border-b border-[#d4d4d4] px-3 py-1.5">
                 {(Object.keys(FILTER_LABELS) as BlockFilter[])
                   .filter((f) => f !== 'svg')
                   .map((filter) => (
@@ -221,8 +221,8 @@ export function BlockLibrary({
                       type="button"
                       onClick={() => setBlockFilter(filter)}
                       className={`rounded-full px-3 py-1 text-[14px] leading-[20px] transition-colors duration-150 ${blockFilter === filter
-                        ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                        : 'bg-[#fdfaf7] text-[#6b655e] hover:text-[#2d2a26]'
+                        ? 'bg-[#ff8d49] text-[#1a1a1a] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                        : 'bg-[#fdfaf7] text-[#4a4a4a] hover:text-[#1a1a1a]'
                         }`}
                     >
                       {FILTER_LABELS[filter]}
@@ -234,7 +234,7 @@ export function BlockLibrary({
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-[#6b655e]">Upgrade to Pro to create custom blocks</p>
+                  <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Upgrade to Pro to create custom blocks</p>
                 </div>
               ) : isLoadingUserBlocks ? (
                 <div className="grid grid-cols-3 gap-2">
@@ -244,7 +244,7 @@ export function BlockLibrary({
                 </div>
               ) : filteredUserBlocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-[#6b655e]">
+                  <p className="text-[14px] leading-[20px] text-[#4a4a4a]">
                     {blockFilter === 'photo'
                       ? 'No photo blocks yet'
                       : blockFilter === 'custom'
@@ -293,12 +293,12 @@ export function BlockLibrary({
               )}
             </div>
             {isPro && (
-              <div className="flex gap-2 border-t border-[#e8e1da] px-3 py-2">
+              <div className="flex gap-2 border-t border-[#d4d4d4] px-3 py-2">
                 {onOpenDrafting && (
                   <button
                     type="button"
                     onClick={onOpenDrafting}
-                    className="flex-1 rounded-full bg-[#ff8d49] text-[#2d2a26] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                    className="flex-1 rounded-full bg-[#ff8d49] text-[#1a1a1a] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
                   >
                     + Draft Block
                   </button>
@@ -307,7 +307,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenPhotoUpload}
-                    className="flex-1 rounded-full bg-[#ffffff] border border-[#e8e1da] px-4 py-2 text-[14px] leading-[20px] text-[#2d2a26] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                    className="flex-1 rounded-full bg-[#ffffff] border border-[#d4d4d4] px-4 py-2 text-[14px] leading-[20px] text-[#1a1a1a] hover:bg-[#ff8d49]/10 transition-colors duration-150"
                   >
                     + Photo Block
                   </button>

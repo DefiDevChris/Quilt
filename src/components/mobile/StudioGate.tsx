@@ -10,7 +10,7 @@ export function StudioGate() {
  height="48"
  viewBox="0 0 24 24"
  fill="none"
- stroke="#e8e1da"
+ stroke="#d4d4d4"
  strokeWidth="1.2"
  strokeLinecap="round"
  strokeLinejoin="round"
@@ -20,14 +20,14 @@ export function StudioGate() {
  <line x1="8" y1="21" x2="16" y2="21" />
  <line x1="12" y1="17" x2="12" y2="21" />
  </svg>
- <h1 className="text-xl font-bold text-[#2d2a26] mb-3">Your design is waiting</h1>
- <p className="text-sm text-[#6b655e] leading-relaxed max-w-xs mb-8">
+ <h1 className="text-xl font-bold text-[#1a1a1a] mb-3">Your design is waiting</h1>
+ <p className="text-sm text-[#4a4a4a] leading-relaxed max-w-xs mb-8">
  Open Quilt Studio on a desktop to continue editing. The full design studio needs a larger
  screen.
  </p>
  <Link
  href="/dashboard"
- className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#ff8d49] text-[#2d2a26] text-sm font-semibold transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+ className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-sm font-semibold transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
  >
  Back to Library
  </Link>

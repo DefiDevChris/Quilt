@@ -68,7 +68,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
     >
       {/* Format Selector */}
       <div className="mb-4">
-        <label className="text-xs font-medium text-[#2d2a26] block mb-1">Format</label>
+        <label className="text-xs font-medium text-[#1a1a1a] block mb-1">Format</label>
         <div className="grid grid-cols-3 gap-2">
           {(['png', 'jpeg', 'svg'] as const).map((fmt) => (
             <button
@@ -77,7 +77,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               onClick={() => setFormat(fmt)}
               className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
                 ? 'border-primary bg-primary text-white'
-                : 'border-[#e8e1da] bg-white text-[#2d2a26] hover:bg-[#ff8d49]/10'
+                : 'border-[#d4d4d4] bg-white text-[#1a1a1a] hover:bg-[#ff8d49]/10'
                 }`}
             >
               {fmt === 'png' ? 'PNG (lossless)' : fmt === 'jpeg' ? 'JPEG (smaller)' : 'SVG (vector)'}
@@ -89,7 +89,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
       {/* DPI Selector — hidden for SVG */}
       {format !== 'svg' && (
         <div className="mb-4">
-          <label className="text-xs font-medium text-[#2d2a26] block mb-1">
+          <label className="text-xs font-medium text-[#1a1a1a] block mb-1">
             Resolution (DPI)
           </label>
           <div className="grid grid-cols-4 gap-2">
@@ -100,14 +100,14 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 onClick={() => setDpi(opt)}
                 className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
                   ? 'border-primary bg-primary text-white'
-                  : 'border-[#e8e1da] bg-white text-[#2d2a26] hover:bg-[#ff8d49]/10'
+                  : 'border-[#d4d4d4] bg-white text-[#1a1a1a] hover:bg-[#ff8d49]/10'
                   }`}
               >
                 {opt}
               </button>
             ))}
           </div>
-          <p className="text-caption text-[#6b655e] mt-1">
+          <p className="text-caption text-[#4a4a4a] mt-1">
             {dpi === 72 && 'Screen resolution — smallest file'}
             {dpi === 150 && 'Good for sharing online'}
             {dpi === 300 && 'Print quality — recommended'}

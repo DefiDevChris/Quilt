@@ -7,16 +7,16 @@ export default function AdminLibrariesPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-[#6b655e] text-sm">Manage global system content available to all users.</p>
+      <p className="text-[#4a4a4a] text-sm">Manage global system content available to all users.</p>
 
-      <div className="flex border-b border-[#e8e1da]">
+      <div className="flex border-b border-[#d4d4d4]">
         {['fabrics', 'blocks', 'shop'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as 'fabrics' | 'blocks' | 'shop')}
             className={`px-4 py-2 font-medium text-sm transition-colors duration-150 ${activeTab === tab
               ? 'border-b-2 border-[#ff8d49] text-[#ff8d49]'
-              : 'text-[#6b655e] hover:text-[#2d2a26]'
+              : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
               }`}
           >
             {tab === 'shop' ? 'Shop Management' : tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -24,7 +24,7 @@ export default function AdminLibrariesPage() {
         ))}
       </div>
 
-      <div className="bg-[#ffffff] rounded-lg border border-[#e8e1da] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[#ffffff] rounded-lg border border-[#d4d4d4] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
         {activeTab === 'fabrics' && <FabricForm />}
         {activeTab === 'blocks' && <BlockForm />}
         {activeTab === 'shop' && <ShopManagement />}
@@ -83,78 +83,78 @@ function FabricForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-      <h3 className="text-lg font-semibold text-[#2d2a26]">Add New System Fabric</h3>
+      <h3 className="text-lg font-semibold text-[#1a1a1a]">Add New System Fabric</h3>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">Name *</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
         <input
           required
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">Image URL *</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">Image URL *</label>
         <input
           required
           type="text"
           name="imageUrl"
           value={formData.imageUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Thumbnail URL</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
           <input
             type="text"
             name="thumbnailUrl"
             value={formData.thumbnailUrl}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Manufacturer</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Manufacturer</label>
           <input
             type="text"
             name="manufacturer"
             value={formData.manufacturer}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">SKU</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">SKU</label>
           <input
             type="text"
             name="sku"
             value={formData.sku}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Collection</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Collection</label>
           <input
             type="text"
             name="collection"
             value={formData.collection}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Color Family</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Color Family</label>
           <input
             type="text"
             name="colorFamily"
             value={formData.colorFamily}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
       </div>
@@ -233,80 +233,80 @@ function BlockForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-      <h3 className="text-lg font-semibold text-[#2d2a26]">Add New System Block</h3>
+      <h3 className="text-lg font-semibold text-[#1a1a1a]">Add New System Block</h3>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">Name *</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
         <input
           required
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Category *</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Category *</label>
           <input
             required
             type="text"
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2d2a26]">Subcategory</label>
+          <label className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
           <input
             type="text"
             name="subcategory"
             value={formData.subcategory}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+            className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
           />
         </div>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">SVG Data *</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">SVG Data *</label>
         <textarea
           required
           name="svgData"
           value={formData.svgData}
           onChange={handleChange}
           rows={4}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff] font-mono text-sm"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">FabricJS JSON (optional)</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">FabricJS JSON (optional)</label>
         <textarea
           name="fabricJsDataStr"
           value={formData.fabricJsDataStr}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff] font-mono text-sm"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] font-mono text-sm"
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">Tags (comma separated)</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
         <input
           type="text"
           name="tagsStr"
           value={formData.tagsStr}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#2d2a26]">Thumbnail URL</label>
+        <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
         <input
           type="text"
           name="thumbnailUrl"
           value={formData.thumbnailUrl}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff]"
+          className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff]"
         />
       </div>
       <button
@@ -432,24 +432,24 @@ function ShopManagement() {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-[#2d2a26]">Shop Fabric Management</h3>
-      <p className="text-sm text-[#6b655e]">
+      <h3 className="text-lg font-semibold text-[#1a1a1a]">Shop Fabric Management</h3>
+      <p className="text-sm text-[#4a4a4a]">
         Set pricing, stock status, and purchasability for fabrics. Purchasable fabrics appear in the
         shop when it is enabled.
       </p>
 
       {/* Bulk Toggle */}
-      <div className="border border-[#e8e1da] rounded-lg p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-[#2d2a26]">Bulk Toggle by Manufacturer</h4>
+      <div className="border border-[#d4d4d4] rounded-lg p-4 space-y-3">
+        <h4 className="text-sm font-semibold text-[#1a1a1a]">Bulk Toggle by Manufacturer</h4>
         <div className="flex items-end gap-3">
           <div className="flex-1 space-y-1">
-            <label className="text-xs text-[#6b655e]">Manufacturer name</label>
+            <label className="text-xs text-[#4a4a4a]">Manufacturer name</label>
             <input
               type="text"
               value={bulkManufacturer}
               onChange={(e) => setBulkManufacturer(e.target.value)}
               placeholder="e.g. Kona Cotton"
-              className="w-full px-3 py-2 border border-[#e8e1da] rounded-lg bg-[#ffffff] text-sm"
+              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[#ffffff] text-sm"
             />
           </div>
           <button
@@ -469,7 +469,7 @@ function ShopManagement() {
             Remove All
           </button>
         </div>
-        {message && <p className="text-xs text-[#6b655e]">{message}</p>}
+        {message && <p className="text-xs text-[#4a4a4a]">{message}</p>}
       </div>
 
       {/* Fabric Table */}
@@ -483,29 +483,29 @@ function ShopManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e8e1da] text-left">
-                <th className="py-2 pr-4 text-[#6b655e] font-medium">Fabric</th>
-                <th className="py-2 pr-4 text-[#6b655e] font-medium">Manufacturer</th>
-                <th className="py-2 pr-4 text-[#6b655e] font-medium">Price/yd</th>
-                <th className="py-2 pr-4 text-[#6b655e] font-medium text-center">In Stock</th>
-                <th className="py-2 text-[#6b655e] font-medium text-center">Purchasable</th>
+              <tr className="border-b border-[#d4d4d4] text-left">
+                <th className="py-2 pr-4 text-[#4a4a4a] font-medium">Fabric</th>
+                <th className="py-2 pr-4 text-[#4a4a4a] font-medium">Manufacturer</th>
+                <th className="py-2 pr-4 text-[#4a4a4a] font-medium">Price/yd</th>
+                <th className="py-2 pr-4 text-[#4a4a4a] font-medium text-center">In Stock</th>
+                <th className="py-2 text-[#4a4a4a] font-medium text-center">Purchasable</th>
               </tr>
             </thead>
             <tbody>
               {fabricRows.map((fabric) => (
-                <tr key={fabric.id} className="border-b border-[#e8e1da]/50">
+                <tr key={fabric.id} className="border-b border-[#d4d4d4]/50">
                   <td className="py-2 pr-4">
                     <div className="flex items-center gap-2">
                       {fabric.hex && (
                         <div
-                          className="w-6 h-6 rounded-lg border border-[#e8e1da] flex-shrink-0"
+                          className="w-6 h-6 rounded-lg border border-[#d4d4d4] flex-shrink-0"
                           style={{ backgroundColor: fabric.hex }}
                         />
                       )}
-                      <span className="text-[#2d2a26] truncate max-w-[200px]">{fabric.name}</span>
+                      <span className="text-[#1a1a1a] truncate max-w-[200px]">{fabric.name}</span>
                     </div>
                   </td>
-                  <td className="py-2 pr-4 text-[#6b655e]">{fabric.manufacturer ?? '—'}</td>
+                  <td className="py-2 pr-4 text-[#4a4a4a]">{fabric.manufacturer ?? '—'}</td>
                   <td className="py-2 pr-4">
                     <input
                       type="number"
@@ -514,7 +514,7 @@ function ShopManagement() {
                       defaultValue={fabric.pricePerYard ?? ''}
                       onBlur={(e) => handlePriceUpdate(fabric.id, e.target.value)}
                       placeholder="0.00"
-                      className="w-20 px-2 py-1 border border-[#e8e1da] rounded-lg bg-[#ffffff] text-xs"
+                      className="w-20 px-2 py-1 border border-[#d4d4d4] rounded-lg bg-[#ffffff] text-xs"
                     />
                   </td>
                   <td className="py-2 text-center">
@@ -559,18 +559,18 @@ function ShopManagement() {
             type="button"
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1 text-xs text-[#6b655e] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
           >
             Previous
           </button>
-          <span className="text-xs text-[#6b655e]">
+          <span className="text-xs text-[#4a4a4a]">
             Page {page} of {totalPages}
           </span>
           <button
             type="button"
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1 text-xs text-[#6b655e] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
+            className="px-3 py-1 text-xs text-[#4a4a4a] rounded-lg hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150"
           >
             Next
           </button>

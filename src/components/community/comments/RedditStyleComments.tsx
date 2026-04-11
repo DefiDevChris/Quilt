@@ -110,7 +110,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
 
  {/* Empty */}
  {!isLoading && flat.length === 0 && (
- <p className="text-sm text-[#6b655e] py-4 px-12">No comments yet</p>
+ <p className="text-sm text-[#4a4a4a] py-4 px-12">No comments yet</p>
  )}
 
  {/* Comments */}
@@ -131,7 +131,7 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
  {sort === 'recent' && !showAll && hiddenCount > 0 && (
  <button
  onClick={() => setShowAll(true)}
- className="text-sm font-medium text-[#6b655e] hover:text-[#2d2a26] px-12 py-2 transition-colors"
+ className="text-sm font-medium text-[#4a4a4a] hover:text-[#1a1a1a] px-12 py-2 transition-colors"
  >
  View all {sorted.length} comments
  </button>
@@ -147,11 +147,11 @@ export function RedditStyleComments({ postId, currentUserId, isAdmin }: Comments
  onCancel={replyTo ? () => setReplyTo(null) : undefined}
  />
  ) : isPrivate ? (
- <div className="text-sm text-[#6b655e] py-4 px-12 text-center">
+ <div className="text-sm text-[#4a4a4a] py-4 px-12 text-center">
  Your account is set to private. Switch to public to comment.
  </div>
  ) : (
- <p className="text-xs text-[#6b655e] py-4 px-12">Sign in to comment</p>
+ <p className="text-xs text-[#4a4a4a] py-4 px-12">Sign in to comment</p>
  )}
  </div>
  </div>
@@ -257,7 +257,7 @@ function CommentInput({
  <button
  type="button"
  onClick={onCancel}
- className="text-xs text-[#6b655e] hover:text-[#2d2a26] transition-colors"
+ className="text-xs text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors"
  >
  Cancel
  </button>
@@ -279,8 +279,8 @@ function CommentSkeleton() {
  <div className="comment-row animate-pulse opacity-50">
  <div className="comment-avatar" />
  <div className="comment-body space-y-2">
- <div className="h-3 w-3/4 bg-[#f5f2ef] rounded-lg" />
- <div className="h-3 w-1/4 bg-[#f5f2ef] rounded-lg" />
+ <div className="h-3 w-3/4 bg-[#fdfaf7] rounded-lg" />
+ <div className="h-3 w-1/4 bg-[#fdfaf7] rounded-lg" />
  </div>
  </div>
  );

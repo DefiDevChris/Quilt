@@ -81,7 +81,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="absolute -top-16 left-6 md:left-12 z-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-3 text-sm text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150 group"
+            className="inline-flex items-center gap-3 text-sm text-[#4a4a4a] hover:text-[#ff8d49] transition-colors duration-150 group"
           >
             <span className="w-6 h-px bg-current" />
             <span className="text-[14px] leading-[20px]">Stories</span>
@@ -94,8 +94,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <span className="text-[14px] leading-[20px] text-[#ff8d49]">
               {post.category}
             </span>
-            <span className="w-6 h-px bg-[#e8e1da]" />
-            <time className="text-[14px] leading-[20px] text-[#6b655e]">
+            <span className="w-6 h-px bg-[#d4d4d4]" />
+            <time className="text-[14px] leading-[20px] text-[#4a4a4a]">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
                   month: 'long',
@@ -107,7 +107,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
 
           <h1
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#2d2a26] mb-10"
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#1a1a1a] mb-10"
             style={{ fontFamily: 'Spline Sans, sans-serif' }}
           >
             {post.title}
@@ -121,7 +121,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 className="w-10 h-10 rounded-full bg-[#ff8d49]/10 object-cover"
               />
             )}
-            <span className="text-[14px] leading-[20px] text-[#2d2a26]">{post.authorName}</span>
+            <span className="text-[14px] leading-[20px] text-[#1a1a1a]">{post.authorName}</span>
           </div>
         </header>
 

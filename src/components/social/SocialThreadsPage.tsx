@@ -121,13 +121,13 @@ export function SocialThreadsPage() {
             <FilterBar viewMode={viewMode} filterMode={filterMode} onViewModeChange={setViewMode} onFilterModeChange={setFilterMode} />
 
             {showSavedPanel && (
-              <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-5">
+              <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-semibold text-[#2d2a26]">Saved Posts ({savedPostsData.length})</h3>
-                  <button onClick={() => setShowSavedPanel(false)} className="text-sm text-[#6b655e]">Close</button>
+                  <h3 className="text-base font-semibold text-[var(--color-text)]">Saved Posts ({savedPostsData.length})</h3>
+                  <button onClick={() => setShowSavedPanel(false)} className="text-sm text-[var(--color-text-dim)]">Close</button>
                 </div>
                 {savedPostsData.length === 0 ? (
-                  <p className="text-sm text-[#6b655e] text-center py-6">No saved posts yet.</p>
+                  <p className="text-sm text-[var(--color-text-dim)] text-center py-6">No saved posts yet.</p>
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
                     {savedPostsData.map((post) => (
@@ -165,12 +165,12 @@ export function SocialThreadsPage() {
             )}
 
             {!hasMorePosts && filteredPosts.length > 0 && (
-              <p className="text-sm text-[#6b655e] text-center pt-2">You&apos;ve reached the end.</p>
+              <p className="text-sm text-[var(--color-text-dim)] text-center pt-2">You&apos;ve reached the end.</p>
             )}
 
             {filteredPosts.length === 0 && searchQuery && (
               <div className="text-center py-12">
-                <p className="text-[#6b655e] mb-2">No posts found for &quot;{searchQuery}&quot;</p>
+                <p className="text-[var(--color-text-dim)] mb-2">No posts found for &quot;{searchQuery}&quot;</p>
                 <button onClick={() => setSearchQuery('')} className="text-sm text-[#ff8d49]">Clear search</button>
               </div>
             )}

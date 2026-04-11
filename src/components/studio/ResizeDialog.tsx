@@ -99,23 +99,23 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  return (
  <div
  ref={containerRef}
- className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40"
+ className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40"
  onClick={(e) => {
  if (e.target === e.currentTarget) onClose();
  }}
  >
  <div
- className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] w-[380px] max-w-[90vw]"
+ className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] w-[380px] max-w-[90vw]"
  role="dialog"
  aria-label="Resize Quilt"
  >
  {step === null ? (
  <div className="p-6">
- <h2 className="text-title-lg text-[#2d2a26] font-semibold mb-4">Resize Quilt</h2>
+ <h2 className="text-title-lg text-[var(--color-text)] font-semibold mb-4">Resize Quilt</h2>
 
  <div className="flex items-end gap-3 mb-4">
  <div className="flex-1">
- <label htmlFor="resize-width" className="block text-label-sm text-[#6b655e] mb-1">
+ <label htmlFor="resize-width" className="block text-label-sm text-[var(--color-text-dim)] mb-1">
  Width ({unitLabel})
  </label>
  <input
@@ -126,7 +126,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  step={0.25}
  value={width}
  onChange={(e) => handleWidthChange(Number(e.target.value))}
- className="w-full px-3 py-2 bg-[#f5f2ef] rounded-lg border border-[#e8e1da]/20 text-body-md text-[#2d2a26] focus:outline-none focus:ring-2 focus:ring-primary/30"
+ className="w-full px-3 py-2 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)]/20 text-body-md text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-primary/30"
  />
  </div>
 
@@ -134,7 +134,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  type="button"
  title={lockAspectRatio ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
  onClick={() => setLockAspectRatio((prev) => !prev)}
- className="w-10 h-10 flex items-center justify-center text-[#6b655e] hover:text-[#2d2a26] transition-colors"
+ className="w-10 h-10 flex items-center justify-center text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
  >
  {lockAspectRatio ? (
  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -174,7 +174,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  </button>
 
  <div className="flex-1">
- <label htmlFor="resize-height" className="block text-label-sm text-[#6b655e] mb-1">
+ <label htmlFor="resize-height" className="block text-label-sm text-[var(--color-text-dim)] mb-1">
  Height ({unitLabel})
  </label>
  <input
@@ -185,18 +185,18 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  step={0.25}
  value={height}
  onChange={(e) => handleHeightChange(Number(e.target.value))}
- className="w-full px-3 py-2 bg-[#f5f2ef] rounded-lg border border-[#e8e1da]/20 text-body-md text-[#2d2a26] focus:outline-none focus:ring-2 focus:ring-primary/30"
+ className="w-full px-3 py-2 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)]/20 text-body-md text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-primary/30"
  />
  </div>
  </div>
 
- <p className="text-body-sm text-[#6b655e] mb-4">Current: {formattedCurrent}</p>
+ <p className="text-body-sm text-[var(--color-text-dim)] mb-4">Current: {formattedCurrent}</p>
 
  <div className="flex justify-end gap-2">
  <button
  type="button"
  onClick={onClose}
- className="bg-[#fdfaf7] px-4 py-2 text-body-md text-[#6b655e] rounded-lg"
+ className="bg-[var(--color-bg)] px-4 py-2 text-body-md text-[var(--color-text-dim)] rounded-full"
  >
  Cancel
  </button>
@@ -204,7 +204,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  type="button"
  disabled={isSameDimensions}
  onClick={handleSubmit}
- className="px-6 py-2 text-[13px] font-semibold text-[#2d2a26] bg-[#ff8d49] rounded-lg hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+ className="px-6 py-2 text-[13px] font-semibold text-[var(--color-text)] bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
  >
  Continue
  </button>
@@ -212,18 +212,18 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  </div>
  ) : (
  <div className="p-6">
- <h2 className="text-title-lg text-[#2d2a26] font-semibold mb-2">Confirm Resize</h2>
- <p className="text-body-md text-[#6b655e] mb-6">
+ <h2 className="text-title-lg text-[var(--color-text)] font-semibold mb-2">Confirm Resize</h2>
+ <p className="text-body-md text-[var(--color-text-dim)] mb-6">
  This changes the entire quilt dimensions from {formattedCurrent} to {formattedNew}.
  </p>
 
  {layoutType !== 'none' && (
- <label className="flex items-center gap-2 mb-4 text-body-sm text-[#6b655e] cursor-pointer">
+ <label className="flex items-center gap-2 mb-4 text-body-sm text-[var(--color-text-dim)] cursor-pointer">
  <input
  type="checkbox"
  checked={tilePattern}
  onChange={(e) => setTilePattern(e.target.checked)}
- className="rounded border-[#e8e1da]"
+ className="rounded border-[var(--color-border)]"
  />
  Tile existing pattern into new blocks
  </label>
@@ -233,21 +233,21 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  <button
  type="button"
  onClick={() => handleConfirm('scale')}
- className="w-full px-4 py-2.5 text-[13px] font-semibold text-[#2d2a26] bg-[#ff8d49] rounded-lg hover:bg-[#e67d3f] transition-colors duration-150"
+ className="w-full px-4 py-2.5 text-[13px] font-semibold text-[var(--color-text)] bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] transition-colors duration-150"
  >
  Resize Current Pattern
  </button>
  <button
  type="button"
  onClick={() => handleConfirm('add-blocks')}
- className="w-full px-4 py-2.5 text-body-md text-[#2d2a26] rounded-lg hover:bg-[#e8e1da] transition-colors border border-[#e8e1da]/20"
+ className="w-full px-4 py-2.5 text-body-md text-[var(--color-text)] rounded-full hover:bg-[var(--color-border)] transition-colors border border-[var(--color-border)]/20"
  >
  {getAddBlocksLabel()}
  </button>
  <button
  type="button"
  onClick={onClose}
- className="bg-[#fdfaf7] w-full px-4 py-2.5 text-body-md text-[#2d2a26] rounded-lg"
+ className="bg-[var(--color-bg)] w-full px-4 py-2.5 text-body-md text-[var(--color-text)] rounded-full"
  >
  Keep {formattedCurrent}
  </button>

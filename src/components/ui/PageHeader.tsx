@@ -15,19 +15,19 @@ export function PageHeader({ label, title, description, action }: PageHeaderProp
           {label && (
             <div className="flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-lg bg-[#ff8d49] animate-pulse" />
-              <p className="text-[#6b655e] text-[14px] leading-[20px] font-normal">
+              <p className="text-[#4a4a4a] text-[14px] leading-[20px] font-normal">
                 {label}
               </p>
             </div>
           )}
           <h1
-            className="text-[#2d2a26] text-[40px] leading-[52px] font-normal"
+            className="text-[#1a1a1a] text-[40px] leading-[52px] font-normal"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             {title}
           </h1>
           {description && (
-            <p className="text-[#6b655e] text-[18px] leading-[28px] font-normal">
+            <p className="text-[#4a4a4a] text-[18px] leading-[28px] font-normal">
               {description}
             </p>
           )}
@@ -38,7 +38,7 @@ export function PageHeader({ label, title, description, action }: PageHeaderProp
           </div>
         )}
       </div>
-      <div className="mt-8 h-px w-full bg-[#e8e1da]" />
+      <div className="mt-8 h-px w-full bg-[#d4d4d4]" />
     </div>
   );
 }

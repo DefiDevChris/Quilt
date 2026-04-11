@@ -155,16 +155,16 @@ export function QuickInfo() {
 
   return (
     <div
-      className="absolute z-40 min-w-[160px] rounded-lg border border-[#e8e1da] bg-[#fdfaf7] p-2 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      className="absolute z-40 min-w-[160px] rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] p-2 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
-      <div className="mb-1 text-caption font-semibold uppercase tracking-wider text-[#6b655e]">
+      <div className="mb-1 text-caption font-semibold uppercase tracking-wider text-[#4a4a4a]">
         Quick Info
       </div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
         {fields.map(({ key, label, suffix }) => (
           <div key={key} className="flex items-center gap-1 text-xs">
-            <span className="w-8 text-[#6b655e]">{label}</span>
+            <span className="w-8 text-[#4a4a4a]">{label}</span>
             {editField === key ? (
               <input
                 ref={inputRef}
@@ -177,11 +177,11 @@ export function QuickInfo() {
                   if (e.key === 'Enter') applyEdit(key, editValue);
                   if (e.key === 'Escape') setEditField(null);
                 }}
-                className="w-16 rounded-lg border border-[#e8e1da] bg-[#ffffff] px-1 py-0 font-mono text-xs text-[#2d2a26] outline-none focus:outline-2 focus:outline-[#ff8d49]"
+                className="w-16 rounded-lg border border-[#d4d4d4] bg-[#ffffff] px-1 py-0 font-mono text-xs text-[#1a1a1a] outline-none focus:outline-2 focus:outline-[#ff8d49]"
                 autoFocus
               />
             ) : key === 'area' ? (
-              <span className="font-mono text-[#2d2a26]">
+              <span className="font-mono text-[#1a1a1a]">
                 {info[key]}
                 {suffix}
               </span>
@@ -192,7 +192,7 @@ export function QuickInfo() {
                   setEditField(key);
                   setEditValue(String(info[key]));
                 }}
-                className="cursor-text rounded px-0.5 font-mono text-[#2d2a26] hover:bg-[#ff8d49]/10"
+                className="cursor-text rounded px-0.5 font-mono text-[#1a1a1a] hover:bg-[#ff8d49]/10"
                 title="Click to edit"
               >
                 {info[key]}

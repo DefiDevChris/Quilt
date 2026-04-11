@@ -41,19 +41,19 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
           <div className="relative h-9 w-9 shrink-0">
             <Image src="/logo.png" alt="QuiltCorgi" fill className="object-contain" />
           </div>
-          <span className="text-lg font-bold text-[#2d2a26]">QuiltCorgi</span>
+          <span className="text-lg font-bold text-[var(--color-text)]">QuiltCorgi</span>
         </div>
 
         {/* Search */}
         <div className="flex-1 max-w-md mx-8">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b655e]" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-dim)]" />
             <Input
               type="search"
               placeholder="Search posts, people, hashtags..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full pl-10 pr-4 h-10 bg-[#fdfaf7] border border-[#e8e1da] rounded-full text-sm"
+              className="w-full pl-10 pr-4 h-10 bg-[#fdfaf7] border border-[var(--color-border)] rounded-full text-sm"
             />
           </div>
         </div>
@@ -64,7 +64,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
             variant="ghost"
             size="icon"
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="h-8 w-8 text-[#6b655e]"
+            className="h-8 w-8 text-[var(--color-text-dim)]"
           >
             {isDarkMode ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
           </Button>
@@ -74,7 +74,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               variant="ghost"
               size="icon"
               onClick={onSavedClick}
-              className="h-8 w-8 relative text-[#6b655e]"
+              className="h-8 w-8 relative text-[var(--color-text-dim)]"
             >
               <Bell className="h-4.5 w-4.5" />
               <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-[#ff8d49] text-[9px] font-bold text-white flex items-center justify-center">
@@ -85,7 +85,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 relative text-[#6b655e]">
+              <Button variant="ghost" size="icon" className="h-8 w-8 relative text-[var(--color-text-dim)]">
                 <Bell className="h-4.5 w-4.5" />
                 <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-[#ff8d49] text-[9px] font-bold text-white flex items-center justify-center">
                   3
@@ -105,7 +105,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                   </div>
                   <div className="flex-1">
                     <p className="text-sm"><span className="font-medium">Emma Wilson</span> liked your post</p>
-                    <p className="text-xs text-[#6b655e]">2 min ago</p>
+                    <p className="text-xs text-[var(--color-text-dim)]">2 min ago</p>
                   </div>
                 </div>
               </DropdownMenuItem>
@@ -119,7 +119,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                   </div>
                   <div className="flex-1">
                     <p className="text-sm"><span className="font-medium">Alex Chen</span> commented on your post</p>
-                    <p className="text-xs text-[#6b655e]">15 min ago</p>
+                    <p className="text-xs text-[var(--color-text-dim)]">15 min ago</p>
                   </div>
                 </div>
               </DropdownMenuItem>
@@ -133,7 +133,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                   </div>
                   <div className="flex-1">
                     <p className="text-sm"><span className="font-medium">Olivia Parker</span> started following you</p>
-                    <p className="text-xs text-[#6b655e]">1 hour ago</p>
+                    <p className="text-xs text-[var(--color-text-dim)]">1 hour ago</p>
                   </div>
                 </div>
               </DropdownMenuItem>
@@ -148,10 +148,10 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                   <AvatarFallback>SM</AvatarFallback>
                 </Avatar>
                 <div className="text-left leading-tight">
-                  <p className="text-sm font-medium text-[#2d2a26]">Sarah Mitchell</p>
-                  <p className="text-xs text-[#6b655e]">@sarahm</p>
+                  <p className="text-sm font-medium text-[var(--color-text)]">Sarah Mitchell</p>
+                  <p className="text-xs text-[var(--color-text-dim)]">@sarahm</p>
                 </div>
-                <ChevronDown className="h-4 w-4 text-[#6b655e]" />
+                <ChevronDown className="h-4 w-4 text-[var(--color-text-dim)]" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">

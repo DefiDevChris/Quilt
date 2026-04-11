@@ -119,7 +119,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-[#fdfaf7] select-none">
+    <div className="h-screen flex flex-col bg-[var(--color-bg)] select-none">
       <StudioTopBar
         onOpenImageExport={dialogs.openImageExport}
         onOpenPdfExport={dialogs.openPdfExport}
@@ -161,15 +161,15 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
                 {/* Reference photo split pane */}
                 {showReferencePanel && referenceImageUrl && (
-                  <div className="w-1/2 border-l border-[#e8e1da]/20 bg-[#fdfaf7]/30 flex flex-col overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2 border-b border-[#e8e1da]/15">
-                      <span className="text-[12px] font-semibold text-[#2d2a26]/60 ">
+                  <div className="w-1/2 border-l border-[var(--color-border)]/20 bg-[var(--color-bg)]/30 flex flex-col overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--color-border)]/15">
+                      <span className="text-[12px] font-semibold text-[var(--color-text)]/60 ">
                         Reference Photo
                       </span>
                       <button
                         type="button"
                         onClick={() => useCanvasStore.getState().setShowReferencePanel(false)}
-                        className="w-6 h-6 flex items-center justify-center rounded-lg text-[#2d2a26]/40 hover:text-[#2d2a26] hover:bg-[#f5f2ef] transition-colors"
+                        className="w-6 h-6 flex items-center justify-center rounded-lg text-[var(--color-text)]/40 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
                         aria-label="Close reference panel"
                       >
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

@@ -87,10 +87,10 @@ export function VerifyEmailForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-[#2d2a26]">
+        <h1 className="text-headline-md font-bold text-[#1a1a1a]">
           Verify your email
         </h1>
-        <p className="mt-2 text-sm text-[#6b655e] text-center">
+        <p className="mt-2 text-sm text-[#4a4a4a] text-center">
           We sent a verification code to your email. Enter it below to verify your account.
         </p>
       </div>
@@ -111,7 +111,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="verify-email"
-            className="block text-sm font-medium text-[#6b655e] mb-1.5"
+            className="block text-sm font-medium text-[#4a4a4a] mb-1.5"
           >
             Email
           </label>
@@ -121,7 +121,7 @@ export function VerifyEmailForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150"
+            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
             placeholder="you@example.com"
             autoComplete="email"
           />
@@ -130,7 +130,7 @@ export function VerifyEmailForm() {
         <div>
           <label
             htmlFor="code"
-            className="block text-sm font-medium text-[#6b655e] mb-1.5"
+            className="block text-sm font-medium text-[#4a4a4a] mb-1.5"
           >
             Verification Code
           </label>
@@ -143,7 +143,7 @@ export function VerifyEmailForm() {
             maxLength={6}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            className="w-full bg-[#fdfaf7] border-b border-[#e8e1da] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#2d2a26] placeholder:text-[#6b655e] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
+            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-base text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
             placeholder="000000"
           />
         </div>
@@ -168,7 +168,7 @@ export function VerifyEmailForm() {
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-[#6b655e]">
+      <p className="mt-6 text-center text-sm text-[#4a4a4a]">
         <Link href="/auth/signin" className="text-primary hover:underline font-medium">
           Back to sign in
         </Link>

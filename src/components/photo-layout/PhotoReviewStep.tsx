@@ -198,8 +198,8 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Review your pattern</h3>
-        <p className="text-body-sm text-[#6b655e] mt-1">
+        <h3 className="text-headline-sm font-semibold text-[#1a1a1a]">Review your pattern</h3>
+        <p className="text-body-sm text-[#4a4a4a] mt-1">
           We found <strong>{scaledPieces.length}</strong> pieces in <strong>{classCount}</strong>{' '}
           shape classes. Adjust if needed, or send straight to the studio.
         </p>
@@ -214,8 +214,8 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
             onClick={() => setViewMode(mode)}
             className={`px-4 py-2 rounded-full text-label-sm font-medium transition-colors duration-150 border ${
               viewMode === mode
-                ? 'bg-[#ff8d49] text-[#2d2a26] border-[#ff8d49]'
-                : 'bg-[#ffffff] border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da]'
+                ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]'
+                : 'bg-[#ffffff] border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4]'
             }`}
           >
             {mode === 'overlay' ? 'Overlay' : mode === 'outlines' ? 'Outlines only' : 'Photo only'}
@@ -224,7 +224,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
       </div>
 
       {/* Preview surface */}
-      <div className="relative rounded-lg overflow-hidden border border-[#e8e1da] bg-[#fdfaf7] aspect-[4/3]">
+      <div className="relative rounded-lg overflow-hidden border border-[#d4d4d4] bg-[#fdfaf7] aspect-[4/3]">
         {/* Source photo layer */}
         {viewMode !== 'outlines' && originalImageUrl && (
           <img
@@ -252,7 +252,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
                   key={piece.id}
                   points={points}
                   fill={isSelected ? 'rgba(255,141,73,0.25)' : 'transparent'}
-                  stroke={isSelected ? '#ff8d49' : '#2d2a26'}
+                  stroke={isSelected ? '#ff8d49' : '#1a1a1a'}
                   strokeWidth={isSelected ? strokeWidth * 2 : strokeWidth}
                   strokeLinejoin="miter"
                   vectorEffect="non-scaling-stroke"
@@ -269,7 +269,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
 
         {scaledPieces.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-body-sm text-[#6b655e]">
+            <p className="text-body-sm text-[#4a4a4a]">
               No pieces extracted. Try adjusting scan settings and re-scanning.
             </p>
           </div>
@@ -278,20 +278,20 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
 
       {/* Class breakdown */}
       {currentClassCounts.length > 0 && (
-        <div className="rounded-lg border border-[#e8e1da] bg-[#ffffff] p-3">
-          <p className="text-label-sm text-[#6b655e] mb-2">Detected shape classes</p>
+        <div className="rounded-lg border border-[#d4d4d4] bg-[#ffffff] p-3">
+          <p className="text-label-sm text-[#4a4a4a] mb-2">Detected shape classes</p>
           <div className="flex flex-wrap gap-2">
             {currentClassCounts.slice(0, 12).map((c) => (
               <span
                 key={c.key}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fdfaf7] border border-[#e8e1da] text-label-xs text-[#2d2a26]"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-label-xs text-[#1a1a1a]"
               >
                 <span>{c.label}</span>
-                <span className="text-[#6b655e]">×{c.count}</span>
+                <span className="text-[#4a4a4a]">×{c.count}</span>
               </span>
             ))}
             {currentClassCounts.length > 12 && (
-              <span className="text-label-xs text-[#6b655e] px-2 py-1">
+              <span className="text-label-xs text-[#4a4a4a] px-2 py-1">
                 +{currentClassCounts.length - 12} more
               </span>
             )}
@@ -300,20 +300,20 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
       )}
 
       {/* Tuning controls */}
-      <div className="rounded-lg border border-[#e8e1da] bg-[#ffffff] p-4 space-y-3">
+      <div className="rounded-lg border border-[#d4d4d4] bg-[#ffffff] p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <p className="text-body-sm font-medium text-[#2d2a26]">Fine-tune quantization</p>
+          <p className="text-body-sm font-medium text-[#1a1a1a]">Fine-tune quantization</p>
           <button
             type="button"
             onClick={handleResetOverrides}
-            className="text-label-xs text-[#6b655e] hover:text-[#ff8d49] transition-colors duration-150"
+            className="text-label-xs text-[#4a4a4a] hover:text-[#ff8d49] transition-colors duration-150"
           >
             Reset
           </button>
         </div>
 
         <div>
-          <label className="block text-label-sm text-[#2d2a26] mb-1">
+          <label className="block text-label-sm text-[#1a1a1a] mb-1">
             Base unit:{' '}
             {unitOverridePx !== null
               ? `${unitOverridePx.toFixed(0)} px (override)`
@@ -332,7 +332,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
             <button
               type="button"
               onClick={() => setUnitOverridePx(null)}
-              className="mt-1 text-label-xs text-[#6b655e] hover:text-[#ff8d49]"
+              className="mt-1 text-label-xs text-[#4a4a4a] hover:text-[#ff8d49]"
             >
               Use auto-inferred
             </button>
@@ -340,7 +340,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
         </div>
 
         <div>
-          <label className="block text-label-sm text-[#2d2a26] mb-1">
+          <label className="block text-label-sm text-[#1a1a1a] mb-1">
             Rotation offset: {rotationOffsetDeg.toFixed(1)}° (auto {inferredRotationDeg.toFixed(1)}
             °)
           </label>
@@ -356,7 +356,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
         </div>
 
         <div>
-          <label className="block text-label-sm text-[#2d2a26] mb-1">
+          <label className="block text-label-sm text-[#1a1a1a] mb-1">
             Minimum piece area: {minAreaPx} px²
           </label>
           <input
@@ -375,7 +375,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
             type="button"
             onClick={handleRequantize}
             disabled={isBusy || detectedPieces.length === 0}
-            className="px-4 py-2 rounded-full text-label-sm font-medium bg-[#ff8d49] text-[#2d2a26] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50"
+            className="px-4 py-2 rounded-full text-label-sm font-medium bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50"
           >
             {isBusy ? 'Re-snapping…' : 'Re-snap to grid'}
           </button>
@@ -391,7 +391,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
             type="button"
             onClick={handleUndo}
             disabled={!canUndo}
-            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150 disabled:opacity-50"
+            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150 disabled:opacity-50"
           >
             Undo last change
           </button>
@@ -399,13 +399,13 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
             type="button"
             onClick={handleDeleteSelected}
             disabled={selectedIds.size === 0}
-            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150 disabled:opacity-50"
+            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150 disabled:opacity-50"
           >
             Delete {selectedIds.size > 0 ? `(${selectedIds.size})` : 'selected'}
           </button>
         </div>
 
-        {message && <p className="text-label-xs text-[#6b655e] pt-1">{message}</p>}
+        {message && <p className="text-label-xs text-[#4a4a4a] pt-1">{message}</p>}
       </div>
 
       {/* Action row */}
@@ -413,7 +413,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2 rounded-full text-label-sm font-medium border border-[#e8e1da] text-[#6b655e] hover:bg-[#e8e1da] transition-colors duration-150"
+          className="px-5 py-2 rounded-full text-label-sm font-medium border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#d4d4d4] transition-colors duration-150"
         >
           Back to settings
         </button>
@@ -421,7 +421,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
           type="button"
           onClick={onConfirm}
           disabled={scaledPieces.length === 0}
-          className="flex-1 bg-[#ff8d49] text-[#2d2a26] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-50"
+          className="flex-1 bg-[#ff8d49] text-[#1a1a1a] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-50"
         >
           Send to Studio
         </button>

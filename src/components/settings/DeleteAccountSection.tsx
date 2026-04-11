@@ -22,7 +22,7 @@ Thank you`);
         <div className="w-1.5 h-8 bg-[#ff8d49] rounded-lg" />
         <div>
           <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-1">Account Settings</p>
-          <h2 className="text-[24px] leading-[32px] text-[#2d2a26]">Delete Account</h2>
+          <h2 className="text-[24px] leading-[32px] text-[#1a1a1a]">Delete Account</h2>
         </div>
       </div>
 
@@ -34,10 +34,10 @@ Thank you`);
 
           <div className="flex-1 space-y-6">
             <div className="space-y-3">
-              <h3 className="text-[18px] leading-[28px] text-[#2d2a26]">
+              <h3 className="text-[18px] leading-[28px] text-[#1a1a1a]">
                 Request Account Deletion
               </h3>
-              <p className="text-[16px] leading-[24px] text-[#6b655e] max-w-xl">
+              <p className="text-[16px] leading-[24px] text-[#4a4a4a] max-w-xl">
                 This will permanently remove all your projects, fabric archives,
                 community designs, and profile data. This action cannot be undone.
               </p>
@@ -45,7 +45,7 @@ Thank you`);
 
             <button
               onClick={handleDeleteRequest}
-              className="group flex items-center gap-4 px-8 py-4 bg-[#ff8d49] text-[#2d2a26] rounded-full text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="group flex items-center gap-4 px-8 py-4 bg-[#ff8d49] text-[#1a1a1a] rounded-full text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             >
               <Mail size={16} />
               Request Account Deletion

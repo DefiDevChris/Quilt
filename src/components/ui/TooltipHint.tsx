@@ -60,7 +60,7 @@ export function TooltipHint({
  {showTooltip && tooltipPos
  ? createPortal(
  <div
- className="fixed bg-[#e8e1da] text-[#2d2a26] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
+ className="fixed bg-[#d4d4d4] text-[#1a1a1a] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 z-[9999] pointer-events-none min-w-[280px] max-w-[320px]"
  style={{
  top: `${tooltipPos.top}px`,
  left: `${tooltipPos.left}px`,
@@ -70,12 +70,12 @@ export function TooltipHint({
  <div className="flex items-center gap-2 mb-1">
  <span className="text-body-md font-semibold">{name}</span>
  {shortcut && (
- <span className="font-mono text-sm text-[#6b655e] bg-[#f5f2ef] px-1.5 py-0.5 rounded">
+ <span className="font-mono text-sm text-[#4a4a4a] bg-[#fdfaf7] px-1.5 py-0.5 rounded">
  {shortcut}
  </span>
  )}
  </div>
- <p className="text-body-md text-[#6b655e] leading-relaxed">{description}</p>
+ <p className="text-body-md text-[#4a4a4a] leading-relaxed">{description}</p>
  </div>,
  document.body,
  )

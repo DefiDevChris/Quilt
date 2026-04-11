@@ -25,14 +25,14 @@ function ContextualHelpSection() {
 
  return (
  <section className="mb-5">
- <h3 className="text-label-sm uppercase text-[#6b655e] font-medium mb-2">
+ <h3 className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-2">
  About this tool
  </h3>
- <div className="bg-[#f5f2ef] rounded-lg p-3">
- <div className="text-body-sm font-medium text-[#2d2a26] capitalize mb-1">
+ <div className="bg-[var(--color-bg)] rounded-lg p-3">
+ <div className="text-body-sm font-medium text-[var(--color-text)] capitalize mb-1">
  {activeTool} tool
  </div>
- <p className="text-body-sm text-[#6b655e] leading-relaxed">{help}</p>
+ <p className="text-body-sm text-[var(--color-text-dim)] leading-relaxed">{help}</p>
  </div>
  </section>
  );
@@ -41,23 +41,23 @@ function ContextualHelpSection() {
 function ShortcutsSection() {
  return (
  <section className="mb-5">
- <h3 className="text-label-sm uppercase text-[#6b655e] font-medium mb-2">
+ <h3 className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-2">
  Keyboard Shortcuts
  </h3>
- <div className="bg-[#f5f2ef] rounded-lg overflow-hidden">
+ <div className="bg-[var(--color-bg)] rounded-lg overflow-hidden">
  <table className="w-full text-body-sm">
  <tbody>
  {KEYBOARD_SHORTCUTS.map((shortcut) => (
  <tr
  key={shortcut.key}
- className="border-b border-[#e8e1da]/[0.08] last:border-0"
+ className="border-b border-[var(--color-border)]/[0.08] last:border-0"
  >
- <td className="px-3 py-1.5 text-[#6b655e] w-[120px]">
- <span className="font-mono bg-[#e8e1da] px-1.5 py-0.5 rounded-lg text-[#2d2a26]">
+ <td className="px-3 py-1.5 text-[var(--color-text-dim)] w-[120px]">
+ <span className="font-mono bg-[var(--color-border)] px-1.5 py-0.5 rounded-lg text-[var(--color-text)]">
  {shortcut.label}
  </span>
  </td>
- <td className="px-3 py-1.5 text-[#2d2a26]">{shortcut.description}</td>
+ <td className="px-3 py-1.5 text-[var(--color-text)]">{shortcut.description}</td>
  </tr>
  ))}
  </tbody>
@@ -82,26 +82,26 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
 
  return (
  <section className="mb-5">
- <h3 className="text-label-sm uppercase text-[#6b655e] font-medium mb-2">
+ <h3 className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-2">
  FAQ
  </h3>
  {Object.entries(grouped).map(([category, categoryEntries]) => (
  <div key={category} className="mb-3">
- <div className="text-body-sm font-medium text-[#2d2a26] mb-1">
+ <div className="text-body-sm font-medium text-[var(--color-text)] mb-1">
  {FAQ_CATEGORY_LABELS[category as FaqCategory]}
  </div>
- <div className="bg-[#f5f2ef] rounded-lg overflow-hidden">
+ <div className="bg-[var(--color-bg)] rounded-lg overflow-hidden">
  {categoryEntries.map((entry) => {
  const isOpen = openId === entry.id;
  return (
  <div
  key={entry.id}
- className="border-b border-[#e8e1da]/[0.08] last:border-0"
+ className="border-b border-[var(--color-border)]/[0.08] last:border-0"
  >
  <button
  type="button"
  onClick={() => toggle(entry.id)}
- className="w-full flex items-center justify-between px-3 py-2.5 text-body-sm text-[#2d2a26] hover:bg-[#e8e1da] transition-colors text-left"
+ className="w-full flex items-center justify-between px-3 py-2.5 text-body-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors text-left"
  >
  <span>{entry.title}</span>
  <svg
@@ -121,7 +121,7 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
  </svg>
  </button>
  {isOpen && (
- <div className="px-3 pb-3 text-body-sm text-[#6b655e] leading-relaxed">
+ <div className="px-3 pb-3 text-body-sm text-[var(--color-text-dim)] leading-relaxed">
  {entry.content}
  </div>
  )}
@@ -138,7 +138,7 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
 function LinksSection() {
  return (
  <section className="mb-5">
- <h3 className="text-label-sm uppercase text-[#6b655e] font-medium mb-2">
+ <h3 className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-2">
  Learn More
  </h3>
  <div className="flex flex-col gap-1">
@@ -150,7 +150,7 @@ function LinksSection() {
  </Link>
  </div>
 
- <h3 className="text-label-sm uppercase text-[#6b655e] font-medium mt-4 mb-2">
+ <h3 className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mt-4 mb-2">
  Contact Support
  </h3>
  <a
@@ -210,15 +210,15 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
  animate={{ x: 0 }}
  exit={{ x: 360 }}
  transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
- className="fixed top-0 right-0 bottom-0 w-[340px] bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-50 flex flex-col"
+ className="fixed top-0 right-0 bottom-0 w-[340px] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] z-50 flex flex-col"
  >
  {/* Header */}
- <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-[#e8e1da]/[0.08]">
- <span className="font-semibold text-[1.125rem] text-[#2d2a26]">Help</span>
+ <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-[var(--color-border)]/[0.08]">
+ <span className="font-semibold text-[1.125rem] text-[var(--color-text)]">Help</span>
  <button
  type="button"
  onClick={onClose}
- className="w-8 h-8 flex items-center justify-center rounded-lg text-[#6b655e] hover:text-[#2d2a26] hover:bg-[#f5f2ef] transition-colors"
+ className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
  aria-label="Close help panel"
  >
  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -240,7 +240,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
  height="16"
  viewBox="0 0 16 16"
  fill="none"
- className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b655e]"
+ className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]"
  >
  <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.4" />
  <path
@@ -255,7 +255,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
  placeholder="Search help..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full pl-9 pr-3 py-2 text-body-sm bg-[#f5f2ef] rounded-lg border-none outline-none placeholder:text-[#6b655e]/60 text-[#2d2a26] focus:ring-1 focus:ring-primary/40"
+ className="w-full pl-9 pr-3 py-2 text-body-sm bg-[var(--color-bg)] rounded-lg border-none outline-none placeholder:text-[var(--color-text-dim)]/60 text-[var(--color-text)] focus:ring-1 focus:ring-primary/40"
  />
  </div>
  </div>

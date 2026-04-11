@@ -20,7 +20,7 @@ interface SidebarProps {
 
 export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProps) {
   return (
-    <aside className={cn("w-64 border-r border-[#e8e1da] bg-white", className)}>
+    <aside className={cn("w-64 border-r border-[var(--color-border)] bg-white", className)}>
       <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar">
         <div className="p-4 space-y-6">
           <Button className="w-full bg-[#ff8d49] text-white font-medium py-5 rounded-full">
@@ -43,7 +43,7 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
                   "flex items-center gap-3 px-3 py-2.5 rounded-full text-sm font-medium",
                   item.active
                     ? "bg-[#ff8d49]/10 text-[#ff8d49]"
-                    : "text-[#6b655e] hover:bg-[#fdfaf7]"
+                    : "text-[var(--color-text-dim)] hover:bg-[#fdfaf7]"
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -57,10 +57,10 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
             ))}
           </nav>
 
-          <div className="pt-4 border-t border-[#e8e1da]">
+          <div className="pt-4 border-t border-[var(--color-border)]">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="h-4 w-4 text-[#ff8d49]" />
-              <h3 className="font-semibold text-sm text-[#2d2a26]">Featured Creators</h3>
+              <h3 className="font-semibold text-sm text-[var(--color-text)]">Featured Creators</h3>
             </div>
             <div className="space-y-1">
               {[
@@ -71,8 +71,8 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
                 <a key={creator.handle} href="#" className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#fdfaf7]">
                   <img src={creator.avatar} alt={creator.name} className="h-9 w-9 rounded-full object-cover" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-[#2d2a26] truncate">{creator.name}</p>
-                    <p className="text-xs text-[#6b655e] truncate">{creator.followers} followers</p>
+                    <p className="font-medium text-sm text-[var(--color-text)] truncate">{creator.name}</p>
+                    <p className="text-xs text-[var(--color-text-dim)] truncate">{creator.followers} followers</p>
                   </div>
                   <Button variant="ghost" size="sm" className="text-xs text-[#ff8d49] h-7 px-2">
                     Follow
@@ -82,12 +82,12 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#e8e1da] text-center">
-            <p className="text-xs text-[#6b655e]">© 2026 QuiltCorgi</p>
+          <div className="pt-4 border-t border-[var(--color-border)] text-center">
+            <p className="text-xs text-[var(--color-text-dim)]">© 2026 QuiltCorgi</p>
             <div className="flex justify-center gap-3 mt-1">
-              <a href="/privacy" className="text-xs text-[#6b655e]">Privacy</a>
-              <a href="/terms" className="text-xs text-[#6b655e]">Terms</a>
-              <a href="/help" className="text-xs text-[#6b655e]">Help</a>
+              <a href="/privacy" className="text-xs text-[var(--color-text-dim)]">Privacy</a>
+              <a href="/terms" className="text-xs text-[var(--color-text-dim)]">Terms</a>
+              <a href="/help" className="text-xs text-[var(--color-text-dim)]">Help</a>
             </div>
           </div>
         </div>

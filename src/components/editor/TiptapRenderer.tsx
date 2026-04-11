@@ -23,7 +23,7 @@ function renderMarks(text: string, marks: readonly TiptapMark[]): ReactNode {
         break;
       case 'code':
         result = (
-          <code className="bg-[#f5f2ef] px-1.5 py-0.5 rounded text-[14px] leading-[20px] font-mono">
+          <code className="bg-[#fdfaf7] px-1.5 py-0.5 rounded text-[14px] leading-[20px] font-mono">
             {result}
           </code>
         );
@@ -73,7 +73,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
   switch (node.type) {
     case 'paragraph':
       return (
-        <p key={key} className="mb-4 text-[#2d2a26] leading-relaxed">
+        <p key={key} className="mb-4 text-[#1a1a1a] leading-relaxed">
           {children}
         </p>
       );
@@ -83,25 +83,25 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       switch (level) {
         case 1:
           return (
-            <h1 key={key} className="text-[40px] leading-[52px] font-bold text-[#2d2a26] mt-8 mb-4">
+            <h1 key={key} className="text-[40px] leading-[52px] font-bold text-[#1a1a1a] mt-8 mb-4">
               {children}
             </h1>
           );
         case 2:
           return (
-            <h2 key={key} className="text-[32px] leading-[40px] font-bold text-[#2d2a26] mt-6 mb-3">
+            <h2 key={key} className="text-[32px] leading-[40px] font-bold text-[#1a1a1a] mt-6 mb-3">
               {children}
             </h2>
           );
         case 3:
           return (
-            <h3 key={key} className="text-[24px] leading-[32px] font-semibold text-[#2d2a26] mt-5 mb-2">
+            <h3 key={key} className="text-[24px] leading-[32px] font-semibold text-[#1a1a1a] mt-5 mb-2">
               {children}
             </h3>
           );
         default:
           return (
-            <h4 key={key} className="text-[16px] leading-[24px] font-semibold text-[#2d2a26] mt-4 mb-2">
+            <h4 key={key} className="text-[16px] leading-[24px] font-semibold text-[#1a1a1a] mt-4 mb-2">
               {children}
             </h4>
           );
@@ -124,7 +124,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
 
     case 'listItem':
       return (
-        <li key={key} className="text-[#2d2a26]">
+        <li key={key} className="text-[#1a1a1a]">
           {children}
         </li>
       );
@@ -133,7 +133,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       return (
         <blockquote
           key={key}
-          className="border-l-4 border-primary/40 pl-4 py-2 mb-4 text-[#6b655e] italic"
+          className="border-l-4 border-primary/40 pl-4 py-2 mb-4 text-[#4a4a4a] italic"
         >
           {children}
         </blockquote>
@@ -143,7 +143,7 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       const language = (node.attrs?.language as string) ?? '';
       return (
         <pre key={key} className="bg-[#fdfaf7] rounded-lg p-4 mb-4 overflow-x-auto">
-          <code className="text-[14px] leading-[20px] font-mono text-[#2d2a26]" data-language={language}>
+          <code className="text-[14px] leading-[20px] font-mono text-[#1a1a1a]" data-language={language}>
             {children}
           </code>
         </pre>
@@ -174,13 +174,13 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
             loading="lazy"
           />
           {alt && (
-            <figcaption className="text-[14px] leading-[20px] text-[#6b655e] mt-2 text-center">{alt}</figcaption>
+            <figcaption className="text-[14px] leading-[20px] text-[#4a4a4a] mt-2 text-center">{alt}</figcaption>
           )}
         </figure>
       );
     }
     case 'horizontalRule':
-      return <hr key={key} className="border-[#e8e1da]/30 my-6" />;
+      return <hr key={key} className="border-[#d4d4d4]/30 my-6" />;
 
     case 'hardBreak':
       return <br key={key} />;
@@ -208,7 +208,7 @@ export function TiptapRenderer({ content }: TiptapRendererProps) {
     // Handle simple text-only content
     if ('text' in doc && typeof (doc as { text?: string }).text === 'string') {
       return (
-        <p className="mb-4 text-[#2d2a26] leading-relaxed">{(doc as { text: string }).text}</p>
+        <p className="mb-4 text-[#1a1a1a] leading-relaxed">{(doc as { text: string }).text}</p>
       );
     }
     return null;

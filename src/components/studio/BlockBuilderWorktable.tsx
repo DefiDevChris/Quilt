@@ -412,12 +412,12 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
-      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[#fdfaf7] border-r border-[#e8e1da]/15 overflow-y-auto">
+      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
         {/* Grid unit slider */}
-        <div className="px-2 pt-3 pb-2 border-b border-[#e8e1da]/15">
+        <div className="px-2 pt-3 pb-2 border-b border-[var(--color-border)]/15">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-medium text-[#6b655e]">Grid</span>
-            <span className="text-[9px] font-mono text-[#6b655e] bg-[#fdfaf7] py-0.5 px-1 rounded">
+            <span className="text-[10px] font-medium text-[var(--color-text-dim)]">Grid</span>
+            <span className="text-[9px] font-mono text-[var(--color-text-dim)] bg-[var(--color-bg)] py-0.5 px-1 rounded">
               {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
             </span>
           </div>
@@ -439,26 +439,26 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       {/* ── Center: Canvas (unified styling) ────────────────── */}
       <div
         ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center bg-[#fdfaf7]/20 overflow-hidden"
+        className="flex-1 flex items-center justify-center bg-[var(--color-bg)]/20 overflow-hidden"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        <div className="border border-[#e8e1da]/20 bg-[#ffffff] shadow">
+        <div className="border border-[var(--color-border)]/20 bg-[var(--color-surface)] shadow">
           <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
         </div>
       </div>
 
       {/* ── Right: Panel (320px, unified) ──────────────────── */}
-      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[#fdfaf7] border-l border-[#e8e1da]/15 overflow-hidden">
+      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
         {/* Tab toggle */}
-        <div className="flex border-b border-[#e8e1da]/15">
+        <div className="flex border-b border-[var(--color-border)]/15">
           <button
             type="button"
             onClick={() => setRightTab('blocks')}
             className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
               rightTab === 'blocks'
                 ? 'text-[#ff8d49] border-b-2 border-[#ff8d49]'
-                : 'text-[#6b655e] hover:text-[#2d2a26]'
+                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
             My Blocks
@@ -469,7 +469,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
               rightTab === 'fabrics'
                 ? 'text-[#ff8d49] border-b-2 border-[#ff8d49]'
-                : 'text-[#6b655e] hover:text-[#2d2a26]'
+                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
             Fabrics
@@ -489,11 +489,11 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         </div>
 
         {/* Block metadata + Save */}
-        <div className="border-t border-[#e8e1da]/15 px-3 py-3 space-y-2">
+        <div className="border-t border-[var(--color-border)]/15 px-3 py-3 space-y-2">
           {error && <p className="text-[11px] text-[#ffc7c7]">{error}</p>}
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[#6b655e]">
+            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
               Block Name
             </label>
             <input
@@ -505,49 +505,49 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               }}
               placeholder="Custom Block 1"
               maxLength={255}
-              className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
             />
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-[#6b655e]">
+          <div className="flex items-center gap-2 text-[10px] text-[var(--color-text-dim)]">
             <span>Dimensions:</span>
-            <span className="font-mono text-[#2d2a26]/70">
+            <span className="font-mono text-[var(--color-text)]/70">
               {blockWidthIn}″ × {blockHeightIn}″
             </span>
-            <span className="text-[#6b655e]/60">(from grid unit)</span>
+            <span className="text-[var(--color-text-dim)]/60">(from grid unit)</span>
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[#6b655e]">Category</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">Category</label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Custom"
               maxLength={100}
-              className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[#6b655e]">
-              Tags <span className="text-[#6b655e]/50">(optional)</span>
+            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
+              Tags <span className="text-[var(--color-text-dim)]/50">(optional)</span>
             </label>
             <input
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="modern, stars"
-              className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
             />
           </div>
 
           {/* Overlay controls */}
-          <div className="flex items-center gap-2 pt-1 border-t border-[#e8e1da]/15">
+          <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-border)]/15">
             <button
               type="button"
               onClick={() => setShowOverlaySelector(true)}
-              className="rounded-lg bg-[#fdfaf7] px-2.5 py-1 text-[11px] font-medium text-[#6b655e] hover:text-[#2d2a26]"
+              className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
             >
               {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
             </button>
@@ -556,12 +556,12 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
                 <button
                   type="button"
                   onClick={handleClearOverlay}
-                  className="rounded-lg bg-[#fdfaf7] px-2.5 py-1 text-[11px] font-medium text-[#ffc7c7] hover:text-[#ffc7c7]/80"
+                  className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[#ffc7c7] hover:text-[#ffc7c7]/80"
                 >
                   Clear
                 </button>
                 {overlayDimensions && (
-                  <span className="text-[10px] text-[#6b655e] font-mono">
+                  <span className="text-[10px] text-[var(--color-text-dim)] font-mono">
                     {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
                   </span>
                 )}
@@ -569,7 +569,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             )}
             {activeOverlay && (
               <div className="flex items-center gap-1 ml-auto">
-                <span className="text-[10px] text-[#6b655e]">Opacity</span>
+                <span className="text-[10px] text-[var(--color-text-dim)]">Opacity</span>
                 <input
                   type="range"
                   min="0.1"
@@ -587,7 +587,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-lg bg-[#ff8d49] py-2.5 text-[13px] font-semibold text-[#2d2a26] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="w-full rounded-full bg-[#ff8d49] py-2.5 text-[13px] font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>

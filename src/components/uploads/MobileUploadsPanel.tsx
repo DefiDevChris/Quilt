@@ -83,7 +83,7 @@ export function MobileUploadsPanel() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-headline-sm font-semibold text-[#2d2a26]">Mobile Uploads</h2>
+        <h2 className="text-headline-sm font-semibold text-[#1a1a1a]">Mobile Uploads</h2>
         <p className="text-body-md text-secondary mt-1">
           Photos from your phone. Assign each a type, then process.
         </p>
@@ -103,8 +103,8 @@ export function MobileUploadsPanel() {
               type="button"
               onClick={() => setFilter(chip.value)}
               className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${filter === chip.value
-                ? 'bg-[#ff8d49] text-[#2d2a26] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border border-[#e8e1da] text-[#6b655e] hover:bg-[#ff8d49]/10'
+                ? 'bg-[#ff8d49] text-[#1a1a1a] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                : 'border border-[#d4d4d4] text-[#4a4a4a] hover:bg-[#ff8d49]/10'
                 }`}
             >
               {chip.label}
@@ -125,11 +125,11 @@ export function MobileUploadsPanel() {
       {isLoading && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div key={i} className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               <div className="aspect-square bg-[#fdfaf7] animate-pulse" />
               <div className="p-3 space-y-2">
-                <div className="h-4 bg-[#e8e1da] rounded-full animate-pulse" />
-                <div className="h-6 bg-[#e8e1da]/50 rounded-full animate-pulse" />
+                <div className="h-4 bg-[#d4d4d4] rounded-full animate-pulse" />
+                <div className="h-6 bg-[#d4d4d4]/50 rounded-full animate-pulse" />
               </div>
             </div>
           ))}
@@ -154,7 +154,7 @@ export function MobileUploadsPanel() {
               <line x1="12" y1="18" x2="12" y2="18.01" />
             </svg>
           </div>
-          <p className="text-body-lg font-medium text-[#2d2a26] mb-1">No uploads waiting</p>
+          <p className="text-body-lg font-medium text-[#1a1a1a] mb-1">No uploads waiting</p>
           <p className="text-body-sm text-secondary max-w-xs">
             Take photos on your phone and they&apos;ll appear here for you to sort and process.
           </p>

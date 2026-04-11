@@ -133,17 +133,17 @@ export default function ShopPage() {
   if (!shopEnabled) {
     return (
       <div className="min-h-screen bg-[#fdfaf7] flex items-center justify-center relative overflow-hidden">
-        <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
+        <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
           <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={28} className="text-[#ff8d49]" />
           </div>
           <h1
-            className="text-[32px] leading-[40px] font-semibold text-[#2d2a26] mb-2"
+            className="text-[32px] leading-[40px] font-semibold text-[#1a1a1a] mb-2"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Shop Coming Soon
           </h1>
-          <p className="text-[#6b655e]">
+          <p className="text-[#4a4a4a]">
             Our fabric shop is being set up. Check back soon for a curated selection of quilting
             fabrics!
           </p>
@@ -155,11 +155,11 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-[#fdfaf7] relative overflow-hidden">
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
-      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#2d2a26" />
+      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#1a1a1a" />
+      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#1a1a1a" />
 
       {/* Header */}
-      <div className="bg-[#ffffff] border-b border-[#e8e1da] relative">
+      <div className="bg-[#ffffff] border-b border-[#d4d4d4] relative">
         {/* Quilt-piece accent strip */}
         <div className="h-1.5 bg-[#fdfaf7]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -167,12 +167,12 @@ export default function ShopPage() {
             <QuiltPieceRow count={3} size={12} gap={5} />
             <div>
               <h1
-                className="text-[40px] leading-[52px] font-semibold text-[#2d2a26]"
+                className="text-[40px] leading-[52px] font-semibold text-[#1a1a1a]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Fabric Shop
               </h1>
-              <p className="mt-1 text-[#6b655e]">Browse our curated collection of quilting fabrics</p>
+              <p className="mt-1 text-[#4a4a4a]">Browse our curated collection of quilting fabrics</p>
             </div>
           </div>
         </div>
@@ -182,13 +182,13 @@ export default function ShopPage() {
         {/* Search + Filter Bar */}
         <div className="flex items-center gap-3 mb-6">
           <form onSubmit={handleSearch} className="flex-1 relative">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b655e]" />
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4a4a4a]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search fabrics..."
-              className="w-full pl-10 pr-4 py-2.5 bg-[#ffffff] border border-[#e8e1da] rounded-full text-sm text-[#2d2a26] placeholder:text-[#6b655e] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-full text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             />
           </form>
 
@@ -196,8 +196,8 @@ export default function ShopPage() {
             type="button"
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] ${showFilters || hasActiveFilters
-              ? 'bg-[#ff8d49] text-[#2d2a26]'
-              : 'bg-[#ffffff] text-[#6b655e] hover:bg-[#fdfaf7]'
+              ? 'bg-[#ff8d49] text-[#1a1a1a]'
+              : 'bg-[#ffffff] text-[#4a4a4a] hover:bg-[#fdfaf7]'
               }`}
           >
             <SlidersHorizontal size={16} />
@@ -212,7 +212,7 @@ export default function ShopPage() {
               setSort(e.target.value as SortOption);
               setPage(1);
             }}
-            className="px-4 py-2.5 rounded-full bg-[#ffffff] text-sm text-[#6b655e] border border-[#e8e1da] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="px-4 py-2.5 rounded-full bg-[#ffffff] text-sm text-[#4a4a4a] border border-[#d4d4d4] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
           >
             <option value="name">Name A-Z</option>
             <option value="price-asc">Price: Low to High</option>
@@ -223,11 +223,11 @@ export default function ShopPage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QuiltPieceRow count={2} size={8} gap={3} />
-                <h3 className="text-sm font-semibold text-[#2d2a26]">Filters</h3>
+                <h3 className="text-sm font-semibold text-[#1a1a1a]">Filters</h3>
               </div>
               {hasActiveFilters && (
                 <button
@@ -241,7 +241,7 @@ export default function ShopPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 relative z-10">
               <div className="space-y-1">
-                <label className="text-xs text-[#6b655e] font-medium">Manufacturer</label>
+                <label className="text-xs text-[#4a4a4a] font-medium">Manufacturer</label>
                 <input
                   type="text"
                   value={manufacturer}
@@ -250,18 +250,18 @@ export default function ShopPage() {
                     setPage(1);
                   }}
                   placeholder="All manufacturers"
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#e8e1da] text-sm text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-[#6b655e] font-medium">Color Family</label>
+                <label className="text-xs text-[#4a4a4a] font-medium">Color Family</label>
                 <select
                   value={colorFamily}
                   onChange={(e) => {
                     setColorFamily(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#e8e1da] text-sm text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <option value="">All colors</option>
                   <option value="red">Red</option>
@@ -278,14 +278,14 @@ export default function ShopPage() {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-[#6b655e] font-medium">Value</label>
+                <label className="text-xs text-[#4a4a4a] font-medium">Value</label>
                 <select
                   value={valueFilter}
                   onChange={(e) => {
                     setValueFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#e8e1da] text-sm text-[#2d2a26] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <option value="">All values</option>
                   <option value="Light">Light</option>
@@ -294,8 +294,8 @@ export default function ShopPage() {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-[#6b655e] font-medium">Availability</label>
-                <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#e8e1da] cursor-pointer">
+                <label className="text-xs text-[#4a4a4a] font-medium">Availability</label>
+                <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={inStockOnly}
@@ -303,9 +303,9 @@ export default function ShopPage() {
                       setInStockOnly(e.target.checked);
                       setPage(1);
                     }}
-                    className="rounded-full border-[#e8e1da] text-[#ff8d49] focus:outline-2 focus:outline-[#ff8d49]"
+                    className="rounded-full border-[#d4d4d4] text-[#ff8d49] focus:outline-2 focus:outline-[#ff8d49]"
                   />
-                  <span className="text-sm text-[#2d2a26]">In stock only</span>
+                  <span className="text-sm text-[#1a1a1a]">In stock only</span>
                 </label>
               </div>
             </div>
@@ -319,7 +319,7 @@ export default function ShopPage() {
 
         {/* Results count */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-[#6b655e]">
+          <p className="text-sm text-[#4a4a4a]">
             {total} fabric{total !== 1 ? 's' : ''} found
           </p>
           {hasActiveFilters && (
@@ -338,7 +338,7 @@ export default function ShopPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+              <div key={i} className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
                 <div className="aspect-square bg-[#ff8d49]/10" />
                 <div className="p-3 space-y-2">
                   <div className="h-4 bg-[#ff8d49]/20 rounded-full w-3/4" />
@@ -349,9 +349,9 @@ export default function ShopPage() {
             ))}
           </div>
         ) : fabrics.length === 0 ? (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
-            <p className="text-lg font-medium text-[#2d2a26] mb-2">No fabrics found</p>
-            <p className="text-sm text-[#6b655e]">
+          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <p className="text-lg font-medium text-[#1a1a1a] mb-2">No fabrics found</p>
+            <p className="text-sm text-[#4a4a4a]">
               {hasActiveFilters
                 ? 'Try adjusting your filters or search terms.'
                 : 'No purchasable fabrics are available yet.'}
@@ -372,18 +372,18 @@ export default function ShopPage() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#e8e1da] text-sm text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             >
               Previous
             </button>
-            <span className="text-sm text-[#6b655e]">
+            <span className="text-sm text-[#4a4a4a]">
               Page {page} of {totalPages}
             </span>
             <button
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#e8e1da] text-sm text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
             >
               Next
             </button>
@@ -407,7 +407,7 @@ function ShopFabricCard({
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
-    <div className="group bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
+    <div className="group bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (
@@ -424,16 +424,16 @@ function ShopFabricCard({
 
       {/* Info */}
       <div className="p-3 space-y-1">
-        <h3 className="text-sm font-medium text-[#2d2a26] truncate" title={fabric.name}>
+        <h3 className="text-sm font-medium text-[#1a1a1a] truncate" title={fabric.name}>
           {fabric.name}
         </h3>
         {fabric.manufacturer && (
-          <p className="text-xs text-[#6b655e] truncate">{fabric.manufacturer}</p>
+          <p className="text-xs text-[#4a4a4a] truncate">{fabric.manufacturer}</p>
         )}
         <div className="flex items-center justify-between pt-1">
-          <span className="text-sm font-semibold text-[#2d2a26]">{price}</span>
+          <span className="text-sm font-semibold text-[#1a1a1a]">{price}</span>
           {fabric.colorFamily && (
-            <span className="text-[10px] text-[#6b655e] capitalize">{fabric.colorFamily}</span>
+            <span className="text-[10px] text-[#4a4a4a] capitalize">{fabric.colorFamily}</span>
           )}
         </div>
 
@@ -441,7 +441,7 @@ function ShopFabricCard({
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ff8d49] text-[#2d2a26] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
         >
           {!fabric.shopifyVariantId
             ? 'Not Available'

@@ -92,7 +92,7 @@ export default function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
             className="h-px transition-colors duration-150"
             style={{
               width: i === active ? 48 : 20,
-              backgroundColor: i === active ? '#2d2a26' : 'rgba(45, 42, 38, 0.25)',
+              backgroundColor: i === active ? '#1a1a1a' : 'rgba(45, 42, 38, 0.25)',
             }}
             aria-label={`Go to slide ${i + 1}`}
           />
@@ -144,11 +144,11 @@ function Slide({
       {/* Content */}
       <div className="relative z-10 px-8 md:px-16 lg:px-24 max-w-2xl">
         <div className="flex items-center gap-4 mb-8">
-          <span className="text-[14px] leading-[20px] text-[#6b655e]">
+          <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
             {post.category}
           </span>
           <span className="w-6 h-px bg-[#ff8d49]" />
-          <time className="text-[14px] leading-[20px] text-[#6b655e]">
+          <time className="text-[14px] leading-[20px] text-[#4a4a4a]">
             {post.createdAt?.toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
@@ -159,7 +159,7 @@ function Slide({
 
         <Link href={`/blog/${post.slug}`} className="group block">
           <h2
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#2d2a26] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#1a1a1a] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
             style={{ fontFamily: 'Spline Sans, sans-serif' }}
           >
             {post.title}
@@ -167,7 +167,7 @@ function Slide({
         </Link>
 
         {post.excerpt && (
-          <p className="text-[16px] leading-[24px] text-[#6b655e] max-w-md">
+          <p className="text-[16px] leading-[24px] text-[#4a4a4a] max-w-md">
             {post.excerpt}
           </p>
         )}

@@ -41,18 +41,18 @@ export function BlockSearch() {
   }, [localSearch, setSearch]);
 
   return (
-    <div className="px-3 py-2 space-y-2 border-b border-neutral-200">
+    <div className="px-3 py-2 space-y-2 border-b border-[var(--color-border)]">
       <input
         type="text"
         value={localSearch}
         onChange={(e) => setLocalSearch(e.target.value)}
         placeholder="Search blocks..."
-        className="w-full rounded-lg border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-primary focus:outline-none"
+        className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-primary focus:outline-none"
       />
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full rounded-lg border border-neutral-200 bg-neutral px-3 py-1.5 text-sm text-neutral-800 focus:border-primary focus:outline-none"
+        className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-primary focus:outline-none"
       >
         {CATEGORIES.map((cat) => (
           <option key={cat} value={cat}>

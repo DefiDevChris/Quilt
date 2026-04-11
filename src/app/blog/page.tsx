@@ -52,12 +52,12 @@ export default async function BlogPage() {
             </svg>
           </div>
           <h2
-            className="text-[32px] leading-[40px] font-semibold text-[#2d2a26] mb-4"
+            className="text-[32px] leading-[40px] font-semibold text-[#1a1a1a] mb-4"
             style={{ fontFamily: 'Spline Sans, sans-serif' }}
           >
             No stories yet
           </h2>
-          <p className="text-[#6b655e] leading-[28px] font-light">
+          <p className="text-[#4a4a4a] leading-[28px] font-light">
             New content is being crafted. Return soon for fresh inspiration.
           </p>
         </div>

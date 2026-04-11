@@ -10,8 +10,8 @@ export default function StudioError({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral p-4">
-      <div className="bg-neutral border border-neutral-200 rounded-full p-8 max-w-md w-full text-center">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
+      <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-8 max-w-md w-full text-center">
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
           <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -22,7 +22,7 @@ export default function StudioError({
             />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-neutral-800 mb-2">
+        <h2 className="text-lg font-semibold text-[var(--color-text)] mb-2">
           Something went wrong in the studio
         </h2>
         <p className="text-sm text-secondary mb-6">
@@ -31,13 +31,13 @@ export default function StudioError({
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-5 py-2.5 rounded-full bg-neutral-800 text-neutral text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="px-5 py-2.5 rounded-full bg-[var(--color-text)] text-[var(--color-bg)] text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Try Again
           </button>
           <Link
             href="/dashboard"
-            className="px-5 py-2.5 rounded-full border border-neutral-200 text-neutral-800 text-sm font-semibold hover:bg-neutral-100 transition-colors"
+            className="px-5 py-2.5 rounded-full border border-[var(--color-border)] text-[var(--color-text)] text-sm font-semibold hover:bg-[var(--color-border)]/30 transition-colors"
           >
             Back to Dashboard
           </Link>

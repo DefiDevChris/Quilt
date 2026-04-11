@@ -47,10 +47,10 @@ function FaqSection({
             key={cat}
             type="button"
             onClick={() => onCategoryChange(cat)}
-            className={`px-3 py-1.5 rounded-lg text-[14px] leading-[20px] font-normal transition-colors duration-150 ${
+            className={`px-3 py-1.5 rounded-full text-[14px] leading-[20px] font-normal transition-colors duration-150 ${
               selectedCategory === cat
-                ? 'bg-[#ff8d49] text-[#2d2a26]'
-                : 'bg-[#fdfaf7] text-[#6b655e] hover:bg-[#ff8d49]/10'
+                ? 'bg-[#ff8d49] text-[#1a1a1a]'
+                : 'bg-[#fdfaf7] text-[#4a4a4a] hover:bg-[#ff8d49]/10'
             }`}
           >
             {cat === 'all' ? 'All' : FAQ_CATEGORY_LABELS[cat]}
@@ -61,19 +61,19 @@ function FaqSection({
       {/* FAQ items */}
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <p className="text-sm text-[#6b655e] py-4">No matching questions found.</p>
+          <p className="text-sm text-[#4a4a4a] py-4">No matching questions found.</p>
         ) : (
           filtered.map((entry) => {
             const isOpen = openId === entry.id;
             return (
               <div
                 key={entry.id}
-                className="border border-[#e8e1da] bg-[#ffffff] rounded-lg overflow-hidden"
+                className="border border-[#d4d4d4] bg-[#ffffff] rounded-lg overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => toggle(entry.id)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm text-[#2d2a26] hover:bg-[#ff8d49]/10 transition-colors duration-150 text-left"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm text-[#1a1a1a] hover:bg-[#ff8d49]/10 transition-colors duration-150 text-left"
                 >
                   <span className="font-medium">{entry.title}</span>
                   <svg
@@ -93,7 +93,7 @@ function FaqSection({
                   </svg>
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-3 text-sm text-[#6b655e] leading-relaxed">
+                  <div className="px-4 pb-3 text-sm text-[#4a4a4a] leading-relaxed">
                     {entry.content}
                   </div>
                 )}
@@ -112,7 +112,7 @@ function VideoTutorialsSection() {
       {VIDEO_TUTORIALS.map((video) => (
         <div
           key={video.id}
-          className="border border-[#e8e1da] bg-[#ffffff] rounded-lg overflow-hidden hover:border-[#ff8d49] transition-colors duration-150"
+          className="border border-[#d4d4d4] bg-[#ffffff] rounded-lg overflow-hidden hover:border-[#ff8d49] transition-colors duration-150"
         >
           {/* Thumbnail placeholder */}
           <div className="aspect-video bg-[#fdfaf7] flex items-center justify-center">
@@ -122,7 +122,7 @@ function VideoTutorialsSection() {
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-[#6b655e] mx-auto mb-1"
+                className="text-[#4a4a4a] mx-auto mb-1"
               >
                 <polygon
                   points="5 3 19 12 5 21 5 3"
@@ -134,13 +134,13 @@ function VideoTutorialsSection() {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-xs text-[#6b655e]">Coming Soon</p>
+              <p className="text-xs text-[#4a4a4a]">Coming Soon</p>
             </div>
           </div>
           <div className="p-3">
-            <h4 className="text-sm font-medium text-[#2d2a26] mb-1">{video.title}</h4>
-            <p className="text-xs text-[#6b655e] line-clamp-2">{video.description}</p>
-            <span className="text-xs text-[#6b655e] mt-1 inline-block">{video.duration}</span>
+            <h4 className="text-sm font-medium text-[#1a1a1a] mb-1">{video.title}</h4>
+            <p className="text-xs text-[#4a4a4a] line-clamp-2">{video.description}</p>
+            <span className="text-xs text-[#4a4a4a] mt-1 inline-block">{video.duration}</span>
           </div>
         </div>
       ))}
@@ -150,14 +150,14 @@ function VideoTutorialsSection() {
 
 function ContactSection() {
   return (
-    <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8">
-      <h3 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-2">Contact Support</h3>
-      <p className="text-[14px] leading-[20px] text-[#6b655e] mb-6">
+    <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8">
+      <h3 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-2">Contact Support</h3>
+      <p className="text-[14px] leading-[20px] text-[#4a4a4a] mb-6">
         Can&apos;t find what you need? Reach out and we&apos;ll help you out.
       </p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-[14px] leading-[20px] font-normal transition-colors duration-150 bg-[#ff8d49] text-[#2d2a26] hover:bg-[#e67d3f]"
+        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[14px] leading-[20px] font-normal transition-colors duration-150 bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f]"
       >
         <svg
           width="16"
@@ -198,10 +198,10 @@ export function HelpCenterContent() {
     <div>
       {/* Hero */}
       <div className="text-center mb-12">
-        <h2 className="text-[40px] leading-[52px] font-normal text-[#2d2a26] mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+        <h2 className="text-[40px] leading-[52px] font-normal text-[#1a1a1a] mb-4" style={{ fontFamily: 'var(--font-display)' }}>
           Documentation
         </h2>
-        <p className="text-[#6b655e] text-[16px] leading-[24px] max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
+        <p className="text-[#4a4a4a] text-[16px] leading-[24px] max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
       </div>
 
       {/* Search */}
@@ -211,7 +211,7 @@ export function HelpCenterContent() {
           height="20"
           viewBox="0 0 20 20"
           fill="none"
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6b655e]"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4a4a4a]"
         >
           <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.4" />
           <path d="M13 13L18 18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
@@ -221,13 +221,13 @@ export function HelpCenterContent() {
           placeholder="Search for assistance..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-[#ffffff] border border-[#e8e1da] rounded-lg text-[#2d2a26] placeholder:text-[#6b655e] focus:outline-2 focus:outline-[#ff8d49] text-[16px] leading-[24px]"
+          className="w-full pl-12 pr-4 py-3 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] text-[16px] leading-[24px]"
         />
       </div>
 
       {/* FAQ Section */}
       <section className="mb-16">
-        <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6">Frequently Asked Questions</h2>
+        <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6">Frequently Asked Questions</h2>
         <FaqSection
           entries={faqResults}
           selectedCategory={selectedCategory}
@@ -237,7 +237,7 @@ export function HelpCenterContent() {
 
       {/* Video Tutorials */}
       <section className="mb-16">
-        <h2 className="text-[24px] leading-[32px] font-normal text-[#2d2a26] mb-6">Video Tutorials</h2>
+        <h2 className="text-[24px] leading-[32px] font-normal text-[#1a1a1a] mb-6">Video Tutorials</h2>
         <VideoTutorialsSection />
       </section>
 

@@ -69,7 +69,7 @@ export function MobileNotifications() {
         <button
           type="button"
           onClick={handleClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#f5f2ef] transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#fdfaf7] transition-colors"
           aria-label="Close notifications"
         >
           <svg
@@ -85,7 +85,7 @@ export function MobileNotifications() {
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        <h1 className="text-[16px] leading-[24px] font-bold text-[#2d2a26]">Notifications</h1>
+        <h1 className="text-[16px] leading-[24px] font-bold text-[#1a1a1a]">Notifications</h1>
         <button
           type="button"
           onClick={markAllAsRead}
@@ -106,7 +106,7 @@ export function MobileNotifications() {
                 key={notification.id}
                 type="button"
                 onClick={() => handleNotificationClick(notification)}
-                className={`w-full text-left px-5 py-4 flex gap-3 hover:bg-[#f5f2ef] transition-colors ${!notification.isRead ? 'bg-[#f5f2ef]' : ''
+                className={`w-full text-left px-5 py-4 flex gap-3 hover:bg-[#fdfaf7] transition-colors ${!notification.isRead ? 'bg-[#fdfaf7]' : ''
                   }`}
               >
                 {!notification.isRead && (
@@ -117,14 +117,14 @@ export function MobileNotifications() {
                 )}
                 <div className={`flex-1 min-w-0 ${notification.isRead ? 'pl-5' : ''}`}>
                   <p
-                    className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-[#ffc8a6]' : 'font-medium text-[#2d2a26]'}`}
+                    className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-[#ffc8a6]' : 'font-medium text-[#1a1a1a]'}`}
                   >
                     {notification.title}
                   </p>
                   <p className="text-[14px] leading-[20px] text-[#ffc8a6] line-clamp-2 mt-0.5">
                     {notification.message}
                   </p>
-                  <p className="text-[12px] leading-[16px] text-[#6b655e] mt-1">
+                  <p className="text-[12px] leading-[16px] text-[#4a4a4a] mt-1">
                     {formatRelativeTime(notification.createdAt)}
                   </p>
                 </div>

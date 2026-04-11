@@ -128,10 +128,10 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  )}
  </div>
  <div className="flex-1">
- <p className="text-sm font-semibold text-[#2d2a26]">
+ <p className="text-sm font-semibold text-[#1a1a1a]">
  {uploading ? 'Uploading...' : 'Upload Photo'}
  </p>
- <p className="text-xs text-[#6b655e] mt-0.5">
+ <p className="text-xs text-[#4a4a4a] mt-0.5">
  Take or pick a photo — assign it on desktop
  </p>
  </div>
@@ -152,7 +152,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
  {/* Pending count */}
  {pendingCount > 0 && !uploadSuccess && (
- <p className="text-xs text-[#6b655e] text-center">
+ <p className="text-xs text-[#4a4a4a] text-center">
  {pendingCount} photo{pendingCount !== 1 ? 's' : ''} waiting on desktop
  </p>
  )}
@@ -161,7 +161,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  <button
  type="button"
  onClick={handleShareToSocial}
- className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-[#f5f2ef] transition-colors text-left"
+ className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-[#fdfaf7] transition-colors text-left"
  >
  <div
  className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
@@ -181,8 +181,8 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  </svg>
  </div>
  <div>
- <p className="text-sm font-semibold text-[#2d2a26]">Share to Social</p>
- <p className="text-xs text-[#6b655e] mt-0.5">Post a quilt photo with your story</p>
+ <p className="text-sm font-semibold text-[#1a1a1a]">Share to Social</p>
+ <p className="text-xs text-[#4a4a4a] mt-0.5">Post a quilt photo with your story</p>
  </div>
  </button>
  </div>

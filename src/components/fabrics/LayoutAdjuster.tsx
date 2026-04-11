@@ -78,16 +78,16 @@ export function LayoutAdjuster() {
   if (!state.hasLayout) return null;
 
   return (
-    <div className="border-t border-neutral-200 px-3 py-2">
-      <h3 className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">
+    <div className="border-t border-[var(--color-border)] px-3 py-2">
+      <h3 className="text-xs font-medium text-[var(--color-text-dim)] uppercase tracking-wider mb-2">
         Layout Fill
       </h3>
 
       <div className="space-y-2">
         <div>
-          <label className="flex items-center justify-between text-xs text-neutral-500">
+          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
             <span>Scale X</span>
-            <span className="text-xs text-neutral-500 font-mono">{state.scaleX.toFixed(2)}</span>
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">{state.scaleX.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -100,9 +100,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-neutral-500">
+          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
             <span>Scale Y</span>
-            <span className="text-xs text-neutral-500 font-mono">{state.scaleY.toFixed(2)}</span>
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">{state.scaleY.toFixed(2)}</span>
           </label>
           <input
             type="range"
@@ -115,9 +115,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-neutral-500">
+          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
             <span>Rotation</span>
-            <span className="text-xs text-neutral-500 font-mono">
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.rotation)}°
             </span>
           </label>
@@ -132,9 +132,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-neutral-500">
+          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
             <span>Offset X</span>
-            <span className="text-xs text-neutral-500 font-mono">
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.offsetX)}px
             </span>
           </label>
@@ -149,9 +149,9 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-neutral-500">
+          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
             <span>Offset Y</span>
-            <span className="text-xs text-neutral-500 font-mono">
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.offsetY)}px
             </span>
           </label>
@@ -171,7 +171,7 @@ export function LayoutAdjuster() {
             setState(DEFAULT_STATE);
             updatePatternTransform(1, 1, 0, 0, 0);
           }}
-          className="w-full rounded-lg bg-neutral px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-200"
+          className="w-full rounded-lg bg-[var(--color-border)] px-2 py-1 text-xs text-[var(--color-text-dim)] hover:bg-[var(--color-secondary)]"
         >
           Reset Pattern Transform
         </button>

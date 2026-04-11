@@ -6,9 +6,9 @@ import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 function MockTopBar({ worktable }: { worktable: string }) {
   return (
-    <div className="h-8 bg-[#fdfaf7] border-b border-[#e8e1da] flex items-center px-2 gap-2 text-[8px] shrink-0 z-20">
+    <div className="h-8 bg-[#fdfaf7] border-b border-[var(--color-border)] flex items-center px-2 gap-2 text-[8px] shrink-0 z-20">
       <div className="flex items-center gap-1.5">
-        <div className="w-3.5 h-3.5 rounded-lg bg-[#ffffff] flex items-center justify-center text-[#6b655e]">
+        <div className="w-3.5 h-3.5 rounded-lg bg-[#ffffff] flex items-center justify-center text-[var(--color-text-dim)]">
           <svg
             width="8"
             height="8"
@@ -22,24 +22,24 @@ function MockTopBar({ worktable }: { worktable: string }) {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </div>
-        <span className="font-bold text-[#2d2a26] hidden md:inline text-[9px]">QuiltCorgi</span>
+        <span className="font-bold text-[var(--color-text)] hidden md:inline text-[9px]">QuiltCorgi</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="px-2 py-0.5 bg-[#ff8d49]/20 text-[#2d2a26] rounded-lg font-bold text-[8px]">
+        <div className="px-2 py-0.5 bg-[#ff8d49]/20 text-[var(--color-text)] rounded-lg font-bold text-[8px]">
           {worktable}
         </div>
-        <span className="text-[#6b655e] text-[10px]">+</span>
+        <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
       </div>
-      <div className="flex-1 text-center text-[#6b655e] truncate hidden md:block">
-        <span className="font-medium text-[#2d2a26] text-[9px]">My Quilt</span>
+      <div className="flex-1 text-center text-[var(--color-text-dim)] truncate hidden md:block">
+        <span className="font-medium text-[var(--color-text)] text-[9px]">My Quilt</span>
         <span className="mx-1">&middot;</span>
         <span>{worktable} Canvas</span>
       </div>
       <div className="flex items-center gap-1.5 ml-auto">
-        <span className="text-[#6b655e] hidden md:inline">Share</span>
-        <span className="text-[#6b655e] hidden md:inline">View</span>
-        <span className="text-[#6b655e] hidden md:inline">Tools</span>
-        <div className="px-2 py-0.5 bg-[#2d2a26] text-[#ffffff] rounded-lg font-bold text-[8px]">
+        <span className="text-[var(--color-text-dim)] hidden md:inline">Share</span>
+        <span className="text-[var(--color-text-dim)] hidden md:inline">View</span>
+        <span className="text-[var(--color-text-dim)] hidden md:inline">Tools</span>
+        <div className="px-2 py-0.5 bg-[var(--color-text)] text-[#ffffff] rounded-lg font-bold text-[8px]">
           Export
         </div>
       </div>
@@ -52,17 +52,17 @@ type ToolSection = { header: string; tools: ToolItem[] };
 
 function MockToolbar({ sections }: { sections: ToolSection[] }) {
   return (
-    <div className="w-[4.5rem] bg-[#fdfaf7] border-r border-[#e8e1da] py-1.5 px-1 hidden sm:flex flex-col gap-1 shrink-0 z-10 overflow-y-auto">
+    <div className="w-[4.5rem] bg-[#fdfaf7] border-r border-[var(--color-border)] py-1.5 px-1 hidden sm:flex flex-col gap-1 shrink-0 z-10 overflow-y-auto">
       {sections.map((section, si) => (
         <div key={si}>
-          <div className="text-[5px] font-bold text-[#6b655e] px-1 mb-0.5">
+          <div className="text-[5px] font-bold text-[var(--color-text-dim)] px-1 mb-0.5">
             {section.header}
           </div>
           <div className="grid grid-cols-2 gap-0.5">
             {section.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className={`flex flex-col items-center gap-0.5 py-1 rounded-lg ${tool.active ? 'bg-[#ff8d49]/10 text-[#ff8d49]' : 'text-[#6b655e]'
+                className={`flex flex-col items-center gap-0.5 py-1 rounded-lg ${tool.active ? 'bg-[#ff8d49]/10 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
                   }`}
               >
                 <svg
@@ -93,10 +93,10 @@ function MockAccordionPanel({
   sections: { label: string; open?: boolean; expanded?: boolean }[];
 }) {
   return (
-    <div className="w-44 bg-[#fdfaf7] border-l border-[#e8e1da] shrink-0 z-10 hidden sm:flex flex-col gap-1 p-1.5 overflow-y-auto">
+    <div className="w-44 bg-[#fdfaf7] border-l border-[var(--color-border)] shrink-0 z-10 hidden sm:flex flex-col gap-1 p-1.5 overflow-y-auto">
       {sections.map((section, i) => (
-        <div key={i} className="border border-[#e8e1da] overflow-hidden">
-          <div className="flex items-center justify-between px-2.5 py-1.5 text-[8px] font-bold text-[#2d2a26] bg-[#fdfaf7]">
+        <div key={i} className="border border-[var(--color-border)] overflow-hidden">
+          <div className="flex items-center justify-between px-2.5 py-1.5 text-[8px] font-bold text-[var(--color-text)] bg-[#fdfaf7]">
             <span>{section.label}</span>
             <svg
               width="8"
@@ -114,20 +114,20 @@ function MockAccordionPanel({
             </svg>
           </div>
           {section.expanded && (
-            <div className="px-2.5 pb-2 text-[7px] text-[#6b655e] border-t border-[#e8e1da]/50">
-              <div className="mt-1.5 mb-1 text-[7px] font-bold text-[#2d2a26]">
+            <div className="px-2.5 pb-2 text-[7px] text-[var(--color-text-dim)] border-t border-[var(--color-border)]/50">
+              <div className="mt-1.5 mb-1 text-[7px] font-bold text-[var(--color-text)]">
                 PRECISION
               </div>
               <div className="grid grid-cols-2 gap-1 mb-1.5">
                 <div>
-                  <div className="text-[6px] text-[#6b655e] mb-0.5">BLOCK WIDTH</div>
-                  <div className="h-4 bg-[#ffffff] rounded-lg border border-[#e8e1da] flex items-center px-1 text-[6px] font-mono text-[#2d2a26]">
+                  <div className="text-[6px] text-[var(--color-text-dim)] mb-0.5">BLOCK WIDTH</div>
+                  <div className="h-4 bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex items-center px-1 text-[6px] font-mono text-[var(--color-text)]">
                     48.000 in
                   </div>
                 </div>
                 <div>
-                  <div className="text-[6px] text-[#6b655e] mb-0.5">BLOCK HEIGHT</div>
-                  <div className="h-4 bg-[#ffffff] rounded-lg border border-[#e8e1da] flex items-center px-1 text-[6px] font-mono text-[#2d2a26]">
+                  <div className="text-[6px] text-[var(--color-text-dim)] mb-0.5">BLOCK HEIGHT</div>
+                  <div className="h-4 bg-[#ffffff] rounded-lg border border-[var(--color-border)] flex items-center px-1 text-[6px] font-mono text-[var(--color-text)]">
                     48.000 in
                   </div>
                 </div>
@@ -145,7 +145,7 @@ function MockAccordionPanel({
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <span className="text-[7px] text-[#2d2a26]">Snap to Grid</span>
+                <span className="text-[7px] text-[var(--color-text)]">Snap to Grid</span>
               </div>
             </div>
           )}
@@ -157,7 +157,7 @@ function MockAccordionPanel({
 
 function MockFloatingToolbar() {
   return (
-    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] rounded-lg px-2.5 py-1 flex items-center gap-1.5 z-20">
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] rounded-lg px-2.5 py-1 flex items-center gap-1.5 z-20">
       {[
         <path key="s" d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
         <rect key="r" x="3" y="3" width="18" height="18" rx="2" />,
@@ -166,7 +166,7 @@ function MockFloatingToolbar() {
       ].map((icon, i) => (
         <div
           key={i}
-          className={`w-5 h-5 rounded-lg flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[#6b655e]'}`}
+          className={`w-5 h-5 rounded-lg flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
         >
           <svg
             width="9"
@@ -180,8 +180,8 @@ function MockFloatingToolbar() {
           </svg>
         </div>
       ))}
-      <div className="w-px h-3 bg-[#e8e1da]" />
-      <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[#6b655e]">
+      <div className="w-px h-3 bg-[var(--color-border)]" />
+      <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[var(--color-text-dim)]">
         <svg
           width="9"
           height="9"
@@ -194,15 +194,15 @@ function MockFloatingToolbar() {
           <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
         </svg>
       </div>
-      <div className="w-px h-3 bg-[#e8e1da]" />
-      <span className="text-[7px] text-[#6b655e] font-mono">48%</span>
+      <div className="w-px h-3 bg-[var(--color-border)]" />
+      <span className="text-[7px] text-[var(--color-text-dim)] font-mono">48%</span>
     </div>
   );
 }
 
 function MockStatusBar() {
   return (
-    <div className="h-5 bg-[#ffffff]/60 border-t border-[#e8e1da] flex items-center justify-between px-3 text-[7px] font-mono text-[#6b655e] shrink-0">
+    <div className="h-5 bg-[#ffffff]/60 border-t border-[var(--color-border)] flex items-center justify-between px-3 text-[7px] font-mono text-[var(--color-text-dim)] shrink-0">
       <span>Mouse H: 12.50&quot; V: 8.25&quot;</span>
       <div className="flex gap-3">
         <span>Snap to Grid: ON</span>
@@ -359,12 +359,12 @@ function QuiltWorktableMockup() {
             }}
           />
 
-          <div className="relative bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] p-2 flex">
+          <div className="relative bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] p-2 flex">
             <div className="grid grid-cols-3 gap-2 bg-[#ff8d49]/10 p-2 border-[4px] border-[#ff8d49]/60">
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-16 h-16 bg-[#fdfaf7] flex items-center justify-center border border-[#e8e1da]/30 relative overflow-hidden"
+                  className="w-16 h-16 bg-[#fdfaf7] flex items-center justify-center border border-[var(--color-border)]/30 relative overflow-hidden"
                 >
                   <svg viewBox="0 0 100 100" className="w-full h-full">
                     <polygon points="0,0 50,50 0,100" fill="#FFE4D0" />
@@ -446,7 +446,7 @@ function BlockWorktableMockup() {
             }}
           />
 
-          <div className="relative w-64 h-64 bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da]/30 flex items-center justify-center">
+          <div className="relative w-64 h-64 bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)]/30 flex items-center justify-center">
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path
                 d="M25 0 V100 M50 0 V100 M75 0 V100 M0 25 H100 M0 50 H100 M0 75 H100"
@@ -464,7 +464,7 @@ function BlockWorktableMockup() {
               <circle cx="50" cy="0" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
               <circle cx="50" cy="50" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
             </svg>
-            <div className="absolute top-2 left-2 bg-[#2d2a26] text-[#ffffff] text-[8px] px-1.5 py-0.5 rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+            <div className="absolute top-2 left-2 bg-[var(--color-text)] text-[#ffffff] text-[8px] px-1.5 py-0.5 rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
               Snap to Grid (Intersect)
             </div>
           </div>
@@ -551,10 +551,10 @@ function ImageWorktableMockup() {
                   backgroundSize: '33.33% 33.33%',
                 }}
               />
-              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[#fdfaf7] border border-[#e8e1da]" />
-              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#fdfaf7] border border-[#e8e1da]" />
-              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[#fdfaf7] border border-[#e8e1da]" />
-              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[#fdfaf7] border border-[#e8e1da]" />
+              <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-[#fdfaf7] border border-[var(--color-border)]" />
+              <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#fdfaf7] border border-[var(--color-border)]" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-[#fdfaf7] border border-[var(--color-border)]" />
+              <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-[#fdfaf7] border border-[var(--color-border)]" />
             </div>
           </div>
 
@@ -614,15 +614,15 @@ function PrintWorktableMockup() {
         />
 
         <div className="flex-1 bg-[#ffffff] relative flex items-center justify-center overflow-hidden p-6">
-          <div className="bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] aspect-[8.5/11] h-full max-h-[300px] border border-[#e8e1da] p-4 flex flex-col">
+          <div className="bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] aspect-[8.5/11] h-full max-h-[300px] border border-[var(--color-border)] p-4 flex flex-col">
             <div
-              className="text-[8px] font-bold text-[#2d2a26] mb-2"
+              className="text-[8px] font-bold text-[var(--color-text)] mb-2"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Quilt Pattern &mdash; True Scale 1:1
             </div>
             <div className="flex-1 grid grid-cols-2 gap-2">
-              <div className="border border-dashed border-[#e8e1da] p-1">
+              <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <polygon points="0,0 100,0 50,50" fill="#FFB085" />
                   <polygon points="0,0 50,50 0,100" fill="#FFE4D0" />
@@ -640,7 +640,7 @@ function PrintWorktableMockup() {
                   />
                 </svg>
               </div>
-              <div className="border border-dashed border-[#e8e1da] p-1">
+              <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <rect x="5" y="5" width="90" height="90" fill="#FFE4D0" />
                   <line
@@ -665,7 +665,7 @@ function PrintWorktableMockup() {
                 </svg>
               </div>
             </div>
-            <div className="mt-2 flex justify-between text-[6px] text-[#6b655e]">
+            <div className="mt-2 flex justify-between text-[6px] text-[var(--color-text-dim)]">
               <span>Seam allowance: 1/4&quot;</span>
               <span>Page 1 of 4</span>
             </div>
@@ -730,14 +730,14 @@ export default function WorkspacePreview() {
                 <QuiltPieceRow count={3} size={8} gap={4} />
               </div>
               <h2
-                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[#2d2a26]"
+                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[var(--color-text)]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Six Layout Presets. One Creative Flow.
               </h2>
             </div>
           </div>
-          <p className="text-[18px] leading-[28px] text-[#6b655e] mb-16 max-w-2xl mx-auto">
+          <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-16 max-w-2xl mx-auto">
             Each layout preset handles a different stage of your quilting journey &mdash; from simple grids
             to sashing, on-point, strippy, medallion, and free-form arrangements.
           </p>
@@ -751,8 +751,8 @@ export default function WorkspacePreview() {
                 key={tab.id}
                 onClick={() => setActiveTab(idx)}
                 className={`relative px-5 py-2.5 rounded-full text-sm font-bold transition-colors duration-150 ${activeTab === idx
-                  ? 'text-[#2d2a26] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                  : 'text-[#6b655e] hover:text-[#2d2a26] hover:bg-[#ffffff]'
+                  ? 'text-[var(--color-text)] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[#ffffff]'
                   }`}
               >
                 <span className="relative z-10 hidden sm:inline">{tab.label}</span>
@@ -763,7 +763,7 @@ export default function WorkspacePreview() {
 
           {/* Mockup Container */}
           <div className="relative">
-            <div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#ffffff] rounded-lg">
+            <div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] bg-[#ffffff] rounded-lg">
               <div className="absolute inset-0 bg-[#ffffff]/50">
                 {tabs[activeTab].component}
               </div>
@@ -771,7 +771,7 @@ export default function WorkspacePreview() {
 
             {/* Dynamic Caption */}
             <div className="mt-8">
-              <p className="text-[18px] leading-[28px] font-medium text-[#6b655e]">
+              <p className="text-[18px] leading-[28px] font-medium text-[var(--color-text-dim)]">
                 {tabs[activeTab].caption}
               </p>
             </div>

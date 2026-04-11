@@ -93,19 +93,19 @@ export function DuplicateOptionsPopup() {
 
  return (
  <div
- className="fixed inset-0 bg-[#2d2a26]/20 flex items-center justify-center z-50"
+ className="fixed inset-0 bg-[var(--color-text)]/20 flex items-center justify-center z-50"
  onClick={() => setShow(false)}
  >
  <div
- className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 min-w-64"
+ className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 min-w-64"
  onClick={(e) => e.stopPropagation()}
  >
- <h4 className="text-sm font-semibold text-[#2d2a26] mb-3">Duplicate to:</h4>
+ <h4 className="text-sm font-semibold text-[var(--color-text)] mb-3">Duplicate to:</h4>
  <div className="flex flex-col gap-2">
  <button
  type="button"
  onClick={duplicateToCurrent}
- className="px-4 py-2 text-sm font-medium text-[#2d2a26] bg-[#f5f2ef] hover:bg-[#e8e1da] rounded-lg transition-colors text-left"
+ className="px-4 py-2 text-sm font-medium text-[var(--color-text)] bg-[var(--color-bg)] hover:bg-[var(--color-border)] rounded-lg transition-colors text-left"
  >
  Current Worktable
  </button>
@@ -113,7 +113,7 @@ export function DuplicateOptionsPopup() {
  <button
  type="button"
  onClick={duplicateToNew}
- className="px-4 py-2 text-sm font-medium text-[#2d2a26] bg-[#f5f2ef] hover:bg-[#e8e1da] rounded-lg transition-colors text-left"
+ className="px-4 py-2 text-sm font-medium text-[var(--color-text)] bg-[var(--color-bg)] hover:bg-[var(--color-border)] rounded-lg transition-colors text-left"
  >
  New Worktable
  </button>

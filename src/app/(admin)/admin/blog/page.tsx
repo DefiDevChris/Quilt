@@ -98,11 +98,11 @@ export default function AdminBlogPage() {
       case 'published':
         return 'bg-green-50 text-green-700 border-green-200';
       case 'draft':
-        return 'bg-[#ffc8a6]/10 text-[#6b655e] border-[#ffc8a6]/20';
+        return 'bg-[#ffc8a6]/10 text-[#4a4a4a] border-[#ffc8a6]/20';
       case 'archived':
-        return 'bg-[#fdfaf7] text-[#6b655e] border-[#e8e1da]';
+        return 'bg-[#fdfaf7] text-[#4a4a4a] border-[#d4d4d4]';
       default:
-        return 'bg-[#fdfaf7] text-[#6b655e] border-[#e8e1da]';
+        return 'bg-[#fdfaf7] text-[#4a4a4a] border-[#d4d4d4]';
     }
   }
 
@@ -117,10 +117,10 @@ export default function AdminBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6b655e]">Manage your blog content</p>
+        <p className="text-sm text-[#4a4a4a]">Manage your blog content</p>
         <Link
           href="/admin/blog/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[#ffffff] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -129,31 +129,31 @@ export default function AdminBlogPage() {
         </Link>
       </div>
 
-      <div className="rounded-lg border border-[#e8e1da] overflow-hidden">
+      <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
         <table className="w-full">
           <thead className="bg-[#fdfaf7]">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                 Title
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                 Category
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[#6b655e]">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
                 Published
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-[#6b655e]">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a]">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e8e1da]/30 bg-[#ffffff]">
+          <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-[#6b655e]">
+                <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
                   No blog posts yet. Create your first post!
                 </td>
               </tr>
@@ -162,14 +162,14 @@ export default function AdminBlogPage() {
                 <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
                   <td className="px-4 py-3">
                     <div className="max-w-md">
-                      <p className="font-medium text-[#2d2a26] truncate">{post.title}</p>
+                      <p className="font-medium text-[#1a1a1a] truncate">{post.title}</p>
                       {post.excerpt && (
-                        <p className="text-xs text-[#6b655e] mt-0.5 line-clamp-1">{post.excerpt}</p>
+                        <p className="text-xs text-[#4a4a4a] mt-0.5 line-clamp-1">{post.excerpt}</p>
                       )}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-[#6b655e]">{post.category}</span>
+                    <span className="text-sm text-[#4a4a4a]">{post.category}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -182,11 +182,11 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-4 py-3">
                     {post.publishedAt ? (
-                      <span className="text-sm text-[#6b655e]">
+                      <span className="text-sm text-[#4a4a4a]">
                         {new Date(post.publishedAt).toLocaleDateString()}
                       </span>
                     ) : (
-                      <span className="text-sm text-[#6b655e]">—</span>
+                      <span className="text-sm text-[#4a4a4a]">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -200,7 +200,7 @@ export default function AdminBlogPage() {
                       </button>
                       <Link
                         href={`/admin/blog/${post.id}`}
-                        className={`text-sm font-medium transition-colors duration-150 ${deletingId === post.id ? 'pointer-events-none opacity-50 text-[#6b655e]' : 'text-[#6b655e] hover:text-[#2d2a26]'}`}
+                        className={`text-sm font-medium transition-colors duration-150 ${deletingId === post.id ? 'pointer-events-none opacity-50 text-[#4a4a4a]' : 'text-[#4a4a4a] hover:text-[#1a1a1a]'}`}
                         aria-disabled={deletingId === post.id}
                       >
                         Edit
@@ -223,7 +223,7 @@ export default function AdminBlogPage() {
 
       {pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-[#6b655e]">
+          <p className="text-sm text-[#4a4a4a]">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
             posts
@@ -234,7 +234,7 @@ export default function AdminBlogPage() {
                 setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
               }
               disabled={pagination.page === 1}
-              className="px-3 py-1.5 rounded-lg border border-[#e8e1da] text-sm font-medium text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Previous
             </button>
@@ -246,7 +246,7 @@ export default function AdminBlogPage() {
                 }))
               }
               disabled={pagination.page >= pagination.totalPages}
-              className="px-3 py-1.5 rounded-lg border border-[#e8e1da] text-sm font-medium text-[#6b655e] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Next
             </button>

@@ -495,10 +495,10 @@ export function SimplePhotoBlockUpload({
         <div className="space-y-4">
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#e8e1da] bg-[#fdfaf7] hover:bg-[#f5f2ef]"
+            className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#d4d4d4] bg-[#fdfaf7] hover:bg-[#fdfaf7]"
           >
-            <p className="text-[14px] leading-[20px] text-[#6b655e]">Click to upload or drag and drop</p>
-            <p className="mt-1 text-[12px] leading-[16px] text-[#6b655e]">PNG, JPEG, or WebP (max 20MB)</p>
+            <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Click to upload or drag and drop</p>
+            <p className="mt-1 text-[12px] leading-[16px] text-[#4a4a4a]">PNG, JPEG, or WebP (max 20MB)</p>
           </div>
           <input
             ref={fileInputRef}
@@ -512,13 +512,13 @@ export function SimplePhotoBlockUpload({
 
       {step === 'imagePrep' && (
         <div className="space-y-4">
-          <div className="flex items-center gap-1 bg-[#f5f2ef] rounded-full p-1">
+          <div className="flex items-center gap-1 bg-[#fdfaf7] rounded-full p-1">
             <button
               type="button"
               onClick={() => setPrepMode('straighten')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'straighten'
-                ? 'bg-[#fdfaf7] text-[#2d2a26] shadow'
-                : 'text-[#6b655e] hover:text-[#2d2a26]'
+                ? 'bg-[#fdfaf7] text-[#1a1a1a] shadow'
+                : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
                 }`}
             >
               Straighten
@@ -527,8 +527,8 @@ export function SimplePhotoBlockUpload({
               type="button"
               onClick={() => setPrepMode('perspective')}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'perspective'
-                ? 'bg-[#fdfaf7] text-[#2d2a26] shadow'
-                : 'text-[#6b655e] hover:text-[#2d2a26]'
+                ? 'bg-[#fdfaf7] text-[#1a1a1a] shadow'
+                : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
                 }`}
             >
               Perspective
@@ -537,7 +537,7 @@ export function SimplePhotoBlockUpload({
 
           {prepMode === 'straighten' ? (
             <>
-              <div className="flex justify-center items-center rounded-lg border border-[#e8e1da]/20 bg-[#f5f2ef] p-4 overflow-hidden h-80">
+              <div className="flex justify-center items-center rounded-lg border border-[#d4d4d4]/20 bg-[#fdfaf7] p-4 overflow-hidden h-80">
                 {originalImageUrl && (
                   <img
                     src={originalImageUrl}
@@ -558,10 +558,10 @@ export function SimplePhotoBlockUpload({
               <div className="space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[12px] leading-[16px] font-medium text-[#2d2a26]/60 uppercase tracking-wider">
+                    <span className="text-[12px] leading-[16px] font-medium text-[#1a1a1a]/60 uppercase tracking-wider">
                       Straighten
                     </span>
-                    <span className="text-[12px] leading-[16px] font-mono text-[#2d2a26]/50">{rotation}°</span>
+                    <span className="text-[12px] leading-[16px] font-mono text-[#1a1a1a]/50">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -577,28 +577,28 @@ export function SimplePhotoBlockUpload({
                   <button
                     type="button"
                     onClick={() => setRotation((r) => r - 90)}
-                    className="flex-1 bg-[#fdfaf7] text-[#2d2a26] rounded-full py-2 text-xs font-medium hover:bg-[#f5f2ef]"
+                    className="flex-1 bg-[#fdfaf7] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[#fdfaf7]"
                   >
                     -90°
                   </button>
                   <button
                     type="button"
                     onClick={() => setRotation((r) => r + 90)}
-                    className="flex-1 bg-[#fdfaf7] text-[#2d2a26] rounded-full py-2 text-xs font-medium hover:bg-[#f5f2ef]"
+                    className="flex-1 bg-[#fdfaf7] text-[#1a1a1a] rounded-full py-2 text-xs font-medium hover:bg-[#fdfaf7]"
                   >
                     +90°
                   </button>
                   <button
                     type="button"
                     onClick={() => setFlipH((v) => !v)}
-                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#f5f2ef]'}`}
+                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipH ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#1a1a1a] hover:bg-[#fdfaf7]'}`}
                   >
                     Flip H
                   </button>
                   <button
                     type="button"
                     onClick={() => setFlipV((v) => !v)}
-                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#2d2a26] hover:bg-[#f5f2ef]'}`}
+                    className={`flex-1 rounded-full py-2 text-xs font-medium transition-colors ${flipV ? 'bg-primary/12 text-primary ring-1 ring-primary/20' : 'bg-[#fdfaf7] text-[#1a1a1a] hover:bg-[#fdfaf7]'}`}
                   >
                     Flip V
                   </button>
@@ -610,7 +610,7 @@ export function SimplePhotoBlockUpload({
                         setFlipH(false);
                         setFlipV(false);
                       }}
-                      className="px-3 rounded-full py-2 text-xs font-medium text-[#2d2a26]/50 hover:text-[#2d2a26] bg-[#fdfaf7] hover:bg-[#f5f2ef]"
+                      className="px-3 rounded-full py-2 text-xs font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[#fdfaf7] hover:bg-[#fdfaf7]"
                     >
                       Reset
                     </button>
@@ -620,12 +620,12 @@ export function SimplePhotoBlockUpload({
             </>
           ) : (
             <>
-              <p className="text-[14px] leading-[20px] text-[#6b655e]">
+              <p className="text-[14px] leading-[20px] text-[#4a4a4a]">
                 Drag corners to align with the edges of your block.
               </p>
               <div
                 ref={containerRef}
-                className="relative h-96 rounded-lg border border-[#e8e1da] bg-[#fdfaf7]"
+                className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[#fdfaf7]"
               >
                 <canvas
                   ref={canvasRef}
@@ -651,7 +651,7 @@ export function SimplePhotoBlockUpload({
                       { x: margin, y: h - margin },
                     ]);
                   }}
-                  className="self-start px-3 py-1.5 text-[12px] leading-[16px] font-medium text-[#2d2a26]/50 hover:text-[#2d2a26] bg-[#fdfaf7] rounded-full hover:bg-[#f5f2ef]"
+                  className="self-start px-3 py-1.5 text-[12px] leading-[16px] font-medium text-[#1a1a1a]/50 hover:text-[#1a1a1a] bg-[#fdfaf7] rounded-full hover:bg-[#fdfaf7]"
                 >
                   Reset Corners
                 </button>
@@ -663,7 +663,7 @@ export function SimplePhotoBlockUpload({
             <button
               type="button"
               onClick={() => setStep('upload')}
-              className="px-4 py-2 text-[14px] leading-[20px] text-[#6b655e] hover:text-[#2d2a26]"
+              className="px-4 py-2 text-[14px] leading-[20px] text-[#4a4a4a] hover:text-[#1a1a1a]"
             >
               Back
             </button>
@@ -681,12 +681,12 @@ export function SimplePhotoBlockUpload({
 
       {step === 'crop' && (
         <div className="space-y-3">
-          <p className="text-[14px] leading-[20px] text-[#6b655e]">
+          <p className="text-[14px] leading-[20px] text-[#4a4a4a]">
             Adjust the crop area to frame your block perfectly.
           </p>
           <div
             ref={containerRef}
-            className="relative h-96 rounded-lg border border-[#e8e1da] bg-[#fdfaf7]"
+            className="relative h-96 rounded-lg border border-[#d4d4d4] bg-[#fdfaf7]"
           >
             <canvas
               ref={canvasRef}
@@ -699,35 +699,35 @@ export function SimplePhotoBlockUpload({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#6b655e]">Block Name *</label>
+              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Block Name *</label>
               <input
                 type="text"
                 value={blockName}
                 onChange={(e) => setBlockName(e.target.value)}
                 placeholder="My Block"
                 maxLength={255}
-                className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#6b655e]">Category</label>
+              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Category</label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Custom"
                 maxLength={100}
-                className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
             <div className="col-span-2">
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#6b655e]">Tags</label>
+              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Tags</label>
               <input
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="modern, geometric"
-                className="w-full rounded-lg border border-[#e8e1da] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-[#d4d4d4] bg-[#fdfaf7] px-2.5 py-1.5 text-[14px] leading-[20px] focus:border-primary focus:outline-none"
               />
             </div>
           </div>
@@ -739,7 +739,7 @@ export function SimplePhotoBlockUpload({
                 setCorners(null);
                 setStep('imagePrep');
               }}
-              className="px-4 py-2 text-[14px] leading-[20px] text-[#6b655e] hover:text-[#2d2a26]"
+              className="px-4 py-2 text-[14px] leading-[20px] text-[#4a4a4a] hover:text-[#1a1a1a]"
             >
               Back
             </button>
