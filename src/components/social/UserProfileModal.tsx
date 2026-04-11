@@ -24,9 +24,14 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-lg w-full max-w-md">
-        <button onClick={onClose} className="absolute top-3 right-3 p-1"><X className="h-5 w-5 text-[#6b655e]" /></button>
+      <div className="absolute inset-0 bg-[#2d2a26]/50" onClick={onClose} />
+      <div className="relative bg-[#ffffff] border border-[#e8e1da] rounded-lg w-full max-w-md">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
+        >
+          <X className="h-5 w-5 text-[#6b655e]" />
+        </button>
         <div className="p-6 text-center">
           <img src={user.avatar} alt={user.name} className="h-20 w-20 rounded-full mx-auto object-cover" />
           <h3 className="font-semibold text-lg text-[#2d2a26] mt-3">{user.name}</h3>

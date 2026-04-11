@@ -45,7 +45,7 @@ function ReferenceImageToggle() {
         className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
           showReferencePanel
             ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
-            : 'text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100'
+            : 'text-[#6b655e]/50 hover:text-[#2d2a26] hover:bg-[#f5f2ef]'
         }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
         aria-pressed={showReferencePanel}
@@ -129,13 +129,13 @@ export function StudioTopBar({
 
   return (
     <>
-      <div className="h-12 bg-neutral border-b border-neutral-200/15 flex items-center justify-between px-4">
+      <div className="h-12 bg-[#fdfaf7] border-b border-[#e8e1da]/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <TooltipHint name="Menu" description="Access project settings and options">
             <button
               type="button"
               onClick={() => setDrawerOpen((prev) => !prev)}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800/50 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full text-[#6b655e]/50 hover:text-[#2d2a26] hover:bg-[#f5f2ef] transition-colors"
               aria-label="Open menu"
             >
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -155,7 +155,7 @@ export function StudioTopBar({
             <button
               type="button"
               onClick={handleBackToDashboard}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] text-neutral-800/70 hover:text-neutral-800 hover:bg-neutral-100 transition-colors"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] leading-[20px] text-[#2d2a26]/70 hover:text-[#2d2a26] hover:bg-[#f5f2ef] transition-colors"
               aria-label="Back to Dashboard"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -190,8 +190,8 @@ export function StudioTopBar({
                   </svg>
                   Back to Quilt
                 </button>
-                <span className="text-neutral-800/30 text-sm">|</span>
-                <span className="font-semibold text-[15px] text-neutral-800 tracking-[-0.01em]">
+                <span className="text-[#2d2a26]/30 text-[14px] leading-[20px]">|</span>
+                <span className="font-semibold text-[15px] leading-[20px] text-[#2d2a26] tracking-[-0.01em]">
                   Block Builder
                 </span>
               </div>
@@ -204,11 +204,11 @@ export function StudioTopBar({
                     title="Unsaved changes"
                   />
                 )}
-                <span className="font-semibold text-[15px] text-neutral-800 tracking-[-0.01em]">
+                <span className="font-semibold text-[15px] leading-[20px] text-[#2d2a26] tracking-[-0.01em]">
                   {projectName || 'Quilt Studio'}
                 </span>
                 {lastSavedAt && (
-                  <span className="text-[10px] text-neutral-500/60 ml-1">
+                  <span className="text-[12px] leading-[16px] text-[#6b655e]/60 ml-1">
                     Saved {formatTimestamp(lastSavedAt)}
                   </span>
                 )}
@@ -238,7 +238,7 @@ export function StudioTopBar({
                 type="button"
                 onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                  isViewportLocked ? 'hover:bg-neutral-100' : 'bg-primary/10 hover:bg-primary/20'
+                  isViewportLocked ? 'hover:bg-[#f5f2ef]' : 'bg-primary/10 hover:bg-primary/20'
                 }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
@@ -285,7 +285,7 @@ export function StudioTopBar({
                 <button
                   type="button"
                   onClick={() => useCanvasStore.getState().centerAndFitViewport()}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f5f2ef] transition-colors"
                   aria-label="Recenter viewport"
                 >
                   <svg
@@ -306,7 +306,7 @@ export function StudioTopBar({
 
           <ReferenceImageToggle />
 
-          <div className="h-6 w-px bg-outline-variant/30" />
+          <div className="h-6 w-px bg-[#e8e1da]/30" />
 
           <QuiltSettingsDropdown
             onOpenImageExport={onOpenImageExport}

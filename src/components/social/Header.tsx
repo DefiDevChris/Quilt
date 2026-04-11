@@ -41,13 +41,13 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
           <div className="relative h-9 w-9 shrink-0">
             <Image src="/logo.png" alt="QuiltCorgi" fill className="object-contain" />
           </div>
-          <span className="text-lg font-bold text-[#1a1a2e]">QuiltCorgi</span>
+          <span className="text-lg font-bold text-[#2d2a26]">QuiltCorgi</span>
         </div>
 
         {/* Search */}
         <div className="flex-1 max-w-md mx-8">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b655e]" />
             <Input
               type="search"
               placeholder="Search posts, people, hashtags..."

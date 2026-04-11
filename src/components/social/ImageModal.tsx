@@ -50,9 +50,12 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-white rounded-lg overflow-hidden flex">
-        <button onClick={onClose} className="absolute top-3 right-3 z-10 p-1.5 bg-black/30 rounded-full text-white">
+      <div className="absolute inset-0 bg-[#2d2a26]/70" onClick={onClose} />
+      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden flex">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 p-1.5 bg-[#2d2a26]/30 rounded-full text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
+        >
           <X className="h-4 w-4" />
         </button>
 

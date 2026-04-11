@@ -26,7 +26,7 @@ export function AuthGateModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-[#2d2a26]/50"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -49,7 +49,7 @@ export function AuthGateModal({
           </svg>
         </button>
 
-        <div className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8">
+        <div className="bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] p-8">
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 relative">

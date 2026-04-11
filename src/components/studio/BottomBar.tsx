@@ -20,7 +20,7 @@ export function BottomBar() {
   const { activateShadeView, deactivateShadeView } = useShadeAssignment();
 
   return (
-    <div className="h-7 bg-neutral flex items-center justify-between px-4 font-mono text-body-sm text-neutral-500">
+    <div className="h-7 bg-[#fdfaf7] flex items-center justify-between px-4 font-mono text-body-sm text-[#6b655e]">
       {/* Left side - cursor position */}
       <div className="flex items-center gap-[2.75rem]">
         <span>
@@ -37,10 +37,10 @@ export function BottomBar() {
                 activateShadeView();
               }
             }}
-            className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors ${
+            className={`px-2 py-0.5 rounded-full text-[12px] leading-[16px] font-medium transition-colors ${
               shadeViewActive
                 ? 'bg-primary/20 text-primary'
-                : 'text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100'
+                : 'text-[#6b655e] hover:text-[#2d2a26] hover:bg-[#f5f2ef]'
             }`}
             title="Toggle shade visualization"
           >
@@ -66,14 +66,14 @@ export function BottomBar() {
           /* Quilt mode stats */
           <>
             {hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form' && (
-              <span className="text-on-surface/50">
+              <span className="text-[#2d2a26]/50">
                 Layout: {layoutType.charAt(0).toUpperCase() + layoutType.slice(1)}
               </span>
             )}
-            <span className={gridSettings.snapToGrid ? 'text-success' : 'text-neutral-500'}>
+            <span className={gridSettings.snapToGrid ? 'text-[#22c55e]' : 'text-[#6b655e]'}>
               Snap to Grid: {gridSettings.snapToGrid ? 'ON' : 'OFF'}
             </span>
-            <span className={gridSettings.snapToNodes ? 'text-success' : 'text-neutral-500'}>
+            <span className={gridSettings.snapToNodes ? 'text-[#22c55e]' : 'text-[#6b655e]'}>
               Snap to Nodes: {gridSettings.snapToNodes ? 'ON' : 'OFF'}
             </span>
           </>

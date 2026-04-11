@@ -13,7 +13,7 @@ interface FilterBarProps {
 
 export function FilterBar({ viewMode, filterMode, onViewModeChange, onFilterModeChange }: FilterBarProps) {
   return (
-    <div className="flex items-center justify-between bg-white border border-[#e8e1da] rounded-2xl shadow-sm px-4 py-2.5">
+    <div className="flex items-center justify-between bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] px-4 py-2.5">
       <div className="flex items-center gap-1">
         <button
           onClick={() => onFilterModeChange('featured')}
@@ -21,7 +21,7 @@ export function FilterBar({ viewMode, filterMode, onViewModeChange, onFilterMode
             "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium",
             filterMode === 'featured'
               ? "bg-[#ff8d49] text-white"
-              : "text-[#6b655e] hover:bg-gray-50"
+              : "text-[#6b655e] hover:bg-[#fdfaf7]"
           )}
         >
           <Star className="h-3.5 w-3.5" />
@@ -33,7 +33,7 @@ export function FilterBar({ viewMode, filterMode, onViewModeChange, onFilterMode
             "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium",
             filterMode === 'newest'
               ? "bg-[#ff8d49] text-white"
-              : "text-[#6b655e] hover:bg-gray-50"
+              : "text-[#6b655e] hover:bg-[#fdfaf7]"
           )}
         >
           <Clock className="h-3.5 w-3.5" />

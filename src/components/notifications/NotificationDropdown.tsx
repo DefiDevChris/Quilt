@@ -150,11 +150,11 @@ export function NotificationDropdown() {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-neutral shadow-elevation-3 rounded-full z-50"
+      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)] rounded-lg z-50 border border-[#e8e1da]"
       role="menu"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200">
-        <h3 className="font-semibold text-neutral-800">Notifications</h3>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#e8e1da]">
+        <h3 className="font-semibold text-[#2d2a26]">Notifications</h3>
         <button
           type="button"
           onClick={markAllAsRead}
@@ -165,9 +165,9 @@ export function NotificationDropdown() {
       </div>
 
       {isLoading && notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-neutral-500 text-sm">Loading...</div>
+        <div className="px-4 py-8 text-center text-[#6b655e] text-[14px] leading-[20px]">Loading...</div>
       ) : notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-neutral-500 text-sm">No notifications yet</div>
+        <div className="px-4 py-8 text-center text-[#6b655e] text-[14px] leading-[20px]">No notifications yet</div>
       ) : (
         <div>
           {notificationsList.map((notification, index) => (
@@ -175,20 +175,20 @@ export function NotificationDropdown() {
               key={notification.id}
               type="button"
               onClick={() => handleNotificationClick(notification)}
-              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-neutral-100 transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
-                } ${index < notificationsList.length - 1 ? 'border-b border-neutral-200' : ''}`}
+              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-[#f5f2ef] transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
+                } ${index < notificationsList.length - 1 ? 'border-b border-[#e8e1da]' : ''}`}
               role="menuitem"
             >
               <div className="mt-0.5">{getNotificationIcon(notification.type)}</div>
               <div className="flex-1 min-w-0">
                 <p
-                  className={`text-sm ${notification.isRead ? 'text-neutral-500' : 'font-medium text-neutral-800'
+                  className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-[#6b655e]' : 'font-medium text-[#2d2a26]'
                     }`}
                 >
                   {notification.title}
                 </p>
-                <p className="text-sm text-neutral-500 line-clamp-2 mt-0.5">{notification.message}</p>
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-[14px] leading-[20px] text-[#6b655e] line-clamp-2 mt-0.5">{notification.message}</p>
+                <p className="text-[12px] leading-[16px] text-[#6b655e] mt-1">
                   {formatRelativeTime(notification.createdAt)}
                 </p>
               </div>

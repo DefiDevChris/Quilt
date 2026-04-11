@@ -26,13 +26,13 @@ export function ConfirmationDialog({
 }: ConfirmationDialogProps) {
  return (
  <div
- className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+ className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40"
  onClick={(e) => {
  if (e.target === e.currentTarget) onCancel();
  }}
  >
  <div
- className={`bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] w-[400px] max-w-[90vw] p-6 ${className}`}
+ className={`bg-[#fdfaf7] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da] w-[400px] max-w-[90vw] p-6 ${className}`}
  >
  <h3 className="text-title-lg text-[#2d2a26] font-semibold mb-2">{title}</h3>
  <div className="text-body-md text-[#6b655e] mb-6">{message}</div>

@@ -93,7 +93,7 @@ export function DuplicateOptionsPopup() {
 
  return (
  <div
- className="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
+ className="fixed inset-0 bg-[#2d2a26]/20 flex items-center justify-center z-50"
  onClick={() => setShow(false)}
  >
  <div

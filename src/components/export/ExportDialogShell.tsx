@@ -28,8 +28,8 @@ export function ExportDialogShell({
  children,
 }: ExportDialogShellProps) {
  return (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
- <div className="w-[440px] max-w-[90vw] rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
+ <div className="w-[440px] max-w-[90vw] rounded-lg bg-[#fdfaf7] p-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[#e8e1da]">
  <h2 className="mb-4 text-lg font-semibold text-[#2d2a26]">{title}</h2>
 
  {children}

@@ -99,7 +99,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  return (
  <div
  ref={containerRef}
- className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+ className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40"
  onClick={(e) => {
  if (e.target === e.currentTarget) onClose();
  }}

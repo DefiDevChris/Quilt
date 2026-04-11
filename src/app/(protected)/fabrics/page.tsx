@@ -198,7 +198,7 @@ export default function FabricsPage() {
                       <p className="text-[10px] text-[#6b655e]/40">No Preview</p>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-150" />
+                  <div className="absolute inset-0 bg-[#2d2a26]/0 group-hover:bg-[#2d2a26]/5 transition-colors duration-150" />
                 </div>
 
                 <div className="p-4 bg-[#ffffff]">

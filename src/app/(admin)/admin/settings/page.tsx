@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2d2a26]/40">
           <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <h3 className="text-lg font-semibold text-[#2d2a26]">Enable Fabric Shop</h3>
             <p className="text-sm text-[#6b655e]">

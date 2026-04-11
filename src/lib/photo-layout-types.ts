@@ -80,6 +80,7 @@ export interface PipelineStep {
 export type PhotoLayoutStep =
   | 'upload'
   | 'imagePrep'
+  | 'crop'
   | 'scanSettings'
   | 'processing'
   | 'review'

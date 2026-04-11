@@ -48,7 +48,7 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
     <nav
       aria-label="Design tools"
       data-tour="toolbar"
-      className="bg-neutral border-r border-neutral-200/15 flex flex-col py-2 h-full overflow-y-auto min-w-[88px] w-[88px] shrink-0"
+      className="bg-[#fdfaf7] border-r border-[#e8e1da]/15 flex flex-col py-2 h-full overflow-y-auto min-w-[88px] w-[88px] shrink-0"
     >
       <div className="flex flex-col items-center gap-0.5 px-1">
         {groups.map((group, groupIdx) => (

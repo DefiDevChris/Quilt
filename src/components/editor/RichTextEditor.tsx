@@ -204,12 +204,12 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
   return (
     <div className="space-y-3">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-neutral-container-high rounded-full border border-neutral-200">
+      <div className="flex flex-wrap items-center gap-1 p-2 bg-[#f5f2ef] rounded-lg border border-[#e8e1da]">
         {/* Block types */}
         <select
           value={blockType}
           onChange={(e) => setBlock(e.target.value)}
-          className="px-2 py-1 text-sm bg-neutral border border-neutral-200 rounded text-neutral-800"
+          className="px-2 py-1 text-[14px] leading-[20px] bg-[#fdfaf7] border border-[#e8e1da] rounded-lg text-[#2d2a26]"
         >
           <option value="paragraph">Paragraph</option>
           <option value="h1">Heading 1</option>
@@ -220,13 +220,13 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
           <option value="codeBlock">Code</option>
         </select>
 
-        <div className="w-px h-6 bg-outline-variant mx-1" />
+        <div className="w-px h-6 bg-[#e8e1da] mx-1" />
 
         {/* Text formatting */}
         <button
           type="button"
           onClick={() => toggleMark('bold')}
-          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('bold') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
+          className={`p-1.5 rounded-lg hover:bg-[#f5f2ef] ${activeMarks.has('bold') ? 'bg-[#f5f2ef] text-primary' : 'text-[#6b655e]'}`}
           title="Bold"
         >
           <span className="font-bold">B</span>
@@ -234,7 +234,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('italic')}
-          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('italic') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
+          className={`p-1.5 rounded-lg hover:bg-[#f5f2ef] ${activeMarks.has('italic') ? 'bg-[#f5f2ef] text-primary' : 'text-[#6b655e]'}`}
           title="Italic"
         >
           <span className="italic">I</span>
@@ -242,7 +242,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('underline')}
-          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('underline') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
+          className={`p-1.5 rounded-lg hover:bg-[#f5f2ef] ${activeMarks.has('underline') ? 'bg-[#f5f2ef] text-primary' : 'text-[#6b655e]'}`}
           title="Underline"
         >
           <span className="underline">U</span>
@@ -250,19 +250,19 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => toggleMark('strikeThrough')}
-          className={`p-1.5 rounded hover:bg-neutral-container ${activeMarks.has('strikeThrough') ? 'bg-neutral-container text-primary' : 'text-neutral-500'}`}
+          className={`p-1.5 rounded-lg hover:bg-[#f5f2ef] ${activeMarks.has('strikeThrough') ? 'bg-[#f5f2ef] text-primary' : 'text-[#6b655e]'}`}
           title="Strikethrough"
         >
           <span className="line-through">S</span>
         </button>
 
-        <div className="w-px h-6 bg-outline-variant mx-1" />
+        <div className="w-px h-6 bg-[#e8e1da] mx-1" />
 
         {/* Lists */}
         <button
           type="button"
           onClick={() => execCommand('insertUnorderedList')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Bullet List"
         >
           • List
@@ -270,19 +270,19 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('insertOrderedList')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Numbered List"
         >
           1. List
         </button>
 
-        <div className="w-px h-6 bg-outline-variant mx-1" />
+        <div className="w-px h-6 bg-[#e8e1da] mx-1" />
 
         {/* Insert */}
         <button
           type="button"
           onClick={insertLink}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Insert Link"
         >
           🔗 Link
@@ -290,19 +290,19 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={insertImage}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Insert Image"
         >
           🖼️ Image
         </button>
 
-        <div className="w-px h-6 bg-outline-variant mx-1" />
+        <div className="w-px h-6 bg-[#e8e1da] mx-1" />
 
         {/* Image Alignment */}
         <button
           type="button"
           onClick={() => setImageAlignment('left')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Float Left"
         >
           ⬅️ Left
@@ -310,7 +310,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('center')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Center"
         >
           ↔️ Center
@@ -318,7 +318,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('right')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Float Right"
         >
           ➡️ Right
@@ -326,19 +326,19 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => setImageAlignment('full')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Full Width"
         >
           ⤡ Full
         </button>
 
-        <div className="w-px h-6 bg-outline-variant mx-1" />
+        <div className="w-px h-6 bg-[#e8e1da] mx-1" />
 
         {/* Undo/Redo */}
         <button
           type="button"
           onClick={() => execCommand('undo')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Undo"
         >
           ↩️
@@ -346,7 +346,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         <button
           type="button"
           onClick={() => execCommand('redo')}
-          className="p-1.5 rounded hover:bg-neutral-container text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-[#f5f2ef] text-[#6b655e]"
           title="Redo"
         >
           ↪️
@@ -359,7 +359,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         contentEditable
         onInput={handleInput}
         onBlur={handleInput}
-        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-neutral border border-neutral-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 prose-quilt-studio"
+        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-[#fdfaf7] border border-[#e8e1da] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 prose-quilt-studio"
         suppressContentEditableWarning
         dangerouslySetInnerHTML={{
           __html: tiptapToHtml(content),

@@ -115,13 +115,13 @@ export function SocialThreadsPage() {
         <Sidebar onSavedClick={() => setShowSavedPanel(!showSavedPanel)} savedCount={savedPosts.size} />
 
         <main className="flex-1 py-6 px-8">
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="max-w-4xl mx-auto space-y-6">
             {isLoading ? <CreatePostSkeleton /> : <CreatePost onPost={handleCreatePost} />}
 
             <FilterBar viewMode={viewMode} filterMode={filterMode} onViewModeChange={setViewMode} onFilterModeChange={setFilterMode} />
 
             {showSavedPanel && (
-              <div className="bg-white rounded-lg shadow-sm p-5">
+              <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-semibold text-[#2d2a26]">Saved Posts ({savedPostsData.length})</h3>
                   <button onClick={() => setShowSavedPanel(false)} className="text-sm text-[#6b655e]">Close</button>

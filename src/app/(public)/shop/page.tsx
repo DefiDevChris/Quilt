@@ -133,7 +133,7 @@ export default function ShopPage() {
   if (!shopEnabled) {
     return (
       <div className="min-h-screen bg-[#fdfaf7] flex items-center justify-center relative overflow-hidden">
-        <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
+        <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
           <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={28} className="text-[#ff8d49]" />
           </div>
@@ -161,7 +161,7 @@ export default function ShopPage() {
       {/* Header */}
       <div className="bg-[#ffffff] border-b border-[#e8e1da] relative">
         {/* Quilt-piece accent strip */}
-        <div className="h-1.5 bg-gradient-to-r from-[#ff8d49]/20 via-[#ffc8a6]/20 to-[#ffc7c7]/20" />
+        <div className="h-1.5 bg-[#fdfaf7]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3">
             <QuiltPieceRow count={3} size={12} gap={5} />
@@ -223,7 +223,7 @@ export default function ShopPage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QuiltPieceRow count={2} size={8} gap={3} />
@@ -338,7 +338,7 @@ export default function ShopPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-[#ffffff] border border-[#e8e1da] rounded-xl overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+              <div key={i} className="bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
                 <div className="aspect-square bg-[#ff8d49]/10" />
                 <div className="p-3 space-y-2">
                   <div className="h-4 bg-[#ff8d49]/20 rounded-full w-3/4" />
@@ -349,7 +349,7 @@ export default function ShopPage() {
             ))}
           </div>
         ) : fabrics.length === 0 ? (
-          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-xl p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[#ffffff] border border-[#e8e1da] rounded-lg p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
             <p className="text-lg font-medium text-[#2d2a26] mb-2">No fabrics found</p>
             <p className="text-sm text-[#6b655e]">
               {hasActiveFilters
@@ -407,7 +407,7 @@ function ShopFabricCard({
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
-    <div className="group bg-[#ffffff] border border-[#e8e1da] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
+    <div className="group bg-[#ffffff] border border-[#e8e1da] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (

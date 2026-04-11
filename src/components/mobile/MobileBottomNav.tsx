@@ -81,7 +81,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-end justify-around pb-7 pt-2 px-3 bg-neutral"
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-end justify-around pb-7 pt-2 px-3 bg-[#fdfaf7]"
       aria-label="Mobile navigation"
     >
       {/* Home */}

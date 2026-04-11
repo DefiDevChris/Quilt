@@ -92,15 +92,18 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
   // Undo history — single entry is enough for A/B.
   const previousScaledRef = useRef<readonly ScaledPiece[] | null>(null);
 
-  // Derived: current class counts for the summary strip.
+  // Derived: current class counts for the summary strip. The `key` field is
+  // the unique cluster key (used for React reconciliation); `label` is the
+  // display string, which is intentionally allowed to repeat across classes
+  // for families like Right Triangles where multiple sizes may share a label.
   const currentClassCounts = useMemo(() => {
-    const counts = new Map<string, { label: string; count: number }>();
+    const counts = new Map<string, { key: string; label: string; count: number }>();
     for (const p of scaledPieces) {
       const key = p.classKey ?? p.id;
       const label = p.classLabel ?? 'Piece';
       const existing = counts.get(key);
       if (existing) existing.count += 1;
-      else counts.set(key, { label, count: 1 });
+      else counts.set(key, { key, label, count: 1 });
     }
     return Array.from(counts.values()).sort((a, b) => b.count - a.count);
   }, [scaledPieces]);
@@ -197,9 +200,8 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
       <div>
         <h3 className="text-headline-sm font-semibold text-[#2d2a26]">Review your pattern</h3>
         <p className="text-body-sm text-[#6b655e] mt-1">
-          We found <strong>{scaledPieces.length}</strong> pieces in{' '}
-          <strong>{classCount}</strong> shape classes. Adjust if needed, or send straight to the
-          studio.
+          We found <strong>{scaledPieces.length}</strong> pieces in <strong>{classCount}</strong>{' '}
+          shape classes. Adjust if needed, or send straight to the studio.
         </p>
       </div>
 
@@ -281,7 +283,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
           <div className="flex flex-wrap gap-2">
             {currentClassCounts.slice(0, 12).map((c) => (
               <span
-                key={c.label}
+                key={c.key}
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fdfaf7] border border-[#e8e1da] text-label-xs text-[#2d2a26]"
               >
                 <span>{c.label}</span>
@@ -312,7 +314,10 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
 
         <div>
           <label className="block text-label-sm text-[#2d2a26] mb-1">
-            Base unit: {unitOverridePx !== null ? `${unitOverridePx.toFixed(0)} px (override)` : `${inferredUnitPx.toFixed(1)} px (auto)`}
+            Base unit:{' '}
+            {unitOverridePx !== null
+              ? `${unitOverridePx.toFixed(0)} px (override)`
+              : `${inferredUnitPx.toFixed(1)} px (auto)`}
           </label>
           <input
             type="range"
@@ -336,7 +341,8 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
 
         <div>
           <label className="block text-label-sm text-[#2d2a26] mb-1">
-            Rotation offset: {rotationOffsetDeg.toFixed(1)}° (auto {inferredRotationDeg.toFixed(1)}°)
+            Rotation offset: {rotationOffsetDeg.toFixed(1)}° (auto {inferredRotationDeg.toFixed(1)}
+            °)
           </label>
           <input
             type="range"
