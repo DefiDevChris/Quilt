@@ -5,7 +5,7 @@ import {
   optimizeStripCutting,
   type PatchShape,
 } from '@/lib/cutting-chart-generator';
-import { formatFraction } from '@/lib/piece-detection-utils';
+import { formatFraction } from '@/lib/fraction-utils';
 
 describe('cutting-chart-generator', () => {
   describe('classifyPatchShape', () => {
