@@ -5,7 +5,7 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import { formatFraction } from '@/lib/piece-detection-utils';
+import { formatFraction } from '@/lib/fraction-utils';
 
 // ── Types ──────────────────────────────────────────────────────────
 

@@ -67,7 +67,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       setOriginalImage(img, preloadedImageUrl);
-      setStep('imagePrep');
+      setStep('calibrate');
       setImageLoading(false);
       onClose();
     };
@@ -104,7 +104,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
         }
 
         setOriginalImage(img, url);
-        setStep('imagePrep');
+        setStep('calibrate');
         setLoading(false);
         onClose();
       };
@@ -161,7 +161,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
         img.crossOrigin = 'anonymous';
         img.onload = () => {
           setOriginalImage(img, upload.imageUrl);
-          setStep('imagePrep');
+          setStep('calibrate');
           setLoading(false);
           onClose();
         };

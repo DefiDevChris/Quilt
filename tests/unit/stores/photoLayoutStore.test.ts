@@ -1,100 +1,146 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
+import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 import {
-  PHOTO_PATTERN_SENSITIVITY_DEFAULT,
-  DEFAULT_SEAM_ALLOWANCE_INCHES,
-  DEFAULT_CANVAS_WIDTH,
-  DEFAULT_CANVAS_HEIGHT,
-} from '@/lib/constants';
+  BLOCK_GRID_PRESETS,
+  DEFAULT_BLOCK_GRID_PRESET_ID,
+} from '@/lib/block-grid-presets';
+import type {
+  GridCell,
+  QuadCorners,
+} from '@/lib/photo-layout-types';
 
-vi.mock('@/lib/photo-layout-utils', () => ({
-  terminateDetectionWorker: vi.fn(),
-}));
-
-describe('photoPatternStore', () => {
+describe('photoLayoutStore (perspective-first)', () => {
   beforeEach(() => {
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     usePhotoLayoutStore.getState().reset();
   });
 
-  it('initializes with step=upload and default sensitivity', () => {
+  it('initializes with step=upload, default block size, and default preset', () => {
     const state = usePhotoLayoutStore.getState();
     expect(state.step).toBe('upload');
-    expect(state.sensitivity).toBe(PHOTO_PATTERN_SENSITIVITY_DEFAULT);
+    expect(state.blockWidthInches).toBe(12);
+    expect(state.blockHeightInches).toBe(12);
+    expect(state.selectedPreset.id).toBe(DEFAULT_BLOCK_GRID_PRESET_ID);
+    expect(state.seamAllowance).toBe(DEFAULT_SEAM_ALLOWANCE_INCHES);
+    expect(state.cells).toEqual([]);
+    expect(state.corners).toBeNull();
+    expect(state.warpedImageRef).toBeNull();
   });
 
-  it('setStep(correction) changes step', () => {
-    usePhotoLayoutStore.getState().setStep('correction');
-    expect(usePhotoLayoutStore.getState().step).toBe('correction');
+  it('setStep updates the wizard step', () => {
+    usePhotoLayoutStore.getState().setStep('calibrate');
+    expect(usePhotoLayoutStore.getState().step).toBe('calibrate');
+    usePhotoLayoutStore.getState().setStep('layout');
+    expect(usePhotoLayoutStore.getState().step).toBe('layout');
   });
 
-  it('setSensitivity(1.5) changes sensitivity', () => {
-    usePhotoLayoutStore.getState().setSensitivity(1.5);
-    expect(usePhotoLayoutStore.getState().sensitivity).toBe(1.5);
+  it('setCorners stores the pinned calibration quadrilateral', () => {
+    const corners: QuadCorners = [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+      { x: 100, y: 100 },
+      { x: 0, y: 100 },
+    ];
+    usePhotoLayoutStore.getState().setCorners(corners);
+    expect(usePhotoLayoutStore.getState().corners).toEqual(corners);
   });
 
-  it('setTargetDimensions(90, 108) changes both targetWidth and targetHeight', () => {
-    usePhotoLayoutStore.getState().setTargetDimensions(90, 108);
+  it('setBlockSize updates both dimensions at once', () => {
+    usePhotoLayoutStore.getState().setBlockSize(14, 10);
     const state = usePhotoLayoutStore.getState();
-    expect(state.targetWidth).toBe(90);
-    expect(state.targetHeight).toBe(108);
+    expect(state.blockWidthInches).toBe(14);
+    expect(state.blockHeightInches).toBe(10);
   });
 
-  it('setSeamAllowance(0.375) changes seamAllowance', () => {
+  it('setSelectedPreset swaps the active block grid', () => {
+    const hst = BLOCK_GRID_PRESETS.find((p) => p.id === 'hst-2x2');
+    expect(hst).toBeDefined();
+    usePhotoLayoutStore.getState().setSelectedPreset(hst!);
+    expect(usePhotoLayoutStore.getState().selectedPreset.id).toBe('hst-2x2');
+  });
+
+  it('setCells replaces the full cell list', () => {
+    const cells: readonly GridCell[] = [
+      {
+        id: 'cell-r0c0',
+        row: 0,
+        col: 0,
+        polygonInches: [
+          { x: 0, y: 0 },
+          { x: 6, y: 0 },
+          { x: 6, y: 6 },
+          { x: 0, y: 6 },
+        ],
+        centroidInches: { x: 3, y: 3 },
+        fabricColor: '#cc0000',
+        assignedFabricId: null,
+      },
+    ];
+    usePhotoLayoutStore.getState().setCells(cells);
+    expect(usePhotoLayoutStore.getState().cells).toEqual(cells);
+  });
+
+  it('updateCellColor rewrites a single cell without touching the others', () => {
+    const cells: readonly GridCell[] = [
+      {
+        id: 'a',
+        row: 0,
+        col: 0,
+        polygonInches: [],
+        centroidInches: { x: 0, y: 0 },
+        fabricColor: '#aaaaaa',
+        assignedFabricId: null,
+      },
+      {
+        id: 'b',
+        row: 0,
+        col: 1,
+        polygonInches: [],
+        centroidInches: { x: 1, y: 0 },
+        fabricColor: '#bbbbbb',
+        assignedFabricId: null,
+      },
+    ];
+    usePhotoLayoutStore.getState().setCells(cells);
+    usePhotoLayoutStore.getState().updateCellColor('b', '#ff0000', 'fabric-42');
+
+    const updated = usePhotoLayoutStore.getState().cells;
+    expect(updated[0].fabricColor).toBe('#aaaaaa');
+    expect(updated[1].fabricColor).toBe('#ff0000');
+    expect(updated[1].assignedFabricId).toBe('fabric-42');
+  });
+
+  it('setSeamAllowance accepts the two legal values', () => {
     usePhotoLayoutStore.getState().setSeamAllowance(0.375);
     expect(usePhotoLayoutStore.getState().seamAllowance).toBe(0.375);
+    usePhotoLayoutStore.getState().setSeamAllowance(0.25);
+    expect(usePhotoLayoutStore.getState().seamAllowance).toBe(0.25);
   });
 
-  it('reset() restores all state to initial values', () => {
-    usePhotoLayoutStore.getState().setStep('results');
-    usePhotoLayoutStore.getState().setSensitivity(1.8);
-    usePhotoLayoutStore.getState().setTargetDimensions(90, 108);
+  it('reset() restores every field to its initial value', () => {
+    const corners: QuadCorners = [
+      { x: 5, y: 5 },
+      { x: 50, y: 5 },
+      { x: 50, y: 50 },
+      { x: 5, y: 50 },
+    ];
+    usePhotoLayoutStore.getState().setStep('review');
+    usePhotoLayoutStore.getState().setCorners(corners);
+    usePhotoLayoutStore.getState().setBlockSize(16, 20);
     usePhotoLayoutStore.getState().setSeamAllowance(0.375);
-    usePhotoLayoutStore.getState().setLockAspectRatio(false);
 
     usePhotoLayoutStore.getState().reset();
 
     const state = usePhotoLayoutStore.getState();
     expect(state.step).toBe('upload');
-    expect(state.sensitivity).toBe(PHOTO_PATTERN_SENSITIVITY_DEFAULT);
-    expect(state.targetWidth).toBe(DEFAULT_CANVAS_WIDTH);
-    expect(state.targetHeight).toBe(DEFAULT_CANVAS_HEIGHT);
+    expect(state.corners).toBeNull();
+    expect(state.blockWidthInches).toBe(12);
+    expect(state.blockHeightInches).toBe(12);
     expect(state.seamAllowance).toBe(DEFAULT_SEAM_ALLOWANCE_INCHES);
-    expect(state.lockAspectRatio).toBe(true);
+    expect(state.cells).toEqual([]);
+    expect(state.warpedImageRef).toBeNull();
     expect(state.originalImage).toBeNull();
     expect(state.originalImageUrl).toBe('');
-    expect(state.correctedImageRef).toBeNull();
-    expect(state.perspectiveCorners).toBeNull();
-    expect(state.detectedPieces).toEqual([]);
-    expect(state.pipelineSteps).toEqual([]);
-    expect(state.scaledPieces).toEqual([]);
-  });
-
-  it('setPipelineSteps updates pipelineSteps', () => {
-    const steps = [{ name: 'detect', status: 'complete' }] as const;
-    usePhotoLayoutStore.getState().setPipelineSteps(steps);
-    expect(usePhotoLayoutStore.getState().pipelineSteps).toEqual(steps);
-  });
-
-  it('setScaledPieces updates scaledPieces', () => {
-    const pieces: readonly import('@/lib/photo-layout-types').ScaledPiece[] = [{
-      id: '1',
-      contourInches: [],
-      finishedWidth: '10',
-      finishedHeight: '10',
-      cutWidth: '10.5',
-      cutHeight: '10.5',
-      finishedWidthNum: 10,
-      finishedHeightNum: 10,
-      dominantColor: '#ffffff',
-    }];
-    usePhotoLayoutStore.getState().setScaledPieces(pieces);
-    expect(usePhotoLayoutStore.getState().scaledPieces).toEqual(pieces);
-  });
-
-  it('setScanConfig updates scanConfig', () => {
-    const config = { hasCurvedPiecing: false, hasApplique: false, hasLowContrastSeams: false, hasHeavyTopstitching: false, pieceScale: 'standard' as const, quiltShape: 'rectangular' as const };
-    usePhotoLayoutStore.getState().setScanConfig(config);
-    expect(usePhotoLayoutStore.getState().scanConfig).toEqual(config);
   });
 });

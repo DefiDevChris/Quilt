@@ -188,29 +188,9 @@ export const GRID_CELL_SIZE_MIN = 0.125;
 export const GRID_CELL_SIZE_MAX = 12;
 export const GRID_CELL_SIZE_STEP = 0.125;
 
-// Photo to Design (Phase 21)
+// Photo to Design (perspective-first pipeline)
 export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 export const PHOTO_PATTERN_MIN_DIMENSION = 200; // px
-
-// Resolution tiers based on piece scale - optimizes for scan quality vs memory usage
-export const PHOTO_PATTERN_DOWNSCALE_MAX = 2000; // px longest side (legacy default)
-export const PHOTO_PATTERN_RESOLUTION_TIERS = {
-  tiny: 2400, // High resolution for small pieces (postage stamp quilts)
-  standard: 1600, // Balanced for typical patchwork
-  large: 1200, // Lower resolution sufficient for large-piece quilts
-} as const;
-
-// Maximum memory budget for ImageData (~32MB to stay under common browser limits)
-export const PHOTO_PATTERN_MAX_IMAGE_DATA_SIZE = 32 * 1024 * 1024; // 32 MB
-export const PHOTO_PATTERN_ABSOLUTE_MAX_DIMENSION = 2800; // Hard cap regardless of piece scale
-export const PHOTO_PATTERN_SENSITIVITY_MIN = 0.2;
-export const PHOTO_PATTERN_SENSITIVITY_MAX = 2.0;
-export const PHOTO_PATTERN_SENSITIVITY_DEFAULT = 1.0;
-export const PHOTO_PATTERN_SENSITIVITY_DEBOUNCE_MS = 300;
-export const PHOTO_PATTERN_OVERLAY_COLOR = 'rgba(249,160,107,0.3)';
-export const PHOTO_PATTERN_OVERLAY_OPACITY = 0.7;
-export const PHOTO_PATTERN_PIECE_MIN_AREA_RATIO = 0.005;
-export const PHOTO_PATTERN_PIECE_MAX_AREA_RATIO = 0.25;
 export const PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT = 0.4;
 
 export const QUILT_SIZE_PRESETS: readonly {
