@@ -1,213 +1,101 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
-import type { DetectedPiece, ScaledPiece } from '@/lib/photo-layout-types';
-import { requantizeDetectedPieces } from '@/lib/photo-layout-utils';
-import { DEFAULT_QUANTIZER_CONFIG } from '@/lib/shape-quantizer-engine';
+import { useCallback, useMemo, useState } from 'react';
+import type { GridCell, WarpedImageRef } from '@/lib/photo-layout-types';
+import { buildFabricPalette } from '@/lib/grid-sampling-engine';
 
 interface PhotoReviewStepProps {
-  /** Source photo URL — shown under the pattern overlay. */
-  originalImageUrl: string;
-  /** Raw detected pieces (input to quantizer — needed for cheap re-quantize). */
-  detectedPieces: readonly DetectedPiece[];
-  /** Currently-quantized pieces on the inferred grid. */
-  scaledPieces: readonly ScaledPiece[];
-  /** Detection-resolution image size — required for scaling contour math. */
-  imageWidthPx: number;
-  imageHeightPx: number;
-  /** Target canvas dimensions in inches (from photoLayoutStore). */
-  targetWidthInches: number;
-  targetHeightInches: number;
-  /** Seam allowance in inches. */
-  seamAllowance: number;
-  /** Inferred base unit from the last quantization pass (display-only). */
-  inferredUnitPx: number;
-  /** Inferred rotation from the last quantization pass (display-only). */
-  inferredRotationDeg: number;
-  /** Cluster class count from the last pass (display-only). */
-  classCount: number;
-  /** Called after a re-quantize pass to hand new ScaledPieces back to the store. */
-  onUpdateScaledPieces: (pieces: readonly ScaledPiece[]) => void;
-  /** Triggers a full OpenCV re-scan (expensive). */
-  onRescan: () => void;
-  /** Called when the user confirms the pattern is ready. */
+  /** Flattened block image displayed behind the cell overlay. */
+  warpedImage: WarpedImageRef;
+  /** Grid cells with sampled colors from the layout step. */
+  cells: readonly GridCell[];
+  /** Real-world block size in inches — drives the SVG viewBox. */
+  widthInches: number;
+  heightInches: number;
+  /** Fired when the user taps a cell to change its color. */
+  onUpdateCellColor: (id: string, fabricColor: string, fabricId?: string | null) => void;
+  /** Fired on Continue — the wizard creates a project + routes to studio. */
   onConfirm: () => void;
-  /** Called when the user wants to go back to Scan Settings. */
+  /** Fired on Back — returns to the layout picker. */
   onBack: () => void;
 }
 
-type ViewMode = 'overlay' | 'outlines' | 'photo';
+type ViewMode = 'overlay' | 'pattern' | 'photo';
 
 /**
- * Review & correction step. Shows the extracted outline pattern on top of
- * the source photo and offers tuning knobs (min area, unit override, rotation
- * offset) plus cheap re-quantization and a "delete selected" correction.
+ * Step 3 of the perspective-first pipeline: the user reviews the sampled
+ * fabric colors and swaps any that look wrong.
  *
- * Design notes:
- * - Kept the review step non-blocking. The Confirm button is the primary
- *   CTA and users can hit it immediately if the first scan looks fine.
- * - Preview is an SVG overlay for simple click-to-select and resolution
- *   independence. Rendering is purely a pattern (strokes only, no fills).
- * - "Re-snap" is the cheap path — re-runs only the quantizer on cached
- *   detected pieces with new settings. "Re-scan" goes all the way back to
- *   the CV worker with the full scan config.
- * - Undo stores a single prior snapshot so the user can A/B the last change.
+ * UI flow:
+ *   1. The top preview shows the warped block (partially dimmed) with one
+ *      filled polygon per `GridCell`.
+ *   2. Clicking a cell reveals a color picker seeded with the current
+ *      palette plus a free-form HTML color input.
+ *   3. A legend at the bottom groups cells by color so the user can see at
+ *      a glance which fabrics will end up in the print list.
  *
- * Not implemented (deferred — scope too large for this change):
- * - Vertex drag to fix individual wobbly edges
- * - Merge two adjacent pieces
- * - Split a piece along a line
- * The common correction needs — delete stray, rescan, retune — are covered.
+ * No tuning sliders — the grid is deterministic, so users only ever touch
+ * colors, not geometry.
  */
 export function PhotoReviewStep(props: PhotoReviewStepProps) {
   const {
-    originalImageUrl,
-    detectedPieces,
-    scaledPieces,
-    imageWidthPx,
-    imageHeightPx,
-    targetWidthInches,
-    targetHeightInches,
-    seamAllowance,
-    inferredUnitPx,
-    inferredRotationDeg,
-    classCount,
-    onUpdateScaledPieces,
-    onRescan,
+    warpedImage,
+    cells,
+    widthInches,
+    heightInches,
+    onUpdateCellColor,
     onConfirm,
     onBack,
   } = props;
 
   const [viewMode, setViewMode] = useState<ViewMode>('overlay');
+  const [selectedCellId, setSelectedCellId] = useState<string | null>(null);
 
-  // Quantizer overrides. Start with "auto" — empty means use inferred value.
-  const [unitOverridePx, setUnitOverridePx] = useState<number | null>(null);
-  const [rotationOffsetDeg, setRotationOffsetDeg] = useState<number>(0);
-  const [minAreaPx, setMinAreaPx] = useState<number>(DEFAULT_QUANTIZER_CONFIG.minAreaPx);
+  const palette = useMemo(() => buildFabricPalette(cells), [cells]);
 
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [isBusy, setIsBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const selectedCell = useMemo(
+    () => cells.find((c) => c.id === selectedCellId) ?? null,
+    [cells, selectedCellId]
+  );
 
-  // Undo history — single entry is enough for A/B.
-  const previousScaledRef = useRef<readonly ScaledPiece[] | null>(null);
-
-  // Derived: current class counts for the summary strip. The `key` field is
-  // the unique cluster key (used for React reconciliation); `label` is the
-  // display string, which is intentionally allowed to repeat across classes
-  // for families like Right Triangles where multiple sizes may share a label.
-  const currentClassCounts = useMemo(() => {
-    const counts = new Map<string, { key: string; label: string; count: number }>();
-    for (const p of scaledPieces) {
-      const key = p.classKey ?? p.id;
-      const label = p.classLabel ?? 'Piece';
-      const existing = counts.get(key);
-      if (existing) existing.count += 1;
-      else counts.set(key, { key, label, count: 1 });
-    }
-    return Array.from(counts.values()).sort((a, b) => b.count - a.count);
-  }, [scaledPieces]);
-
-  const canUndo = previousScaledRef.current !== null;
-
-  // --- Actions -----------------------------------------------------------
-
-  const handleRequantize = useCallback(async () => {
-    if (isBusy) return;
-    setIsBusy(true);
-    setMessage(null);
-    try {
-      previousScaledRef.current = scaledPieces;
-      const result = await requantizeDetectedPieces(
-        detectedPieces,
-        imageWidthPx,
-        imageHeightPx,
-        targetWidthInches,
-        targetHeightInches,
-        seamAllowance,
-        {
-          unitOverridePx,
-          rotationOffsetDeg,
-          minAreaPx,
-        }
-      );
-      onUpdateScaledPieces(result.scaledPieces);
-      setSelectedIds(new Set());
-      setMessage(
-        `Re-quantized: ${result.scaledPieces.length} pieces, ${result.classCount} classes, u=${result.unitPx.toFixed(1)}px`
-      );
-    } catch (err) {
-      console.error('[PhotoReview] re-quantize failed:', err);
-      setMessage('Re-quantize failed. See console.');
-    } finally {
-      setIsBusy(false);
-    }
-  }, [
-    isBusy,
-    scaledPieces,
-    detectedPieces,
-    imageWidthPx,
-    imageHeightPx,
-    targetWidthInches,
-    targetHeightInches,
-    seamAllowance,
-    unitOverridePx,
-    rotationOffsetDeg,
-    minAreaPx,
-    onUpdateScaledPieces,
-  ]);
-
-  const handleUndo = useCallback(() => {
-    if (!previousScaledRef.current) return;
-    const prev = previousScaledRef.current;
-    previousScaledRef.current = scaledPieces;
-    onUpdateScaledPieces(prev);
-    setSelectedIds(new Set());
-    setMessage('Reverted to previous scan.');
-  }, [scaledPieces, onUpdateScaledPieces]);
-
-  const handleDeleteSelected = useCallback(() => {
-    if (selectedIds.size === 0) return;
-    previousScaledRef.current = scaledPieces;
-    const next = scaledPieces.filter((p) => !selectedIds.has(p.id));
-    onUpdateScaledPieces(next);
-    setSelectedIds(new Set());
-    setMessage(`Deleted ${scaledPieces.length - next.length} piece(s).`);
-  }, [selectedIds, scaledPieces, onUpdateScaledPieces]);
-
-  const togglePieceSelection = useCallback((id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const handleCellClick = useCallback((id: string) => {
+    setSelectedCellId((prev) => (prev === id ? null : id));
   }, []);
 
-  const handleResetOverrides = useCallback(() => {
-    setUnitOverridePx(null);
-    setRotationOffsetDeg(0);
-    setMinAreaPx(DEFAULT_QUANTIZER_CONFIG.minAreaPx);
-  }, []);
+  const handlePaletteSwap = useCallback(
+    (color: string) => {
+      if (!selectedCellId) return;
+      onUpdateCellColor(selectedCellId, color, null);
+    },
+    [selectedCellId, onUpdateCellColor]
+  );
 
-  // --- Preview: SVG overlay ----------------------------------------------
+  const handleCustomColor = useCallback(
+    (color: string) => {
+      if (!selectedCellId) return;
+      onUpdateCellColor(selectedCellId, color, null);
+    },
+    [selectedCellId, onUpdateCellColor]
+  );
 
-  const svgViewBox = `0 0 ${targetWidthInches} ${targetHeightInches}`;
-  const strokeWidth = Math.max(0.02, targetWidthInches / 600);
+  const svgViewBox = `0 0 ${widthInches} ${heightInches}`;
+  const strokeWidth = Math.max(0.02, widthInches / 300);
 
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Review your pattern</h3>
+        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">
+          Review your pattern
+        </h3>
         <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
-          We found <strong>{scaledPieces.length}</strong> pieces in <strong>{classCount}</strong>{' '}
-          shape classes. Adjust if needed, or send straight to the studio.
+          Tap any patch to change its color. {cells.length} patches in{' '}
+          {palette.length} unique color{palette.length === 1 ? '' : 's'}.
         </p>
       </div>
 
       {/* View toggle */}
       <div className="flex gap-2" role="group" aria-label="Preview mode">
-        {(['overlay', 'outlines', 'photo'] as ViewMode[]).map((mode) => (
+        {(['overlay', 'pattern', 'photo'] as ViewMode[]).map((mode) => (
           <button
             key={mode}
             type="button"
@@ -218,195 +106,146 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
                 : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
             }`}
           >
-            {mode === 'overlay' ? 'Overlay' : mode === 'outlines' ? 'Outlines only' : 'Photo only'}
+            {mode === 'overlay' ? 'Overlay' : mode === 'pattern' ? 'Pattern only' : 'Photo only'}
           </button>
         ))}
       </div>
 
       {/* Preview surface */}
-      <div className="relative rounded-lg overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg)] aspect-[4/3]">
-        {/* Source photo layer */}
-        {viewMode !== 'outlines' && originalImageUrl && (
+      <div
+        className="relative mx-auto rounded-lg overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg)]"
+        style={{
+          width: '100%',
+          maxWidth: '480px',
+          aspectRatio: `${widthInches} / ${heightInches}`,
+        }}
+      >
+        {viewMode !== 'pattern' && (
           <img
-            src={originalImageUrl}
-            alt="Source photo"
-            className="absolute inset-0 w-full h-full object-contain"
-            style={{ opacity: viewMode === 'overlay' ? 0.55 : 1 }}
+            src={warpedImage.url}
+            alt="Flattened block"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ opacity: viewMode === 'overlay' ? 0.4 : 1 }}
           />
         )}
 
-        {/* SVG pattern overlay */}
-        {viewMode !== 'photo' && scaledPieces.length > 0 && (
+        {viewMode !== 'photo' && cells.length > 0 && (
           <svg
             viewBox={svgViewBox}
-            preserveAspectRatio="xMidYMid meet"
+            preserveAspectRatio="none"
             className="absolute inset-0 w-full h-full"
             aria-label="Extracted pattern preview"
           >
-            {scaledPieces.map((piece) => {
-              if (piece.contourInches.length < 3) return null;
-              const points = piece.contourInches.map((p) => `${p.x},${p.y}`).join(' ');
-              const isSelected = selectedIds.has(piece.id);
+            {cells.map((cell) => {
+              if (cell.polygonInches.length < 3) return null;
+              const points = cell.polygonInches
+                .map((p) => `${p.x},${p.y}`)
+                .join(' ');
+              const isSelected = cell.id === selectedCellId;
               return (
                 <polygon
-                  key={piece.id}
+                  key={cell.id}
                   points={points}
-                  fill={isSelected ? 'rgba(255,141,73,0.25)' : 'transparent'}
-                  stroke={isSelected ? '#ff8d49' : 'var(--color-text)'}
-                  strokeWidth={isSelected ? strokeWidth * 2 : strokeWidth}
+                  fill={viewMode === 'pattern' ? cell.fabricColor : `${cell.fabricColor}cc`}
+                  stroke={isSelected ? '#1a1a1a' : '#1a1a1a55'}
+                  strokeWidth={isSelected ? strokeWidth * 3 : strokeWidth}
                   strokeLinejoin="miter"
                   vectorEffect="non-scaling-stroke"
                   style={{ cursor: 'pointer' }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    togglePieceSelection(piece.id);
+                    handleCellClick(cell.id);
                   }}
                 />
               );
             })}
           </svg>
         )}
-
-        {scaledPieces.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-body-sm text-[var(--color-text-dim)]">
-              No pieces extracted. Try adjusting scan settings and re-scanning.
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Class breakdown */}
-      {currentClassCounts.length > 0 && (
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-          <p className="text-label-sm text-[var(--color-text-dim)] mb-2">Detected shape classes</p>
-          <div className="flex flex-wrap gap-2">
-            {currentClassCounts.slice(0, 12).map((c) => (
+      {/* Color swap panel — appears when a cell is selected */}
+      {selectedCell && (
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <span
-                key={c.key}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-label-xs text-[var(--color-text)]"
-              >
-                <span>{c.label}</span>
-                <span className="text-[var(--color-text-dim)]">×{c.count}</span>
-              </span>
-            ))}
-            {currentClassCounts.length > 12 && (
-              <span className="text-label-xs text-[var(--color-text-dim)] px-2 py-1">
-                +{currentClassCounts.length - 12} more
-              </span>
-            )}
+                className="inline-block w-6 h-6 rounded-lg border border-[var(--color-border)]"
+                style={{ backgroundColor: selectedCell.fabricColor }}
+                aria-hidden
+              />
+              <p className="text-body-sm font-medium text-[var(--color-text)]">
+                Patch {selectedCell.id}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedCellId(null)}
+              className="text-label-xs text-[var(--color-text-dim)] hover:text-[#ff8d49] transition-colors duration-150"
+            >
+              Close
+            </button>
+          </div>
+
+          <div>
+            <p className="text-label-sm text-[var(--color-text-dim)] mb-2">
+              Swap to an existing color:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {palette.map(({ color }) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => handlePaletteSwap(color)}
+                  className={`w-9 h-9 rounded-full border-2 transition-transform duration-150 ${
+                    color === selectedCell.fabricColor
+                      ? 'border-[#ff8d49]'
+                      : 'border-[var(--color-border)] hover:border-[#ff8d49]/60'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  aria-label={`Use color ${color}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-label-sm text-[var(--color-text-dim)] block mb-1">
+              Or pick a custom color:
+            </label>
+            <input
+              type="color"
+              value={selectedCell.fabricColor}
+              onChange={(e) => handleCustomColor(e.target.value)}
+              className="w-16 h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] cursor-pointer"
+              aria-label="Custom color"
+            />
           </div>
         </div>
       )}
 
-      {/* Tuning controls */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-body-sm font-medium text-[var(--color-text)]">Fine-tune quantization</p>
-          <button
-            type="button"
-            onClick={handleResetOverrides}
-            className="text-label-xs text-[var(--color-text-dim)] hover:text-[#ff8d49] transition-colors duration-150"
-          >
-            Reset
-          </button>
+      {/* Palette legend */}
+      {palette.length > 0 && (
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+          <p className="text-label-sm text-[var(--color-text-dim)] mb-2">Fabric palette</p>
+          <div className="flex flex-wrap gap-2">
+            {palette.map(({ color, count }) => (
+              <span
+                key={color}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-label-xs text-[var(--color-text)]"
+              >
+                <span
+                  className="inline-block w-3 h-3 rounded-full border border-[var(--color-border)]"
+                  style={{ backgroundColor: color }}
+                  aria-hidden
+                />
+                <span>{color}</span>
+                <span className="text-[var(--color-text-dim)]">×{count}</span>
+              </span>
+            ))}
+          </div>
         </div>
-
-        <div>
-          <label className="block text-label-sm text-[var(--color-text)] mb-1">
-            Base unit:{' '}
-            {unitOverridePx !== null
-              ? `${unitOverridePx.toFixed(0)} px (override)`
-              : `${inferredUnitPx.toFixed(1)} px (auto)`}
-          </label>
-          <input
-            type="range"
-            min="4"
-            max={Math.max(80, Math.round(inferredUnitPx * 2 || 80))}
-            step="1"
-            value={unitOverridePx ?? Math.round(inferredUnitPx)}
-            onChange={(e) => setUnitOverridePx(Number(e.target.value))}
-            className="w-full"
-          />
-          {unitOverridePx !== null && (
-            <button
-              type="button"
-              onClick={() => setUnitOverridePx(null)}
-              className="mt-1 text-label-xs text-[var(--color-text-dim)] hover:text-[#ff8d49]"
-            >
-              Use auto-inferred
-            </button>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-label-sm text-[var(--color-text)] mb-1">
-            Rotation offset: {rotationOffsetDeg.toFixed(1)}° (auto {inferredRotationDeg.toFixed(1)}
-            °)
-          </label>
-          <input
-            type="range"
-            min="-5"
-            max="5"
-            step="0.1"
-            value={rotationOffsetDeg}
-            onChange={(e) => setRotationOffsetDeg(Number(e.target.value))}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block text-label-sm text-[var(--color-text)] mb-1">
-            Minimum piece area: {minAreaPx} px²
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="500"
-            step="5"
-            value={minAreaPx}
-            onChange={(e) => setMinAreaPx(Number(e.target.value))}
-            className="w-full"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-2 pt-2">
-          <button
-            type="button"
-            onClick={handleRequantize}
-            disabled={isBusy || detectedPieces.length === 0}
-            className="px-4 py-2 rounded-full text-label-sm font-medium bg-[#ff8d49] text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50"
-          >
-            {isBusy ? 'Re-snapping…' : 'Re-snap to grid'}
-          </button>
-          <button
-            type="button"
-            onClick={onRescan}
-            disabled={isBusy}
-            className="px-4 py-2 rounded-full text-label-sm font-medium border-2 border-[#ff8d49] text-[#ff8d49] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
-          >
-            Full re-scan
-          </button>
-          <button
-            type="button"
-            onClick={handleUndo}
-            disabled={!canUndo}
-            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150 disabled:opacity-50"
-          >
-            Undo last change
-          </button>
-          <button
-            type="button"
-            onClick={handleDeleteSelected}
-            disabled={selectedIds.size === 0}
-            className="px-4 py-2 rounded-full text-label-sm font-medium border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150 disabled:opacity-50"
-          >
-            Delete {selectedIds.size > 0 ? `(${selectedIds.size})` : 'selected'}
-          </button>
-        </div>
-
-        {message && <p className="text-label-xs text-[var(--color-text-dim)] pt-1">{message}</p>}
-      </div>
+      )}
 
       {/* Action row */}
       <div className="flex items-center gap-3 pt-2">
@@ -415,12 +254,12 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
           onClick={onBack}
           className="px-5 py-2 rounded-full text-label-sm font-medium border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
         >
-          Back to settings
+          Back to layout
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          disabled={scaledPieces.length === 0}
+          disabled={cells.length === 0}
           className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] disabled:opacity-50"
         >
           Send to Studio

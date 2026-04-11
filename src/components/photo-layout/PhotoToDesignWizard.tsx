@@ -12,21 +12,24 @@ import {
   PHOTO_PATTERN_MAX_FILE_SIZE,
   PHOTO_PATTERN_MIN_DIMENSION,
 } from '@/lib/constants';
-import { runDetectionPipeline } from '@/lib/photo-layout-utils';
+import { warpSourceImage, buildBlockPattern } from '@/lib/photo-layout-utils';
 import { PhotoReviewStep } from '@/components/photo-layout/PhotoReviewStep';
+import { CalibrationStep } from '@/components/photo-layout/CalibrationStep';
+import { LayoutPickerStep } from '@/components/photo-layout/LayoutPickerStep';
 import type { MobileUpload } from '@/types/mobile-upload';
-import type { ScaledPiece, PhotoLayoutStep } from '@/lib/photo-layout-types';
+import type {
+  PhotoLayoutStep,
+  QuadCorners,
+} from '@/lib/photo-layout-types';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
 
-const STEP_LABELS = ['Upload', 'Image Prep', 'Crop', 'Scan Settings', 'Processing', 'Review'];
+const STEP_LABELS = ['Upload', 'Calibrate', 'Layout', 'Review'] as const;
 
 const STEP_KEYS: Array<PhotoLayoutStep> = [
   'upload',
-  'imagePrep',
-  'crop',
-  'scanSettings',
-  'processing',
+  'calibrate',
+  'layout',
   'review',
 ];
 
@@ -40,6 +43,20 @@ function validateFile(file: File): string | null {
   return null;
 }
 
+/**
+ * Top-level wizard orchestrating the perspective-first photo → pattern
+ * pipeline. The four real steps are:
+ *
+ *   upload     — drop or pick an image
+ *   calibrate  — pin four corners onto one quilt block + set real-world size
+ *   layout     — pick a block grid preset; the flattened block is warped here
+ *   review     — color-check each patch; swap colors; send to studio
+ *
+ * State is split between this component (ephemeral UI flags) and the
+ * `photoLayoutStore` (durable geometry + warped image). `usePhotoPatternImport`
+ * reads the store after the studio mounts and drops the polygons onto the
+ * canvas.
+ */
 export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?: string }) {
   const router = useRouter();
   const isPro = useAuthStore((s) => s.isPro);
@@ -51,43 +68,34 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   const setOriginalImage = usePhotoLayoutStore((s) => s.setOriginalImage);
   const originalImage = usePhotoLayoutStore((s) => s.originalImage);
   const originalImageUrl = usePhotoLayoutStore((s) => s.originalImageUrl);
-  const sensitivity = usePhotoLayoutStore((s) => s.sensitivity);
-  const detectedPieces = usePhotoLayoutStore((s) => s.detectedPieces);
-  const scaledPieces = usePhotoLayoutStore((s) => s.scaledPieces);
-  const setDetectedPieces = usePhotoLayoutStore((s) => s.setDetectedPieces);
-  const setScaledPieces = usePhotoLayoutStore((s) => s.setScaledPieces);
-  const setCorrectedImageRef = usePhotoLayoutStore((s) => s.setCorrectedImageRef);
-  const setPipelineSteps = usePhotoLayoutStore((s) => s.setPipelineSteps);
+
+  const corners = usePhotoLayoutStore((s) => s.corners);
+  const setCorners = usePhotoLayoutStore((s) => s.setCorners);
+  const blockWidthInches = usePhotoLayoutStore((s) => s.blockWidthInches);
+  const blockHeightInches = usePhotoLayoutStore((s) => s.blockHeightInches);
+  const setBlockSize = usePhotoLayoutStore((s) => s.setBlockSize);
+
+  const warpedImageRef = usePhotoLayoutStore((s) => s.warpedImageRef);
+  const setWarpedImageRef = usePhotoLayoutStore((s) => s.setWarpedImageRef);
+
+  const selectedPreset = usePhotoLayoutStore((s) => s.selectedPreset);
+  const setSelectedPreset = usePhotoLayoutStore((s) => s.setSelectedPreset);
+
+  const cells = usePhotoLayoutStore((s) => s.cells);
+  const setCells = usePhotoLayoutStore((s) => s.setCells);
+  const updateCellColor = usePhotoLayoutStore((s) => s.updateCellColor);
+
   const reset = usePhotoLayoutStore((s) => s.reset);
 
-  const targetWidth = usePhotoLayoutStore((s) => s.targetWidth);
-  const targetHeight = usePhotoLayoutStore((s) => s.targetHeight);
-  const seamAllowance = usePhotoLayoutStore((s) => s.seamAllowance);
-
-  // Review step metadata captured from the last pipeline run. Kept in component
-  // state because only the review UI needs it.
-  const [detectionSize, setDetectionSize] = useState<{ w: number; h: number } | null>(null);
-  const [inferredUnitPx, setInferredUnitPx] = useState(0);
-  const [inferredRotationDeg, setInferredRotationDeg] = useState(0);
-  const [classCount, setClassCount] = useState(0);
+  // Warped bitmap kept in a ref — too large for Zustand, but needed to
+  // re-sample colors whenever the user swaps presets on the layout step.
+  const warpedBitmapRef = useRef<ImageData | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [warping, setWarping] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Image prep state
-  const [rotation, setRotation] = useState(0);
-  const [flipH, setFlipH] = useState(false);
-  const [flipV, setFlipV] = useState(false);
-
-  // Scan settings state (merged: characteristics + piece scale)
-  const [curvedSeams, setCurvedSeams] = useState(false);
-  const [applique, setApplique] = useState(false);
-  const [touchingFabrics, setTouchingFabrics] = useState(false);
-  const [heavyQuilting, setHeavyQuilting] = useState(false);
-  const [pieceScale, setPieceScale] = useState<'tiny' | 'standard' | 'large'>('standard');
 
   const uploads = useMobileUploadStore((s) => s.uploads);
   const fetchUploads = useMobileUploadStore((s) => s.fetchUploads);
@@ -103,7 +111,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         setOriginalImage(img, preloadedImageUrl);
-        setStep('imagePrep');
+        setStep('calibrate');
       };
       img.onerror = () => {
         setError('Failed to load image from URL.');
@@ -119,75 +127,20 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
     }
   }, [step, fetchUploads]);
 
-  // Run detection pipeline when step transitions to 'processing'
+  // Re-sample grid cells whenever the user changes presets on the layout
+  // step. We keep the warped ImageData in a ref so this is cheap — no extra
+  // fetches, no re-warp.
   useEffect(() => {
-    if (step !== 'processing' || !originalImage) return;
-
-    let cancelled = false;
-
-    const config = {
-      hasCurvedPiecing: curvedSeams,
-      hasApplique: applique,
-      hasLowContrastSeams: touchingFabrics,
-      hasHeavyTopstitching: heavyQuilting,
-      pieceScale,
-    };
-
-    async function runPipeline() {
-      try {
-        const result = await runDetectionPipeline(
-          originalImage!,
-          (steps: import('@/lib/photo-layout-types').PipelineStep[]) => {
-            if (!cancelled) {
-              setPipelineSteps(steps);
-            }
-          },
-          {
-            sensitivity,
-            scanConfig: config,
-          }
-        );
-
-        if (cancelled) return;
-
-        setDetectedPieces(result.pieces);
-        setScaledPieces(result.scaledPieces);
-        setDetectionSize({ w: result.imageWidthPx, h: result.imageHeightPx });
-        setInferredUnitPx(result.inferredUnitPx);
-        setInferredRotationDeg(result.inferredRotationDeg);
-        setClassCount(result.classCount);
-        if (result.correctedImageRef) {
-          setCorrectedImageRef(result.correctedImageRef);
-        }
-        setStep('review');
-      } catch {
-        if (!cancelled) {
-          setError('Detection failed. Please try again with a different image.');
-          setStep('scanSettings');
-        }
-      }
-    }
-
-    runPipeline();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    step,
-    originalImage,
-    sensitivity,
-    curvedSeams,
-    applique,
-    touchingFabrics,
-    heavyQuilting,
-    pieceScale,
-    setDetectedPieces,
-    setScaledPieces,
-    setCorrectedImageRef,
-    setPipelineSteps,
-    setStep,
-  ]);
+    if (step !== 'layout') return;
+    if (!warpedBitmapRef.current) return;
+    const result = buildBlockPattern(
+      selectedPreset,
+      blockWidthInches,
+      blockHeightInches,
+      warpedBitmapRef.current
+    );
+    setCells(result.cells);
+  }, [step, selectedPreset, blockWidthInches, blockHeightInches, setCells]);
 
   const processFile = useCallback(
     (file: File) => {
@@ -285,50 +238,93 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
     [processUpload, setOriginalImage]
   );
 
-  const handleContinue = () => {
+  /**
+   * Advance past the upload step. Gated on pro access so we don't do the
+   * expensive warp for free users.
+   */
+  const handleContinueFromUpload = useCallback(() => {
     if (!isPro && !isLoadingAuth) {
       setShowProUpgrade(true);
       return;
     }
+    setStep('calibrate');
+  }, [isPro, isLoadingAuth, setStep]);
 
-    const nextIndex = currentStepIndex + 1;
-    if (nextIndex < STEP_KEYS.length) {
-      setStep(STEP_KEYS[nextIndex]);
-    }
-  };
+  /**
+   * Calibration → Layout: take the pinned corners, warp the source into a
+   * flat block bitmap, stash both the Blob URL (in the store) and the raw
+   * ImageData (in a ref) for downstream color sampling.
+   */
+  const handleCalibrationContinue = useCallback(
+    async (nextCorners: QuadCorners, widthInches: number, heightInches: number) => {
+      if (!originalImage) return;
+      setError(null);
+      setWarping(true);
+      try {
+        setCorners(nextCorners);
+        setBlockSize(widthInches, heightInches);
+
+        const result = await warpSourceImage(originalImage, {
+          corners: nextCorners,
+          widthInches,
+          heightInches,
+        });
+        if (!result) {
+          setError(
+            'Could not flatten that block — double-check the four corners and try again.'
+          );
+          setWarping(false);
+          return;
+        }
+
+        warpedBitmapRef.current = result.warped;
+        setWarpedImageRef(result.warpedRef);
+
+        // Sample colors with the current preset so the layout step can
+        // render an immediate preview instead of showing empty cells.
+        const pattern = buildBlockPattern(
+          selectedPreset,
+          widthInches,
+          heightInches,
+          result.warped
+        );
+        setCells(pattern.cells);
+        setStep('layout');
+      } catch (err) {
+        console.error('[PhotoToDesignWizard] warp failed:', err);
+        setError('Something went wrong while flattening the block. Please try again.');
+      } finally {
+        setWarping(false);
+      }
+    },
+    [
+      originalImage,
+      setCorners,
+      setBlockSize,
+      setWarpedImageRef,
+      selectedPreset,
+      setCells,
+      setStep,
+    ]
+  );
+
+  const handleLayoutContinue = useCallback(() => {
+    setStep('review');
+  }, [setStep]);
 
   const handleClose = () => {
     reset();
+    warpedBitmapRef.current = null;
     router.push('/dashboard');
   };
 
-  // Full OpenCV re-scan from the Review step. Clears current detection results
-  // and routes back through 'processing', which retriggers the pipeline effect.
-  const handleRescan = useCallback(() => {
-    setDetectedPieces([]);
-    setScaledPieces([]);
-    setDetectionSize(null);
-    setInferredUnitPx(0);
-    setInferredRotationDeg(0);
-    setClassCount(0);
-    setStep('processing');
-  }, [setDetectedPieces, setScaledPieces, setStep]);
-
-  // "Back to settings" from the Review step — user wants to change scan
-  // config (e.g. flip the curved seams toggle) and rerun.
-  const handleBackToSettings = useCallback(() => {
-    setStep('scanSettings');
-  }, [setStep]);
-
   /**
-   * Creates a new project sized to match the detected pattern, then navigates
-   * to it. The detected pieces stay in the photoLayoutStore — when the studio
-   * mounts, usePhotoPatternImport picks them up, places them on the canvas,
-   * and calls reset() itself to clear the store.
+   * Create a new project sized to match the calibrated block, then navigate
+   * to it. The grid cells stay in `photoLayoutStore` — when the studio
+   * mounts, `usePhotoPatternImport` picks them up, drops the polygons on the
+   * canvas, and calls `reset()` itself to clear the store.
    */
   const handleOpenInStudio = async () => {
-    const { targetWidth, targetHeight } = usePhotoLayoutStore.getState();
-
     try {
       const res = await fetch('/api/projects', {
         method: 'POST',
@@ -336,8 +332,8 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         body: JSON.stringify({
           name: 'Photo Pattern',
           unitSystem: 'imperial',
-          canvasWidth: targetWidth,
-          canvasHeight: targetHeight,
+          canvasWidth: blockWidthInches,
+          canvasHeight: blockHeightInches,
           gridSettings: { enabled: true, size: 1, snapToGrid: true },
         }),
       });
@@ -439,54 +435,79 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
             <div className="h-2 bg-[var(--color-bg)]" />
 
             <div className="p-6">
-              <WizardStepContent
-                step={step}
-                originalImage={originalImage}
-                originalImageUrl={originalImageUrl}
-                isDragOver={isDragOver}
-                loading={loading}
-                error={error}
-                warning={warning}
-                rotation={rotation}
-                flipH={flipH}
-                flipV={flipV}
-                curvedSeams={curvedSeams}
-                applique={applique}
-                touchingFabrics={touchingFabrics}
-                heavyQuilting={heavyQuilting}
-                pieceScale={pieceScale}
-                pendingUploads={pendingUploads}
-                inputRef={inputRef}
-                onFileChange={handleFileChange}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onMobileUploadSelect={handleMobileUploadSelect}
-                onContinue={handleContinue}
-                onClose={handleClose}
-                onOpenInStudio={handleOpenInStudio}
-                setOriginalImage={setOriginalImage}
-                setRotation={setRotation}
-                setFlipH={setFlipH}
-                setFlipV={setFlipV}
-                setCurvedSeams={setCurvedSeams}
-                setApplique={setApplique}
-                setTouchingFabrics={setTouchingFabrics}
-                setHeavyQuilting={setHeavyQuilting}
-                setPieceScale={setPieceScale}
-                detectedPieces={detectedPieces}
-                scaledPieces={scaledPieces}
-                detectionSize={detectionSize}
-                targetWidth={targetWidth}
-                targetHeight={targetHeight}
-                seamAllowance={seamAllowance}
-                inferredUnitPx={inferredUnitPx}
-                inferredRotationDeg={inferredRotationDeg}
-                classCount={classCount}
-                onUpdateScaledPieces={setScaledPieces}
-                onRescan={handleRescan}
-                onBackToSettings={handleBackToSettings}
-              />
+              {step === 'upload' && (
+                <UploadStep
+                  isDragOver={isDragOver}
+                  loading={loading}
+                  error={error}
+                  warning={warning}
+                  originalImage={originalImage}
+                  originalImageUrl={originalImageUrl}
+                  pendingUploads={pendingUploads}
+                  onFileChange={handleFileChange}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onMobileUploadSelect={handleMobileUploadSelect}
+                  onContinue={handleContinueFromUpload}
+                />
+              )}
+
+              {step === 'calibrate' && originalImage && (
+                <>
+                  {error && (
+                    <div className="mb-3 px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
+                      <p className="text-body-sm text-[#ff8d49]">{error}</p>
+                    </div>
+                  )}
+                  <CalibrationStep
+                    image={originalImage}
+                    imageUrl={originalImageUrl}
+                    initialCorners={corners}
+                    initialWidthInches={blockWidthInches}
+                    initialHeightInches={blockHeightInches}
+                    onContinue={handleCalibrationContinue}
+                    onBack={() => setStep('upload')}
+                  />
+                  {warping && (
+                    <div className="mt-3 text-center text-body-sm text-[var(--color-text-dim)]">
+                      Flattening block…
+                    </div>
+                  )}
+                </>
+              )}
+
+              {step === 'layout' && warpedImageRef && (
+                <LayoutPickerStep
+                  warpedImage={warpedImageRef}
+                  widthInches={blockWidthInches}
+                  heightInches={blockHeightInches}
+                  selectedPreset={selectedPreset}
+                  onSelectPreset={setSelectedPreset}
+                  onContinue={handleLayoutContinue}
+                  onBack={() => setStep('calibrate')}
+                />
+              )}
+
+              {step === 'review' && warpedImageRef && (
+                <PhotoReviewStep
+                  warpedImage={warpedImageRef}
+                  cells={cells}
+                  widthInches={blockWidthInches}
+                  heightInches={blockHeightInches}
+                  onUpdateCellColor={updateCellColor}
+                  onConfirm={handleOpenInStudio}
+                  onBack={() => setStep('layout')}
+                />
+              )}
+
+              {/* Fallback for any mismatched state — should never render in
+                  happy paths but guards against stale store data. */}
+              {step !== 'upload' && step !== 'calibrate' && step !== 'layout' && step !== 'review' && (
+                <p className="text-body-md text-[var(--color-text-dim)]">
+                  Unknown step: {step}
+                </p>
+              )}
             </div>
 
             {/* Step indicator dots */}
@@ -509,110 +530,31 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
 }
 
 // ---------------------------------------------------------------------------
-// Step content (extracted for readability)
+// Upload step (extracted for readability)
 // ---------------------------------------------------------------------------
 
-interface WizardStepContentProps {
-  step: string;
-  originalImage: HTMLImageElement | null;
-  originalImageUrl: string;
+interface UploadStepProps {
   isDragOver: boolean;
   loading: boolean;
   error: string | null;
   warning: string | null;
-  rotation: number;
-  flipH: boolean;
-  flipV: boolean;
-  curvedSeams: boolean;
-  applique: boolean;
-  touchingFabrics: boolean;
-  heavyQuilting: boolean;
-  pieceScale: 'tiny' | 'standard' | 'large';
+  originalImage: HTMLImageElement | null;
+  originalImageUrl: string;
   pendingUploads: MobileUpload[];
-  inputRef: React.RefObject<HTMLInputElement | null>;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDrop: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDragLeave: (e: React.DragEvent) => void;
   onMobileUploadSelect: (upload: MobileUpload) => void;
   onContinue: () => void;
-  onClose: () => void;
-  onOpenInStudio: () => void;
-  setOriginalImage: (img: HTMLImageElement, url: string) => void;
-  setRotation: React.Dispatch<React.SetStateAction<number>>;
-  setFlipH: React.Dispatch<React.SetStateAction<boolean>>;
-  setFlipV: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurvedSeams: React.Dispatch<React.SetStateAction<boolean>>;
-  setApplique: React.Dispatch<React.SetStateAction<boolean>>;
-  setTouchingFabrics: React.Dispatch<React.SetStateAction<boolean>>;
-  setHeavyQuilting: React.Dispatch<React.SetStateAction<boolean>>;
-  setPieceScale: React.Dispatch<React.SetStateAction<'tiny' | 'standard' | 'large'>>;
-  // Review step
-  detectedPieces: readonly import('@/lib/photo-layout-types').DetectedPiece[];
-  scaledPieces: readonly ScaledPiece[];
-  detectionSize: { w: number; h: number } | null;
-  targetWidth: number;
-  targetHeight: number;
-  seamAllowance: number;
-  inferredUnitPx: number;
-  inferredRotationDeg: number;
-  classCount: number;
-  onUpdateScaledPieces: (pieces: readonly ScaledPiece[]) => void;
-  onRescan: () => void;
-  onBackToSettings: () => void;
 }
 
-function WizardStepContent(props: WizardStepContentProps) {
-  switch (props.step) {
-    case 'upload':
-      return <UploadStep {...props} />;
-    case 'imagePrep':
-      return <ImagePrepStep {...props} />;
-    case 'crop':
-      return <CropStep {...props} />;
-    case 'scanSettings':
-      return <ScanSettingsStep {...props} />;
-    case 'processing':
-      return <ProcessingStep />;
-    case 'review':
-      if (!props.detectionSize) {
-        return <ProcessingStep />;
-      }
-      return (
-        <PhotoReviewStep
-          originalImageUrl={props.originalImageUrl}
-          detectedPieces={props.detectedPieces}
-          scaledPieces={props.scaledPieces}
-          imageWidthPx={props.detectionSize.w}
-          imageHeightPx={props.detectionSize.h}
-          targetWidthInches={props.targetWidth}
-          targetHeightInches={props.targetHeight}
-          seamAllowance={props.seamAllowance}
-          inferredUnitPx={props.inferredUnitPx}
-          inferredRotationDeg={props.inferredRotationDeg}
-          classCount={props.classCount}
-          onUpdateScaledPieces={props.onUpdateScaledPieces}
-          onRescan={props.onRescan}
-          onConfirm={props.onOpenInStudio}
-          onBack={props.onBackToSettings}
-        />
-      );
-    case 'complete':
-      return <CompleteStep onOpenInStudio={props.onOpenInStudio} />;
-    default:
-      return <p className="text-body-md text-[var(--color-text-dim)]">Unknown step: {props.step}</p>;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Individual step components
-// ---------------------------------------------------------------------------
-
-function UploadStep(props: WizardStepContentProps) {
+function UploadStep(props: UploadStepProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
     <div className="space-y-4">
       <p className="text-body-md text-[var(--color-text-dim)] text-center">
-        Extract quilt pieces from a photo using AI. Choose a source:
+        Extract a quilt-block pattern from a photo. Choose a source:
       </p>
 
       <div className="space-y-3">
@@ -623,7 +565,7 @@ function UploadStep(props: WizardStepContentProps) {
             a real <button> to guarantee the user gesture reaches the input. */}
         <input
           id="photo-upload-file-input"
-          ref={props.inputRef}
+          ref={inputRef}
           type="file"
           accept={ACCEPTED_IMAGE_TYPES.join(',')}
           onChange={props.onFileChange}
@@ -633,7 +575,7 @@ function UploadStep(props: WizardStepContentProps) {
         />
         <button
           type="button"
-          onClick={() => props.inputRef.current?.click()}
+          onClick={() => inputRef.current?.click()}
           onDrop={props.onDrop}
           onDragOver={props.onDragOver}
           onDragLeave={props.onDragLeave}
@@ -751,554 +693,6 @@ function UploadStep(props: WizardStepContentProps) {
           </button>
         </div>
       )}
-    </div>
-  );
-}
-
-function ImagePrepStep(props: WizardStepContentProps) {
-  return (
-    <div className="space-y-4">
-      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">
-        Straighten &amp; adjust your image
-      </h3>
-
-      {/* Preview */}
-      <div className="rounded-lg overflow-hidden bg-[var(--color-bg)] aspect-video flex items-center justify-center border border-[var(--color-border)]">
-        <img
-          src={props.originalImageUrl}
-          alt="Image to adjust"
-          className="max-w-full max-h-full object-contain"
-          style={{
-            transform: `rotate(${props.rotation}deg) scaleX(${props.flipH ? -1 : 1}) scaleY(${props.flipV ? -1 : 1})`,
-          }}
-        />
-      </div>
-
-      {/* Rotation slider */}
-      <div className="space-y-2">
-        <label className="text-body-sm font-medium text-[var(--color-text)]">
-          Straighten: {props.rotation}°
-        </label>
-        <input
-          type="range"
-          min="-180"
-          max="180"
-          value={props.rotation}
-          onChange={(e) => props.setRotation(Number(e.target.value))}
-          className="w-full"
-        />
-      </div>
-
-      {/* Flip and rotation buttons */}
-      <div className="flex gap-2 flex-wrap">
-        <button
-          type="button"
-          onClick={() => props.setRotation((r) => r - 90)}
-          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
-        >
-          -90°
-        </button>
-        <button
-          type="button"
-          onClick={() => props.setRotation((r) => r + 90)}
-          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
-        >
-          +90°
-        </button>
-        <button
-          type="button"
-          onClick={() => props.setFlipH((f) => !f)}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
-            props.flipH
-              ? 'bg-[#ff8d49] text-[var(--color-text)] border-[#ff8d49]'
-              : 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
-          }`}
-        >
-          Flip H
-        </button>
-        <button
-          type="button"
-          onClick={() => props.setFlipV((f) => !f)}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 border ${
-            props.flipV
-              ? 'bg-[#ff8d49] text-[var(--color-text)] border-[#ff8d49]'
-              : 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
-          }`}
-        >
-          Flip V
-        </button>
-      </div>
-
-      <button
-        type="button"
-        onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-      >
-        Continue
-      </button>
-    </div>
-  );
-}
-
-interface CropRect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-type CropDragMode = 'move' | 'nw' | 'ne' | 'sw' | 'se';
-
-function CropStep(props: WizardStepContentProps) {
-  const {
-    originalImage,
-    rotation,
-    flipH,
-    flipV,
-    setOriginalImage,
-    setRotation,
-    setFlipH,
-    setFlipV,
-    onContinue,
-  } = props;
-
-  // The image with rotation + flip baked in, used both for preview and as the
-  // source we crop from. Kept as an object URL so it can be passed to an <img>
-  // element and revoked on unmount.
-  const [transformedUrl, setTransformedUrl] = useState<string | null>(null);
-  const [transformedSize, setTransformedSize] = useState<{ w: number; h: number } | null>(null);
-  const [crop, setCrop] = useState<CropRect>({ x: 0.05, y: 0.05, w: 0.9, h: 0.9 });
-  const [baking, setBaking] = useState(false);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Bake rotation + flip into an offscreen canvas once on entry (or whenever
-  // the user navigates back after changing rotation). We translate the
-  // transform center to the midpoint so rotation is around the image center,
-  // then expand the target canvas to fit the rotated AABB.
-  useEffect(() => {
-    if (!originalImage) return;
-
-    const rad = (rotation * Math.PI) / 180;
-    const absCos = Math.abs(Math.cos(rad));
-    const absSin = Math.abs(Math.sin(rad));
-    const w = originalImage.naturalWidth;
-    const h = originalImage.naturalHeight;
-    const newW = Math.max(1, Math.round(w * absCos + h * absSin));
-    const newH = Math.max(1, Math.round(w * absSin + h * absCos));
-
-    const canvas = document.createElement('canvas');
-    canvas.width = newW;
-    canvas.height = newH;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.translate(newW / 2, newH / 2);
-    ctx.rotate(rad);
-    ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
-    ctx.drawImage(originalImage, -w / 2, -h / 2);
-
-    let objectUrl: string | null = null;
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      objectUrl = URL.createObjectURL(blob);
-      setTransformedUrl(objectUrl);
-      setTransformedSize({ w: newW, h: newH });
-    }, 'image/png');
-
-    return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [originalImage, rotation, flipH, flipV]);
-
-  const startDrag = useCallback(
-    (mode: CropDragMode) => (e: React.PointerEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const container = containerRef.current;
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-
-      const startX = e.clientX;
-      const startY = e.clientY;
-      const start: CropRect = { ...crop };
-      const MIN = 0.05;
-
-      const onMove = (ev: PointerEvent) => {
-        const dx = (ev.clientX - startX) / rect.width;
-        const dy = (ev.clientY - startY) / rect.height;
-
-        let { x, y, w, h } = start;
-
-        if (mode === 'move') {
-          x = Math.max(0, Math.min(1 - w, x + dx));
-          y = Math.max(0, Math.min(1 - h, y + dy));
-        } else if (mode === 'nw') {
-          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
-          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
-          w = w + (x - nx);
-          h = h + (y - ny);
-          x = nx;
-          y = ny;
-        } else if (mode === 'ne') {
-          const nw = Math.max(MIN, Math.min(1 - x, w + dx));
-          const ny = Math.max(0, Math.min(y + h - MIN, y + dy));
-          h = h + (y - ny);
-          y = ny;
-          w = nw;
-        } else if (mode === 'sw') {
-          const nx = Math.max(0, Math.min(x + w - MIN, x + dx));
-          const nh = Math.max(MIN, Math.min(1 - y, h + dy));
-          w = w + (x - nx);
-          x = nx;
-          h = nh;
-        } else if (mode === 'se') {
-          w = Math.max(MIN, Math.min(1 - x, w + dx));
-          h = Math.max(MIN, Math.min(1 - y, h + dy));
-        }
-
-        setCrop({ x, y, w, h });
-      };
-
-      const onUp = () => {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-      };
-
-      window.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
-    },
-    [crop]
-  );
-
-  const handleReset = useCallback(() => {
-    setCrop({ x: 0, y: 0, w: 1, h: 1 });
-  }, []);
-
-  const handleApplyAndContinue = useCallback(() => {
-    if (!transformedUrl || !transformedSize) return;
-
-    setBaking(true);
-
-    const src = new Image();
-    src.onload = () => {
-      const cropPxX = Math.round(crop.x * transformedSize.w);
-      const cropPxY = Math.round(crop.y * transformedSize.h);
-      const cropPxW = Math.max(1, Math.round(crop.w * transformedSize.w));
-      const cropPxH = Math.max(1, Math.round(crop.h * transformedSize.h));
-
-      const canvas = document.createElement('canvas');
-      canvas.width = cropPxW;
-      canvas.height = cropPxH;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        setBaking(false);
-        return;
-      }
-      ctx.drawImage(src, cropPxX, cropPxY, cropPxW, cropPxH, 0, 0, cropPxW, cropPxH);
-
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          setBaking(false);
-          return;
-        }
-        const url = URL.createObjectURL(blob);
-        const finalImg = new Image();
-        finalImg.onload = () => {
-          setOriginalImage(finalImg, url);
-          // Rotation + flip are now baked into the new image, so reset the
-          // prep state to avoid double-applying them on later steps.
-          setRotation(0);
-          setFlipH(false);
-          setFlipV(false);
-          setBaking(false);
-          onContinue();
-        };
-        finalImg.onerror = () => setBaking(false);
-        finalImg.src = url;
-      }, 'image/png');
-    };
-    src.onerror = () => setBaking(false);
-    src.src = transformedUrl;
-  }, [
-    transformedUrl,
-    transformedSize,
-    crop,
-    setOriginalImage,
-    setRotation,
-    setFlipH,
-    setFlipV,
-    onContinue,
-  ]);
-
-  if (!originalImage || !transformedUrl || !transformedSize) {
-    return (
-      <div className="py-12 text-center">
-        <p className="text-body-md text-[var(--color-text-dim)]">Preparing image...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Crop to the quilt</h3>
-      <p className="text-body-sm text-[var(--color-text-dim)]">
-        Drag the corners to trim the photo down to just the quilt. Extra background can throw off
-        piece detection.
-      </p>
-
-      <div className="flex items-center justify-center">
-        <div
-          ref={containerRef}
-          className="relative bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden select-none touch-none"
-          style={{
-            width: '100%',
-            maxWidth: `${Math.min(600, transformedSize.w)}px`,
-            aspectRatio: `${transformedSize.w} / ${transformedSize.h}`,
-          }}
-        >
-          <img
-            src={transformedUrl}
-            alt="Crop preview"
-            draggable={false}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          />
-          <div
-            className="absolute border-2 border-[#ff8d49] cursor-move"
-            style={{
-              left: `${crop.x * 100}%`,
-              top: `${crop.y * 100}%`,
-              width: `${crop.w * 100}%`,
-              height: `${crop.h * 100}%`,
-              boxShadow: '0 0 0 9999px rgba(45, 42, 38, 0.5)',
-            }}
-            onPointerDown={startDrag('move')}
-          >
-            <div
-              className="absolute -left-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
-              onPointerDown={startDrag('nw')}
-            />
-            <div
-              className="absolute -right-2 -top-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
-              onPointerDown={startDrag('ne')}
-            />
-            <div
-              className="absolute -left-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nesw-resize"
-              onPointerDown={startDrag('sw')}
-            />
-            <div
-              className="absolute -right-2 -bottom-2 w-4 h-4 bg-[#ff8d49] border-2 border-white rounded-full cursor-nwse-resize"
-              onPointerDown={startDrag('se')}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
-        >
-          Reset
-        </button>
-        <button
-          type="button"
-          onClick={handleApplyAndContinue}
-          disabled={baking}
-          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {baking ? 'Applying crop...' : 'Continue'}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function ScanSettingsStep(props: WizardStepContentProps) {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <QuiltPieceRow count={3} size={10} gap={4} />
-        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Tell us about your quilt</h3>
-      </div>
-
-      {/* Curved seams */}
-      <button
-        type="button"
-        onClick={() => props.setCurvedSeams((v) => !v)}
-        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
-          props.curvedSeams
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-        }`}
-      >
-        <p className="text-body-md font-medium text-[var(--color-text)]">
-          Does this quilt have curved seams?
-        </p>
-        <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
-          Drunkard&apos;s Path, Orange Peel, Wedding Ring, Clamshell
-        </p>
-      </button>
-
-      {/* Applique */}
-      <button
-        type="button"
-        onClick={() => props.setApplique((v) => !v)}
-        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
-          props.applique
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-        }`}
-      >
-        <p className="text-body-md font-medium text-[var(--color-text)]">
-          Are there shapes sewn on top of the background?
-        </p>
-        <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
-          Needle-turn applique, raw-edge applique, fused shapes
-        </p>
-      </button>
-
-      {/* Touching fabrics */}
-      <button
-        type="button"
-        onClick={() => props.setTouchingFabrics((v) => !v)}
-        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
-          props.touchingFabrics
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-        }`}
-      >
-        <p className="text-body-md font-medium text-[var(--color-text)]">
-          Are there pieces of the exact same fabric sewn touching each other?
-        </p>
-      </button>
-
-      {/* Heavy quilting */}
-      <button
-        type="button"
-        onClick={() => props.setHeavyQuilting((v) => !v)}
-        className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
-          props.heavyQuilting
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-        }`}
-      >
-        <p className="text-body-md font-medium text-[var(--color-text)]">
-          Is there heavy quilting or embroidery over the pieces?
-        </p>
-      </button>
-
-      {/* Piece scale selector */}
-      <div className="space-y-2">
-        <p className="text-body-md font-medium text-[var(--color-text)]">How big are the pieces generally?</p>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={() => props.setPieceScale('tiny')}
-            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
-              props.pieceScale === 'tiny'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            }`}
-          >
-            <p className="text-body-sm font-medium text-[var(--color-text)]">Tiny</p>
-            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">Under 2&quot;</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => props.setPieceScale('standard')}
-            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
-              props.pieceScale === 'standard'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            }`}
-          >
-            <p className="text-body-sm font-medium text-[var(--color-text)]">Standard</p>
-            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">2&quot;-6&quot;</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => props.setPieceScale('large')}
-            className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
-              props.pieceScale === 'large'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            }`}
-          >
-            <p className="text-body-sm font-medium text-[var(--color-text)]">Large</p>
-            <p className="text-label-xs text-[var(--color-text-dim)] mt-1">6&quot;+</p>
-          </button>
-        </div>
-      </div>
-
-      <p className="text-body-sm text-[var(--color-text-dim)] text-center">
-        Default settings work well for most quilts.
-      </p>
-
-      <button
-        type="button"
-        onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-      >
-        Analyze Quilt
-      </button>
-    </div>
-  );
-}
-
-function ProcessingStep() {
-  return (
-    <div className="space-y-6 text-center py-8">
-      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto animate-pulse">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
-          <circle
-            cx="16"
-            cy="16"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            strokeDasharray="4 3"
-          />
-        </svg>
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Analyzing your quilt</h3>
-        <p className="text-body-md text-[var(--color-text-dim)]">
-          Detecting pieces and extracting the pattern...
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
-  return (
-    <div className="space-y-6 text-center py-8">
-      <div className="w-16 h-16 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center mx-auto">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#ff8d49]">
-          <path
-            d="M8 16L14 22L24 10"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-      <h3 className="text-headline-sm font-semibold text-[var(--color-text)]">Pattern extracted!</h3>
-      <p className="text-body-md text-[var(--color-text-dim)]">
-        Your quilt pieces have been detected. You can now assign fabrics and export to the studio.
-      </p>
-      <button
-        type="button"
-        onClick={onOpenInStudio}
-        className="bg-[#ff8d49] text-[var(--color-text)] px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-      >
-        Open in Studio
-      </button>
     </div>
   );
 }
