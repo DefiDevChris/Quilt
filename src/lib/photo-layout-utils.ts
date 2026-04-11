@@ -15,11 +15,11 @@ import type {
   PipelineStepStatus,
   DetectedPiece,
   ScaledPiece,
-  Rect,
   Point2D,
   DownscaleInfo,
   QuiltDetectionConfig,
 } from '@/lib/photo-layout-types';
+import type { QuantizedPiece, QuantizerConfig } from '@/lib/shape-quantizer-engine';
 import {
   PHOTO_PATTERN_RESOLUTION_TIERS,
   PHOTO_PATTERN_MAX_IMAGE_DATA_SIZE,
@@ -53,8 +53,17 @@ export interface PipelineResult {
   readonly perspectiveApplied: boolean;
   /** Information about any image downscaling that occurred */
   readonly downscaleInfo: DownscaleInfo;
-  /** Normalized + edge-snapped pieces, ready for canvas placement */
+  /** Quantized + grid-snapped pieces, ready for canvas placement */
   readonly scaledPieces: readonly ScaledPiece[];
+  /** Final detection bitmap dimensions in pixels (post-downscale). */
+  readonly imageWidthPx: number;
+  readonly imageHeightPx: number;
+  /** Inferred base unit in pixels at detection resolution. */
+  readonly inferredUnitPx: number;
+  /** Inferred global rotation in degrees. */
+  readonly inferredRotationDeg: number;
+  /** Number of distinct canonical classes discovered. */
+  readonly classCount: number;
 }
 
 // ── Pipeline Helpers ───────────────────────────────────────────────────────
@@ -166,11 +175,12 @@ export function calculateDownscaleParams(
 // ── Scaling Helpers ───────────────────────────────────────────────────────
 
 /**
- * Convert pixel contours to inch-based ScaledPieces using target dimensions.
+ * Convert quantized pixel polygons to inch-based ScaledPieces using target
+ * canvas dimensions. Preserves class metadata for print-list clustering.
  */
 function buildScaledPieces(
-  pieces: readonly DetectedPiece[],
-  contours: readonly Point2D[][],
+  quantized: readonly QuantizedPiece[],
+  pieceColorById: ReadonlyMap<string, string>,
   imageWidth: number,
   imageHeight: number,
   targetWidthInches: number,
@@ -180,9 +190,8 @@ function buildScaledPieces(
   const scaleX = targetWidthInches / imageWidth;
   const scaleY = targetHeightInches / imageHeight;
 
-  return pieces.map((piece, i) => {
-    const contour = contours[i] ?? piece.contour;
-    const contourInches: Point2D[] = contour.map((p) => ({
+  return quantized.map((q) => {
+    const contourInches: Point2D[] = q.contour.map((p) => ({
       x: p.x * scaleX,
       y: p.y * scaleY,
     }));
@@ -192,10 +201,10 @@ function buildScaledPieces(
     let maxX = -Infinity;
     let maxY = -Infinity;
     for (const p of contourInches) {
-      minX = Math.min(minX, p.x);
-      minY = Math.min(minY, p.y);
-      maxX = Math.max(maxX, p.x);
-      maxY = Math.max(maxY, p.y);
+      if (p.x < minX) minX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y > maxY) maxY = p.y;
     }
 
     const finishedW = maxX - minX;
@@ -204,7 +213,7 @@ function buildScaledPieces(
     const cutH = finishedH + seamAllowance * 2;
 
     return {
-      id: piece.id,
+      id: q.id,
       contourInches,
       finishedWidth: formatInches(finishedW),
       finishedHeight: formatInches(finishedH),
@@ -212,7 +221,12 @@ function buildScaledPieces(
       cutHeight: formatInches(cutH),
       finishedWidthNum: finishedW,
       finishedHeightNum: finishedH,
-      dominantColor: piece.dominantColor,
+      dominantColor: pieceColorById.get(q.id) ?? '#d4ccc4',
+      shapeClass: q.shapeClass,
+      classKey: q.classKey,
+      classLabel: q.classLabel,
+      unitsW: q.unitsW,
+      unitsH: q.unitsH,
     };
   });
 }
@@ -249,6 +263,62 @@ export interface RunDetectionPipelineOptions {
   minSolidity?: number;
   maxAspectRatio?: number;
   scanConfig?: QuiltDetectionConfig;
+  /** Optional overrides for the post-detection shape quantizer. */
+  quantizerConfig?: Partial<QuantizerConfig>;
+}
+
+/**
+ * Re-quantize already-detected pieces with new settings. Used by the Review
+ * step when the user tweaks the base unit, rotation offset, or min area and
+ * wants a cheap refresh without re-running the OpenCV worker.
+ */
+export async function requantizeDetectedPieces(
+  detectedPieces: readonly DetectedPiece[],
+  imageWidthPx: number,
+  imageHeightPx: number,
+  targetWidthInches: number,
+  targetHeightInches: number,
+  seamAllowance: number,
+  quantizerConfig?: Partial<QuantizerConfig>
+): Promise<{
+  scaledPieces: ScaledPiece[];
+  unitPx: number;
+  rotationDeg: number;
+  classCount: number;
+  droppedIds: readonly string[];
+}> {
+  const { quantizeShapes } = await import('@/lib/shape-quantizer-engine');
+  const { filterOrphanPieces } = await import('@/lib/orphan-filter');
+
+  let cleanPieces: readonly DetectedPiece[] = detectedPieces;
+  try {
+    cleanPieces = filterOrphanPieces(detectedPieces).pieces;
+  } catch {
+    // Non-fatal
+  }
+
+  const quantResult = quantizeShapes(cleanPieces, quantizerConfig);
+
+  const colorById = new Map<string, string>();
+  for (const p of cleanPieces) colorById.set(p.id, p.dominantColor);
+
+  const scaledPieces = buildScaledPieces(
+    quantResult.pieces,
+    colorById,
+    imageWidthPx,
+    imageHeightPx,
+    targetWidthInches,
+    targetHeightInches,
+    seamAllowance
+  );
+
+  return {
+    scaledPieces,
+    unitPx: quantResult.unitPx,
+    rotationDeg: quantResult.rotationDeg,
+    classCount: quantResult.classCount,
+    droppedIds: quantResult.droppedIds,
+  };
 }
 
 export async function runDetectionPipeline(
@@ -269,6 +339,7 @@ export async function runDetectionPipeline(
     minSolidity = 0.5,
     maxAspectRatio = 20,
     scanConfig,
+    quantizerConfig,
   } = options;
 
   let steps = createInitialPipeline();
@@ -352,7 +423,7 @@ export async function runDetectionPipeline(
     advance(3, 'complete');
     advance(4, 'complete');
 
-    // Step 5: Finalizing — orphan filter → normalize → edge snap → scale (main thread)
+    // Step 5: Finalizing — orphan filter → quantize → scale (main thread)
     advance(5, 'running');
 
     // Orphan filter
@@ -365,36 +436,32 @@ export async function runDetectionPipeline(
       // Non-fatal
     }
 
-    // Shape normalization
-    let normalizedContours: Point2D[][] = cleanPieces.map((p) =>
-      p.contour.map((pt) => ({ x: pt.x, y: pt.y }))
-    );
-    try {
-      const { normalizeShapes } = await import('@/lib/shape-normalizer-engine');
-      const normResult = normalizeShapes(cleanPieces);
-      normalizedContours = normResult.normalizedContours.map((c) =>
-        c.map((pt) => ({ x: pt.x, y: pt.y }))
-      );
-    } catch {
-      // Non-fatal
-    }
-
-    // Edge snapping
+    // Shape quantization — single-pass grid inference + canonicalization
     const imageW = downscaleParams.width;
     const imageH = downscaleParams.height;
-    const canvasBounds: Rect = { x: 0, y: 0, width: imageW, height: imageH };
 
-    try {
-      const { snapEdges } = await import('@/lib/edge-snapper-engine');
-      normalizedContours = snapEdges(normalizedContours, canvasBounds);
-    } catch {
-      // Non-fatal
-    }
+    const { quantizeShapes } = await import('@/lib/shape-quantizer-engine');
+    const quantResult = quantizeShapes(cleanPieces, quantizerConfig);
+    console.log(
+      '[PhotoPipeline] Quantized:',
+      quantResult.pieces.length,
+      'pieces,',
+      quantResult.classCount,
+      'classes,',
+      'u=',
+      quantResult.unitPx.toFixed(2),
+      'px, θ=',
+      quantResult.rotationDeg.toFixed(2),
+      'deg'
+    );
 
-    // Scale pixel contours to inch-based ScaledPieces
+    // Map id → dominant color for rendering.
+    const colorById = new Map<string, string>();
+    for (const p of cleanPieces) colorById.set(p.id, p.dominantColor);
+
     const scaledPieces = buildScaledPieces(
-      cleanPieces,
-      normalizedContours,
+      quantResult.pieces,
+      colorById,
       imageW,
       imageH,
       DEFAULT_CANVAS_WIDTH,
@@ -434,6 +501,11 @@ export async function runDetectionPipeline(
       perspectiveApplied,
       downscaleInfo,
       scaledPieces,
+      imageWidthPx: imageW,
+      imageHeightPx: imageH,
+      inferredUnitPx: quantResult.unitPx,
+      inferredRotationDeg: quantResult.rotationDeg,
+      classCount: quantResult.classCount,
     };
   } catch (error) {
     console.error('[PhotoPipeline] Pipeline failed:', error);
@@ -457,6 +529,11 @@ export async function runDetectionPipeline(
         reason: 'none',
       },
       scaledPieces: [],
+      imageWidthPx: imageElement.naturalWidth,
+      imageHeightPx: imageElement.naturalHeight,
+      inferredUnitPx: 0,
+      inferredRotationDeg: 0,
+      classCount: 0,
     };
   }
 }
