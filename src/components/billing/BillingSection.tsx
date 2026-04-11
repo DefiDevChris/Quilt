@@ -116,7 +116,7 @@ export function BillingSection() {
       )}
 
       {/* Current plan status */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-8 space-y-6 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-8 space-y-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">Current Membership</p>
@@ -168,7 +168,7 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-lg bg-[var(--color-text)] text-[var(--color-surface)] p-10 space-y-8 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden">
+        <div className="rounded-lg bg-[var(--color-text)] text-[var(--color-surface)] p-10 space-y-8 shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-[#ff8d49]" />
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
@@ -224,7 +224,7 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="w-full h-16 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative z-10"
+            className="w-full h-16 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative z-10"
           >
             {isCheckoutLoading ? 'Processing...' : 'Upgrade to Pro'}
           </button>

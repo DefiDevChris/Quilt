@@ -32,7 +32,7 @@ export function ConfirmationDialog({
  }}
  >
  <div
- className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] border border-[var(--color-border)] w-[400px] max-w-[90vw] p-6 ${className}`}
+ className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] w-[400px] max-w-[90vw] p-6 ${className}`}
  >
  <h3 className="text-title-lg text-[var(--color-text)] font-semibold mb-2">{title}</h3>
  <div className="text-body-md text-[var(--color-text-dim)] mb-6">{message}</div>

@@ -421,7 +421,7 @@ export function PhotoReviewStep(props: PhotoReviewStepProps) {
           type="button"
           onClick={onConfirm}
           disabled={scaledPieces.length === 0}
-          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-50"
+          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] disabled:opacity-50"
         >
           Send to Studio
         </button>

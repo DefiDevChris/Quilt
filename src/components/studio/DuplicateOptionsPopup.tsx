@@ -97,7 +97,7 @@ export function DuplicateOptionsPopup() {
  onClick={() => setShow(false)}
  >
  <div
- className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-4 min-w-64"
+ className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-4 min-w-64"
  onClick={(e) => e.stopPropagation()}
  >
  <h4 className="text-sm font-semibold text-[var(--color-text)] mb-3">Duplicate to:</h4>

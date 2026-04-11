@@ -113,7 +113,7 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Shop Toggle Section */}
-      <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-[#1a1a1a]">Fabric Shop</h3>
@@ -153,7 +153,7 @@ export default function AdminSettingsPage() {
       {/* Confirmation Modal */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
-          <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
             <h3 className="text-lg font-semibold text-[#1a1a1a]">Enable Fabric Shop</h3>
             <p className="text-sm text-[#4a4a4a]">
               This will make the shop visible to all users. A &quot;Shop&quot; tab will appear in

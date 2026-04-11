@@ -76,7 +76,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-[#fdfaf7] border-l border-[#d4d4d4] flex flex-col">
+      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-[var(--color-bg)] border-l border-[#d4d4d4] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#d4d4d4]">
           <div className="flex items-center gap-2">
@@ -137,7 +137,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={handleCopyList}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border-2 border-[#d4d4d4] text-[14px] leading-[20px] font-medium text-[#4a4a4a] hover:bg-[#fdfaf7] transition-colors duration-150"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border-2 border-[#d4d4d4] text-[14px] leading-[20px] font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] transition-colors duration-150"
               >
                 <Copy size={14} />
                 Copy List
@@ -147,7 +147,7 @@ export function CartDrawer() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
                   {isLoading ? 'Loading...' : 'Checkout'}
                 </a>
@@ -155,7 +155,7 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={handleCopyList}
-                  className="flex-1 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="flex-1 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
                   Copy Shopping List
                 </button>
@@ -188,7 +188,7 @@ function CartItemRow({
   const lineTotal = item.pricePerYard * item.quantityInYards;
 
   return (
-    <div className="flex gap-3 p-3 bg-[#fdfaf7] border border-[#d4d4d4] rounded-lg">
+    <div className="flex gap-3 p-3 bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg">
       {/* Swatch */}
       <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-[#d4d4d4]">
         {item.fabricImageUrl ? (

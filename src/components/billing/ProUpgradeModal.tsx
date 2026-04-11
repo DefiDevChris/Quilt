@@ -14,7 +14,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-text)]/60 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-[var(--color-surface)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] my-8 border border-[var(--color-border)]">
+      <div className="relative w-full max-w-4xl bg-[var(--color-surface)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-[var(--color-border)]">
         {/* Close Button */}
         <button
           onClick={onClose}

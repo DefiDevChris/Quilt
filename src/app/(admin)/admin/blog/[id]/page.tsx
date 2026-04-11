@@ -198,7 +198,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
         </div>
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 bg-[#ffffff] text-[#4a4a4a] rounded-full text-sm font-medium hover:bg-[#fdfaf7] transition-colors duration-150"
+          className="px-4 py-2 bg-[var(--color-surface)] text-[#4a4a4a] rounded-full text-sm font-medium hover:bg-[var(--color-bg)] transition-colors duration-150"
         >
           Cancel
         </button>
@@ -221,7 +221,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             id="title"
             value={formData.title}
             onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-            className="w-full px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+            className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
             placeholder="Enter post title"
             maxLength={200}
             required
@@ -237,7 +237,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             id="excerpt"
             value={formData.excerpt}
             onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
-            className="w-full px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 resize-none"
+            className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 resize-none"
             placeholder="Brief summary of the post"
             rows={3}
             maxLength={300}
@@ -272,7 +272,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                 </button>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-[#d4d4d4] rounded-lg cursor-pointer hover:bg-[#fdfaf7] transition-colors duration-150">
+              <label className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-[#d4d4d4] rounded-lg cursor-pointer hover:bg-[var(--color-bg)] transition-colors duration-150">
                 <div className="text-center">
                   <svg
                     className="mx-auto h-8 w-8 text-[#4a4a4a]"
@@ -307,7 +307,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, featuredImageUrl: e.target.value }))
                 }
-                className="w-full max-w-lg px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+                className="w-full max-w-lg px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
                 placeholder="Or paste image URL..."
               />
             )}
@@ -324,7 +324,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               id="category"
               value={formData.category}
               onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-              className="w-full px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
             >
               {BLOG_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -346,7 +346,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   layout: e.target.value as BlogPostFormData['layout'],
                 }))
               }
-              className="w-full px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
             >
               <option value="standard">Standard</option>
               <option value="hero-cover">Hero Cover</option>
@@ -366,7 +366,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   status: e.target.value as BlogPostFormData['status'],
                 }))
               }
-              className="w-full px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -392,7 +392,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   handleAddTag();
                 }
               }}
-              className="flex-1 px-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+              className="flex-1 px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
               placeholder="Add a tag"
               maxLength={50}
             />
@@ -400,7 +400,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               type="button"
               onClick={handleAddTag}
               disabled={formData.tags.length >= 5 || !tagInput.trim()}
-              className="px-4 py-2.5 bg-[#fdfaf7] border border-[#d4d4d4] rounded-full text-sm font-medium text-[#4a4a4a] hover:bg-[#d4d4d4]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-4 py-2.5 bg-[var(--color-bg)] border border-[#d4d4d4] rounded-full text-sm font-medium text-[#4a4a4a] hover:bg-[#d4d4d4]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Add
             </button>
@@ -410,7 +410,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               {formData.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#fdfaf7] rounded-lg text-xs font-medium text-[#4a4a4a]"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-[var(--color-bg)] rounded-lg text-xs font-medium text-[#4a4a4a]"
                 >
                   {tag}
                   <button
@@ -441,7 +441,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
         {formData.content && (
           <div>
             <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Preview</label>
-            <div className="p-4 bg-[#fdfaf7] rounded-lg border border-[#d4d4d4]">
+            <div className="p-4 bg-[var(--color-bg)] rounded-lg border border-[#d4d4d4]">
               <TiptapRenderer content={formData.content} />
             </div>
           </div>
@@ -453,14 +453,14 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             type="button"
             onClick={() => handleSubmit('draft')}
             disabled={saving}
-            className="px-5 py-2.5 bg-[#ffffff] text-[#4a4a4a] rounded-full text-sm font-medium hover:bg-[#fdfaf7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+            className="px-5 py-2.5 bg-[var(--color-surface)] text-[#4a4a4a] rounded-full text-sm font-medium hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           >
             Save as Draft
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-full bg-[#ff8d49] text-[#ffffff] text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+            className="px-5 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-surface)] text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           >
             {saving ? 'Saving...' : postId ? 'Update Post' : 'Create Post'}
           </button>

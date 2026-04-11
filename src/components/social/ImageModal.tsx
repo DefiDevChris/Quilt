@@ -51,7 +51,7 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-[var(--color-text)]/70" onClick={onClose} />
-      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-[#ffffff] border border-[var(--color-border)] rounded-lg overflow-hidden flex">
+      <div className="relative w-[90vw] max-w-[1200px] h-[85vh] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden flex">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 z-10 p-1.5 bg-[var(--color-text)]/30 rounded-full text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
@@ -91,7 +91,7 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
         </div>
 
         {/* Image */}
-        <div className="w-1/2 p-6 flex flex-col items-center justify-center bg-[#fdfaf7]">
+        <div className="w-1/2 p-6 flex flex-col items-center justify-center bg-[var(--color-bg)]">
           <img src={post.image} alt="" className="max-h-[65vh] w-auto object-contain rounded-lg" />
           <p className="mt-4 text-center text-sm text-[var(--color-text)] max-w-sm">{post.content}</p>
           {post.isFeatured && <span className="mt-2 px-2.5 py-1 text-[10px] font-medium bg-[#ff8d49] text-white rounded-full">Featured</span>}

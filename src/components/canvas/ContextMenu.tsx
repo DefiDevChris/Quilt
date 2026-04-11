@@ -476,7 +476,7 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
@@ -592,7 +592,7 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
@@ -677,7 +677,7 @@ export function ContextMenu() {
     return (
       <div
         ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="fixed z-50 min-w-[220px] rounded-full border border-[#d4d4d4] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         style={{ left: position.x, top: position.y }}
       >
         <button
@@ -761,7 +761,7 @@ export function ContextMenu() {
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-[180px] rounded-full border border-[#d4d4d4] bg-[#fdfaf7] py-1 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+      className="fixed z-50 min-w-[180px] rounded-full border border-[#d4d4d4] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       style={{ left: position.x, top: position.y }}
     >
       {menuItems.map((item, i) =>

@@ -53,7 +53,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               placeholder="Search posts, people, hashtags..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full pl-10 pr-4 h-10 bg-[#fdfaf7] border border-[var(--color-border)] rounded-full text-sm"
+              className="w-full pl-10 pr-4 h-10 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-sm"
             />
           </div>
         </div>

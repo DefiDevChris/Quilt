@@ -159,7 +159,7 @@ export function RecommendedDimensionsModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1a1a1a]/60">
-      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[#ffffff] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
           <div>
@@ -187,7 +187,7 @@ export function RecommendedDimensionsModal({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Pattern info */}
           {selectedPattern && (
-            <div className="border border-[#d4d4d4] bg-[#fdfaf7] p-4 flex flex-col gap-2 rounded-lg">
+            <div className="border border-[#d4d4d4] bg-[var(--color-bg)] p-4 flex flex-col gap-2 rounded-lg">
               <div className="flex items-center justify-between">
                 <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
                   {selectedPattern.displayName}
@@ -214,7 +214,7 @@ export function RecommendedDimensionsModal({
                   onClick={() => onSelect(rec.width, rec.height)}
                   className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${rec.isClosest
                     ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                    : 'border-[#d4d4d4] bg-[#ffffff] hover:border-[#ff8d49]/50'
+                    : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
                     }`}
                 >
                   <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
@@ -257,14 +257,14 @@ export function RecommendedDimensionsModal({
                   placeholder="Width"
                   min="6"
                   max="200"
-                  className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+                  className="w-full border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
-                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]' : 'bg-[#ffffff] text-[#4a4a4a] border-[#d4d4d4]'
+                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]' : 'bg-[var(--color-surface)] text-[#4a4a4a] border-[#d4d4d4]'
                   }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
@@ -302,7 +302,7 @@ export function RecommendedDimensionsModal({
                   placeholder="Height"
                   min="6"
                   max="200"
-                  className="w-full border border-[#d4d4d4] bg-[#ffffff] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+                  className="w-full border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
                 />
               </div>
 
@@ -310,7 +310,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="h-[42px] border border-[#d4d4d4] bg-[#ff8d49] text-[#1a1a1a] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                className="h-[42px] border border-[#d4d4d4] bg-[#ff8d49] text-[#1a1a1a] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 Apply
               </button>

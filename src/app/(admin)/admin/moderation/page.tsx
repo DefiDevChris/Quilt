@@ -158,7 +158,7 @@ export default function AdminModerationPage() {
           {activeTab === 'reports' && (
             <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[#fdfaf7]">
+                <thead className="bg-[var(--color-bg)]">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Type
@@ -177,7 +177,7 @@ export default function AdminModerationPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
                   {reports.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
@@ -186,7 +186,7 @@ export default function AdminModerationPage() {
                     </tr>
                   ) : (
                     reports.map((report) => (
-                      <tr key={report.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                      <tr key={report.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <span className="text-sm text-[#1a1a1a]">{report.postId ? 'Post' : 'Comment'}</span>
                         </td>
@@ -226,7 +226,7 @@ export default function AdminModerationPage() {
           {activeTab === 'posts' && (
             <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[#fdfaf7]">
+                <thead className="bg-[var(--color-bg)]">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Post
@@ -245,7 +245,7 @@ export default function AdminModerationPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
                   {posts.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
@@ -254,7 +254,7 @@ export default function AdminModerationPage() {
                     </tr>
                   ) : (
                     posts.map((post) => (
-                      <tr key={post.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                      <tr key={post.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <div className="max-w-md">
                             <p className="font-medium text-[#1a1a1a] truncate">{post.title}</p>
@@ -299,7 +299,7 @@ export default function AdminModerationPage() {
           {activeTab === 'comments' && (
             <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[#fdfaf7]">
+                <thead className="bg-[var(--color-bg)]">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
                       Comment
@@ -318,7 +318,7 @@ export default function AdminModerationPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[#ffffff]">
+                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
                   {comments.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
@@ -327,7 +327,7 @@ export default function AdminModerationPage() {
                     </tr>
                   ) : (
                     comments.map((comment) => (
-                      <tr key={comment.id} className="hover:bg-[#fdfaf7]/60 transition-colors duration-150">
+                      <tr key={comment.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <p className="text-sm text-[#1a1a1a] max-w-md truncate">
                             {comment.content}
@@ -367,7 +367,7 @@ export default function AdminModerationPage() {
 
           {/* Users Tab - Placeholder */}
           {activeTab === 'users' && (
-            <div className="p-8 text-center text-[#4a4a4a] bg-[#fdfaf7] rounded-lg">
+            <div className="p-8 text-center text-[#4a4a4a] bg-[var(--color-bg)] rounded-lg">
               <p>User management coming soon. Use the role update API for now.</p>
             </div>
           )}

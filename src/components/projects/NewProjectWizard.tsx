@@ -211,7 +211,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className={`w-full max-h-[90vh] overflow-y-auto bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] focus:outline-none rounded-lg ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
+        className={`w-full max-h-[90vh] overflow-y-auto bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] focus:outline-none rounded-lg ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)]">
@@ -299,7 +299,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel(preset.label)}
                       className={
                         isActive
-                          ? 'flex flex-col items-center justify-center p-3 bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(45,42,38,0.08)] rounded-full'
+                          ? 'flex flex-col items-center justify-center p-3 bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-full'
                           : 'flex flex-col items-center justify-center p-3 bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full'
                       }
                     >
@@ -325,7 +325,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel('Custom')}
                       className={
                         isCustom
-                          ? 'w-full px-4 py-3 bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] font-medium shadow-[0_1px_2px_rgba(45,42,38,0.08)] rounded-full'
+                          ? 'w-full px-4 py-3 bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] font-medium shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-full'
                           : 'w-full px-4 py-3 bg-[var(--color-bg)] text-[var(--color-text)] text-[16px] leading-[24px] font-medium hover:bg-[#ffc8a6]/20 transition-colors duration-150 border border-[var(--color-border)] rounded-full'
                       }
                     >
@@ -341,7 +341,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   onClick={() => setSizePresetLabel('Custom')}
                   className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
                     isCustom
-                      ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                      ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                       : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ffc8a6]/20'
                   }`}
                 >
@@ -406,7 +406,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                         onClick={() => setCellSize(size)}
                         className={`px-4 py-2 text-[16px] leading-[24px] font-medium transition-colors duration-150 rounded-full ${
                           Math.abs(cellSize - size) < 0.001
-                            ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                            ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                             : 'bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20'
                         }`}
                       >

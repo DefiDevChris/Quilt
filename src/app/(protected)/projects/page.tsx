@@ -75,7 +75,7 @@ export default function AllProjectsPage() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'grid'
-                  ? 'bg-[#ffffff] text-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                  ? 'bg-[var(--color-surface)] text-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                   : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
                   }`}
                 title="Grid View"
@@ -85,7 +85,7 @@ export default function AllProjectsPage() {
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'list'
-                  ? 'bg-[#ffffff] text-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                  ? 'bg-[var(--color-surface)] text-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                   : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
                   }`}
                 title="List View"
@@ -95,7 +95,7 @@ export default function AllProjectsPage() {
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             >
               <Plus size={16} strokeWidth={3} />
               Create New
@@ -118,7 +118,7 @@ export default function AllProjectsPage() {
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           >
             <Plus size={20} strokeWidth={3} />
             Initialize Blank Canvas
@@ -137,8 +137,8 @@ export default function AllProjectsPage() {
               key={project.id}
               href={`/studio/${project.id}`}
               className={`group block ${viewMode === 'grid'
-                ? 'bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150'
-                : 'bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)] transition-colors duration-150 flex items-center gap-4'
+                ? 'bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150'
+                : 'bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 flex items-center gap-4'
                 }`}
             >
               <div

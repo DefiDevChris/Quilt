@@ -174,7 +174,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
  {/* ── Photo block upload (pro only) ─────────────────────── */}
  {isPro && isPhotoBlockUploadOpen && (
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
- <div className="w-[560px] rounded-lg bg-[#fdfaf7] p-5 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+ <div className="w-[560px] rounded-lg bg-[var(--color-bg)] p-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
  <div className="mb-4 flex items-center justify-between">
  <h2 className="text-lg font-semibold text-[#1a1a1a]">Upload Block Photo</h2>
  <button

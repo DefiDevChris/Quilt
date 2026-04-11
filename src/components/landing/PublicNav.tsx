@@ -25,7 +25,7 @@ export default function PublicNav() {
     <header
       className="sticky top-0 z-50 bg-[var(--color-surface)] transition-colors duration-150"
       style={{
-        boxShadow: scrolled ? '0 1px 2px rgba(45,42,38,0.08)' : 'none',
+        boxShadow: scrolled ? '0 1px 2px rgba(26,26,26,0.08)' : 'none',
         borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
       }}
     >

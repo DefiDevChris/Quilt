@@ -39,14 +39,14 @@ export function CreatePost({ onPost }: CreatePostProps) {
   };
 
   return (
-    <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-5">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-5">
       <div className="flex gap-3">
         <Avatar className="h-10 w-10 shrink-0">
           <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
           <AvatarFallback>SM</AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="bg-[#fdfaf7] rounded-lg p-3">
+          <div className="bg-[var(--color-bg)] rounded-lg p-3">
             <Textarea
               placeholder="What's on your mind, Sarah?"
               value={content}

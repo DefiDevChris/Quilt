@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 export function PostSkeleton({ viewMode = 'full' }: { viewMode?: 'full' | 'grid' }) {
   if (viewMode === 'grid') {
     return (
-      <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg overflow-hidden">
+      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
         <div className="aspect-[4/3] bg-[var(--color-border)]/30 animate-pulse rounded-t-lg" />
         <div className="p-3 space-y-2">
           <div className="flex items-center gap-2">
@@ -19,7 +19,7 @@ export function PostSkeleton({ viewMode = 'full' }: { viewMode?: 'full' | 'grid'
     );
   }
   return (
-    <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg overflow-hidden">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
       <div className="flex items-center gap-3 p-5 pb-3">
         <div className="h-10 w-10 rounded-full bg-[var(--color-border)]/30 animate-pulse" />
         <div className="flex-1 space-y-2">
@@ -54,7 +54,7 @@ export function PostSkeleton({ viewMode = 'full' }: { viewMode?: 'full' | 'grid'
 
 export function CreatePostSkeleton() {
   return (
-    <div className="bg-[#ffffff] border border-[var(--color-border)] rounded-lg p-4">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4">
       <div className="flex gap-3">
         <div className="h-10 w-10 rounded-full bg-[var(--color-border)]/30 animate-pulse" />
         <div className="flex-1 space-y-3">

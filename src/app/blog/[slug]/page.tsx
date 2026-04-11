@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               style={{ objectPosition: '20% 50%' }}
             />
           </div>
-          <div className="absolute inset-0 bg-[#fdfaf7]/60" />
+          <div className="absolute inset-0 bg-[var(--color-bg)]/60" />
         </div>
       )}
 

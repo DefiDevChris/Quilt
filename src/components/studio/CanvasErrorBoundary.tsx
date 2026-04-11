@@ -59,8 +59,8 @@ export class CanvasErrorBoundary extends Component<
  render(): ReactNode {
  if (this.state.hasError) {
  return (
- <div className="flex-1 flex items-center justify-center bg-[#fdfaf7]">
- <div className="max-w-sm w-full rounded-lg bg-[#fdfaf7] p-8 shadow-[0_1px_2px_rgba(45,42,38,0.08)] text-center">
+ <div className="flex-1 flex items-center justify-center bg-[var(--color-bg)]">
+ <div className="max-w-sm w-full rounded-lg bg-[var(--color-bg)] p-8 shadow-[0_1px_2px_rgba(26,26,26,0.08)] text-center">
  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#ffc7c7]/10">
  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ffc7c7]">
  <path
@@ -78,14 +78,14 @@ export class CanvasErrorBoundary extends Component<
  the canvas to continue.
  </p>
  {this.state.errorMessage && (
- <p className="mb-4 rounded-lg bg-[#fdfaf7] p-2 text-xs font-mono text-[#4a4a4a] break-words">
+ <p className="mb-4 rounded-lg bg-[var(--color-bg)] p-2 text-xs font-mono text-[#4a4a4a] break-words">
  {this.state.errorMessage}
  </p>
  )}
  <button
  type="button"
  onClick={this.handleReload}
- className="rounded-full bg-[#ff8d49] text-[#1a1a1a] hover:opacity-90 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+ className="rounded-full bg-[#ff8d49] text-[#1a1a1a] hover:opacity-90 transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
  >
  Reload Canvas
  </button>

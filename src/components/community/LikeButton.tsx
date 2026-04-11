@@ -40,7 +40,7 @@ export function LikeButton({ postId, likeCount, isLikedByUser, size = 'sm' }: Li
  disabled={!user}
  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors duration-150 ${isLikedByUser
  ? 'bg-[#ffc7c7]/10 text-[#ffc7c7] hover:bg-[#ffc7c7]/20'
- : 'hover:bg-[#fdfaf7] text-[#4a4a4a]'
+ : 'hover:bg-[var(--color-bg)] text-[#4a4a4a]'
  } ${!user ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
  title={!user ? 'Sign in to like' : isLikedByUser ? 'Unlike' : 'Like'}
  >

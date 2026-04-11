@@ -249,7 +249,7 @@ export function OnboardingForm() {
           : 'border-[#d4d4d4]';
 
   return (
-    <div className="w-full max-w-[540px] mx-auto bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-[2.75rem]">
+    <div className="w-full max-w-[540px] mx-auto bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Image
           src="/logo.png"
@@ -288,7 +288,7 @@ export function OnboardingForm() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
+            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
             placeholder="How should we call you?"
             autoComplete="name"
             maxLength={60}
@@ -309,7 +309,7 @@ export function OnboardingForm() {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-[#fdfaf7] border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150`}
+            className={`w-full bg-[var(--color-bg)] border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150`}
             placeholder="quilter_jane"
             autoComplete="username"
             maxLength={60}
@@ -341,7 +341,7 @@ export function OnboardingForm() {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full bg-[#fdfaf7] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 resize-none"
+            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 resize-none"
             placeholder="Tell the community a little about yourself..."
           />
         </div>
@@ -400,7 +400,7 @@ export function OnboardingForm() {
                   setUploadedFile(null);
                 }}
                 className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors duration-150 ${selectedCorgi === corgi.id
-                  ? 'border-primary shadow-[0_1px_2px_rgba(45,42,38,0.08)] ring-2 ring-primary/30'
+                  ? 'border-primary shadow-[0_1px_2px_rgba(26,26,26,0.08)] ring-2 ring-primary/30'
                   : 'border-[#d4d4d4] hover:border-primary/50'
                   }`}
                 aria-label={corgi.alt}

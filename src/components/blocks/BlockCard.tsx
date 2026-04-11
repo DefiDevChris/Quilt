@@ -18,12 +18,12 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
   return (
     <div
       className={`group relative flex flex-col items-center rounded-lg border p-2 transition-colors duration-150 ${block.isLocked
-          ? 'opacity-70 border-[#d4d4d4] bg-[#fdfaf7]'
+          ? 'opacity-70 border-[#d4d4d4] bg-[var(--color-bg)]'
           : isSelected
             ? 'border-[#ff8d49] bg-[#ff8d49]/10 ring-2 ring-[#ff8d49]/30 cursor-pointer'
             : isDragging
               ? 'opacity-50 border-[#ff8d49] bg-[#ff8d49]/5'
-              : 'border-[#d4d4d4] bg-[#fdfaf7] cursor-grab active:cursor-grabbing hover:border-[#ff8d49]/50'
+              : 'border-[#d4d4d4] bg-[var(--color-bg)] cursor-grab active:cursor-grabbing hover:border-[#ff8d49]/50'
         }`}
       draggable={!block.isLocked}
       onDragStart={(e) => {
@@ -45,7 +45,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
       }}
     >
       {/* Block thumbnail */}
-      <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-[#fdfaf7]">
+      <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-[var(--color-bg)]">
         {block.svgData ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -78,7 +78,7 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
         )}
 
         {block.isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#fdfaf7]/80">
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/80">
             <span className="text-lg" title="Pro required">
               🔒
             </span>

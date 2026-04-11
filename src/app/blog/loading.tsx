@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function BlogLoading() {
   return (
-    <div className="flex flex-col w-full min-h-screen animate-pulse bg-[#fdfaf7]">
+    <div className="flex flex-col w-full min-h-screen animate-pulse bg-[var(--color-bg)]">
       {/* Hero Skeleton */}
-      <div className="w-full h-[60vh] lg:h-[75vh] bg-[#ffffff] relative">
+      <div className="w-full h-[60vh] lg:h-[75vh] bg-[var(--color-surface)] relative">
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl w-full mx-auto px-6 h-full flex flex-col justify-end pb-24 md:pb-32">
             <div className="w-24 h-8 bg-[#d4d4d4] rounded-lg mb-6" />

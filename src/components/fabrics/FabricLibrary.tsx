@@ -361,7 +361,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <button
                   type="button"
                   onClick={onOpenUpload}
-                  className="w-full rounded-full bg-[#ff8d49] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="w-full rounded-full bg-[#ff8d49] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
                   + Import Fabric
                 </button>

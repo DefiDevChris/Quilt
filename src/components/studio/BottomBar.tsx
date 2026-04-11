@@ -20,7 +20,7 @@ export function BottomBar() {
   const { activateShadeView, deactivateShadeView } = useShadeAssignment();
 
   return (
-    <div className="h-7 bg-[#fdfaf7] flex items-center justify-between px-4 font-mono text-body-sm text-[#4a4a4a]">
+    <div className="h-7 bg-[var(--color-bg)] flex items-center justify-between px-4 font-mono text-body-sm text-[#4a4a4a]">
       {/* Left side - cursor position */}
       <div className="flex items-center gap-[2.75rem]">
         <span>
@@ -40,7 +40,7 @@ export function BottomBar() {
             className={`px-2 py-0.5 rounded-full text-[12px] leading-[16px] font-medium transition-colors ${
               shadeViewActive
                 ? 'bg-primary/20 text-primary'
-                : 'text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[#fdfaf7]'
+                : 'text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[var(--color-bg)]'
             }`}
             title="Toggle shade visualization"
           >

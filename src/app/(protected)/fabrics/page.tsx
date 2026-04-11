@@ -111,7 +111,7 @@ export default function FabricsPage() {
                 setPage(1);
               }}
               className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${scope === s
-                ? 'bg-[#1a1a1a] text-[#fdfaf7] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                ? 'bg-[#1a1a1a] text-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                 : 'text-[#4a4a4a] hover:bg-[#d4d4d4]/60'
                 }`}
             >
@@ -130,7 +130,7 @@ export default function FabricsPage() {
             placeholder="Filter archive by name or manufacturer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-14 pr-6 py-4 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a]/50 font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 transition-colors duration-150"
+            className="w-full pl-14 pr-6 py-4 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a]/50 font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 transition-colors duration-150"
           />
         </div>
 
@@ -140,7 +140,7 @@ export default function FabricsPage() {
             setColorFamily(e.target.value);
             setPage(1);
           }}
-          className="px-6 py-4 bg-[#ffffff] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 appearance-none cursor-pointer transition-colors duration-150"
+          className="px-6 py-4 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 appearance-none cursor-pointer transition-colors duration-150"
         >
           <option value="">Spectrum: All</option>
           {COLOR_FAMILIES.map((c) => (
@@ -166,7 +166,7 @@ export default function FabricsPage() {
           ))}
         </div>
       ) : fabrics.length === 0 ? (
-        <div className="py-24 text-center bg-[#fdfaf7] border border-[#d4d4d4] border-dashed rounded-lg">
+        <div className="py-24 text-center bg-[var(--color-bg)] border border-[#d4d4d4] border-dashed rounded-lg">
           <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
             No Entries Found
           </h3>
@@ -183,7 +183,7 @@ export default function FabricsPage() {
             return (
               <div
                 key={fabric.id}
-                className="group relative rounded-lg border border-[#d4d4d4]/30 bg-[#ffffff] overflow-hidden hover:border-[#ff8d49]/40 transition-colors duration-150"
+                className="group relative rounded-lg border border-[#d4d4d4]/30 bg-[var(--color-surface)] overflow-hidden hover:border-[#ff8d49]/40 transition-colors duration-150"
               >
                 <div className="aspect-square relative overflow-hidden">
                   {imgSrc ? (
@@ -201,7 +201,7 @@ export default function FabricsPage() {
                   <div className="absolute inset-0 bg-[#1a1a1a]/0 group-hover:bg-[#1a1a1a]/5 transition-colors duration-150" />
                 </div>
 
-                <div className="p-4 bg-[#ffffff]">
+                <div className="p-4 bg-[var(--color-surface)]">
                   <p className="text-xs font-bold text-[#1a1a1a] truncate">{fabric.name}</p>
                   {fabric.manufacturer && (
                     <p className="text-[10px] text-[#4a4a4a] mt-1 opacity-60">{fabric.manufacturer}</p>

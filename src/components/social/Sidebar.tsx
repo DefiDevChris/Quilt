@@ -43,7 +43,7 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
                   "flex items-center gap-3 px-3 py-2.5 rounded-full text-sm font-medium",
                   item.active
                     ? "bg-[#ff8d49]/10 text-[#ff8d49]"
-                    : "text-[var(--color-text-dim)] hover:bg-[#fdfaf7]"
+                    : "text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]"
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -68,7 +68,7 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
                 { name: 'Alex Chen', handle: '@alexc', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop', followers: '8.9K' },
                 { name: 'Olivia Parker', handle: '@oliviap', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop', followers: '45.2K' },
               ].map((creator) => (
-                <a key={creator.handle} href="#" className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#fdfaf7]">
+                <a key={creator.handle} href="#" className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[var(--color-bg)]">
                   <img src={creator.avatar} alt={creator.name} className="h-9 w-9 rounded-full object-cover" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm text-[var(--color-text)] truncate">{creator.name}</p>

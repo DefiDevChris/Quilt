@@ -90,7 +90,7 @@ export function BlockLibrary({
 
   return (
     <>
-      <div className="flex flex-1 min-h-0 w-full flex-col bg-[#fdfaf7]">
+      <div className="flex flex-1 min-h-0 w-full flex-col bg-[var(--color-bg)]">
         {/* Tabs */}
         <div className="flex border-b border-[#d4d4d4]">
           <button
@@ -151,7 +151,7 @@ export function BlockLibrary({
               {isLoading ? (
                 <div className="grid grid-cols-3 gap-2">
                   {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-lg bg-[#fdfaf7]" />
+                    <div key={i} className="h-24 animate-pulse rounded-lg bg-[var(--color-bg)]" />
                   ))}
                 </div>
               ) : error ? (
@@ -191,7 +191,7 @@ export function BlockLibrary({
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="bg-[#fdfaf7] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
+                  className="bg-[var(--color-bg)] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
                 >
                   {'\u2190'} Prev
                 </button>
@@ -202,7 +202,7 @@ export function BlockLibrary({
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="bg-[#fdfaf7] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
+                  className="bg-[var(--color-bg)] text-[#4a4a4a] rounded-full px-2 py-1 text-[14px] leading-[20px] hover:bg-[#ff8d49]/10 transition-colors duration-150 disabled:opacity-50"
                 >
                   Next {'\u2192'}
                 </button>
@@ -221,8 +221,8 @@ export function BlockLibrary({
                       type="button"
                       onClick={() => setBlockFilter(filter)}
                       className={`rounded-full px-3 py-1 text-[14px] leading-[20px] transition-colors duration-150 ${blockFilter === filter
-                        ? 'bg-[#ff8d49] text-[#1a1a1a] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                        : 'bg-[#fdfaf7] text-[#4a4a4a] hover:text-[#1a1a1a]'
+                        ? 'bg-[#ff8d49] text-[#1a1a1a] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                        : 'bg-[var(--color-bg)] text-[#4a4a4a] hover:text-[#1a1a1a]'
                         }`}
                     >
                       {FILTER_LABELS[filter]}
@@ -239,7 +239,7 @@ export function BlockLibrary({
               ) : isLoadingUserBlocks ? (
                 <div className="grid grid-cols-3 gap-2">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-lg bg-[#fdfaf7]" />
+                    <div key={i} className="h-24 animate-pulse rounded-lg bg-[var(--color-bg)]" />
                   ))}
                 </div>
               ) : filteredUserBlocks.length === 0 ? (
@@ -298,7 +298,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenDrafting}
-                    className="flex-1 rounded-full bg-[#ff8d49] text-[#1a1a1a] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                    className="flex-1 rounded-full bg-[#ff8d49] text-[#1a1a1a] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                   >
                     + Draft Block
                   </button>
@@ -307,7 +307,7 @@ export function BlockLibrary({
                   <button
                     type="button"
                     onClick={onOpenPhotoUpload}
-                    className="flex-1 rounded-full bg-[#ffffff] border border-[#d4d4d4] px-4 py-2 text-[14px] leading-[20px] text-[#1a1a1a] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                    className="flex-1 rounded-full bg-[var(--color-surface)] border border-[#d4d4d4] px-4 py-2 text-[14px] leading-[20px] text-[#1a1a1a] hover:bg-[#ff8d49]/10 transition-colors duration-150"
                   >
                     + Photo Block
                   </button>

@@ -279,8 +279,8 @@ function CommentSkeleton() {
  <div className="comment-row animate-pulse opacity-50">
  <div className="comment-avatar" />
  <div className="comment-body space-y-2">
- <div className="h-3 w-3/4 bg-[#fdfaf7] rounded-lg" />
- <div className="h-3 w-1/4 bg-[#fdfaf7] rounded-lg" />
+ <div className="h-3 w-3/4 bg-[var(--color-bg)] rounded-lg" />
+ <div className="h-3 w-1/4 bg-[var(--color-bg)] rounded-lg" />
  </div>
  </div>
  );

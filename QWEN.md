@@ -74,7 +74,7 @@ Tailwind CSS v4. Full spec in `brand_config.json`.
 
 **Typography:** Headings: **Spline Sans** (400-700). Body: **Inter** (300-700). Scale: h1 40/52, h2 32/40, h3 24/32, body 18/28, small 16/24, label 14/20.
 
-**Shape:** Buttons/CTAs/tabs/filters/pills: `rounded-full` (pill shape) everywhere. Cards/containers/inputs/dialogs: `rounded-lg` (8px). Avatar containers: `rounded-full`. Shadow: `0 1px 2px rgba(45,42,38,0.08)` only.
+**Shape:** Buttons/CTAs/tabs/filters/pills: `rounded-full` (pill shape) everywhere. Cards/containers/inputs/dialogs: `rounded-lg` (8px). Avatar containers: `rounded-full`. Shadow: single subtle shadow `0 1px 2px rgba(26,26,26,0.08)`.
 
 **Motion:** Hover changes color/background ONLY. 150ms ease-out on color/opacity. No scale, translate, lift, shift, or transforms on hover. Framer Motion is allowed for entry/exit animations, drawer slides, and component transitions. No spinners (use opacity pulse).
 

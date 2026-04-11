@@ -433,7 +433,7 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         <div className="max-w-2xl mx-auto">
           <div
             data-testid="photo-pattern-wizard"
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] relative overflow-hidden"
+            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative overflow-hidden"
           >
             {/* Quilt-piece accent strip at top of card */}
             <div className="h-2 bg-[var(--color-bg)]" />
@@ -703,7 +703,7 @@ function UploadStep(props: WizardStepContentProps) {
                   key={upload.id}
                   type="button"
                   onClick={() => props.onMobileUploadSelect(upload)}
-                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden transition-colors group text-left hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
                   <div className="aspect-square bg-[var(--color-bg)] overflow-hidden">
                     <img
@@ -745,7 +745,7 @@ function UploadStep(props: WizardStepContentProps) {
           <button
             type="button"
             onClick={props.onContinue}
-            className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           >
             Continue
           </button>
@@ -832,7 +832,7 @@ function ImagePrepStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       >
         Continue
       </button>
@@ -1107,7 +1107,7 @@ function CropStep(props: WizardStepContentProps) {
           type="button"
           onClick={handleApplyAndContinue}
           disabled={baking}
-          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {baking ? 'Applying crop...' : 'Continue'}
         </button>
@@ -1130,8 +1130,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
         onClick={() => props.setCurvedSeams((v) => !v)}
         className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.curvedSeams
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
         }`}
       >
         <p className="text-body-md font-medium text-[var(--color-text)]">
@@ -1148,8 +1148,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
         onClick={() => props.setApplique((v) => !v)}
         className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.applique
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
         }`}
       >
         <p className="text-body-md font-medium text-[var(--color-text)]">
@@ -1166,8 +1166,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
         onClick={() => props.setTouchingFabrics((v) => !v)}
         className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.touchingFabrics
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
         }`}
       >
         <p className="text-body-md font-medium text-[var(--color-text)]">
@@ -1181,8 +1181,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
         onClick={() => props.setHeavyQuilting((v) => !v)}
         className={`w-full bg-[var(--color-surface)] border rounded-full p-4 text-left transition-colors duration-150 ${
           props.heavyQuilting
-            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+            ? 'border-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
         }`}
       >
         <p className="text-body-md font-medium text-[var(--color-text)]">
@@ -1199,8 +1199,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             onClick={() => props.setPieceScale('tiny')}
             className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'tiny'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
             }`}
           >
             <p className="text-body-sm font-medium text-[var(--color-text)]">Tiny</p>
@@ -1211,8 +1211,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             onClick={() => props.setPieceScale('standard')}
             className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'standard'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
             }`}
           >
             <p className="text-body-sm font-medium text-[var(--color-text)]">Standard</p>
@@ -1223,8 +1223,8 @@ function ScanSettingsStep(props: WizardStepContentProps) {
             onClick={() => props.setPieceScale('large')}
             className={`bg-[var(--color-surface)] border rounded-full p-3 text-center transition-colors duration-150 ${
               props.pieceScale === 'large'
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
-                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(45,42,38,0.08)]'
+                ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
             }`}
           >
             <p className="text-body-sm font-medium text-[var(--color-text)]">Large</p>
@@ -1240,7 +1240,7 @@ function ScanSettingsStep(props: WizardStepContentProps) {
       <button
         type="button"
         onClick={props.onContinue}
-        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       >
         Analyze Quilt
       </button>
@@ -1295,7 +1295,7 @@ function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
       <button
         type="button"
         onClick={onOpenInStudio}
-        className="bg-[#ff8d49] text-[var(--color-text)] px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+        className="bg-[#ff8d49] text-[var(--color-text)] px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       >
         Open in Studio
       </button>

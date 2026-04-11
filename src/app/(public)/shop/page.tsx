@@ -120,7 +120,7 @@ export default function ShopPage() {
   // Loading shop settings
   if (shopEnabled === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fdfaf7]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
         <div className="animate-pulse space-y-4 text-center">
           <div className="h-8 bg-[#ff8d49]/20 rounded-full w-48 mx-auto" />
           <div className="h-4 bg-[#ff8d49]/10 rounded-full w-32 mx-auto" />
@@ -132,8 +132,8 @@ export default function ShopPage() {
   // Shop not enabled
   if (!shopEnabled) {
     return (
-      <div className="min-h-screen bg-[#fdfaf7] flex items-center justify-center relative overflow-hidden">
-        <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-12 text-center max-w-md relative z-10">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center relative overflow-hidden">
+        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-12 text-center max-w-md relative z-10">
           <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={28} className="text-[#ff8d49]" />
           </div>
@@ -153,15 +153,15 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fdfaf7] relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-bg)] relative overflow-hidden">
       {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
       <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="#1a1a1a" />
       <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="#1a1a1a" />
 
       {/* Header */}
-      <div className="bg-[#ffffff] border-b border-[#d4d4d4] relative">
+      <div className="bg-[var(--color-surface)] border-b border-[#d4d4d4] relative">
         {/* Quilt-piece accent strip */}
-        <div className="h-1.5 bg-[#fdfaf7]" />
+        <div className="h-1.5 bg-[var(--color-bg)]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3">
             <QuiltPieceRow count={3} size={12} gap={5} />
@@ -188,21 +188,21 @@ export default function ShopPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search fabrics..."
-              className="w-full pl-10 pr-4 py-2.5 bg-[#ffffff] border border-[#d4d4d4] rounded-full text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-full text-sm text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             />
           </form>
 
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)] ${showFilters || hasActiveFilters
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] ${showFilters || hasActiveFilters
               ? 'bg-[#ff8d49] text-[#1a1a1a]'
-              : 'bg-[#ffffff] text-[#4a4a4a] hover:bg-[#fdfaf7]'
+              : 'bg-[var(--color-surface)] text-[#4a4a4a] hover:bg-[var(--color-bg)]'
               }`}
           >
             <SlidersHorizontal size={16} />
             Filters
-            {hasActiveFilters && <span className="ml-1 w-2 h-2 rounded-full bg-[#ffffff]" />}
+            {hasActiveFilters && <span className="ml-1 w-2 h-2 rounded-full bg-[var(--color-surface)]" />}
           </button>
 
           {/* Sort */}
@@ -212,7 +212,7 @@ export default function ShopPage() {
               setSort(e.target.value as SortOption);
               setPage(1);
             }}
-            className="px-4 py-2.5 rounded-full bg-[#ffffff] text-sm text-[#4a4a4a] border border-[#d4d4d4] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+            className="px-4 py-2.5 rounded-full bg-[var(--color-surface)] text-sm text-[#4a4a4a] border border-[#d4d4d4] focus:outline-2 focus:outline-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           >
             <option value="name">Name A-Z</option>
             <option value="price-asc">Price: Low to High</option>
@@ -223,7 +223,7 @@ export default function ShopPage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-4 mb-6 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QuiltPieceRow count={2} size={8} gap={3} />
@@ -250,7 +250,7 @@ export default function ShopPage() {
                     setPage(1);
                   }}
                   placeholder="All manufacturers"
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 />
               </div>
               <div className="space-y-1">
@@ -261,7 +261,7 @@ export default function ShopPage() {
                     setColorFamily(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <option value="">All colors</option>
                   <option value="red">Red</option>
@@ -285,7 +285,7 @@ export default function ShopPage() {
                     setValueFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[#d4d4d4] text-sm text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49]"
                 >
                   <option value="">All values</option>
                   <option value="Light">Light</option>
@@ -295,7 +295,7 @@ export default function ShopPage() {
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-[#4a4a4a] font-medium">Availability</label>
-                <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#fdfaf7] border border-[#d4d4d4] cursor-pointer">
+                <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[#d4d4d4] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={inStockOnly}
@@ -338,7 +338,7 @@ export default function ShopPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+              <div key={i} className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg overflow-hidden animate-pulse shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
                 <div className="aspect-square bg-[#ff8d49]/10" />
                 <div className="p-3 space-y-2">
                   <div className="h-4 bg-[#ff8d49]/20 rounded-full w-3/4" />
@@ -349,7 +349,7 @@ export default function ShopPage() {
             ))}
           </div>
         ) : fabrics.length === 0 ? (
-          <div className="bg-[#ffffff] border border-[#d4d4d4] rounded-lg p-12 text-center shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+          <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-12 text-center shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
             <p className="text-lg font-medium text-[#1a1a1a] mb-2">No fabrics found</p>
             <p className="text-sm text-[#4a4a4a]">
               {hasActiveFilters
@@ -372,7 +372,7 @@ export default function ShopPage() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             >
               Previous
             </button>
@@ -383,7 +383,7 @@ export default function ShopPage() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="px-5 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[#fdfaf7] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border border-[#d4d4d4] text-sm text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
             >
               Next
             </button>
@@ -407,7 +407,7 @@ function ShopFabricCard({
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
 
   return (
-    <div className="group bg-[#ffffff] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(45,42,38,0.08)] hover:bg-[#fdfaf7] transition-colors duration-150 duration-150">
+    <div className="group bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] hover:bg-[var(--color-bg)] transition-colors duration-150 duration-150">
       {/* Swatch */}
       <div className="aspect-square relative">
         {fabric.hex ? (
@@ -441,7 +441,7 @@ function ShopFabricCard({
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(45,42,38,0.08)]"
+          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ff8d49] text-[#1a1a1a] hover:bg-[#e67d3f] shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         >
           {!fabric.shopifyVariantId
             ? 'Not Available'

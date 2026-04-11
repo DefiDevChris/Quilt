@@ -101,7 +101,7 @@
   "design_system": {
     "framework": "Tailwind CSS v4",
     "radius": "Buttons/CTAs/tabs/filters/pills: rounded-full (pill shape) everywhere. Cards/containers/inputs/dialogs: rounded-lg (8px). No rounded-none, no rounded-2xl. rounded-full on avatar containers remains standard.",
-    "shadow": "0 1px 2px rgba(45, 42, 38, 0.08) — single subtle shadow only.",
+    "shadow": "0 1px 2px rgba(26, 26, 26, 0.08) — single subtle shadow only.",
     "motion": {
       "transitions": "150ms ease-out on color and opacity ONLY",
       "hover": "Color or background change ONLY. No scale, translate, lift, shift, or transform.",

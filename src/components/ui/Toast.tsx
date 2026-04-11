@@ -93,7 +93,7 @@ export function Toast({ id, title, description, type, onDismiss }: ToastProps) {
  initial={{ opacity: 0, y: 20 }}
  animate={{ opacity: 1, y: 0 }}
  exit={{ opacity: 0, y: 20 }}
- className="relative bg-[#d4d4d4] text-[#1a1a1a] shadow-[0_1px_2px_rgba(45,42,38,0.08)] rounded-lg p-4 max-w-sm"
+ className="relative bg-[#d4d4d4] text-[#1a1a1a] shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-lg p-4 max-w-sm"
  role="alert"
  >
  <div className="flex flex-row items-start gap-3">

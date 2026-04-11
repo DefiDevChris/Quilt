@@ -345,25 +345,25 @@ export default function PrivacyPage() {
             <p className="mb-3">The cookies we use are:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                   qc_id_token
                 </code>{' '}
                 &mdash; Your authentication token (expires with your session, typically 1 hour).
               </li>
               <li>
-                <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                   qc_access_token
                 </code>{' '}
                 &mdash; API access token (expires with your session).
               </li>
               <li>
-                <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                   qc_refresh_token
                 </code>{' '}
                 &mdash; Used to renew your session (max age: 30 days).
               </li>
               <li>
-                <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+                <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                   qc_user_role
                 </code>{' '}
                 &mdash; Stores your account role for access control (max age: 1 hour).
@@ -371,15 +371,15 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-3">
               All cookies are set as{' '}
-              <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+              <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                 HttpOnly
               </code>
               ,{' '}
-              <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+              <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                 Secure
               </code>{' '}
               (in production), and{' '}
-              <code className="text-sm bg-[#fdfaf7] px-1.5 py-0.5 rounded">
+              <code className="text-sm bg-[var(--color-bg)] px-1.5 py-0.5 rounded">
                 SameSite=Lax
               </code>
               . They cannot be accessed by client-side JavaScript.

@@ -25,7 +25,7 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-[var(--color-text)]/50" onClick={onClose} />
-      <div className="relative bg-[#ffffff] border border-[var(--color-border)] rounded-lg w-full max-w-md">
+      <div className="relative bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-md">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"

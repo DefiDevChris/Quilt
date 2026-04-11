@@ -226,7 +226,7 @@ export function QuiltSettingsDropdown({
 
  {/* Dropdown panel */}
  {isOpen && (
- <div className="absolute right-0 top-full mt-1 w-80 bg-[var(--color-bg)] border border-[var(--color-border)]/20 rounded-lg shadow-[0_1px_2px_rgba(45,42,38,0.08)] py-3 z-50">
+ <div className="absolute right-0 top-full mt-1 w-80 bg-[var(--color-bg)] border border-[var(--color-border)]/20 rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] py-3 z-50">
  {/* Quilt Size section */}
  <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
  <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">

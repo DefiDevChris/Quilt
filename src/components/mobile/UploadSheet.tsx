@@ -80,7 +80,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  onClick={onClose}
  aria-hidden="true"
  />
- <div className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-bg)] rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(45,42,38,0.08)]">
+ <div className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-bg)] rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
  <div className="w-10 h-1 rounded-lg bg-[#d8d1ca] mx-auto mb-6" />
  <div className="px-6 space-y-3">
  {/* Upload Photo — primary action */}
