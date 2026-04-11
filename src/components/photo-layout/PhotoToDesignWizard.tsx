@@ -332,11 +332,11 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
 
   return (
     <div className="min-h-screen bg-[#fdfaf7] flex flex-col relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds */}
-      <QuiltPiece color="primary" size={200} rotation={12} top={-30} right={-40} opacity={8} />
-      <QuiltPiece color="secondary" size={150} rotation={-8} bottom={80} left={-30} opacity={10} />
-      <QuiltPiece color="accent" size={100} rotation={25} top="40%" right={60} opacity={12} />
-      <QuiltPiece color="primary" size={80} rotation={-15} bottom={200} right="20%" opacity={6} />
+      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="secondary" size={450} rotation={0} top={50} right={-150} opacity={18} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} left={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="primary" size={350} rotation={0} bottom={-100} right={-50} opacity={16} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e1da] relative z-10">
@@ -501,10 +501,11 @@ function UploadStep(props: WizardStepContentProps) {
       </p>
 
       <div className="space-y-3">
-        {/* Upload from Computer — input is a sibling of the label (not nested)
-            so the native htmlFor association works reliably in all browsers.
-            Nesting + htmlFor can cause duplicate click events that cancel the
-            file picker in some browser/React combinations. */}
+        {/* Hidden file input — triggered imperatively via inputRef.current.click()
+            instead of a <label htmlFor> wrapper. Label + sr-only input can
+            silently fail in Chromium when the input's hit box is effectively
+            zero (clip-path + 1x1), so we drive it from an onClick handler on
+            a real <button> to guarantee the user gesture reaches the input. */}
         <input
           id="photo-upload-file-input"
           ref={props.inputRef}
@@ -512,12 +513,16 @@ function UploadStep(props: WizardStepContentProps) {
           accept={ACCEPTED_IMAGE_TYPES.join(',')}
           onChange={props.onFileChange}
           className="sr-only"
+          aria-hidden="true"
+          tabIndex={-1}
         />
-        <label
-          htmlFor="photo-upload-file-input"
+        <button
+          type="button"
+          onClick={() => props.inputRef.current?.click()}
           onDrop={props.onDrop}
           onDragOver={props.onDragOver}
           onDragLeave={props.onDragLeave}
+          aria-label="Drop your quilt photo here or click to browse. PNG, JPEG, or WebP up to 20 MB"
           className={`block w-full rounded-xl border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
               ? 'border-[#ff8d49] bg-[#ff8d49]/5'
@@ -525,8 +530,8 @@ function UploadStep(props: WizardStepContentProps) {
           }`}
         >
           {/* Subtle quilt-piece decoration in drop zone */}
-          <div className="absolute top-2 right-2 opacity-10 pointer-events-none">
-            <QuiltPiece color="primary" size={60} rotation={15} stitch={false} />
+          <div className="absolute top-2 right-2 opacity-12 pointer-events-none">
+            <QuiltPiece color="primary" size={80} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
           </div>
           {props.loading ? (
             <div className="flex flex-col items-center gap-3">
@@ -572,7 +577,7 @@ function UploadStep(props: WizardStepContentProps) {
               <p className="mt-2 text-label-sm text-[#6b655e]">PNG, JPEG, or WebP up to 20 MB</p>
             </>
           )}
-        </label>
+        </button>
 
         {/* Or choose from mobile uploads */}
         {props.pendingUploads.length > 0 && (
@@ -649,8 +654,8 @@ function ImagePrepStep(props: WizardStepContentProps) {
       {/* Preview */}
       <div className="rounded-xl overflow-hidden bg-[#fdfaf7] aspect-video flex items-center justify-center border border-[#e8e1da] relative">
         {/* Subtle stitch decoration */}
-        <div className="absolute top-2 left-2 opacity-8 pointer-events-none">
-          <QuiltPiece color="accent" size={40} rotation={-10} stitch={true} />
+        <div className="absolute top-2 left-2 opacity-12 pointer-events-none">
+          <QuiltPiece color="accent" size={60} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
         </div>
         <img
           src={props.originalImageUrl}
@@ -883,10 +888,10 @@ function ProcessingStep() {
         </p>
       </div>
       {/* Quilt-piece decoration */}
-      <div className="flex justify-center gap-2 opacity-20">
-        <QuiltPiece color="primary" size={24} rotation={8} stitch={false} />
-        <QuiltPiece color="secondary" size={20} rotation={-12} stitch={false} />
-        <QuiltPiece color="accent" size={16} rotation={20} stitch={false} />
+      <div className="flex justify-center gap-3 opacity-25">
+        <QuiltPiece color="primary" size={32} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="secondary" size={28} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="accent" size={24} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
       </div>
     </div>
   );
@@ -911,12 +916,12 @@ function CompleteStep({ onOpenInStudio }: { onOpenInStudio: () => void }) {
         Your quilt pieces have been detected. You can now assign fabrics and export to the studio.
       </p>
       {/* Quilt-piece celebration */}
-      <div className="flex justify-center gap-3 opacity-30">
-        <QuiltPiece color="accent" size={20} rotation={-15} stitch={false} />
-        <QuiltPiece color="primary" size={24} rotation={5} stitch={false} />
-        <QuiltPiece color="secondary" size={18} rotation={12} stitch={false} />
-        <QuiltPiece color="primary" size={22} rotation={-8} stitch={false} />
-        <QuiltPiece color="accent" size={16} rotation={20} stitch={false} />
+      <div className="flex justify-center gap-4 opacity-35">
+        <QuiltPiece color="accent" size={28} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="primary" size={32} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="secondary" size={26} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="primary" size={30} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
+        <QuiltPiece color="accent" size={24} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={4} />
       </div>
       <button
         type="button"

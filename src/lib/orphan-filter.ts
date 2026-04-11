@@ -17,9 +17,14 @@ import type { DetectedPiece, Point2D } from '@/lib/photo-layout-types';
 /**
  * Vertex proximity tolerance for determining shared edges.
  * Two pieces share an edge if ≥2 vertices fall within this distance.
- * Matches the tolerance used in shape-matcher-engine.ts for detected-piece adjacency.
+ *
+ * Phase 0: raised from 8 → 18 px. After approxPolyDP polygon approximation,
+ * vertices on opposite sides of a shared seam routinely drift 5–15 px apart
+ * even when the underlying pieces clearly share that edge in the source image.
+ * The 8 px tolerance was dropping ~73% of legitimate pieces as false orphans
+ * on the Fairgrounds test quilt.
  */
-const SHARED_EDGE_TOLERANCE = 8.0;
+const SHARED_EDGE_TOLERANCE = 18.0;
 
 // ============================================================================
 // Result
@@ -109,11 +114,7 @@ export function filterOrphanPieces(
  *
  * Shared vertices indicate the pieces are sewn together along a common edge.
  */
-function piecesShareEdge(
-  a: readonly Point2D[],
-  b: readonly Point2D[],
-  tolSq: number
-): boolean {
+function piecesShareEdge(a: readonly Point2D[], b: readonly Point2D[], tolSq: number): boolean {
   let sharedCount = 0;
 
   for (let i = 0; i < a.length; i++) {

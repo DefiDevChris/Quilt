@@ -59,9 +59,9 @@ const features = [
 export default function FeatureHighlights() {
   return (
     <section id="features" className="px-6 lg:px-12 py-16 lg:py-24 bg-[#fdfaf7] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds */}
-      <QuiltPiece color="primary" size={120} rotation={15} top={20} right="5%" opacity={6} />
-      <QuiltPiece color="accent" size={90} rotation={-10} bottom={60} left="8%" opacity={8} />
+      {/* Decorative quilt-piece backgrounds - HUGE, spread out, high opacity, charcoal stitches, flush */}
+      <QuiltPiece color="primary" size={500} rotation={0} top={-100} left={-100} opacity={20} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
+      <QuiltPiece color="accent" size={400} rotation={0} bottom={-50} right={-80} opacity={22} strokeWidth={3} stitchGap={8} stitchColor="#2d2a26" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex items-center gap-4 mb-16">
@@ -89,8 +89,8 @@ export default function FeatureHighlights() {
               className="bg-[#ffffff] rounded-xl border border-[#e8e1da] shadow-[0_1px_2px_rgba(45,42,38,0.08)] p-8 relative overflow-hidden hover:shadow-[0_1px_2px_rgba(45,42,38,0.12)] transition-shadow duration-150"
             >
               {/* Subtle quilt-piece decoration */}
-              <div className="absolute top-2 right-2 opacity-5 pointer-events-none">
-                <QuiltPiece color="secondary" size={40} rotation={10} stitch={false} />
+              <div className="absolute top-2 right-2 opacity-8 pointer-events-none">
+                <QuiltPiece color="secondary" size={60} rotation={0} stitch={true} stitchColor="#2d2a26" strokeWidth={2} stitchGap={6} />
               </div>
               <div className="relative z-10">
                 <div className="w-16 h-16 mb-6">
