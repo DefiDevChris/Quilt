@@ -76,11 +76,11 @@ Tailwind CSS v4. Full spec in `brand_config.json`. BrandGuard agent enforces con
 
 **Shape:** Buttons/CTAs/tabs/filters/pills: `rounded-full` (pill shape) everywhere. Cards/containers/inputs/dialogs: `rounded-lg` (8px). Avatar containers: `rounded-full`. Shadow: `0 1px 2px rgba(45,42,38,0.08)` only.
 
-**Motion:** Hover changes color/background ONLY. 150ms ease-out on color/opacity. No scale, translate, lift, shift, or transforms. No Framer Motion entry animations. No spinners (use opacity pulse).
+**Motion:** Hover changes color/background ONLY. 150ms ease-out on color/opacity. No scale, translate, lift, shift, or transforms on hover. Framer Motion is allowed for entry/exit animations, drawer slides, and component transitions. No spinners (use opacity pulse).
 
 **Buttons:** Primary: `bg-[#ff8d49] text-[#2d2a26] px-6 py-2 rounded-full hover:bg-[#e67d3f]`. Secondary: `border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10`.
 
-**Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, gradients, glassmorphism, `hover:scale-*`/`hover:-translate-*`, `shadow-elevation-*`, hard offset shadows, `font-black uppercase tracking-[0.2em]`, Framer Motion scale/y transforms, AI slop.
+**Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, gradients, glassmorphism, `hover:scale-*`/`hover:-translate-*`, `shadow-elevation-*`, hard offset shadows, `font-black uppercase tracking-[0.2em]`, AI slop.
 
 ### State Management
 
