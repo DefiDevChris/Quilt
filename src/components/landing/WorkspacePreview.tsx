@@ -62,7 +62,7 @@ function MockToolbar({ sections }: { sections: ToolSection[] }) {
             {section.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className={`flex flex-col items-center gap-0.5 py-1 rounded-lg ${tool.active ? 'bg-[#ff8d49]/10 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
+                className={`flex flex-col items-center gap-0.5 py-1 rounded-full ${tool.active ? 'bg-[#ff8d49]/10 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
                   }`}
               >
                 <svg
@@ -157,7 +157,7 @@ function MockAccordionPanel({
 
 function MockFloatingToolbar() {
   return (
-    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-lg px-2.5 py-1 flex items-center gap-1.5 z-20">
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-full px-2.5 py-1 flex items-center gap-1.5 z-20">
       {[
         <path key="s" d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />,
         <rect key="r" x="3" y="3" width="18" height="18" rx="2" />,
@@ -166,7 +166,7 @@ function MockFloatingToolbar() {
       ].map((icon, i) => (
         <div
           key={i}
-          className={`w-5 h-5 rounded-lg flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+          className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
         >
           <svg
             width="9"
@@ -181,7 +181,7 @@ function MockFloatingToolbar() {
         </div>
       ))}
       <div className="w-px h-3 bg-[var(--color-border)]" />
-      <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[var(--color-text-dim)]">
+      <div className="w-5 h-5 rounded-full flex items-center justify-center text-[var(--color-text-dim)]">
         <svg
           width="9"
           height="9"
@@ -367,9 +367,9 @@ function QuiltWorktableMockup() {
                   className="w-16 h-16 bg-[var(--color-bg)] flex items-center justify-center border border-[var(--color-border)]/30 relative overflow-hidden"
                 >
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <polygon points="0,0 50,50 0,100" fill="#FFE4D0" />
-                    <polygon points="0,0 100,0 50,50" fill="#FFB085" />
-                    <polygon points="100,0 100,100 50,50" fill="#C67B5C" opacity="0.8" />
+                    <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
+                    <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
+                    <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.8" />
                     <polygon points="0,100 100,100 50,50" fill="white" />
                   </svg>
                   {i === 4 && <div className="absolute inset-0 border-2 border-[#ff8d49] z-10" />}
@@ -455,14 +455,14 @@ function BlockWorktableMockup() {
                 strokeDasharray="2 2"
                 opacity="0.5"
               />
-              <polygon points="50,0 100,50 50,100 0,50" fill="#FFE4D0" opacity="0.4" />
-              <polygon points="50,0 75,25 50,50 25,25" fill="#FFB085" opacity="0.8" />
-              <polygon points="50,50 75,75 50,100 25,75" fill="#C67B5C" opacity="0.8" />
-              <line x1="25" y1="25" x2="10" y2="10" stroke="#D4726A" strokeWidth="1.5" />
-              <circle cx="25" cy="25" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
-              <circle cx="10" cy="10" r="2" fill="#D4726A" />
-              <circle cx="50" cy="0" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
-              <circle cx="50" cy="50" r="2" fill="white" stroke="#FFB085" strokeWidth="1" />
+              <polygon points="50,0 100,50 50,100 0,50" fill="#FFC8A6" opacity="0.4" />
+              <polygon points="50,0 75,25 50,50 25,25" fill="#ff8d49" opacity="0.8" />
+              <polygon points="50,50 75,75 50,100 25,75" fill="#FFC7C7" opacity="0.8" />
+              <line x1="25" y1="25" x2="10" y2="10" stroke="#ff8d49" strokeWidth="1.5" />
+              <circle cx="25" cy="25" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
+              <circle cx="10" cy="10" r="2" fill="#FFC7C7" />
+              <circle cx="50" cy="0" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
+              <circle cx="50" cy="50" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
             </svg>
             <div className="absolute top-2 left-2 bg-[var(--color-text)] text-[var(--color-surface)] text-[8px] px-1.5 py-0.5 rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               Snap to Grid (Intersect)
@@ -624,9 +624,9 @@ function PrintWorktableMockup() {
             <div className="flex-1 grid grid-cols-2 gap-2">
               <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <polygon points="0,0 100,0 50,50" fill="#FFB085" />
-                  <polygon points="0,0 50,50 0,100" fill="#FFE4D0" />
-                  <polygon points="100,0 100,100 50,50" fill="#C67B5C" opacity="0.7" />
+                  <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
+                  <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
+                  <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.7" />
                   <polygon points="0,100 100,100 50,50" fill="white" />
                   <rect
                     x="0"
@@ -642,7 +642,7 @@ function PrintWorktableMockup() {
               </div>
               <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <rect x="5" y="5" width="90" height="90" fill="#FFE4D0" />
+                  <rect x="5" y="5" width="90" height="90" fill="#FFC8A6" />
                   <line
                     x1="5"
                     y1="5"

@@ -13,7 +13,7 @@ interface CreatePostProps {
 
 export function CreatePost({ onPost }: CreatePostProps) {
   const [content, setContent] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
 
@@ -24,7 +24,7 @@ export function CreatePost({ onPost }: CreatePostProps) {
       onPost?.(content, selectedImage || undefined);
       setContent('');
       setSelectedImage(null);
-      setIsExpanded(false);
+      setIsFocused(false);
       setIsPosting(false);
     }
   };
@@ -39,41 +39,42 @@ export function CreatePost({ onPost }: CreatePostProps) {
   };
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-5">
+    <div className={cn(
+      'bg-[var(--color-surface)] border rounded-2xl p-5 transition-all duration-150',
+      isFocused ? 'border-[#ff8d49]/30 ring-2 ring-[#ff8d49]/10' : 'border-[var(--color-border)]'
+    )}>
       <div className="flex gap-3">
-        <Avatar className="h-10 w-10 shrink-0">
+        <Avatar className="h-12 w-12 shrink-0 border-2 border-[#ff8d49]">
           <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
           <AvatarFallback>SM</AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="bg-[var(--color-bg)] rounded-lg p-3">
+          <div className="bg-[var(--color-bg)] rounded-2xl p-4">
             <Textarea
               placeholder="What's on your mind, Sarah?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              onFocus={() => setIsExpanded(true)}
-              className="min-h-[50px] resize-none border-none bg-transparent text-sm placeholder:text-[var(--color-text-dim)] focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              onFocus={() => setIsFocused(true)}
+              className="min-h-[80px] resize-none border-none bg-transparent text-base placeholder:text-[var(--color-text-dim)] focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
             />
           </div>
           {selectedImage && (
-            <div className="relative mt-3 rounded-lg overflow-hidden">
+            <div className="relative mt-3 mx-3 mb-3 rounded-xl overflow-hidden">
               <img src={selectedImage} alt="Selected" className="w-full h-48 object-cover" />
-              <button onClick={() => setSelectedImage(null)} className="absolute top-2 right-2 p-1 bg-[var(--color-text)]/50 rounded-full text-white">
+              <button onClick={() => setSelectedImage(null)} className="absolute top-2 right-2 p-1.5 bg-[var(--color-text)]/50 rounded-full text-white">
                 <X className="h-4 w-4" />
               </button>
             </div>
           )}
-          {isExpanded && (
-            <div className="flex items-center justify-between mt-3">
-              <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-[#ff8d49] h-8">
-                <ImagePlus className="h-4 w-4 mr-1" />
-                Photo
-              </Button>
-              <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-[#ff8d49] text-white rounded-full h-8 px-5 text-sm">
-                {isPosting ? 'Posting...' : 'Post'}
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--color-border)]">
+            <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-[#ff8d49] h-9 rounded-full">
+              <ImagePlus className="h-4 w-4 mr-1.5" />
+              Photo
+            </Button>
+            <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-[#ff8d49] text-white rounded-full h-9 px-6 text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-40">
+              {isPosting ? 'Posting...' : 'Post'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

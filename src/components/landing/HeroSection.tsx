@@ -161,9 +161,9 @@ function StudioMockup() {
                 className="aspect-square bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)]/20"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <polygon points="0,0 50,50 0,100" fill="#fed7aa" />
-                  <polygon points="0,0 100,0 50,50" fill="#f97316" />
-                  <polygon points="100,0 100,100 50,50" fill="#f43f5e" opacity="0.85" />
+                  <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
+                  <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
+                  <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.85" />
                   <polygon points="0,100 100,100 50,50" fill="white" />
                 </svg>
               </div>
@@ -198,11 +198,11 @@ function StudioMockup() {
         </div>
 
         {/* Floating bottom toolbar */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 flex items-center gap-2 z-20">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-full px-3 py-1.5 flex items-center gap-2 z-20">
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
-              className={`w-6 h-6 rounded-lg flex items-center justify-center text-[7px] ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
             >
               <svg
                 width="10"
@@ -220,7 +220,7 @@ function StudioMockup() {
             </div>
           ))}
           <div className="w-px h-4 bg-[var(--color-text)]/20" />
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[var(--color-text-dim)]">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-text-dim)]">
             <svg
               width="10"
               height="10"

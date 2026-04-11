@@ -26,12 +26,12 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 /* 6x6 quilt grid -- a simplified Ohio Star / Nine-Patch pattern */
 const QUILT_GRID: string[][] = [
-  ['#FFB085', '#FFF5E6', '#C67B5C', '#FFF5E6', '#FFB085', '#FFF5E6'],
-  ['#FFF5E6', '#C67B5C', '#FFB085', '#C67B5C', '#FFF5E6', '#C67B5C'],
-  ['#C67B5C', '#FFB085', '#FFF5E6', '#FFB085', '#C67B5C', '#FFB085'],
-  ['#FFF5E6', '#C67B5C', '#FFB085', '#C67B5C', '#FFF5E6', '#C67B5C'],
-  ['#FFB085', '#FFF5E6', '#C67B5C', '#FFF5E6', '#FFB085', '#FFF5E6'],
-  ['#FFF5E6', '#C67B5C', '#FFB085', '#C67B5C', '#FFF5E6', '#C67B5C'],
+  ['#ff8d49', '#FFF5E6', '#FFC7C7', '#FFF5E6', '#ff8d49', '#FFF5E6'],
+  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
+  ['#FFC7C7', '#ff8d49', '#FFF5E6', '#ff8d49', '#FFC7C7', '#ff8d49'],
+  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
+  ['#ff8d49', '#FFF5E6', '#FFC7C7', '#FFF5E6', '#ff8d49', '#FFF5E6'],
+  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
 ];
 
 function StudioPreviewMockup() {
@@ -167,11 +167,11 @@ function StudioPreviewMockup() {
               ))}
             </div>
             {/* Floating toolbar */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-lg px-2 py-1 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] rounded-full px-2 py-1 flex items-center gap-1.5 z-10">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className={`w-5 h-5 flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
                 >
                   <svg
                     width="8"

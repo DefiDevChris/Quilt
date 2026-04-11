@@ -47,44 +47,44 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
 
   return (
     <div className={cn('flex flex-col h-full', className)}>
-      <div className="flex items-center gap-1.5 mb-3">
+      <div className="flex items-center gap-2 mb-4">
         <span className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]" />
         <h3 className="font-semibold text-sm text-[var(--color-text)]">Comments</h3>
-        <span className="text-xs text-[var(--color-text-dim)] ml-auto">{comments.length}</span>
+        <span className="text-xs text-[var(--color-text-dim)] bg-[var(--color-bg)] px-2 py-0.5 rounded-full ml-auto">{comments.length}</span>
       </div>
-      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
+      <div className="flex-1 overflow-y-auto space-y-4 pr-2">
         {comments.length === 0 ? (
-          <p className="text-sm text-[var(--color-text-dim)] text-center py-6">No comments yet.</p>
+          <p className="text-sm text-[var(--color-text-dim)] text-center py-8">No comments yet.</p>
         ) : (
           comments.map((comment) => (
-            <div key={comment.id} className="flex gap-2">
-              <Avatar className="h-6 w-6 shrink-0 mt-0.5">
+            <div key={comment.id} className="flex gap-2.5">
+              <Avatar className="h-8 w-8 shrink-0 mt-0.5 border border-[var(--color-border)]">
                 <AvatarImage src={comment.user.avatar} />
-                <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
+                <AvatarFallback className="text-xs">{comment.user.name[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-xs text-[var(--color-text)]">{comment.user.name}</span>
-                  <span className="text-[10px] text-[var(--color-text-dim)]">·</span>
-                  <span className="text-[10px] text-[var(--color-text-dim)]">{formatTimeAgo(comment.createdAt)}</span>
+                  <span className="font-medium text-sm text-[var(--color-text)]">{comment.user.name}</span>
+                  <span className="text-xs text-[var(--color-text-dim)]">&middot;</span>
+                  <span className="text-xs text-[var(--color-text-dim)]">{formatTimeAgo(comment.createdAt)}</span>
                 </div>
-                <p className="text-xs text-[var(--color-text-dim)] mt-0.5 leading-relaxed">{comment.content}</p>
-                <div className="flex items-center gap-3 mt-1">
+                <p className="text-sm text-[var(--color-text-dim)] mt-1 leading-relaxed">{comment.content}</p>
+                <div className="flex items-center gap-4 mt-1.5">
                   <button onClick={() => handleLike(comment.id)}
-                    className={cn('flex items-center gap-0.5 text-[10px]', likedComments.has(comment.id) ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
-                    <Heart className={cn('h-2.5 w-2.5', likedComments.has(comment.id) && 'fill-current')} />
+                    className={cn('flex items-center gap-1 text-xs', likedComments.has(comment.id) ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]')}>
+                    <Heart className={cn('h-3 w-3', likedComments.has(comment.id) && 'fill-current')} />
                     {comment.likes + (likedComments.has(comment.id) ? 1 : 0)}
                   </button>
-                  <button className="text-[10px] text-[var(--color-text-dim)]">Reply</button>
+                  <button className="text-xs text-[var(--color-text-dim)] hover:text-[var(--color-text)]">Reply</button>
                 </div>
               </div>
             </div>
           ))
         )}
       </div>
-      <div className="pt-3 mt-2 border-t border-[var(--color-border)]/30">
-        <div className="flex gap-2">
-          <Avatar className="h-7 w-7 shrink-0">
+      <div className="pt-4 mt-3 border-t border-[var(--color-border)]">
+        <div className="flex gap-2.5">
+          <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
             <AvatarFallback>SM</AvatarFallback>
           </Avatar>
@@ -92,10 +92,10 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
             <Input placeholder="Add a comment..." value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="pr-9 border-[var(--color-border)] rounded-full text-xs h-8" />
+              className="pr-10 border-[var(--color-border)] rounded-full text-sm h-9 focus-visible:ring-[#ff8d49]/20" />
             <Button onClick={handleSubmit} size="icon" disabled={!newComment.trim()}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 bg-[#ff8d49] rounded-full">
-              <Send className="h-3 w-3 text-white" />
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] disabled:opacity-40">
+              <Send className="h-3.5 w-3.5 text-white" />
             </Button>
           </div>
         </div>
