@@ -62,16 +62,16 @@
     "accent": "#ffc7c7",
     "bg": "#fdfaf7",
     "surface": "#ffffff",
-    "text": "#2d2a26",
-    "text_dim": "#6b655e",
-    "border": "#e8e1da",
+    "text": "#1a1a1a",
+    "text_dim": "#4a4a4a",
+    "border": "#d4d4d4",
     "usage_rules": [
       "Light mode only. No dark mode.",
       "Warm, fabric-friendly tones that let quilts shine.",
       "Primary (#ff8d49) for buttons, key actions, corgi accents.",
       "Secondary (#ffc8a6) for subtle supports, dividers, inactive states.",
       "Accent (#ffc7c7) sparing highlights only.",
-      "No gradients. No animated color shifts.",
+      "No animated color shifts.",
       "No arbitrary colors outside this palette.",
       "No gray-*, slate-*, or brown-toned neutrals."
     ]
@@ -101,7 +101,7 @@
   "design_system": {
     "framework": "Tailwind CSS v4",
     "radius": "Buttons/CTAs/tabs/filters/pills: rounded-full (pill shape) everywhere. Cards/containers/inputs/dialogs: rounded-lg (8px). No rounded-none, no rounded-2xl. rounded-full on avatar containers remains standard.",
-    "shadow": "0 1px 2px rgba(45, 42, 38, 0.08) — single subtle shadow only. No elevation tiers, no hard offset shadows, no glows.",
+    "shadow": "0 1px 2px rgba(45, 42, 38, 0.08) — single subtle shadow only.",
     "motion": {
       "transitions": "150ms ease-out on color and opacity ONLY",
       "hover": "Color or background change ONLY. No scale, translate, lift, shift, or transform.",
@@ -110,19 +110,19 @@
       "entry_exit": "Allowed. Framer Motion animations are permitted for page transitions, drawer slides, and component entrances/exits."
     },
     "buttons": {
-      "primary": "bg-[#ff8d49] text-[#2d2a26] px-6 py-2 rounded-full hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
+      "primary": "bg-[#ff8d49] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
       "secondary": "bg-transparent border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10 transition-colors duration-150",
       "rules": ["Pill shape (rounded-full) for CTA buttons, tabs, filters, small interactive elements", "No gradients", "No press animations", "Hover is background shift only"]
     },
     "cards": {
-      "base": "bg-white border border-[#e8e1da] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
+      "base": "bg-white border border-[#d4d4d4] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
       "rules": ["Quilt image fills card, no decorative overlays", "No hover effects that obscure content", "Click to view details"]
     },
     "inputs": {
-      "base": "border border-[#e8e1da] rounded-full focus:outline-2 focus:outline-[#ff8d49]",
-      "placeholder": "text-[#6b655e]"
+      "base": "border border-[#d4d4d4] rounded-full focus:outline-2 focus:outline-[#ff8d49]",
+      "placeholder": "text-[#4a4a4a]"
     },
-    "nav_link": "text-[#2d2a26] hover:text-[#ff8d49] transition-colors",
+    "nav_link": "text-[#1a1a1a] hover:text-[#ff8d49] transition-colors",
     "layout": {
       "container_max": "1440px",
       "sidebar_width": "280px",
@@ -138,15 +138,12 @@
       ]
     },
     "banned_patterns": [
-      "Gradients (bg-gradient-*)",
       "Animated color shifts",
       "Hover effects that move, scale, lift, or shift elements (no hover:scale-*, hover:-translate-*, hover:translate-*)",
       "Soft drop shadows beyond the single defined shadow",
-      "Hard offset shadows (shadow-[4px_4px_0px_0px_...])",
       "rounded-2xl, rounded-xl",
       "text-gray-*, text-slate-*, bg-gray-*, bg-slate-*, border-gray-*, border-slate-*",
       "Brown-toned neutral scales (#2c2420, #4a3f35, #6b5d50, #8a7c6f, #e8dbcf as neutral ramps)",
-      "Glassmorphism (backdrop-blur without hard borders, bg-white/50)",
       "Vanity metrics (visible like counts, follower counts, engagement scores)",
       "Badges, ribbons, achievements, points, levels",
       "Trending or viral sections",
@@ -198,7 +195,7 @@
   },
 
   "pages_log": {
-    "_instructions": "BrandGuard agent maintains this log. After every page built or modified, add/update the entry. Track all images, icons, graphics per page to prevent duplication and ensure consistency.",
+    "_instructions": "Maintain this log. After every page built or modified, add/update the entry. Track all images, icons, graphics per page to prevent duplication and ensure consistency.",
     "pages": [
       {
         "page": "landing",
