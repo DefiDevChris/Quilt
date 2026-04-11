@@ -8,9 +8,9 @@
   --color-accent: #ffc7c7;
   --color-bg: #fdfaf7;
   --color-surface: #ffffff;
-  --color-text: #2d2a26;
-  --color-text-dim: #6b655e;
-  --color-border: #e8e1da;
+  --color-text: #1a1a1a;
+  --color-text-dim: #4a4a4a;
+  --color-border: #d4d4d4;
 
   /* Functional */
   --color-error: #ed4956;
@@ -946,12 +946,12 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e8e1da;
+  background: var(--color-border);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #ffc8a6;
+  background: var(--color-secondary);
 }
 
 @keyframes fadeIn {
