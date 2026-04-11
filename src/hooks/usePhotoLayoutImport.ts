@@ -10,30 +10,26 @@ import { PIXELS_PER_INCH, PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT } from '@/lib/
 import type { ScaledPiece } from '@/lib/photo-layout-types';
 
 /**
- * Groups identical pieces by comparing their contours.
- * Returns groups with representative piece and count.
+ * Groups pieces by their canonical class key. Falls back to a rounded-contour
+ * fingerprint when a piece has no classKey (general polygons without a stable
+ * canonical identity still cluster by exact shape).
  */
-function groupIdenticalPieces(pieces: readonly ScaledPiece[]): Map<string, ScaledPiece[]> {
+function groupByCanonicalClass(pieces: readonly ScaledPiece[]): Map<string, ScaledPiece[]> {
   const groups = new Map<string, ScaledPiece[]>();
-
   for (const piece of pieces) {
-    const key = piece.contourInches
-      .map((p) => `${Math.round(p.x * 100)},${Math.round(p.y * 100)}`)
-      .join('|');
-
+    const key =
+      piece.classKey ??
+      piece.contourInches.map((p) => `${Math.round(p.x * 100)},${Math.round(p.y * 100)}`).join('|');
     const existing = groups.get(key);
-    if (existing) {
-      existing.push(piece);
-    } else {
-      groups.set(key, [piece]);
-    }
+    if (existing) existing.push(piece);
+    else groups.set(key, [piece]);
   }
-
   return groups;
 }
 
 /**
- * Generates SVG from piece contour.
+ * Generates SVG from piece contour. Outline-only — no fill — to match the
+ * on-canvas pattern rendering.
  */
 function contourToSvg(contour: readonly { x: number; y: number }[]): string {
   if (contour.length < 3) return '';
@@ -55,25 +51,19 @@ function contourToSvg(contour: readonly { x: number; y: number }[]): string {
   const vh = maxY - minY + pad * 2;
 
   const points = contour.map((p) => `${p.x},${p.y}`).join(' ');
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet"><polygon points="${points}" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet"><polygon points="${points}" fill="none" stroke="currentColor" stroke-width="0.5"/></svg>`;
 }
 
-/** Neutral fallback fill for pieces with black dominant color. */
-const NEUTRAL_FILL = '#d4ccc4';
-
-/**
- * Resolves the fill color for a piece. Uses the detected dominant color
- * unless it's pure black, which typically indicates a detection artifact.
- */
-function resolveFillColor(dominantColor: string): string {
-  return dominantColor === '#000000' ? NEUTRAL_FILL : dominantColor;
-}
+/** Brand text color used as the pattern outline stroke. */
+const PATTERN_STROKE_COLOR = '#2d2a26';
+/** Stroke width for pattern outlines (in canvas pixels). */
+const PATTERN_STROKE_WIDTH = 1.5;
 
 /**
  * On studio mount, if photoLayoutStore has scaledPieces:
  * 1. Set reference photo as canvas background
- * 2. Create a fabric.Polygon for each piece, filled with its dominant color
- * 3. Group identical pieces and add to print list with quantities
+ * 2. Create a stroked-outline fabric.Polygon for each piece (transparent fill)
+ * 3. Group by canonical class key and add to print list with quantities
  * 4. Open print list panel
  * 5. Persist reference image URL
  * 6. Reset photoLayoutStore
@@ -114,7 +104,10 @@ export function usePhotoPatternImport() {
         }
       }
 
-      // 2. Create polygons for each piece
+      // 2. Create stroked-outline polygons for each piece. Pattern rendering
+      // is cutting-diagram style: transparent fill + dark hairline stroke.
+      // Users assign fabrics in the studio; the photo import just provides
+      // the geometry.
       for (const scaledPiece of scaledPieces) {
         const points = scaledPiece.contourInches.map((p) => ({
           x: p.x * PIXELS_PER_INCH,
@@ -124,32 +117,42 @@ export function usePhotoPatternImport() {
         if (points.length < 3) continue;
 
         const polygon = new fabric.Polygon(points, {
-          fill: resolveFillColor(scaledPiece.dominantColor),
-          stroke: '#4A3B32',
-          strokeWidth: 1,
+          fill: 'transparent',
+          stroke: PATTERN_STROKE_COLOR,
+          strokeWidth: PATTERN_STROKE_WIDTH,
+          strokeUniform: true,
           selectable: true,
           objectCaching: false,
         });
 
         (polygon as unknown as Record<string, unknown>).__pieceId = scaledPiece.id;
+        (polygon as unknown as Record<string, unknown>).__classKey = scaledPiece.classKey;
 
         canvas.add(polygon);
       }
 
-      // 3. Add to print list grouped by shape
-      const pieceGroups = groupIdenticalPieces(scaledPieces);
+      // 3. Add to print list grouped by canonical class (inferred per quilt).
+      // For a Fairgrounds-style quilt this collapses ~600 raw detections to
+      // ~5 entries like "1×1 Square × 120".
+      const pieceGroups = groupByCanonicalClass(scaledPieces);
+      // Order: larger class counts first so the print list reads big shapes
+      // at the top.
+      const orderedGroups = Array.from(pieceGroups.entries()).sort(
+        (a, b) => b[1].length - a[1].length
+      );
       let groupIndex = 0;
-      for (const [, groupPieces] of pieceGroups) {
+      for (const [key, groupPieces] of orderedGroups) {
         const representative = groupPieces[0];
         const quantity = groupPieces.length;
 
         if (representative.contourInches.length < 3) continue;
 
-        const quantitySuffix = quantity > 1 ? ` (${quantity} identical)` : '';
-        const shapeName = `Piece ${groupIndex + 1}${quantitySuffix}`;
+        const baseName = representative.classLabel ?? `Piece ${groupIndex + 1}`;
+        const quantitySuffix = quantity > 1 ? ` (×${quantity})` : '';
+        const shapeName = `${baseName}${quantitySuffix}`;
 
         usePrintlistStore.getState().addItem({
-          shapeId: `photo-piece-${groupIndex}`,
+          shapeId: `photo-piece-${key}`,
           shapeName,
           svgData: contourToSvg(representative.contourInches),
           quantity,
