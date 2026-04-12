@@ -376,8 +376,9 @@ function BlockFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
+              <label htmlFor="block-name" className="text-sm font-medium text-[#1a1a1a]">Name *</label>
               <input
+                id="block-name"
                 required
                 type="text"
                 name="name"
@@ -387,8 +388,9 @@ function BlockFormModal({
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1a1a1a]">Category *</label>
+              <label htmlFor="block-category" className="text-sm font-medium text-[#1a1a1a]">Category *</label>
               <input
+                id="block-category"
                 required
                 type="text"
                 name="category"
@@ -400,8 +402,9 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
+            <label htmlFor="block-subcategory" className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
             <input
+              id="block-subcategory"
               type="text"
               name="subcategory"
               value={formData.subcategory}
@@ -411,10 +414,11 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">
+            <label htmlFor="block-svg-data" className="text-sm font-medium text-[#1a1a1a]">
               SVG Data {isEditing ? '(leave blank to keep current)' : '*'}
             </label>
             <textarea
+              id="block-svg-data"
               name="svgData"
               value={formData.svgData}
               onChange={handleChange}
@@ -425,8 +429,9 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
+            <label htmlFor="block-tags" className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
             <input
+              id="block-tags"
               type="text"
               name="tagsStr"
               value={formData.tagsStr}
@@ -437,8 +442,9 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
+            <label htmlFor="block-thumbnail-url" className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
             <input
+              id="block-thumbnail-url"
               type="text"
               name="thumbnailUrl"
               value={formData.thumbnailUrl}

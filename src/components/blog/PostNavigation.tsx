@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { COLORS, MOTION } from '@/lib/design-system';
 
 interface PostNavigationProps {
   prev: { slug: string; title: string } | null;
@@ -24,8 +25,8 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
     <nav ref={containerRef} className="relative max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
       <div className="absolute top-0 left-6 md:left-12 right-6 md:right-12 h-px bg-[var(--color-border)]">
         <motion.div
-          style={{ scaleX: lineProgress, transformOrigin: 'left' }}
-          className="h-full bg-[#ff8d49]"
+          style={{ scaleX: lineProgress, transformOrigin: 'left', backgroundColor: COLORS.primary }}
+          className="h-full"
         />
       </div>
 
@@ -46,8 +47,10 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                   </span>
                 </div>
                 <h3
-                  className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)] group-hover:text-[#ff8d49] transition-colors duration-150"
+                  className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)]"
                   style={{ fontFamily: 'Spline Sans, sans-serif' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   {prev.title}
                 </h3>
@@ -74,8 +77,10 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                   </span>
                 </div>
                 <h3
-                  className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)] group-hover:text-[#ff8d49] transition-colors duration-150"
+                  className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)]"
                   style={{ fontFamily: 'Spline Sans, sans-serif' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   {next.title}
                 </h3>

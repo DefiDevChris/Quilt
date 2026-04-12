@@ -12,26 +12,18 @@ import {
   PHOTO_PATTERN_MAX_FILE_SIZE,
   PHOTO_PATTERN_MIN_DIMENSION,
 } from '@/lib/constants';
-import { warpSourceImage, buildBlockPattern } from '@/lib/photo-layout-utils';
-import { PhotoReviewStep } from '@/components/photo-layout/PhotoReviewStep';
+import { warpSourceImage } from '@/lib/photo-layout-utils';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { FabricReviewStep } from '@/components/photo-layout/FabricReviewStep';
 import { CalibrationStep } from '@/components/photo-layout/CalibrationStep';
-import { LayoutPickerStep } from '@/components/photo-layout/LayoutPickerStep';
 import type { MobileUpload } from '@/types/mobile-upload';
-import type {
-  PhotoLayoutStep,
-  QuadCorners,
-} from '@/lib/photo-layout-types';
+import type { PhotoLayoutStep, QuadCorners } from '@/lib/photo-layout-types';
 
 const ACCEPTED_TYPES_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
 
-const STEP_LABELS = ['Upload', 'Calibrate', 'Layout', 'Review'] as const;
+const STEP_LABELS = ['Upload', 'Calibrate', 'Review'] as const;
 
-const STEP_KEYS: Array<PhotoLayoutStep> = [
-  'upload',
-  'calibrate',
-  'layout',
-  'review',
-];
+const STEP_KEYS: Array<PhotoLayoutStep> = ['upload', 'calibrate', 'review'];
 
 function validateFile(file: File): string | null {
   if (!ACCEPTED_TYPES_SET.has(file.type)) {
@@ -78,18 +70,14 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
   const warpedImageRef = usePhotoLayoutStore((s) => s.warpedImageRef);
   const setWarpedImageRef = usePhotoLayoutStore((s) => s.setWarpedImageRef);
 
-  const selectedPreset = usePhotoLayoutStore((s) => s.selectedPreset);
-  const setSelectedPreset = usePhotoLayoutStore((s) => s.setSelectedPreset);
-
-  const cells = usePhotoLayoutStore((s) => s.cells);
-  const setCells = usePhotoLayoutStore((s) => s.setCells);
-  const updateCellColor = usePhotoLayoutStore((s) => s.updateCellColor);
-
   const reset = usePhotoLayoutStore((s) => s.reset);
 
-  // Warped bitmap kept in a ref — too large for Zustand, but needed to
-  // re-sample colors whenever the user swaps presets on the layout step.
+  // Warped bitmap kept in a ref — too large for Zustand, but the Review
+  // step needs the raw ImageData to feed into `segmentQuilt`.
   const warpedBitmapRef = useRef<ImageData | null>(null);
+  // React state mirror of the bitmap so the Review step re-runs
+  // segmentation when the warped ImageData actually changes.
+  const [warpedBitmap, setWarpedBitmap] = useState<ImageData | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
@@ -127,20 +115,8 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
     }
   }, [step, fetchUploads]);
 
-  // Re-sample grid cells whenever the user changes presets on the layout
-  // step. We keep the warped ImageData in a ref so this is cheap — no extra
-  // fetches, no re-warp.
-  useEffect(() => {
-    if (step !== 'layout') return;
-    if (!warpedBitmapRef.current) return;
-    const result = buildBlockPattern(
-      selectedPreset,
-      blockWidthInches,
-      blockHeightInches,
-      warpedBitmapRef.current
-    );
-    setCells(result.cells);
-  }, [step, selectedPreset, blockWidthInches, blockHeightInches, setCells]);
+  // Segmentation is driven by the Review step itself now — no imperative
+  // re-sample loop here.
 
   const processFile = useCallback(
     (file: File) => {
@@ -270,26 +246,19 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
           heightInches,
         });
         if (!result) {
-          setError(
-            'Could not flatten that block — double-check the four corners and try again.'
-          );
+          setError('Could not flatten that block — double-check the four corners and try again.');
           setWarping(false);
           return;
         }
 
         warpedBitmapRef.current = result.warped;
+        setWarpedBitmap(result.warped);
         setWarpedImageRef(result.warpedRef);
 
-        // Sample colors with the current preset so the layout step can
-        // render an immediate preview instead of showing empty cells.
-        const pattern = buildBlockPattern(
-          selectedPreset,
-          widthInches,
-          heightInches,
-          result.warped
-        );
-        setCells(pattern.cells);
-        setStep('layout');
+        // Jump straight into the fabric-first Review step — segmentation
+        // runs there on mount so the user immediately sees the detected
+        // patches.
+        setStep('review');
       } catch (err) {
         console.error('[PhotoToDesignWizard] warp failed:', err);
         setError('Something went wrong while flattening the block. Please try again.');
@@ -297,24 +266,13 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         setWarping(false);
       }
     },
-    [
-      originalImage,
-      setCorners,
-      setBlockSize,
-      setWarpedImageRef,
-      selectedPreset,
-      setCells,
-      setStep,
-    ]
+    [originalImage, setCorners, setBlockSize, setWarpedImageRef, setStep]
   );
-
-  const handleLayoutContinue = useCallback(() => {
-    setStep('review');
-  }, [setStep]);
 
   const handleClose = () => {
     reset();
     warpedBitmapRef.current = null;
+    setWarpedBitmap(null);
     router.push('/dashboard');
   };
 
@@ -402,7 +360,10 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         <button
           type="button"
           onClick={handleClose}
-          className="inline-flex items-center gap-2 text-body-sm text-[var(--color-text-dim)] hover:text-[#ff8d49] transition-colors duration-150"
+          className="inline-flex items-center gap-2 text-body-sm text-[var(--color-text-dim)]"
+          style={{ transition: `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}` }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = '')}
           aria-label="Close"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -418,7 +379,9 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
         </button>
         <div className="flex items-center gap-3">
           <QuiltPieceRow count={3} size={10} gap={4} />
-          <h2 className="text-headline-sm font-semibold text-[var(--color-text)]">Photo to Design</h2>
+          <h2 className="text-headline-sm font-semibold text-[var(--color-text)]">
+            Photo to Design
+          </h2>
           <QuiltPieceRow count={3} size={10} gap={4} colors={['accent', 'secondary', 'primary']} />
         </div>
         <div className="w-24" /> {/* Spacer for centering */}
@@ -456,8 +419,8 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
               {step === 'calibrate' && originalImage && (
                 <>
                   {error && (
-                    <div className="mb-3 px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
-                      <p className="text-body-sm text-[#ff8d49]">{error}</p>
+                    <div className="mb-3 px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
+                      <p className="text-body-sm" style={{ color: COLORS.primary }}>{error}</p>
                     </div>
                   )}
                   <CalibrationStep
@@ -477,36 +440,21 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 </>
               )}
 
-              {step === 'layout' && warpedImageRef && (
-                <LayoutPickerStep
-                  warpedImage={warpedImageRef}
-                  widthInches={blockWidthInches}
-                  heightInches={blockHeightInches}
-                  selectedPreset={selectedPreset}
-                  onSelectPreset={setSelectedPreset}
-                  onContinue={handleLayoutContinue}
-                  onBack={() => setStep('calibrate')}
-                />
-              )}
-
               {step === 'review' && warpedImageRef && (
-                <PhotoReviewStep
+                <FabricReviewStep
                   warpedImage={warpedImageRef}
-                  cells={cells}
+                  warpedBitmap={warpedBitmap}
                   widthInches={blockWidthInches}
                   heightInches={blockHeightInches}
-                  onUpdateCellColor={updateCellColor}
                   onConfirm={handleOpenInStudio}
-                  onBack={() => setStep('layout')}
+                  onBack={() => setStep('calibrate')}
                 />
               )}
 
               {/* Fallback for any mismatched state — should never render in
                   happy paths but guards against stale store data. */}
-              {step !== 'upload' && step !== 'calibrate' && step !== 'layout' && step !== 'review' && (
-                <p className="text-body-md text-[var(--color-text-dim)]">
-                  Unknown step: {step}
-                </p>
+              {step !== 'upload' && step !== 'calibrate' && step !== 'review' && (
+                <p className="text-body-md text-[var(--color-text-dim)]">Unknown step: {step}</p>
               )}
             </div>
 
@@ -516,8 +464,11 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                 <div
                   key={key}
                   className={`rounded-full w-2 h-2 transition-colors ${
-                    i === currentStepIndex ? 'bg-[#ff8d49]' : 'bg-[#ff8d49]/30'
+                    i === currentStepIndex ? '' : ''
                   }`}
+                  style={{
+                    backgroundColor: i === currentStepIndex ? COLORS.primary : `${COLORS.primary}4d`,
+                  }}
                   aria-label={STEP_LABELS[i]}
                 />
               ))}
@@ -551,6 +502,61 @@ interface UploadStepProps {
 
 function UploadStep(props: UploadStepProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const reset = usePhotoLayoutStore((s) => s.reset);
+
+  // If an image is already loaded, show only the preview and continue button
+  if (props.originalImage) {
+    return (
+      <div className="space-y-4">
+        <img
+          src={props.originalImageUrl}
+          alt="Uploaded quilt photo preview"
+          className="w-full rounded-lg object-contain max-h-96"
+        />
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              // Clear the current image state and trigger file picker for a new one
+              reset();
+              if (inputRef.current) {
+                inputRef.current.value = '';
+                inputRef.current.click();
+              }
+            }}
+            className="flex-1 px-6 py-3 rounded-full text-sm font-semibold"
+            style={{
+              borderColor: COLORS.primary,
+              color: COLORS.primary,
+              borderWidth: '2px',
+              borderStyle: 'solid',
+              transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '')}
+          >
+            Change Image
+          </button>
+          <button
+            type="button"
+            onClick={props.onContinue}
+            className="flex-1 px-6 py-3 rounded-full text-sm font-semibold text-[var(--color-text)]"
+            style={{
+              backgroundColor: COLORS.primary,
+              boxShadow: SHADOW.brand,
+              transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No image yet - show the upload box
   return (
     <div className="space-y-4">
       <p className="text-body-md text-[var(--color-text-dim)] text-center">
@@ -582,19 +588,29 @@ function UploadStep(props: UploadStepProps) {
           aria-label="Drop your quilt photo here or click to browse. PNG, JPEG, or WebP up to 20 MB"
           className={`block w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
             props.isDragOver
-              ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-              : 'border-[var(--color-border)]/50 hover:border-[#ff8d49]/50'
+              ? ''
+              : 'border-[var(--color-border)]/50'
           }`}
+          style={props.isDragOver
+            ? { borderColor: COLORS.primary, backgroundColor: `${COLORS.primary}0d` }
+            : undefined}
+          onMouseEnter={(e) => {
+            if (!props.isDragOver) e.currentTarget.style.borderColor = `${COLORS.primary}80`;
+          }}
+          onMouseLeave={(e) => {
+            if (!props.isDragOver) e.currentTarget.style.borderColor = '';
+          }}
         >
           {props.loading ? (
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#ff8d49]/20 flex items-center justify-center animate-pulse">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center animate-pulse" style={{ backgroundColor: `${COLORS.primary}33` }}>
                 <svg
                   width="20"
                   height="20"
                   viewBox="0 0 20 20"
                   fill="none"
-                  className="text-[#ff8d49]"
+                  className=""
+                  style={{ color: COLORS.primary }}
                 >
                   <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="2" fill="none" />
                 </svg>
@@ -625,9 +641,13 @@ function UploadStep(props: UploadStepProps) {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-body-md font-medium text-[var(--color-text)]">Drop your quilt photo here</p>
+              <p className="text-body-md font-medium text-[var(--color-text)]">
+                Drop your quilt photo here
+              </p>
               <p className="mt-1 text-body-sm text-[var(--color-text-dim)]">or click to browse</p>
-              <p className="mt-2 text-label-sm text-[var(--color-text-dim)]">PNG, JPEG, or WebP up to 20 MB</p>
+              <p className="mt-2 text-label-sm text-[var(--color-text-dim)]">
+                PNG, JPEG, or WebP up to 20 MB
+              </p>
             </>
           )}
         </button>
@@ -637,7 +657,9 @@ function UploadStep(props: UploadStepProps) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <QuiltPieceRow count={2} size={8} gap={4} />
-              <p className="text-body-sm text-[var(--color-text-dim)]">Or choose from mobile uploads:</p>
+              <p className="text-body-sm text-[var(--color-text-dim)]">
+                Or choose from mobile uploads:
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {props.pendingUploads.slice(0, 4).map((upload) => (
@@ -667,30 +689,13 @@ function UploadStep(props: UploadStepProps) {
       </div>
 
       {props.error && (
-        <div className="px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
-          <p className="text-body-sm text-[#ff8d49]">{props.error}</p>
+        <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
+          <p className="text-body-sm" style={{ color: COLORS.primary }}>{props.error}</p>
         </div>
       )}
       {props.warning && (
-        <div className="px-4 py-3 rounded-lg bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
+        <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.secondary}33`, borderColor: `${COLORS.secondary}66` }}>
           <p className="text-body-sm text-[var(--color-text-dim)]">{props.warning}</p>
-        </div>
-      )}
-
-      {props.originalImage && (
-        <div className="space-y-3">
-          <img
-            src={props.originalImageUrl}
-            alt="Uploaded quilt photo preview"
-            className="w-full rounded-lg object-contain max-h-96"
-          />
-          <button
-            type="button"
-            onClick={props.onContinue}
-            className="w-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-          >
-            Continue
-          </button>
         </div>
       )}
     </div>

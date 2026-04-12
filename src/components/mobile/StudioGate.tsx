@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 export function StudioGate() {
  return (
@@ -27,7 +28,17 @@ export function StudioGate() {
  </p>
  <Link
  href="/dashboard"
- className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-sm font-semibold transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+ className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[var(--color-text)] text-sm font-semibold transition-colors"
+ style={{
+   backgroundColor: COLORS.primary,
+   boxShadow: SHADOW.brand,
+ }}
+ onMouseEnter={(e) => {
+   e.currentTarget.style.backgroundColor = '#e67d3f';
+ }}
+ onMouseLeave={(e) => {
+   e.currentTarget.style.backgroundColor = COLORS.primary;
+ }}
  >
  Back to Library
  </Link>

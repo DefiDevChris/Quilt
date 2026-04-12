@@ -4,24 +4,21 @@ import { create } from 'zustand';
 import type {
   PhotoLayoutStep,
   QuadCorners,
-  GridCell,
   WarpedImageRef,
-  BlockGridPreset,
 } from '@/lib/photo-layout-types';
+import type { SegmentationResult } from '@/lib/quilt-segmentation-engine';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
-import {
-  BLOCK_GRID_PRESETS,
-  DEFAULT_BLOCK_GRID_PRESET_ID,
-} from '@/lib/block-grid-presets';
 
 /** Default real-world block size. Matches the most common traditional block. */
 const DEFAULT_BLOCK_SIZE_INCHES = 12;
 
-function getDefaultPreset(): BlockGridPreset {
-  return (
-    BLOCK_GRID_PRESETS.find((p) => p.id === DEFAULT_BLOCK_GRID_PRESET_ID) ??
-    BLOCK_GRID_PRESETS[0]
-  );
+/** Default fabric-count target for the Review slider. */
+const DEFAULT_FABRIC_COUNT = 6;
+
+/** Per-patch override the user applies in the Review step. */
+export interface PatchOverride {
+  readonly hex: string;
+  readonly fabricId: string | null;
 }
 
 interface PhotoLayoutState {
@@ -38,11 +35,12 @@ interface PhotoLayoutState {
   /** Blob URL reference to the flattened (warped) block image. */
   warpedImageRef: WarpedImageRef | null;
 
-  /** User-selected block grid preset (4-Patch, 9-Patch, HST, ...). */
-  selectedPreset: BlockGridPreset;
-
-  /** Final grid cells with sampled fabric colors. */
-  cells: readonly GridCell[];
+  /** Latest segmentation result — filled on the review step. */
+  segmentation: SegmentationResult | null;
+  /** k — target fabric count the Review slider drives. */
+  fabricCount: number;
+  /** Per-patch user overrides keyed by patch id. Empty by default. */
+  patchOverrides: Record<string, PatchOverride>;
 
   /** Seam allowance (passed through to the studio import). */
   seamAllowance: 0.25 | 0.375;
@@ -52,9 +50,10 @@ interface PhotoLayoutState {
   setCorners: (corners: QuadCorners | null) => void;
   setBlockSize: (widthInches: number, heightInches: number) => void;
   setWarpedImageRef: (ref: WarpedImageRef | null) => void;
-  setSelectedPreset: (preset: BlockGridPreset) => void;
-  setCells: (cells: readonly GridCell[]) => void;
-  updateCellColor: (id: string, fabricColor: string, fabricId?: string | null) => void;
+  setSegmentation: (segmentation: SegmentationResult | null) => void;
+  setFabricCount: (n: number) => void;
+  setPatchOverride: (patchId: string, hex: string, fabricId: string | null) => void;
+  clearPatchOverrides: () => void;
   setSeamAllowance: (value: 0.25 | 0.375) => void;
   reset: () => void;
 }
@@ -67,8 +66,9 @@ const initialState = {
   blockWidthInches: DEFAULT_BLOCK_SIZE_INCHES,
   blockHeightInches: DEFAULT_BLOCK_SIZE_INCHES,
   warpedImageRef: null as WarpedImageRef | null,
-  selectedPreset: getDefaultPreset(),
-  cells: [] as readonly GridCell[],
+  segmentation: null as SegmentationResult | null,
+  fabricCount: DEFAULT_FABRIC_COUNT,
+  patchOverrides: {} as Record<string, PatchOverride>,
   seamAllowance: DEFAULT_SEAM_ALLOWANCE_INCHES as 0.25 | 0.375,
 };
 
@@ -98,16 +98,16 @@ export const usePhotoLayoutStore = create<PhotoLayoutState>((set, get) => ({
     set({ warpedImageRef: ref });
   },
 
-  setSelectedPreset: (preset) => set({ selectedPreset: preset }),
+  setSegmentation: (segmentation) => set({ segmentation }),
 
-  setCells: (cells) => set({ cells }),
+  setFabricCount: (n) => set({ fabricCount: Math.max(1, Math.round(n)) }),
 
-  updateCellColor: (id, fabricColor, fabricId = null) =>
+  setPatchOverride: (patchId, hex, fabricId) =>
     set((s) => ({
-      cells: s.cells.map((c) =>
-        c.id === id ? { ...c, fabricColor, assignedFabricId: fabricId } : c
-      ),
+      patchOverrides: { ...s.patchOverrides, [patchId]: { hex, fabricId } },
     })),
+
+  clearPatchOverrides: () => set({ patchOverrides: {} }),
 
   setSeamAllowance: (value) => set({ seamAllowance: value }),
 
@@ -115,7 +115,7 @@ export const usePhotoLayoutStore = create<PhotoLayoutState>((set, get) => ({
     const { originalImageUrl, warpedImageRef } = get();
     revokeUrl(originalImageUrl);
     revokeUrl(warpedImageRef?.url);
-    set({ ...initialState, selectedPreset: getDefaultPreset() });
+    set({ ...initialState });
   },
 }));
 

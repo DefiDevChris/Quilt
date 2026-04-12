@@ -781,9 +781,10 @@ export function ContextMenu() {
               </button>
             ) : (
               <div className="flex items-center gap-1 px-3 py-1.5">
-                <span className="w-5 text-center text-sm">🖨</span>
+                <span className="w-5 text-center text-sm" aria-hidden="true">🖨</span>
                 <input
                   type="number"
+                  aria-label="Print quantity"
                   min={1}
                   max={999}
                   value={quantity}

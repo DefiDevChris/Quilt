@@ -8,6 +8,7 @@ import { mobileUploads } from '@/db/schema/mobileUploads';
 import { users } from '@/db/schema/users';
 import { count, eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 async function getStats() {
   const [blockCount, blogCount, reportCount, socialCount, fabricCount, userCount, pendingUploads] =
@@ -89,8 +90,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-[#1a1a1a]">Welcome back, Admin</h2>
-        <p className="text-sm text-[#4a4a4a] mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
+        <h2 className="text-xl font-semibold text-[var(--color-text)]">Welcome back, Admin</h2>
+        <p className="text-sm text-[var(--color-text-dim)] mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
       </div>
 
       {/* Stat cards */}
@@ -110,7 +111,7 @@ export default async function AdminDashboardPage() {
 
       {/* Quick actions */}
       <div>
-        <h3 className="text-sm font-semibold text-[#4a4a4a] mb-4">
+        <h3 className="text-sm font-semibold text-[var(--color-text-dim)] mb-4">
           Quick Actions
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -180,20 +181,23 @@ export default async function AdminDashboardPage() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent blog posts */}
-        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6" style={{ boxShadow: SHADOW.brand }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#4a4a4a]">
+            <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">
               Recent Blog Posts
             </h3>
             <Link
               href="/admin/blog"
-              className="text-xs font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
+              className="text-xs font-medium"
+              style={{ color: COLORS.primary }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
             >
               View all
             </Link>
           </div>
           {recentPosts.length === 0 ? (
-            <p className="text-sm text-[#4a4a4a] py-8 text-center">No blog posts yet</p>
+            <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No blog posts yet</p>
           ) : (
             <ul className="space-y-3">
               {recentPosts.map((post) => (
@@ -201,18 +205,21 @@ export default async function AdminDashboardPage() {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/admin/blog/${post.id}`}
-                      className="text-sm font-medium text-[#1a1a1a] truncate hover:text-[#ff8d49] transition-colors duration-150"
+                      className="text-sm font-medium truncate"
+                      style={{ color: 'var(--color-text)' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
                     >
                       {post.title}
                     </Link>
-                    <p className="text-xs text-[#4a4a4a] mt-0.5">
+                    <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
                       {new Date(post.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <span
                     className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${post.status === 'published'
                       ? 'bg-green-50 text-green-700'
-                      : 'bg-[var(--color-bg)] text-[#4a4a4a]'
+                      : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
                       }`}
                   >
                     {post.status}
@@ -224,31 +231,34 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent social posts */}
-        <div className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6" style={{ boxShadow: SHADOW.brand }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#4a4a4a]">
+            <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">
               Recent Social Posts
             </h3>
             <Link
               href="/admin/moderation"
-              className="text-xs font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
+              className="text-xs font-medium"
+              style={{ color: COLORS.primary }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
             >
               Moderate
             </Link>
           </div>
           {recentSocial.length === 0 ? (
-            <p className="text-sm text-[#4a4a4a] py-8 text-center">No social posts yet</p>
+            <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No social posts yet</p>
           ) : (
             <ul className="space-y-3">
               {recentSocial.map((post) => (
                 <li key={post.id} className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1a1a1a] truncate">{post.title}</p>
-                    <p className="text-xs text-[#4a4a4a] mt-0.5">
+                    <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{post.title}</p>
+                    <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
                       by {post.creatorName} &middot; {post.likeCount} likes
                     </p>
                   </div>
-                  <span className="text-xs text-[#4a4a4a]">
+                  <span className="text-xs text-[var(--color-text-dim)]">
                     {new Date(post.createdAt).toLocaleDateString()}
                   </span>
                 </li>
@@ -273,13 +283,13 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block"
+      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block"
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] text-lg font-bold">
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold" style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}>
           {value}
         </div>
-        <p className="text-sm font-medium text-[#4a4a4a]">{label}</p>
+        <p className="text-sm font-medium text-[var(--color-text-dim)]">{label}</p>
       </div>
     </Link>
   );
@@ -299,13 +309,20 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block group"
+      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block group"
     >
       <div className="flex items-start gap-3">
-        <div className="text-[#4a4a4a] group-hover:text-[#ff8d49] transition-colors duration-150">{icon}</div>
+        <div
+          className="transition-colors duration-150"
+          style={{ color: 'var(--color-text-dim)' }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-dim)')}
+        >
+          {icon}
+        </div>
         <div>
-          <p className="text-sm font-semibold text-[#1a1a1a]">{title}</p>
-          <p className="text-xs text-[#4a4a4a] mt-1">{description}</p>
+          <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>{title}</p>
+          <p className="text-xs text-[var(--color-text-dim)] mt-1">{description}</p>
         </div>
       </div>
     </Link>

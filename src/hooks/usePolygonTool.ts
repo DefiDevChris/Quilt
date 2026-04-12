@@ -4,14 +4,22 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { maybeSnap } from '@/lib/canvas-utils';
+import { CANVAS } from '@/lib/design-system';
 
 export function usePolygonTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
 
-  const stateRef = useRef({
-    fillColor: '#f9a06b',
-    strokeColor: '#4a3f35',
+  const stateRef = useRef<{
+    fillColor: string;
+    strokeColor: string;
+    strokeWidth: number;
+    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    unitSystem: 'imperial' | 'metric';
+    isSpacePressed: boolean;
+  }>({
+    fillColor: CANVAS.pencilPreview,
+    strokeColor: CANVAS.seamLine,
     strokeWidth: 1,
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
@@ -67,7 +75,7 @@ export function usePolygonTool() {
           left: x - 4,
           top: y - 4,
           radius: 4,
-          fill: '#8a7c6f',
+          fill: CANVAS.seamLine,
           selectable: false,
           evented: false,
         });
@@ -84,7 +92,7 @@ export function usePolygonTool() {
       ) {
         if (!fabric || !canvas) return;
         const line = new fabric.Line([x1, y1, x2, y2], {
-          stroke: '#4a3f35',
+          stroke: CANVAS.seamLine,
           strokeWidth: 2,
           strokeDashArray: dashArray,
           selectable: false,

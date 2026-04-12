@@ -1,21 +1,15 @@
 /**
- * Photo → Pattern Types (Perspective-First Pipeline)
+ * Photo → Design Types (Fabric-First Pipeline)
  *
- * The old CV-heuristic types (DetectionOptions, QuiltDetectionConfig,
- * WorkerRequestMessage, ShapeCluster, ContourHierarchy, ...) were deleted
- * when the 15-step OpenCV pipeline was ripped out. We now run a
- * perspective-first pipeline:
+ * The wizard is: upload → calibrate → review. Calibration pins four
+ * corners onto one block; warping flattens it; segmentation (k-means in
+ * LAB + connected components + contour trace + simplify) produces a list
+ * of `DetectedPatch` polygons in `quilt-segmentation-engine.ts`; the
+ * review step lets the user pick a target fabric count and swap colors.
  *
- *   upload → calibrate → layout → review
- *
- * At each step we only need two kinds of geometric data:
- *   1. The four corners the user pinned to the real quilt block.
- *   2. The grid cells produced by the chosen block layout.
- *
- * Final output is a list of {@link GridCell}s — one per patch — each with a
- * real-world size in inches, a polygon in inch-space, and a sampled fabric
- * color. Because the polygons come from a strict mathematical grid, they
- * never need "polygon cleanup" downstream.
+ * Types kept here are the durable geometry contracts shared across
+ * multiple modules. The live segmentation output lives alongside the
+ * engine in `quilt-segmentation-engine.ts`.
  */
 
 import type { Point2D } from '@/types/geometry';
@@ -40,55 +34,26 @@ export interface RealWorldSizeInches {
 }
 
 /**
- * Grid preset describing a block-level layout (4-patch, 9-patch, HST, etc.).
- * Lives in {@link BLOCK_GRID_PRESETS}.
- */
-export interface BlockGridPreset {
-  readonly id: string;
-  readonly name: string;
-  readonly description: string;
-  readonly rows: number;
-  readonly cols: number;
-  /**
-   * Optional diagonal split pattern for Half-Square-Triangle style blocks.
-   * Each entry maps a (row, col) cell to a split type.
-   *   - 'tl-br' splits from the top-left to bottom-right diagonal.
-   *   - 'tr-bl' splits from the top-right to bottom-left diagonal.
-   */
-  readonly splits?: ReadonlyArray<{ row: number; col: number; split: 'tl-br' | 'tr-bl' }>;
-}
-
-/**
- * One patch in the final block layout. Coordinates are in inches, relative
- * to the top-left of the block.
+ * Legacy type kept for the bulk `matchFabricsToCells` helper in
+ * `fabric-match.ts`. New code should use `DetectedPatch` from
+ * `quilt-segmentation-engine.ts` instead.
  */
 export interface GridCell {
-  /** Stable id such as `cell-r0c0` or `cell-r0c0-a` for split halves. */
   readonly id: string;
-  /** Row index in the preset grid. */
   readonly row: number;
-  /** Column index in the preset grid. */
   readonly col: number;
-  /** Polygon in inch-space. Always axis-aligned squares or right triangles. */
   readonly polygonInches: readonly Point2D[];
-  /** Centroid in inch-space (used for the K-Means sample center). */
   readonly centroidInches: Point2D;
-  /** Sampled dominant color as `#rrggbb`. */
   readonly fabricColor: string;
-  /**
-   * Optional fabric id the user assigned from their fabric library.
-   * Null means the cell is still using its auto-sampled color.
-   */
   readonly assignedFabricId: string | null;
 }
 
 /**
- * Wizard steps — rebuilt for the perspective-first pipeline.
+ * Wizard steps — three real steps in the fabric-first pipeline.
  */
 export type PhotoLayoutStep =
   | 'upload'
   | 'calibrate'
-  | 'layout'
   | 'review'
   | 'complete';
 

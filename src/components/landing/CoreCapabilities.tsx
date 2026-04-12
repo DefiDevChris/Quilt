@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-4 text-[var(--color-text-dim)] font-medium">
-      <div className="w-6 h-6 rounded-full bg-[#ff8d49]/10 flex items-center justify-center text-[#ff8d49] mt-0.5 flex-shrink-0">
+      <div className="w-6 h-6 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0" style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}>
         <svg
           width="14"
           height="14"
@@ -26,12 +27,12 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 /* 6x6 quilt grid -- a simplified Ohio Star / Nine-Patch pattern */
 const QUILT_GRID: string[][] = [
-  ['#ff8d49', '#FFF5E6', '#FFC7C7', '#FFF5E6', '#ff8d49', '#FFF5E6'],
-  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
-  ['#FFC7C7', '#ff8d49', '#FFF5E6', '#ff8d49', '#FFC7C7', '#ff8d49'],
-  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
-  ['#ff8d49', '#FFF5E6', '#FFC7C7', '#FFF5E6', '#ff8d49', '#FFF5E6'],
-  ['#FFF5E6', '#FFC7C7', '#ff8d49', '#FFC7C7', '#FFF5E6', '#FFC7C7'],
+  [COLORS.primary, '#FFF5E6', COLORS.accent, '#FFF5E6', COLORS.primary, '#FFF5E6'],
+  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
+  [COLORS.accent, COLORS.primary, '#FFF5E6', COLORS.primary, COLORS.accent, COLORS.primary],
+  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
+  [COLORS.primary, '#FFF5E6', COLORS.accent, '#FFF5E6', COLORS.primary, '#FFF5E6'],
+  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
 ];
 
 function StudioPreviewMockup() {
@@ -66,7 +67,7 @@ function StudioPreviewMockup() {
             <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="px-2 py-0.5 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[8px]">
+            <div className="px-2 py-0.5 text-[var(--color-text)] font-bold text-[8px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
               Main
             </div>
             <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
@@ -126,8 +127,9 @@ function StudioPreviewMockup() {
               ) : (
                 <div
                   key={i}
-                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${(tool as { active?: boolean }).active ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
+                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${(tool as { active?: boolean }).active ? '' : 'text-[var(--color-text-dim)]'
                     }`}
+                  style={(tool as { active?: boolean }).active ? { color: COLORS.primary } : undefined}
                 >
                   <svg
                     width="12"
@@ -171,7 +173,8 @@ function StudioPreviewMockup() {
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? '' : 'text-[var(--color-text-dim)]'}`}
+                  style={i === 0 ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary } : undefined}
                 >
                   <svg
                     width="8"
@@ -246,7 +249,7 @@ export default function CoreCapabilities() {
               >
                 Tools quilters actually need.
                 <br />
-                <span className="text-[#ff8d49]">Built by quilters who care.</span>
+                <span style={{ color: COLORS.primary }}>Built by quilters who care.</span>
               </h2>
             </div>
 
@@ -269,7 +272,14 @@ export default function CoreCapabilities() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center bg-[#ff8d49] text-[var(--color-text)] font-bold px-8 py-4 rounded-full text-lg hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="inline-flex items-center justify-center text-[var(--color-text)] font-bold px-8 py-4 rounded-full text-lg"
+              style={{
+                backgroundColor: COLORS.primary,
+                boxShadow: SHADOW.brand,
+                transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
             >
               See What You Can Create
             </Link>

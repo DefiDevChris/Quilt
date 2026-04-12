@@ -6,6 +6,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { computeFenceAreas } from '@/lib/fence-engine';
+import { FENCE } from '@/lib/design-system';
 import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
 
@@ -34,44 +35,16 @@ type FabricObject = {
 };
 
 /** Fill colors by fence role — normal (applied) mode. */
-const ROLE_FILLS: Record<LayoutAreaRole, string> = {
-  'block-cell': 'rgba(255, 255, 255, 0.6)',
-  sashing: '#e8dbcf',
-  cornerstone: '#e5d5c5',
-  border: '#d5c8b8',
-  binding: '#8a7c6f',
-  edging: '#6b5d50',
-};
+const ROLE_FILLS = FENCE.normal.fills;
 
 /** Fill colors by fence role — preview mode (transparent). */
-const PREVIEW_FILLS: Record<LayoutAreaRole, string> = {
-  'block-cell': 'rgba(249, 160, 107, 0.15)',
-  sashing: 'rgba(138, 124, 111, 0.15)',
-  cornerstone: 'rgba(138, 124, 111, 0.12)',
-  border: 'rgba(249, 160, 107, 0.15)',
-  binding: 'rgba(249, 160, 107, 0.10)',
-  edging: 'rgba(0, 0, 0, 0.08)',
-};
+const PREVIEW_FILLS = FENCE.preview.fills;
 
 /** Stroke colors by fence role. */
-const ROLE_STROKES: Record<LayoutAreaRole, string> = {
-  'block-cell': '#b8a698',
-  sashing: '#b8a698',
-  cornerstone: '#a89888',
-  border: '#b8a698',
-  binding: '#6b5d50',
-  edging: '#4a3f35',
-};
+const ROLE_STROKES = FENCE.normal.strokes;
 
 /** Stroke colors for preview mode — dashed, lighter. */
-const PREVIEW_STROKES: Record<LayoutAreaRole, string> = {
-  'block-cell': 'rgba(249, 160, 107, 0.4)',
-  sashing: 'rgba(138, 124, 111, 0.4)',
-  cornerstone: 'rgba(138, 124, 111, 0.35)',
-  border: 'rgba(249, 160, 107, 0.4)',
-  binding: 'rgba(249, 160, 107, 0.3)',
-  edging: 'rgba(0, 0, 0, 0.2)',
-};
+const PREVIEW_STROKES = FENCE.preview.strokes;
 
 /**
  * Build a LayoutTemplate from the current layoutStore state.

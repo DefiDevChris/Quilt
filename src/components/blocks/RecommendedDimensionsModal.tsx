@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   BLOCK_OVERLAYS,
   LAYOUT_OVERLAYS,
@@ -120,6 +120,16 @@ export function RecommendedDimensionsModal({
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
   const [lockAspect, setLockAspect] = useState(true);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    dialogRef.current?.focus();
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const selectedBlock = useMemo(
     () => BLOCK_OVERLAYS.find((b) => b.svgPath === selectedOverlay),
@@ -159,11 +169,18 @@ export function RecommendedDimensionsModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1a1a1a]/60">
-      <div className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="recommended-dimensions-title"
+        tabIndex={-1}
+        className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
           <div>
-            <h2 className="text-[24px] leading-[32px] text-[#1a1a1a]">Recommended Dimensions</h2>
+            <h2 id="recommended-dimensions-title" className="text-[24px] leading-[32px] text-[#1a1a1a]">Recommended Dimensions</h2>
             <p className="text-[14px] leading-[20px] text-[#4a4a4a] mt-1">
               Maintains exact aspect ratio
             </p>
@@ -171,6 +188,7 @@ export function RecommendedDimensionsModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close"
             className="p-2 rounded-lg hover:bg-[#ff8d49]/10 transition-colors duration-150"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -236,11 +254,12 @@ export function RecommendedDimensionsModal({
 
           {/* Custom dimensions */}
           <div className="border-t border-[#d4d4d4] pt-6">
-            <h3 className="text-[18px] leading-[28px] text-[#1a1a1a] mb-3">Custom Dimensions</h3>
+            <h3 id="custom-dimensions-heading" className="text-[18px] leading-[28px] text-[#1a1a1a] mb-3">Custom Dimensions</h3>
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Width (in)</label>
+                <label htmlFor="custom-width" className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Width (in)</label>
                 <input
+                  id="custom-width"
                   type="number"
                   value={customWidth}
                   onChange={(e) => {
@@ -264,6 +283,7 @@ export function RecommendedDimensionsModal({
               <button
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
+                aria-label={lockAspect ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
                 className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]' : 'bg-[var(--color-surface)] text-[#4a4a4a] border-[#d4d4d4]'
                   }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
@@ -284,8 +304,9 @@ export function RecommendedDimensionsModal({
               </button>
 
               <div className="flex-1">
-                <label className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Height (in)</label>
+                <label htmlFor="custom-height" className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Height (in)</label>
                 <input
+                  id="custom-height"
                   type="number"
                   value={customHeight}
                   onChange={(e) => {

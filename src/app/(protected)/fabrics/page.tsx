@@ -5,6 +5,9 @@ import { Search } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { BrandedPage } from '@/components/layout/BrandedPage';
+import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 interface FabricItem {
   id: string;
@@ -88,7 +91,7 @@ export default function FabricsPage() {
   }, [scope, page, debouncedSearch, colorFamily]);
 
   return (
-    <div className="space-y-10">
+    <BrandedPage showMascots mascotCount={2}>
       <PageHeader
         label="Archives"
         title="Material Library"
@@ -101,7 +104,7 @@ export default function FabricsPage() {
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
-        <div className="flex gap-2 p-1 bg-[#d4d4d4] border border-[#d4d4d4] rounded-lg w-fit">
+        <div className="flex gap-2 p-1 rounded-lg w-fit" style={{ backgroundColor: COLORS.border, border: `1px solid ${COLORS.border}` }}>
           {(['system', 'user'] as const).map((s) => (
             <button
               key={s}
@@ -110,10 +113,25 @@ export default function FabricsPage() {
                 setScope(s);
                 setPage(1);
               }}
-              className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${scope === s
-                ? 'bg-[#1a1a1a] text-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'text-[#4a4a4a] hover:bg-[#d4d4d4]/60'
-                }`}
+              className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors`}
+              style={{
+                transitionDuration: `${MOTION.transitionDuration}ms`,
+                transitionTimingFunction: MOTION.transitionEasing,
+                ...(scope === s
+                  ? { backgroundColor: COLORS.text, color: COLORS.bg, boxShadow: SHADOW.brand }
+                  : { color: COLORS.textDim }
+                ),
+              }}
+              onMouseEnter={(e) => {
+                if (scope !== s) {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = `${COLORS.border}99`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (scope !== s) {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+                }
+              }}
             >
               {s === 'system' ? 'Studio Archive' : 'Personal Collection'}
             </button>
@@ -124,13 +142,37 @@ export default function FabricsPage() {
       {/* Search + Color filter */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="md:col-span-3 relative group">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-[#4a4a4a] group-focus-within:text-[#ff8d49] transition-colors duration-150" size={20} />
+          <Search
+            className="absolute left-5 top-1/2 -translate-y-1/2 transition-colors"
+            style={{
+              color: COLORS.textDim,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+            }}
+            size={20}
+          />
           <input
             type="text"
             placeholder="Filter archive by name or manufacturer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-14 pr-6 py-4 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a]/50 font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 transition-colors duration-150"
+            className="w-full pl-14 pr-6 py-4 border rounded-lg font-medium focus:outline-none focus:ring-2 transition-colors"
+            style={{
+              backgroundColor: COLORS.surface,
+              borderColor: COLORS.border,
+              color: COLORS.text,
+              boxShadow: 'none',
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = `${COLORS.primary}40`;
+              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color = COLORS.primary;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = COLORS.border;
+              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color = COLORS.textDim;
+            }}
           />
         </div>
 
@@ -140,7 +182,20 @@ export default function FabricsPage() {
             setColorFamily(e.target.value);
             setPage(1);
           }}
-          className="px-6 py-4 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20 focus:border-[#ff8d49]/40 appearance-none cursor-pointer transition-colors duration-150"
+          className="px-6 py-4 border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 appearance-none cursor-pointer transition-colors"
+          style={{
+            backgroundColor: COLORS.surface,
+            borderColor: COLORS.border,
+            color: COLORS.text,
+            transitionDuration: `${MOTION.transitionDuration}ms`,
+            transitionTimingFunction: MOTION.transitionEasing,
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = `${COLORS.primary}40`;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = COLORS.border;
+          }}
         >
           <option value="">Spectrum: All</option>
           {COLOR_FAMILIES.map((c) => (
@@ -152,8 +207,8 @@ export default function FabricsPage() {
       </div>
 
       {/* Results count */}
-      <div className="flex items-center justify-between border-b border-[#d4d4d4] pb-4">
-        <p className="text-xs text-[#4a4a4a]">
+      <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: COLORS.border }}>
+        <p className="text-xs" style={{ color: COLORS.textDim }}>
           Showing {loading ? '...' : total} Entries
         </p>
       </div>
@@ -162,17 +217,21 @@ export default function FabricsPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className="aspect-square bg-[#d4d4d4]/50 rounded-lg animate-pulse border border-[#d4d4d4]/10" />
+            <div key={i} className="aspect-square rounded-lg animate-pulse border" style={{ backgroundColor: `${COLORS.border}80`, borderColor: `${COLORS.border}1a` }} />
           ))}
         </div>
       ) : fabrics.length === 0 ? (
-        <div className="py-24 text-center bg-[var(--color-bg)] border border-[#d4d4d4] border-dashed rounded-lg">
-          <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
-            No Entries Found
+        <div className="py-24 text-center">
+          <div className="mb-6">
+            <QuiltPiece size={120} opacity={25} strokeWidth={3} stitchGap={8} color="secondary" />
+          </div>
+          <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
+          <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
+            No fabrics found
           </h3>
-          <p className="text-[#4a4a4a] text-sm">
+          <p className="text-body-md text-[var(--color-text-dim)] max-w-sm mx-auto">
             {debouncedSearch || colorFamily
-              ? 'No materials match your current filter parameters.'
+              ? 'No materials match your current filters. Try adjusting your search.'
               : 'Your personal material collection is currently empty.'}
           </p>
         </div>
@@ -183,7 +242,19 @@ export default function FabricsPage() {
             return (
               <div
                 key={fabric.id}
-                className="group relative rounded-lg border border-[#d4d4d4]/30 bg-[var(--color-surface)] overflow-hidden hover:border-[#ff8d49]/40 transition-colors duration-150"
+                className="group relative rounded-lg border overflow-hidden transition-colors"
+                style={{
+                  borderColor: `${COLORS.border}4d`,
+                  backgroundColor: COLORS.surface,
+                  transitionDuration: `${MOTION.transitionDuration}ms`,
+                  transitionTimingFunction: MOTION.transitionEasing,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = `${COLORS.primary}66`;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = `${COLORS.border}4d`;
+                }}
               >
                 <div className="aspect-square relative overflow-hidden">
                   {imgSrc ? (
@@ -194,17 +265,30 @@ export default function FabricsPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-[#d4d4d4]/30">
-                      <p className="text-[10px] text-[#4a4a4a]/40">No Preview</p>
+                    <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: `${COLORS.border}4d` }}>
+                      <p className="text-[10px]" style={{ color: `${COLORS.textDim}66` }}>No Preview</p>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-[#1a1a1a]/0 group-hover:bg-[#1a1a1a]/5 transition-colors duration-150" />
+                  <div
+                    className="absolute inset-0 transition-colors"
+                    style={{
+                      backgroundColor: `${COLORS.text}00`,
+                      transitionDuration: `${MOTION.transitionDuration}ms`,
+                      transitionTimingFunction: MOTION.transitionEasing,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.text}0d`;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.text}00`;
+                    }}
+                  />
                 </div>
 
-                <div className="p-4 bg-[var(--color-surface)]">
-                  <p className="text-xs font-bold text-[#1a1a1a] truncate">{fabric.name}</p>
+                <div className="p-4" style={{ backgroundColor: COLORS.surface }}>
+                  <p className="text-xs font-bold truncate" style={{ color: COLORS.text }}>{fabric.name}</p>
                   {fabric.manufacturer && (
-                    <p className="text-[10px] text-[#4a4a4a] mt-1 opacity-60">{fabric.manufacturer}</p>
+                    <p className="text-[10px] mt-1" style={{ color: COLORS.textDim, opacity: 0.6 }}>{fabric.manufacturer}</p>
                   )}
                 </div>
               </div>
@@ -220,24 +304,50 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border border-[#d4d4d4]/30 rounded-lg hover:bg-[#d4d4d4] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              borderColor: `${COLORS.border}4d`,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+            }}
+            onMouseEnter={(e) => {
+              if (!e.currentTarget.disabled) {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.border;
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+            }}
           >
             Previous
           </button>
           <div className="flex flex-col items-center">
-            <span className="text-xs text-[#4a4a4a]">Index</span>
-            <span className="text-sm font-bold text-[#1a1a1a]">{page} <span className="text-[#4a4a4a]/40">/</span> {totalPages}</span>
+            <span className="text-xs" style={{ color: COLORS.textDim }}>Index</span>
+            <span className="text-sm font-bold" style={{ color: COLORS.text }}>{page} <span style={{ color: `${COLORS.textDim}66` }}>/</span> {totalPages}</span>
           </div>
           <button
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border border-[#d4d4d4]/30 rounded-lg hover:bg-[#d4d4d4] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              borderColor: `${COLORS.border}4d`,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+            }}
+            onMouseEnter={(e) => {
+              if (!e.currentTarget.disabled) {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.border;
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+            }}
           >
             Next
           </button>
         </div>
       )}
-    </div>
+    </BrandedPage>
   );
 }

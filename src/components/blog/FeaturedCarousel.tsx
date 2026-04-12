@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, animate, PanInfo } from 'framer-motion';
 import Link from 'next/link';
+import { COLORS, MOTION } from '@/lib/design-system';
 
 export interface BlogPost {
   id: string;
@@ -147,7 +148,7 @@ function Slide({
           <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             {post.category}
           </span>
-          <span className="w-6 h-px bg-[#ff8d49]" />
+          <span className="w-6 h-px" style={{ backgroundColor: COLORS.primary }} />
           <time className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             {post.createdAt?.toLocaleDateString('en-US', {
               month: 'long',
@@ -159,8 +160,10 @@ function Slide({
 
         <Link href={`/blog/${post.slug}`} className="group block">
           <h2
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[var(--color-text)] mb-6 transition-colors duration-150 group-hover:text-[#ff8d49]"
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[var(--color-text)] mb-6"
             style={{ fontFamily: 'Spline Sans, sans-serif' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '')}
           >
             {post.title}
           </h2>

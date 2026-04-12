@@ -1,6 +1,7 @@
 'use client';
 
 import { Mail } from 'lucide-react';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 export function DeleteAccountSection() {
   const handleDeleteRequest = () => {
@@ -19,17 +20,17 @@ Thank you`);
   return (
     <div className="space-y-10 py-4">
       <div className="flex items-center gap-4">
-        <div className="w-1.5 h-8 bg-[#ff8d49] rounded-lg" />
+        <div className="w-1.5 h-8 rounded-lg" style={{ backgroundColor: COLORS.primary }} />
         <div>
-          <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-1">Account Settings</p>
+          <p className="text-[14px] leading-[20px] mb-1" style={{ color: COLORS.primary }}>Account Settings</p>
           <h2 className="text-[24px] leading-[32px] text-[var(--color-text)]">Delete Account</h2>
         </div>
       </div>
 
-      <div className="rounded-lg border border-[#ff8d49]/20 bg-[#ff8d49]/5 p-8 space-y-8 relative overflow-hidden">
+      <div className="rounded-lg p-8 space-y-8 relative overflow-hidden" style={{ borderColor: `${COLORS.primary}33`, backgroundColor: `${COLORS.primary}0d`, borderWidth: '1px', borderStyle: 'solid' }}>
         <div className="flex flex-col md:flex-row gap-10 items-start relative z-10">
-          <div className="w-12 h-12 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0 border border-[#ff8d49]/20">
-            <Mail size={24} className="text-[#ff8d49]" />
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33`, borderWidth: '1px', borderStyle: 'solid' }}>
+            <Mail size={24} style={{ color: COLORS.primary }} />
           </div>
 
           <div className="flex-1 space-y-6">
@@ -45,7 +46,14 @@ Thank you`);
 
             <button
               onClick={handleDeleteRequest}
-              className="group flex items-center gap-4 px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="group flex items-center gap-4 px-8 py-4 text-[var(--color-text)] rounded-full text-[16px] leading-[24px]"
+              style={{
+                backgroundColor: COLORS.primary,
+                boxShadow: SHADOW.brand,
+                transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
             >
               <Mail size={16} />
               Request Account Deletion

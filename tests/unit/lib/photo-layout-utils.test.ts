@@ -6,8 +6,6 @@ import {
   sortCornersClockwise,
   warpPerspective,
 } from '@/lib/perspective-engine';
-import { buildBlockPattern } from '@/lib/photo-layout-utils';
-import { BLOCK_GRID_PRESETS, getBlockGridPreset } from '@/lib/block-grid-presets';
 import type { QuadCorners } from '@/lib/photo-layout-types';
 
 // jsdom does not ship an ImageData implementation. The perspective engine
@@ -29,18 +27,17 @@ if (typeof (globalThis as { ImageData?: unknown }).ImageData === 'undefined') {
 }
 
 /**
- * Perspective-first pipeline tests — replaces the old 15-step CV pipeline
- * tests that were deleted with the heuristic detection code. Focuses on
- * math correctness (homography, warp, grid generation) rather than UI.
+ * Perspective pipeline tests — math correctness for the homography /
+ * warp layer consumed by the fabric-first segmentation engine.
  */
 describe('photo-layout pipeline', () => {
   describe('sortCornersClockwise', () => {
     it('returns corners in TL,TR,BR,BL order regardless of input order', () => {
       const corners: QuadCorners = [
         { x: 100, y: 100 }, // BR
-        { x: 0, y: 0 },     // TL
-        { x: 100, y: 0 },   // TR
-        { x: 0, y: 100 },   // BL
+        { x: 0, y: 0 }, // TL
+        { x: 100, y: 0 }, // TR
+        { x: 0, y: 100 }, // BL
       ];
       const sorted = sortCornersClockwise(corners);
       expect(sorted).not.toBeNull();
@@ -98,48 +95,6 @@ describe('photo-layout pipeline', () => {
       // Middle pixel should be solid green.
       const mid = (25 * 50 + 25) * 4;
       expect(warped!.data[mid + 1]).toBeGreaterThan(150);
-    });
-  });
-
-  describe('block grid presets', () => {
-    it('exposes a 9-patch preset', () => {
-      const preset = getBlockGridPreset('grid-3x3');
-      expect(preset).toBeDefined();
-      expect(preset!.rows).toBe(3);
-      expect(preset!.cols).toBe(3);
-    });
-
-    it('includes HST variants with diagonal splits', () => {
-      const hst = BLOCK_GRID_PRESETS.find((p) => p.id === 'hst-2x2');
-      expect(hst).toBeDefined();
-      expect(hst!.splits?.length).toBe(4);
-    });
-  });
-
-  describe('buildBlockPattern', () => {
-    it('produces one cell per patch for a plain 9-patch', () => {
-      const preset = getBlockGridPreset('grid-3x3')!;
-      const { cells } = buildBlockPattern(preset, 12, 12, null);
-      expect(cells).toHaveLength(9);
-      for (const cell of cells) {
-        expect(cell.polygonInches.length).toBe(4);
-      }
-    });
-
-    it('produces two triangular halves for every HST cell', () => {
-      const preset = getBlockGridPreset('hst-2x2')!;
-      const { cells } = buildBlockPattern(preset, 12, 12, null);
-      // 2x2 = 4 cells, each split into 2 halves.
-      expect(cells).toHaveLength(8);
-      for (const cell of cells) {
-        expect(cell.polygonInches.length).toBe(3);
-      }
-    });
-
-    it('fills cells with a neutral placeholder when no warped image is given', () => {
-      const preset = getBlockGridPreset('grid-2x2')!;
-      const { cells } = buildBlockPattern(preset, 10, 10, null);
-      expect(cells.every((c) => /^#[0-9a-f]{6}$/i.test(c.fabricColor))).toBe(true);
     });
   });
 });

@@ -246,7 +246,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
 
         {/* Cover Image */}
         <div>
-          <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Cover Image</label>
+          <label htmlFor="blog-cover-image" className="block text-sm font-medium text-[#1a1a1a] mb-2">Cover Image</label>
           <div className="space-y-3">
             {formData.featuredImageUrl ? (
               <div className="relative aspect-video max-w-lg rounded-lg overflow-hidden border border-[#d4d4d4]">
@@ -258,6 +258,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                 />
                 <button
                   type="button"
+                  aria-label="Remove cover image"
                   onClick={() => setFormData((prev) => ({ ...prev, featuredImageUrl: '' }))}
                   className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-150"
                 >
@@ -272,7 +273,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                 </button>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-[#d4d4d4] rounded-lg cursor-pointer hover:bg-[var(--color-bg)] transition-colors duration-150">
+              <label htmlFor="blog-cover-upload" className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-[#d4d4d4] rounded-lg cursor-pointer hover:bg-[var(--color-bg)] transition-colors duration-150">
                 <div className="text-center">
                   <svg
                     className="mx-auto h-8 w-8 text-[#4a4a4a]"
@@ -292,6 +293,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   </p>
                 </div>
                 <input
+                  id="blog-cover-upload"
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
@@ -301,15 +303,19 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               </label>
             )}
             {!formData.featuredImageUrl && (
-              <input
-                type="url"
-                value={formData.featuredImageUrl}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, featuredImageUrl: e.target.value }))
-                }
-                className="w-full max-w-lg px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
-                placeholder="Or paste image URL..."
-              />
+              <>
+                <label htmlFor="blog-cover-url" className="sr-only">Cover Image URL</label>
+                <input
+                  id="blog-cover-url"
+                  type="url"
+                  value={formData.featuredImageUrl}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, featuredImageUrl: e.target.value }))
+                  }
+                  className="w-full max-w-lg px-4 py-2.5 bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg text-[#1a1a1a] text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8d49]/20"
+                  placeholder="Or paste image URL..."
+                />
+              </>
             )}
           </div>
         </div>

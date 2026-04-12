@@ -172,12 +172,14 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     >
       {/* Mode selector */}
       <div className="mb-4">
-        <label className="mb-1 block text-xs font-medium text-[var(--color-text)]">Export Type</label>
-        <div className="grid grid-cols-4 gap-2">
+        <label id="pdf-export-type-label" className="mb-1 block text-xs font-medium text-[var(--color-text)]">Export Type</label>
+        <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-labelledby="pdf-export-type-label">
           {(Object.keys(MODE_INFO) as ExportMode[]).map((mode) => (
             <button
               key={mode}
               type="button"
+              role="radio"
+              aria-checked={exportMode === mode}
               onClick={() => setExportMode(mode)}
               className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
                 ? 'border-primary bg-primary text-white'
@@ -205,8 +207,9 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Paper size */}
       <div className="mb-4">
-        <label className="mb-1 block text-xs font-medium text-[var(--color-text)]">Paper Size</label>
+        <label htmlFor="pdf-paper-size" className="mb-1 block text-xs font-medium text-[var(--color-text)]">Paper Size</label>
         <select
+          id="pdf-paper-size"
           value={paperSize}
           onChange={(e) => setPaperSize(e.target.value as PaperSize)}
           className="w-full rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-text)]"

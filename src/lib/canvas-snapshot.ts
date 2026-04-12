@@ -7,6 +7,7 @@
  */
 
 import { GRID_LINE_COLOR } from '@/lib/constants';
+import { DEFAULT_CANVAS } from '@/lib/design-system';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -190,16 +191,16 @@ function extractPiece(obj: Record<string, unknown>): PieceSnapshot | null {
   const rawFill = obj.fill;
   let fill: string;
   if (typeof rawFill === 'string') {
-    fill = rawFill || '#b8a698';
+    fill = rawFill || DEFAULT_CANVAS.stroke;
   } else if (rawFill && typeof rawFill === 'object') {
     // fabric.Pattern — try to extract a representative color.
     // The actual pattern image renders correctly in captureCanvasPng().
     // For structured data (yardage, cutting charts), we use fabricId below.
     const patternObj = rawFill as Record<string, unknown>;
     const sourceEl = patternObj.source as { src?: string } | undefined;
-    fill = sourceEl?.src ? `pattern:${sourceEl.src}` : '#b8a698';
+    fill = sourceEl?.src ? `pattern:${sourceEl.src}` : DEFAULT_CANVAS.stroke;
   } else {
-    fill = '#b8a698';
+    fill = DEFAULT_CANVAS.stroke;
   }
   const fabricId = str(obj, 'fabricId') || undefined;
 

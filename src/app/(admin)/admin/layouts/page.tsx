@@ -376,8 +376,9 @@ function LayoutFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
+              <label htmlFor="layout-name" className="text-sm font-medium text-[#1a1a1a]">Name *</label>
               <input
+                id="layout-name"
                 required
                 type="text"
                 name="name"
@@ -388,8 +389,9 @@ function LayoutFormModal({
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1a1a1a]">Category</label>
+              <label htmlFor="layout-category" className="text-sm font-medium text-[#1a1a1a]">Category</label>
               <select
+                id="layout-category"
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
@@ -406,10 +408,11 @@ function LayoutFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">
+            <label htmlFor="layout-template-data" className="text-sm font-medium text-[#1a1a1a]">
               Template Data (JSON) *
             </label>
             <textarea
+              id="layout-template-data"
               required
               name="templateDataJson"
               value={formData.templateDataJson}
@@ -421,8 +424,9 @@ function LayoutFormModal({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail SVG</label>
+            <label htmlFor="layout-thumbnail-svg" className="text-sm font-medium text-[#1a1a1a]">Thumbnail SVG</label>
             <textarea
+              id="layout-thumbnail-svg"
               name="thumbnailSvg"
               value={formData.thumbnailSvg}
               onChange={handleChange}

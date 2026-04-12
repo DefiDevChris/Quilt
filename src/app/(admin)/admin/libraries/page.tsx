@@ -85,8 +85,9 @@ function FabricForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <h3 className="text-lg font-semibold text-[#1a1a1a]">Add New System Fabric</h3>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
+        <label htmlFor="fabric-name" className="text-sm font-medium text-[#1a1a1a]">Name *</label>
         <input
+          id="fabric-name"
           required
           type="text"
           name="name"
@@ -96,8 +97,9 @@ function FabricForm() {
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">Image URL *</label>
+        <label htmlFor="fabric-image-url" className="text-sm font-medium text-[#1a1a1a]">Image URL *</label>
         <input
+          id="fabric-image-url"
           required
           type="text"
           name="imageUrl"
@@ -108,8 +110,9 @@ function FabricForm() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
+          <label htmlFor="fabric-thumbnail-url" className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
           <input
+            id="fabric-thumbnail-url"
             type="text"
             name="thumbnailUrl"
             value={formData.thumbnailUrl}
@@ -118,8 +121,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Manufacturer</label>
+          <label htmlFor="fabric-manufacturer" className="text-sm font-medium text-[#1a1a1a]">Manufacturer</label>
           <input
+            id="fabric-manufacturer"
             type="text"
             name="manufacturer"
             value={formData.manufacturer}
@@ -128,8 +132,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">SKU</label>
+          <label htmlFor="fabric-sku" className="text-sm font-medium text-[#1a1a1a]">SKU</label>
           <input
+            id="fabric-sku"
             type="text"
             name="sku"
             value={formData.sku}
@@ -138,8 +143,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Collection</label>
+          <label htmlFor="fabric-collection" className="text-sm font-medium text-[#1a1a1a]">Collection</label>
           <input
+            id="fabric-collection"
             type="text"
             name="collection"
             value={formData.collection}
@@ -148,8 +154,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Color Family</label>
+          <label htmlFor="fabric-color-family" className="text-sm font-medium text-[#1a1a1a]">Color Family</label>
           <input
+            id="fabric-color-family"
             type="text"
             name="colorFamily"
             value={formData.colorFamily}
@@ -235,8 +242,9 @@ function BlockForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <h3 className="text-lg font-semibold text-[#1a1a1a]">Add New System Block</h3>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">Name *</label>
+        <label htmlFor="lib-block-name" className="text-sm font-medium text-[#1a1a1a]">Name *</label>
         <input
+          id="lib-block-name"
           required
           type="text"
           name="name"
@@ -247,8 +255,9 @@ function BlockForm() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Category *</label>
+          <label htmlFor="lib-block-category" className="text-sm font-medium text-[#1a1a1a]">Category *</label>
           <input
+            id="lib-block-category"
             required
             type="text"
             name="category"
@@ -258,8 +267,9 @@ function BlockForm() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
+          <label htmlFor="lib-block-subcategory" className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
           <input
+            id="lib-block-subcategory"
             type="text"
             name="subcategory"
             value={formData.subcategory}
@@ -269,8 +279,9 @@ function BlockForm() {
         </div>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">SVG Data *</label>
+        <label htmlFor="lib-block-svg-data" className="text-sm font-medium text-[#1a1a1a]">SVG Data *</label>
         <textarea
+          id="lib-block-svg-data"
           required
           name="svgData"
           value={formData.svgData}
@@ -280,8 +291,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">FabricJS JSON (optional)</label>
+        <label htmlFor="lib-block-fabric-json" className="text-sm font-medium text-[#1a1a1a]">FabricJS JSON (optional)</label>
         <textarea
+          id="lib-block-fabric-json"
           name="fabricJsDataStr"
           value={formData.fabricJsDataStr}
           onChange={handleChange}
@@ -290,8 +302,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
+        <label htmlFor="lib-block-tags" className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
         <input
+          id="lib-block-tags"
           type="text"
           name="tagsStr"
           value={formData.tagsStr}
@@ -300,8 +313,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
+        <label htmlFor="lib-block-thumbnail" className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
         <input
+          id="lib-block-thumbnail"
           type="text"
           name="thumbnailUrl"
           value={formData.thumbnailUrl}
@@ -443,8 +457,9 @@ function ShopManagement() {
         <h4 className="text-sm font-semibold text-[#1a1a1a]">Bulk Toggle by Manufacturer</h4>
         <div className="flex items-end gap-3">
           <div className="flex-1 space-y-1">
-            <label className="text-xs text-[#4a4a4a]">Manufacturer name</label>
+            <label htmlFor="bulk-manufacturer" className="text-xs text-[#4a4a4a]">Manufacturer name</label>
             <input
+              id="bulk-manufacturer"
               type="text"
               value={bulkManufacturer}
               onChange={(e) => setBulkManufacturer(e.target.value)}

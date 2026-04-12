@@ -1,8 +1,6 @@
 'use client';
 
 import { Home, Compass, Bookmark } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 const menuItems = [
   { icon: Home, label: 'Home', active: true },
@@ -16,14 +14,14 @@ interface SidebarProps {
   savedCount?: number;
 }
 
-export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProps) {
+export function Sidebar({ className = '', onSavedClick, savedCount = 0 }: SidebarProps) {
   return (
-    <aside className={cn('w-64 border-r border-[var(--color-border)] bg-white', className)}>
+    <aside className={`w-64 border-r border-[var(--color-border)] bg-white ${className}`}>
       <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
         <div className="p-5 space-y-6">
-          <Button className="w-full bg-[#ff8d49] text-white font-medium py-6 rounded-full text-sm">
+          <button className="w-full bg-[var(--color-primary)] text-white font-medium py-6 rounded-full text-sm transition-colors duration-150 hover:bg-[#e67d3f]">
             Create Post
-          </Button>
+          </button>
 
           <nav className="space-y-1">
             {menuItems.map((item) => (
@@ -35,17 +33,16 @@ export function Sidebar({ className, onSavedClick, savedCount = 0 }: SidebarProp
                     onSavedClick();
                   }
                 }}
-                className={cn(
-                  'flex items-center gap-3 w-full px-4 py-3 rounded-full text-sm font-medium transition-colors duration-150',
+                className={`flex items-center gap-3 w-full px-4 py-3 rounded-full text-sm font-medium transition-colors duration-150 ${
                   item.active
-                    ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
+                    ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                     : 'text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]'
-                )}
+                }`}
               >
                 <item.icon className="h-5 w-5" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.isSaved && savedCount > 0 && (
-                  <span className="text-xs bg-[#ff8d49] text-white px-2 py-0.5 rounded-full font-medium min-w-[20px] text-center">
+                  <span className="text-xs bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-full font-medium min-w-[20px] text-center">
                     {savedCount}
                   </span>
                 )}

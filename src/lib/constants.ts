@@ -57,6 +57,7 @@ export const MOBILE_UPLOADS_MAX_PENDING = 50;
 
 // ── UI Colors & Design System ──
 
+/** @deprecated Use CANVAS.gridLine from design-system instead */
 export const GRID_LINE_COLOR = '#E5E2DD';
 
 export const DEFAULT_QUILT_PALETTE = [
@@ -74,9 +75,11 @@ export const DEFAULT_QUILT_PALETTE = [
   '#4A7C59',
 ] as const;
 
-/** @deprecated Use GRID_LINE_COLOR instead */
-export const PATTERN_PREVIEW_FILL = GRID_LINE_COLOR;
+/** @deprecated Use PATTERN_PREVIEW from design-system instead */
+export const PATTERN_PREVIEW_FILL = '#E5E2DD';
+/** @deprecated Use PATTERN_PREVIEW from design-system instead */
 export const PATTERN_PREVIEW_STROKE = '#c0b8ae';
+/** @deprecated Use PATTERN_PREVIEW from design-system instead */
 export const PATTERN_PREVIEW_ACCENT = '#8B7355';
 
 export const WHITE_FILL = '#ffffff';
@@ -217,12 +220,14 @@ export const SOCIAL_FALLBACK_IMAGES = {
   small: '/images/quilts/quilt_22_porch_railing.png',
 } as const;
 
-// Default canvas colors
+/** @deprecated Use DEFAULT_CANVAS from design-system instead */
 export const DEFAULT_FILL_COLOR = '#ffc8a6';
+/** @deprecated Use DEFAULT_CANVAS from design-system instead */
 export const DEFAULT_STROKE_COLOR = '#4a3f35';
 
-// Default layout colors
+/** @deprecated Use DEFAULT_LAYOUT from design-system instead */
 export const DEFAULT_SASHING_COLOR = '#e5d5c5';
+/** @deprecated Use DEFAULT_LAYOUT from design-system instead */
 export const DEFAULT_BORDER_COLOR = '#4a3f35';
 
 // ── PDF Page Sizes ──

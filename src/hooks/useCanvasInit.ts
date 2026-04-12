@@ -8,6 +8,7 @@ import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-util
 import { applyCustomControls, applyHoverEffects } from '@/lib/fabric-controls';
 import { registerFabricCustomProperties } from '@/lib/fabric-custom-props';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { CANVAS } from '@/lib/design-system';
 import type { Project } from '@/types/project';
 
 export function useCanvasInit(
@@ -259,7 +260,7 @@ export function useCanvasInit(
       let hoveredPatchPrevStroke: string | null = null;
       let hoveredPatchPrevStrokeWidth: number | null = null;
 
-      const PATCH_HOVER_STROKE = '#f9a06b';
+      const PATCH_HOVER_STROKE = CANVAS.patchHover;
       const PATCH_HOVER_STROKE_WIDTH = 2;
 
       const onPatchHover = (e: { target?: unknown; subTargets?: unknown[] }) => {

@@ -2,17 +2,7 @@
 
 import { useState } from 'react';
 import { Bell, Search, ChevronDown, Heart, MessageCircle, UserPlus, Bookmark } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Button, Input, Avatar, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui';
 import Image from 'next/image';
 
 interface HeaderProps {
@@ -52,7 +42,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               placeholder="Search posts, people, hashtags..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full pl-11 pr-4 h-11 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-sm focus-visible:ring-[#ff8d49]/20"
+              className="w-full pl-11 pr-4 h-11 bg-[var(--color-bg)] text-sm"
             />
           </div>
         </div>
@@ -64,10 +54,10 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               variant="ghost"
               size="icon"
               onClick={onSavedClick}
-              className="h-10 w-10 relative text-[var(--color-text-dim)] rounded-full"
+              className="h-10 w-10 relative text-[var(--color-text-dim)]"
             >
               <Bookmark className="h-5 w-5" />
-              <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-[#ff8d49] text-[10px] font-bold text-white flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-[var(--color-primary)] text-[10px] font-bold text-white flex items-center justify-center">
                 {savedCount}
               </span>
             </Button>
@@ -75,9 +65,9 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 relative text-[var(--color-text-dim)] rounded-full">
+              <Button variant="ghost" size="icon" className="h-10 w-10 relative text-[var(--color-text-dim)]">
                 <Bell className="h-5 w-5" />
-                <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-[#ff8d49] text-[10px] font-bold text-white flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-[var(--color-primary)] text-[10px] font-bold text-white flex items-center justify-center">
                   3
                 </span>
               </Button>
@@ -89,7 +79,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                 <div className="flex items-start gap-3">
                   <div className="relative shrink-0">
                     <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop" alt="" className="h-10 w-10 rounded-full" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff8d49] flex items-center justify-center">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
                       <Heart className="h-3 w-3 text-white fill-white" />
                     </div>
                   </div>
@@ -103,7 +93,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                 <div className="flex items-start gap-3">
                   <div className="relative shrink-0">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="" className="h-10 w-10 rounded-full" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff8d49] flex items-center justify-center">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
                       <MessageCircle className="h-3 w-3 text-white fill-white" />
                     </div>
                   </div>
@@ -117,7 +107,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                 <div className="flex items-start gap-3">
                   <div className="relative shrink-0">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop" alt="" className="h-10 w-10 rounded-full" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff8d49] flex items-center justify-center">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
                       <UserPlus className="h-3 w-3 text-white" />
                     </div>
                   </div>
@@ -133,10 +123,11 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2.5 pl-2 cursor-pointer py-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150">
-                <Avatar className="h-9 w-9 border-2 border-[#ff8d49]">
-                  <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
+                <Avatar
+                  className="h-9 w-9 border-2 border-[var(--color-primary)]"
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+                  fallback="SM"
+                />
                 <div className="text-left leading-tight">
                   <p className="text-sm font-semibold text-[var(--color-text)]">Sarah Mitchell</p>
                   <p className="text-xs text-[var(--color-text-dim)]">@sarahm</p>
@@ -148,7 +139,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5">Profile</DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5" onClick={onSavedClick}>
                 Saved Posts
-                {savedCount > 0 && <span className="ml-auto text-xs bg-[#ff8d49] text-white px-2 py-0.5 rounded-full">{savedCount}</span>}
+                {savedCount > 0 && <span className="ml-auto text-xs bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-full">{savedCount}</span>}
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5">Settings</DropdownMenuItem>
               <DropdownMenuSeparator className="mx-0" />

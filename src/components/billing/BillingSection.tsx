@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, PRO_YEARLY_SAVINGS_PERCENT } from '@/lib/constants';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { useToast } from '@/components/ui/ToastProvider';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 type SubscriptionInfo = {
   plan: 'free' | 'pro';
@@ -86,20 +87,20 @@ export function BillingSection() {
   return (
     <div id="billing" className="space-y-12 py-8">
       <div>
-        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-2">Studio Access</p>
+        <p className="text-[14px] leading-[20px] mb-2" style={{ color: COLORS.primary }}>Studio Access</p>
         <h2 className="text-[24px] leading-[32px] text-[var(--color-text)]">Licensing & Plans</h2>
       </div>
 
       {successMessage && (
-        <div className="rounded-lg border border-[#ffc8a6]/30 bg-[#ffc8a6]/10 p-5">
+        <div className="rounded-lg p-5" style={{ borderColor: `${COLORS.secondary}4d`, backgroundColor: `${COLORS.secondary}1a` }}>
           <p className="text-[16px] leading-[24px] text-[var(--color-text)]">{successMessage}</p>
         </div>
       )}
 
       {isPastDue && (
-        <div className="rounded-lg border border-[#ff8d49]/30 bg-[#ff8d49]/5 p-6 space-y-4">
+        <div className="rounded-lg p-6 space-y-4" style={{ borderColor: `${COLORS.primary}4d`, backgroundColor: `${COLORS.primary}0d` }}>
           <div>
-            <h3 className="text-[16px] leading-[24px] text-[#ff8d49] mb-1">Payment Failed</h3>
+            <h3 className="text-[16px] leading-[24px] mb-1" style={{ color: COLORS.primary }}>Payment Failed</h3>
             <p className="text-[16px] leading-[24px] text-[var(--color-text-dim)]">
               Your last payment was unsuccessful. Please update your payment method within 7 days to maintain Pro status.
             </p>
@@ -108,7 +109,10 @@ export function BillingSection() {
             type="button"
             onClick={handleManageSubscription}
             disabled={isPortalLoading}
-            className="rounded-full bg-[#ff8d49] text-[var(--color-text)] px-6 py-2.5 text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50"
+            className="rounded-full text-[var(--color-text)] px-6 py-2.5 text-[16px] leading-[24px] transition-colors duration-150 disabled:opacity-50"
+            style={{ backgroundColor: COLORS.primary }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
           >
             {isPortalLoading ? 'Updating...' : 'Update Payment Method'}
           </button>
@@ -121,13 +125,13 @@ export function BillingSection() {
           <div className="space-y-1">
             <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">Current Membership</p>
             <div className="flex items-center gap-3">
-              <span className={`text-[24px] leading-[32px] ${isPro ? 'text-[#ff8d49]' : 'text-[var(--color-text)]'}`}>
+              <span className={`text-[24px] leading-[32px]`} style={isPro ? { color: COLORS.primary } : {}}>
                 {isPro ? 'Pro Member' : 'Free Member'}
               </span>
               {isLoading ? (
-                <div className="w-4 h-4 rounded-lg bg-[#ffc8a6] animate-pulse" />
+                <div className="w-4 h-4 rounded-lg animate-pulse" style={{ backgroundColor: COLORS.secondary }} />
               ) : (
-                <div className={`w-2 h-2 rounded-full ${isPro ? 'bg-[#ff8d49] animate-pulse' : 'bg-[var(--color-text-dim)]'}`} />
+                <div className={`w-2 h-2 rounded-full ${isPro ? 'animate-pulse' : 'bg-[var(--color-text-dim)]'}`} style={isPro ? { backgroundColor: COLORS.primary } : {}} />
               )}
             </div>
           </div>
@@ -137,7 +141,9 @@ export function BillingSection() {
               type="button"
               onClick={handleManageSubscription}
               disabled={isPortalLoading}
-              className="rounded-full border border-[var(--color-border)] px-6 py-3 text-[16px] leading-[24px] text-[var(--color-text)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+              className="rounded-full border border-[var(--color-border)] px-6 py-3 text-[16px] leading-[24px] text-[var(--color-text)] transition-colors duration-150"
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               {isPortalLoading ? 'Opening...' : 'Manage Subscription'}
             </button>
@@ -158,8 +164,8 @@ export function BillingSection() {
                 })}
               </p>
             </div>
-            <div className={`px-3 py-1 rounded-full text-[14px] leading-[20px] ${subscription.status === 'active' ? 'bg-[#ffc8a6]/20 text-[#ff8d49]' : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
-              }`}>
+            <div className={`px-3 py-1 rounded-full text-[14px] leading-[20px] ${subscription.status === 'active' ? '' : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
+              }`} style={subscription.status === 'active' ? { backgroundColor: `${COLORS.secondary}33`, color: COLORS.primary } : {}}>
               {subscription.status}
             </div>
           </div>
@@ -169,11 +175,11 @@ export function BillingSection() {
       {/* Upgrade section (free only) */}
       {!isPro && (
         <div className="rounded-lg bg-[var(--color-text)] text-[var(--color-surface)] p-10 space-y-8 shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-[#ff8d49]" />
+          <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: COLORS.primary }} />
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
             <div className="space-y-4">
-              <p className="text-[14px] leading-[20px] text-[#ff8d49]">Upgrade to Pro</p>
+              <p className="text-[14px] leading-[20px]" style={{ color: COLORS.primary }}>Upgrade to Pro</p>
               <h3 className="text-[32px] leading-[40px] text-[var(--color-surface)]">Unlock the Full Studio.</h3>
               <p className="text-[16px] leading-[24px] text-[var(--color-text-dim)] max-w-sm">
                 Unlock professional-grade exports, unlimited projects, and the complete material library.
@@ -186,19 +192,21 @@ export function BillingSection() {
                 <button
                   type="button"
                   onClick={() => setBillingInterval('monthly')}
-                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'monthly' ? 'bg-[#ff8d49] text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-surface)]'
+                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'monthly' ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-surface)]'
                     }`}
+                  style={billingInterval === 'monthly' ? { backgroundColor: COLORS.primary } : {}}
                 >
                   Monthly
                 </button>
                 <button
                   type="button"
                   onClick={() => setBillingInterval('yearly')}
-                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'yearly' ? 'bg-[#ff8d49] text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-surface)]'
+                  className={`px-4 py-2 rounded-full text-[14px] leading-[20px] transition-colors duration-150 ${billingInterval === 'yearly' ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-surface)]'
                     }`}
+                  style={billingInterval === 'yearly' ? { backgroundColor: COLORS.primary } : {}}
                 >
                   Yearly
-                  <span className="ml-2 text-[14px] leading-[20px] text-[#ff8d49]">-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
+                  <span className="ml-2 text-[14px] leading-[20px]" style={{ color: COLORS.primary }}>-{PRO_YEARLY_SAVINGS_PERCENT}%</span>
                 </button>
               </div>
 
@@ -224,7 +232,10 @@ export function BillingSection() {
             type="button"
             onClick={handleUpgrade}
             disabled={isCheckoutLoading}
-            className="w-full h-16 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative z-10"
+            className="w-full h-16 rounded-full text-[var(--color-text)] text-[16px] leading-[24px] transition-colors duration-150 disabled:opacity-50 relative z-10"
+            style={{ backgroundColor: COLORS.primary, boxShadow: SHADOW.brand }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
           >
             {isCheckoutLoading ? 'Processing...' : 'Upgrade to Pro'}
           </button>
@@ -266,8 +277,8 @@ export function BillingSection() {
 
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <p className="text-[14px] leading-[20px] text-[#ff8d49]">Pro Plan</p>
-            <h4 className="text-[16px] leading-[24px] text-[#ff8d49]">Pro Collective</h4>
+            <p className="text-[14px] leading-[20px]" style={{ color: COLORS.primary }}>Pro Plan</p>
+            <h4 className="text-[16px] leading-[24px]" style={{ color: COLORS.primary }}>Pro Collective</h4>
           </div>
           <ul className="space-y-4">
             <li className="text-[16px] leading-[24px] text-[var(--color-text)]">Everything in Free, plus:</li>
@@ -281,7 +292,7 @@ export function BillingSection() {
               'Server-side project sync'
             ].map((item) => (
               <li key={item} className="flex items-center gap-3 text-[16px] leading-[24px] text-[var(--color-text)]">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]" />
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS.primary }} />
                 {item}
               </li>
             ))}

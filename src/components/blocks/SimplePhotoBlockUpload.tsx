@@ -699,8 +699,9 @@ export function SimplePhotoBlockUpload({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Block Name *</label>
+              <label htmlFor="photo-block-name" className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Block Name *</label>
               <input
+                id="photo-block-name"
                 type="text"
                 value={blockName}
                 onChange={(e) => setBlockName(e.target.value)}
@@ -710,8 +711,9 @@ export function SimplePhotoBlockUpload({
               />
             </div>
             <div>
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Category</label>
+              <label htmlFor="photo-block-category" className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Category</label>
               <input
+                id="photo-block-category"
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -721,8 +723,9 @@ export function SimplePhotoBlockUpload({
               />
             </div>
             <div className="col-span-2">
-              <label className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Tags</label>
+              <label htmlFor="photo-block-tags" className="mb-1 block text-[12px] leading-[16px] font-medium text-[#4a4a4a]">Tags</label>
               <input
+                id="photo-block-tags"
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}

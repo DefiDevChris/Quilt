@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { User } from '@/types/social';
-import { cn } from '@/lib/utils';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -20,28 +18,50 @@ type ProfileTab = 'posts' | 'about';
 export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, followersCount = 0, followingCount = 0 }: UserProfileModalProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
   const [isFollowing, setIsFollowing] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      dialogRef.current?.focus();
+    } else {
+      document.body.style.overflow = 'unset';
+    }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="user-profile-title"
+        tabIndex={-1}
+        className="relative bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto outline-none"
+      >
         <button
           onClick={onClose}
+          aria-label="Close"
           className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full hover:bg-white"
         >
           <X className="h-5 w-5 text-[var(--color-text-dim)]" />
         </button>
 
         {/* Cover */}
-        <div className="h-32 bg-gradient-to-r from-[#ff8d49] to-[#ffc8a6] rounded-t-2xl relative">
+        <div className="h-32 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-t-2xl relative">
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
             <img src={user.avatar} alt={user.name} className="h-24 w-24 rounded-full border-4 border-white object-cover shadow-lg" />
           </div>
@@ -49,7 +69,7 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
 
         {/* Info */}
         <div className="pt-16 px-8 pb-6 text-center">
-          <h3 className="font-semibold text-xl text-[var(--color-text)]">{user.name}</h3>
+          <h3 id="user-profile-title" className="font-semibold text-xl text-[var(--color-text)]">{user.name}</h3>
           <p className="text-sm text-[var(--color-text-dim)]">@{user.username}</p>
           {user.bio && <p className="text-sm text-[var(--color-text-dim)] mt-3 max-w-sm mx-auto leading-relaxed">{user.bio}</p>}
 
@@ -59,17 +79,16 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
             <div><p className="font-bold text-xl text-[var(--color-text)]">{followingCount.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Following</p></div>
           </div>
 
-          <Button
+          <button
             onClick={() => setIsFollowing(!isFollowing)}
-            className={cn(
-              'mt-5 rounded-xl font-medium px-8',
+            className={`mt-5 rounded-full font-medium px-8 transition-colors duration-150 ${
               isFollowing
                 ? 'bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]'
-                : 'bg-[#ff8d49] text-white hover:bg-[#e67d3f]'
-            )}
+                : 'bg-[var(--color-primary)] text-white hover:bg-[#e67d3f]'
+            }`}
           >
             {isFollowing ? 'Following' : 'Follow'}
-          </Button>
+          </button>
         </div>
 
         {/* Tabs */}
@@ -77,19 +96,17 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
           <div className="flex">
             <button
               onClick={() => setActiveTab('posts')}
-              className={cn(
-                'flex-1 py-3 text-sm font-medium border-b-2',
-                activeTab === 'posts' ? 'border-[#ff8d49] text-[#ff8d49]' : 'border-transparent text-[var(--color-text-dim)]'
-              )}
+              className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors duration-150 ${
+                activeTab === 'posts' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-dim)]'
+              }`}
             >
               Posts
             </button>
             <button
               onClick={() => setActiveTab('about')}
-              className={cn(
-                'flex-1 py-3 text-sm font-medium border-b-2',
-                activeTab === 'about' ? 'border-[#ff8d49] text-[#ff8d49]' : 'border-transparent text-[var(--color-text-dim)]'
-              )}
+              className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors duration-150 ${
+                activeTab === 'about' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-dim)]'
+              }`}
             >
               About
             </button>

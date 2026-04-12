@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 import type { Point2D, QuadCorners } from '@/lib/photo-layout-types';
+import { detectQuiltQuad } from '@/lib/quad-detect';
 
 interface CalibrationStepProps {
   /** Source photo the user is calibrating against. */
@@ -29,6 +31,47 @@ const CORNER_LABELS: Record<CornerIndex, string> = {
 const HIT_RADIUS_PX = 24;
 
 /**
+ * Build the default 15% inset corner layout — fallback when auto-detect
+ * fails and the user has no prior corners.
+ */
+function defaultInsetCorners(naturalWidth: number, naturalHeight: number): QuadCorners {
+  const insetX = naturalWidth * 0.15;
+  const insetY = naturalHeight * 0.15;
+  return [
+    { x: insetX, y: insetY },
+    { x: naturalWidth - insetX, y: insetY },
+    { x: naturalWidth - insetX, y: naturalHeight - insetY },
+    { x: insetX, y: naturalHeight - insetY },
+  ];
+}
+
+/**
+ * Rasterize an HTMLImageElement into ImageData via an offscreen canvas.
+ * The resulting pixels are handed to `detectQuiltQuad` for automatic
+ * four-corner seeding on the calibration step. Returns `null` when the
+ * canvas context is unavailable or the image hasn't decoded yet.
+ */
+function imageElementToImageData(image: HTMLImageElement): ImageData | null {
+  if (typeof document === 'undefined') return null;
+  if (image.naturalWidth === 0 || image.naturalHeight === 0) return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  if (!ctx) return null;
+  ctx.drawImage(image, 0, 0);
+  try {
+    return ctx.getImageData(0, 0, image.naturalWidth, image.naturalHeight);
+  } catch {
+    // Cross-origin taint or similar — silently fall back.
+    return null;
+  } finally {
+    canvas.width = 0;
+    canvas.height = 0;
+  }
+}
+
+/**
  * Convert a clientX/clientY pair into the photo's naturalWidth/naturalHeight
  * coordinate space. We treat the rendered <img> like an `object-contain` box
  * and account for letterboxing on both axes.
@@ -40,10 +83,7 @@ function clientToImageSpace(
   naturalWidth: number,
   naturalHeight: number
 ): Point2D {
-  const scale = Math.min(
-    containerRect.width / naturalWidth,
-    containerRect.height / naturalHeight
-  );
+  const scale = Math.min(containerRect.width / naturalWidth, containerRect.height / naturalHeight);
   const renderedW = naturalWidth * scale;
   const renderedH = naturalHeight * scale;
   const offsetX = (containerRect.width - renderedW) / 2;
@@ -65,10 +105,7 @@ function imageToDomSpace(
   naturalHeight: number
 ): Point2D {
   if (!containerRect) return { x: 0, y: 0 };
-  const scale = Math.min(
-    containerRect.width / naturalWidth,
-    containerRect.height / naturalHeight
-  );
+  const scale = Math.min(containerRect.width / naturalWidth, containerRect.height / naturalHeight);
   const renderedW = naturalWidth * scale;
   const renderedH = naturalHeight * scale;
   const offsetX = (containerRect.width - renderedW) / 2;
@@ -107,21 +144,52 @@ export function CalibrationStep(props: CalibrationStepProps) {
 
   const [corners, setCorners] = useState<QuadCorners>(() => {
     if (initialCorners) return initialCorners;
-    const w = image.naturalWidth;
-    const h = image.naturalHeight;
-    const insetX = w * 0.15;
-    const insetY = h * 0.15;
-    return [
-      { x: insetX, y: insetY },
-      { x: w - insetX, y: insetY },
-      { x: w - insetX, y: h - insetY },
-      { x: insetX, y: h - insetY },
-    ];
+    return defaultInsetCorners(image.naturalWidth, image.naturalHeight);
   });
 
   const [widthInches, setWidthInches] = useState<number>(initialWidthInches);
   const [heightInches, setHeightInches] = useState<number>(initialHeightInches);
   const [dragging, setDragging] = useState<CornerIndex | null>(null);
+
+  // Auto-detect state — runs once per image, uses `quad-detect.ts`. When
+  // the confidence is meaningful we prefill the corners; otherwise the
+  // user starts from the 15% inset default.
+  const [autoDetectState, setAutoDetectState] = useState<'pending' | 'done' | 'failed'>('pending');
+  const [autoConfidence, setAutoConfidence] = useState(0);
+
+  useEffect(() => {
+    if (initialCorners) {
+      setAutoDetectState('done');
+      return;
+    }
+    let cancelled = false;
+    // Defer to a microtask so the initial render can commit before we
+    // start the (synchronous but heavy) Canny + Hough pipeline.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      const imgData = imageElementToImageData(image);
+      if (!imgData) {
+        setAutoDetectState('failed');
+        return;
+      }
+      const result = detectQuiltQuad(imgData);
+      if (cancelled) return;
+      if (result && result.confidence > 0.3) {
+        setCorners(result.corners);
+        setAutoConfidence(result.confidence);
+        setAutoDetectState('done');
+      } else {
+        setAutoDetectState('failed');
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [image, initialCorners]);
+
+  const handleResetCorners = useCallback(() => {
+    setCorners(defaultInsetCorners(image.naturalWidth, image.naturalHeight));
+  }, [image.naturalWidth, image.naturalHeight]);
 
   // Track container size so the SVG overlay re-layouts on resize. Kept as
   // state so the JSX below re-runs `imageToDomSpace` after mount + resize.
@@ -216,6 +284,10 @@ export function CalibrationStep(props: CalibrationStepProps) {
   const polygonPoints = domCorners.map((p) => `${p.x},${p.y}`).join(' ');
   const canvasAspect = `${image.naturalWidth} / ${image.naturalHeight}`;
 
+  const showLowConfidenceBanner =
+    autoDetectState === 'done' && autoConfidence > 0 && autoConfidence < 0.6;
+  const showFailedBanner = autoDetectState === 'failed';
+
   return (
     <div className="space-y-4">
       <div>
@@ -223,11 +295,33 @@ export function CalibrationStep(props: CalibrationStepProps) {
           Pin one quilt block
         </h3>
         <p className="text-body-sm text-[var(--color-text-dim)] mt-1">
-          Drag the four corner handles to the outer corners of a single block,
-          then tell us its real-world size. Any block will do — we&apos;ll
-          flatten the photo and lay down the grid around it.
+          Drag the four corner handles to the outer corners of a single block, then tell us its
+          real-world size. Any block will do — we&apos;ll flatten the photo and lay down the grid
+          around it.
         </p>
       </div>
+
+      {showLowConfidenceBanner && (
+        <div
+          className="px-4 py-2.5 rounded-lg border"
+          style={{
+            backgroundColor: `${COLORS.secondary}4d`,
+            borderColor: `${COLORS.primary}4d`,
+          }}
+        >
+          <p className="text-body-sm text-[var(--color-text)]">
+            We&apos;ve guessed the corners — double-check before continuing.
+          </p>
+        </div>
+      )}
+      {showFailedBanner && (
+        <div className="px-4 py-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
+          <p className="text-body-sm text-[var(--color-text-dim)]">
+            Auto-detect couldn&apos;t find the quilt edges — drag each corner onto one block
+            yourself.
+          </p>
+        </div>
+      )}
 
       {/* Calibration surface */}
       <div
@@ -275,7 +369,7 @@ export function CalibrationStep(props: CalibrationStepProps) {
           <polygon
             points={polygonPoints}
             fill="transparent"
-            stroke="#ff8d49"
+            stroke={COLORS.primary}
             strokeWidth="2"
             strokeLinejoin="round"
             pointerEvents="none"
@@ -284,19 +378,13 @@ export function CalibrationStep(props: CalibrationStepProps) {
           {/* Corner nodes — bigger touch target than visible handle */}
           {domCorners.map((d, i) => (
             <g key={i}>
-              <circle
-                cx={d.x}
-                cy={d.y}
-                r={HIT_RADIUS_PX}
-                fill="transparent"
-                pointerEvents="none"
-              />
+              <circle cx={d.x} cy={d.y} r={HIT_RADIUS_PX} fill="transparent" pointerEvents="none" />
               <circle
                 cx={d.x}
                 cy={d.y}
                 r={10}
-                fill={dragging === i ? '#ff8d49' : 'white'}
-                stroke="#ff8d49"
+                fill={dragging === i ? COLORS.primary : 'white'}
+                stroke={COLORS.primary}
                 strokeWidth={3}
                 pointerEvents="none"
               />
@@ -306,7 +394,7 @@ export function CalibrationStep(props: CalibrationStepProps) {
                 textAnchor="middle"
                 fontSize="11"
                 fontWeight={600}
-                fill="#1a1a1a"
+                fill={COLORS.text}
                 stroke="white"
                 strokeWidth={3}
                 paintOrder="stroke"
@@ -369,11 +457,31 @@ export function CalibrationStep(props: CalibrationStepProps) {
               setWidthInches(size);
               setHeightInches(size);
             }}
-            className={`rounded-full border px-3 py-1.5 text-label-sm transition-colors duration-150 ${
-              widthInches === size && heightInches === size
-                ? 'border-[#ff8d49] bg-[#ff8d49]/10 text-[#ff8d49]'
-                : 'border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
-            }`}
+            className={`rounded-full border px-3 py-1.5 text-label-sm transition-colors duration-${MOTION.transitionDuration}`}
+            style={{
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+              ...(widthInches === size && heightInches === size
+                ? {
+                    borderColor: COLORS.primary,
+                    backgroundColor: `${COLORS.primary}1a`,
+                    color: COLORS.primary,
+                  }
+                : {
+                    borderColor: COLORS.border,
+                    color: COLORS.textDim,
+                  }),
+            }}
+            onMouseEnter={(e) => {
+              if (!(widthInches === size && heightInches === size)) {
+                e.currentTarget.style.backgroundColor = COLORS.border;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!(widthInches === size && heightInches === size)) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
+            }}
           >
             {size}&quot; × {size}&quot;
           </button>
@@ -391,9 +499,32 @@ export function CalibrationStep(props: CalibrationStepProps) {
         </button>
         <button
           type="button"
+          onClick={handleResetCorners}
+          className="px-5 py-2 rounded-full text-label-sm font-medium border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[var(--color-border)] transition-colors duration-150"
+        >
+          Reset corners
+        </button>
+        <button
+          type="button"
           onClick={handleContinue}
           disabled={widthInches <= 0 || heightInches <= 0}
-          className="flex-1 bg-[#ff8d49] text-[var(--color-text)] px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-6 py-3 rounded-full text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: COLORS.primary,
+            color: COLORS.text,
+            transitionDuration: `${MOTION.transitionDuration}ms`,
+            transitionTimingFunction: MOTION.transitionEasing,
+            transitionProperty: 'background-color',
+            boxShadow: SHADOW.brand,
+          }}
+          onMouseEnter={(e) => {
+            if (!e.currentTarget.disabled) {
+              e.currentTarget.style.backgroundColor = COLORS_HOVER.primary;
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = COLORS.primary;
+          }}
         >
           Flatten block
         </button>

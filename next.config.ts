@@ -37,8 +37,7 @@ const csp = [
   // Stripe payment frame + Stripe fraud-detection beacon
   'frame-src https://js.stripe.com https://hooks.stripe.com',
   // API calls: self + Stripe + Google OAuth + S3 presigned uploads
-  // data: required by @techstark/opencv-js — it fetches its embedded WASM binary via a data: URI
-  "connect-src 'self' data: https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://s3.*.amazonaws.com",
+  "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://s3.*.amazonaws.com",
   // Block all plugins (Flash, etc.)
   "object-src 'none'",
   // Disallow framing this site

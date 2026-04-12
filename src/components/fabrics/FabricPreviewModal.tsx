@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, ExternalLink, ShoppingBag, Plus, Minus } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
@@ -20,6 +20,16 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
   const setDrawerOpen = useCartStore((s) => s.setDrawerOpen);
   const shopEnabled = useShopEnabled();
   const [quantity, setQuantity] = useState(0.5);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    dialogRef.current?.focus();
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const isPurchasable = fabric.isPurchasable && shopEnabled;
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : null;
@@ -40,8 +50,15 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-[var(--color-text)]/40" onClick={onClose} />
-      <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+      <div className="fixed inset-0 z-50 bg-[var(--color-text)]/40" onClick={onClose} aria-hidden="true" />
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="fabric-preview-title"
+        tabIndex={-1}
+        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+      >
         {/* Close */}
         <button
           type="button"
@@ -68,7 +85,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         {/* Info */}
         <div className="p-5 space-y-3">
           <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text)]">{fabric.name}</h3>
+            <h3 id="fabric-preview-title" className="text-lg font-semibold text-[var(--color-text)]">{fabric.name}</h3>
             {fabric.manufacturer && <p className="text-sm text-[var(--color-text-dim)]">{fabric.manufacturer}</p>}
             {fabric.collection && <p className="text-xs text-[var(--color-text-dim)]">{fabric.collection}</p>}
           </div>
@@ -87,6 +104,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  aria-label="Decrease quantity"
                   onClick={() => setQuantity(Math.max(0.25, quantity - 0.25))}
                   disabled={quantity <= 0.25}
                   className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 disabled:opacity-30 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
@@ -98,6 +116,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
                 </span>
                 <button
                   type="button"
+                  aria-label="Increase quantity"
                   onClick={() => setQuantity(quantity + 0.25)}
                   className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
                 >

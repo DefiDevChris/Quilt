@@ -9,7 +9,9 @@ import { PostCard } from '@/components/social/PostCard';
 import { ImageModal } from '@/components/social/ImageModal';
 import { UserProfileModal } from '@/components/social/UserProfileModal';
 import { PostSkeleton, CreatePostSkeleton } from '@/components/social/PostSkeleton';
+import { BrandedPage } from '@/components/layout/BrandedPage';
 import { Post, ViewMode, FilterMode, User } from '@/types/social';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 const POSTS_PER_PAGE = 5;
 
@@ -142,25 +144,48 @@ export function SocialThreadsPage() {
       <div className="flex">
         <Sidebar onSavedClick={() => setShowSavedPanel(!showSavedPanel)} savedCount={savedPosts.size} />
 
-        <main className="flex-1 py-8 px-10">
-          <div className="max-w-5xl mx-auto space-y-6">
+        <BrandedPage showMascots mascotCount={1} decorationOpacity={8}>
+          <main className="flex-1 py-8 px-10">
+            <div className="max-w-5xl mx-auto space-y-6">
             {isLoading ? <CreatePostSkeleton /> : <CreatePost onPost={handleCreatePost} />}
 
             <FilterBar viewMode={viewMode} filterMode={filterMode} onViewModeChange={setViewMode} onFilterModeChange={setFilterMode} />
 
             {showSavedPanel && (
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 shadow-sm">
+              <div className="rounded-2xl p-6" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}`, boxShadow: SHADOW.brand }}>
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-lg font-semibold text-[var(--color-text)]">Saved Posts ({savedPostsData.length})</h3>
-                  <button onClick={() => setShowSavedPanel(false)} className="text-sm text-[var(--color-text-dim)] hover:text-[var(--color-text)]">Close</button>
+                  <h3 className="text-lg font-semibold" style={{ color: COLORS.text }}>Saved Posts ({savedPostsData.length})</h3>
+                  <button
+                    onClick={() => setShowSavedPanel(false)}
+                    className="text-sm transition-colors"
+                    style={{
+                      color: COLORS.textDim,
+                      transitionDuration: `${MOTION.transitionDuration}ms`,
+                      transitionTimingFunction: MOTION.transitionEasing,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.color = COLORS.text;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.color = COLORS.textDim;
+                    }}
+                  >Close</button>
                 </div>
                 {savedPostsData.length === 0 ? (
-                  <p className="text-sm text-[var(--color-text-dim)] text-center py-8">No saved posts yet.</p>
+                  <p className="text-sm text-center py-8" style={{ color: COLORS.textDim }}>No saved posts yet.</p>
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
                     {savedPostsData.map((post) => (
-                      <div key={post.id} className="relative aspect-square rounded-xl overflow-hidden cursor-pointer hover:opacity-90"
-                        onClick={() => { handleImageClick(post); setShowSavedPanel(false); }}>
+                      <div key={post.id} className="relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                        style={{ transitionDuration: `${MOTION.transitionDuration}ms`, transitionTimingFunction: MOTION.transitionEasing }}
+                        onClick={() => { handleImageClick(post); setShowSavedPanel(false); }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLDivElement).style.opacity = '0.9';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLDivElement).style.opacity = '1';
+                        }}
+                      >
                         <img src={post.image} alt="" className="w-full h-full object-cover" />
                       </div>
                     ))}
@@ -186,30 +211,59 @@ export function SocialThreadsPage() {
 
             {hasMorePosts && (
               <div className="flex justify-center pt-2">
-                <button onClick={() => setDisplayedPostsCount((p) => p + POSTS_PER_PAGE)}
-                  className="px-8 py-3 bg-[#ff8d49] text-white rounded-full text-sm font-medium hover:bg-[#e67d3f] transition-colors duration-150">
+                <button
+                  onClick={() => setDisplayedPostsCount((p) => p + POSTS_PER_PAGE)}
+                  className="px-8 py-3 rounded-full text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: COLORS.primary,
+                    color: COLORS.surface,
+                    transitionDuration: `${MOTION.transitionDuration}ms`,
+                    transitionTimingFunction: MOTION.transitionEasing,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS_HOVER.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
+                  }}
+                >
                   Load More
                 </button>
               </div>
             )}
 
             {!hasMorePosts && filteredPosts.length > 0 && (
-              <p className="text-sm text-[var(--color-text-dim)] text-center pt-4">You&apos;ve reached the end.</p>
+              <p className="text-sm text-center pt-4" style={{ color: COLORS.textDim }}>You&apos;ve reached the end.</p>
             )}
 
             {filteredPosts.length === 0 && searchQuery && (
               <div className="text-center py-16">
-                <p className="text-[var(--color-text-dim)] mb-3">No posts found for &quot;{searchQuery}&quot;</p>
-                <button onClick={() => setSearchQuery('')} className="text-sm text-[#ff8d49] font-medium hover:underline">Clear search</button>
+                <p className="mb-3" style={{ color: COLORS.textDim }}>No posts found for &quot;{searchQuery}&quot;</p>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="text-sm font-medium transition-colors"
+                  style={{
+                    color: COLORS.primary,
+                    transitionDuration: `${MOTION.transitionDuration}ms`,
+                    transitionTimingFunction: MOTION.transitionEasing,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.textDecoration = 'none';
+                  }}
+                >Clear search</button>
               </div>
             )}
           </div>
         </main>
+        </BrandedPage>
       </div>
 
       {/* Share Toast */}
       {shareToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--color-text)] text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-sm font-medium" style={{ backgroundColor: COLORS.text, color: COLORS.surface, boxShadow: SHADOW.brand }}>
           Link copied to clipboard!
         </div>
       )}

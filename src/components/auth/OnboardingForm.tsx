@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { COLORS, TYPOGRAPHY, RADIUS, MOTION } from '@/lib/design-system';
 
 const CORGI_COUNT = 29;
 const CORGI_IMAGES = Array.from({ length: CORGI_COUNT }, (_, i) => ({
@@ -20,7 +21,12 @@ function normalizeUsername(raw: string): string {
     .slice(0, 60);
 }
 
-export function OnboardingForm() {
+interface OnboardingFormProps {
+  /** When true, renders in compact mode (for modal use) */
+  compact?: boolean;
+}
+
+export function OnboardingForm({ compact = false }: OnboardingFormProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
   const [usernameInput, setUsernameInput] = useState('');
@@ -246,8 +252,110 @@ export function OnboardingForm() {
         ? 'border-red-500'
         : usernameStatus === 'invalid'
           ? 'border-red-500'
-          : 'border-[#d4d4d4]';
+          : COLORS.border;
 
+  if (compact) {
+    return (
+      <form onSubmit={handleSubmit} className="w-full space-y-6">
+        {error && (
+          <div className="rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-sm text-red-500">
+            {error}
+          </div>
+        )}
+
+        {/* Name */}
+        <div>
+          <label
+            htmlFor="displayName"
+            className="block text-sm font-semibold mb-1.5"
+            style={{ color: COLORS.text }}
+          >
+            Your name
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            required
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49] focus:border-transparent transition-all shadow-sm"
+            style={{
+              backgroundColor: 'rgba(253, 250, 247, 0.8)',
+              border: `1px solid ${COLORS.border}`,
+              boxShadow: 'inset 0 2px 8px rgba(26, 26, 26, 0.06), inset 0 1px 3px rgba(26, 26, 26, 0.04)',
+              transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            placeholder="How should we call you?"
+            autoComplete="name"
+            maxLength={60}
+          />
+        </div>
+
+        {/* Username */}
+        <div>
+          <label
+            htmlFor="username"
+            className="block text-sm font-semibold mb-1.5"
+            style={{ color: COLORS.text }}
+          >
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            required
+            value={usernameInput}
+            onChange={(e) => handleUsernameChange(e.target.value)}
+            className={`w-full px-4 py-3 rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49] focus:border-transparent transition-all shadow-sm ${usernameBorderColor}`}
+            style={{
+              backgroundColor: 'rgba(253, 250, 247, 0.8)',
+              border: `1px solid ${usernameBorderColor}`,
+              boxShadow: 'inset 0 2px 8px rgba(26, 26, 26, 0.06), inset 0 1px 3px rgba(26, 26, 26, 0.04)',
+              transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            placeholder="quilter_jane"
+            autoComplete="username"
+            maxLength={60}
+          />
+          {usernameMessage && (
+            <p
+              className={`mt-1 text-sm ${usernameStatus === 'available' ? 'text-green-600' : 'text-red-500'}`}
+            >
+              {usernameMessage}
+              {usernameStatus === 'checking' && (
+                <span
+                  className="inline-block w-3 h-3 ml-1 rounded-full animate-pulse align-middle"
+                  style={{ backgroundColor: COLORS.secondary }}
+                />
+              )}
+            </p>
+          )}
+          <p className="mt-1 text-xs" style={{ color: COLORS.textDim }}>
+            Lowercase letters, numbers, and hyphens only.
+          </p>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isSaving || !isComplete}
+          className="w-full font-semibold text-white px-6 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: COLORS.primary,
+            borderRadius: RADIUS.full,
+            fontSize: TYPOGRAPHY.body.fontSize,
+            lineHeight: TYPOGRAPHY.body.lineHeight,
+            boxShadow: '0 4px 8px rgba(26, 26, 26, 0.1), 0 12px 32px rgba(26, 26, 26, 0.14)',
+            transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+          }}
+        >
+          {isSaving ? 'Setting up your account...' : "Let's go!"}
+        </button>
+      </form>
+    );
+  }
+
+  // Full page mode (original layout)
   return (
     <div className="w-full max-w-[540px] mx-auto bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">

@@ -68,12 +68,14 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
     >
       {/* Format Selector */}
       <div className="mb-4">
-        <label className="text-xs font-medium text-[var(--color-text)] block mb-1">Format</label>
-        <div className="grid grid-cols-3 gap-2">
+        <label id="image-format-label" className="text-xs font-medium text-[var(--color-text)] block mb-1">Format</label>
+        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-labelledby="image-format-label">
           {(['png', 'jpeg', 'svg'] as const).map((fmt) => (
             <button
               key={fmt}
               type="button"
+              role="radio"
+              aria-checked={format === fmt}
               onClick={() => setFormat(fmt)}
               className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
                 ? 'border-primary bg-primary text-white'
@@ -89,14 +91,16 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
       {/* DPI Selector — hidden for SVG */}
       {format !== 'svg' && (
         <div className="mb-4">
-          <label className="text-xs font-medium text-[var(--color-text)] block mb-1">
+          <label id="image-dpi-label" className="text-xs font-medium text-[var(--color-text)] block mb-1">
             Resolution (DPI)
           </label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-labelledby="image-dpi-label">
             {DPI_OPTIONS.map((opt) => (
               <button
                 key={opt}
                 type="button"
+                role="radio"
+                aria-checked={dpi === opt}
                 onClick={() => setDpi(opt)}
                 className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
                   ? 'border-primary bg-primary text-white'

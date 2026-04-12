@@ -6,7 +6,7 @@
 
 Next.js 16 quilt design app with Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments. Consumer hobbyist tool — users pick layouts, assign blocks and fabrics, and export print-ready PDF patterns.
 
-**Flagship features:** Design Studio (canvas + fence layouts + block builder), Photo-to-Design (OpenCV piece extraction), Block Photo Upload, PDF Pattern Export (commercial-grade patterns with seam allowance).
+**Flagship features:** Design Studio (canvas + fence layouts + block builder), Photo-to-Design (perspective-first human-in-the-loop calibration), Block Photo Upload, PDF Pattern Export (commercial-grade patterns with seam allowance).
 
 ## Development Commands
 
@@ -162,9 +162,17 @@ Engines: `project-pdf-engine.ts` (full document), `cutlist-pdf-engine.ts` (cutti
 
 ## Photo-to-Design Pipeline
 
-Photo → OpenCV web worker (15-step: sharpen, CLAHE, bilateral, adaptive threshold, watershed, contours) → `orphan-filter.ts` (remove noise) → `shape-normalizer-engine.ts` (cluster, regularize, equalize) → `edge-snapper-engine.ts` (snap shared edges, eliminate gaps) → `usePhotoPatternImport` (fabric.Polygon per piece with dominant color).
+Perspective-first, human-in-the-loop. Four steps: `upload → calibrate → layout → review`.
 
-No grid detection, no block matching. Pieces are just "Piece 1", "Piece 2", etc. `perspective-utils.ts` handles angled photos.
+1. **Upload** — `PhotoToDesignWizard` accepts a photo (drag-drop, file picker, or mobile-upload handoff).
+2. **Calibrate** (`CalibrationStep`) — user pins four draggable corners onto one quilt block and enters its real-world size (e.g. 12×12").
+3. **Warp** — `perspective-engine.ts` (pure TypeScript, zero OpenCV/WASM) computes a homography via an 8×8 linear solve + bilinear resample in `warpSourceImage()` (`photo-layout-utils.ts`) and produces a flat block bitmap.
+4. **Layout** (`LayoutPickerStep`) — user picks a `BlockGridPreset` from `block-grid-presets.ts` (4-Patch, 9-Patch, HST, etc.). Every emitted polygon is axis-aligned or a right triangle on the inch grid — no polygon cleanup.
+5. **Sample** — `grid-sampling-engine.ts` iterates cells and K-Means-samples the dominant color per patch from the center 50% of the cell (ignoring seam shadows).
+6. **Review** (`PhotoReviewStep`) — user inspects each patch, can swap fabric colors or match to the library.
+7. **Handoff** — `usePhotoPatternImport` drops `fabric.Polygon`s onto the studio canvas and seeds the print list.
+
+Pieces are just "Piece 1", "Piece 2", etc. No block matching, no heuristic piece detection.
 
 ## Fabric Library
 

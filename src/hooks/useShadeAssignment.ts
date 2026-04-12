@@ -18,14 +18,15 @@ import {
 } from '@/lib/shade-assignment-engine';
 import { loadImage } from '@/lib/image-processing';
 import { saveRecentFabric } from '@/lib/recent-fabrics';
+import { SHADE } from '@/lib/design-system';
 import type { Shade, ShadeBreakdown, PatchDescriptor } from '@/types/shade';
 
 /** Shade visualization colors (not part of the design palette — data display only). */
 const SHADE_COLORS: Record<Shade, string> = {
-  dark: '#505050',
-  light: '#E0E0E0',
-  background: '#F5F5F5',
-  unknown: '#CCCCCC',
+  dark: SHADE.dark,
+  light: SHADE.light,
+  background: SHADE.background,
+  unknown: SHADE.unknown,
 };
 
 /**

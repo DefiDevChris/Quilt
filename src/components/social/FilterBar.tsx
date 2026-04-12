@@ -1,7 +1,6 @@
 'use client';
 
 import { Star, Clock, LayoutGrid, List } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { ViewMode, FilterMode } from '@/types/social';
 
 interface FilterBarProps {
@@ -18,24 +17,22 @@ export function FilterBar({ viewMode, filterMode, onViewModeChange, onFilterMode
         <div className="flex items-center gap-2">
           <button
             onClick={() => onFilterModeChange('featured')}
-            className={cn(
-              'flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium',
+            className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 ${
               filterMode === 'featured'
-                ? 'bg-[#ff8d49] text-white'
+                ? 'bg-[var(--color-primary)] text-white'
                 : 'text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]'
-            )}
+            }`}
           >
             <Star className="h-4 w-4" />
             Featured
           </button>
           <button
             onClick={() => onFilterModeChange('newest')}
-            className={cn(
-              'flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium',
+            className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 ${
               filterMode === 'newest'
-                ? 'bg-[#ff8d49] text-white'
+                ? 'bg-[var(--color-primary)] text-white'
                 : 'text-[var(--color-text-dim)] hover:bg-[var(--color-bg)]'
-            )}
+            }`}
           >
             <Clock className="h-4 w-4" />
             Newest
@@ -45,24 +42,22 @@ export function FilterBar({ viewMode, filterMode, onViewModeChange, onFilterMode
         <div className="flex items-center gap-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full p-1">
           <button
             onClick={() => onViewModeChange('full')}
-            className={cn(
-              'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium',
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
               viewMode === 'full'
-                ? 'bg-white text-[#ff8d49] shadow-sm'
+                ? 'bg-white text-[var(--color-primary)] shadow-sm'
                 : 'text-[var(--color-text-dim)]'
-            )}
+            }`}
           >
             <List className="h-4 w-4" />
             Full
           </button>
           <button
             onClick={() => onViewModeChange('grid')}
-            className={cn(
-              'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium',
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
               viewMode === 'grid'
-                ? 'bg-white text-[#ff8d49] shadow-sm'
+                ? 'bg-white text-[var(--color-primary)] shadow-sm'
                 : 'text-[var(--color-text-dim)]'
-            )}
+            }`}
           >
             <LayoutGrid className="h-4 w-4" />
             Grid

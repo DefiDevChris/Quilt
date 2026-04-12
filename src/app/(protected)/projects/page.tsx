@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Grid, List, Calendar, Plus, Sparkles } from 'lucide-react';
+import { Grid, List, Calendar, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { BrandedPage } from '@/components/layout/BrandedPage';
+import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 interface ProjectListItem {
   id: string;
@@ -52,11 +55,11 @@ export default function AllProjectsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 bg-[#d4d4d4] rounded-lg w-48"></div>
-        <div className="h-12 bg-[#d4d4d4] rounded-lg"></div>
+        <div className="h-8 rounded-lg w-48" style={{ backgroundColor: COLORS.border }}></div>
+        <div className="h-12 rounded-lg" style={{ backgroundColor: COLORS.border }}></div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-48 bg-[#d4d4d4] rounded-lg"></div>
+            <div key={i} className="h-48 rounded-lg" style={{ backgroundColor: COLORS.border }}></div>
           ))}
         </div>
       </div>
@@ -64,30 +67,60 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <div>
+    <BrandedPage showMascots mascotCount={1}>
       <PageHeader
         label="Archive"
         title="Project Library"
         description={`${projects.length} ${projects.length === 1 ? 'curated design' : 'curated designs'}`}
         action={
           <div className="flex items-center gap-4">
-            <div className="flex items-center bg-[#d4d4d4] rounded-lg p-1 border border-[#d4d4d4]">
+            <div className="flex items-center rounded-lg p-1" style={{ backgroundColor: COLORS.border }}>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'grid'
-                  ? 'bg-[var(--color-surface)] text-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                  : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
-                  }`}
+                className={`p-2 rounded-full transition-colors`}
+                style={{
+                  transitionDuration: `${MOTION.transitionDuration}ms`,
+                  transitionTimingFunction: MOTION.transitionEasing,
+                  ...(viewMode === 'grid'
+                    ? { backgroundColor: COLORS.surface, color: COLORS.primary, boxShadow: SHADOW.brand }
+                    : { color: COLORS.secondary }
+                  ),
+                }}
+                onMouseEnter={(e) => {
+                  if (viewMode !== 'grid') {
+                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.text;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewMode !== 'grid') {
+                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.secondary;
+                  }
+                }}
                 title="Grid View"
               >
                 <Grid size={18} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-full transition-colors duration-150 ${viewMode === 'list'
-                  ? 'bg-[var(--color-surface)] text-[#ff8d49] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                  : 'text-[#ffc8a6] hover:text-[#1a1a1a]'
-                  }`}
+                className={`p-2 rounded-full transition-colors`}
+                style={{
+                  transitionDuration: `${MOTION.transitionDuration}ms`,
+                  transitionTimingFunction: MOTION.transitionEasing,
+                  ...(viewMode === 'list'
+                    ? { backgroundColor: COLORS.surface, color: COLORS.primary, boxShadow: SHADOW.brand }
+                    : { color: COLORS.secondary }
+                  ),
+                }}
+                onMouseEnter={(e) => {
+                  if (viewMode !== 'list') {
+                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.text;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewMode !== 'list') {
+                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.secondary;
+                  }
+                }}
                 title="List View"
               >
                 <List size={18} />
@@ -95,7 +128,20 @@ export default function AllProjectsPage() {
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-medium text-sm transition-colors"
+              style={{
+                backgroundColor: COLORS.primary,
+                color: COLORS.text,
+                boxShadow: SHADOW.brand,
+                transitionDuration: `${MOTION.transitionDuration}ms`,
+                transitionTimingFunction: MOTION.transitionEasing,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS_HOVER.primary;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS.primary;
+              }}
             >
               <Plus size={16} strokeWidth={3} />
               Create New
@@ -106,22 +152,35 @@ export default function AllProjectsPage() {
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center py-32 text-center">
-          <div className="w-24 h-24 rounded-lg bg-[#d4d4d4] flex items-center justify-center mb-8 border border-[#d4d4d4]">
-            <Grid size={40} className="text-[#ffc8a6] opacity-50" />
+          <div className="mb-6">
+            <QuiltPiece size={120} opacity={25} strokeWidth={3} stitchGap={8} />
           </div>
-
-          <h3 className="text-3xl font-bold text-[#1a1a1a] mb-3">
-            The workspace is empty
+          <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
+          <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
+            No projects yet
           </h3>
-          <p className="text-[#4a4a4a] mb-10 max-w-sm leading-relaxed">
-            Begin your next creative journey by starting a new project or exploring studio templates.
+          <p className="text-body-md text-[var(--color-text-dim)] mb-10 max-w-sm leading-relaxed">
+            Start your first quilt design and build your collection of curated patterns.
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff8d49] text-[#1a1a1a] rounded-full font-medium text-sm hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-medium text-sm transition-colors"
+            style={{
+              backgroundColor: COLORS.primary,
+              color: COLORS.text,
+              boxShadow: SHADOW.brand,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+              transitionTimingFunction: MOTION.transitionEasing,
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS_HOVER.primary;
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS.primary;
+            }}
           >
             <Plus size={20} strokeWidth={3} />
-            Initialize Blank Canvas
+            Start Your First Quilt
           </Link>
         </div>
       ) : (
@@ -136,10 +195,22 @@ export default function AllProjectsPage() {
             <Link
               key={project.id}
               href={`/studio/${project.id}`}
-              className={`group block ${viewMode === 'grid'
-                ? 'bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150'
-                : 'bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-4 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 flex items-center gap-4'
+              className={`group block transition-colors ${viewMode === 'grid'
+                ? 'rounded-lg p-4'
+                : 'rounded-lg p-4 flex items-center gap-4'
                 }`}
+              style={{
+                backgroundColor: COLORS.surface,
+                border: `1px solid ${COLORS.border}`,
+                transitionDuration: `${MOTION.transitionDuration}ms`,
+                transitionTimingFunction: MOTION.transitionEasing,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = SHADOW.brand;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none';
+              }}
             >
               <div
                 className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}
@@ -150,11 +221,12 @@ export default function AllProjectsPage() {
                     alt={project.name}
                     width={viewMode === 'grid' ? 200 : 64}
                     height={viewMode === 'grid' ? 200 : 64}
-                    className="w-full h-full object-cover rounded-lg bg-[#d4d4d4]"
+                    className="w-full h-full object-cover rounded-lg"
+                    style={{ backgroundColor: COLORS.border }}
                   />
                 ) : (
-                  <div className="w-full h-full bg-[#d4d4d4] rounded-lg flex items-center justify-center">
-                    <span className="text-[#ffc8a6]/50 font-bold text-lg">
+                  <div className="w-full h-full rounded-lg flex items-center justify-center" style={{ backgroundColor: COLORS.border }}>
+                    <span style={{ color: COLORS.secondary, opacity: 0.5 }} className="font-bold text-lg">
                       {project.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -162,10 +234,23 @@ export default function AllProjectsPage() {
               </div>
 
               <div className="flex-1">
-                <h3 className="font-bold text-[#1a1a1a] group-hover:text-[#ff8d49] transition-colors duration-150 line-clamp-2">
+                <h3
+                  className="font-bold transition-colors line-clamp-2"
+                  style={{
+                    color: COLORS.text,
+                    transitionDuration: `${MOTION.transitionDuration}ms`,
+                    transitionTimingFunction: MOTION.transitionEasing,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLHeadingElement).style.color = COLORS.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLHeadingElement).style.color = COLORS.text;
+                  }}
+                >
                   {project.name}
                 </h3>
-                <div className="flex items-center gap-1 mt-2 text-xs text-[#4a4a4a]">
+                <div className="flex items-center gap-1 mt-2 text-xs" style={{ color: COLORS.textDim }}>
                   <Calendar size={12} />
                   <span>Updated {formatDate(project.updatedAt)}</span>
                 </div>
@@ -174,6 +259,6 @@ export default function AllProjectsPage() {
           ))}
         </div>
       )}
-    </div>
+    </BrandedPage>
   );
 }

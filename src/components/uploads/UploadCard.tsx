@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import type { MobileUpload, MobileUploadAssignedType } from '@/types/mobile-upload';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 const TYPE_OPTIONS: { value: MobileUploadAssignedType; label: string }[] = [
   { value: 'unassigned', label: 'Unassigned' },
@@ -13,10 +14,15 @@ const TYPE_OPTIONS: { value: MobileUploadAssignedType; label: string }[] = [
 
 const TYPE_COLORS: Record<MobileUploadAssignedType, string> = {
   unassigned: 'bg-[var(--color-border)]/50 text-[var(--color-text-dim)]',
-  fabric: 'bg-[#ff8d49]/10 text-[#ff8d49]',
-  block: 'bg-[#ff8d49]/10 text-[#ff8d49]',
-  quilt: 'bg-[#ff8d49]/10 text-[#ff8d49]',
+  fabric: '',
+  block: '',
+  quilt: '',
 };
+
+function getTypeColor(type: MobileUploadAssignedType): React.CSSProperties | undefined {
+  if (type === 'unassigned') return undefined;
+  return { backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary };
+}
 
 interface UploadCardProps {
   upload: MobileUpload;
@@ -87,6 +93,7 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
                 ? TYPE_COLORS[opt.value]
                 : 'bg-transparent text-[var(--color-text-dim)]/60 hover:bg-[var(--color-border)]/50'
                 } disabled:opacity-50`}
+              style={upload.assignedType === opt.value ? getTypeColor(opt.value) : undefined}
             >
               {opt.label}
             </button>
@@ -99,7 +106,13 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleProcess}
             disabled={!canProcess || processing}
-            className="flex-1 px-3 py-1.5 text-[12px] font-medium rounded-full bg-[#ff8d49] text-[var(--color-text)] disabled:opacity-40 hover:bg-[#e67d3f] transition-colors duration-150"
+            className="flex-1 px-3 py-1.5 text-[12px] font-medium rounded-full text-[var(--color-text)] disabled:opacity-40"
+            style={{
+              backgroundColor: COLORS.primary,
+              transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
           >
             {processing ? 'Opening...' : 'Process'}
           </button>
@@ -107,9 +120,24 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
             type="button"
             onClick={handleDelete}
             className={`px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors duration-150 ${confirmDelete
-              ? 'bg-[#ff8d49]/10 text-[#ff8d49]'
-              : 'border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 hover:text-[#ff8d49]'
+              ? ''
+              : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
               }`}
+            style={confirmDelete
+              ? { backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }
+              : undefined}
+            onMouseEnter={(e) => {
+              if (!confirmDelete) {
+                e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
+                e.currentTarget.style.color = COLORS.primary;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!confirmDelete) {
+                e.currentTarget.style.backgroundColor = '';
+                e.currentTarget.style.color = '';
+              }
+            }}
           >
             {confirmDelete ? 'Confirm?' : 'Delete'}
           </button>

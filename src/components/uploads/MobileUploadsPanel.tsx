@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { UploadCard } from './UploadCard';
 import type { MobileUploadAssignedType } from '@/types/mobile-upload';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 type FilterType = 'all' | 'fabric' | 'block' | 'quilt';
 
@@ -103,9 +104,18 @@ export function MobileUploadsPanel() {
               type="button"
               onClick={() => setFilter(chip.value)}
               className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${filter === chip.value
-                ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'border border-[var(--color-border)] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10'
+                ? 'text-[var(--color-text)]'
+                : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
                 }`}
+              style={filter === chip.value
+                ? { backgroundColor: COLORS.primary, boxShadow: SHADOW.brand }
+                : undefined}
+              onMouseEnter={(e) => {
+                if (filter !== chip.value) e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
+              }}
+              onMouseLeave={(e) => {
+                if (filter !== chip.value) e.currentTarget.style.backgroundColor = '';
+              }}
             >
               {chip.label}
               {count > 0 && <span className="ml-1.5 text-[12px] opacity-70">{count}</span>}
@@ -116,8 +126,8 @@ export function MobileUploadsPanel() {
 
       {/* Error */}
       {error && (
-        <div className="px-4 py-3 rounded-full bg-[#ff8d49]/10 border border-[#ff8d49]/20">
-          <p className="text-[14px] text-[#ff8d49]">{error}</p>
+        <div className="px-4 py-3 rounded-full border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
+          <p className="text-[14px]" style={{ color: COLORS.primary }}>{error}</p>
         </div>
       )}
 
@@ -139,7 +149,7 @@ export function MobileUploadsPanel() {
       {/* Empty state */}
       {!isLoading && filteredUploads.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: `${COLORS.primary}1a` }}>
             <svg
               width="28"
               height="28"

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { CANVAS } from '@/lib/design-system';
 
 /**
  * Easydraw — freehand drawing tool for the quilt worktable.
@@ -18,9 +19,13 @@ export function useEasyDrawTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
 
-  const stateRef = useRef({
-    fillColor: '#f9a06b',
-    strokeColor: '#4a3f35',
+  const stateRef = useRef<{
+    fillColor: string;
+    strokeColor: string;
+    strokeWidth: number;
+  }>({
+    fillColor: CANVAS.pencilPreview,
+    strokeColor: CANVAS.seamLine,
     strokeWidth: 2,
   });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { X, Check } from 'lucide-react';
 import { useStripeCheckout } from '@/lib/stripe-checkout';
@@ -11,13 +11,31 @@ interface ProUpgradeModalProps {
 
 export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
   const { handleCheckout } = useStripeCheckout();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    dialogRef.current?.focus();
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-text)]/60 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-[var(--color-surface)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-[var(--color-border)]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pro-upgrade-title"
+        tabIndex={-1}
+        className="relative w-full max-w-4xl bg-[var(--color-surface)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-[var(--color-border)] outline-none"
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Close"
           className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
         >
           <X size={24} />
@@ -28,7 +46,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
           <div className="bg-[var(--color-bg)] text-[var(--color-text)] p-12 flex flex-col justify-center relative overflow-hidden">
             <div className="relative z-10">
               <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Professional Tier</p>
-              <h2 className="text-[40px] leading-[52px] text-[var(--color-text)] mb-8">
+              <h2 id="pro-upgrade-title" className="text-[40px] leading-[52px] text-[var(--color-text)] mb-8">
                 The Full <br /> Studio <br /> Experience
               </h2>
               <div className="h-1 w-20 bg-[#ff8d49] mb-8" />

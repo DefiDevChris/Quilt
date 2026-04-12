@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { COLORS, SHADOW } from '@/lib/design-system';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
@@ -25,7 +26,7 @@ function MockTopBar({ worktable }: { worktable: string }) {
         <span className="font-bold text-[var(--color-text)] hidden md:inline text-[9px]">QuiltCorgi</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="px-2 py-0.5 bg-[#ff8d49]/20 text-[var(--color-text)] rounded-lg font-bold text-[8px]">
+        <div className="px-2 py-0.5 text-[var(--color-text)] rounded-lg font-bold text-[8px]" style={{ backgroundColor: `${COLORS.primary}33` }}>
           {worktable}
         </div>
         <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
@@ -62,8 +63,9 @@ function MockToolbar({ sections }: { sections: ToolSection[] }) {
             {section.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className={`flex flex-col items-center gap-0.5 py-1 rounded-full ${tool.active ? 'bg-[#ff8d49]/10 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
+                className={`flex flex-col items-center gap-0.5 py-1 rounded-full ${tool.active ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'
                   }`}
+                style={tool.active ? { backgroundColor: `${COLORS.primary}1a` } : undefined}
               >
                 <svg
                   width="13"
@@ -133,7 +135,7 @@ function MockAccordionPanel({
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-lg border border-[#ff8d49] bg-[#ff8d49] flex items-center justify-center text-[var(--color-surface)]">
+                <div className="w-3 h-3 rounded-lg flex items-center justify-center text-[var(--color-surface)]" style={{ border: `1px solid ${COLORS.primary}`, backgroundColor: COLORS.primary }}>
                   <svg
                     width="7"
                     height="7"
@@ -166,7 +168,8 @@ function MockFloatingToolbar() {
       ].map((icon, i) => (
         <div
           key={i}
-          className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+          className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'}`}
+          style={i === 0 ? { backgroundColor: `${COLORS.primary}26` } : undefined}
         >
           <svg
             width="9"
@@ -360,19 +363,19 @@ function QuiltWorktableMockup() {
           />
 
           <div className="relative bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] p-2 flex">
-            <div className="grid grid-cols-3 gap-2 bg-[#ff8d49]/10 p-2 border-[4px] border-[#ff8d49]/60">
+            <div className="grid grid-cols-3 gap-2 p-2" style={{ backgroundColor: `${COLORS.primary}1a`, border: `4px solid ${COLORS.primary}99` }}>
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
                   className="w-16 h-16 bg-[var(--color-bg)] flex items-center justify-center border border-[var(--color-border)]/30 relative overflow-hidden"
                 >
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
-                    <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
-                    <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.8" />
+                    <polygon points="0,0 50,50 0,100" fill={COLORS.secondary} />
+                    <polygon points="0,0 100,0 50,50" fill={COLORS.primary} />
+                    <polygon points="100,0 100,100 50,50" fill={COLORS.accent} opacity="0.8" />
                     <polygon points="0,100 100,100 50,50" fill="white" />
                   </svg>
-                  {i === 4 && <div className="absolute inset-0 border-2 border-[#ff8d49] z-10" />}
+                  {i === 4 && <div className="absolute inset-0 z-10" style={{ border: `2px solid ${COLORS.primary}` }} />}
                 </div>
               ))}
             </div>
@@ -455,14 +458,14 @@ function BlockWorktableMockup() {
                 strokeDasharray="2 2"
                 opacity="0.5"
               />
-              <polygon points="50,0 100,50 50,100 0,50" fill="#FFC8A6" opacity="0.4" />
-              <polygon points="50,0 75,25 50,50 25,25" fill="#ff8d49" opacity="0.8" />
-              <polygon points="50,50 75,75 50,100 25,75" fill="#FFC7C7" opacity="0.8" />
-              <line x1="25" y1="25" x2="10" y2="10" stroke="#ff8d49" strokeWidth="1.5" />
-              <circle cx="25" cy="25" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
-              <circle cx="10" cy="10" r="2" fill="#FFC7C7" />
-              <circle cx="50" cy="0" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
-              <circle cx="50" cy="50" r="2" fill="white" stroke="#ff8d49" strokeWidth="1" />
+              <polygon points="50,0 100,50 50,100 0,50" fill={COLORS.secondary} opacity="0.4" />
+              <polygon points="50,0 75,25 50,50 25,25" fill={COLORS.primary} opacity="0.8" />
+              <polygon points="50,50 75,75 50,100 25,75" fill={COLORS.accent} opacity="0.8" />
+              <line x1="25" y1="25" x2="10" y2="10" stroke={COLORS.primary} strokeWidth="1.5" />
+              <circle cx="25" cy="25" r="2" fill="white" stroke={COLORS.primary} strokeWidth="1" />
+              <circle cx="10" cy="10" r="2" fill={COLORS.accent} />
+              <circle cx="50" cy="0" r="2" fill="white" stroke={COLORS.primary} strokeWidth="1" />
+              <circle cx="50" cy="50" r="2" fill="white" stroke={COLORS.primary} strokeWidth="1" />
             </svg>
             <div className="absolute top-2 left-2 bg-[var(--color-text)] text-[var(--color-surface)] text-[8px] px-1.5 py-0.5 rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               Snap to Grid (Intersect)
@@ -624,9 +627,9 @@ function PrintWorktableMockup() {
             <div className="flex-1 grid grid-cols-2 gap-2">
               <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
-                  <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
-                  <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.7" />
+                  <polygon points="0,0 100,0 50,50" fill={COLORS.primary} />
+                  <polygon points="0,0 50,50 0,100" fill={COLORS.secondary} />
+                  <polygon points="100,0 100,100 50,50" fill={COLORS.accent} opacity="0.7" />
                   <polygon points="0,100 100,100 50,50" fill="white" />
                   <rect
                     x="0"
@@ -642,7 +645,7 @@ function PrintWorktableMockup() {
               </div>
               <div className="border border-dashed border-[var(--color-border)] p-1">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <rect x="5" y="5" width="90" height="90" fill="#FFC8A6" />
+                  <rect x="5" y="5" width="90" height="90" fill={COLORS.secondary} />
                   <line
                     x1="5"
                     y1="5"
@@ -751,9 +754,10 @@ export default function WorkspacePreview() {
                 key={tab.id}
                 onClick={() => setActiveTab(idx)}
                 className={`relative px-5 py-2.5 rounded-full text-sm font-bold transition-colors duration-150 ${activeTab === idx
-                  ? 'text-[var(--color-text)] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                  ? 'text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
                   : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)]'
                   }`}
+                style={activeTab === idx ? { backgroundColor: `${COLORS.primary}1a` } : undefined}
               >
                 <span className="relative z-10 hidden sm:inline">{tab.label}</span>
                 <span className="relative z-10 sm:hidden">{tab.shortLabel}</span>

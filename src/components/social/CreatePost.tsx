@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { ImagePlus, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
+import { Button, Textarea, Avatar } from './ui';
 
 interface CreatePostProps {
   onPost?: (content: string, image?: string) => void;
@@ -39,15 +36,15 @@ export function CreatePost({ onPost }: CreatePostProps) {
   };
 
   return (
-    <div className={cn(
-      'bg-[var(--color-surface)] border rounded-2xl p-5 transition-all duration-150',
-      isFocused ? 'border-[#ff8d49]/30 ring-2 ring-[#ff8d49]/10' : 'border-[var(--color-border)]'
-    )}>
+    <div className={`bg-[var(--color-surface)] border rounded-2xl p-5 transition-all duration-150 ${
+      isFocused ? 'border-[var(--color-primary)]/30 ring-2 ring-[var(--color-primary)]/10' : 'border-[var(--color-border)]'
+    }`}>
       <div className="flex gap-3">
-        <Avatar className="h-12 w-12 shrink-0 border-2 border-[#ff8d49]">
-          <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
-          <AvatarFallback>SM</AvatarFallback>
-        </Avatar>
+        <Avatar
+          className="h-12 w-12 shrink-0 border-2 border-[var(--color-primary)]"
+          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+          fallback="SM"
+        />
         <div className="flex-1">
           <div className="bg-[var(--color-bg)] rounded-2xl p-4">
             <Textarea
@@ -67,11 +64,11 @@ export function CreatePost({ onPost }: CreatePostProps) {
             </div>
           )}
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--color-border)]">
-            <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-[#ff8d49] h-9 rounded-full">
+            <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-[var(--color-primary)] h-9 rounded-full">
               <ImagePlus className="h-4 w-4 mr-1.5" />
               Photo
             </Button>
-            <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-[#ff8d49] text-white rounded-full h-9 px-6 text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-40">
+            <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-[var(--color-primary)] text-white rounded-full h-9 px-6 text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-40">
               {isPosting ? 'Posting...' : 'Post'}
             </Button>
           </div>

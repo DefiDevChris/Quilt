@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import { Heart, Send } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Avatar, Button, Input } from './ui';
 import { Comment } from '@/types/social';
-import { cn } from '@/lib/utils';
 
 interface CommentsProps {
   comments: Comment[];
@@ -46,9 +43,9 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
   };
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={`flex flex-col h-full ${className}`}>
       <div className="flex items-center gap-2 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
         <h3 className="font-semibold text-sm text-[var(--color-text)]">Comments</h3>
         <span className="text-xs text-[var(--color-text-dim)] bg-[var(--color-bg)] px-2 py-0.5 rounded-full ml-auto">{comments.length}</span>
       </div>
@@ -58,10 +55,11 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
         ) : (
           comments.map((comment) => (
             <div key={comment.id} className="flex gap-2.5">
-              <Avatar className="h-8 w-8 shrink-0 mt-0.5 border border-[var(--color-border)]">
-                <AvatarImage src={comment.user.avatar} />
-                <AvatarFallback className="text-xs">{comment.user.name[0]}</AvatarFallback>
-              </Avatar>
+              <Avatar
+                className="h-8 w-8 shrink-0 mt-0.5 border border-[var(--color-border)]"
+                src={comment.user.avatar}
+                fallback={comment.user.name[0]}
+              />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="font-medium text-sm text-[var(--color-text)]">{comment.user.name}</span>
@@ -71,8 +69,8 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
                 <p className="text-sm text-[var(--color-text-dim)] mt-1 leading-relaxed">{comment.content}</p>
                 <div className="flex items-center gap-4 mt-1.5">
                   <button onClick={() => handleLike(comment.id)}
-                    className={cn('flex items-center gap-1 text-xs', likedComments.has(comment.id) ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]')}>
-                    <Heart className={cn('h-3 w-3', likedComments.has(comment.id) && 'fill-current')} />
+                    className={`flex items-center gap-1 text-xs transition-colors duration-150 ${likedComments.has(comment.id) ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'}`}>
+                    <Heart className={`h-3 w-3 ${likedComments.has(comment.id) ? 'fill-current' : ''}`} />
                     {comment.likes + (likedComments.has(comment.id) ? 1 : 0)}
                   </button>
                   <button className="text-xs text-[var(--color-text-dim)] hover:text-[var(--color-text)]">Reply</button>
@@ -84,17 +82,18 @@ export function Comments({ comments, onAddComment, className }: CommentsProps) {
       </div>
       <div className="pt-4 mt-3 border-t border-[var(--color-border)]">
         <div className="flex gap-2.5">
-          <Avatar className="h-8 w-8 shrink-0">
-            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" />
-            <AvatarFallback>SM</AvatarFallback>
-          </Avatar>
+          <Avatar
+            className="h-8 w-8 shrink-0"
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+            fallback="SM"
+          />
           <div className="flex-1 relative">
             <Input placeholder="Add a comment..." value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="pr-10 border-[var(--color-border)] rounded-full text-sm h-9 focus-visible:ring-[#ff8d49]/20" />
+              className="pr-10 text-sm h-9" />
             <Button onClick={handleSubmit} size="icon" disabled={!newComment.trim()}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] disabled:opacity-40">
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 bg-[var(--color-primary)] hover:bg-[#e67d3f]">
               <Send className="h-3.5 w-3.5 text-white" />
             </Button>
           </div>

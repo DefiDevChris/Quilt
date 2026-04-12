@@ -4,13 +4,21 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { maybeSnap } from '@/lib/canvas-utils';
+import { CANVAS } from '@/lib/design-system';
 
 export function useDrawingTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
-  const stateRef = useRef({
-    fillColor: '#f9a06b',
-    strokeColor: '#4a3f35',
+  const stateRef = useRef<{
+    fillColor: string;
+    strokeColor: string;
+    strokeWidth: number;
+    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    unitSystem: 'imperial' | 'metric';
+    isSpacePressed: boolean;
+  }>({
+    fillColor: CANVAS.pencilPreview,
+    strokeColor: CANVAS.seamLine,
     strokeWidth: 1,
     gridSettings: { enabled: true, size: 1, snapToGrid: true },
     unitSystem: 'imperial' as 'imperial' | 'metric',
@@ -103,7 +111,7 @@ export function useDrawingTool() {
             width: 0,
             height: 0,
             fill: 'transparent',
-            stroke: '#f9a06b',
+            stroke: CANVAS.pencilPreview,
             strokeWidth: 4,
             strokeDashArray: [5, 5],
             selectable: false,
@@ -120,7 +128,7 @@ export function useDrawingTool() {
             ],
             {
               fill: 'transparent',
-              stroke: '#f9a06b',
+              stroke: CANVAS.pencilPreview,
               strokeWidth: 4,
               strokeDashArray: [5, 5],
               selectable: false,

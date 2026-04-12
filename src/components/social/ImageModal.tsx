@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { X, Heart, MessageCircle, Bookmark, Share2 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar } from './ui';
 import { Post } from '@/types/social';
 import { Comments } from './Comments';
-import { cn } from '@/lib/utils';
 
 interface ImageModalProps {
   post: Post | null;
@@ -68,10 +66,11 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
         {/* Left: Author Info */}
         <div className="w-1/4 border-r border-[var(--color-border)] p-6 flex flex-col">
           <div className="flex flex-col items-center text-center">
-            <Avatar className="h-24 w-24 mb-4 border-4 border-[#ff8d49]">
-              <AvatarImage src={post.user.avatar} />
-              <AvatarFallback className="text-2xl">{post.user.name[0]}</AvatarFallback>
-            </Avatar>
+            <Avatar
+              className="h-24 w-24 mb-4 border-4 border-[var(--color-primary)]"
+              src={post.user.avatar}
+              fallback={post.user.name[0]}
+            />
             <h3 className="font-semibold text-lg text-[var(--color-text)]">{post.user.name}</h3>
             <p className="text-sm text-[var(--color-text-dim)]">@{post.user.username}</p>
             {post.user.bio && <p className="text-sm text-[var(--color-text-dim)] mt-3 px-4 leading-relaxed">{post.user.bio}</p>}
@@ -79,22 +78,21 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
               <div><p className="font-semibold text-lg text-[var(--color-text)]">{post.user.followers.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Followers</p></div>
               <div><p className="font-semibold text-lg text-[var(--color-text)]">{post.user.following.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Following</p></div>
             </div>
-            <Button
+            <button
               onClick={() => setIsFollowing(!isFollowing)}
-              className={cn(
-                'mt-4 w-full rounded-xl font-medium',
+              className={`mt-4 w-full rounded-full font-medium transition-colors duration-150 ${
                 isFollowing
                   ? 'bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]'
-                  : 'bg-[#ff8d49] text-white hover:bg-[#e67d3f]'
-              )}
+                  : 'bg-[var(--color-primary)] text-white hover:bg-[#e67d3f]'
+              }`}
             >
               {isFollowing ? 'Following' : 'Follow'}
-            </Button>
+            </button>
           </div>
           <div className="mt-auto pt-5 border-t border-[var(--color-border)]">
             <div className="flex items-center justify-around mb-4">
-              <button onClick={() => setLikedDelta((p) => (p === 0 ? 1 : 0))} className={cn('flex flex-col items-center gap-1 p-2 rounded-xl', isLiked ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
-                <Heart className={cn('h-5 w-5', isLiked && 'fill-current')} /><span className="text-sm font-medium">{displayLikes}</span>
+              <button onClick={() => setLikedDelta((p) => (p === 0 ? 1 : 0))} className={`flex flex-col items-center gap-1 p-2 rounded-full transition-colors duration-150 ${isLiked ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-dim)]'}`}>
+                <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} /><span className="text-sm font-medium">{displayLikes}</span>
               </button>
               <div className="flex flex-col items-center gap-1 p-2 text-[var(--color-text-dim)]">
                 <MessageCircle className="h-5 w-5" /><span className="text-sm font-medium">{post.comments.length}</span>
@@ -102,8 +100,8 @@ export function ImageModal({ post, isOpen, onClose, onAddComment }: ImageModalPr
               <button onClick={handleShare} className="flex flex-col items-center gap-1 p-2 text-[var(--color-text-dim)]">
                 <Share2 className="h-5 w-5" />
               </button>
-              <button onClick={() => setSaved(!saved)} className={cn('flex flex-col items-center gap-1 p-2', saved ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]')}>
-                <Bookmark className={cn('h-5 w-5', saved && 'fill-current')} />
+              <button onClick={() => setSaved(!saved)} className={`flex flex-col items-center gap-1 p-2 transition-colors duration-150 ${saved ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-dim)]'}`}>
+                <Bookmark className={`h-5 w-5 ${saved ? 'fill-current' : ''}`} />
               </button>
             </div>
             <p className="text-xs text-[var(--color-text-dim)] text-center">Posted {formatTimeAgo(post.createdAt)}</p>

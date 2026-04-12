@@ -1,5 +1,6 @@
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
+import { CANVAS, GRID } from '@/lib/design-system';
 import type { UnitSystem } from '@/types/canvas';
 
 interface GridRenderOptions {
@@ -36,7 +37,7 @@ function renderDimensionLabels(
   ctx.font = `500 ${fontSize}px Manrope, system-ui, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
-  ctx.fillStyle = '#6b5d50';
+  ctx.fillStyle = GRID.label;
 
   // Width label centered along top edge
   ctx.fillText(widthLabel, quiltWidthPx / 2, -(LABEL_OFFSET / zoom));
@@ -58,7 +59,7 @@ function renderCornerMarks(
   zoom: number
 ): void {
   const len = CORNER_MARK_LENGTH / zoom;
-  ctx.strokeStyle = '#6b5d50';
+  ctx.strokeStyle = GRID.label;
   ctx.lineWidth = 1 / zoom;
 
   const corners = [
@@ -103,7 +104,7 @@ export function renderGrid(
   const panY = vpt[5];
 
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#f5ede5';
+  ctx.fillStyle = GRID.bg;
   ctx.fillRect(0, 0, w, h);
 
   // --- Infinite background grid removed as per user request ---
@@ -115,7 +116,7 @@ export function renderGrid(
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, quiltWidthPx, quiltHeightPx);
 
-  ctx.strokeStyle = '#b8a698';
+  ctx.strokeStyle = GRID.border;
   ctx.lineWidth = 1.5 / zoom;
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 

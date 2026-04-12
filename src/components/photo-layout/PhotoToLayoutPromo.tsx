@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
@@ -183,9 +184,18 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
   if (mode === 'processing') {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/50">
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 flex flex-col items-center gap-4 max-w-sm shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
-          <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center animate-pulse">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 flex flex-col items-center gap-4 max-w-sm shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center animate-pulse"
+            style={{ backgroundColor: `${COLORS.primary}1a` }}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: COLORS.primary }}
+            >
               <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="4 3" />
             </svg>
           </div>
@@ -239,8 +249,19 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                   onClick={() => setMode('upload')}
                   className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 group"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ff8d49]/20 transition-colors duration-150">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
+                    style={{ backgroundColor: `${COLORS.primary}1a` }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.primary}33`; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.primary}1a`; }}
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      style={{ color: COLORS.primary }}
+                    >
                       <path
                         d="M12 4V16M12 4L8 8M12 4L16 8"
                         stroke="currentColor"
@@ -269,8 +290,19 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                   onClick={() => setMode('mobile-uploads')}
                   className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 flex items-center gap-4 text-left hover:bg-[var(--color-bg)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] transition-colors duration-150 group"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#ff8d49]/20 transition-colors duration-150">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#ff8d49]">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-150"
+                    style={{ backgroundColor: `${COLORS.primary}1a` }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.primary}33`; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.primary}1a`; }}
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      style={{ color: COLORS.primary }}
+                    >
                       <rect x="6" y="2" width="12" height="20" rx="2" stroke="currentColor" strokeWidth="2" />
                       <path d="M12 18H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       <path
@@ -291,7 +323,10 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                     </p>
                   </div>
                   {pendingUploads.length > 0 && (
-                    <span className="w-7 h-7 rounded-lg bg-[#ff8d49] text-[var(--color-text)] text-xs font-semibold flex items-center justify-center">
+                    <span
+                      className="w-7 h-7 rounded-lg text-[var(--color-text)] text-xs font-semibold flex items-center justify-center"
+                      style={{ backgroundColor: COLORS.primary }}
+                    >
                       {pendingUploads.length}
                     </span>
                   )}
@@ -324,13 +359,16 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                 <div className="grid grid-cols-2 gap-3">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
-                      <div className="aspect-square bg-[#ff8d49]/20 animate-pulse" />
+                      <div className="aspect-square animate-pulse" style={{ backgroundColor: `${COLORS.primary}33` }} />
                     </div>
                   ))}
                 </div>
               ) : pendingUploads.length === 0 ? (
                 <div className="flex flex-col items-center py-8 text-center">
-                  <div className="w-14 h-14 rounded-full bg-[#ff8d49]/10 flex items-center justify-center mb-3">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+                    style={{ backgroundColor: `${COLORS.primary}1a` }}
+                  >
                     <svg
                       width="24"
                       height="24"
@@ -402,6 +440,7 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
               <div
                 role="button"
                 tabIndex={0}
+                aria-label="Upload a quilt photo. Click or drag a file here."
                 onClick={() => inputRef.current?.click()}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -412,10 +451,26 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                className={`w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${isDragOver
-                  ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                  : 'border-[var(--color-border)]/50 hover:border-[#ff8d49]/50'
+                className={`w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
+                  isDragOver
+                    ? ''
+                    : 'border-[var(--color-border)]/50'
                 }`}
+                style={
+                  isDragOver
+                    ? { borderColor: COLORS.primary, backgroundColor: `${COLORS.primary}0d` }
+                    : undefined
+                }
+                onMouseEnter={(e) => {
+                  if (!isDragOver) {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = `${COLORS.primary}80`;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isDragOver) {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = '';
+                  }
+                }}
               >
                 <input
                   ref={inputRef}
@@ -459,14 +514,20 @@ export function PhotoToDesignPromo({ isPro: _isPro, onClose, preloadedImageUrl }
 
               {/* Error */}
               {error && (
-                <div className="px-4 py-3 rounded-lg bg-[#ff8d49]/10 border border-[#ff8d49]/20">
-                  <p className="text-body-sm text-[#ff8d49]">{error}</p>
+                <div
+                  className="px-4 py-3 rounded-lg"
+                  style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}
+                >
+                  <p className="text-body-sm" style={{ color: COLORS.primary }}>{error}</p>
                 </div>
               )}
 
               {/* Warning */}
               {warning && (
-                <div className="px-4 py-3 rounded-lg bg-[#ffc8a6]/20 border border-[#ffc8a6]/40">
+                <div
+                  className="px-4 py-3 rounded-lg"
+                  style={{ backgroundColor: `${COLORS.secondary}33`, borderColor: `${COLORS.secondary}66` }}
+                >
                   <p className="text-body-sm text-[var(--color-text-dim)]">{warning}</p>
                 </div>
               )}

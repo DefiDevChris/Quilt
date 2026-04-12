@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import type { BlogPost } from './FeaturedCarousel';
+import { COLORS, MOTION } from '@/lib/design-system';
 
 const FALLBACK = [
   '/images/quilts/simple_quilt_one_1775442292809.png',
@@ -44,7 +45,7 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
         className="max-w-[1400px] mx-auto px-6 md:px-12 mb-12 md:mb-16"
       >
         <div className="flex items-center gap-4 mb-4">
-          <span className="w-12 h-px bg-[#ff8d49]" />
+          <span className="w-12 h-px" style={{ backgroundColor: COLORS.primary }} />
           <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
             Stories
           </span>
@@ -106,7 +107,7 @@ function PostCard({
           {/* Content */}
           <div className="pt-4 md:pt-5">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-[14px] leading-[20px] text-[#ff8d49]">
+              <span className="text-[14px] leading-[20px]" style={{ color: COLORS.primary }}>
                 {post.category}
               </span>
               <span className="w-4 h-px bg-[var(--color-border)]" />
@@ -116,7 +117,7 @@ function PostCard({
             </div>
 
             <h3
-              className="text-[var(--color-text)] leading-[1.15] group-hover:text-[#ff8d49] transition-colors duration-150"
+              className="text-[var(--color-text)] leading-[1.15]"
               style={{
                 fontFamily: 'Spline Sans, sans-serif',
                 fontSize:
@@ -124,6 +125,8 @@ function PostCard({
                     ? 'clamp(1.5rem, 2.5vw, 2rem)'
                     : 'clamp(1.125rem, 1.5vw, 1.375rem)',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '')}
             >
               {post.title}
             </h3>

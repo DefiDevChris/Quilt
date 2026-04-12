@@ -8,8 +8,9 @@ import { useProjectStore } from '@/stores/projectStore';
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
+import { CANVAS } from '@/lib/design-system';
 
-const FABRIC_HIGHLIGHT_COLOR = '#f9a06b';
+const FABRIC_HIGHLIGHT_COLOR = CANVAS.fabricHighlight;
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.

@@ -6,8 +6,9 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
+import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
-const BLOCK_HIGHLIGHT_COLOR = '#f9a06b';
+const BLOCK_HIGHLIGHT_COLOR = CANVAS.blockHighlight;
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -275,7 +276,7 @@ async function createFabricObject(
   obj: Record<string, unknown>
 ): Promise<import('fabric').FabricObject | null> {
   const type = obj.type as string;
-  const fill = (obj.fill as string) ?? '#2c2420';
+  const fill = (obj.fill as string) ?? DEFAULT_CANVAS.fill;
   const stroke = (obj.stroke as string) ?? null;
   const strokeWidth = (obj.strokeWidth as number) ?? 0.5;
 
@@ -324,7 +325,7 @@ async function createFabricObject(
         number,
       ];
       result = new fabric.Line(coords, {
-        stroke: (obj.stroke as string) ?? '#4a3f35',
+        stroke: (obj.stroke as string) ?? CANVAS.seamLine,
         strokeWidth,
       });
       break;

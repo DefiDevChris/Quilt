@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 function StudioMockup() {
   const toolItems = [
@@ -92,7 +93,7 @@ function StudioMockup() {
           <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[9px]">
+          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
             Main
           </div>
           <div className="w-4 h-4 rounded-lg text-[var(--color-text-dim)] flex items-center justify-center text-[10px]">
@@ -108,7 +109,7 @@ function StudioMockup() {
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 bg-[#ff8d49] text-[var(--color-text)] font-bold text-[9px]">
+          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
             Export
           </div>
         </div>
@@ -123,8 +124,9 @@ function StudioMockup() {
             ) : (
               <div
                 key={i}
-                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-[#ff8d49]' : 'text-[var(--color-text-dim)]'
+                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-primary' : 'text-[var(--color-text-dim)]'
                   }`}
+                style={tool.active ? { color: COLORS.primary } : undefined}
               >
                 <svg
                   width="14"
@@ -154,16 +156,16 @@ function StudioMockup() {
               opacity: 0.3,
             }}
           />
-          <div className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 border-[#ff8d49]/60 rounded-lg mx-auto max-w-[260px]">
+          <div className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 rounded-lg mx-auto max-w-[260px]" style={{ borderColor: `${COLORS.primary}99` }}>
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
                 className="aspect-square bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)]/20"
               >
                 <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <polygon points="0,0 50,50 0,100" fill="#FFC8A6" />
-                  <polygon points="0,0 100,0 50,50" fill="#ff8d49" />
-                  <polygon points="100,0 100,100 50,50" fill="#FFC7C7" opacity="0.85" />
+                  <polygon points="0,0 50,50 0,100" fill={COLORS.secondary} />
+                  <polygon points="0,0 100,0 50,50" fill={COLORS.primary} />
+                  <polygon points="100,0 100,100 50,50" fill={COLORS.accent} opacity="0.85" />
                   <polygon points="0,100 100,100 50,50" fill="white" />
                 </svg>
               </div>
@@ -202,7 +204,8 @@ function StudioMockup() {
           {['Select', 'Rect', 'Tri', 'Line'].map((t, i) => (
             <div
               key={t}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'bg-[#ff8d49]/15 text-[#ff8d49]' : 'text-[var(--color-text-dim)]'}`}
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'text-primary' : 'text-[var(--color-text-dim)]'}`}
+              style={i === 0 ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary } : undefined}
             >
               <svg
                 width="10"
@@ -269,7 +272,7 @@ export default function HeroSection() {
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 From First Stitch
-                <span className="block text-[#ff8d49]">
+                <span className="block" style={{ color: COLORS.primary }}>
                   to Finished Quilt
                 </span>
               </h1>
@@ -283,7 +286,14 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/auth/signup"
-                className="px-8 py-4 bg-[#ff8d49] text-[var(--color-text)] rounded-full font-bold text-lg hover:bg-[#e67d3f] transition-colors duration-150 text-center shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="px-8 py-4 text-[var(--color-text)] rounded-full font-bold text-lg text-center"
+                style={{
+                  backgroundColor: COLORS.primary,
+                  boxShadow: SHADOW.brand,
+                  transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
               >
                 Start Designing Free
               </Link>

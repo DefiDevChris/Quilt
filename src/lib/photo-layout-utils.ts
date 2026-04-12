@@ -1,36 +1,25 @@
 /**
- * Photo Pattern Orchestrator — Perspective-First Pipeline
+ * Photo → Design Utilities — Perspective warp layer.
  *
- * Rebuilt after the 15-step OpenCV pipeline was deleted. Flow:
+ * In the fabric-first pipeline this file owns only the homography step:
+ * take the calibrated four corners and rasterize a flat, front-facing
+ * block bitmap using the pure-TS perspective engine. Everything
+ * downstream (quantize, component labelling, contour, simplify) lives in
+ * `quilt-segmentation-engine.ts`.
  *
- *   1. The user drops a photo in `PhotoToDesignWizard`.
- *   2. In the Calibration step they pin the four corners of one quilt block
- *      and enter its real-world size (e.g., 12×12 inches).
- *   3. `warpSourceImage()` uses the pure-TS `perspective-engine` to produce
- *      a flat, front-facing bitmap of just that block.
- *   4. In the Layout step the user picks a `BlockGridPreset` (4-Patch,
- *      9-Patch, HST, etc.).
- *   5. `buildBlockPattern()` overlays the preset's cells on the flattened
- *      image and K-Means-samples a dominant color per patch.
- *   6. The review step presents the pattern for validation / color swap.
- *
- * No polygon cleanup downstream — every emitted polygon is axis-aligned
- * or a right triangle on an inch grid.
+ * Kept as a thin wrapper because the wizard also needs a Blob URL for the
+ * `<img>` preview in the Review step, while the segmentation engine wants
+ * the raw `ImageData`. Producing both in one place keeps the canvas
+ * lifecycle (creation + cleanup) localized.
  */
 
-import type {
-  BlockGridPreset,
-  GridCell,
-  QuadCorners,
-  WarpedImageRef,
-} from './photo-layout-types';
+import type { QuadCorners, WarpedImageRef } from './photo-layout-types';
 import {
   computeHomography,
   rectCorners,
   sortCornersClockwise,
   warpPerspective,
 } from './perspective-engine';
-import { buildGridCells } from './grid-sampling-engine';
 
 // ── Calibration → Warped Image ────────────────────────────────────────────
 
@@ -43,8 +32,8 @@ export interface WarpSourceImageOptions {
   readonly heightInches: number;
   /**
    * Pixels per inch used for the warped bitmap. Default 120 gives a
-   * detailed enough image for reliable K-Means while staying well under
-   * the memory budget for a typical 12×12 block (~2 MB).
+   * detailed enough image for reliable segmentation while staying well
+   * under the memory budget for a typical 12×12 block (~2 MB).
    */
   readonly pixelsPerInch?: number;
 }
@@ -120,24 +109,4 @@ export async function warpSourceImage(
     pixelsPerInch,
     sortedCorners: sorted,
   };
-}
-
-// ── Layout → Pattern ──────────────────────────────────────────────────────
-
-export interface BuildBlockPatternResult {
-  readonly cells: readonly GridCell[];
-}
-
-/**
- * Apply a block grid preset to the warped image and produce the final
- * list of `GridCell`s with sampled fabric colors.
- */
-export function buildBlockPattern(
-  preset: BlockGridPreset,
-  widthInches: number,
-  heightInches: number,
-  warped: ImageData | null
-): BuildBlockPatternResult {
-  const { cells } = buildGridCells(preset, widthInches, heightInches, warped);
-  return { cells };
 }

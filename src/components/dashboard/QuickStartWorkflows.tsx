@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatRelativeTime } from '@/lib/format-time';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 interface RecentProject {
   id: string;
@@ -44,7 +45,7 @@ export function QuickStartWorkflows({
 
   return (
     <section className="mb-8" aria-label="Quick start workflows">
-      <h2 className="text-sm font-semibold text-[#1a1a1a] mb-4">
+      <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">
         Quick Start
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -52,12 +53,12 @@ export function QuickStartWorkflows({
         <button
           type="button"
           onClick={onNewProject}
-          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer bg-[var(--color-bg)] border border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           aria-label="Start a new project"
         >
           <div>
-            <p className="text-[#1a1a1a] font-semibold text-lg mb-1">Start New Project</p>
-            <p className="text-[#4a4a4a] text-sm">Pick a size and start designing</p>
+            <p className="text-[var(--color-text)] font-semibold text-lg mb-1">Start New Project</p>
+            <p className="text-[var(--color-text-dim)] text-sm">Pick a size and start designing</p>
           </div>
           <Image
             src="/icons/quilt-13-dashed-squares-Photoroom.png"
@@ -76,11 +77,11 @@ export function QuickStartWorkflows({
             aria-haspopup="listbox"
             aria-expanded={resumeOpen}
             aria-label="Resume a recent project"
-            className="w-full min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
+            className="w-full min-h-[140px] rounded-lg p-6 text-left overflow-hidden group cursor-pointer bg-[var(--color-bg)] border border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           >
             <div>
-              <p className="text-[#1a1a1a] font-semibold text-lg mb-1">Resume</p>
-              <p className="text-[#4a4a4a] text-sm">
+              <p className="text-[var(--color-text)] font-semibold text-lg mb-1">Resume</p>
+              <p className="text-[var(--color-text-dim)] text-sm">
                 {recentProjects.length > 0
                   ? `Pick up where you left off (${recentProjects.length})`
                   : 'No projects yet'}
@@ -98,18 +99,22 @@ export function QuickStartWorkflows({
           {resumeOpen && (
             <div
               role="listbox"
-              className="absolute left-0 right-0 mt-2 z-30 rounded-lg border border-[#d4d4d4] bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] overflow-hidden"
+              className="absolute left-0 right-0 mt-2 z-30 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
+              style={{ boxShadow: SHADOW.brand }}
             >
               {recentProjects.length === 0 ? (
                 <div className="px-4 py-6 text-center">
-                  <p className="text-sm text-[#4a4a4a]">No projects yet.</p>
+                  <p className="text-sm" style={{ color: COLORS.textDim }}>No projects yet.</p>
                   <button
                     type="button"
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = COLORS_HOVER.primary; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = COLORS.primary; }}
                     onClick={() => {
                       setResumeOpen(false);
                       onNewProject();
                     }}
-                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#ff8d49] px-4 py-1.5 text-sm font-medium text-[#1a1a1a] hover:bg-[#e67d3f] transition-colors duration-150"
+                    className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
+                    style={{ backgroundColor: COLORS.primary, color: COLORS.text }}
                   >
                     Start your first quilt
                   </button>
@@ -117,19 +122,21 @@ export function QuickStartWorkflows({
               ) : (
                 <ul className="max-h-72 overflow-y-auto">
                   {recentProjects.map((project) => (
-                    <li key={project.id} className="border-b border-[#d4d4d4] last:border-b-0">
+                    <li key={project.id} className="border-b last:border-b-0" style={{ borderColor: COLORS.border }}>
                       <Link
                         href={`/studio/${project.id}`}
                         role="option"
                         aria-selected="false"
-                        className="flex items-center justify-between px-4 py-3 hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                        className="flex items-center justify-between px-4 py-3"
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                         onClick={() => setResumeOpen(false)}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-[#1a1a1a] truncate">
+                          <p className="text-sm font-medium truncate" style={{ color: COLORS.text }}>
                             {project.name}
                           </p>
-                          <p className="text-xs text-[#4a4a4a] mt-0.5">
+                          <p className="text-xs mt-0.5" style={{ color: COLORS.textDim }}>
                             {formatRelativeTime(project.updatedAt)}
                           </p>
                         </div>
@@ -138,7 +145,8 @@ export function QuickStartWorkflows({
                           height="14"
                           viewBox="0 0 14 14"
                           fill="none"
-                          className="text-[#4a4a4a] ml-3 shrink-0"
+                          className="ml-3 shrink-0"
+                          style={{ color: COLORS.textDim }}
                           aria-hidden="true"
                         >
                           <path
@@ -157,7 +165,10 @@ export function QuickStartWorkflows({
               <Link
                 href="/projects"
                 onClick={() => setResumeOpen(false)}
-                className="block px-4 py-2.5 text-center text-sm font-medium text-[#ff8d49] hover:bg-[#ff8d49]/10 border-t border-[#d4d4d4]"
+                className="block px-4 py-2.5 text-center text-sm font-medium border-t"
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                style={{ color: COLORS.primary, borderColor: COLORS.border }}
               >
                 View all in My Quiltbook →
               </Link>
@@ -168,12 +179,12 @@ export function QuickStartWorkflows({
         {/* Photo to Design */}
         <Link
           href="/photo-to-design"
-          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden transition-colors duration-150 bg-[var(--color-bg)] border border-[#d4d4d4] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
+          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden bg-[var(--color-bg)] border border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
           aria-label="Photo to Design workflow"
         >
           <div>
-            <p className="text-[#1a1a1a] font-semibold text-lg mb-1">Photo to Design</p>
-            <p className="text-[#4a4a4a] text-sm">Extract blocks with AI</p>
+            <p className="text-[var(--color-text)] font-semibold text-lg mb-1">Photo to Design</p>
+            <p className="text-[var(--color-text-dim)] text-sm">Extract blocks with AI</p>
           </div>
           <Image
             src="/icons/quilt-photo-camera.png"
