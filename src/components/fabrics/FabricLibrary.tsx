@@ -9,13 +9,14 @@ import { FabricCard } from '@/components/fabrics/FabricCard';
 import { FabricPreviewModal } from '@/components/fabrics/FabricPreviewModal';
 import { SkeletonGrid } from '@/components/ui/skeleton';
 import { ShoppingBag } from 'lucide-react';
+import { COLORS } from '@/lib/design-system';
 import type { FabricListItem } from '@/types/fabric';
 
 type TabType = 'library' | 'myfabrics' | 'presets' | 'shop';
 
 /** Neutral solid fabrics that work well for sashing, borders, and binding. */
 const QUICK_APPLY_FABRICS: Array<{ id: string; name: string; hex: string }> = [
-  { id: 'qa-white', name: 'White', hex: '#FFFFFF' },
+  { id: 'qa-white', name: 'White', hex: COLORS.surface },
   { id: 'qa-cream', name: 'Cream', hex: '#F5F0E8' },
   { id: 'qa-light-gray', name: 'Light Gray', hex: '#D0D0D0' },
   { id: 'qa-med-gray', name: 'Medium Gray', hex: '#B0B0B0' },
@@ -230,7 +231,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="rounded-lg px-2 py-1 text-xs text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 disabled:opacity-30"
+                  className="rounded-lg px-2 py-1 text-xs text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50"
                 >
                   ← Prev
                 </button>
@@ -241,7 +242,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="rounded-lg px-2 py-1 text-xs text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 disabled:opacity-30"
+                  className="rounded-lg px-2 py-1 text-xs text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50"
                 >
                   Next →
                 </button>
@@ -361,7 +362,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <button
                   type="button"
                   onClick={onOpenUpload}
-                  className="w-full rounded-full bg-[#ff8d49] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                  className="w-full rounded-full bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
                   + Import Fabric
                 </button>

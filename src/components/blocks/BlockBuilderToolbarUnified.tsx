@@ -233,10 +233,10 @@ export function BlockBuilderToolbarUnified({
                     aria-disabled={tool.isDisabled ?? false}
                     onClick={tool.isDisabled ? undefined : tool.onClick}
                     className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${tool.isDisabled
-                      ? 'text-[#4a4a4a]/25 cursor-default'
+                      ? 'text-[var(--color-text-dim)]/25 cursor-default'
                       : isActive
-                        ? 'text-[#ff8d49]'
-                        : 'text-[#4a4a4a] hover:text-[#1a1a1a]'
+                        ? 'text-[var(--color-primary)]'
+                        : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
                       }`}
                   >
                     <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">

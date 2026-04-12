@@ -204,6 +204,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40 p-4"
+
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-project-wizard-title"
@@ -211,7 +212,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className={`w-full max-h-[90vh] overflow-y-auto bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] focus:outline-none rounded-lg ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
+        className={`w-full max-h-[90vh] overflow-y-auto bg-surface border border-[var(--color-border)] shadow-brand focus:outline-none rounded-lg ${isStudio ? 'max-w-lg' : 'max-w-2xl'}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)]">
@@ -225,7 +226,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
           <button
             type="button"
             onClick={handleClose}
-            className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] w-8 h-8 flex items-center justify-center hover:bg-[var(--color-bg)] transition-colors duration-150 rounded-full"
+            className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] w-8 h-8 flex items-center justify-center hover:bg-default transition-colors duration-150 rounded-full"
             aria-label="Close"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -264,7 +265,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   onChange={(e) => setName(e.target.value)}
                   maxLength={255}
                   placeholder="e.g. My Next Masterpiece"
-                  className="w-full border border-[var(--color-border)] px-4 py-3 text-[18px] leading-[28px] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
+                  className="w-full border border-[var(--color-border)] px-4 py-3 text-[18px] leading-[28px] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-2 focus:outline-primary rounded-lg"
                   autoFocus
                 />
               </div>
@@ -273,10 +274,9 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   type="button"
                   onClick={() => setStep(2)}
                   disabled={!name.trim()}
-                  className="bg-[#ff8d49] text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
+                  className="bg-primary text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
                 >
-                  Next Step
-                </button>
+                  Next Step</button>
               </div>
             </div>
           )}
@@ -299,8 +299,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel(preset.label)}
                       className={
                         isActive
-                          ? 'flex flex-col items-center justify-center p-3 bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-full'
-                          : 'flex flex-col items-center justify-center p-3 bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full'
+                          ? 'flex flex-col items-center justify-center p-3 bg-primary text-[var(--color-text)] shadow-brand rounded-full'
+                          : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full'
                       }
                     >
                       <span className="text-[16px] leading-[24px] font-medium mb-1">
@@ -325,8 +325,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       onClick={() => setSizePresetLabel('Custom')}
                       className={
                         isCustom
-                          ? 'w-full px-4 py-3 bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] font-medium shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-full'
-                          : 'w-full px-4 py-3 bg-[var(--color-bg)] text-[var(--color-text)] text-[16px] leading-[24px] font-medium hover:bg-[#ffc8a6]/20 transition-colors duration-150 border border-[var(--color-border)] rounded-full'
+                          ? 'w-full px-4 py-3 bg-primary text-[var(--color-text)] text-[16px] leading-[24px] font-medium shadow-brand rounded-full'
+                          : 'w-full px-4 py-3 bg-default text-[var(--color-text)] text-[16px] leading-[24px] font-medium hover:bg-[#ffc8a6]/20 transition-colors duration-150 border border-[var(--color-border)] rounded-full'
                       }
                     >
                       Custom Size
@@ -341,8 +341,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   onClick={() => setSizePresetLabel('Custom')}
                   className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
                     isCustom
-                      ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                      : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ffc8a6]/20'
+                      ? 'bg-primary text-[var(--color-text)] shadow-brand'
+                      : 'bg-default text-[var(--color-text)] hover:bg-[#ffc8a6]/20'
                   }`}
                 >
                   <span className="text-[16px] leading-[24px] font-medium">Custom Size</span>
@@ -350,7 +350,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
               )}
 
               {isCustom && (
-                <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg">
+                <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-default border border-[var(--color-border)] rounded-lg">
                   <div>
                     <label
                       htmlFor="wizard-w"
@@ -366,7 +366,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customWidth}
                       onChange={(e) => setCustomWidth(e.target.value)}
-                      className="w-full border border-[var(--color-border)] px-3 py-2 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
+                      className="w-full border border-[var(--color-border)] px-3 py-2 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-primary rounded-lg"
                       placeholder="e.g. 60"
                     />
                   </div>
@@ -385,7 +385,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       step={0.5}
                       value={customHeight}
                       onChange={(e) => setCustomHeight(e.target.value)}
-                      className="w-full border border-[var(--color-border)] px-3 py-2 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-[#ff8d49] rounded-lg"
+                      className="w-full border border-[var(--color-border)] px-3 py-2 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-primary rounded-lg"
                       placeholder="e.g. 72"
                     />
                   </div>
@@ -406,8 +406,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                         onClick={() => setCellSize(size)}
                         className={`px-4 py-2 text-[16px] leading-[24px] font-medium transition-colors duration-150 rounded-full ${
                           Math.abs(cellSize - size) < 0.001
-                            ? 'bg-[#ff8d49] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                            : 'bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20'
+                            ? 'bg-primary text-[var(--color-text)] shadow-brand'
+                            : 'bg-default text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20'
                         }`}
                       >
                         {fmtCellSize(size)}
@@ -426,7 +426,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   <button
                     type="button"
                     onClick={handleDismiss}
-                    className="bg-[var(--color-bg)] border border-[var(--color-border)] px-4 py-2 text-[16px] leading-[24px] font-medium text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full"
+                    className="bg-default border border-[var(--color-border)] px-4 py-2 text-[16px] leading-[24px] font-medium text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full"
                   >
                     Skip
                   </button>
@@ -436,7 +436,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                     type="button"
                     onClick={handleCreate}
                     disabled={isCustom && (!customWidth || !customHeight)}
-                    className="bg-[#ff8d49] text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
+                    className="bg-primary text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
                   >
                     Create Quilt
                   </button>
@@ -445,7 +445,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                     type="button"
                     onClick={() => setStep(2)}
                     disabled={isCustom && (!customWidth || !customHeight)}
-                    className="bg-[#ff8d49] text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
+                    className="bg-primary text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
                   >
                     Next Step
                   </button>

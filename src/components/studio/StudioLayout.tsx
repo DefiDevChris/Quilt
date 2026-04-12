@@ -13,6 +13,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { COLORS } from '@/lib/design-system';
 import type { Project } from '@/types/project';
 
 import { StudioTopBar } from '@/components/studio/StudioTopBar';
@@ -112,7 +113,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
     const canvas = useCanvasStore.getState().fabricCanvas;
     if (canvas) {
       canvas.clear();
-      canvas.backgroundColor = '#FFFFFF';
+      canvas.backgroundColor = COLORS.surface;
       canvas.renderAll();
     }
     useCanvasStore.getState().resetHistory();
@@ -163,7 +164,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                 {showReferencePanel && referenceImageUrl && (
                   <div className="w-1/2 border-l border-[var(--color-border)]/20 bg-[var(--color-bg)]/30 flex flex-col overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--color-border)]/15">
-                      <span className="text-[12px] font-semibold text-[var(--color-text)]/60 ">
+                      <span className="text-[14px] leading-[20px] font-semibold text-[var(--color-text)]/60 ">
                         Reference Photo
                       </span>
                       <button

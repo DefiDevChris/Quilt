@@ -41,7 +41,7 @@ const WARNING_ICON = (
 );
 
 const INFO_ICON = (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-[var(--color-text-dim)] shrink-0">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-dim shrink-0">
     <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
     <path d="M10 6v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     <circle cx="10" cy="14" r="0.75" fill="currentColor" />
@@ -150,11 +150,11 @@ export function NotificationDropdown() {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] rounded-lg z-50 border border-[var(--color-border)]"
+      className="absolute right-0 top-full mt-2 w-80 max-h-[400px] overflow-y-auto bg-surface shadow-brand rounded-lg z-50 border border-default"
       role="menu"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
-        <h3 className="font-semibold text-[var(--color-text)]">Notifications</h3>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-default">
+        <h3 className="font-semibold text-default">Notifications</h3>
         <button
           type="button"
           onClick={markAllAsRead}
@@ -165,9 +165,9 @@ export function NotificationDropdown() {
       </div>
 
       {isLoading && notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-[#4a4a4a] text-[14px] leading-[20px]">Loading...</div>
+        <div className="px-4 py-8 text-center text-dim text-[14px] leading-[20px]">Loading...</div>
       ) : notificationsList.length === 0 ? (
-        <div className="px-4 py-8 text-center text-[#4a4a4a] text-[14px] leading-[20px]">No notifications yet</div>
+        <div className="px-4 py-8 text-center text-dim text-[14px] leading-[20px]">No notifications yet</div>
       ) : (
         <div>
           {notificationsList.map((notification, index) => (
@@ -175,20 +175,20 @@ export function NotificationDropdown() {
               key={notification.id}
               type="button"
               onClick={() => handleNotificationClick(notification)}
-              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-[var(--color-bg)] transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
-                } ${index < notificationsList.length - 1 ? 'border-b border-[#d4d4d4]' : ''}`}
+              className={`w-full text-left px-4 py-3 flex gap-3 hover:bg-default transition-colors ${!notification.isRead ? 'border-l-2 border-primary' : ''
+                } ${index < notificationsList.length - 1 ? 'border-b border-default' : ''}`}
               role="menuitem"
             >
               <div className="mt-0.5">{getNotificationIcon(notification.type)}</div>
               <div className="flex-1 min-w-0">
                 <p
-                  className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-[#4a4a4a]' : 'font-medium text-[#1a1a1a]'
+                  className={`text-[14px] leading-[20px] ${notification.isRead ? 'text-dim' : 'font-medium text-default'
                     }`}
                 >
                   {notification.title}
                 </p>
-                <p className="text-[14px] leading-[20px] text-[#4a4a4a] line-clamp-2 mt-0.5">{notification.message}</p>
-                <p className="text-[12px] leading-[16px] text-[#4a4a4a] mt-1">
+                <p className="text-[14px] leading-[20px] text-dim line-clamp-2 mt-0.5">{notification.message}</p>
+                <p className="text-[14px] leading-[20px] text-dim mt-1">
                   {formatRelativeTime(notification.createdAt)}
                 </p>
               </div>

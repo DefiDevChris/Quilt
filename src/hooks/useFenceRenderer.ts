@@ -6,7 +6,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { computeFenceAreas } from '@/lib/fence-engine';
-import { FENCE } from '@/lib/design-system';
+import { FENCE, CANVAS } from '@/lib/design-system';
 import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
 
@@ -209,7 +209,7 @@ export function useFenceRenderer() {
             originX: 'center',
             originY: 'center',
             fontSize: labelFontSize,
-            fill: isPreview ? 'rgba(74, 63, 53, 0.25)' : 'rgba(74, 63, 53, 0.12)',
+            fill: isPreview ? CANVAS.fenceLabelBg : CANVAS.fenceLabelBgLight,
             fontFamily: 'var(--font-sans)',
             selectable: false,
             evented: false,

@@ -86,7 +86,7 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  onDragStart={(e) => onDragStart(e, fabric)}
  onClick={onClick}
  onContextMenu={handleContextMenu}
- className="group relative cursor-grab rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden hover:border-[#ff8d49] transition-colors"
+ className="group relative cursor-grab rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden hover:border-[var(--color-primary)] transition-colors"
  title={fabric.name}
  >
  <div className="aspect-square">
@@ -113,7 +113,7 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  <button
  type="button"
  onClick={onRemove}
- className="absolute top-1 right-1 w-5 h-5 rounded-lg bg-[#ffc7c7]/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-[#ffc7c7] transition-colors duration-150"
+ className="absolute top-1 right-1 w-5 h-5 rounded-lg bg-[var(--color-accent)]/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-[var(--color-accent)] transition-colors duration-150"
  title="Remove from presets"
  >
  ✕

@@ -8,6 +8,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
+import { LAYOUT } from '@/lib/design-system';
 
 import { ZOOM_FACTOR } from '@/lib/constants';
 import { performUndo, performRedo } from '@/lib/canvas-history';
@@ -210,7 +211,7 @@ export function HamburgerDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-[#ff8d49]/20 z-40"
+            className="fixed inset-0 bg-[var(--color-primary)]/20 z-40"
             onClick={onClose}
           />
 
@@ -220,7 +221,7 @@ export function HamburgerDrawer({
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 overflow-y-auto"
+            className={`fixed top-0 left-0 bottom-0 w-[${LAYOUT.sidebarWidth}] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 overflow-y-auto`}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12">

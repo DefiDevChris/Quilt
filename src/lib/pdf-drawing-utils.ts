@@ -6,8 +6,9 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import { PDFDocument, PDFPage, PDFFont, PDFImage, rgb, LineCapStyle, StandardFonts } from 'pdf-lib';
+import { PDFDocument, PDFPage, PDFFont, PDFImage, rgb, LineCapStyle, StandardFonts, type RGB } from 'pdf-lib';
 import { PDF_POINTS_PER_INCH } from '@/lib/constants';
+import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -35,18 +36,11 @@ export interface TableOptions {
 }
 
 export interface LineOptions {
-  color?: { r: number; g: number; b: number };
+  color?: RGB;
   lineWidth?: number;
   dashArray?: number[];
   dashPhase?: number;
 }
-
-// ── Brand Colors ───────────────────────────────────────────────────
-
-const BRAND_PRIMARY = rgb(1, 0.553, 0.286); // warm amber (#ff8d49)
-const BRAND_DARK = rgb(0.102, 0.102, 0.102); // charcoal text (#1a1a1a)
-const BRAND_MUTED = rgb(0.29, 0.29, 0.29); // dim charcoal (#4a4a4a)
-const BRAND_LIGHT_BG = rgb(0.831, 0.831, 0.831); // neutral border (#d4d4d4)
 
 // ── Logo Embedding ─────────────────────────────────────────────────
 
@@ -99,7 +93,7 @@ export function drawCoverBranding(
     y: y - 16,
     size: 12,
     font,
-    color: BRAND_PRIMARY,
+    color: PDF_COLOR.primary,
   });
 }
 
@@ -134,7 +128,7 @@ export function drawPageHeader(
     y: y - 12,
     size: 9,
     font,
-    color: BRAND_PRIMARY,
+    color: PDF_COLOR.primary,
   });
 }
 
@@ -159,7 +153,7 @@ export function drawBrandedFooter(
     y,
     size: 7,
     font,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   // Page number — bottom-right
@@ -170,7 +164,7 @@ export function drawBrandedFooter(
     y,
     size: 7,
     font,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 }
 
@@ -215,7 +209,7 @@ export function drawFullCoverPage(
     y: pageHeight - margin - 22,
     size: 14,
     font: options.titleFont,
-    color: BRAND_PRIMARY,
+    color: PDF_COLOR.primary,
   });
 
   // Horizontal rule under branding
@@ -224,7 +218,7 @@ export function drawFullCoverPage(
     start: { x: margin, y: ruleY },
     end: { x: pageWidth - margin, y: ruleY },
     thickness: 1,
-    color: BRAND_PRIMARY,
+    color: PDF_COLOR.primary,
   });
 
   // Project name — large title
@@ -234,7 +228,7 @@ export function drawFullCoverPage(
     y: cursorY,
     size: 28,
     font: options.titleFont,
-    color: BRAND_DARK,
+    color: PDF_SEMANTIC.charcoal,
   });
 
   cursorY -= 8;
@@ -245,7 +239,7 @@ export function drawFullCoverPage(
     y: cursorY,
     size: 12,
     font: options.bodyFont,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   cursorY -= 22;
@@ -256,7 +250,7 @@ export function drawFullCoverPage(
     y: cursorY,
     size: 11,
     font: options.titleFont,
-    color: BRAND_DARK,
+    color: PDF_SEMANTIC.charcoal,
   });
 
   cursorY -= 30;
@@ -289,7 +283,7 @@ export function drawFullCoverPage(
     y: Math.max(cursorY, margin + 30),
     size: 9,
     font: options.bodyFont,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   // Footer rule
@@ -297,7 +291,7 @@ export function drawFullCoverPage(
     start: { x: margin, y: margin + 20 },
     end: { x: pageWidth - margin, y: margin + 20 },
     thickness: 0.5,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   // Website — bottom-left
@@ -306,7 +300,7 @@ export function drawFullCoverPage(
     y: margin + 8,
     size: 7,
     font: options.bodyFont,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   // Page 1 — bottom-right
@@ -317,7 +311,7 @@ export function drawFullCoverPage(
     y: margin + 8,
     size: 7,
     font: options.bodyFont,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 }
 
@@ -343,7 +337,7 @@ export function drawSectionHeader(
     y,
     size: 14,
     font,
-    color: BRAND_DARK,
+    color: PDF_SEMANTIC.charcoal,
   });
 
   const ruleY = y - 4;
@@ -351,7 +345,7 @@ export function drawSectionHeader(
     start: { x: mx, y: ruleY },
     end: { x: pageWidth - mx, y: ruleY },
     thickness: 0.5,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   return ruleY - 16;
@@ -390,7 +384,7 @@ export function drawTable(
     y: y - rowH,
     width: tableW,
     height: rowH,
-    color: BRAND_LIGHT_BG,
+    color: PDF_COLOR.border,
   });
 
   // Header text
@@ -401,7 +395,7 @@ export function drawTable(
       y: y - rowH + 4,
       size: headerSize,
       font: fonts.headerFont,
-      color: BRAND_DARK,
+      color: PDF_SEMANTIC.charcoal,
     });
     colX += colWidths[c];
   }
@@ -418,7 +412,7 @@ export function drawTable(
         y: y - rowH + 4,
         size: bodySize,
         font: fonts.bodyFont,
-        color: rgb(0.15, 0.15, 0.15),
+        color: PDF_SEMANTIC.charcoal,
       });
       colX += colWidths[c];
     }
@@ -430,7 +424,7 @@ export function drawTable(
     start: { x: startX, y },
     end: { x: startX + tableW, y },
     thickness: 0.5,
-    color: BRAND_MUTED,
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   return y - 8;
@@ -449,7 +443,7 @@ export function drawPolylinePoints(
 ): void {
   if (points.length < 2) return;
 
-  const color = options?.color ?? { r: 0, g: 0, b: 0 };
+  const color = options?.color ?? PDF_SEMANTIC.black;
   const lineWidth = options?.lineWidth ?? 1;
 
   for (let i = 0; i < points.length; i++) {
@@ -458,7 +452,7 @@ export function drawPolylinePoints(
       start: { x: points[i].x, y: points[i].y },
       end: { x: points[next].x, y: points[next].y },
       thickness: lineWidth,
-      color: rgb(color.r, color.g, color.b),
+      color,
       lineCap: LineCapStyle.Round,
       dashArray: options?.dashArray,
       dashPhase: options?.dashPhase,
@@ -479,9 +473,9 @@ export function drawValidationSquare(page: PDFPage, font: PDFFont, x: number, y:
     y: y - size,
     width: size,
     height: size,
-    borderColor: rgb(0, 0, 0),
+    borderColor: PDF_SEMANTIC.black,
     borderWidth: 1,
-    color: rgb(1, 1, 1),
+    color: PDF_SEMANTIC.white,
   });
 
   const labelSize = 7;
@@ -493,7 +487,7 @@ export function drawValidationSquare(page: PDFPage, font: PDFFont, x: number, y:
     y: y - labelSize - 2,
     size: labelSize,
     font,
-    color: rgb(0.3, 0.3, 0.3),
+    color: PDF_SEMANTIC.mediumGray,
   });
 
   page.drawText(line2, {
@@ -501,7 +495,7 @@ export function drawValidationSquare(page: PDFPage, font: PDFFont, x: number, y:
     y: y - labelSize * 2 - 5,
     size: labelSize,
     font,
-    color: rgb(0.3, 0.3, 0.3),
+    color: PDF_SEMANTIC.mediumGray,
   });
 }
 
@@ -527,7 +521,7 @@ export function drawGrainLine(
     start: { x, y },
     end: { x: endX, y: endY },
     thickness: 0.75,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
     lineCap: LineCapStyle.Round,
   });
 
@@ -541,7 +535,7 @@ export function drawGrainLine(
       y: endY - arrowLen * Math.sin(angle - arrowAngle),
     },
     thickness: 0.75,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
   });
   page.drawLine({
     start: { x: endX, y: endY },
@@ -550,7 +544,7 @@ export function drawGrainLine(
       y: endY - arrowLen * Math.sin(angle + arrowAngle),
     },
     thickness: 0.75,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
   });
 
   // Arrowhead at start (reversed)
@@ -561,7 +555,7 @@ export function drawGrainLine(
       y: y + arrowLen * Math.sin(angle - arrowAngle),
     },
     thickness: 0.75,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
   });
   page.drawLine({
     start: { x, y },
@@ -570,7 +564,7 @@ export function drawGrainLine(
       y: y + arrowLen * Math.sin(angle + arrowAngle),
     },
     thickness: 0.75,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
   });
 
   // "GRAIN" text — centered along the line
@@ -583,7 +577,7 @@ export function drawGrainLine(
     y: midY + 4,
     size: 7,
     font,
-    color: rgb(0, 0, 0),
+    color: PDF_SEMANTIC.black,
   });
 }
 
@@ -625,7 +619,7 @@ export function drawContentPageHeader(
       y: cursorY - 12,
       size: 9,
       font: fonts.bodyFont,
-      color: BRAND_PRIMARY,
+      color: PDF_COLOR.primary,
     });
   } else {
     page.drawText('Quilt Studio', {
@@ -633,7 +627,7 @@ export function drawContentPageHeader(
       y: cursorY - 12,
       size: 9,
       font: fonts.bodyFont,
-      color: BRAND_PRIMARY,
+      color: PDF_COLOR.primary,
     });
   }
 
@@ -645,7 +639,7 @@ export function drawContentPageHeader(
     y: cursorY,
     size: 16,
     font: fonts.titleFont,
-    color: BRAND_DARK,
+    color: PDF_SEMANTIC.charcoal,
   });
 
   // Horizontal rule
@@ -654,7 +648,7 @@ export function drawContentPageHeader(
     start: { x: mx, y: ruleY },
     end: { x: pageWidth - mx, y: ruleY },
     thickness: 0.75,
-    color: BRAND_PRIMARY,
+    color: PDF_COLOR.primary,
   });
 
   // Footer
@@ -684,7 +678,7 @@ export function drawColorSwatch(
     width: size,
     height: size,
     color: rgb(r, g, b),
-    borderColor: rgb(0.7, 0.7, 0.7),
+    borderColor: PDF_SEMANTIC.borderGray,
     borderWidth: 0.5,
   });
 }

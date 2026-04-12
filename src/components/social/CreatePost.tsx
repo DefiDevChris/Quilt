@@ -36,39 +36,39 @@ export function CreatePost({ onPost }: CreatePostProps) {
   };
 
   return (
-    <div className={`bg-[var(--color-surface)] border rounded-2xl p-5 transition-all duration-150 ${
-      isFocused ? 'border-[var(--color-primary)]/30 ring-2 ring-[var(--color-primary)]/10' : 'border-[var(--color-border)]'
+    <div className={`bg-surface border rounded-lg p-5 transition-colors duration-150 ${
+      isFocused ? 'border-[var(--color-primary)]/30 ring-2 ring-[var(--color-primary)]/10' : 'border-default'
     }`}>
       <div className="flex gap-3">
         <Avatar
-          className="h-12 w-12 shrink-0 border-2 border-[var(--color-primary)]"
+          className="h-12 w-12 shrink-0 border-2 border-primary"
           src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
           fallback="SM"
         />
         <div className="flex-1">
-          <div className="bg-[var(--color-bg)] rounded-2xl p-4">
+          <div className="bg-default rounded-lg p-4">
             <Textarea
               placeholder="What's on your mind, Sarah?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onFocus={() => setIsFocused(true)}
-              className="min-h-[80px] resize-none border-none bg-transparent text-base placeholder:text-[var(--color-text-dim)] focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              className="min-h-[80px] resize-none border-none bg-transparent text-base placeholder:text-dim focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
             />
           </div>
           {selectedImage && (
-            <div className="relative mt-3 mx-3 mb-3 rounded-xl overflow-hidden">
+            <div className="relative mt-3 mx-3 mb-3 rounded-lg overflow-hidden">
               <img src={selectedImage} alt="Selected" className="w-full h-48 object-cover" />
               <button onClick={() => setSelectedImage(null)} className="absolute top-2 right-2 p-1.5 bg-[var(--color-text)]/50 rounded-full text-white">
                 <X className="h-4 w-4" />
               </button>
             </div>
           )}
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--color-border)]">
-            <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-[var(--color-primary)] h-9 rounded-full">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-default">
+            <Button variant="ghost" size="sm" onClick={handleImageSelect} className="text-primary h-9 rounded-full">
               <ImagePlus className="h-4 w-4 mr-1.5" />
               Photo
             </Button>
-            <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-[var(--color-primary)] text-white rounded-full h-9 px-6 text-sm font-medium hover:bg-[#e67d3f] disabled:opacity-40">
+            <Button onClick={handleSubmit} disabled={(!content.trim() && !selectedImage) || isPosting} className="bg-primary text-white rounded-full h-9 px-6 text-sm font-medium hover:bg-primary-dark disabled:opacity-40">
               {isPosting ? 'Posting...' : 'Post'}
             </Button>
           </div>

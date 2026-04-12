@@ -152,7 +152,7 @@ export function SocialThreadsPage() {
             <FilterBar viewMode={viewMode} filterMode={filterMode} onViewModeChange={setViewMode} onFilterModeChange={setFilterMode} />
 
             {showSavedPanel && (
-              <div className="rounded-2xl p-6" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}`, boxShadow: SHADOW.brand }}>
+              <div className="rounded-lg p-6" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}`, boxShadow: SHADOW.brand }}>
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="text-lg font-semibold" style={{ color: COLORS.text }}>Saved Posts ({savedPostsData.length})</h3>
                   <button
@@ -176,7 +176,7 @@ export function SocialThreadsPage() {
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
                     {savedPostsData.map((post) => (
-                      <div key={post.id} className="relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                      <div key={post.id} className="relative aspect-square rounded-lg overflow-hidden cursor-pointer"
                         style={{ transitionDuration: `${MOTION.transitionDuration}ms`, transitionTimingFunction: MOTION.transitionEasing }}
                         onClick={() => { handleImageClick(post); setShowSavedPanel(false); }}
                         onMouseEnter={(e) => {

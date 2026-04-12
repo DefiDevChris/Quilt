@@ -82,7 +82,7 @@ export function PostCard({
   /* ── Grid View ── */
   if (viewMode === 'grid') {
     return (
-      <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
+      <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-sm overflow-hidden">
         <div className="relative aspect-[4/3] cursor-pointer overflow-hidden"
           onClick={() => { handleDoubleTapLike(); onImageClick?.(post); }}>
           <img src={post.image} alt="" className="w-full h-full object-cover" />
@@ -132,7 +132,7 @@ export function PostCard({
 
   /* ── Full View ── */
   return (
-    <article className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
+    <article className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-sm overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 p-6 pb-4">
         <Avatar
@@ -157,7 +157,7 @@ export function PostCard({
             <DropdownMenuTrigger asChild>
               <button className="p-2 rounded-full hover:bg-[var(--color-bg)]" aria-label="More options"><MoreHorizontal className="h-5 w-5 text-[var(--color-text-dim)]" /></button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-36 rounded-2xl p-2">
+            <DropdownMenuContent align="end" className="w-36 rounded-lg p-2">
               <DropdownMenuItem className="text-red-500 rounded-full mx-1 py-2">Delete Post</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -169,7 +169,7 @@ export function PostCard({
 
       {/* Image + Comments */}
       <div className="flex gap-5 px-6 pb-5">
-        <div className="w-2/3 cursor-pointer rounded-xl overflow-hidden relative"
+        <div className="w-2/3 cursor-pointer rounded-lg overflow-hidden relative"
           onClick={() => { handleDoubleTapLike(); onImageClick?.(post); }}>
           <img src={post.image} alt="" className="w-full h-80 object-cover" />
           {showHeart && (

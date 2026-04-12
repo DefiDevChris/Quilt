@@ -6,8 +6,7 @@
  * keeping the PDF engines free of direct Fabric.js dependencies.
  */
 
-import { GRID_LINE_COLOR } from '@/lib/constants';
-import { DEFAULT_CANVAS } from '@/lib/design-system';
+import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -34,7 +33,7 @@ function isSystemObject(obj: Record<string, unknown>): boolean {
   const stroke = obj.stroke as string | undefined;
   const name = obj.name as string | undefined;
 
-  if (stroke === GRID_LINE_COLOR) return true;
+  if (stroke === CANVAS.gridLine) return true;
   if (name === 'overlay-ref') return true;
   if (name === 'grid-line') return true;
 

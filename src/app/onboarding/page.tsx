@@ -10,7 +10,7 @@ export default function OnboardingPage() {
   return (
     <Suspense
       fallback={
-        <div className="h-8 w-8 animate-pulse rounded-lg bg-[#ffc8a6]" />
+        <div className="h-8 w-8 animate-pulse rounded-lg bg-secondary" />
       }
     >
       <OnboardingForm />

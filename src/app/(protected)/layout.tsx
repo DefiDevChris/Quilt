@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
+import { OPACITY } from '@/lib/design-system';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   if (process.env.DEV_AUTH_BYPASS !== 'true') {
@@ -19,7 +20,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
       {/* Background at 20% opacity */}
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/background.png')", opacity: 0.2 }}
+        style={{ backgroundImage: "url('/background.png')", opacity: OPACITY.overlay }}
       />
       <ResponsiveShell>
         <div className="max-w-5xl mx-auto md:pt-10 md:pb-12 relative z-10 w-full">{children}</div>

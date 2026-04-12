@@ -13,6 +13,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from '@/components/shop/CartDrawer';
 import { ShoppingBag } from 'lucide-react';
 import { logout } from '@/lib/logout';
+import { COLORS, COLORS_HOVER } from '@/lib/design-system';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
  const user = useAuthStore((s) => s.user);
@@ -54,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <nav
  aria-label="Main navigation"
  className={`sticky top-0 z-40 px-6 lg:px-12 py-2 flex items-center justify-between transition-colors duration-150 border-b ${scrolled
- ? 'bg-[var(--color-bg)] border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+ ? 'bg-[var(--color-bg)] border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
  : 'bg-[var(--color-bg)] border-transparent'
  }`}
  >
@@ -67,7 +68,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  className="object-contain w-[52px] h-[52px]"
  />
  <span
- className="text-[28px] font-bold text-[#1a1a1a] tracking-tight"
+ className="text-[28px] font-bold text-[var(--color-text)] tracking-tight"
  style={{ fontFamily: 'var(--font-display)' }}
  >
  QuiltCorgi
@@ -77,14 +78,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <div className="hidden lg:flex items-center gap-6">
  <Link
  href="/dashboard"
- className={`font-medium transition-colors ${isActive('/dashboard') ? 'text-[#1a1a1a]' : 'text-[#4a4a4a] hover:text-[#ff8d49]'
+ className={`font-medium transition-colors ${isActive('/dashboard') ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-primary)]'
  }`}
  >
  Dashboard
  </Link>
  <Link
  href="/socialthreads"
- className={`font-medium transition-colors ${isActive('/socialthreads') ? 'text-[#1a1a1a]' : 'text-[#4a4a4a] hover:text-[#ff8d49]'
+ className={`font-medium transition-colors ${isActive('/socialthreads') ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-primary)]'
  }`}
  >
  Social Threads
@@ -92,7 +93,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  {shopEnabled && (
  <Link
  href="/shop"
- className={`font-medium transition-colors ${isActive('/shop') ? 'text-[#1a1a1a]' : 'text-[#4a4a4a] hover:text-[#ff8d49]'
+ className={`font-medium transition-colors ${isActive('/shop') ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-primary)]'
  }`}
  >
  Shop
@@ -101,7 +102,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  {isAuthenticated && (
  <Link
  href="/profile"
- className={`font-medium transition-colors ${isActive('/profile') ? 'text-[#1a1a1a]' : 'text-[#4a4a4a] hover:text-[#ff8d49]'
+ className={`font-medium transition-colors ${isActive('/profile') ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-primary)]'
  }`}
  >
  Profile
@@ -120,7 +121,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <button
  type="button"
  onClick={toggleCartDrawer}
- className="relative p-1.5 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors"
+ className="relative p-1.5 text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
  aria-label="Shopping cart"
  >
  <ShoppingBag size={20} />
@@ -138,7 +139,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  aria-label="User menu"
  aria-expanded={dropdownOpen}
  aria-haspopup="true"
- className="flex items-center gap-2 rounded-full hover:bg-[#ff8d49]/5 transition-colors duration-150"
+ className="flex items-center gap-2 rounded-full hover:bg-[var(--color-primary)]/5 transition-colors duration-150"
  >
  {user?.image ? (
  <Image
@@ -149,7 +150,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  className="h-8 w-8 rounded-full object-cover "
  />
  ) : (
- <div className="h-8 w-8 rounded-lg bg-[#ff8d49]/20 flex items-center justify-center overflow-hidden ">
+ <div className="h-8 w-8 rounded-lg bg-[var(--color-primary)]/20 flex items-center justify-center overflow-hidden ">
  <Image
  src="/mascots&avatars/corgi1.png"
  alt="Default Avatar"
@@ -162,14 +163,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  </button>
 
  {dropdownOpen && (
- <div className="absolute top-12 right-4 z-50 w-48 rounded-lg bg-[var(--color-bg)] border border-[#d4d4d4] py-1.5">
- <div className="px-4 py-2 border-b border-[#d4d4d4]">
- <p className="text-sm font-medium text-[#1a1a1a] truncate">{user?.name}</p>
- <p className="text-xs text-[#4a4a4a] truncate">{user?.email}</p>
+ <div className="absolute top-12 right-4 z-50 w-48 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] py-1.5">
+ <div className="px-4 py-2 border-b border-[var(--color-border)]">
+ <p className="text-sm font-medium text-[var(--color-text)] truncate">{user?.name}</p>
+ <p className="text-xs text-[var(--color-text-dim)] truncate">{user?.email}</p>
  </div>
  <Link
  href="/socialthreads"
- className="block px-4 py-2 text-sm text-[#4a4a4a] hover:bg-[var(--color-bg)] transition-colors"
+ className="block px-4 py-2 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] transition-colors"
  onClick={() => setDropdownOpen(false)}
  >
  Profile
@@ -181,7 +182,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  router.push('/');
  router.refresh();
  }}
- className="w-full text-left px-4 py-2 text-sm text-[#ffc7c7] hover:bg-[var(--color-bg)] transition-colors"
+ className="w-full text-left px-4 py-2 text-sm text-[var(--color-accent)] hover:bg-[var(--color-bg)] transition-colors"
  >
  Sign Out
  </button>
@@ -192,13 +193,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
  <div className="flex items-center gap-3">
  <Link
  href="/auth/signin"
- className="text-label-lg text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors"
+ className="text-label-lg text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
  >
  Sign In
  </Link>
  <Link
  href="/auth/signup"
- className="bg-[#ff8d49] text-[#1a1a1a] px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-colors duration-150"
+ className="bg-[var(--color-primary)] text-[var(--color-text)] px-5 py-2 rounded-full font-semibold hover:opacity-90 transition-colors duration-150"
  >
  Start Designing
  </Link>

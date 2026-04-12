@@ -9,6 +9,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import type { LayoutType, BorderConfig } from '@/lib/layout-utils';
 import { computeLayoutSize, type LayoutSizeOptions } from '@/lib/layout-size-utils';
+import { COLORS } from '@/lib/design-system';
 
 interface LayoutSelectorProps {
   readonly onLayoutSelect?: (presetId: string) => void;
@@ -101,7 +102,7 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
           <button
             type="button"
             onClick={handleClearLayout}
-            className="w-full rounded-full border border-[#ffc7c7]/30 bg-[#ffc7c7]/5 px-4 py-2.5 text-xs font-medium text-[var(--color-text)] hover:bg-[#ffc7c7]/10 transition-colors duration-150"
+            className="w-full rounded-full border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5 px-4 py-2.5 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-accent)]/10 transition-colors duration-150"
           >
             Clear Layout
           </button>
@@ -133,10 +134,10 @@ function LayoutCard({
     <div
       className={`rounded-lg border-2 overflow-hidden transition-colors duration-150 ${
         isApplied
-          ? 'border-[#ff8d49] bg-[#ff8d49]/5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
           : isExpanded
-            ? 'border-[#ff8d49]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[#ff8d49]/30 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            ? 'border-[var(--color-primary)]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[var(--color-primary)]/30 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
       }`}
     >
       <button
@@ -156,7 +157,7 @@ function LayoutCard({
           <div className="flex items-center gap-1.5">
             <span className="text-sm font-semibold text-[var(--color-text)]">{card.name}</span>
             {isApplied && (
-              <div className="w-4 h-4 rounded-full bg-[#ff8d49] flex items-center justify-center flex-shrink-0">
+              <div className="w-4 h-4 rounded-full bg-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
                   <path
                     d="M2 6L5 9L10 3"
@@ -224,7 +225,7 @@ function FreeFormApply({
       <button
         type="button"
         onClick={handleApply}
-        className="w-full rounded-full bg-[#ff8d49] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150"
+        className="w-full rounded-full bg-[var(--color-primary)] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150"
       >
         Apply
       </button>
@@ -318,7 +319,7 @@ function LayoutConfigForm({
                 type="checkbox"
                 checked={hasCornerstones}
                 onChange={(e) => setHasCornerstones(e.target.checked)}
-                className="rounded accent-[#ff8d49]"
+                className="rounded accent-[var(--color-primary)]"
               />
               <span className="text-[11px] text-[var(--color-text)]">
                 Cornerstones at sashing intersections
@@ -341,7 +342,7 @@ function LayoutConfigForm({
                   step={0.5}
                   value={border.width}
                   onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })}
-                  className="flex-1 accent-[#ff8d49] h-1"
+                  className="flex-1 accent-[var(--color-primary)] h-1"
                 />
                 <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-8 text-right">
                   {border.width}\u2033
@@ -349,7 +350,7 @@ function LayoutConfigForm({
                 <button
                   type="button"
                   onClick={() => removeBorder(i)}
-                  className="text-[10px] text-[#ffc7c7] hover:text-[#ffc7c7]/80 w-4"
+                  className="text-[10px] text-[var(--color-accent)] hover:text-[var(--color-accent)]/80 w-4"
                 >
                   \u2715
                 </button>
@@ -359,7 +360,7 @@ function LayoutConfigForm({
               <button
                 type="button"
                 onClick={addBorder}
-                className="text-[10px] text-[#ff8d49] hover:opacity-80"
+                className="text-[10px] text-[var(--color-primary)] hover:opacity-80"
               >
                 + Add Border
               </button>
@@ -393,7 +394,7 @@ function LayoutConfigForm({
             disabled={previewMode}
             className={`flex-1 rounded-full border py-2 text-xs font-medium transition-colors duration-150 ${
               previewMode
-                ? 'border-[#ff8d49]/30 bg-[#ff8d49]/10 text-[#ff8d49]'
+                ? 'border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                 : 'border-[var(--color-border)]/30 text-[var(--color-text)] hover:bg-[var(--color-bg)]'
             }`}
           >
@@ -402,7 +403,7 @@ function LayoutConfigForm({
           <button
             type="button"
             onClick={handleApply}
-            className="flex-1 rounded-full bg-[#ff8d49] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150"
+            className="flex-1 rounded-full bg-[var(--color-primary)] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150"
           >
             Apply
           </button>
@@ -439,7 +440,7 @@ function SliderRow({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="flex-1 accent-[#ff8d49] h-1"
+        className="flex-1 accent-[var(--color-primary)] h-1"
       />
       <span className="text-[10px] font-mono text-[var(--color-text)]/70 w-16 text-right flex-shrink-0">
         {suffix}

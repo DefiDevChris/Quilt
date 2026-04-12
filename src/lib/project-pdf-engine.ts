@@ -39,6 +39,7 @@ import {
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
 import { embedLogo } from '@/lib/pdf-drawing-utils';
+import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 import { generateCuttingChart } from '@/lib/cutting-chart-generator';
 import {
   groupShapesByFabric,
@@ -181,7 +182,7 @@ function buildFabricRequirementsPage(
     y,
     size: 8,
     font: fonts.bodyFont,
-    color: rgb(0.4, 0.4, 0.4),
+    color: PDF_SEMANTIC.midGray,
   });
   y -= 20;
 
@@ -231,7 +232,7 @@ function buildFabricRequirementsPage(
       y,
       size: 9,
       font: fonts.bodyFont,
-      color: rgb(0.4, 0.4, 0.4),
+      color: PDF_SEMANTIC.midGray,
     });
     y -= 16;
   }
@@ -252,7 +253,7 @@ function buildFabricRequirementsPage(
     y,
     size: 9,
     font: fonts.bodyFont,
-    color: rgb(0.15, 0.15, 0.15),
+    color: PDF_SEMANTIC.charcoal,
   });
   y -= 14;
 
@@ -261,7 +262,7 @@ function buildFabricRequirementsPage(
     y,
     size: 9,
     font: fonts.bodyFont,
-    color: rgb(0.15, 0.15, 0.15),
+    color: PDF_SEMANTIC.charcoal,
   });
 }
 
@@ -308,7 +309,7 @@ function buildCuttingDirectionsPages(
       y,
       size: 8,
       font: fonts.bodyFont,
-      color: rgb(0.4, 0.4, 0.4),
+      color: PDF_SEMANTIC.midGray,
     }
   );
   y -= 20;
@@ -329,7 +330,7 @@ function buildCuttingDirectionsPages(
       y: y - 8,
       size: 10,
       font: fonts.titleFont,
-      color: rgb(0.15, 0.15, 0.15),
+      color: PDF_SEMANTIC.charcoal,
     });
     y -= 22;
 
@@ -365,7 +366,7 @@ function buildCuttingDirectionsPages(
         y,
         size: 8,
         font: fonts.bodyFont,
-        color: rgb(0.2, 0.2, 0.2),
+        color: PDF_SEMANTIC.darkGray,
       });
       y -= 13;
     }
@@ -420,7 +421,7 @@ function buildBlockAssemblyPages(
       y,
       size: 11,
       font: fonts.titleFont,
-      color: rgb(0.15, 0.15, 0.15),
+      color: PDF_SEMANTIC.charcoal,
     });
     y -= 18;
 
@@ -445,7 +446,7 @@ function buildBlockAssemblyPages(
         y: y - 6,
         size: 8,
         font: fonts.bodyFont,
-        color: rgb(0.2, 0.2, 0.2),
+        color: PDF_SEMANTIC.darkGray,
       });
       y -= 14;
       pieceIdx++;
@@ -496,7 +497,7 @@ function buildQuiltDiagramPage(
     y: drawY - 14,
     size: 10,
     font: fonts.titleFont,
-    color: rgb(0.3, 0.3, 0.3),
+    color: PDF_SEMANTIC.mediumGray,
   });
 }
 
@@ -558,7 +559,7 @@ function buildCuttingTemplatePages(
       y,
       size: 12,
       font: fonts.titleFont,
-      color: rgb(0, 0, 0),
+      color: PDF_SEMANTIC.black,
     });
     y -= 20;
 
@@ -574,7 +575,7 @@ function buildCuttingTemplatePages(
         y: drawOriginY + (seamBbox.height - (p.y - seamBbox.minY)) * pts,
       }));
       drawPolylinePoints(page, seamPts, {
-        color: { r: 0.5, g: 0.5, b: 0.5 },
+        color: PDF_SEMANTIC.sewLine,
         lineWidth: 0.5,
         dashArray: [3, 3],
         dashPhase: 0,
@@ -587,7 +588,7 @@ function buildCuttingTemplatePages(
       y: drawOriginY + (seamBbox.height - (p.y - seamBbox.minY)) * pts,
     }));
     drawPolylinePoints(page, cutPts, {
-      color: { r: 0, g: 0, b: 0 },
+      color: PDF_SEMANTIC.cutLine,
       lineWidth: 1,
     });
 
@@ -609,7 +610,7 @@ function buildCuttingTemplatePages(
         y: labelY - 3,
         size: 7,
         font: fonts.bodyFont,
-        color: rgb(0.2, 0.2, 0.2),
+        color: PDF_SEMANTIC.darkGray,
       });
     }
 

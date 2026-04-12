@@ -5,6 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { exportCanvasImage, generateImageFilename, downloadImage, DPI_OPTIONS, type DpiOption, type ImageFormat } from '@/lib/image-exporter';
 import { exportCanvasSvg, generateSvgFilename, downloadSvg } from '@/lib/svg-exporter';
+import { COLORS } from '@/lib/design-system';
 import { ExportDialogShell } from './ExportDialogShell';
 
 type ExportFormat = ImageFormat | 'svg';
@@ -33,7 +34,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
         const svgString = await exportCanvasSvg(fabricCanvas, {
           projectName: projectName ?? 'quilt',
           includeBackground: true,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: COLORS.surface,
         });
         const filename = generateSvgFilename(projectName ?? 'quilt');
         downloadSvg(svgString, filename);
@@ -79,7 +80,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               onClick={() => setFormat(fmt)}
               className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
                 ? 'border-primary bg-primary text-white'
-                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[#ff8d49]/10'
+                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
                 }`}
             >
               {fmt === 'png' ? 'PNG (lossless)' : fmt === 'jpeg' ? 'JPEG (smaller)' : 'SVG (vector)'}
@@ -104,7 +105,7 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 onClick={() => setDpi(opt)}
                 className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
                   ? 'border-primary bg-primary text-white'
-                  : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[#ff8d49]/10'
+                  : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
                   }`}
               >
                 {opt}

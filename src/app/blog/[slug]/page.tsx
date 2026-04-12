@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               style={{ objectPosition: '20% 50%' }}
             />
           </div>
-          <div className="absolute inset-0 bg-[var(--color-bg)]/60" />
+          <div className="absolute inset-0 bg-default/60" />
         </div>
       )}
 
@@ -81,7 +81,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="absolute -top-16 left-6 md:left-12 z-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-3 text-sm text-[#4a4a4a] hover:text-[#ff8d49] transition-colors duration-150 group"
+            className="inline-flex items-center gap-3 text-sm text-dim hover:text-primary transition-colors duration-150 group"
           >
             <span className="w-6 h-px bg-current" />
             <span className="text-[14px] leading-[20px]">Stories</span>
@@ -91,11 +91,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Header */}
         <header className="max-w-3xl mx-auto px-6 md:px-12 pt-12 md:pt-20 pb-12">
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-[14px] leading-[20px] text-[#ff8d49]">
+            <span className="text-[14px] leading-[20px] text-primary">
               {post.category}
             </span>
-            <span className="w-6 h-px bg-[#d4d4d4]" />
-            <time className="text-[14px] leading-[20px] text-[#4a4a4a]">
+            <span className="w-6 h-px border-default" />
+            <time className="text-[14px] leading-[20px] text-dim">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
                   month: 'long',
@@ -107,8 +107,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
 
           <h1
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[#1a1a1a] mb-10"
-            style={{ fontFamily: 'Spline Sans, sans-serif' }}
+            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-default mb-10"
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             {post.title}
           </h1>
@@ -118,10 +118,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <img
                 src={post.authorAvatarUrl}
                 alt={post.authorName ?? 'Author'}
-                className="w-10 h-10 rounded-full bg-[#ff8d49]/10 object-cover"
+                className="w-10 h-10 rounded-full bg-primary/10 object-cover"
               />
             )}
-            <span className="text-[14px] leading-[20px] text-[#1a1a1a]">{post.authorName}</span>
+            <span className="text-[14px] leading-[20px] text-default">{post.authorName}</span>
           </div>
         </header>
 

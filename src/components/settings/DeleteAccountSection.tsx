@@ -1,7 +1,7 @@
 'use client';
 
 import { Mail } from 'lucide-react';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 export function DeleteAccountSection() {
   const handleDeleteRequest = () => {
@@ -52,7 +52,7 @@ Thank you`);
                 boxShadow: SHADOW.brand,
                 transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
             >
               <Mail size={16} />

@@ -10,10 +10,11 @@ import {
   BlockBuilderToolbarUnified,
   BlockBuilderCallbacks,
 } from '@/components/blocks/BlockBuilderToolbarUnified';
-import { GRID_LINE_COLOR } from '@/lib/constants';
+import { CANVAS } from '@/lib/design-system';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 import { hexToRgb } from '@/lib/color-math';
+import { COLORS } from '@/lib/design-system';
 
 /**
  * Shared props for drafting tab components.
@@ -128,7 +129,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       const canvas = new fabric.Canvas(canvasRef.current, {
         width: canvasSize,
         height: canvasSize,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: COLORS.surface,
         selection: true,
         preserveObjectStacking: true,
       });
@@ -221,7 +222,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     const fabric = await import('fabric');
     const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
     const objs = canvas.getObjects().filter((o) => {
-      if (o.stroke === GRID_LINE_COLOR) return false;
+      if (o.stroke === CANVAS.gridLine) return false;
       if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
       return true;
     });
@@ -428,7 +429,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             step={1}
             value={sliderValue}
             onChange={handleSliderChange}
-            className="w-full accent-[#ff8d49] h-1"
+            className="w-full accent-[var(--color-primary)] h-1"
           />
         </div>
 
@@ -457,7 +458,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             onClick={() => setRightTab('blocks')}
             className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
               rightTab === 'blocks'
-                ? 'text-[#ff8d49] border-b-2 border-[#ff8d49]'
+                ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
                 : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
@@ -468,7 +469,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             onClick={() => setRightTab('fabrics')}
             className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
               rightTab === 'fabrics'
-                ? 'text-[#ff8d49] border-b-2 border-[#ff8d49]'
+                ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
                 : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
@@ -490,7 +491,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
         {/* Block metadata + Save */}
         <div className="border-t border-[var(--color-border)]/15 px-3 py-3 space-y-2">
-          {error && <p className="text-[11px] text-[#ffc7c7]">{error}</p>}
+          {error && <p className="text-[11px] text-[var(--color-accent)]">{error}</p>}
 
           <div>
             <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
@@ -505,7 +506,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               }}
               placeholder="Custom Block 1"
               maxLength={255}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
             />
           </div>
 
@@ -525,7 +526,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Custom"
               maxLength={100}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
             />
           </div>
 
@@ -538,7 +539,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="modern, stars"
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[#ff8d49] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
             />
           </div>
 
@@ -556,7 +557,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
                 <button
                   type="button"
                   onClick={handleClearOverlay}
-                  className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[#ffc7c7] hover:text-[#ffc7c7]/80"
+                  className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-accent)] hover:text-[var(--color-accent)]/80"
                 >
                   Clear
                 </button>
@@ -587,7 +588,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full rounded-full bg-[#ff8d49] py-2.5 text-[13px] font-semibold text-[var(--color-text)] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+            className="w-full rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           >
             {saving ? 'Saving…' : 'Save Block'}
           </button>

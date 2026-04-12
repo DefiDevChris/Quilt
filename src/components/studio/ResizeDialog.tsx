@@ -6,6 +6,8 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useQuiltResize } from '@/hooks/useQuiltResize';
 import { formatMeasurement, getUnitLabel } from '@/lib/canvas-utils';
+import { LAYOUT } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 
 interface ResizeDialogProps {
  readonly isOpen: boolean;
@@ -105,7 +107,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  }}
  >
  <div
- className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] w-[380px] max-w-[90vw]"
+ className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] w-[${LAYOUT.dialogSm}] max-w-[90vw]`}
  role="dialog"
  aria-label="Resize Quilt"
  >
@@ -204,7 +206,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  type="button"
  disabled={isSameDimensions}
  onClick={handleSubmit}
- className="px-6 py-2 text-[13px] font-semibold text-[var(--color-text)] bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+ className="px-6 py-2 text-[14px] font-semibold text-[var(--color-text)] bg-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
  >
  Continue
  </button>
@@ -233,7 +235,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
  <button
  type="button"
  onClick={() => handleConfirm('scale')}
- className="w-full px-4 py-2.5 text-[13px] font-semibold text-[var(--color-text)] bg-[#ff8d49] rounded-full hover:bg-[#e67d3f] transition-colors duration-150"
+ className="w-full px-4 py-2.5 text-[14px] font-semibold text-[var(--color-text)] bg-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] transition-colors duration-150"
  >
  Resize Current Pattern
  </button>

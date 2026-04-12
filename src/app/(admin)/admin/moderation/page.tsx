@@ -125,10 +125,10 @@ export default function AdminModerationPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-[#4a4a4a]">Review reports and moderate community content</p>
+      <p className="text-sm text-dim">Review reports and moderate community content</p>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#d4d4d4]">
+      <div className="flex gap-2 border-b border-default">
         {[
           { id: 'reports', label: 'Reports' },
           { id: 'posts', label: 'Posts' },
@@ -139,8 +139,8 @@ export default function AdminModerationPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id as Tab)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-150 ${activeTab === tab.id
-              ? 'border-[#ff8d49] text-[#ff8d49]'
-              : 'border-transparent text-[#4a4a4a] hover:text-[#1a1a1a]'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-dim hover:text-default'
               }`}
           >
             {tab.label}
@@ -150,58 +150,58 @@ export default function AdminModerationPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20"></div>
+          <div className="animate-pulse rounded-lg h-8 w-8 bg-primary/20"></div>
         </div>
       ) : (
         <>
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
+            <div className="rounded-lg border border-default overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[var(--color-bg)]">
+                <thead className="bg-default">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Type
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Reason
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Reporter
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-dim uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
+                <tbody className="divide-y divide-default/30 bg-surface">
                   {reports.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-dim">
                         No reports to review
                       </td>
                     </tr>
                   ) : (
                     reports.map((report) => (
-                      <tr key={report.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
+                      <tr key={report.id} className="hover:bg-default/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#1a1a1a]">{report.postId ? 'Post' : 'Comment'}</span>
+                          <span className="text-sm text-default">{report.postId ? 'Post' : 'Comment'}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm text-[#1a1a1a] max-w-md truncate">
+                          <p className="text-sm text-default max-w-md truncate">
                             {report.reason}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {report.reporterName || report.reporterEmail || 'Anonymous'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {new Date(report.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -209,7 +209,7 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleDismissReport(report.id)}
                             disabled={actionInProgress === report.id}
-                            className="text-sm font-medium text-[#ff8d49] hover:text-[#e67d3f] disabled:opacity-50 transition-colors duration-150"
+                            className="text-sm font-medium text-primary hover:text-primary-dark disabled:opacity-50 transition-colors duration-150"
                           >
                             {actionInProgress === report.id ? '...' : 'Dismiss'}
                           </button>
@@ -224,57 +224,57 @@ export default function AdminModerationPage() {
 
           {/* Posts Tab */}
           {activeTab === 'posts' && (
-            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
+            <div className="rounded-lg border border-default overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[var(--color-bg)]">
+                <thead className="bg-default">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Creator
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Likes
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-dim uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
+                <tbody className="divide-y divide-default/30 bg-surface">
                   {posts.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-dim">
                         No posts found
                       </td>
                     </tr>
                   ) : (
                     posts.map((post) => (
-                      <tr key={post.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
+                      <tr key={post.id} className="hover:bg-default/60 transition-colors duration-150">
                         <td className="px-4 py-3">
                           <div className="max-w-md">
-                            <p className="font-medium text-[#1a1a1a] truncate">{post.title}</p>
+                            <p className="font-medium text-default truncate">{post.title}</p>
                             {post.description && (
-                              <p className="text-xs text-[#4a4a4a] mt-0.5 line-clamp-1">
+                              <p className="text-xs text-dim mt-0.5 line-clamp-1">
                                 {post.description}
                               </p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {formatCreatorName(post.creatorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">{post.likeCount}</span>
+                          <span className="text-sm text-dim">{post.likeCount}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {new Date(post.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -297,54 +297,54 @@ export default function AdminModerationPage() {
 
           {/* Comments Tab */}
           {activeTab === 'comments' && (
-            <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
+            <div className="rounded-lg border border-default overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[var(--color-bg)]">
+                <thead className="bg-default">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Comment
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Author
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       On Post
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-dim uppercase">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a] uppercase">
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-dim uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#d4d4d4]/30 bg-[var(--color-surface)]">
+                <tbody className="divide-y divide-default/30 bg-surface">
                   {comments.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-[#4a4a4a]">
+                      <td colSpan={5} className="px-4 py-12 text-center text-dim">
                         No reported comments
                       </td>
                     </tr>
                   ) : (
                     comments.map((comment) => (
-                      <tr key={comment.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
+                      <tr key={comment.id} className="hover:bg-default/60 transition-colors duration-150">
                         <td className="px-4 py-3">
-                          <p className="text-sm text-[#1a1a1a] max-w-md truncate">
+                          <p className="text-sm text-default max-w-md truncate">
                             {comment.content}
                           </p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {formatCreatorName(comment.authorName)}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a] max-w-xs truncate block">
+                          <span className="text-sm text-dim max-w-xs truncate block">
                             {comment.postTitle || 'Deleted Post'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-[#4a4a4a]">
+                          <span className="text-sm text-dim">
                             {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </td>
@@ -367,7 +367,7 @@ export default function AdminModerationPage() {
 
           {/* Users Tab - Placeholder */}
           {activeTab === 'users' && (
-            <div className="p-8 text-center text-[#4a4a4a] bg-[var(--color-bg)] rounded-lg">
+            <div className="p-8 text-center text-dim bg-default rounded-lg">
               <p>User management coming soon. Use the role update API for now.</p>
             </div>
           )}

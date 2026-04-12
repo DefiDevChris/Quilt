@@ -391,7 +391,7 @@ export default function ShopPage() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150"
+              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-50 transition-colors duration-150"
               style={{ borderColor: COLORS.border, color: COLORS.textDim, boxShadow: SHADOW.brand }}
             >
               Previous
@@ -403,7 +403,7 @@ export default function ShopPage() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-30 transition-colors duration-150"
+              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-50 transition-colors duration-150"
               style={{ borderColor: COLORS.border, color: COLORS.textDim, boxShadow: SHADOW.brand }}
             >
               Next

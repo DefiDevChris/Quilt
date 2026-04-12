@@ -40,14 +40,14 @@ export function ConfirmationDialog({
  <button
  type="button"
  onClick={onCancel}
- className="bg-[var(--color-bg)] px-5 py-2 text-[13px] font-medium text-[var(--color-text-dim)] rounded-lg hover:bg-[var(--color-border)] transition-colors"
+ className="bg-[var(--color-bg)] px-5 py-2 text-[14px] font-medium text-[var(--color-text-dim)] rounded-lg hover:bg-[var(--color-border)] transition-colors"
  >
  {cancelLabel}
  </button>
  <button
  type="button"
  onClick={onConfirm}
- className="px-6 py-2 text-[13px] font-semibold text-[var(--color-bg)] bg-[var(--color-text)] rounded-lg hover:opacity-90 transition-colors duration-150"
+ className="px-6 py-2 text-[14px] font-semibold text-[var(--color-bg)] bg-[var(--color-text)] rounded-lg hover:opacity-90 transition-colors duration-150"
  >
  {confirmLabel}
  </button>

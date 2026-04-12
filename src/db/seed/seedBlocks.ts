@@ -8,6 +8,7 @@
  */
 import { getAllBlockDefinitions, type BlockDefinition } from './blockDefinitions';
 import { eq } from 'drizzle-orm';
+import { COLORS, CANVAS } from '../../lib/design-system';
 
 /**
  * Convert an SVG block definition to Fabric.js group JSON.
@@ -33,8 +34,8 @@ export function svgToFabricJsData(svgData: string): Record<string, unknown> {
       top: y,
       width,
       height,
-      fill: attrs.fill ?? '#000',
-      stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? '#333'),
+      fill: attrs.fill ?? COLORS.text,
+      stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(attrs['stroke-width'] ?? '0.5'),
       opacity: parseFloat(attrs.opacity ?? '1'),
     });
@@ -57,8 +58,8 @@ export function svgToFabricJsData(svgData: string): Record<string, unknown> {
       objects.push({
         type: 'Polygon',
         points,
-        fill: attrs.fill ?? '#000',
-        stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? '#333'),
+        fill: attrs.fill ?? COLORS.text,
+        stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? CANVAS.strokeDefault),
         strokeWidth: parseFloat(attrs['stroke-width'] ?? '0.5'),
       });
     }
@@ -72,8 +73,8 @@ export function svgToFabricJsData(svgData: string): Record<string, unknown> {
       objects.push({
         type: 'Path',
         path: attrs.d,
-        fill: attrs.fill === 'none' ? '' : (attrs.fill ?? '#000'),
-        stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? '#333'),
+        fill: attrs.fill === 'none' ? '' : (attrs.fill ?? COLORS.text),
+        stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? CANVAS.strokeDefault),
         strokeWidth: parseFloat(attrs['stroke-width'] ?? '0.5'),
       });
     }
@@ -91,8 +92,8 @@ export function svgToFabricJsData(svgData: string): Record<string, unknown> {
       left: cx - r,
       top: cy - r,
       radius: r,
-      fill: attrs.fill ?? '#000',
-      stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? '#333'),
+      fill: attrs.fill ?? COLORS.text,
+      stroke: attrs.stroke === 'none' ? null : (attrs.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(attrs['stroke-width'] ?? '0.5'),
     });
   }
@@ -111,7 +112,7 @@ export function svgToFabricJsData(svgData: string): Record<string, unknown> {
       y1,
       x2,
       y2,
-      stroke: attrs.stroke ?? '#333',
+      stroke: attrs.stroke ?? CANVAS.strokeDefault,
       strokeWidth: parseFloat(attrs['stroke-width'] ?? '1'),
     });
   }

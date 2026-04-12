@@ -49,7 +49,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
 
       <div className="relative z-10 mt-16 md:mt-24">
         <p
-          className="text-[12px] leading-4.5 border-t pt-6"
+          className="text-[14px] leading-[20px] border-t pt-6"
           style={{
             fontFamily: TYPOGRAPHY.small.fontFamily,
             color: COLORS.textDim,

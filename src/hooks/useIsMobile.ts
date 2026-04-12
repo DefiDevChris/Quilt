@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useLayoutEffect } from 'react';
+import { BREAKPOINTS } from '@/lib/design-system';
 
-const MOBILE_BREAKPOINT = '(max-width: 767px)';
+const MOBILE_MEDIA_QUERY = `(max-width: ${BREAKPOINTS.mobile - 1}px)`;
 
 export function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia(MOBILE_BREAKPOINT).matches;
+    return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
   });
 
   useLayoutEffect(() => {
-    const mql = window.matchMedia(MOBILE_BREAKPOINT);
+    const mql = window.matchMedia(MOBILE_MEDIA_QUERY);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mql.matches);
 

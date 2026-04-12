@@ -1,5 +1,7 @@
 'use client';
 
+import { RADIUS } from '@/lib/design-system';
+
 export default function GlobalError({
   reset,
 }: {
@@ -23,7 +25,7 @@ export default function GlobalError({
               background: 'var(--color-text)',
               color: 'var(--color-surface)',
               border: 'none',
-              borderRadius: '9999px',
+              borderRadius: RADIUS.full,
               cursor: 'pointer',
             }}
           >

@@ -26,6 +26,7 @@ import {
   createPdfDocument,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
+import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 import { extractShapePolyline } from '@/lib/seam-allowance';
 import { polylineBoundingBox } from '@/lib/bin-packer';
 import { calculateEdgeDimensions } from '@/lib/edge-dimension-utils';
@@ -122,7 +123,7 @@ export async function generateCutListPdf(
       y,
       size: 12,
       font: fonts.titleFont,
-      color: rgb(0, 0, 0),
+      color: PDF_SEMANTIC.black,
     });
 
     // Shape name
@@ -132,7 +133,7 @@ export async function generateCutListPdf(
       y: y - 14,
       size: 8,
       font: fonts.bodyFont,
-      color: rgb(0.4, 0.4, 0.4),
+      color: PDF_SEMANTIC.midGray,
     });
 
     // Dimensions text
@@ -142,7 +143,7 @@ export async function generateCutListPdf(
       y: y - 14,
       size: 8,
       font: fonts.bodyFont,
-      color: rgb(0.4, 0.4, 0.4),
+      color: PDF_SEMANTIC.midGray,
     });
     y -= 32;
 
@@ -158,7 +159,7 @@ export async function generateCutListPdf(
         y: drawOriginY + (outerBbox.height - (p.y - outerBbox.minY)) * pts,
       }));
       drawPolylinePoints(page, seamPts, {
-        color: { r: 0.5, g: 0.5, b: 0.5 },
+        color: PDF_SEMANTIC.sewLine,
         lineWidth: 0.5,
         dashArray: [3, 3],
         dashPhase: 0,
@@ -171,7 +172,7 @@ export async function generateCutListPdf(
       y: drawOriginY + (outerBbox.height - (p.y - outerBbox.minY)) * pts,
     }));
     drawPolylinePoints(page, cutPts, {
-      color: { r: 0, g: 0, b: 0 },
+      color: PDF_SEMANTIC.cutLine,
       lineWidth: 1,
     });
 
@@ -192,7 +193,7 @@ export async function generateCutListPdf(
         y: labelY - 3,
         size: 7,
         font: fonts.bodyFont,
-        color: rgb(0.2, 0.2, 0.2),
+        color: PDF_SEMANTIC.darkGray,
       });
     }
 
@@ -208,21 +209,21 @@ export async function generateCutListPdf(
       start: { x: mx, y: legendY + 4 },
       end: { x: mx + 20, y: legendY + 4 },
       thickness: 1,
-      color: rgb(0, 0, 0),
+      color: PDF_SEMANTIC.black,
     });
     page.drawText('= Cut line', {
       x: mx + 24,
       y: legendY,
       size: 7,
       font: fonts.bodyFont,
-      color: rgb(0.3, 0.3, 0.3),
+      color: PDF_SEMANTIC.mediumGray,
     });
 
     page.drawLine({
       start: { x: mx + 80, y: legendY + 4 },
       end: { x: mx + 100, y: legendY + 4 },
       thickness: 0.5,
-      color: rgb(0.5, 0.5, 0.5),
+      color: PDF_SEMANTIC.lightGray,
       dashArray: [3, 3],
     });
     page.drawText('= Sew line (\u00BC" seam allowance)', {
@@ -230,7 +231,7 @@ export async function generateCutListPdf(
       y: legendY,
       size: 7,
       font: fonts.bodyFont,
-      color: rgb(0.3, 0.3, 0.3),
+      color: PDF_SEMANTIC.mediumGray,
     });
   }
 
@@ -266,7 +267,7 @@ function buildKeyBlockPage(
     y,
     size: 8,
     font: fonts.bodyFont,
-    color: rgb(0.4, 0.4, 0.4),
+    color: PDF_SEMANTIC.midGray,
   });
   y -= 20;
 
@@ -281,7 +282,7 @@ function buildKeyBlockPage(
       y,
       size: 9,
       font: fonts.titleFont,
-      color: rgb(0, 0, 0),
+      color: PDF_SEMANTIC.black,
     });
 
     const desc = `${item.shapeName} \u2014 Cut ${totalQuantity}`;
@@ -290,7 +291,7 @@ function buildKeyBlockPage(
       y,
       size: 8,
       font: fonts.bodyFont,
-      color: rgb(0.2, 0.2, 0.2),
+      color: PDF_SEMANTIC.darkGray,
     });
     y -= 14;
   }

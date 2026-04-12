@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { eq, and, isNull } from 'drizzle-orm';
 
 import { BLOCK_OVERLAYS, type BlockOverlay } from '@/lib/quilt-overlay-registry';
+import { COLORS, CANVAS } from '@/lib/design-system';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -144,8 +145,8 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       top: parseFloat(a.y ?? '0'),
       width: parseFloat(a.width ?? '0'),
       height: parseFloat(a.height ?? '0'),
-      fill: a.fill ?? '#000',
-      stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
+      fill: a.fill ?? COLORS.text,
+      stroke: a.stroke === 'none' ? null : (a.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
       __shade: a['data-shade'] ?? 'unknown',
       __pieceRole: a['data-role'] ?? 'patch',
@@ -169,8 +170,8 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
     objects.push({
       type: 'Polygon',
       points,
-      fill: a.fill ?? '#000',
-      stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
+      fill: a.fill ?? COLORS.text,
+      stroke: a.stroke === 'none' ? null : (a.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
       __shade: a['data-shade'] ?? 'unknown',
       __pieceRole: a['data-role'] ?? 'patch',
@@ -186,8 +187,8 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
     objects.push({
       type: 'Path',
       path: a.d,
-      fill: a.fill === 'none' ? '' : (a.fill ?? '#000'),
-      stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
+      fill: a.fill === 'none' ? '' : (a.fill ?? COLORS.text),
+      stroke: a.stroke === 'none' ? null : (a.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
       __shade: a['data-shade'] ?? 'unknown',
       __pieceRole: a['data-role'] ?? 'patch',
@@ -208,8 +209,8 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       left: cx - r,
       top: cy - r,
       radius: r,
-      fill: a.fill ?? '#000',
-      stroke: a.stroke === 'none' ? null : (a.stroke ?? '#333'),
+      fill: a.fill ?? COLORS.text,
+      stroke: a.stroke === 'none' ? null : (a.stroke ?? CANVAS.strokeDefault),
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
       __shade: a['data-shade'] ?? 'unknown',
       __pieceRole: a['data-role'] ?? 'patch',
@@ -227,7 +228,7 @@ export function svgToFabricGroup(svgData: string): Record<string, unknown> {
       y1: parseFloat(a.y1 ?? '0'),
       x2: parseFloat(a.x2 ?? '0'),
       y2: parseFloat(a.y2 ?? '0'),
-      stroke: a.stroke ?? '#333',
+      stroke: a.stroke ?? CANVAS.strokeDefault,
       strokeWidth: parseFloat(a['stroke-width'] ?? '1'),
       __pieceRole: 'seam',
       __blockPatchIndex: objects.length,

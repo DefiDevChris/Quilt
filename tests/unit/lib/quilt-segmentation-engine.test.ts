@@ -62,12 +62,14 @@ function fourQuadrantImage(): ImageDataLike {
 // ── Tests ────────────────────────────────────────────────────────────────
 
 describe('segmentQuilt', () => {
-  it('returns one palette entry + one patch per solid quadrant', () => {
+  it('returns one palette entry per solid quadrant with valid patches', () => {
     const img = fourQuadrantImage();
-    const result = segmentQuilt(img, { fabricCount: 4, seed: 1, maxWorkingDim: 64 });
+    const result = segmentQuilt(img, { fabricCount: 4, seed: 1, maxWorkingDim: 64, gridCellPx: 8 });
 
     expect(result.palette).toHaveLength(4);
-    expect(result.patches).toHaveLength(4);
+    // Grid decomposition produces rect patches — at least 4 (one per
+    // quadrant, possibly more from cell boundaries).
+    expect(result.patches.length).toBeGreaterThanOrEqual(4);
 
     // Every patch should reference a valid cluster index.
     for (const p of result.patches) {
@@ -75,21 +77,17 @@ describe('segmentQuilt', () => {
       expect(refd).toBeDefined();
     }
 
-    // Each patch should simplify to roughly 4 corners (the quadrant outline)
-    // plus one to close the loop — DP + snap may leave 3–6 points.
+    // Grid decomposition produces 4-vertex rects or 3-vertex triangles.
     for (const p of result.patches) {
-      expect(p.polygonPx.length).toBeGreaterThanOrEqual(3);
-      expect(p.polygonPx.length).toBeLessThanOrEqual(6);
+      expect(p.polygonPx.length === 3 || p.polygonPx.length === 4).toBe(true);
     }
   });
 
-  it('collapses to 2 clusters when fabricCount=2, preserving 2 patches', () => {
+  it('collapses to 2 clusters when fabricCount=2', () => {
     const img = fourQuadrantImage();
-    const result = segmentQuilt(img, { fabricCount: 2, seed: 1, maxWorkingDim: 64 });
+    const result = segmentQuilt(img, { fabricCount: 2, seed: 1, maxWorkingDim: 64, gridCellPx: 8 });
 
     expect(result.palette).toHaveLength(2);
-    // With 2 clusters over 4 flat quadrants, we still get at most 4 connected
-    // components but each cluster likely contains ≥ 1 patch.
     expect(result.patches.length).toBeGreaterThanOrEqual(2);
     for (const p of result.patches) {
       expect(p.clusterIndex).toBeGreaterThanOrEqual(0);
@@ -97,11 +95,9 @@ describe('segmentQuilt', () => {
     }
   });
 
-  it('filters out tiny noise blobs via minPatchAreaPx', () => {
-    // 64×64 background red + a 2×2 blue speck. With a 5 px² threshold the
-    // speck should be dropped — the only surviving patch is the background.
-    // The majority filter would also eat this speck, so we disable it
-    // here to test `minPatchAreaPx` in isolation.
+  it('majority filter swallows isolated speckle before grid decompose', () => {
+    // 64×64 red background + a 2×2 blue speck. The majority filter eats
+    // the speck before grid decomposition so no blue patches survive.
     const img = solidImage(64, 64, [200, 20, 20]);
     fillRect(img, 30, 30, 32, 32, [20, 20, 200]);
 
@@ -109,42 +105,16 @@ describe('segmentQuilt', () => {
       fabricCount: 2,
       seed: 1,
       maxWorkingDim: 64,
-      minPatchAreaPx: 5,
-      majorityFilterIterations: 0,
-    });
-
-    // 1 background patch + 0 speck patches.
-    const specks = result.patches.filter((p) => p.areaPx < 10);
-    expect(specks).toHaveLength(0);
-
-    // Without a threshold we'd also see the speck as its own patch.
-    const permissive = segmentQuilt(img, {
-      fabricCount: 2,
-      seed: 1,
-      maxWorkingDim: 64,
       minPatchAreaPx: 0,
-      majorityFilterIterations: 0,
+      gridCellPx: 8,
     });
-    const specksPermissive = permissive.patches.filter((p) => p.areaPx < 10);
-    expect(specksPermissive.length).toBeGreaterThanOrEqual(1);
-  });
 
-  it('majority filter swallows isolated single-pixel speckle', () => {
-    // 64×64 red background with a 2×2 blue speck. With the default
-    // majority filter on (2 iterations), the speck should be reassigned
-    // to red before CCL even runs — producing zero speck patches even
-    // with minPatchAreaPx=0.
-    const img = solidImage(64, 64, [200, 20, 20]);
-    fillRect(img, 30, 30, 32, 32, [20, 20, 200]);
-
-    const filtered = segmentQuilt(img, {
-      fabricCount: 2,
-      seed: 1,
-      maxWorkingDim: 64,
-      minPatchAreaPx: 0,
-    });
-    const specks = filtered.patches.filter((p) => p.areaPx < 10);
-    expect(specks).toHaveLength(0);
+    // The speck is gone — every patch should be the red cluster.
+    const blueCluster = result.palette.find((c) => c.rgb.b > 100);
+    const bluePatches = blueCluster
+      ? result.patches.filter((p) => p.clusterIndex === blueCluster.index)
+      : [];
+    expect(bluePatches).toHaveLength(0);
   });
 
   it('populates libraryFabricId + distance when candidates are supplied', () => {
@@ -190,6 +160,51 @@ describe('segmentQuilt', () => {
     expect(a.patches.map((p) => p.polygonPx.length)).toEqual(
       b.patches.map((p) => p.polygonPx.length)
     );
+  });
+
+  it('grid decomposition produces 4 rect patches from a 4-quadrant image', () => {
+    const img = fourQuadrantImage();
+    const result = segmentQuilt(img, {
+      fabricCount: 4,
+      seed: 1,
+      maxWorkingDim: 64,
+      gridCellPx: 8,
+    });
+
+    expect(result.palette).toHaveLength(4);
+    // Grid decomposition merges same-color cells into maximal rectangles.
+    // Each 32×32 quadrant is composed of (32/8)² = 16 same-color cells
+    // that merge into one rectangle → 4 patches total.
+    expect(result.patches).toHaveLength(4);
+
+    // Every patch should be a 4-vertex axis-aligned rectangle.
+    for (const p of result.patches) {
+      expect(p.polygonPx).toHaveLength(4);
+    }
+  });
+
+  it('grid decomposition prevents adjacent same-color regions from merging', () => {
+    // Two separate red rectangles with a green strip between them. In the
+    // CCL path they would each be a separate component (because the green
+    // separates them). The grid path should also keep them separate.
+    const img = solidImage(64, 64, [20, 200, 20]); // green background
+    fillRect(img, 0, 0, 24, 64, [200, 20, 20]); // left red
+    fillRect(img, 40, 0, 64, 64, [200, 20, 20]); // right red
+
+    const result = segmentQuilt(img, {
+      fabricCount: 2,
+      seed: 1,
+      maxWorkingDim: 64,
+      gridCellPx: 8,
+    });
+
+    // The two red regions should remain separate patches even though
+    // they're the same cluster, because the green cells between them
+    // break the greedy merge.
+    const redCluster = result.palette.find((c) => c.rgb.r > 100);
+    expect(redCluster).toBeDefined();
+    const redPatches = result.patches.filter((p) => p.clusterIndex === redCluster!.index);
+    expect(redPatches.length).toBeGreaterThanOrEqual(2);
   });
 });
 

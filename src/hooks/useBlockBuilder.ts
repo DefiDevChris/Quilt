@@ -16,7 +16,6 @@ import {
   generateCircle,
   generateBend,
 } from '@/lib/block-builder-engine';
-import { GRID_LINE_COLOR } from '@/lib/constants';
 import { CANVAS } from '@/lib/design-system';
 
 interface UseBlockBuilderOptions {
@@ -327,7 +326,7 @@ export function useBlockBuilder({
       for (let row = 0; row <= gridRows; row++) {
         const y = row * gridSize;
         const line = new fabric.Line([0, y, canvasSize, y], {
-          stroke: GRID_LINE_COLOR,
+          stroke: CANVAS.gridLine,
           strokeWidth: 1,
           selectable: false,
           evented: false,
@@ -338,7 +337,7 @@ export function useBlockBuilder({
       for (let col = 0; col <= gridCols; col++) {
         const x = col * gridSize;
         const line = new fabric.Line([x, 0, x, canvasSize], {
-          stroke: GRID_LINE_COLOR,
+          stroke: CANVAS.gridLine,
           strokeWidth: 1,
           selectable: false,
           evented: false,
@@ -713,7 +712,7 @@ export function useBlockBuilder({
 
           const pathStr = `M ${a.x} ${a.y} L ${b.x} ${b.y} L ${cPt.x} ${cPt.y} Z`;
           const path = new fabric.Path(pathStr, {
-            fill: 'rgba(249, 115, 22, 0.1)',
+            fill: CANVAS.selectionHighlight,
             stroke: PENCIL_PREVIEW_COLOR,
             strokeWidth: 1.5,
             strokeDashArray: [6, 4],

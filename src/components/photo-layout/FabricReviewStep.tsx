@@ -10,9 +10,9 @@ import {
   type SegmentationResult,
   type SegmentOptions,
 } from '@/lib/quilt-segmentation-engine';
-import { regularizeSegmentation } from '@/lib/shape-regularize';
 import { matchFabricToColor, type FabricMatchCandidate } from '@/lib/fabric-match';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { findMatchingPatches, buildPieceGroup, GROUP_COLORS } from '@/lib/shape-picker-engine';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 
 interface FabricReviewStepProps {
   /** Flattened block image produced by the calibration step. */
@@ -52,6 +52,13 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
   const patchOverrides = usePhotoLayoutStore((s) => s.patchOverrides);
   const setPatchOverride = usePhotoLayoutStore((s) => s.setPatchOverride);
   const clearPatchOverrides = usePhotoLayoutStore((s) => s.clearPatchOverrides);
+  const shapePickerActive = usePhotoLayoutStore((s) => s.shapePickerActive);
+  const setShapePickerActive = usePhotoLayoutStore((s) => s.setShapePickerActive);
+  const pieceGroups = usePhotoLayoutStore((s) => s.pieceGroups);
+  const addPieceGroup = usePhotoLayoutStore((s) => s.addPieceGroup);
+  const removePieceGroup = usePhotoLayoutStore((s) => s.removePieceGroup);
+  const clearPieceGroups = usePhotoLayoutStore((s) => s.clearPieceGroups);
+  const patchToPieceLabel = usePhotoLayoutStore((s) => s.patchToPieceLabel);
 
   const [viewMode, setViewMode] = useState<ViewMode>('overlay');
   const [selectedPatchId, setSelectedPatchId] = useState<string | null>(null);
@@ -102,20 +109,14 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
       const nonNullCandidates = fabricCandidates.filter(
         (c): c is { id: string; hex: string } => typeof c.hex === 'string'
       );
+      const pxPerInch = widthInches > 0 ? warpedBitmap.width / widthInches : undefined;
       const opts: SegmentOptions = {
         fabricCount,
         libraryCandidates: nonNullCandidates,
         seed: SEGMENTATION_SEED,
+        pxPerInch,
       };
-      const raw: SegmentationResult = segmentQuilt(warpedBitmap, opts);
-      // Regularize: classify rects/right triangles, group by shape,
-      // average canonical dims, and snap all vertices to a 0.5" inch
-      // grid relative to the block's warped footprint. The Review UI
-      // renders this result directly — what the user approves is what
-      // the studio imports.
-      const pxPerInch = raw.width > 0 ? raw.width / Math.max(widthInches, 1e-6) : 0;
-      const result =
-        pxPerInch > 0 ? regularizeSegmentation(raw, { pxPerInch, snapIncrementInches: 0.5 }) : raw;
+      const result: SegmentationResult = segmentQuilt(warpedBitmap, opts);
       if (runId !== segRunId.current) return;
       setSegmentation(result);
       setIsSegmenting(false);
@@ -139,7 +140,7 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
       const override = patchOverrides[patchId];
       if (override) return override.hex;
       const cluster = segmentation?.palette.find((c) => c.index === clusterIndex);
-      return cluster?.hex ?? '#d4ccc4';
+      return cluster?.hex ?? COLORS.fabricFallback;
     },
     [patchOverrides, segmentation]
   );
@@ -169,8 +170,8 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
     return ranked;
   }, [selectedPatch, selectedPatchHex, fabricCandidates, fabricsById]);
 
-  // Prune overrides whose patch id no longer exists (re-segmenting can
-  // invalidate them). Run after every segmentation update.
+  // Prune overrides and piece groups when re-segmenting invalidates
+  // patch IDs (changing k produces entirely new patches).
   useEffect(() => {
     if (!segmentation) return;
     const validIds = new Set(segmentation.patches.map((p) => p.id));
@@ -179,14 +180,54 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
     if (stale.length === keys.length && stale.length > 0) {
       clearPatchOverrides();
     }
-    // If only some are stale, leave them — the user can still see the
-    // valid ones; the stale ones simply won't render anywhere.
+    if (pieceGroups.length > 0) {
+      const anyValid = pieceGroups.some((g) => g.patchIds.some((id) => validIds.has(id)));
+      if (!anyValid) clearPieceGroups();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [segmentation]);
 
-  const handlePatchClick = useCallback((id: string) => {
-    setSelectedPatchId((prev) => (prev === id ? null : id));
-  }, []);
+  const patches = segmentation?.patches ?? [];
+
+  const pxPerInch = useMemo(
+    () => (widthInches > 0 && warpedImage.width > 0 ? warpedImage.width / widthInches : 0),
+    [warpedImage.width, widthInches]
+  );
+
+  // Shape picker: map from piece label → group index for stroke colors.
+  const labelToGroupIndex = useMemo(() => {
+    const m: Record<string, number> = {};
+    pieceGroups.forEach((g, i) => {
+      m[g.label] = i;
+    });
+    return m;
+  }, [pieceGroups]);
+
+  const ungroupedCount = useMemo(() => {
+    const grouped = new Set(Object.keys(patchToPieceLabel));
+    return patches.filter((p) => !grouped.has(p.id)).length;
+  }, [patches, patchToPieceLabel]);
+
+  const handlePatchClick = useCallback(
+    (id: string) => {
+      if (!shapePickerActive) {
+        setSelectedPatchId((prev) => (prev === id ? null : id));
+        return;
+      }
+      // Shape picker mode: clicking an ungrouped patch creates a new group.
+      if (patchToPieceLabel[id]) return; // already grouped
+      const patch = patches.find((p) => p.id === id);
+      if (!patch || pxPerInch <= 0) return;
+      const matchingIds = findMatchingPatches(patch, patches, pxPerInch);
+      // Exclude patches already in other groups.
+      const availableIds = matchingIds.filter((mid) => !patchToPieceLabel[mid]);
+      if (availableIds.length === 0) return;
+      const currentGroupCount = usePhotoLayoutStore.getState().pieceGroups.length;
+      const group = buildPieceGroup(patch, availableIds, currentGroupCount, pxPerInch);
+      addPieceGroup(group);
+    },
+    [shapePickerActive, patchToPieceLabel, patches, pxPerInch, addPieceGroup]
+  );
 
   const handlePaletteSwap = useCallback(
     (hex: string) => {
@@ -231,8 +272,6 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
   const svgViewBox = `0 0 ${warpedImage.width} ${warpedImage.height}`;
   const strokeWidth = Math.max(1, warpedImage.width / 400);
 
-  const patches = segmentation?.patches ?? [];
-
   return (
     <div className="space-y-4">
       <div>
@@ -245,8 +284,8 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
         </p>
       </div>
 
-      {/* View toggle */}
-      <div className="flex gap-2" role="group" aria-label="Preview mode">
+      {/* View toggle + shape picker toggle */}
+      <div className="flex gap-2 flex-wrap" role="group" aria-label="Preview mode">
         {(['overlay', 'pattern', 'photo'] as ViewMode[]).map((mode) => (
           <button
             key={mode}
@@ -270,7 +309,36 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
             {mode === 'overlay' ? 'Overlay' : mode === 'pattern' ? 'Pattern only' : 'Photo only'}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => setShapePickerActive(!shapePickerActive)}
+          className={`px-4 py-2 rounded-full text-label-sm font-medium transition-colors duration-150 border ${
+            shapePickerActive
+              ? ''
+              : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-dim)]'
+          }`}
+          style={
+            shapePickerActive
+              ? { backgroundColor: COLORS.primary, color: COLORS.text, borderColor: COLORS.primary }
+              : undefined
+          }
+        >
+          Identify Pieces
+        </button>
       </div>
+
+      {/* Shape picker instructions */}
+      {shapePickerActive && (
+        <p className="text-body-sm text-[var(--color-text-dim)]">
+          Click a shape to identify it. All matching shapes will be grouped automatically.
+          {ungroupedCount > 0 && (
+            <span className="font-medium" style={{ color: COLORS.primary }}>
+              {' '}
+              {ungroupedCount} ungrouped.
+            </span>
+          )}
+        </p>
+      )}
 
       {/* Preview + palette */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4">
@@ -305,21 +373,55 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
                 const isSelected = patch.id === selectedPatchId;
                 const color = patchColor(patch.id, patch.clusterIndex);
                 const fill = viewMode === 'pattern' ? color : `${color}cc`;
+                const pieceLabel = patchToPieceLabel[patch.id];
+                const groupIdx = pieceLabel ? (labelToGroupIndex[pieceLabel] ?? 0) : -1;
+                const groupColor =
+                  groupIdx >= 0 ? GROUP_COLORS[groupIdx % GROUP_COLORS.length] : undefined;
+
+                let strokeColor = isSelected ? COLORS.text : `${COLORS.text}55`;
+                let sw = isSelected ? strokeWidth * 2 : strokeWidth;
+                let dashArray: string | undefined;
+                if (shapePickerActive) {
+                  if (groupColor) {
+                    strokeColor = groupColor;
+                    sw = strokeWidth * 2.5;
+                  } else {
+                    strokeColor = `${COLORS.text}88`;
+                    dashArray = `${strokeWidth * 3} ${strokeWidth * 2}`;
+                  }
+                }
+
                 return (
-                  <polygon
-                    key={patch.id}
-                    points={points}
-                    fill={fill}
-                    stroke={isSelected ? COLORS.text : `${COLORS.text}55`}
-                    strokeWidth={isSelected ? strokeWidth * 2 : strokeWidth}
-                    strokeLinejoin="miter"
-                    vectorEffect="non-scaling-stroke"
-                    style={{ cursor: 'pointer' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePatchClick(patch.id);
-                    }}
-                  />
+                  <g key={patch.id}>
+                    <polygon
+                      points={points}
+                      fill={fill}
+                      stroke={strokeColor}
+                      strokeWidth={sw}
+                      strokeLinejoin="miter"
+                      strokeDasharray={dashArray}
+                      vectorEffect="non-scaling-stroke"
+                      style={{ cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePatchClick(patch.id);
+                      }}
+                    />
+                    {shapePickerActive && pieceLabel && (
+                      <text
+                        x={patch.centroidPx.x}
+                        y={patch.centroidPx.y}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill={COLORS.text}
+                        fontSize={warpedImage.width / 30}
+                        fontWeight="700"
+                        style={{ pointerEvents: 'none' }}
+                      >
+                        {pieceLabel.replace('Piece ', '')}
+                      </text>
+                    )}
+                  </g>
                 );
               })}
             </svg>
@@ -470,7 +572,7 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
                     >
                       <div
                         className="w-full h-10"
-                        style={{ backgroundColor: fabric.hex ?? '#d4ccc4' }}
+                        style={{ backgroundColor: fabric.hex ?? COLORS.fabricFallback }}
                         aria-hidden
                       />
                       <div className="p-1.5">
@@ -535,6 +637,72 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
         </div>
       )}
 
+      {/* Piece list — shows groups created by the shape picker */}
+      {pieceGroups.length > 0 && (
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-label-sm font-medium text-[var(--color-text)]">
+              Pieces ({pieceGroups.length})
+            </p>
+            <button
+              type="button"
+              onClick={() => clearPieceGroups()}
+              className="text-label-xs text-[var(--color-text-dim)]"
+              style={{
+                transition: `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '')}
+            >
+              Clear all
+            </button>
+          </div>
+          {pieceGroups.map((group, i) => {
+            const groupColor = GROUP_COLORS[i % GROUP_COLORS.length];
+            return (
+              <div
+                key={group.label}
+                className="flex items-center gap-2 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] p-2"
+              >
+                <span
+                  className="inline-block w-4 h-4 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: groupColor }}
+                  aria-hidden
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-label-xs font-medium text-[var(--color-text)]">
+                    {group.label}: {group.displayWidth} × {group.displayHeight}{' '}
+                    {group.shapeType === 'triangle' ? 'Triangle' : 'Rect'}
+                    <span className="text-[var(--color-text-dim)] font-normal">
+                      {' '}
+                      ({group.patchIds.length} found)
+                    </span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removePieceGroup(group.label)}
+                  className="text-label-xs text-[var(--color-text-dim)] flex-shrink-0"
+                  style={{
+                    transition: `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
+                  aria-label={`Remove ${group.label}`}
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+          {ungroupedCount > 0 && (
+            <p className="text-label-xs text-[var(--color-text-dim)] italic">
+              {ungroupedCount} patches not yet identified
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Action row */}
       <div className="flex items-center gap-3 pt-2">
         <button
@@ -556,7 +724,7 @@ export function FabricReviewStep(props: FabricReviewStepProps) {
             transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
           }}
           onMouseEnter={(e) => {
-            if (patches.length > 0) e.currentTarget.style.backgroundColor = '#e67d3f';
+            if (patches.length > 0) e.currentTarget.style.backgroundColor = COLORS_HOVER.primary;
           }}
           onMouseLeave={(e) => {
             if (patches.length > 0) e.currentTarget.style.backgroundColor = COLORS.primary;

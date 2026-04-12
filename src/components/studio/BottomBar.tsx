@@ -5,6 +5,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { useBlockBuilderStore } from '@/stores/blockBuilderStore';
 import { formatMeasurement } from '@/lib/canvas-utils';
 import { useShadeAssignment } from '@/hooks/useShadeAssignment';
+import { COLORS } from '@/lib/design-system';
 
 export function BottomBar() {
   const cursorPosition = useCanvasStore((s) => s.cursorPosition);
@@ -20,7 +21,7 @@ export function BottomBar() {
   const { activateShadeView, deactivateShadeView } = useShadeAssignment();
 
   return (
-    <div className="h-7 bg-[var(--color-bg)] flex items-center justify-between px-4 font-mono text-body-sm text-[#4a4a4a]">
+    <div className="h-7 bg-default flex items-center justify-between px-4 font-mono text-body-sm text-dim">
       {/* Left side - cursor position */}
       <div className="flex items-center gap-[2.75rem]">
         <span>
@@ -37,10 +38,10 @@ export function BottomBar() {
                 activateShadeView();
               }
             }}
-            className={`px-2 py-0.5 rounded-full text-[12px] leading-[16px] font-medium transition-colors ${
+            className={`px-2 py-0.5 rounded-full text-[14px] leading-[20px] font-medium transition-colors ${
               shadeViewActive
                 ? 'bg-primary/20 text-primary'
-                : 'text-[#4a4a4a] hover:text-[#1a1a1a] hover:bg-[var(--color-bg)]'
+                : 'text-dim hover:text-default hover:bg-default'
             }`}
             title="Toggle shade visualization"
           >
@@ -66,14 +67,14 @@ export function BottomBar() {
           /* Quilt mode stats */
           <>
             {hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form' && (
-              <span className="text-[#1a1a1a]/50">
+              <span className="text-default/50">
                 Layout: {layoutType.charAt(0).toUpperCase() + layoutType.slice(1)}
               </span>
             )}
-            <span className={gridSettings.snapToGrid ? 'text-[#22c55e]' : 'text-[#4a4a4a]'}>
+            <span className={gridSettings.snapToGrid ? 'text-[#22c55e]' : 'text-dim'}>
               Snap to Grid: {gridSettings.snapToGrid ? 'ON' : 'OFF'}
             </span>
-            <span className={gridSettings.snapToNodes ? 'text-[#22c55e]' : 'text-[#4a4a4a]'}>
+            <span className={gridSettings.snapToNodes ? 'text-[#22c55e]' : 'text-dim'}>
               Snap to Nodes: {gridSettings.snapToNodes ? 'ON' : 'OFF'}
             </span>
           </>

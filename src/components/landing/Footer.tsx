@@ -40,12 +40,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <a href="#features" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <a href="#features" className="hover:text-primary transition-colors duration-150">
                   Design Studio
                 </a>
               </li>
               <li>
-                <a href="#features" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <a href="#features" className="hover:text-primary transition-colors duration-150">
                   Yardage Calculator
                 </a>
               </li>
@@ -62,12 +62,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <Link href="/socialthreads" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/socialthreads" className="hover:text-primary transition-colors duration-150">
                   Gallery
                 </Link>
               </li>
               <li>
-                <Link href="/socialthreads" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/socialthreads" className="hover:text-primary transition-colors duration-150">
                   Discussions
                 </Link>
               </li>
@@ -84,22 +84,22 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <Link href="/about" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/about" className="hover:text-primary transition-colors duration-150">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/contact" className="hover:text-primary transition-colors duration-150">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/privacy" className="hover:text-primary transition-colors duration-150">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-[#ff8d49] transition-colors duration-150">
+                <Link href="/terms" className="hover:text-primary transition-colors duration-150">
                   Terms of Service
                 </Link>
               </li>
@@ -110,10 +110,10 @@ export default function Footer() {
         <div className="pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-[var(--color-text-dim)]">&copy; 2026 QuiltCorgi. All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm text-[var(--color-text-dim)]">
-            <Link href="/privacy" className="hover:text-[#ff8d49] transition-colors duration-150">
+            <Link href="/privacy" className="hover:text-primary transition-colors duration-150">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-[#ff8d49] transition-colors duration-150">
+            <Link href="/terms" className="hover:text-primary transition-colors duration-150">
               Terms
             </Link>
           </div>

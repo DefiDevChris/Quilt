@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { COLORS, SHADOW } from '@/lib/design-system';
+import { COLORS, SHADOW, OPACITY, CANVAS } from '@/lib/design-system';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
@@ -356,9 +356,9 @@ function QuiltWorktableMockup() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'radial-gradient(#E8DCCB 1px, transparent 1px)',
+              backgroundImage: `radial-gradient(${CANVAS.mockQuiltStitch} 1px, transparent 1px)`,
               backgroundSize: '20px 20px',
-              opacity: 0.3,
+              opacity: OPACITY.fencePreview,
             }}
           />
 
@@ -443,9 +443,9 @@ function BlockWorktableMockup() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'radial-gradient(#E8DCCB 1px, transparent 1px)',
+              backgroundImage: `radial-gradient(${CANVAS.mockQuiltStitch} 1px, transparent 1px)`,
               backgroundSize: '10px 10px',
-              opacity: 0.3,
+              opacity: OPACITY.fencePreview,
             }}
           />
 
@@ -453,7 +453,7 @@ function BlockWorktableMockup() {
             <svg viewBox="0 0 100 100" className="w-full h-full">
               <path
                 d="M25 0 V100 M50 0 V100 M75 0 V100 M0 25 H100 M0 50 H100 M0 75 H100"
-                stroke="#E8DCCB"
+                stroke={CANVAS.mockQuiltStitch}
                 strokeWidth="0.5"
                 strokeDasharray="2 2"
                 opacity="0.5"
@@ -550,7 +550,7 @@ function ImageWorktableMockup() {
                 className="w-full h-full border border-white/50"
                 style={{
                   backgroundImage:
-                    'linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px)',
+                    `linear-gradient(to right, ${CANVAS.mockGridBg} 1px, transparent 1px), linear-gradient(to bottom, ${CANVAS.mockGridBg} 1px, transparent 1px)`,
                   backgroundSize: '33.33% 33.33%',
                 }}
               />
@@ -637,7 +637,7 @@ function PrintWorktableMockup() {
                     width="100"
                     height="100"
                     fill="none"
-                    stroke="#E8DCCB"
+                    stroke={CANVAS.mockQuiltStitch}
                     strokeWidth="1"
                     strokeDasharray="4 2"
                   />
@@ -651,7 +651,7 @@ function PrintWorktableMockup() {
                     y1="5"
                     x2="95"
                     y2="95"
-                    stroke="#E8DCCB"
+                    stroke={CANVAS.mockQuiltStitch}
                     strokeWidth="0.5"
                     strokeDasharray="3 3"
                   />
@@ -661,7 +661,7 @@ function PrintWorktableMockup() {
                     width="100"
                     height="100"
                     fill="none"
-                    stroke="#E8DCCB"
+                    stroke={CANVAS.mockQuiltStitch}
                     strokeWidth="1"
                     strokeDasharray="4 2"
                   />

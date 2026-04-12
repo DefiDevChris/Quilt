@@ -30,27 +30,27 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
         aria-modal="true"
         aria-labelledby="pro-upgrade-title"
         tabIndex={-1}
-        className="relative w-full max-w-4xl bg-[var(--color-surface)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-[var(--color-border)] outline-none"
+        className="relative w-full max-w-4xl bg-surface rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-default outline-none"
       >
         {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+          className="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full bg-default text-default hover:bg-primary/10 transition-colors duration-150"
         >
           <X size={24} />
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Left Column: Brand statement */}
-          <div className="bg-[var(--color-bg)] text-[var(--color-text)] p-12 flex flex-col justify-center relative overflow-hidden">
+          <div className="bg-default text-default p-12 flex flex-col justify-center relative overflow-hidden">
             <div className="relative z-10">
-              <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Professional Tier</p>
-              <h2 id="pro-upgrade-title" className="text-[40px] leading-[52px] text-[var(--color-text)] mb-8">
+              <p className="text-[14px] leading-[20px] text-primary mb-6">Professional Tier</p>
+              <h2 id="pro-upgrade-title" className="text-[40px] leading-[52px] text-default mb-8">
                 The Full <br /> Studio <br /> Experience
               </h2>
-              <div className="h-1 w-20 bg-[#ff8d49] mb-8" />
-              <p className="text-[var(--color-text-dim)] text-[16px] leading-[24px] max-w-xs">
+              <div className="h-1 w-20 bg-primary mb-8" />
+              <p className="text-dim text-[16px] leading-[24px] max-w-xs">
                 Unlock professional access to advanced pattern generation,
                 high-resolution exports, and complete fabric calibration tools.
               </p>
@@ -58,9 +58,9 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
           </div>
 
           {/* Right Column: Pricing & Benefits */}
-          <div className="bg-[var(--color-surface)] p-12 flex flex-col justify-between">
+          <div className="bg-surface p-12 flex flex-col justify-between">
             <div>
-              <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-8">Pro Features</p>
+              <p className="text-[14px] leading-[20px] text-dim mb-8">Pro Features</p>
 
               <ul className="space-y-6 mb-12">
                 {[
@@ -72,8 +72,8 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                   'Custom fabric image uploads',
                 ].map((benefit, i) => (
                   <li key={i} className="flex items-center gap-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#ff8d49]" />
-                    <span className="text-[16px] leading-[24px] text-[var(--color-text)]">{benefit}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    <span className="text-[16px] leading-[24px] text-default">{benefit}</span>
                   </li>
                 ))}
               </ul>
@@ -84,7 +84,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 {/* Yearly Plan */}
                 <button
                   onClick={() => handleCheckout({ plan: 'yearly' })}
-                  className="group relative flex flex-col p-6 border-2 border-[#ff8d49] bg-[#ff8d49] text-[var(--color-text)] rounded-full hover:bg-[#e67d3f] transition-colors duration-150"
+                  className="group relative flex flex-col p-6 border-2 border-primary bg-primary text-default rounded-full hover:bg-primary-dark transition-colors duration-150"
                 >
                   <span className="text-[14px] leading-[20px] mb-1">Annual Archive</span>
                   <div className="flex items-baseline gap-1">
@@ -97,7 +97,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 {/* Monthly Plan */}
                 <button
                   onClick={() => handleCheckout({ plan: 'monthly' })}
-                  className="flex flex-col p-6 border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] rounded-full hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                  className="flex flex-col p-6 border-2 border-default bg-surface text-default rounded-full hover:bg-primary/10 transition-colors duration-150"
                 >
                   <span className="text-[14px] leading-[20px] mb-1">Monthly Access</span>
                   <div className="flex items-baseline gap-1">
@@ -108,7 +108,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
                 </button>
               </div>
 
-              <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] text-center">
+              <p className="text-[14px] leading-[20px] text-dim text-center">
                 Payment processed securely via Stripe. <br />
                 Manage your subscription in Settings.
               </p>

@@ -8,6 +8,8 @@ import {
   type LayoutOverlay,
 } from '@/lib/quilt-overlay-registry';
 
+import { COLORS, COLORS_HOVER } from '@/lib/design-system';
+
 interface RecommendedDimensionsModalProps {
   onSelect: (width: number, height: number) => void;
   onClose: () => void;
@@ -168,20 +170,20 @@ export function RecommendedDimensionsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1a1a1a]/60">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--color-text)]/60">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="recommended-dimensions-title"
         tabIndex={-1}
-        className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+        className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#d4d4d4] p-4">
+        <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
           <div>
-            <h2 id="recommended-dimensions-title" className="text-[24px] leading-[32px] text-[#1a1a1a]">Recommended Dimensions</h2>
-            <p className="text-[14px] leading-[20px] text-[#4a4a4a] mt-1">
+            <h2 id="recommended-dimensions-title" className="text-[24px] leading-[32px] text-[var(--color-text)]">Recommended Dimensions</h2>
+            <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mt-1">
               Maintains exact aspect ratio
             </p>
           </div>
@@ -189,7 +191,7 @@ export function RecommendedDimensionsModal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="p-2 rounded-lg hover:bg-[#ff8d49]/10 transition-colors duration-150"
+            className="p-2 rounded-lg hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -205,17 +207,17 @@ export function RecommendedDimensionsModal({
         <div className="p-6 flex flex-col gap-6 overflow-hidden">
           {/* Pattern info */}
           {selectedPattern && (
-            <div className="border border-[#d4d4d4] bg-[var(--color-bg)] p-4 flex flex-col gap-2 rounded-lg">
+            <div className="border border-[var(--color-border)] bg-[var(--color-bg)] p-4 flex flex-col gap-2 rounded-lg">
               <div className="flex items-center justify-between">
-                <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
+                <span className="text-[16px] leading-[24px] text-[var(--color-text)]">
                   {selectedPattern.displayName}
                 </span>
-                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+                <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                   Original: {selectedPattern.dimensions.width}&quot; &times; {selectedPattern.dimensions.height}&quot;
                 </span>
               </div>
               {selectedPattern.blockLayout && (
-                <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+                <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                   Layout: {selectedPattern.blockLayout.cols} &times; {selectedPattern.blockLayout.rows} blocks
                 </span>
               )}
@@ -231,20 +233,20 @@ export function RecommendedDimensionsModal({
                   type="button"
                   onClick={() => onSelect(rec.width, rec.height)}
                   className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${rec.isClosest
-                    ? 'border-[#ff8d49] bg-[#ff8d49]/5'
-                    : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
+                    ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                    : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
                     }`}
                 >
-                  <span className="text-[16px] leading-[24px] text-[#1a1a1a]">
+                  <span className="text-[16px] leading-[24px] text-[var(--color-text)]">
                     {rec.label}
                   </span>
-                  <div className="mt-2 text-[16px] leading-[24px] text-[#1a1a1a]">
+                  <div className="mt-2 text-[16px] leading-[24px] text-[var(--color-text)]">
                     {rec.width}&quot; &times; {rec.height}&quot;
                   </div>
-                  <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a]">
+                  <div className="mt-1 text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                     {rec.cols} &times; {rec.rows} = {rec.total} blocks
                   </div>
-                  <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a]">
+                  <div className="mt-1 text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                     Each: {rec.blockSize}&quot; &times; {rec.blockSize}&quot;
                   </div>
                 </button>
@@ -253,11 +255,11 @@ export function RecommendedDimensionsModal({
           </div>
 
           {/* Custom dimensions */}
-          <div className="border-t border-[#d4d4d4] pt-6">
-            <h3 id="custom-dimensions-heading" className="text-[18px] leading-[28px] text-[#1a1a1a] mb-3">Custom Dimensions</h3>
+          <div className="border-t border-[var(--color-border)] pt-6">
+            <h3 id="custom-dimensions-heading" className="text-[18px] leading-[28px] text-[var(--color-text)] mb-3">Custom Dimensions</h3>
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label htmlFor="custom-width" className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Width (in)</label>
+                <label htmlFor="custom-width" className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2">Width (in)</label>
                 <input
                   id="custom-width"
                   type="number"
@@ -276,7 +278,7 @@ export function RecommendedDimensionsModal({
                   placeholder="Width"
                   min="6"
                   max="200"
-                  className="w-full border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-[var(--color-primary)] transition-colors duration-150 placeholder:text-[var(--color-text-dim)]"
                 />
               </div>
 
@@ -284,7 +286,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
                 aria-label={lockAspect ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
-                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[#ff8d49] text-[#1a1a1a] border-[#ff8d49]' : 'bg-[var(--color-surface)] text-[#4a4a4a] border-[#d4d4d4]'
+                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[var(--color-primary)] text-[var(--color-text)] border-[var(--color-primary)]' : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] border-[var(--color-border)]'
                   }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
@@ -304,7 +306,7 @@ export function RecommendedDimensionsModal({
               </button>
 
               <div className="flex-1">
-                <label htmlFor="custom-height" className="block text-[14px] leading-[20px] text-[#4a4a4a] mb-2">Height (in)</label>
+                <label htmlFor="custom-height" className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2">Height (in)</label>
                 <input
                   id="custom-height"
                   type="number"
@@ -323,7 +325,7 @@ export function RecommendedDimensionsModal({
                   placeholder="Height"
                   min="6"
                   max="200"
-                  className="w-full border border-[#d4d4d4] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[#1a1a1a] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg p-3 text-[16px] leading-[24px] text-[var(--color-text)] focus:outline-2 focus:outline-[var(--color-primary)] transition-colors duration-150 placeholder:text-[var(--color-text-dim)]"
                 />
               </div>
 
@@ -331,7 +333,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="h-[42px] border border-[#d4d4d4] bg-[#ff8d49] text-[#1a1a1a] px-6 text-[14px] leading-[20px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="h-[42px] border border-[var(--color-border)] bg-[var(--color-primary)] text-[var(--color-text)] px-6 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 Apply
               </button>

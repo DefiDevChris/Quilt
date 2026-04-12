@@ -123,7 +123,7 @@ export function renderGrid(
   // Grid lines inside the quilt area
   if (gridSettings.size > 0) {
     const gridSizePx = gridSettings.size * pxPerUnit;
-    ctx.strokeStyle = 'rgba(190, 185, 178, 0.85)';
+    ctx.strokeStyle = CANVAS.gridLineDimmed;
     ctx.lineWidth = 1 / zoom;
 
     ctx.beginPath();

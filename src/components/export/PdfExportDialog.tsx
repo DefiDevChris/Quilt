@@ -183,7 +183,7 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
               onClick={() => setExportMode(mode)}
               className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
                 ? 'border-primary bg-primary text-white'
-                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[#ff8d49]/10'
+                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
                 }`}
             >
               {MODE_INFO[mode].label}

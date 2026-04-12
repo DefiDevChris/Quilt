@@ -1,12 +1,10 @@
 'use client';
 
 import { create } from 'zustand';
-import type {
-  PhotoLayoutStep,
-  QuadCorners,
-  WarpedImageRef,
-} from '@/lib/photo-layout-types';
+import type { PhotoLayoutStep, QuadCorners, WarpedImageRef } from '@/lib/photo-layout-types';
 import type { SegmentationResult } from '@/lib/quilt-segmentation-engine';
+import type { PieceGroup } from '@/lib/shape-picker-engine';
+import { buildPatchLabelMap } from '@/lib/shape-picker-engine';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 
 /** Default real-world block size. Matches the most common traditional block. */
@@ -45,6 +43,13 @@ interface PhotoLayoutState {
   /** Seam allowance (passed through to the studio import). */
   seamAllowance: 0.25 | 0.375;
 
+  /** User-defined piece groups from the shape picker. */
+  pieceGroups: readonly PieceGroup[];
+  /** Fast lookup: patch ID → piece label. Derived from pieceGroups. */
+  patchToPieceLabel: Record<string, string>;
+  /** Whether shape-picker mode is active in the review step. */
+  shapePickerActive: boolean;
+
   setStep: (step: PhotoLayoutStep) => void;
   setOriginalImage: (img: HTMLImageElement, url: string) => void;
   setCorners: (corners: QuadCorners | null) => void;
@@ -55,6 +60,10 @@ interface PhotoLayoutState {
   setPatchOverride: (patchId: string, hex: string, fabricId: string | null) => void;
   clearPatchOverrides: () => void;
   setSeamAllowance: (value: 0.25 | 0.375) => void;
+  addPieceGroup: (group: PieceGroup) => void;
+  removePieceGroup: (label: string) => void;
+  clearPieceGroups: () => void;
+  setShapePickerActive: (active: boolean) => void;
   reset: () => void;
 }
 
@@ -70,6 +79,9 @@ const initialState = {
   fabricCount: DEFAULT_FABRIC_COUNT,
   patchOverrides: {} as Record<string, PatchOverride>,
   seamAllowance: DEFAULT_SEAM_ALLOWANCE_INCHES as 0.25 | 0.375,
+  pieceGroups: [] as readonly PieceGroup[],
+  patchToPieceLabel: {} as Record<string, string>,
+  shapePickerActive: false,
 };
 
 function revokeUrl(url: string | undefined | null): void {
@@ -110,6 +122,22 @@ export const usePhotoLayoutStore = create<PhotoLayoutState>((set, get) => ({
   clearPatchOverrides: () => set({ patchOverrides: {} }),
 
   setSeamAllowance: (value) => set({ seamAllowance: value }),
+
+  addPieceGroup: (group) =>
+    set((s) => {
+      const groups = [...s.pieceGroups, group];
+      return { pieceGroups: groups, patchToPieceLabel: buildPatchLabelMap(groups) };
+    }),
+
+  removePieceGroup: (label) =>
+    set((s) => {
+      const groups = s.pieceGroups.filter((g) => g.label !== label);
+      return { pieceGroups: groups, patchToPieceLabel: buildPatchLabelMap(groups) };
+    }),
+
+  clearPieceGroups: () => set({ pieceGroups: [], patchToPieceLabel: {}, shapePickerActive: false }),
+
+  setShapePickerActive: (active) => set({ shapePickerActive: active }),
 
   reset: () => {
     const { originalImageUrl, warpedImageRef } = get();

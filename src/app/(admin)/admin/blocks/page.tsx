@@ -84,14 +84,14 @@ export default function AdminBlocksPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a1a]">System Blocks</h1>
-          <p className="text-sm text-[#4a4a4a] mt-1">
+          <h1 className="text-2xl font-bold text-default">System Blocks</h1>
+          <p className="text-sm text-dim mt-1">
             Manage the quilt block library available to all users
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-surface)] font-medium hover:bg-[#e67d3f] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-[var(--color-surface)] font-medium hover:bg-primary-dark transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -102,36 +102,36 @@ export default function AdminBlocksPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-pulse rounded-lg h-8 w-8 bg-[#ff8d49]/20" />
+          <div className="animate-pulse rounded-lg h-8 w-8" style={{ backgroundColor: 'rgba(255, 141, 73, 0.2)' }} />
         </div>
       ) : blocks.length === 0 ? (
-        <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-12 text-center">
-          <p className="text-[#4a4a4a]">No blocks yet. Create your first block!</p>
+        <div className="bg-[var(--color-bg)] border border-default rounded-lg p-12 text-center">
+          <p className="text-dim">No blocks yet. Create your first block!</p>
         </div>
       ) : (
         <>
-          <div className="rounded-lg border border-[#d4d4d4] overflow-hidden">
+          <div className="rounded-lg border border-default overflow-hidden">
             <table className="w-full">
               <thead className="bg-[var(--color-bg)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
                     Block
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a]">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
                     Category
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] hidden md:table-cell">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden md:table-cell">
                     Tags
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-[#4a4a4a] hidden sm:table-cell">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden sm:table-cell">
                     Created
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-[#4a4a4a]">
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-dim">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d4d4d4] bg-[var(--color-bg)]">
+              <tbody className="divide-y divide-default bg-[var(--color-bg)]">
                 {blocks.map((block) => (
                   <tr key={block.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
                     <td className="px-4 py-3">
@@ -144,40 +144,41 @@ export default function AdminBlocksPage() {
                             className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-[#4a4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(255, 141, 73, 0.1)' }}>
+                            <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
                             </svg>
                           </div>
                         )}
                         <div className="min-w-0">
-                          <p className="font-medium text-[#1a1a1a] truncate">{block.name}</p>
+                          <p className="font-medium text-default truncate">{block.name}</p>
                           {block.subcategory && (
-                            <p className="text-xs text-[#4a4a4a]">{block.subcategory}</p>
+                            <p className="text-xs text-dim">{block.subcategory}</p>
                           )}
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-[#4a4a4a]">{block.category}</span>
+                      <span className="text-sm text-dim">{block.category}</span>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="flex flex-wrap gap-1 max-w-[200px]">
                         {block.tags.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className="text-xs px-1.5 py-0.5 rounded-lg bg-[#ff8d49]/10 text-[#4a4a4a]"
+                            className="text-xs px-1.5 py-0.5 rounded-lg text-dim"
+                            style={{ backgroundColor: 'rgba(255, 141, 73, 0.1)' }}
                           >
                             {tag}
                           </span>
                         ))}
                         {block.tags.length > 2 && (
-                          <span className="text-xs text-[#4a4a4a]">+{block.tags.length - 2}</span>
+                          <span className="text-xs text-dim">+{block.tags.length - 2}</span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell">
-                      <span className="text-sm text-[#4a4a4a]">
+                      <span className="text-sm text-dim">
                         {new Date(block.createdAt).toLocaleDateString()}
                       </span>
                     </td>
@@ -185,7 +186,7 @@ export default function AdminBlocksPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setEditingBlock(block)}
-                          className="text-sm font-medium text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150"
+                          className="text-sm font-medium text-primary hover:text-primary-dark transition-colors duration-150"
                         >
                           Edit
                         </button>
@@ -206,7 +207,7 @@ export default function AdminBlocksPage() {
 
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between">
-              <p className="text-sm text-[#4a4a4a]">
+              <p className="text-sm text-dim">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
                 {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
                 blocks
@@ -217,7 +218,7 @@ export default function AdminBlocksPage() {
                     setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Previous
                 </button>
@@ -229,7 +230,7 @@ export default function AdminBlocksPage() {
                     }))
                   }
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-full border border-[#d4d4d4] text-sm font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                  className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   Next
                 </button>
@@ -350,10 +351,10 @@ function BlockFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#1a1a1a]/40 overflow-y-auto py-8">
-      <div className="bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8" style={{ backgroundColor: 'rgba(26, 26, 26, 0.4)' }}>
+      <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[#1a1a1a]">
+          <h3 className="text-lg font-semibold text-default">
             {isEditing ? 'Edit Block' : 'Create New Block'}
           </h3>
           <button
@@ -361,7 +362,7 @@ function BlockFormModal({
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
-            <svg className="w-5 h-5 text-[#4a4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -376,7 +377,7 @@ function BlockFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="block-name" className="text-sm font-medium text-[#1a1a1a]">Name *</label>
+              <label htmlFor="block-name" className="text-sm font-medium text-default">Name *</label>
               <input
                 id="block-name"
                 required
@@ -384,11 +385,11 @@ function BlockFormModal({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
+                className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)]"
               />
             </div>
             <div>
-              <label htmlFor="block-category" className="text-sm font-medium text-[#1a1a1a]">Category *</label>
+              <label htmlFor="block-category" className="text-sm font-medium text-default">Category *</label>
               <input
                 id="block-category"
                 required
@@ -396,25 +397,25 @@ function BlockFormModal({
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
+                className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)]"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="block-subcategory" className="text-sm font-medium text-[#1a1a1a]">Subcategory</label>
+            <label htmlFor="block-subcategory" className="text-sm font-medium text-default">Subcategory</label>
             <input
               id="block-subcategory"
               type="text"
               name="subcategory"
               value={formData.subcategory}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
+              className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)]"
             />
           </div>
 
           <div>
-            <label htmlFor="block-svg-data" className="text-sm font-medium text-[#1a1a1a]">
+            <label htmlFor="block-svg-data" className="text-sm font-medium text-default">
               SVG Data {isEditing ? '(leave blank to keep current)' : '*'}
             </label>
             <textarea
@@ -423,33 +424,33 @@ function BlockFormModal({
               value={formData.svgData}
               onChange={handleChange}
               rows={5}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)] font-mono text-sm"
+              className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)] font-mono text-sm"
               placeholder="<svg viewBox=&quot;0 0 300 300&quot;>...</svg>"
             />
           </div>
 
           <div>
-            <label htmlFor="block-tags" className="text-sm font-medium text-[#1a1a1a]">Tags (comma separated)</label>
+            <label htmlFor="block-tags" className="text-sm font-medium text-default">Tags (comma separated)</label>
             <input
               id="block-tags"
               type="text"
               name="tagsStr"
               value={formData.tagsStr}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
+              className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)]"
               placeholder="traditional, nine-patch, beginner"
             />
           </div>
 
           <div>
-            <label htmlFor="block-thumbnail-url" className="text-sm font-medium text-[#1a1a1a]">Thumbnail URL</label>
+            <label htmlFor="block-thumbnail-url" className="text-sm font-medium text-default">Thumbnail URL</label>
             <input
               id="block-thumbnail-url"
               type="text"
               name="thumbnailUrl"
               value={formData.thumbnailUrl}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#d4d4d4] rounded-lg bg-[var(--color-surface)]"
+              className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)]"
             />
           </div>
 
@@ -457,14 +458,14 @@ function BlockFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-[#4a4a4a] rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
+              className="px-4 py-2 text-sm font-medium text-dim rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-[#ff8d49] rounded-full disabled:opacity-50 hover:bg-[#e67d3f] transition-colors duration-150"
+              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-primary rounded-full disabled:opacity-50 hover:bg-primary-dark transition-colors duration-150"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Block' : 'Create Block'}
             </button>

@@ -5,7 +5,9 @@
  */
 
 import React from 'react';
-import { COLORS, MOTION, TYPOGRAPHY, RADIUS, SHADOW } from './design-system';
+import { COLORS, MOTION, TYPOGRAPHY, RADIUS, SHADOW, FONT_SIZE, withAlpha } from './design-system';
+
+const COLOR_ONLY_TRANSITION = `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, opacity ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`;
 
 // Re-export for convenience
 export { COLORS, TYPOGRAPHY, RADIUS, SHADOW };
@@ -56,7 +58,8 @@ export function BrandedSplitPaneModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop with ambient lighting */}
       <div
-        className="absolute inset-0 bg-[#1a1a1a]/50"
+        className="absolute inset-0"
+        style={{ backgroundColor: withAlpha(COLORS.text, 0.5) }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -64,11 +67,11 @@ export function BrandedSplitPaneModal({
       {/* Ambient glow effects */}
       <div
         className="absolute top-[-15%] left-[-5%] w-[600px] h-[600px] rounded-full mix-blend-multiply filter blur-3xl pointer-events-none"
-        style={{ backgroundColor: 'rgba(255, 141, 73, 0.12)' }}
+        style={{ backgroundColor: withAlpha(COLORS.primary, 0.12) }}
       />
       <div
         className="absolute bottom-[-15%] right-[-5%] w-[600px] h-[600px] rounded-full mix-blend-multiply filter blur-3xl pointer-events-none"
-        style={{ backgroundColor: 'rgba(255, 200, 166, 0.12)' }}
+        style={{ backgroundColor: withAlpha(COLORS.secondary, 0.12) }}
       />
 
       {/* Modal container */}
@@ -81,16 +84,16 @@ export function BrandedSplitPaneModal({
         style={{
           backgroundColor: COLORS.surface,
           borderColor: COLORS.border,
-          boxShadow: '0 4px 8px rgba(26, 26, 26, 0.1), 0 12px 32px rgba(26, 26, 26, 0.14)',
+          boxShadow: SHADOW.elevated,
         }}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 p-2 rounded-lg hover:bg-[#fdfaf7]"
+          className="absolute right-4 top-4 z-10 p-2 rounded-lg hover:bg-[var(--color-bg)]"
           style={{
             color: COLORS.textDim,
-            transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            transition: COLOR_ONLY_TRANSITION,
           }}
           aria-label="Close"
         >
@@ -110,7 +113,7 @@ export function BrandedSplitPaneModal({
           <div
             className="md:w-5/12 relative flex flex-col justify-between p-8 sm:p-12 border-b md:border-b-0 md:border-r"
             style={{
-              background: `linear-gradient(135deg, rgba(255, 141, 73, 0.06) 0%, ${COLORS.bg} 100%)`,
+              background: `linear-gradient(135deg, ${withAlpha(COLORS.primary, 0.06)} 0%, ${COLORS.bg} 100%)`,
               borderColor: COLORS.border,
             }}
           >
@@ -120,7 +123,7 @@ export function BrandedSplitPaneModal({
           {/* Right Panel: Transactional Form */}
           <div
             className="md:w-7/12 p-8 sm:p-12 flex flex-col justify-center items-center md:items-start"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+            style={{ backgroundColor: withAlpha(COLORS.surface, 0.3) }}
           >
             {rightPanel}
           </div>
@@ -145,12 +148,12 @@ export function BrandedInput({ label, error, className = '', ...props }: Branded
         {label}
       </label>
       <input
-        className={`w-full px-4 py-3.5 rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49] focus:border-transparent transition-all shadow-sm ${className}`}
+        className={`w-full px-4 py-3 rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-colors shadow-sm ${className}`}
         style={{
-          backgroundColor: 'rgba(253, 250, 247, 0.8)',
+          backgroundColor: withAlpha(COLORS.bg, 0.8),
           border: `1px solid ${COLORS.border}`,
-          boxShadow: 'inset 0 2px 8px rgba(26, 26, 26, 0.06), inset 0 1px 3px rgba(26, 26, 26, 0.04)',
-          transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+          boxShadow: SHADOW.inset,
+          transition: COLOR_ONLY_TRANSITION,
         }}
         {...props}
       />
@@ -174,23 +177,23 @@ export function BrandedButton({
   className = '',
   ...props
 }: BrandedButtonProps) {
-  const baseStyles = 'w-full font-semibold px-6 py-4 transition-all';
+  const baseStyles = 'w-full font-semibold px-6 py-4 transition-colors';
 
   return (
     <button
       className={`${baseStyles} ${className}`}
       style={{
         backgroundColor: variant === 'primary' ? COLORS.primary : 'transparent',
-        color: variant === 'primary' ? '#ffffff' : COLORS.primary,
+        color: variant === 'primary' ? COLORS.surface : COLORS.primary,
         border: variant === 'primary' ? 'none' : `2px solid ${COLORS.primary}`,
-        borderRadius: '9999px',
-        fontSize: '18px',
-        lineHeight: '28px',
+        borderRadius: RADIUS.full,
+        fontSize: FONT_SIZE.body,
+        lineHeight: FONT_SIZE.bodyLineHeight,
         boxShadow:
           variant === 'primary'
-            ? '0 4px 8px rgba(26, 26, 26, 0.1), 0 12px 32px rgba(26, 26, 26, 0.14)'
+            ? SHADOW.elevated
             : 'none',
-        transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+        transition: COLOR_ONLY_TRANSITION,
       }}
       {...props}
     >

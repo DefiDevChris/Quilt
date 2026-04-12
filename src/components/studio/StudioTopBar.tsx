@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
-import { ON_SURFACE_COLOR } from '@/lib/constants';
+import { CANVAS } from '@/lib/design-system';
 
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
@@ -44,7 +44,7 @@ function ReferenceImageToggle() {
         onClick={toggleReferencePanel}
         className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
           showReferencePanel
-            ? 'bg-primary/12 text-primary ring-1 ring-primary/20'
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
             : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]'
         }`}
         aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
@@ -208,7 +208,7 @@ export function StudioTopBar({
                   {projectName || 'Quilt Studio'}
                 </span>
                 {lastSavedAt && (
-                  <span className="text-[12px] leading-[16px] text-[var(--color-text-dim)]/60 ml-1">
+                  <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]/60 ml-1">
                     Saved {formatTimestamp(lastSavedAt)}
                   </span>
                 )}
@@ -248,7 +248,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke={ON_SURFACE_COLOR}
+                    stroke={CANVAS.seamLine}
                     strokeWidth="1.4"
                   >
                     <rect x="4" y="9" width="12" height="8" rx="2" />
@@ -263,7 +263,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke={ON_SURFACE_COLOR}
+                    stroke={CANVAS.seamLine}
                     strokeWidth="1.4"
                   >
                     <rect x="4" y="9" width="12" height="8" rx="2" />
@@ -293,7 +293,7 @@ export function StudioTopBar({
                     height="18"
                     viewBox="0 0 20 20"
                     fill="none"
-                    stroke={ON_SURFACE_COLOR}
+                    stroke={CANVAS.seamLine}
                     strokeWidth="1.4"
                   >
                     <circle cx="10" cy="10" r="3" />

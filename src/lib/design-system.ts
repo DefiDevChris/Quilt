@@ -8,124 +8,156 @@
 
 import brandConfig from '../../brand_config.json';
 
+// ─── Helpers ───────────────────────────────────────────────────────────
+
+/**
+ * Converts a hex color + alpha to an rgba string.
+ * e.g. withAlpha('#ff8d49', 0.12) → 'rgba(255, 141, 73, 0.12)'
+ */
+function withAlpha(hex: string, alpha: number): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/**
+ * Darkens a hex color by a given amount (0-1).
+ * e.g. darkenHex('#ff8d49', 0.1) → darker orange
+ */
+function darkenHex(hex: string, amount: number): string {
+  const h = hex.replace('#', '');
+  const r = Math.max(0, parseInt(h.substring(0, 2), 16) - Math.round(255 * amount));
+  const g = Math.max(0, parseInt(h.substring(2, 4), 16) - Math.round(255 * amount));
+  const b = Math.max(0, parseInt(h.substring(4, 6), 16) - Math.round(255 * amount));
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
 // ─── Colors ───────────────────────────────────────────────────────────
 
 const { color_palette: cp } = brandConfig;
+const cc = brandConfig.canvas_colors;
+const fc = brandConfig.fence_colors;
+const sc = brandConfig.shade_colors;
+const pp = brandConfig.pattern_preview_colors;
+const dc = brandConfig.default_canvas;
+const dl = brandConfig.default_layout;
+const gc = brandConfig.grid_colors;
+const func = brandConfig.functional_colors;
+const comp = brandConfig.computed_colors;
+const ac = brandConfig.alpha_colors;
 
 export const COLORS = {
-  primary: cp.primary,       // #ff8d49
-  secondary: cp.secondary,   // #ffc8a6
-  accent: cp.accent,         // #ffc7c7
-  bg: cp.bg,                 // #fdfaf7
-  surface: cp.surface,       // #ffffff
-  text: cp.text,             // #1a1a1a
-  textDim: cp.text_dim,      // #4a4a4a
-  border: cp.border,         // #d4d4d4
-  error: '#ed4956',          // from globals.css --color-error
+  primary: cp.primary,
+  secondary: cp.secondary,
+  accent: cp.accent,
+  bg: cp.bg,
+  surface: cp.surface,
+  text: cp.text,
+  textDim: cp.text_dim,
+  border: cp.border,
+  error: func.error,
+  fabricFallback: func.fabric_fallback,
+  fabricGridMockBg: func.fabric_grid_mock_bg,
+  mockSurfaceBg: func.mock_surface_bg,
 } as const;
 
 // Computed hover variants (primary darkened for hover state)
 export const COLORS_HOVER = {
-  primary: '#e67d3f',
+  primary: comp.primary_hover,
 } as const;
 
 // ─── Canvas / Tool Colors ────────────────────────────────────────────
 
 export const CANVAS = {
-  gridLine: '#E5E2DD',
-  seamLine: '#4a3f35',
-  pencilPreview: '#f9a06b',
-  patchHover: '#f9a06b',
-  blockHighlight: '#f9a06b',
-  fabricHighlight: '#f9a06b',
+  gridLine: cc.grid_line,
+  seamLine: cc.seam_line,
+  pencilPreview: cc.pencil_preview,
+  patchHover: cc.patch_hover,
+  blockHighlight: cc.block_highlight,
+  fabricHighlight: cc.fabric_highlight,
+  strokeDefault: cc.stroke_default,
+  fenceLabelBg: withAlpha(ac.canvas.fence_label_bg.hex, ac.canvas.fence_label_bg.alpha),
+  fenceLabelBgLight: withAlpha(ac.canvas.fence_label_bg_light.hex, ac.canvas.fence_label_bg_light.alpha),
+  selectionHighlight: withAlpha(ac.canvas.selection_highlight.hex, ac.canvas.selection_highlight.alpha),
+  gridLineDimmed: withAlpha(ac.canvas.grid_line_dimmed.hex, ac.canvas.grid_line_dimmed.alpha),
+  calibrationBackdrop: withAlpha(ac.canvas.calibration_backdrop.hex, ac.canvas.calibration_backdrop.alpha),
+  dotIndicatorInactive: withAlpha(ac.canvas.dot_indicator_inactive.hex, ac.canvas.dot_indicator_inactive.alpha),
+  mockGridBg: withAlpha(ac.canvas.mock_grid_bg.hex, ac.canvas.mock_grid_bg.alpha),
+  mockQuiltStitch: cc.mock_quilt_stitch,
 } as const;
 
 // ─── Fence Role Colors ───────────────────────────────────────────────
 
-export const FENCE = {
-  normal: {
-    fills: {
-      'block-cell': 'rgba(255, 255, 255, 0.6)',
-      sashing: '#e8dbcf',
-      cornerstone: '#e5d5c5',
-      border: '#d5c8b8',
-      binding: '#8a7c6f',
-      edging: '#6b5d50',
-    },
-    strokes: {
-      'block-cell': '#b8a698',
-      sashing: '#b8a698',
-      cornerstone: '#a89888',
-      border: '#b8a698',
-      binding: '#6b5d50',
-      edging: '#4a3f35',
-    },
-  },
-  preview: {
-    fills: {
-      'block-cell': 'rgba(249, 160, 107, 0.15)',
-      sashing: 'rgba(138, 124, 111, 0.15)',
-      cornerstone: 'rgba(138, 124, 111, 0.12)',
-      border: 'rgba(249, 160, 107, 0.15)',
-      binding: 'rgba(249, 160, 107, 0.10)',
-      edging: 'rgba(0, 0, 0, 0.08)',
-    },
-    strokes: {
-      'block-cell': 'rgba(249, 160, 107, 0.4)',
-      sashing: 'rgba(138, 124, 111, 0.4)',
-      cornerstone: 'rgba(138, 124, 111, 0.35)',
-      border: 'rgba(249, 160, 107, 0.4)',
-      binding: 'rgba(249, 160, 107, 0.3)',
-      edging: 'rgba(0, 0, 0, 0.2)',
-    },
-  },
-} as const;
+export const FENCE = fc as typeof fc;
 
 // ─── Shade Colors ────────────────────────────────────────────────────
 
 export const SHADE = {
-  dark: '#505050',
-  light: '#E0E0E0',
-  background: '#F5F5F5',
-  unknown: '#CCCCCC',
+  dark: sc.dark,
+  light: sc.light,
+  background: sc.background,
+  unknown: sc.unknown,
 } as const;
 
 // ─── Pattern Preview Colors ──────────────────────────────────────────
 
 export const PATTERN_PREVIEW = {
-  fill: '#E5E2DD',
-  stroke: '#c0b8ae',
-  accent: '#8B7355',
+  fill: pp.fill,
+  stroke: pp.stroke,
+  accent: pp.accent,
 } as const;
 
 // ─── Default Canvas Colors ───────────────────────────────────────────
 
 export const DEFAULT_CANVAS = {
-  fill: '#ffc8a6',
-  stroke: '#4a3f35',
+  fill: dc.fill,
+  stroke: dc.stroke,
 } as const;
 
 // ─── Default Layout Colors ───────────────────────────────────────────
 
 export const DEFAULT_LAYOUT = {
-  sashing: '#e5d5c5',
-  border: '#4a3f35',
+  sashing: dl.sashing,
+  border: dl.border,
 } as const;
 
 // ─── Grid / Measurement Colors ───────────────────────────────────────
 
 export const GRID = {
-  /** Background fill outside canvas area */
-  bg: '#f5ede5',
-  /** Dimension label text and corner mark color */
-  label: '#6b5d50',
-  /** Quilt border stroke */
-  border: '#b8a698',
+  bg: gc.bg,
+  label: gc.label,
+  border: gc.border,
 } as const;
 
 // ─── Typography ───────────────────────────────────────────────────────
 
 const { scale: ts } = brandConfig.typography;
+
+export const FONT_SIZE = {
+  h1: '40px',
+  h1LineHeight: '52px',
+  h2: '32px',
+  h2LineHeight: '40px',
+  h3: '24px',
+  h3LineHeight: '32px',
+  body: '18px',
+  bodyLineHeight: '28px',
+  small: '16px',
+  smallLineHeight: '24px',
+  label: '14px',
+  labelLineHeight: '20px',
+} as const;
+
+export const SPACING = {
+  button: 'px-6 py-2',
+  buttonSm: 'px-4 py-2',
+  input: 'px-4 py-2.5',
+  inputSm: 'px-3 py-1.5',
+  card: 'p-6',
+  dialog: 'p-8',
+} as const;
 
 export const TYPOGRAPHY = {
   h1: {
@@ -171,30 +203,38 @@ export const TYPOGRAPHY = {
 const { layout: l } = brandConfig.design_system;
 
 export const LAYOUT = {
-  containerMax: l.container_max,    // 1440px
-  gutter: l.gutter,                 // 24px
-  baseSpacing: parseInt(l.base_spacing, 10), // 8 (px)
-  sidebarWidth: l.sidebar_width,    // 280px
-  headerHeight: l.header_height,    // 64px
+  containerMax: l.container_max,
+  gutter: l.gutter,
+  baseSpacing: parseInt(l.base_spacing, 10),
+  sidebarWidth: l.sidebar_width,
+  headerHeight: l.header_height,
+  contextPanelWidth: '320px',
+  toolbarWidth: '88px',
+  dialogSm: '380px',
+  dialogMd: '440px',
+  dialogLg: '560px',
+  helpPanelWidth: '340px',
+  modalMaxHeight: '90vh',
 } as const;
 
 // ─── Motion ───────────────────────────────────────────────────────────
 
 export const MOTION = {
-  transitionDuration: 150,          // ms
+  transitionDuration: 150,
   transitionEasing: 'ease-out',
 } as const;
 
 // ─── Shadow ───────────────────────────────────────────────────────────
 
 export const SHADOW = {
-  brand: '0 1px 2px rgba(26, 26, 26, 0.08)',
+  brand: `0 1px 2px ${withAlpha(ac.shadows.brand.hex, ac.shadows.brand.alpha)}`,
+  elevated: `0 4px 8px ${withAlpha(ac.shadows.elevated_outer.hex, ac.shadows.elevated_outer.alpha)}, 0 12px 32px ${withAlpha(ac.shadows.elevated_outer_deep.hex, ac.shadows.elevated_outer_deep.alpha)}`,
+  inset: `inset 0 2px 8px ${withAlpha(ac.shadows.inset_inner.hex, ac.shadows.inset_inner.alpha)}, inset 0 1px 3px ${withAlpha(ac.shadows.inset_inner_subtle.hex, ac.shadows.inset_inner_subtle.alpha)}`,
 } as const;
 
 // ─── Decoration (QuiltPiece background elements) ──────────────────────
 
 export const DECORATION = {
-  /** The three QuiltPiece background decorations */
   quiltPieceBackgrounds: [
     {
       color: 'primary' as const,
@@ -219,21 +259,18 @@ export const DECORATION = {
       size: 500,
       rotation: 5,
       position: { top: '40%', right: -150 },
-      opacity: 8.4,  // 12 * 0.7
+      opacity: 8.4,
       strokeWidth: 4,
       stitchGap: 12,
     },
   ],
-  /** Default opacity for page-level decoration (percentage 0-100) */
   defaultOpacity: 12,
-  /** Stitch line color for decorations */
   stitchColor: 'var(--color-text)',
 } as const;
 
 // ─── Mascots ──────────────────────────────────────────────────────────
 
 export const MASCOT = {
-  /** Position configs for 1-3 mascot layouts */
   positions: {
     1: [
       { pose: 'sitting' as const, size: 'lg' as const, position: { bottom: 32, right: 32 }, opacity: 0.4 },
@@ -248,7 +285,6 @@ export const MASCOT = {
       { pose: 'walking' as const, size: 'sm' as const, position: { top: 96, right: 32 }, opacity: 0.25 },
     ],
   },
-  /** Max mascots per screen per brand rules */
   maxPerScreen: 1,
 } as const;
 
@@ -263,6 +299,42 @@ export const ASSETS = {
 // ─── Radius ───────────────────────────────────────────────────────────
 
 export const RADIUS = {
-  full: '9999px',   // rounded-full — buttons, CTAs, tabs, filters, pills, avatars
-  lg: '8px',         // rounded-lg — cards, containers, inputs, dialogs
+  full: '9999px',
+  lg: '8px',
 } as const;
+
+// ─── Opacity ──────────────────────────────────────────────────────────
+
+export const OPACITY = {
+  disabled: 0.5,
+  dim: 0.6,
+  overlay: 0.2,
+  fencePreview: 0.3,
+  'background-image': 0.05,
+  reviewOverlay: 0.35,
+} as const;
+
+// ─── Z-Index ─────────────────────────────────────────────────────────
+
+export const Z_INDEX = {
+  base: 0,
+  behind: -10,
+  dropdown: 50,
+  panel: 40,
+  overlay: 9999,
+  topBar: 10,
+  feedTabs: 9,
+  contextMenu: 60,
+  toast: 100,
+  modal: 70,
+} as const;
+
+// ─── Breakpoints ─────────────────────────────────────────────────────
+
+export const BREAKPOINTS = {
+  mobile: 768,
+} as const;
+
+// ─── Exports for external use ─────────────────────────────────────────
+
+export { withAlpha, darkenHex };

@@ -15,6 +15,7 @@ import {
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
+import { COLORS } from '@/lib/design-system';
 
 interface QuiltSettingsDropdownProps {
  readonly onOpenImageExport?: () => void;
@@ -199,7 +200,7 @@ export function QuiltSettingsDropdown({
  <button
  type="button"
  onClick={() => setIsOpen((o) => !o)}
- className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${isOpen
+ className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-medium transition-colors ${isOpen
  ? 'bg-[var(--color-border)] text-[var(--color-text)]'
  : 'text-[var(--color-text)]/70 hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]'
  }`}
@@ -250,10 +251,10 @@ export function QuiltSettingsDropdown({
  onKeyDown={(e) => {
  if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
  }}
- className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${widthError ? 'border-[#ffc7c7]' : ''
+ className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${widthError ? 'border-[var(--color-accent)]' : ''
  }`}
  />
- {widthError && <p className="text-xs text-[#ffc7c7] mt-1">{widthError}</p>}
+ {widthError && <p className="text-xs text-[var(--color-accent)] mt-1">{widthError}</p>}
  </div>
  <div className="flex-1">
  <label htmlFor="quilt-h" className="block text-xs text-[var(--color-text-dim)] mb-1">
@@ -272,10 +273,10 @@ export function QuiltSettingsDropdown({
  onKeyDown={(e) => {
  if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
  }}
- className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${heightError ? 'border-[#ffc7c7]' : ''
+ className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${heightError ? 'border-[var(--color-accent)]' : ''
  }`}
  />
- {heightError && <p className="text-xs text-[#ffc7c7] mt-1">{heightError}</p>}
+ {heightError && <p className="text-xs text-[var(--color-accent)] mt-1">{heightError}</p>}
  </div>
  </div>
 
@@ -290,7 +291,7 @@ export function QuiltSettingsDropdown({
  type="button"
  onClick={() => applyPreset(p.width, p.height)}
  className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors ${isActive
- ? 'bg-[#ff8d49] text-[var(--color-text)]'
+ ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
  : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[var(--color-border)]'
  }`}
  >
@@ -332,7 +333,7 @@ export function QuiltSettingsDropdown({
  onMouseUp={() => {
  // Commit on mouse up for slider
  }}
- className="w-full accent-[#ff8d49]"
+ className="w-full accent-[var(--color-primary)]"
  />
  </div>
  <label className="flex items-center gap-2 cursor-pointer">
@@ -340,7 +341,7 @@ export function QuiltSettingsDropdown({
  type="checkbox"
  checked={gridSettings.snapToGrid}
  onChange={(e) => setGridSettings({ snapToGrid: e.target.checked })}
- className="rounded accent-[#ff8d49]"
+ className="rounded accent-[var(--color-primary)]"
  />
  <span className="text-xs text-[var(--color-text-dim)]">Snap to grid</span>
  </label>
@@ -362,7 +363,7 @@ export function QuiltSettingsDropdown({
  setIsOpen(false);
  onOpenImageExport?.();
  }}
- className="flex-1 bg-[#ff8d49] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+ className="flex-1 bg-[var(--color-primary)] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
  >
  Image
  </button>
@@ -376,13 +377,13 @@ export function QuiltSettingsDropdown({
  setIsOpen(false);
  onOpenPdfExport?.();
  }}
- className="flex-1 bg-[#ff8d49] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+ className="flex-1 bg-[var(--color-primary)] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
  >
  PDF
  </button>
  </div>
  {!isPro && (
- <p className="text-[10px] text-[#ff8d49] mt-1.5">Pro required for export</p>
+ <p className="text-[10px] text-[var(--color-primary)] mt-1.5">Pro required for export</p>
  )}
  </div>
  </div>

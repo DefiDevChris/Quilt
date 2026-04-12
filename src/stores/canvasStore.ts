@@ -14,9 +14,8 @@ import {
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
   REFERENCE_IMAGE_DEFAULT_OPACITY,
-  DEFAULT_FILL_COLOR,
-  DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
+import { DEFAULT_CANVAS } from '@/lib/design-system';
 import { clamp } from '@/lib/math-utils';
 import { fitToScreenZoom, computeViewportTransform } from '@/lib/canvas-utils';
 import { getProjectDimensions } from '@/stores/store-bridge';
@@ -133,8 +132,8 @@ const INITIAL_STATE = {
 
   cursorPosition: { x: 0, y: 0 },
   isSpacePressed: false,
-  fillColor: DEFAULT_FILL_COLOR,
-  strokeColor: DEFAULT_STROKE_COLOR,
+  fillColor: DEFAULT_CANVAS.fill,
+  strokeColor: DEFAULT_CANVAS.stroke,
   strokeWidth: 1,
   undoStack: [] as string[],
   redoStack: [] as string[],
@@ -331,8 +330,8 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     const saved = toolSettings[tool];
     if (saved) {
       set({
-        fillColor: saved.fillColor ?? DEFAULT_FILL_COLOR,
-        strokeColor: saved.strokeColor ?? DEFAULT_STROKE_COLOR,
+        fillColor: saved.fillColor ?? DEFAULT_CANVAS.fill,
+        strokeColor: saved.strokeColor ?? DEFAULT_CANVAS.stroke,
         strokeWidth: saved.strokeWidth ?? 1,
       });
     }

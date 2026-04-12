@@ -8,6 +8,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
+import { LAYOUT, COLORS } from '@/lib/design-system';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 
 import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
@@ -173,14 +174,14 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
 
  {/* ── Photo block upload (pro only) ─────────────────────── */}
  {isPro && isPhotoBlockUploadOpen && (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1a1a1a]/40">
- <div className="w-[560px] rounded-lg bg-[var(--color-bg)] p-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40">
+ <div className={`w-[${LAYOUT.dialogLg}] rounded-lg bg-[var(--color-bg)] p-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]`}>
  <div className="mb-4 flex items-center justify-between">
- <h2 className="text-lg font-semibold text-[#1a1a1a]">Upload Block Photo</h2>
+ <h2 className="text-lg font-semibold text-[var(--color-text)]">Upload Block Photo</h2>
  <button
  type="button"
  onClick={() => setIsPhotoBlockUploadOpen(false)}
- className="text-[#4a4a4a] hover:text-[#1a1a1a]"
+ className="text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
  >
  {'\u2715'}
  </button>
@@ -230,7 +231,7 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
  height="32"
  viewBox="0 0 24 24"
  fill="none"
- className="text-[#4a4a4a] mx-auto mb-3"
+ className="text-[var(--color-text-dim)] mx-auto mb-3"
  aria-hidden="true"
  >
  <rect
@@ -249,8 +250,8 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
  strokeLinecap="round"
  />
  </svg>
- <p className="text-lg font-semibold text-[#1a1a1a] mb-1">{proUpgradeFeature}</p>
- <p className="text-sm text-[#4a4a4a] mb-4">
+ <p className="text-lg font-semibold text-[var(--color-text)] mb-1">{proUpgradeFeature}</p>
+ <p className="text-sm text-[var(--color-text-dim)] mb-4">
  This feature requires a Pro subscription. Start at ${PRO_PRICE_MONTHLY}/month.
  </p>
  </div>

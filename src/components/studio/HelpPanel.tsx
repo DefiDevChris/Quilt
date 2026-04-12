@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { LAYOUT, COLORS } from '@/lib/design-system';
 import {
  getContextualHelp,
  searchFaq,
@@ -142,10 +143,10 @@ function LinksSection() {
  Learn More
  </h3>
  <div className="flex flex-col gap-1">
- <Link href="/help" className="text-body-sm text-[#ff8d49] hover:underline px-1 py-1">
+ <Link href="/help" className="text-body-sm text-[var(--color-primary)] hover:underline px-1 py-1">
  Help Center
  </Link>
- <Link href="/socialthreads" className="text-body-sm text-[#ff8d49] hover:underline px-1 py-1">
+ <Link href="/socialthreads" className="text-body-sm text-[var(--color-primary)] hover:underline px-1 py-1">
  Social
  </Link>
  </div>
@@ -155,7 +156,7 @@ function LinksSection() {
  </h3>
  <a
  href={`mailto:${SUPPORT_EMAIL}`}
- className="text-body-sm text-[#ff8d49] hover:underline px-1 py-1"
+ className="text-body-sm text-[var(--color-primary)] hover:underline px-1 py-1"
  >
  {SUPPORT_EMAIL}
  </a>
@@ -200,7 +201,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
  animate={{ opacity: 1 }}
  exit={{ opacity: 0 }}
  transition={{ duration: 0.15 }}
- className="fixed inset-0 bg-[#ff8d49]/20 z-40"
+ className="fixed inset-0 bg-[var(--color-primary)]/20 z-40"
  onClick={onClose}
  />
 
@@ -210,7 +211,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
  animate={{ x: 0 }}
  exit={{ x: 360 }}
  transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
- className="fixed top-0 right-0 bottom-0 w-[340px] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 flex flex-col"
+ className={`fixed top-0 right-0 bottom-0 w-[${LAYOUT.helpPanelWidth}] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 flex flex-col`}
  >
  {/* Header */}
  <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-[var(--color-border)]/[0.08]">

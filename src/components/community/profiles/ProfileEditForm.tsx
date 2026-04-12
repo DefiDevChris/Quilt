@@ -200,7 +200,7 @@ export function ProfileEditForm() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-[14px] leading-[20px] text-[#4a4a4a]">Signed out</p>
+        <p className="text-[14px] leading-[20px] text-dim">Signed out</p>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export function ProfileEditForm() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 rounded-lg bg-[#ffc8a6] animate-pulse" />
+        <div className="w-8 h-8 rounded-lg bg-primary/30 animate-pulse" />
       </div>
     );
   }
@@ -216,7 +216,7 @@ export function ProfileEditForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-16 py-12">
       <div className="space-y-10">
-        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Your Profile</p>
+        <p className="text-[14px] leading-[20px] text-primary mb-6">Your Profile</p>
 
         <AvatarUpload
           avatarPreview={avatarPreview}
@@ -247,8 +247,8 @@ export function ProfileEditForm() {
 
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="text-[14px] leading-[20px] text-[#4a4a4a]">About You</label>
-            <span className="text-[14px] leading-[20px] text-[#4a4a4a]">
+            <label className="text-[14px] leading-[20px] text-dim">About You</label>
+            <span className="text-[14px] leading-[20px] text-dim">
               {form.bio.length}/{BIO_MAX}
             </span>
           </div>
@@ -257,26 +257,26 @@ export function ProfileEditForm() {
             onChange={(e) => updateField('bio', e.target.value)}
             maxLength={BIO_MAX}
             rows={4}
-            className="w-full px-5 py-4 rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-[#4a4a4a] transition-colors duration-150"
+            className="w-full px-5 py-4 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-dim transition-colors duration-150"
             placeholder="Tell the community about your quilting journey..."
           />
-          {fieldErrors.bio && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>}
+          {fieldErrors.bio && <p className="text-primary text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>}
         </div>
       </div>
 
       <div className="space-y-8">
-        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Visibility</p>
+        <p className="text-[14px] leading-[20px] text-primary mb-6">Visibility</p>
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
             className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'public'
-              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-              : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
+              ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+              : 'border-default bg-surface hover:border-[#ff8d49]/50'
               }`}
           >
-            <div className="text-[16px] leading-[24px] text-[#1a1a1a]">Open Studio</div>
-            <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a] leading-relaxed">
+            <div className="text-[16px] leading-[24px] text-default">Open Studio</div>
+            <div className="mt-1 text-[14px] leading-[20px] text-dim leading-relaxed">
               Share designs with the community and collaborate on ideas.
             </div>
           </button>
@@ -284,12 +284,12 @@ export function ProfileEditForm() {
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
             className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'private'
-              ? 'border-[#ff8d49] bg-[#ff8d49]/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-              : 'border-[#d4d4d4] bg-[var(--color-surface)] hover:border-[#ff8d49]/50'
+              ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+              : 'border-default bg-surface hover:border-[#ff8d49]/50'
               }`}
           >
-            <div className="text-[16px] leading-[24px] text-[#1a1a1a]">Private Workshop</div>
-            <div className="mt-1 text-[14px] leading-[20px] text-[#4a4a4a] leading-relaxed">
+            <div className="text-[16px] leading-[24px] text-default">Private Workshop</div>
+            <div className="mt-1 text-[14px] leading-[20px] text-dim leading-relaxed">
               Keep your designs private. Focus on personal projects.
             </div>
           </button>
@@ -297,8 +297,8 @@ export function ProfileEditForm() {
       </div>
 
       <div className="space-y-8">
-        <p className="text-[14px] leading-[20px] text-[#ff8d49] mb-6">Connections</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg">
+        <p className="text-[14px] leading-[20px] text-primary mb-6">Connections</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-default border border-default rounded-lg">
           <FieldInput
             label="Website"
             value={form.websiteUrl}
@@ -342,13 +342,13 @@ export function ProfileEditForm() {
 
       <div className="flex flex-col gap-4 pt-4">
         {error && (
-          <div className="p-4 rounded-lg bg-[#ff8d49]/5 border border-[#ff8d49]/20 text-[#ff8d49] text-[14px] leading-[20px] text-center">
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[14px] leading-[20px] text-center">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="p-4 rounded-lg bg-[#ffc8a6]/10 border border-[#ffc8a6]/30 text-[#4a4a4a] text-[14px] leading-[20px] text-center">
+          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 text-dim text-[14px] leading-[20px] text-center">
             {success}
           </div>
         )}
@@ -356,7 +356,7 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+          className="w-full h-14 rounded-full bg-primary text-default text-[16px] leading-[24px] hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
         >
           {isSaving ? 'Saving...' : 'Save Profile'}
         </button>
@@ -385,7 +385,7 @@ function AvatarUpload({
   return (
     <div className="flex items-center gap-8 group">
       <label className="relative cursor-pointer">
-        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#ffffff] shadow-[0_1px_2px_rgba(26,26,26,0.08)] bg-[var(--color-bg)] relative">
+        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white shadow-[0_1px_2px_rgba(26,26,26,0.08)] bg-default relative">
           {avatarPreview ? (
             <img
               src={avatarPreview}
@@ -394,12 +394,12 @@ function AvatarUpload({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-2xl text-[#4a4a4a] opacity-40">
+              <span className="text-2xl text-dim opacity-40">
                 {initials || '?'}
               </span>
             </div>
           )}
-          <div className="absolute inset-0 bg-[#1a1a1a]/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          <div className="absolute inset-0 bg-default/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -418,8 +418,8 @@ function AvatarUpload({
         />
       </label>
       <div>
-        <p className="text-[14px] leading-[20px] text-[#1a1a1a] mb-1.5">Profile Photo</p>
-        <p className="text-[14px] leading-[20px] text-[#4a4a4a]">
+        <p className="text-[14px] leading-[20px] text-default mb-1.5">Profile Photo</p>
+        <p className="text-[14px] leading-[20px] text-dim">
           {isUploading ? 'Uploading...' : 'Click to update your photo'}
         </p>
       </div>
@@ -448,7 +448,7 @@ function FieldInput({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-[14px] leading-[20px] text-[#4a4a4a]">{label}</label>
+      <label className="block text-[14px] leading-[20px] text-dim">{label}</label>
       <input
         type={type}
         value={value}
@@ -456,9 +456,9 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3.5 rounded-lg bg-[var(--color-surface)] border border-[#d4d4d4] text-[#1a1a1a] text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-[#4a4a4a]"
+        className="w-full px-5 py-3 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] transition-colors duration-150 placeholder:text-dim"
       />
-      {error && <p className="text-[#ff8d49] text-[14px] leading-[20px] mt-1">{error}</p>}
+      {error && <p className="text-primary text-[14px] leading-[20px] mt-1">{error}</p>}
     </div>
   );
 }

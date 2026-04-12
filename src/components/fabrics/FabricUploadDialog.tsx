@@ -16,6 +16,7 @@ import {
  type CalibrationMethod,
  type ScannerPreset,
 } from '@/lib/fabric-calibration';
+import { COLORS } from '@/lib/design-system';
 
 interface FabricUploadDialogProps {
  isOpen: boolean;
@@ -241,7 +242,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  </div>
 
  {error && (
- <div className="mb-3 rounded-lg bg-[#ffc7c7]/5 px-3 py-2 text-sm text-[#ffc7c7]">{error}</div>
+ <div className="mb-3 rounded-lg bg-[var(--color-accent)]/5 px-3 py-2 text-sm text-[var(--color-accent)]">{error}</div>
  )}
 
  {step === 'pick' && (
@@ -279,7 +280,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  value={fabricName}
  onChange={(e) => setFabricName(e.target.value)}
  maxLength={255}
- className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-[#ff8d49] focus:outline-none"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none"
  />
  </div>
 
@@ -293,7 +294,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  onChange={(e) => setManufacturer(e.target.value)}
  maxLength={255}
  placeholder="e.g. Robert Kaufman"
- className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[#ff8d49] focus:outline-none"
+ className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:border-[var(--color-primary)] focus:outline-none"
  />
  </div>
 
@@ -307,7 +308,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  max={200}
  value={scale * 100}
  onChange={(e) => setScale(Number(e.target.value) / 100)}
- className="w-full accent-[#ff8d49]"
+ className="w-full accent-[var(--color-primary)]"
  />
  </div>
 
@@ -321,7 +322,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  max={45}
  value={rotation}
  onChange={(e) => setRotation(Number(e.target.value))}
- className="w-full accent-[#ff8d49]"
+ className="w-full accent-[var(--color-primary)]"
  />
  </div>
 
@@ -399,7 +400,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
  value={opt.value}
  checked={calibrationMethod === opt.value}
  onChange={() => setCalibrationMethod(opt.value)}
- className="accent-[#ff8d49]"
+ className="accent-[var(--color-primary)]"
  />
  <span className="text-sm text-[var(--color-text)]">{opt.label}</span>
  </label>
@@ -519,7 +520,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
  {step === 'uploading' && (
  <div className="py-8 text-center">
- <div className="w-8 h-8 border-2 border-[#ff8d49] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
+ <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
  <p className="text-sm text-[var(--color-text-dim)]">{uploadProgress}</p>
  </div>
  )}

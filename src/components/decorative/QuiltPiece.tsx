@@ -1,3 +1,5 @@
+import { OPACITY } from '@/lib/design-system';
+
 interface QuiltPieceProps {
   /** Decorative fabric color — uses brand palette by default */
   color?: 'primary' | 'secondary' | 'accent' | 'bg' | 'surface';
@@ -128,7 +130,7 @@ export function QuiltPieceRow({
             width: size,
             height: size,
             backgroundColor: COLOR_MAP[colors[i % colors.length]],
-            opacity: 0.3,
+            opacity: OPACITY.fencePreview,
           }}
         />
       ))}

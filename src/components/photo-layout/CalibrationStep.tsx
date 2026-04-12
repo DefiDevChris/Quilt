@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION, CANVAS } from '@/lib/design-system';
 import type { Point2D, QuadCorners } from '@/lib/photo-layout-types';
 import { detectQuiltQuad } from '@/lib/quad-detect';
 
@@ -360,7 +360,7 @@ export function CalibrationStep(props: CalibrationStepProps) {
           <rect
             width="100%"
             height="100%"
-            fill="rgba(45, 42, 38, 0.55)"
+            fill={CANVAS.calibrationBackdrop}
             mask="url(#calibration-cutout)"
             pointerEvents="none"
           />

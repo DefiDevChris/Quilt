@@ -63,7 +63,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-[var(--color-bg)] text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150 focus:outline-2 focus:outline-[var(--color-primary)]"
           aria-label="Close preview"
         >
           <X size={16} />
@@ -107,7 +107,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
                   aria-label="Decrease quantity"
                   onClick={() => setQuantity(Math.max(0.25, quantity - 0.25))}
                   disabled={quantity <= 0.25}
-                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 disabled:opacity-30 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 transition-colors duration-150 focus:outline-2 focus:outline-[var(--color-primary)]"
                 >
                   <Minus size={14} />
                 </button>
@@ -118,7 +118,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
                   type="button"
                   aria-label="Increase quantity"
                   onClick={() => setQuantity(quantity + 0.25)}
-                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150 focus:outline-2 focus:outline-[#ff8d49]"
+                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150 focus:outline-2 focus:outline-[var(--color-primary)]"
                 >
                   <Plus size={14} />
                 </button>
@@ -133,7 +133,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
                 href="/shop"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
               >
                 <ExternalLink size={14} />
                 View in Store
@@ -143,7 +143,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List
@@ -152,7 +152,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-full bg-[var(--color-bg)] text-[16px] leading-[24px] text-[var(--color-text-dim)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+                className="flex-1 py-2.5 rounded-full bg-[var(--color-bg)] text-[16px] leading-[24px] text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
               >
                 Close
               </button>

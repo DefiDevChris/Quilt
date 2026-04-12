@@ -76,11 +76,11 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  <>
  <div
  data-testid="upload-sheet-backdrop"
- className="fixed inset-0 z-50 bg-[var(--color-bg)]/20"
+ className="fixed inset-0 z-50 bg-default/20"
  onClick={onClose}
  aria-hidden="true"
  />
- <div className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-bg)] rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+ <div className="fixed bottom-0 left-0 right-0 z-50 bg-default rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
  <div className="w-10 h-1 rounded-lg bg-[#d8d1ca] mx-auto mb-6" />
  <div className="px-6 space-y-3">
  {/* Upload Photo — primary action */}
@@ -88,7 +88,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={uploading}
- className="w-full flex items-center gap-4 p-4 rounded-lg bg-[var(--color-bg)] border border-[#ff8d49]/20 transition-colors text-left disabled:opacity-50"
+ className="w-full flex items-center gap-4 p-4 rounded-lg bg-default border border-[#ff8d49]/20 transition-colors text-left disabled:opacity-50"
  >
  <div
  className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
@@ -99,7 +99,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  width="22"
  height="22"
  viewBox="0 0 24 24"
- className="animation-spinner text-[#ff8d49]"
+ className="animation-spinner text-primary"
  >
  <circle
  cx="12"
@@ -161,7 +161,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
  <button
  type="button"
  onClick={handleShareToSocial}
- className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--color-bg)] transition-colors text-left"
+ className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-default transition-colors text-left"
  >
  <div
  className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"

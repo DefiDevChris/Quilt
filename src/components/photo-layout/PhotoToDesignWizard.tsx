@@ -13,7 +13,7 @@ import {
   PHOTO_PATTERN_MIN_DIMENSION,
 } from '@/lib/constants';
 import { warpSourceImage } from '@/lib/photo-layout-utils';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 import { FabricReviewStep } from '@/components/photo-layout/FabricReviewStep';
 import { CalibrationStep } from '@/components/photo-layout/CalibrationStep';
 import type { MobileUpload } from '@/types/mobile-upload';
@@ -419,8 +419,16 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
               {step === 'calibrate' && originalImage && (
                 <>
                   {error && (
-                    <div className="mb-3 px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
-                      <p className="text-body-sm" style={{ color: COLORS.primary }}>{error}</p>
+                    <div
+                      className="mb-3 px-4 py-3 rounded-lg border"
+                      style={{
+                        backgroundColor: `${COLORS.primary}1a`,
+                        borderColor: `${COLORS.primary}33`,
+                      }}
+                    >
+                      <p className="text-body-sm" style={{ color: COLORS.primary }}>
+                        {error}
+                      </p>
                     </div>
                   )}
                   <CalibrationStep
@@ -467,7 +475,8 @@ export function PhotoToDesignWizard({ preloadedImageUrl }: { preloadedImageUrl?:
                     i === currentStepIndex ? '' : ''
                   }`}
                   style={{
-                    backgroundColor: i === currentStepIndex ? COLORS.primary : `${COLORS.primary}4d`,
+                    backgroundColor:
+                      i === currentStepIndex ? COLORS.primary : `${COLORS.primary}4d`,
                   }}
                   aria-label={STEP_LABELS[i]}
                 />
@@ -546,7 +555,7 @@ function UploadStep(props: UploadStepProps) {
               boxShadow: SHADOW.brand,
               transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
           >
             Continue
@@ -564,11 +573,6 @@ function UploadStep(props: UploadStepProps) {
       </p>
 
       <div className="space-y-3">
-        {/* Hidden file input — triggered imperatively via inputRef.current.click()
-            instead of a <label htmlFor> wrapper. Label + sr-only input can
-            silently fail in Chromium when the input's hit box is effectively
-            zero (clip-path + 1x1), so we drive it from an onClick handler on
-            a real <button> to guarantee the user gesture reaches the input. */}
         <input
           id="photo-upload-file-input"
           ref={inputRef}
@@ -587,13 +591,13 @@ function UploadStep(props: UploadStepProps) {
           onDragLeave={props.onDragLeave}
           aria-label="Drop your quilt photo here or click to browse. PNG, JPEG, or WebP up to 20 MB"
           className={`block w-full rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 cursor-pointer relative overflow-hidden ${
-            props.isDragOver
-              ? ''
-              : 'border-[var(--color-border)]/50'
+            props.isDragOver ? '' : 'border-[var(--color-border)]/50'
           }`}
-          style={props.isDragOver
-            ? { borderColor: COLORS.primary, backgroundColor: `${COLORS.primary}0d` }
-            : undefined}
+          style={
+            props.isDragOver
+              ? { borderColor: COLORS.primary, backgroundColor: `${COLORS.primary}0d` }
+              : undefined
+          }
           onMouseEnter={(e) => {
             if (!props.isDragOver) e.currentTarget.style.borderColor = `${COLORS.primary}80`;
           }}
@@ -603,7 +607,10 @@ function UploadStep(props: UploadStepProps) {
         >
           {props.loading ? (
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center animate-pulse" style={{ backgroundColor: `${COLORS.primary}33` }}>
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center animate-pulse"
+                style={{ backgroundColor: `${COLORS.primary}33` }}
+              >
                 <svg
                   width="20"
                   height="20"
@@ -689,12 +696,20 @@ function UploadStep(props: UploadStepProps) {
       </div>
 
       {props.error && (
-        <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
-          <p className="text-body-sm" style={{ color: COLORS.primary }}>{props.error}</p>
+        <div
+          className="px-4 py-3 rounded-lg border"
+          style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}
+        >
+          <p className="text-body-sm" style={{ color: COLORS.primary }}>
+            {props.error}
+          </p>
         </div>
       )}
       {props.warning && (
-        <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: `${COLORS.secondary}33`, borderColor: `${COLORS.secondary}66` }}>
+        <div
+          className="px-4 py-3 rounded-lg border"
+          style={{ backgroundColor: `${COLORS.secondary}33`, borderColor: `${COLORS.secondary}66` }}
+        >
           <p className="text-body-sm text-[var(--color-text-dim)]">{props.warning}</p>
         </div>
       )}

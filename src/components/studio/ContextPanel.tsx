@@ -123,7 +123,7 @@ function LibraryTabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 px-3 py-2 text-[12px] leading-[16px] font-medium transition-colors ${
+      className={`flex-1 px-3 py-2 text-[14px] leading-[20px] font-medium transition-colors ${
         active
           ? 'border-b-2 border-primary text-primary'
           : 'text-[var(--color-text)]/60 hover:text-[var(--color-text)]'

@@ -7,9 +7,8 @@ import {
   ZOOM_DEFAULT,
   UNDO_HISTORY_MAX,
   UNDO_SNAPSHOT_SIZE_LIMIT,
-  DEFAULT_FILL_COLOR,
-  DEFAULT_STROKE_COLOR,
 } from '@/lib/constants';
+import { DEFAULT_CANVAS } from '@/lib/design-system';
 
 describe('canvasStore', () => {
   beforeEach(() => {
@@ -199,8 +198,8 @@ describe('canvasStore', () => {
 
     it('loadToolSettings uses defaults when no settings saved', () => {
       useCanvasStore.getState().loadToolSettings('polygon');
-      expect(useCanvasStore.getState().fillColor).toBe(DEFAULT_FILL_COLOR);
-      expect(useCanvasStore.getState().strokeColor).toBe(DEFAULT_STROKE_COLOR);
+      expect(useCanvasStore.getState().fillColor).toBe(DEFAULT_CANVAS.fill);
+      expect(useCanvasStore.getState().strokeColor).toBe(DEFAULT_CANVAS.stroke);
       expect(useCanvasStore.getState().strokeWidth).toBe(1);
     });
   });
@@ -308,7 +307,7 @@ describe('canvasStore', () => {
       const state = useCanvasStore.getState();
       expect(state.activeTool).toBe('select');
       expect(state.zoom).toBe(ZOOM_DEFAULT);
-      expect(state.fillColor).toBe(DEFAULT_FILL_COLOR);
+      expect(state.fillColor).toBe(DEFAULT_CANVAS.fill);
       expect(state.undoStack).toEqual([]);
     });
   });

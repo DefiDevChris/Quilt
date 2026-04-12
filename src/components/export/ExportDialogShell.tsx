@@ -1,3 +1,5 @@
+import { LAYOUT, COLORS, COLORS_HOVER } from '@/lib/design-system';
+
 interface ExportDialogShellProps {
  /** Dialog title, e.g. "Export PDF" */
  title: string;
@@ -29,13 +31,13 @@ export function ExportDialogShell({
 }: ExportDialogShellProps) {
  return (
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40">
- <div className="w-[440px] max-w-[90vw] rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)]">
+ <div className={`w-[${LAYOUT.dialogMd}] max-w-[90vw] rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)]`}>
  <h2 className="mb-4 text-lg font-semibold text-[var(--color-text)]">{title}</h2>
 
  {children}
 
  {/* Error */}
- {error && <p className="mb-3 text-xs text-[#ffc7c7]">{error}</p>}
+ {error && <p className="mb-3 text-xs text-[var(--color-accent)]">{error}</p>}
 
  {/* Actions */}
  <div className="flex justify-end gap-2">
@@ -51,7 +53,7 @@ export function ExportDialogShell({
  type="button"
  onClick={onExport}
  disabled={isDisabled}
- className="flex items-center gap-2 rounded-full bg-[#ff8d49] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[#e67d3f] disabled:cursor-not-allowed disabled:opacity-40 transition-colors duration-150"
+ className="flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-40 transition-colors duration-150"
  >
  {isExporting ? (
  <>

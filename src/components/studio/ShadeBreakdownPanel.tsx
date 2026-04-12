@@ -2,15 +2,8 @@
 
 import { useMemo } from 'react';
 import { getRecentFabrics } from '@/lib/recent-fabrics';
+import { SHADE } from '@/lib/design-system';
 import type { Shade, ShadeBreakdown } from '@/types/shade';
-
-/** Shade visualization colors (match useShadeAssignment). */
-const SHADE_SWATCH_COLORS: Record<Shade, string> = {
-  dark: '#505050',
-  light: '#E0E0E0',
-  background: '#F5F5F5',
-  unknown: '#CCCCCC',
-};
 
 const SHADE_LABELS: Record<Shade, string> = {
   dark: 'Dark',
@@ -52,7 +45,7 @@ export function ShadeBreakdownPanel({
 
   return (
     <div className="px-3 py-2 border-b border-[var(--color-border)]/40 bg-[var(--color-bg)] flex-shrink-0">
-      <p className="text-[12px] leading-[16px] font-medium text-[var(--color-text-dim)] mb-1.5">
+      <p className="text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)] mb-1.5">
         Shade Breakdown
       </p>
 
@@ -62,12 +55,12 @@ export function ShadeBreakdownPanel({
             <div className="flex items-center gap-1.5">
               <span
                 className="inline-block w-3 h-3 rounded-full border border-[var(--color-border)]/50 flex-shrink-0"
-                style={{ backgroundColor: SHADE_SWATCH_COLORS[shade] }}
+                style={{ backgroundColor: SHADE[shade] }}
               />
-              <span className="text-[12px] leading-[16px] text-[var(--color-text)]">
+              <span className="text-[14px] leading-[20px] text-[var(--color-text)]">
                 {SHADE_LABELS[shade]}
               </span>
-              <span className="text-[12px] leading-[16px] text-[var(--color-text-dim)]">
+              <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
                 {breakdown[shade]}
               </span>
             </div>
@@ -77,12 +70,12 @@ export function ShadeBreakdownPanel({
                 type="button"
                 disabled={isApplying}
                 onClick={() => onBulkApply(shade)}
-                className="rounded-lg bg-primary/10 text-primary text-[12px] leading-[16px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-primary/10 text-primary text-[14px] leading-[20px] px-2 py-0.5 hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isApplying ? 'Applying\u2026' : `Apply ${truncatedName}`}
               </button>
             ) : (
-              <span className="text-[12px] leading-[16px] text-[var(--color-text-dim)] italic">
+              <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)] italic">
                 Select fabric first
               </span>
             )}
@@ -91,7 +84,7 @@ export function ShadeBreakdownPanel({
       </div>
 
       {!recentFabric && (
-        <p className="text-[12px] leading-[16px] text-[var(--color-text-dim)] mt-1.5">
+        <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mt-1.5">
           Drag a fabric onto the canvas first, then use these buttons to fill all matching patches.
         </p>
       )}

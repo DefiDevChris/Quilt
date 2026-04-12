@@ -37,7 +37,7 @@ export default async function BlogPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-md text-center">
-          <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center rounded-lg bg-[#ff8d49]/10">
+          <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center rounded-lg bg-primary/10">
             <svg
               width="32"
               height="32"
@@ -45,19 +45,19 @@ export default async function BlogPage() {
               fill="none"
               stroke="currentColor"
               strokeWidth="1"
-              className="text-[#ff8d49]"
+              className="text-primary"
             >
               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
               <path d="M8 7h6M8 11h8" />
             </svg>
           </div>
           <h2
-            className="text-[32px] leading-[40px] font-semibold text-[#1a1a1a] mb-4"
-            style={{ fontFamily: 'Spline Sans, sans-serif' }}
+            className="text-[32px] leading-[40px] font-semibold text-default mb-4"
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             No stories yet
           </h2>
-          <p className="text-[#4a4a4a] leading-[28px] font-light">
+          <p className="text-dim leading-[28px] font-light">
             New content is being crafted. Return soon for fresh inspiration.
           </p>
         </div>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS } from '@/lib/design-system';
 
 function StudioMockup() {
   const toolItems = [
@@ -93,7 +93,7 @@ function StudioMockup() {
           <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
+          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
             Main
           </div>
           <div className="w-4 h-4 rounded-lg text-[var(--color-text-dim)] flex items-center justify-center text-[10px]">
@@ -109,7 +109,7 @@ function StudioMockup() {
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
+          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
             Export
           </div>
         </div>
@@ -151,9 +151,9 @@ function StudioMockup() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'radial-gradient(#E8DCCB 1px, transparent 1px)',
+              backgroundImage: `radial-gradient(${CANVAS.mockQuiltStitch} 1px, transparent 1px)`,
               backgroundSize: '16px 16px',
-              opacity: 0.3,
+              opacity: OPACITY.fencePreview,
             }}
           />
           <div className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 rounded-lg mx-auto max-w-[260px]" style={{ borderColor: `${COLORS.primary}99` }}>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
+import { OPACITY } from '@/lib/design-system';
 
 export const metadata: Metadata = {
   title: 'Dashboard | Quilt Studio',
@@ -13,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Background at 5% opacity */}
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/background.png')", opacity: 0.05 }}
+        style={{ backgroundImage: "url('/background.png')", opacity: OPACITY['background-image'] }}
       />
       <ResponsiveShell>{children}</ResponsiveShell>
     </>

@@ -200,7 +200,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[12px] leading-[16px] font-bold text-[var(--color-text-dim)]">
+                  <div className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[14px] leading-[20px] font-bold text-[var(--color-text-dim)]">
                     {(project.creator.displayName ?? project.creator.username ?? '?')
                       .charAt(0)
                       .toUpperCase()}
@@ -211,7 +211,7 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
                 </span>
               </div>
             )}
-            <span className="text-[12px] leading-[16px] text-[var(--color-text-dim)]">
+            <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
               {project.canvasWidth}&Prime; &times; {project.canvasHeight}&Prime;
             </span>
           </div>

@@ -359,7 +359,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
         contentEditable
         onInput={handleInput}
         onBlur={handleInput}
-        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 prose-quilt-studio"
+        className="min-h-[300px] max-h-[600px] overflow-y-auto p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 prose-quilt-studio"
         suppressContentEditableWarning
         dangerouslySetInnerHTML={{
           __html: tiptapToHtml(content),

@@ -71,25 +71,25 @@ export function CartDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-[#1a1a1a]/30"
+        className="fixed inset-0 z-40 bg-[var(--color-text)]/30"
         onClick={() => setDrawerOpen(false)}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-[var(--color-bg)] border-l border-[#d4d4d4] flex flex-col">
+      <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-default border-l border-default flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#d4d4d4]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-default">
           <div className="flex items-center gap-2">
-            <ShoppingBag size={20} className="text-[#1a1a1a]" />
-            <h2 className="text-[16px] leading-[24px] font-semibold text-[#1a1a1a]">Shopping Cart</h2>
-            <span className="text-[12px] leading-[16px] text-[#4a4a4a]">
+            <ShoppingBag size={20} className="text-default" />
+            <h2 className="text-[16px] leading-[24px] font-semibold text-default">Shopping Cart</h2>
+            <span className="text-[14px] leading-[20px] text-dim">
               ({items.length} item{items.length !== 1 ? 's' : ''})
             </span>
           </div>
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
-            className="p-1.5 text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d49]"
+            className="p-1.5 text-dim hover:text-default transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
             aria-label="Close cart"
           >
             <X size={20} />
@@ -108,10 +108,10 @@ export function CartDrawer() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-14 h-14 rounded-full bg-primary/40 flex items-center justify-center mb-3">
-                <ShoppingBag size={24} className="text-[#4a4a4a]" />
+                <ShoppingBag size={24} className="text-dim" />
               </div>
-              <p className="text-[14px] leading-[20px] font-medium text-[#1a1a1a] mb-1">Your cart is empty</p>
-              <p className="text-[12px] leading-[16px] text-[#4a4a4a]">Add fabrics from the shop to get started.</p>
+              <p className="text-[14px] leading-[20px] font-medium text-default mb-1">Your cart is empty</p>
+              <p className="text-[14px] leading-[20px] text-dim">Add fabrics from the shop to get started.</p>
             </div>
           ) : (
             items.map((item) => (
@@ -127,17 +127,17 @@ export function CartDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-[#d4d4d4] px-5 py-4 space-y-3">
+          <div className="border-t border-default px-5 py-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[14px] leading-[20px] font-medium text-[#4a4a4a]">Subtotal</span>
-              <span className="text-[16px] leading-[24px] font-bold text-[#1a1a1a]">${subtotal.toFixed(2)}</span>
+              <span className="text-[14px] leading-[20px] font-medium text-dim">Subtotal</span>
+              <span className="text-[16px] leading-[24px] font-bold text-default">${subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleCopyList}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border-2 border-[#d4d4d4] text-[14px] leading-[20px] font-medium text-[#4a4a4a] hover:bg-[var(--color-bg)] transition-colors duration-150"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full border-2 border-default text-[14px] leading-[20px] font-medium text-dim hover:bg-default transition-colors duration-150"
               >
                 <Copy size={14} />
                 Copy List
@@ -147,7 +147,7 @@ export function CartDrawer() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-primary text-default text-[16px] leading-[24px] hover:bg-primary transition-colors duration-150 shadow-brand"
                 >
                   {isLoading ? 'Loading...' : 'Checkout'}
                 </a>
@@ -155,7 +155,7 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={handleCopyList}
-                  className="flex-1 py-2.5 rounded-full bg-[#ff8d49] text-[#1a1a1a] text-[16px] leading-[24px] hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                  className="flex-1 py-2.5 rounded-full bg-primary text-default text-[16px] leading-[24px] hover:bg-primary transition-colors duration-150 shadow-brand"
                 >
                   Copy Shopping List
                 </button>
@@ -165,7 +165,7 @@ export function CartDrawer() {
             <button
               type="button"
               onClick={clearCart}
-              className="w-full text-center text-[12px] leading-[16px] text-[#4a4a4a] hover:text-[#ff8d49] transition-colors"
+              className="w-full text-center text-[14px] leading-[20px] text-dim hover:text-primary transition-colors"
             >
               Clear Cart
             </button>
@@ -188,9 +188,9 @@ function CartItemRow({
   const lineTotal = item.pricePerYard * item.quantityInYards;
 
   return (
-    <div className="flex gap-3 p-3 bg-[var(--color-bg)] border border-[#d4d4d4] rounded-lg">
+    <div className="flex gap-3 p-3 bg-default border border-default rounded-lg">
       {/* Swatch */}
-      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-[#d4d4d4]">
+      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border border-default">
         {item.fabricImageUrl ? (
           <img
             src={item.fabricImageUrl}
@@ -206,8 +206,8 @@ function CartItemRow({
 
       {/* Details */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-[14px] leading-[20px] font-medium text-[#1a1a1a] truncate">{item.fabricName}</h4>
-        <p className="text-[12px] leading-[16px] text-[#4a4a4a]">${item.pricePerYard.toFixed(2)}/yd</p>
+        <h4 className="text-[14px] leading-[20px] font-medium text-default truncate">{item.fabricName}</h4>
+        <p className="text-[14px] leading-[20px] text-dim">${item.pricePerYard.toFixed(2)}/yd</p>
 
         {/* Quantity controls */}
         <div className="flex items-center gap-2 mt-1.5">
@@ -215,17 +215,17 @@ function CartItemRow({
             type="button"
             onClick={() => onQuantityChange(item.fabricId, -0.25)}
             disabled={item.quantityInYards <= 0.25}
-            className="w-6 h-6 rounded-full bg-[#d4d4d4] flex items-center justify-center text-[#4a4a4a] hover:bg-[#d4ccc4] disabled:opacity-30 transition-colors"
+            className="w-6 h-6 rounded-full border-default flex items-center justify-center text-dim hover:bg-surface-dark disabled:opacity-50 transition-colors"
           >
             <Minus size={12} />
           </button>
-          <span className="text-[12px] leading-[16px] font-medium text-[#1a1a1a] min-w-[3rem] text-center">
+          <span className="text-[14px] leading-[20px] font-medium text-default min-w-[3rem] text-center">
             {item.quantityInYards} yd{item.quantityInYards !== 1 ? 's' : ''}
           </span>
           <button
             type="button"
             onClick={() => onQuantityChange(item.fabricId, 0.25)}
-            className="w-6 h-6 rounded-full bg-[#d4d4d4] flex items-center justify-center text-[#4a4a4a] hover:bg-[#d4ccc4] transition-colors"
+            className="w-6 h-6 rounded-full border-default flex items-center justify-center text-dim hover:bg-surface-dark transition-colors"
           >
             <Plus size={12} />
           </button>
@@ -234,11 +234,11 @@ function CartItemRow({
 
       {/* Line total + remove */}
       <div className="flex flex-col items-end justify-between">
-        <span className="text-[14px] leading-[20px] font-semibold text-[#1a1a1a]">${lineTotal.toFixed(2)}</span>
+        <span className="text-[14px] leading-[20px] font-semibold text-default">${lineTotal.toFixed(2)}</span>
         <button
           type="button"
           onClick={() => onRemove(item.fabricId)}
-          className="p-1 text-[#4a4a4a] hover:text-[#ff8d49] transition-colors"
+          className="p-1 text-dim hover:text-primary transition-colors"
           aria-label={`Remove ${item.fabricName}`}
         >
           <Trash2 size={14} />

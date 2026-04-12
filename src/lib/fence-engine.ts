@@ -15,7 +15,7 @@ import {
   type LayoutConfig,
   type LayoutResult,
 } from '@/lib/layout-utils';
-import { DEFAULT_SASHING_COLOR, DEFAULT_BORDER_COLOR } from '@/lib/constants';
+import { DEFAULT_LAYOUT } from '@/lib/design-system';
 
 /** Map template category to the internal LayoutType used by computeLayout. */
 const CATEGORY_TO_LAYOUT_TYPE: Record<LayoutCategory, 'grid' | 'sashing' | 'on-point'> = {
@@ -250,12 +250,12 @@ function templateToLayoutConfig(
     blockSize: template.defaultBlockSize,
     sashing: {
       width: template.sashingWidth,
-      color: DEFAULT_SASHING_COLOR,
+      color: DEFAULT_LAYOUT.sashing,
       fabricId: null,
     },
     borders: template.borders.map((b) => ({
       width: b.width,
-      color: DEFAULT_BORDER_COLOR,
+      color: DEFAULT_LAYOUT.border,
       fabricId: null,
     })),
   };

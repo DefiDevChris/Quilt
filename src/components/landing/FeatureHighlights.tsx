@@ -7,8 +7,8 @@ import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex items-center gap-2">
-      <div className="w-4 h-4 rounded-full bg-[#ff8d49]/10 flex items-center justify-center flex-shrink-0">
-        <svg className="w-2.5 h-2.5 text-[#ff8d49]" fill="currentColor" viewBox="0 0 20 20">
+      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <svg className="w-2.5 h-2.5 text-primary" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -58,7 +58,7 @@ const features = [
 
 export default function FeatureHighlights() {
   return (
-    <section id="features" className="px-6 lg:px-12 py-16 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
+    <section id="features" className="px-6 lg:px-12 py-16 lg:py-24 bg-default relative overflow-hidden">
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex items-center gap-4 mb-16">
@@ -67,13 +67,13 @@ export default function FeatureHighlights() {
             <div className="flex items-center gap-2 mb-2">
               <QuiltPieceRow count={3} size={8} gap={4} />
               <h2
-                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-[var(--color-text)]"
+                className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-default"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Your Quilt, Start to Finish
               </h2>
             </div>
-            <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mt-2">
+            <p className="text-[18px] leading-[28px] text-dim mt-2">
               Design, calculate, and print &mdash; all in one place
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function FeatureHighlights() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8 relative overflow-hidden hover:bg-[var(--color-bg)] transition-colors duration-150 duration-150"
+              className="bg-surface rounded-lg border border-default shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8 relative overflow-hidden hover:bg-default transition-colors duration-150 duration-150"
             >
               <div className="relative z-10">
                 <div className="w-16 h-16 mb-6">
@@ -96,13 +96,13 @@ export default function FeatureHighlights() {
                   />
                 </div>
                 <h3
-                  className="text-[24px] leading-[32px] font-bold text-[var(--color-text)] mb-3"
+                  className="text-[24px] leading-[32px] font-bold text-default mb-3"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-[var(--color-text-dim)] mb-4">{feature.description}</p>
-                <ul className="space-y-2 text-[14px] leading-[20px] text-[var(--color-text-dim)]">
+                <p className="text-dim mb-4">{feature.description}</p>
+                <ul className="space-y-2 text-[14px] leading-[20px] text-dim">
                   {feature.checks.map((check) => (
                     <CheckItem key={check}>{check}</CheckItem>
                   ))}

@@ -99,8 +99,8 @@ export function StudioClient({ projectId }: StudioClientProps) {
  return (
  <div className="h-screen flex items-center justify-center bg-[var(--color-bg)]">
  <div className="text-center">
- <div className="w-8 h-8 border-2 border-[#ff8d49] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
- <p className="text-sm text-[#4a4a4a]">Loading your design...</p>
+ <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animation-spinner mx-auto mb-3" />
+ <p className="text-sm text-[var(--color-text-dim)]">Loading your design...</p>
  </div>
  </div>
  );
@@ -110,10 +110,10 @@ export function StudioClient({ projectId }: StudioClientProps) {
  return (
  <div className="h-screen flex items-center justify-center bg-[var(--color-bg)]">
  <div className="text-center">
- <p className="text-sm text-[#ffc7c7] mb-4">{error || 'Failed to load project.'}</p>
+ <p className="text-sm text-[var(--color-accent)] mb-4">{error || 'Failed to load project.'}</p>
  <Link
  href="/dashboard"
- className="inline-block rounded-full bg-[#ff8d49] px-6 py-2 text-[13px] font-semibold text-[#1a1a1a] hover:opacity-90 transition-colors duration-150"
+ className="inline-block rounded-full bg-[var(--color-primary)] px-6 py-2 text-[14px] font-semibold text-[var(--color-text)] hover:opacity-90 transition-colors duration-150"
  >
  Return to Dashboard
  </Link>

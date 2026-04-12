@@ -7,7 +7,7 @@ import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constant
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BrandedPage } from '@/components/layout/BrandedPage';
 import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
 interface FabricItem {
   id: string;
@@ -288,7 +288,7 @@ export default function FabricsPage() {
                 <div className="p-4" style={{ backgroundColor: COLORS.surface }}>
                   <p className="text-xs font-bold truncate" style={{ color: COLORS.text }}>{fabric.name}</p>
                   {fabric.manufacturer && (
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textDim, opacity: 0.6 }}>{fabric.manufacturer}</p>
+                    <p className="text-[10px] mt-1" style={{ color: COLORS.textDim, opacity: OPACITY.dim }}>{fabric.manufacturer}</p>
                   )}
                 </div>
               </div>
@@ -304,7 +304,7 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               borderColor: `${COLORS.border}4d`,
               transitionDuration: `${MOTION.transitionDuration}ms`,
@@ -329,7 +329,7 @@ export default function FabricsPage() {
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-medium border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               borderColor: `${COLORS.border}4d`,
               transitionDuration: `${MOTION.transitionDuration}ms`,

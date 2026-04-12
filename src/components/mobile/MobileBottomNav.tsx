@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
+import { SHADOW } from '@/lib/design-system';
 
 interface MobileBottomNavProps {
   onFabPress: () => void;
@@ -112,7 +113,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
           className="w-[46px] h-[46px] rounded-full flex items-center justify-center"
           style={{
             background: 'linear-gradient(145deg, #ff8d49, #ffc8a6)',
-            boxShadow: '0 1px 2px rgba(26,26,26,0.08)',
+            boxShadow: SHADOW.brand,
           }}
         >
           <svg

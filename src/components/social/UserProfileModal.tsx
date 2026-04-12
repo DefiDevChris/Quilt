@@ -50,41 +50,41 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
         aria-modal="true"
         aria-labelledby="user-profile-title"
         tabIndex={-1}
-        className="relative bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto outline-none"
+        className="relative bg-surface border border-default rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto outline-none"
       >
         <button
           onClick={onClose}
           aria-label="Close"
           className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full hover:bg-white"
         >
-          <X className="h-5 w-5 text-[var(--color-text-dim)]" />
+          <X className="h-5 w-5 text-dim" />
         </button>
 
         {/* Cover */}
-        <div className="h-32 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-t-2xl relative">
+        <div className="h-32 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] rounded-t-lg relative">
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
-            <img src={user.avatar} alt={user.name} className="h-24 w-24 rounded-full border-4 border-white object-cover shadow-lg" />
+            <img src={user.avatar} alt={user.name} className="h-24 w-24 rounded-full border-2 border-white object-cover shadow-lg" />
           </div>
         </div>
 
         {/* Info */}
         <div className="pt-16 px-8 pb-6 text-center">
-          <h3 id="user-profile-title" className="font-semibold text-xl text-[var(--color-text)]">{user.name}</h3>
-          <p className="text-sm text-[var(--color-text-dim)]">@{user.username}</p>
-          {user.bio && <p className="text-sm text-[var(--color-text-dim)] mt-3 max-w-sm mx-auto leading-relaxed">{user.bio}</p>}
+          <h3 id="user-profile-title" className="font-semibold text-xl text-default">{user.name}</h3>
+          <p className="text-sm text-dim">@{user.username}</p>
+          {user.bio && <p className="text-sm text-dim mt-3 max-w-sm mx-auto leading-relaxed">{user.bio}</p>}
 
           <div className="flex justify-center gap-10 mt-5">
-            <div><p className="font-bold text-xl text-[var(--color-text)]">{postsCount}</p><p className="text-xs text-[var(--color-text-dim)]">Posts</p></div>
-            <div><p className="font-bold text-xl text-[var(--color-text)]">{followersCount.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Followers</p></div>
-            <div><p className="font-bold text-xl text-[var(--color-text)]">{followingCount.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Following</p></div>
+            <div><p className="font-bold text-xl text-default">{postsCount}</p><p className="text-xs text-dim">Posts</p></div>
+            <div><p className="font-bold text-xl text-default">{followersCount.toLocaleString()}</p><p className="text-xs text-dim">Followers</p></div>
+            <div><p className="font-bold text-xl text-default">{followingCount.toLocaleString()}</p><p className="text-xs text-dim">Following</p></div>
           </div>
 
           <button
             onClick={() => setIsFollowing(!isFollowing)}
             className={`mt-5 rounded-full font-medium px-8 transition-colors duration-150 ${
               isFollowing
-                ? 'bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]'
-                : 'bg-[var(--color-primary)] text-white hover:bg-[#e67d3f]'
+                ? 'bg-default text-default border border-default'
+                : 'bg-primary text-white hover:bg-primary-dark'
             }`}
           >
             {isFollowing ? 'Following' : 'Follow'}
@@ -92,12 +92,12 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
         </div>
 
         {/* Tabs */}
-        <div className="border-t border-[var(--color-border)]">
+        <div className="border-t border-default">
           <div className="flex">
             <button
               onClick={() => setActiveTab('posts')}
               className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors duration-150 ${
-                activeTab === 'posts' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-dim)]'
+                activeTab === 'posts' ? 'border-primary text-primary' : 'border-transparent text-dim'
               }`}
             >
               Posts
@@ -105,7 +105,7 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
             <button
               onClick={() => setActiveTab('about')}
               className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors duration-150 ${
-                activeTab === 'about' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-text-dim)]'
+                activeTab === 'about' ? 'border-primary text-primary' : 'border-transparent text-dim'
               }`}
             >
               About
@@ -118,18 +118,18 @@ export function UserProfileModal({ isOpen, onClose, user, postsCount = 0, follow
           {activeTab === 'posts' && (
             <div className="grid grid-cols-3 gap-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-square bg-[var(--color-bg)] rounded-xl overflow-hidden">
-                  <div className="w-full h-full bg-[var(--color-border)]/30 animate-pulse" />
+                <div key={i} className="aspect-square bg-default rounded-lg overflow-hidden">
+                  <div className="w-full h-full bg-default/30 animate-pulse" />
                 </div>
               ))}
             </div>
           )}
           {activeTab === 'about' && (
             <div className="space-y-4">
-              <p className="text-sm text-[var(--color-text-dim)] leading-relaxed">{user.bio || 'No bio yet.'}</p>
+              <p className="text-sm text-dim leading-relaxed">{user.bio || 'No bio yet.'}</p>
               <div className="flex justify-center gap-8 pt-2">
-                <div className="text-center"><p className="text-lg font-semibold text-[var(--color-text)]">{followersCount.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Followers</p></div>
-                <div className="text-center"><p className="text-lg font-semibold text-[var(--color-text)]">{followingCount.toLocaleString()}</p><p className="text-xs text-[var(--color-text-dim)]">Following</p></div>
+                <div className="text-center"><p className="text-lg font-semibold text-default">{followersCount.toLocaleString()}</p><p className="text-xs text-dim">Followers</p></div>
+                <div className="text-center"><p className="text-lg font-semibold text-default">{followingCount.toLocaleString()}</p><p className="text-xs text-dim">Following</p></div>
               </div>
             </div>
           )}

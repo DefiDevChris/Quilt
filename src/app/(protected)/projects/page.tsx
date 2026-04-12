@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BrandedPage } from '@/components/layout/BrandedPage';
 import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
 interface ProjectListItem {
   id: string;
@@ -226,7 +226,7 @@ export default function AllProjectsPage() {
                   />
                 ) : (
                   <div className="w-full h-full rounded-lg flex items-center justify-center" style={{ backgroundColor: COLORS.border }}>
-                    <span style={{ color: COLORS.secondary, opacity: 0.5 }} className="font-bold text-lg">
+                    <span style={{ color: COLORS.secondary, opacity: OPACITY.disabled }} className="font-bold text-lg">
                       {project.name.charAt(0).toUpperCase()}
                     </span>
                   </div>

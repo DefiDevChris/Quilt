@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { COLORS, TYPOGRAPHY, RADIUS, MOTION } from '@/lib/design-system';
+import { COLORS, TYPOGRAPHY, RADIUS, MOTION, SHADOW } from '@/lib/design-system';
+
+const COLOR_ONLY_TRANSITION = `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, opacity ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`;
 
 const CORGI_COUNT = 29;
 const CORGI_IMAGES = Array.from({ length: CORGI_COUNT }, (_, i) => ({
@@ -278,12 +280,12 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49] focus:border-transparent transition-all shadow-sm"
+            className="w-full px-4 py-3 rounded-lg text-default placeholder:text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors shadow-sm"
             style={{
               backgroundColor: 'rgba(253, 250, 247, 0.8)',
               border: `1px solid ${COLORS.border}`,
-              boxShadow: 'inset 0 2px 8px rgba(26, 26, 26, 0.06), inset 0 1px 3px rgba(26, 26, 26, 0.04)',
-              transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+              boxShadow: SHADOW.inset,
+              transition: COLOR_ONLY_TRANSITION,
             }}
             placeholder="How should we call you?"
             autoComplete="name"
@@ -306,12 +308,12 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full px-4 py-3 rounded-lg text-[#1a1a1a] placeholder:text-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-[#ff8d49] focus:border-transparent transition-all shadow-sm ${usernameBorderColor}`}
+            className={`w-full px-4 py-3 rounded-lg text-default placeholder:text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors shadow-sm ${usernameBorderColor}`}
             style={{
               backgroundColor: 'rgba(253, 250, 247, 0.8)',
               border: `1px solid ${usernameBorderColor}`,
-              boxShadow: 'inset 0 2px 8px rgba(26, 26, 26, 0.06), inset 0 1px 3px rgba(26, 26, 26, 0.04)',
-              transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+              boxShadow: SHADOW.inset,
+              transition: COLOR_ONLY_TRANSITION,
             }}
             placeholder="quilter_jane"
             autoComplete="username"
@@ -345,8 +347,8 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             borderRadius: RADIUS.full,
             fontSize: TYPOGRAPHY.body.fontSize,
             lineHeight: TYPOGRAPHY.body.lineHeight,
-            boxShadow: '0 4px 8px rgba(26, 26, 26, 0.1), 0 12px 32px rgba(26, 26, 26, 0.14)',
-            transition: `all ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            boxShadow: SHADOW.elevated,
+            transition: COLOR_ONLY_TRANSITION,
           }}
         >
           {isSaving ? 'Setting up your account...' : "Let's go!"}
@@ -357,7 +359,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
 
   // Full page mode (original layout)
   return (
-    <div className="w-full max-w-[540px] mx-auto bg-[var(--color-surface)] border border-[#d4d4d4] rounded-lg p-[2.75rem]">
+    <div className="w-full max-w-[540px] mx-auto bg-surface border border-default rounded-lg p-[2.75rem]">
       <div className="flex flex-col items-center mb-8">
         <Image
           src="/logo.png"
@@ -367,7 +369,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
           className="object-contain mb-4"
           priority
         />
-        <h1 className="text-headline-md font-bold text-[#1a1a1a] text-center">
+        <h1 className="text-headline-md font-bold text-default text-center">
           Welcome to QuiltCorgi!
         </h1>
         <p className="mt-2 text-body-md text-secondary text-center">
@@ -396,7 +398,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150"
+            className="w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-default placeholder:text-dim outline-none transition-colors duration-150"
             placeholder="How should we call you?"
             autoComplete="name"
             maxLength={60}
@@ -417,7 +419,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             required
             value={usernameInput}
             onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-[var(--color-bg)] border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150`}
+            className={`w-full bg-default border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-default placeholder:text-dim outline-none transition-colors duration-150`}
             placeholder="quilter_jane"
             autoComplete="username"
             maxLength={60}
@@ -429,7 +431,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             >
               {usernameMessage}
               {usernameStatus === 'checking' && (
-                <span className="inline-block w-3 h-3 ml-1 bg-[#ffc8a6] rounded-lg animate-pulse align-middle" />
+                <span className="inline-block w-3 h-3 ml-1 bg-accent rounded-lg animate-pulse align-middle" />
               )}
             </p>
           )}
@@ -449,7 +451,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full bg-[var(--color-bg)] border-b border-[#d4d4d4] focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-[#1a1a1a] placeholder:text-[#4a4a4a] outline-none transition-colors duration-150 resize-none"
+            className="w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-default placeholder:text-dim outline-none transition-colors duration-150 resize-none"
             placeholder="Tell the community a little about yourself..."
           />
         </div>
@@ -464,8 +466,8 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
               type="button"
               onClick={() => setPrivacyMode('public')}
               className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'public'
-                ? 'border-primary bg-primary/10 text-[#1a1a1a]'
-                : 'border-[#d4d4d4] text-secondary hover:border-[#d4d4d4]'
+                ? 'border-primary bg-primary/10 text-default'
+                : 'border-default text-secondary hover:border-default'
                 }`}
             >
               <div className="text-body-md font-medium">Public</div>
@@ -477,8 +479,8 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
               type="button"
               onClick={() => setPrivacyMode('private')}
               className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'private'
-                ? 'border-primary bg-primary/10 text-[#1a1a1a]'
-                : 'border-[#d4d4d4] text-secondary hover:border-[#d4d4d4]'
+                ? 'border-primary bg-primary/10 text-default'
+                : 'border-default text-secondary hover:border-default'
                 }`}
             >
               <div className="text-body-md font-medium">Private</div>
@@ -509,7 +511,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
                 }}
                 className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors duration-150 ${selectedCorgi === corgi.id
                   ? 'border-primary shadow-[0_1px_2px_rgba(26,26,26,0.08)] ring-2 ring-primary/30'
-                  : 'border-[#d4d4d4] hover:border-primary/50'
+                  : 'border-default hover:border-primary/50'
                   }`}
                 aria-label={corgi.alt}
               >
@@ -552,7 +554,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 rounded-lg border border-dashed border-[#d4d4d4] hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-[#1a1a1a] transition-colors duration-150 w-full"
+              className="flex items-center gap-2 rounded-lg border border-dashed border-default hover:border-primary/50 px-4 py-3 text-body-sm text-secondary hover:text-default transition-colors duration-150 w-full"
             >
               <svg
                 className="w-5 h-5 shrink-0"

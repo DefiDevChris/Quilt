@@ -7,7 +7,7 @@
  * Runs client-side in the browser.
  */
 
-import { PDFDocument, rgb, LineCapStyle } from 'pdf-lib';
+import { PDFDocument, LineCapStyle, type RGB } from 'pdf-lib';
 import type { PrintlistItem } from '@/types/printlist';
 import { PDF_POINTS_PER_INCH, PIXELS_PER_INCH } from '@/lib/constants';
 import {
@@ -33,6 +33,7 @@ import {
   type PdfFonts,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
+import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 
 export type PaperSize = 'letter' | 'a4';
 
@@ -97,7 +98,7 @@ function drawPolyline(
   originY: number,
   scale: number,
   options: {
-    color: { r: number; g: number; b: number };
+    color: RGB;
     lineWidth: number;
     dashArray?: number[];
     dashPhase?: number;
@@ -117,7 +118,7 @@ function drawPolyline(
     start: { x: toX(points[0].x), y: toY(points[0].y) },
     end: { x: toX(points[1].x), y: toY(points[1].y) },
     thickness: options.lineWidth,
-    color: rgb(options.color.r, options.color.g, options.color.b),
+    color: options.color,
     lineCap: LineCapStyle.Round,
     dashArray: options.dashArray,
     dashPhase: options.dashPhase,
@@ -129,7 +130,7 @@ function drawPolyline(
       start: { x: toX(points[i].x), y: toY(points[i].y) },
       end: { x: toX(next.x), y: toY(next.y) },
       thickness: options.lineWidth,
-      color: rgb(options.color.r, options.color.g, options.color.b),
+      color: options.color,
       lineCap: LineCapStyle.Round,
       dashArray: options.dashArray,
       dashPhase: options.dashPhase,
@@ -253,7 +254,7 @@ export async function generatePatternPdf(
         shape.seamBbox.minY,
         scale,
         {
-          color: { r: 0.5, g: 0.5, b: 0.5 },
+          color: PDF_SEMANTIC.sewLine,
           lineWidth: 0.5,
           dashArray: [3, 3],
           dashPhase: 0,
@@ -271,7 +272,7 @@ export async function generatePatternPdf(
       shape.seamBbox.minY,
       scale,
       {
-        color: { r: 0, g: 0, b: 0 },
+        color: PDF_SEMANTIC.cutLine,
         lineWidth: 1,
       }
     );
@@ -288,7 +289,7 @@ export async function generatePatternPdf(
       y: labelY,
       size: 7,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: PDF_SEMANTIC.black,
     });
 
     page.drawText(dimText, {
@@ -296,7 +297,7 @@ export async function generatePatternPdf(
       y: labelY,
       size: 6,
       font,
-      color: rgb(0.4, 0.4, 0.4),
+      color: PDF_SEMANTIC.midGray,
     });
   }
 

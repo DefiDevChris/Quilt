@@ -45,26 +45,26 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  return (
  <>
  <div
- className="fixed inset-0 z-50 bg-[var(--color-bg)]/20"
+ className="fixed inset-0 z-50 bg-default/20"
  onClick={onClose}
  aria-hidden="true"
  />
  <div
  ref={drawerRef}
- className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex flex-col"
+ className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-default shadow-brand flex flex-col"
  role="dialog"
  aria-modal="true"
  aria-label="Menu"
  >
  <div className="px-6 pt-14 pb-6">
- <span className="text-lg font-bold text-[#1a1a1a]">Quilt Studio</span>
+ <span className="text-lg font-bold text-default">Quilt Studio</span>
  </div>
  <nav className="flex-1 px-3 space-y-1">
  {/* Home */}
  <Link
  href="/"
  onClick={onClose}
- className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -88,7 +88,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/socialthreads"
  onClick={onClose}
- className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -110,7 +110,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/fabrics"
  onClick={onClose}
- className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -133,7 +133,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/dashboard"
  onClick={onClose}
- className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -156,7 +156,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/settings"
  onClick={onClose}
- className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -181,7 +181,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <button
  type="button"
  onClick={handleSignOut}
- className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-[#ffc7c7] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-error hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -204,7 +204,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/auth/signin"
  onClick={onClose}
- className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-[#1a1a1a] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-default hover:bg-default transition-colors"
  >
  <svg
  width="20"
@@ -225,7 +225,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
  <Link
  href="/auth/signup"
  onClick={onClose}
- className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-[#ff8d49] hover:bg-[var(--color-bg)] transition-colors"
+ className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-primary hover:bg-default transition-colors"
  >
  <svg
  width="20"

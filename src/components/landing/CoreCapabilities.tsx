@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS } from '@/lib/design-system';
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
@@ -27,12 +27,12 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 /* 6x6 quilt grid -- a simplified Ohio Star / Nine-Patch pattern */
 const QUILT_GRID: string[][] = [
-  [COLORS.primary, '#FFF5E6', COLORS.accent, '#FFF5E6', COLORS.primary, '#FFF5E6'],
-  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
-  [COLORS.accent, COLORS.primary, '#FFF5E6', COLORS.primary, COLORS.accent, COLORS.primary],
-  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
-  [COLORS.primary, '#FFF5E6', COLORS.accent, '#FFF5E6', COLORS.primary, '#FFF5E6'],
-  ['#FFF5E6', COLORS.accent, COLORS.primary, COLORS.accent, '#FFF5E6', COLORS.accent],
+  [COLORS.primary, COLORS.fabricGridMockBg, COLORS.accent, COLORS.fabricGridMockBg, COLORS.primary, COLORS.fabricGridMockBg],
+  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
+  [COLORS.accent, COLORS.primary, COLORS.fabricGridMockBg, COLORS.primary, COLORS.accent, COLORS.primary],
+  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
+  [COLORS.primary, COLORS.fabricGridMockBg, COLORS.accent, COLORS.fabricGridMockBg, COLORS.primary, COLORS.fabricGridMockBg],
+  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
 ];
 
 function StudioPreviewMockup() {
@@ -67,7 +67,7 @@ function StudioPreviewMockup() {
             <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="px-2 py-0.5 text-[var(--color-text)] font-bold text-[8px]" style={{ backgroundColor: COLORS.primary, borderRadius: '8px' }}>
+            <div className="px-2 py-0.5 text-[var(--color-text)] font-bold text-[8px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
               Main
             </div>
             <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
@@ -154,9 +154,9 @@ function StudioPreviewMockup() {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: 'radial-gradient(#E8DCCB 1px, transparent 1px)',
+                backgroundImage: `radial-gradient(${CANVAS.mockQuiltStitch} 1px, transparent 1px)`,
                 backgroundSize: '16px 16px',
-                opacity: 0.3,
+                opacity: OPACITY.fencePreview,
               }}
             />
             <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[var(--color-border)]/30 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">

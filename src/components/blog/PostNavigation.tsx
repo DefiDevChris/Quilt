@@ -48,7 +48,7 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                 </div>
                 <h3
                   className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)]"
-                  style={{ fontFamily: 'Spline Sans, sans-serif' }}
+                  style={{ fontFamily: 'var(--font-display)' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
@@ -78,7 +78,7 @@ export default function PostNavigation({ prev, next }: PostNavigationProps) {
                 </div>
                 <h3
                   className="text-[24px] leading-[32px] md:text-[24px] md:leading-[32px] text-[var(--color-text)]"
-                  style={{ fontFamily: 'Spline Sans, sans-serif' }}
+                  style={{ fontFamily: 'var(--font-display)' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >

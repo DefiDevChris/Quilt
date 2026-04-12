@@ -12,6 +12,7 @@ import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useFenceRenderer } from '@/hooks/useFenceRenderer';
+import { Z_INDEX } from '@/lib/design-system';
 
 interface CanvasWorkspaceProps {
   project: Project;
@@ -35,7 +36,7 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
 
   return (
     <div ref={containerRef} className="relative flex-1 overflow-hidden">
-      <canvas ref={gridCanvasRef} className="absolute inset-0" style={{ zIndex: 0 }} />
+      <canvas ref={gridCanvasRef} className="absolute inset-0" style={{ zIndex: Z_INDEX.base }} />
       <canvas ref={fabricCanvasRef} />
     </div>
   );

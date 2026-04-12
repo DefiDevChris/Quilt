@@ -72,7 +72,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2">
+            <DropdownMenuContent align="end" className="w-80 rounded-lg p-2">
               <DropdownMenuLabel className="px-3 py-2 text-base font-semibold">Notifications</DropdownMenuLabel>
               <DropdownMenuSeparator className="mx-0" />
               <DropdownMenuItem className="py-3 px-3 cursor-pointer rounded-full mx-1">
@@ -135,7 +135,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
                 <ChevronDown className="h-4 w-4 text-[var(--color-text-dim)]" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2">
+            <DropdownMenuContent align="end" className="w-48 rounded-lg p-2">
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5">Profile</DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5" onClick={onSavedClick}>
                 Saved Posts

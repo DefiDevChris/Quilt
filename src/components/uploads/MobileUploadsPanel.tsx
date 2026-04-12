@@ -118,7 +118,7 @@ export function MobileUploadsPanel() {
               }}
             >
               {chip.label}
-              {count > 0 && <span className="ml-1.5 text-[12px] opacity-70">{count}</span>}
+              {count > 0 && <span className="ml-1.5 text-[14px] opacity-70">{count}</span>}
             </button>
           );
         })}
