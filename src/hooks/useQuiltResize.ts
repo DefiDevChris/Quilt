@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
@@ -51,6 +52,7 @@ function extractObjectData(objects: FabricObject[]): CanvasObjectData[] {
 }
 
 export function useQuiltResize() {
+  const { getCanvas } = useCanvasContext();
   const applyResize = useCallback(
     (
       mode: 'scale' | 'add-blocks',
@@ -61,7 +63,7 @@ export function useQuiltResize() {
       containerWidth: number,
       containerHeight: number
     ) => {
-      const canvas = useCanvasStore.getState().fabricCanvas as FabricCanvas | null;
+      const canvas = getCanvas() as FabricCanvas | null;
       if (!canvas) return;
 
       // Validate dimensions
@@ -155,7 +157,7 @@ export function useQuiltResize() {
         saveProject({ projectId, fabricCanvas: canvas });
       }
     },
-    []
+    [getCanvas]
   );
 
   return { applyResize };

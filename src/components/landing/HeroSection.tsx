@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Mascot from './Mascot';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS } from '@/lib/design-system';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS, COLORS_HOVER } from '@/lib/design-system';
 
 function StudioMockup() {
   const toolItems = [
@@ -93,7 +93,10 @@ function StudioMockup() {
           <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
         </div>
         <div className="flex items-center gap-1 ml-2">
-          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
+          <div
+            className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]"
+            style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}
+          >
             Main
           </div>
           <div className="w-4 h-4 rounded-lg text-[var(--color-text-dim)] flex items-center justify-center text-[10px]">
@@ -109,7 +112,10 @@ function StudioMockup() {
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Share</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">View</span>
           <span className="text-[var(--color-text-dim)] hidden sm:inline">Tools</span>
-          <div className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
+          <div
+            className="px-3 py-1 text-[var(--color-text)] font-bold text-[9px]"
+            style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}
+          >
             Export
           </div>
         </div>
@@ -124,8 +130,9 @@ function StudioMockup() {
             ) : (
               <div
                 key={i}
-                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${tool.active ? 'text-primary' : 'text-[var(--color-text-dim)]'
-                  }`}
+                className={`w-12 py-1 flex flex-col items-center gap-0.5 ${
+                  tool.active ? 'text-primary' : 'text-[var(--color-text-dim)]'
+                }`}
                 style={tool.active ? { color: COLORS.primary } : undefined}
               >
                 <svg
@@ -156,7 +163,10 @@ function StudioMockup() {
               opacity: OPACITY.fencePreview,
             }}
           />
-          <div className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 rounded-lg mx-auto max-w-[260px]" style={{ borderColor: `${COLORS.primary}99` }}>
+          <div
+            className="relative grid grid-cols-3 gap-2 bg-[var(--color-surface)] p-2 border-4 rounded-lg mx-auto max-w-[260px]"
+            style={{ borderColor: `${COLORS.primary}99` }}
+          >
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
@@ -205,7 +215,11 @@ function StudioMockup() {
             <div
               key={t}
               className={`w-6 h-6 rounded-full flex items-center justify-center text-[7px] ${i === 0 ? 'text-primary' : 'text-[var(--color-text-dim)]'}`}
-              style={i === 0 ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary } : undefined}
+              style={
+                i === 0
+                  ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary }
+                  : undefined
+              }
             >
               <svg
                 width="10"
@@ -255,10 +269,6 @@ function StudioMockup() {
 export default function HeroSection() {
   return (
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
-      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
-
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left - Text */}
@@ -292,7 +302,7 @@ export default function HeroSection() {
                   boxShadow: SHADOW.brand,
                   transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
               >
                 Start Designing Free
@@ -303,8 +313,16 @@ export default function HeroSection() {
           {/* Right - Studio Preview */}
           <div className="relative">
             {/* Mascots around the preview — hide on small screens to avoid overflow */}
-            <Mascot pose="jumping" size="md" className="absolute -top-8 -left-8 z-10 hidden lg:block" />
-            <Mascot pose="fetching" size="lg" className="absolute -bottom-6 -right-6 z-10 hidden lg:block" />
+            <Mascot
+              pose="jumping"
+              size="md"
+              className="absolute -top-8 -left-8 z-10 hidden lg:block"
+            />
+            <Mascot
+              pose="fetching"
+              size="lg"
+              className="absolute -bottom-6 -right-6 z-10 hidden lg:block"
+            />
 
             <StudioMockup />
           </div>

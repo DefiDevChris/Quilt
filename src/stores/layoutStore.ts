@@ -1,5 +1,3 @@
-'use client';
-
 import { create } from 'zustand';
 import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-utils';
 import { DEFAULT_LAYOUT } from '@/lib/design-system';

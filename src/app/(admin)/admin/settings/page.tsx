@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 export default function AdminSettingsPage() {
   const [shopEnabled, setShopEnabled] = useState(false);
@@ -90,8 +91,8 @@ export default function AdminSettingsPage() {
     return (
       <div className="space-y-6">
         <div className="bg-default border border-default rounded-lg p-6 animate-pulse">
-          <div style={{ backgroundColor: 'rgba(255, 141, 73, 0.1)' }} className="h-6 rounded-lg w-1/4 mb-4" />
-          <div style={{ backgroundColor: 'rgba(255, 141, 73, 0.05)' }} className="h-10 rounded-lg w-1/3" />
+          <div style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }} className="h-6 rounded-lg w-1/4 mb-4" />
+          <div style={{ backgroundColor: withAlpha(COLORS.primary, 0.05) }} className="h-10 rounded-lg w-1/3" />
         </div>
       </div>
     );
@@ -103,10 +104,11 @@ export default function AdminSettingsPage() {
 
       {message && (
         <div
-          className={`rounded-lg px-4 py-3 text-sm font-medium ${message.type === 'success'
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-            }`}
+          className="rounded-lg px-4 py-3 text-sm font-medium"
+          style={message.type === 'success'
+            ? { backgroundColor: withAlpha(COLORS.success, 0.05), color: COLORS.success, borderColor: withAlpha(COLORS.success, 0.2) }
+            : { backgroundColor: withAlpha(COLORS.error, 0.05), color: COLORS.error, borderColor: withAlpha(COLORS.error, 0.2) }
+          }
         >
           {message.text}
         </div>
@@ -124,11 +126,11 @@ export default function AdminSettingsPage() {
           </div>
           <div className="flex items-center gap-3">
             <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${shopEnabled
-                ? 'bg-green-50 text-green-700'
-                : ''
-                }`}
-              style={shopEnabled ? undefined : { backgroundColor: 'rgba(255, 141, 73, 0.1)' }}
+              className="text-xs font-semibold px-2.5 py-1 rounded-lg"
+              style={shopEnabled
+                ? { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success }
+                : { backgroundColor: withAlpha(COLORS.primary, 0.1) }
+              }
             >
               {shopEnabled ? 'Enabled' : 'Disabled'}
             </span>
@@ -138,7 +140,7 @@ export default function AdminSettingsPage() {
               disabled={saving}
               className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 ${shopEnabled ? 'bg-primary' : ''
                 }`}
-              style={!shopEnabled ? { backgroundColor: 'rgba(255, 141, 73, 0.3)' } : undefined}
+              style={!shopEnabled ? { backgroundColor: withAlpha(COLORS.primary, 0.3) } : undefined}
               role="switch"
               aria-checked={shopEnabled}
               aria-label="Toggle shop"
@@ -154,7 +156,7 @@ export default function AdminSettingsPage() {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(26, 26, 26, 0.4)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}>
           <div className="bg-surface border border-default rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
             <h3 className="text-lg font-semibold text-default">Enable Fabric Shop</h3>
             <p className="text-sm text-dim">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { COLORS, TYPOGRAPHY, RADIUS, MOTION, SHADOW } from '@/lib/design-system';
+import { COLORS, withAlpha, TYPOGRAPHY, RADIUS, MOTION, SHADOW } from '@/lib/design-system';
 
 const COLOR_ONLY_TRANSITION = `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, opacity ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`;
 
@@ -249,18 +249,18 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
 
   const usernameBorderColor =
     usernameStatus === 'available'
-      ? 'border-green-500'
+      ? withAlpha(COLORS.success, 1)
       : usernameStatus === 'taken'
-        ? 'border-red-500'
+        ? withAlpha(COLORS.error, 1)
         : usernameStatus === 'invalid'
-          ? 'border-red-500'
+          ? withAlpha(COLORS.error, 1)
           : COLORS.border;
 
   if (compact) {
     return (
       <form onSubmit={handleSubmit} className="w-full space-y-6">
         {error && (
-          <div className="rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-sm text-red-500">
+          <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
             {error}
           </div>
         )}
@@ -282,7 +282,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             onChange={(e) => setDisplayName(e.target.value)}
             className="w-full px-4 py-3 rounded-lg text-default placeholder:text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors shadow-sm"
             style={{
-              backgroundColor: 'rgba(253, 250, 247, 0.8)',
+              backgroundColor: withAlpha(COLORS.bg, 0.8),
               border: `1px solid ${COLORS.border}`,
               boxShadow: SHADOW.inset,
               transition: COLOR_ONLY_TRANSITION,
@@ -310,7 +310,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             onChange={(e) => handleUsernameChange(e.target.value)}
             className={`w-full px-4 py-3 rounded-lg text-default placeholder:text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors shadow-sm ${usernameBorderColor}`}
             style={{
-              backgroundColor: 'rgba(253, 250, 247, 0.8)',
+              backgroundColor: withAlpha(COLORS.bg, 0.8),
               border: `1px solid ${usernameBorderColor}`,
               boxShadow: SHADOW.inset,
               transition: COLOR_ONLY_TRANSITION,
@@ -321,7 +321,8 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
           />
           {usernameMessage && (
             <p
-              className={`mt-1 text-sm ${usernameStatus === 'available' ? 'text-green-600' : 'text-red-500'}`}
+              className="mt-1 text-sm"
+              style={{ color: usernameStatus === 'available' ? COLORS.success : COLORS.error }}
             >
               {usernameMessage}
               {usernameStatus === 'checking' && (
@@ -379,7 +380,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-body-sm text-red-500">
+          <div className="rounded-lg px-4 py-3 text-body-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
             {error}
           </div>
         )}

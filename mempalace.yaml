@@ -1,0 +1,60 @@
+wing: quilt
+rooms:
+- name: public
+  description: Files from public/
+  keywords:
+  - public
+  - public
+- name: src
+  description: Files from src/
+  keywords:
+  - src
+  - src
+- name: testing
+  description: Files from tests/
+  keywords:
+  - testing
+  - tests
+- name: quilt_blocks
+  description: Files from quilt_blocks/
+  keywords:
+  - quilt_blocks
+  - quilt_blocks
+- name: quilt_layouts
+  description: Files from quilt_layouts/
+  keywords:
+  - quilt_layouts
+  - quilt_layouts
+- name: test_results
+  description: Files from test-results/
+  keywords:
+  - test_results
+  - test-results
+- name: playwright_report
+  description: Files from playwright-report/
+  keywords:
+  - playwright_report
+  - playwright-report
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: backend
+  description: Files from db/
+  keywords:
+  - backend
+  - db
+- name: frontend
+  description: Files from components/
+  keywords:
+  - frontend
+  - components
+- name: planning
+  description: Files from specs/
+  keywords:
+  - planning
+  - specs
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

@@ -6,6 +6,7 @@ import type { Project } from '@/types/project';
 
 import { StudioDialogsProvider } from '@/components/studio/StudioDialogs';
 import { StudioLayout } from '@/components/studio/StudioLayout';
+import { CanvasProvider } from '@/contexts/CanvasContext';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -123,8 +124,10 @@ export function StudioClient({ projectId }: StudioClientProps) {
  }
 
  return (
+ <CanvasProvider>
  <StudioDialogsProvider>
  <StudioLayout project={project} />
  </StudioDialogsProvider>
+ </CanvasProvider>
  );
 }

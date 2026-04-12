@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 
 export function DuplicateOptionsPopup() {
  const [show, setShow] = useState(false);
  const [objects, setObjects] = useState<unknown[]>([]);
- const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+ const { getCanvas } = useCanvasContext();
+ const fabricCanvas = getCanvas();
  const worktables = useProjectStore((s) => s.worktables);
 
  useEffect(() => {

@@ -9,6 +9,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { LAYOUT } from '@/lib/design-system';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 
 import { ZOOM_FACTOR } from '@/lib/constants';
 import { performUndo, performRedo } from '@/lib/canvas-history';
@@ -44,7 +45,8 @@ export function HamburgerDrawer({
   onOpenHistory,
 }: HamburgerDrawerProps) {
   const router = useRouter();
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const canUndo = useCanvasStore((s) => s.canUndo());
   const canRedo = useCanvasStore((s) => s.canRedo());
   const undoCount = useCanvasStore((s) => s.undoStack.length);
@@ -106,17 +108,18 @@ export function HamburgerDrawer({
 
   const handleZoomIn = useCallback(() => {
     const { zoom, zoomAtPoint } = useCanvasStore.getState();
-    zoomAtPoint(zoom * ZOOM_FACTOR);
-  }, []);
+    zoomAtPoint(zoom * ZOOM_FACTOR, fabricCanvas);
+  }, [fabricCanvas]);
 
   const handleZoomOut = useCallback(() => {
     const { zoom, zoomAtPoint } = useCanvasStore.getState();
-    zoomAtPoint(zoom / ZOOM_FACTOR);
-  }, []);
+    zoomAtPoint(zoom / ZOOM_FACTOR, fabricCanvas);
+  }, [fabricCanvas]);
 
   const handleFitToScreen = useCallback(() => {
-    useCanvasStore.getState().centerAndFitViewport();
-  }, []);
+    const { canvasWidth, canvasHeight } = useProjectStore.getState();
+    useCanvasStore.getState().centerAndFitViewport(fabricCanvas, canvasWidth, canvasHeight);
+  }, [fabricCanvas]);
 
   const menuGroups: MenuGroup[] = [
     {

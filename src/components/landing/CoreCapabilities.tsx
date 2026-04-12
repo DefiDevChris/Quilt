@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
-import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS } from '@/lib/design-system';
+import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS, COLORS_HOVER } from '@/lib/design-system';
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
@@ -278,7 +278,7 @@ export default function CoreCapabilities() {
                 boxShadow: SHADOW.brand,
                 transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e67d3f')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
             >
               See What You Can Create

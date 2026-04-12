@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 type Step = 'request' | 'reset';
 
@@ -98,13 +99,13 @@ export function ForgotPasswordForm() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-500/5 border border-red-500/20 px-4 py-3 text-sm text-red-500">
+        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-lg bg-green-500/5 border border-green-500/20 px-4 py-3 text-sm text-green-600">
+        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.success, 0.05), borderColor: withAlpha(COLORS.success, 0.2), color: COLORS.success }}>
           {success}
         </div>
       )}

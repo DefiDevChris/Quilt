@@ -1,9 +1,17 @@
-'use client';
-
 import { create } from 'zustand';
 import type { YardageResult } from '@/lib/yardage-utils';
 import type { FabricListItem } from '@/types/fabric';
-import { isShopifyEnabled, createCart, addToCart, type ShopifyCartLineInput } from '@/lib/shopify';
+import {
+  isShopifyEnabled,
+  createCart,
+  addToCart,
+  getCart,
+  cartLinesUpdate,
+  cartLinesRemove,
+  cartBuyerIdentityUpdate,
+  type ShopifyCartLineInput,
+  type ShopifyCart,
+} from '@/lib/shopify';
 
 /**
  * Cart Item representing a fabric yardage selection
@@ -64,7 +72,12 @@ interface CartState {
    * Sync local cart with Shopify
    * Creates a new cart or updates existing one
    */
-  syncWithShopify: () => Promise<void>;
+  syncWithShopify: (buyerEmail?: string) => Promise<void>;
+
+  /**
+   * Restore cart from Shopify on app initialization
+   */
+  restoreFromShopify: () => Promise<void>;
 
   /** Reset cart to initial state */
   reset: () => void;
@@ -113,13 +126,25 @@ export const useCartStore = create<CartState>((set, get) => ({
       ),
     })),
 
-  clearCart: () =>
+  clearCart: async () => {
+    const state = get();
+
+    // Clear Shopify cart if it exists
+    if (state.shopifyCartId && isShopifyEnabled()) {
+      try {
+        await cartLinesRemove(state.shopifyCartId, []);
+      } catch (error) {
+        console.warn('Failed to clear Shopify cart:', error);
+      }
+    }
+
     set({
       shopifyCartId: null,
       checkoutUrl: null,
       items: [],
       error: null,
-    }),
+    });
+  },
 
   toggleDrawer: () => set((state) => ({ isDrawerOpen: !state.isDrawerOpen })),
   setDrawerOpen: (isDrawerOpen) => set({ isDrawerOpen }),
@@ -205,7 +230,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   reset: () => set(INITIAL_STATE),
 
-  syncWithShopify: async () => {
+  syncWithShopify: async (buyerEmail?: string) => {
     const state = get();
 
     if (!isShopifyEnabled()) {
@@ -226,20 +251,76 @@ export const useCartStore = create<CartState>((set, get) => ({
         set({ shopifyCartId: cartId, checkoutUrl });
       }
 
-      // Prepare cart lines from local items
-      const lines: ShopifyCartLineInput[] = state.items.map((item) => ({
-        variantId: item.shopifyVariantId,
-        quantity: item.quantityInYards,
-        // Add custom attributes for yardage info
-        attributes: [
-          { key: 'Fabric Type', value: 'Quilting Cotton' },
-          { key: 'Quantity Unit', value: 'Yards' },
-        ],
-      }));
+      // Fetch current Shopify cart to compare
+      const shopifyCart = cartId ? await getCart(cartId) : null;
+      const shopifyLines = shopifyCart?.lines || [];
 
-      if (lines.length > 0 && cartId) {
-        // Add/update items in Shopify cart
-        await addToCart(cartId, lines);
+      // Build lookup maps
+      const localByVariant = new Map<string, CartItem>();
+      state.items.forEach((item) => {
+        localByVariant.set(item.shopifyVariantId, item);
+      });
+
+      const shopifyByVariant = new Map<string, ShopifyCart['lines'][number]>();
+      shopifyLines.forEach((line) => {
+        shopifyByVariant.set(line.merchandise.id, line);
+      });
+
+      const linesToAdd: ShopifyCartLineInput[] = [];
+      const linesToUpdate: { id: string; quantity: number }[] = [];
+      const lineIdsToRemove: string[] = [];
+
+      // Find new items and changed quantities
+      for (const localItem of state.items) {
+        const shopifyLine = shopifyByVariant.get(localItem.shopifyVariantId);
+        if (!shopifyLine) {
+          // New item - add to cart
+          linesToAdd.push({
+            variantId: localItem.shopifyVariantId,
+            quantity: localItem.quantityInYards,
+            attributes: [
+              { key: 'Fabric Type', value: 'Quilting Cotton' },
+              { key: 'Quantity Unit', value: 'Yards' },
+            ],
+          });
+        } else if (shopifyLine.quantity !== localItem.quantityInYards) {
+          // Quantity changed - update line
+          linesToUpdate.push({
+            id: shopifyLine.id,
+            quantity: localItem.quantityInYards,
+          });
+        }
+      }
+
+      // Find items in Shopify but not in local (removed)
+      for (const [variantId, shopifyLine] of shopifyByVariant) {
+        if (!localByVariant.has(variantId)) {
+          lineIdsToRemove.push(shopifyLine.id);
+        }
+      }
+
+      // Execute operations
+      if (linesToAdd.length > 0 && cartId) {
+        await addToCart(cartId, linesToAdd);
+      }
+
+      if (linesToUpdate.length > 0 && cartId) {
+        await cartLinesUpdate(cartId, linesToUpdate);
+      }
+
+      if (lineIdsToRemove.length > 0 && cartId) {
+        await cartLinesRemove(cartId, lineIdsToRemove);
+      }
+
+      // Update buyer identity if email provided
+      if (buyerEmail && cartId) {
+        try {
+          const result = await cartBuyerIdentityUpdate(cartId, buyerEmail);
+          checkoutUrl = result.checkoutUrl;
+          set({ checkoutUrl });
+        } catch (error) {
+          console.warn('Failed to update buyer identity:', error);
+        }
       }
 
       set({ isLoading: false });
@@ -250,6 +331,39 @@ export const useCartStore = create<CartState>((set, get) => ({
         isLoading: false,
       });
       throw error;
+    }
+  },
+
+  restoreFromShopify: async () => {
+    if (!isShopifyEnabled()) {
+      return;
+    }
+
+    const state = get();
+
+    // Only restore if we have a cart ID (from localStorage persistence)
+    if (!state.shopifyCartId) {
+      return;
+    }
+
+    try {
+      const shopifyCart = await getCart(state.shopifyCartId);
+
+      if (!shopifyCart || !shopifyCart.checkoutUrl) {
+        // Cart expired or invalid - clear local state
+        set({ shopifyCartId: null, checkoutUrl: null, items: [] });
+        return;
+      }
+
+      // Restore cart items from Shopify
+      // Note: We can only restore if the variant IDs map back to local fabrics
+      // For now, we restore the cart ID and checkout URL
+      // Items will be synced on next addProjectYardageToCart call
+      set({
+        checkoutUrl: shopifyCart.checkoutUrl,
+      });
+    } catch (error) {
+      console.warn('Failed to restore cart from Shopify:', error);
     }
   },
 }));

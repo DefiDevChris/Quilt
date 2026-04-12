@@ -5,6 +5,7 @@ import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, ThumbsUp } from
 import { Avatar, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui';
 import { Post, User } from '@/types/social';
 import { Comments } from './Comments';
+import { COLORS } from '@/lib/design-system';
 
 interface PostCardProps {
   post: Post;
@@ -158,7 +159,7 @@ export function PostCard({
               <button className="p-2 rounded-full hover:bg-[var(--color-bg)]" aria-label="More options"><MoreHorizontal className="h-5 w-5 text-[var(--color-text-dim)]" /></button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36 rounded-lg p-2">
-              <DropdownMenuItem className="text-red-500 rounded-full mx-1 py-2">Delete Post</DropdownMenuItem>
+              <DropdownMenuItem className="rounded-full mx-1 py-2" style={{ color: COLORS.error }}>Delete Post</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}

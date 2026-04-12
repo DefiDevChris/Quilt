@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useCartStore } from '@/stores/cartStore';
 import { Search, SlidersHorizontal, ShoppingBag, X } from 'lucide-react';
-import { QuiltPiece, QuiltPieceRow, QuiltPieceBand } from '@/components/decorative/QuiltPiece';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 import { COLORS, SHADOW, COLORS_HOVER } from '@/lib/design-system';
 
 interface ShopFabric {
@@ -155,10 +155,6 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)] relative overflow-hidden">
-      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="primary" size={900} rotation={0} top={-350} left={-350} opacity={35} strokeWidth={5} stitchGap={16} stitchColor={COLORS.text} />
-      <QuiltPiece color="secondary" size={800} rotation={0} bottom={-300} right={-200} opacity={30} strokeWidth={5} stitchGap={16} stitchColor={COLORS.text} />
-
       {/* Header */}
       <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] relative">
         {/* Quilt-piece accent strip */}
@@ -410,9 +406,6 @@ export default function ShopPage() {
             </button>
           </div>
         )}
-
-        {/* Bottom decorative band */}
-        <QuiltPieceBand color="secondary" height={40} opacity={6} pieceCount={4} className="mt-12" />
       </div>
     </div>
   );

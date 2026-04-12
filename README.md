@@ -107,11 +107,11 @@ src/
     studio/[projectId]/   # Design canvas (desktop only)
     templates/            # Template browser
   components/             # React components, organized by domain
-    social/               # FeedContent, BlogContent, SocialLayout
+    social/               # FeedContent, SocialLayout
     mobile/               # MobileShell, MobileBottomNav (3 items)
     studio/               # Studio panels and controls
     blocks/               # BlockBuilderWorktable, BlockBuilderTab, BlockBuilderToolbar, BlockLibrary, SimplePhotoBlockUpload
-    export/               # PdfExportDialog, PrintlistPanel
+    export/               # PdfExportDialog
   hooks/                  # Custom React hooks (canvas, drawing, auth)
   stores/                 # Zustand stores (19 total)
   lib/                    # Pure utility modules and engines

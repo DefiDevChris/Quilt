@@ -17,9 +17,10 @@ interface UndoableCanvas {
 
 /**
  * Get the current canvas cast to the undo-able interface, or null.
+ * Returns null — callers must pass the canvas explicitly.
  */
 function getCanvas(): UndoableCanvas | null {
-  return useCanvasStore.getState().fabricCanvas as UndoableCanvas | null;
+  return null;
 }
 
 /**

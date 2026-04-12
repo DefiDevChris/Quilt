@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { pixelsToUnits, unitsToPixels, getUnitLabel } from '@/lib/canvas-utils';
 import { COLORS } from '@/lib/design-system';
@@ -17,7 +18,8 @@ interface ObjectInfo {
 }
 
 export function QuickInfo() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
   const [info, setInfo] = useState<ObjectInfo | null>(null);

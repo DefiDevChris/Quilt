@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { FabricListItem } from '@/types/fabric';
 
 interface FabricCardProps {
@@ -17,7 +17,8 @@ export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCar
  const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
  const addFabricPreset = useProjectStore((s) => s.addFabricPreset);
  const setWhereUsedFabric = useFabricStore((s) => s.setWhereUsedFabric);
- const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+ const { getCanvas } = useCanvasContext();
+ const fabricCanvas = getCanvas();
  const [showMenu, setShowMenu] = useState(false);
  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
  const menuRef = useRef<HTMLDivElement>(null);

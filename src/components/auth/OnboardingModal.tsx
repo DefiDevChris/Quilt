@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { OnboardingForm } from './OnboardingForm';
 import { BrandedSplitPaneModal } from '@/lib/branded-modal';
-import { COLORS, TYPOGRAPHY } from '@/lib/design-system';
+import { COLORS, withAlpha, TYPOGRAPHY } from '@/lib/design-system';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -53,7 +53,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
           style={{
             fontFamily: TYPOGRAPHY.small.fontFamily,
             color: COLORS.textDim,
-            borderColor: 'rgba(26, 26, 26, 0.05)',
+            borderColor: withAlpha(COLORS.text, 0.05),
           }}
         >
           You can always change these settings later in your profile.

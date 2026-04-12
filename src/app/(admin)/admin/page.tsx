@@ -8,7 +8,7 @@ import { mobileUploads } from '@/db/schema/mobileUploads';
 import { users } from '@/db/schema/users';
 import { count, eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, MOTION, withAlpha } from '@/lib/design-system';
 
 async function getStats() {
   const [blockCount, blogCount, reportCount, socialCount, fabricCount, userCount, pendingUploads] =
@@ -218,9 +218,10 @@ export default async function AdminDashboardPage() {
                   </div>
                   <span
                     className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${post.status === 'published'
-                      ? 'bg-green-50 text-green-700'
+                      ? ''
                       : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
                       }`}
+                    style={post.status === 'published' ? { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success } : undefined}
                   >
                     {post.status}
                   </span>

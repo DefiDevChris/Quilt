@@ -34,8 +34,8 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
-import { usePhotoPatternImport } from '@/hooks/usePhotoLayoutImport';
 import { saveProject } from '@/lib/save-project';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 
 interface StudioLayoutProps {
   readonly project: Project;
@@ -43,9 +43,10 @@ interface StudioLayoutProps {
 
 export function StudioLayout({ project }: StudioLayoutProps) {
   const dialogs = useStudioDialogs();
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
 
@@ -75,7 +76,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
     ({ width, height }: { width: number; height: number }) => {
       useProjectStore.getState().setCanvasWidth(width);
       useProjectStore.getState().setCanvasHeight(height);
-      useCanvasStore.getState().centerAndFitViewport();
+      useCanvasStore.getState().centerAndFitViewport(fabricCanvas, width, height);
       if (typeof window !== 'undefined') {
         window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
         // Clean up the dimensions storage
@@ -83,7 +84,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
       }
       setShowQuiltSetup(false);
     },
-    [project.id]
+    [project.id, fabricCanvas]
   );
 
   const handleQuiltSetupDismiss = useCallback(() => {
@@ -99,9 +100,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const { handleDragStart: handleBlockDragStart } = useBlockDrop();
   const { handleFabricDragStart } = useFabricDrop();
 
-  // Mount supporting hooks
-  usePhotoPatternImport();
-
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
     if (projectId) {
@@ -110,14 +108,14 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, [fabricCanvas]);
 
   const handleNewBlock = useCallback(() => {
-    const canvas = useCanvasStore.getState().fabricCanvas;
+    const canvas = getCanvas();
     if (canvas) {
       canvas.clear();
       canvas.backgroundColor = COLORS.surface;
       canvas.renderAll();
     }
     useCanvasStore.getState().resetHistory();
-  }, []);
+  }, [getCanvas]);
 
   return (
     <div className="h-screen flex flex-col bg-[var(--color-bg)] select-none">

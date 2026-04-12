@@ -34,6 +34,12 @@ const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const storefrontToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const isShopEnabled = process.env.NEXT_PUBLIC_ENABLE_SHOP === 'true';
 
+// Admin API (for inventory sync, webhooks, etc.)
+const adminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+const shopifyAdminEndpoint = shopifyDomain
+  ? `https://${shopifyDomain}/admin/api/2024-01/graphql.json`
+  : '';
+
 const SHOPIFY_GRAPHQL_ENDPOINT = shopifyDomain
   ? `https://${shopifyDomain}/api/2024-01/graphql.json`
   : '';
@@ -70,6 +76,37 @@ async function shopifyGraphQLRequest<T>(query: string, variables?: Record<string
 
   if (result.errors) {
     throw new Error(`Shopify GraphQL errors: ${JSON.stringify(result.errors)}`);
+  }
+
+  return result.data as T;
+}
+
+/**
+ * Admin API GraphQL request helper (for inventory sync, orders, etc.)
+ */
+async function shopifyAdminGraphQLRequest<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+  if (!shopifyDomain || !adminAccessToken) {
+    throw new Error('Shopify Admin API not configured. Set SHOPIFY_ADMIN_ACCESS_TOKEN');
+  }
+
+  const response = await fetch(shopifyAdminEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': adminAccessToken,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Shopify Admin API error: ${response.status} - ${errorText}`);
+  }
+
+  const result = await response.json();
+
+  if (result.errors) {
+    throw new Error(`Shopify Admin GraphQL errors: ${JSON.stringify(result.errors)}`);
   }
 
   return result.data as T;
@@ -143,6 +180,9 @@ const GET_CART_QUERY = `
       checkoutUrl
       createdAt
       updatedAt
+      buyerIdentity {
+        email
+      }
       lines(first: 250) {
         edges {
           node {
@@ -169,6 +209,97 @@ const GET_CART_QUERY = `
               }
             }
           }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Update lines in an existing cart
+ * Takes: cartId and lines array with id and quantity
+ */
+const CART_LINES_UPDATE_MUTATION = `
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        checkoutUrl
+        lines(first: 250) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Remove lines from an existing cart
+ * Takes: cartId and lineIds array
+ */
+const CART_LINES_REMOVE_MUTATION = `
+  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
+        checkoutUrl
+        lines(first: 250) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Update cart buyer identity (customer email)
+ * Takes: cartId and buyerIdentity input with email
+ */
+const CART_BUYER_IDENTITY_UPDATE_MUTATION = `
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart {
+        id
+        checkoutUrl
+        buyerIdentity {
+          email
+          phone
         }
       }
     }
@@ -216,6 +347,11 @@ export interface ShopifyCart {
 export interface CreateCartResult {
   cartId: string;
   checkoutUrl: string;
+}
+
+export interface ShopifyCartLineUpdateInput {
+  id: string;
+  quantity: number;
 }
 
 /**
@@ -269,6 +405,62 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   }
 }
 
+/**
+ * Update lines in an existing cart
+ * @param cartId - The Shopify cart ID
+ * @param lines - Array of line IDs and updated quantities
+ */
+export async function cartLinesUpdate(
+  cartId: string,
+  lines: ShopifyCartLineUpdateInput[]
+): Promise<ShopifyCart> {
+  const data = await shopifyGraphQLRequest<{
+    cartLinesUpdate: { cart: ShopifyCartResponse };
+  }>(CART_LINES_UPDATE_MUTATION, { cartId, lines });
+
+  return parseCartResponse(data.cartLinesUpdate.cart);
+}
+
+/**
+ * Remove lines from an existing cart
+ * @param cartId - The Shopify cart ID
+ * @param lineIds - Array of line IDs to remove
+ */
+export async function cartLinesRemove(
+  cartId: string,
+  lineIds: string[]
+): Promise<ShopifyCart> {
+  const data = await shopifyGraphQLRequest<{
+    cartLinesRemove: { cart: ShopifyCartResponse };
+  }>(CART_LINES_REMOVE_MUTATION, { cartId, lineIds });
+
+  return parseCartResponse(data.cartLinesRemove.cart);
+}
+
+/**
+ * Update cart buyer identity (customer email)
+ * @param cartId - The Shopify cart ID
+ * @param email - Customer email
+ */
+export async function cartBuyerIdentityUpdate(
+  cartId: string,
+  email: string
+): Promise<{ id: string; checkoutUrl: string }> {
+  const data = await shopifyGraphQLRequest<{
+    cartBuyerIdentityUpdate: {
+      cart: { id: string; checkoutUrl: string };
+    };
+  }>(CART_BUYER_IDENTITY_UPDATE_MUTATION, {
+    cartId,
+    buyerIdentity: { email },
+  });
+
+  return {
+    id: data.cartBuyerIdentityUpdate.cart.id,
+    checkoutUrl: data.cartBuyerIdentityUpdate.cart.checkoutUrl,
+  };
+}
+
 // Internal types for parsing
 interface ShopifyCartResponse {
   id: string;
@@ -309,4 +501,90 @@ export function isShopifyEnabled(): boolean {
 export function getCheckoutUrl(cartId: string): string {
   // The checkout URL format is standard across Shopify stores
   return `https://${shopifyDomain}/checkouts/${cartId.split('/').pop()}`;
+}
+
+// ============================================================
+// Admin API Functions (for inventory sync, etc.)
+// ============================================================
+
+/**
+ * Query Shopify for product/variant inventory levels
+ * Used by admin inventory sync endpoint
+ */
+const INVENTORY_QUERY = `
+  query getInventory($first: Int!) {
+    products(first: $first) {
+      edges {
+        node {
+          id
+          title
+          variants(first: 20) {
+            edges {
+              node {
+                id
+                title
+                inventoryQuantity
+                availableForSale
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export interface InventoryItem {
+  productId: string;
+  productTitle: string;
+  variantId: string;
+  variantTitle: string;
+  inventoryQuantity: number;
+  availableForSale: boolean;
+}
+
+/**
+ * Fetch inventory levels from Shopify Admin API
+ * @param first - Number of products to fetch (default 50)
+ */
+export async function getInventoryLevels(first: number = 50): Promise<InventoryItem[]> {
+  const data = await shopifyAdminGraphQLRequest<{
+    products: {
+      edges: Array<{
+        node: {
+          id: string;
+          title: string;
+          variants: {
+            edges: Array<{
+              node: {
+                id: string;
+                title: string;
+                inventoryQuantity: number;
+                availableForSale: boolean;
+              };
+            }>;
+          };
+        };
+      }>;
+    };
+  }>(INVENTORY_QUERY, { first });
+
+  const items: InventoryItem[] = [];
+
+  for (const productEdge of data.products.edges) {
+    const product = productEdge.node;
+    for (const variantEdge of product.variants.edges) {
+      const variant = variantEdge.node;
+      items.push({
+        productId: product.id,
+        productTitle: product.title,
+        variantId: variant.id,
+        variantTitle: variant.title,
+        inventoryQuantity: variant.inventoryQuantity,
+        availableForSale: variant.availableForSale,
+      });
+    }
+  }
+
+  return items;
 }

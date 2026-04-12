@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect x="0" y="0" width="300" height="40" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="border" data-shade="border" />
-  <rect x="0" y="260" width="300" height="40" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="border" data-shade="border" />
-  <rect x="0" y="40" width="40" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="border" data-shade="border" />
-  <rect x="260" y="40" width="40" height="220" fill="#E0E0E0" stroke="#333333" stroke-width="0.5" data-role="border" data-shade="border" />
-  <polygon points="150,80 170,120 210,120 180,150 190,190 150,170 110,190 120,150 90,120 130,120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
-</svg>

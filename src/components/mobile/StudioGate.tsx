@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, SHADOW, MOTION, COLORS_HOVER } from '@/lib/design-system';
 
 export function StudioGate() {
  return (
@@ -34,7 +34,7 @@ export function StudioGate() {
    boxShadow: SHADOW.brand,
  }}
  onMouseEnter={(e) => {
-   e.currentTarget.style.backgroundColor = '#e67d3f';
+   e.currentTarget.style.backgroundColor = COLORS_HOVER.primary;
  }}
  onMouseLeave={(e) => {
    e.currentTarget.style.backgroundColor = COLORS.primary;

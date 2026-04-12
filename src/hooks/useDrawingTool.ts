@@ -2,12 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { maybeSnap } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
 export function useDrawingTool() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const activeTool = useCanvasStore((s) => s.activeTool);
   const stateRef = useRef<{
     fillColor: string;
@@ -62,7 +64,7 @@ export function useDrawingTool() {
           // Skip objects that are explicitly marked as non-selectable (like guides)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((obj as any).data?.isGuide || (obj as any).data?.isHelper) return;
-          // Skip layout-generated objects (managed by useLayoutEngine)
+          // Skip layout-generated objects
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((obj as any)._layoutElement) return;
 

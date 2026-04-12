@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
@@ -16,7 +17,8 @@ const FABRIC_HIGHLIGHT_COLOR = CANVAS.fabricHighlight;
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
  */
 export function useFabricLayout() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
 
   const applyFabricToObject = useCallback(
     async (objectId: string | null, imageUrl: string) => {
@@ -128,7 +130,8 @@ export function useFabricLayout() {
  * Fence-enforced: fabrics can ONLY drop into sashing/cornerstone/border/binding/edging areas.
  */
 export function useFabricDrop() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const { applyFabricToObject } = useFabricLayout();
   const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
 

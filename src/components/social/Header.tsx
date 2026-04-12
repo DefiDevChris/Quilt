@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Bell, Search, ChevronDown, Heart, MessageCircle, UserPlus, Bookmark } from 'lucide-react';
 import { Button, Input, Avatar, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui';
 import Image from 'next/image';
+import { COLORS } from '@/lib/design-system';
 
 interface HeaderProps {
   onSavedClick?: () => void;
@@ -143,7 +144,7 @@ export function Header({ onSavedClick, savedCount = 0, onSearch, searchQuery: ex
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5">Settings</DropdownMenuItem>
               <DropdownMenuSeparator className="mx-0" />
-              <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5 text-red-500">Log out</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer rounded-full mx-1 py-2.5" style={{ color: COLORS.error }}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

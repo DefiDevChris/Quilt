@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import Mascot from '@/components/landing/Mascot';
-import { QuiltPiece } from '@/components/decorative/QuiltPiece';
-import { DECORATION, MASCOT } from '@/lib/design-system';
+import { MASCOT } from '@/lib/design-system';
 
 interface BrandedPageProps {
   children: ReactNode;
@@ -19,7 +18,7 @@ interface BrandedPageProps {
  * Wrapper component that adds QuiltCorgi decorative branding to page content areas.
  *
  * Does NOT include the logo — that comes from AppShell/PublicNav via route group layouts.
- * Adds: QuiltPiece background decorations + optional mascot decorations.
+ * Adds: optional mascot decorations.
  *
  * Usage:
  *   <BrandedPage>
@@ -34,7 +33,7 @@ interface BrandedPageProps {
  */
 export function BrandedPage({
   children,
-  decorationOpacity = DECORATION.defaultOpacity,
+  decorationOpacity = 0,
   showMascots = false,
   mascotCount = 1,
   className = '',
@@ -43,21 +42,6 @@ export function BrandedPage({
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      {/* Background decorations — subtle, non-intrusive QuiltPiece elements */}
-      {DECORATION.quiltPieceBackgrounds.map((cfg, i) => (
-        <QuiltPiece
-          key={i}
-          color={cfg.color}
-          size={cfg.size}
-          rotation={cfg.rotation}
-          {...cfg.position}
-          opacity={decorationOpacity * (cfg.opacity / DECORATION.defaultOpacity)}
-          strokeWidth={cfg.strokeWidth}
-          stitchGap={cfg.stitchGap}
-          stitchColor={DECORATION.stitchColor}
-        />
-      ))}
-
       {/* Mascot decorations — optional, positioned in corners/negative space */}
       {showMascots &&
         mascotConfigs.map((mc, i) => (

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 export default function AdminLibrariesPage() {
   const [activeTab, setActiveTab] = useState<'fabrics' | 'blocks' | 'shop'>('fabrics');
@@ -471,7 +472,10 @@ function ShopManagement() {
             type="button"
             onClick={() => handleBulkToggle(true)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-green-50 text-green-700 rounded-full disabled:opacity-50 hover:bg-green-100 transition-colors duration-150"
+            className="px-3 py-2 text-xs font-medium rounded-full disabled:opacity-50 transition-colors duration-150"
+            style={{ backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.2))}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.1))}
           >
             Mark All Purchasable
           </button>
@@ -479,7 +483,10 @@ function ShopManagement() {
             type="button"
             onClick={() => handleBulkToggle(false)}
             disabled={bulkSaving || !bulkManufacturer.trim()}
-            className="px-3 py-2 text-xs font-medium bg-red-50 text-red-700 rounded-full disabled:opacity-50 hover:bg-red-100 transition-colors duration-150"
+            className="px-3 py-2 text-xs font-medium rounded-full disabled:opacity-50 transition-colors duration-150"
+            style={{ backgroundColor: withAlpha(COLORS.error, 0.1), color: COLORS.error }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.2))}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.1))}
           >
             Remove All
           </button>
@@ -536,8 +543,8 @@ function ShopManagement() {
                     <button
                       type="button"
                       onClick={() => handleToggleField(fabric.id, 'inStock', fabric.inStock)}
-                      className={`inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150 ${fabric.inStock ? 'bg-green-500' : 'bg-secondary/60'
-                        }`}
+                      className="inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150"
+                      style={{ backgroundColor: fabric.inStock ? COLORS.success : withAlpha(COLORS.secondary, 0.6) }}
                     >
                       <span
                         className={`inline-block h-3.5 w-3.5 rounded-full bg-surface transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'

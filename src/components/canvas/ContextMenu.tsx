@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
@@ -30,7 +31,8 @@ interface ContextMenuPosition {
 type SubMenuType = 'fabric' | 'block' | 'printlist' | 'selectSimilar' | null;
 
 export function ContextMenu() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const [position, setPosition] = useState<ContextMenuPosition | null>(null);
   const [showQuantityInput, setShowQuantityInput] = useState(false);

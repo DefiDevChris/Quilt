@@ -31,3 +31,4 @@ export { userFabrics } from './userFabrics';
 export { siteSettings } from './siteSettings';
 export { mobileUploads } from './mobileUploads';
 export { layoutTemplates } from './layoutTemplates';
+export { orders, orderStatusHistory } from './orders';

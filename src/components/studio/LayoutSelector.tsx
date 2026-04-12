@@ -7,6 +7,7 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { LayoutType, BorderConfig } from '@/lib/layout-utils';
 import { computeLayoutSize, type LayoutSizeOptions } from '@/lib/layout-size-utils';
 import { COLORS } from '@/lib/design-system';
@@ -15,8 +16,8 @@ interface LayoutSelectorProps {
   readonly onLayoutSelect?: (presetId: string) => void;
 }
 
-function removeBlockGroupsFromCanvas(): void {
-  const canvas = useCanvasStore.getState().fabricCanvas;
+function removeBlockGroupsFromCanvas(getCanvas: () => unknown): void {
+  const canvas = getCanvas();
   if (!canvas) return;
   const c = canvas as unknown as {
     getObjects: () => Array<Record<string, unknown>>;
@@ -38,6 +39,7 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
   const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
   const selectedPresetId = useLayoutStore((s) => s.selectedPresetId);
   const dialogs = useStudioDialogs();
+  const { getCanvas } = useCanvasContext();
 
   const handleCardClick = useCallback(
     (card: LayoutTypeCard) => {
@@ -48,7 +50,7 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
       }
 
       const doExpand = () => {
-        removeBlockGroupsFromCanvas();
+        removeBlockGroupsFromCanvas(getCanvas);
         const preset = LAYOUT_PRESETS.find((p) => p.id === card.defaultPresetId);
         if (preset) {
           ls.setLayoutType(preset.config.type as LayoutType);
@@ -74,10 +76,10 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
 
   const handleClearLayout = useCallback(() => {
     dialogs.confirmClearLayout(() => {
-      removeBlockGroupsFromCanvas();
+      removeBlockGroupsFromCanvas(getCanvas);
       useLayoutStore.getState().clearLayout();
     });
-  }, [dialogs]);
+  }, [dialogs, getCanvas]);
 
   return (
     <div className="p-3 space-y-2">
@@ -240,6 +242,7 @@ function LayoutConfigForm({
   readonly card: LayoutTypeCard;
   readonly onLayoutSelect?: (presetId: string) => void;
 }) {
+  const { getCanvas } = useCanvasContext();
   const rows = useLayoutStore((s) => s.rows);
   const cols = useLayoutStore((s) => s.cols);
   const blockSize = useLayoutStore((s) => s.blockSize);
@@ -286,10 +289,10 @@ function LayoutConfigForm({
     useProjectStore.getState().setCanvasWidth(size.width);
     useProjectStore.getState().setCanvasHeight(size.height);
     requestAnimationFrame(() => {
-      useCanvasStore.getState().centerAndFitViewport();
+      useCanvasStore.getState().centerAndFitViewport(getCanvas(), size.width, size.height);
     });
     onLayoutSelect?.(selectedPresetId ?? card.defaultPresetId);
-  }, [size, selectedPresetId, card.defaultPresetId, onLayoutSelect]);
+  }, [size, selectedPresetId, card.defaultPresetId, onLayoutSelect, getCanvas]);
 
   return (
     <div className="px-3 pb-3 space-y-3 border-t border-[var(--color-border)]/10">

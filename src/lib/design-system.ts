@@ -58,6 +58,7 @@ export const COLORS = {
   textDim: cp.text_dim,
   border: cp.border,
   error: func.error,
+  success: func.success,
   fabricFallback: func.fabric_fallback,
   fabricGridMockBg: func.fabric_grid_mock_bg,
   mockSurfaceBg: func.mock_surface_bg,
@@ -232,38 +233,9 @@ export const SHADOW = {
   inset: `inset 0 2px 8px ${withAlpha(ac.shadows.inset_inner.hex, ac.shadows.inset_inner.alpha)}, inset 0 1px 3px ${withAlpha(ac.shadows.inset_inner_subtle.hex, ac.shadows.inset_inner_subtle.alpha)}`,
 } as const;
 
-// ─── Decoration (QuiltPiece background elements) ──────────────────────
+// ─── Decoration ─────────────────────────────────────────────────────
 
 export const DECORATION = {
-  quiltPieceBackgrounds: [
-    {
-      color: 'primary' as const,
-      size: 900,
-      rotation: 12,
-      position: { top: -400, left: -350 },
-      opacity: 12,
-      strokeWidth: 5,
-      stitchGap: 16,
-    },
-    {
-      color: 'secondary' as const,
-      size: 700,
-      rotation: -8,
-      position: { bottom: -300, right: -250 },
-      opacity: 12,
-      strokeWidth: 5,
-      stitchGap: 16,
-    },
-    {
-      color: 'accent' as const,
-      size: 500,
-      rotation: 5,
-      position: { top: '40%', right: -150 },
-      opacity: 8.4,
-      strokeWidth: 4,
-      stitchGap: 12,
-    },
-  ],
   defaultOpacity: 12,
   stitchColor: 'var(--color-text)',
 } as const;

@@ -1,7 +1,4 @@
-'use client';
-
 import { create } from 'zustand';
-import type { Canvas as FabricCanvas } from 'fabric';
 import type { UnitSystem } from '@/types/canvas';
 import type { CanvasGridSettings } from '@/types/grid';
 import {
@@ -18,7 +15,6 @@ import {
 import { DEFAULT_CANVAS } from '@/lib/design-system';
 import { clamp } from '@/lib/math-utils';
 import { fitToScreenZoom, computeViewportTransform } from '@/lib/canvas-utils';
-import { getProjectDimensions } from '@/stores/store-bridge';
 
 export type ToolType =
   | 'select'
@@ -35,7 +31,6 @@ export type BlockDraftingMode = 'freeform' | 'blockbuilder';
 export type WorktableType = 'quilt' | 'block-builder';
 
 interface CanvasStoreState {
-  fabricCanvas: FabricCanvas | null;
   zoom: number;
   unitSystem: UnitSystem;
   gridSettings: CanvasGridSettings;
@@ -72,7 +67,6 @@ interface CanvasStoreState {
   /** When true, patches are temporarily recolored by shade category. */
   shadeViewActive: boolean;
 
-  setFabricCanvas: (canvas: FabricCanvas | null) => void;
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
@@ -93,14 +87,14 @@ interface CanvasStoreState {
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
 
-  setViewportLocked: (locked: boolean) => void;
+  setViewportLocked: (locked: boolean, canvas?: unknown, canvasWidth?: number, canvasHeight?: number) => void;
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
   setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
   setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
-  centerAndFitViewport: () => void;
-  zoomAndCenter: (newZoom: number) => void;
-  zoomAtPoint: (newZoom: number, screenX?: number, screenY?: number) => void;
+  centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
+  zoomAndCenter: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
+  zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
@@ -114,11 +108,6 @@ interface CanvasStoreState {
 }
 
 const INITIAL_STATE = {
-  // WARNING: fabricCanvas is a mutable DOM object. Storing it in Zustand
-  // breaks serialization and time-travel debugging. This is a known
-  // anti-pattern but kept for pragmatic canvas state management.
-  // Consider using React context or a ref for future refactoring.
-  fabricCanvas: null as FabricCanvas | null,
   zoom: ZOOM_DEFAULT,
   unitSystem: 'imperial' as UnitSystem,
   gridSettings: {
@@ -158,8 +147,6 @@ const INITIAL_STATE = {
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   ...INITIAL_STATE,
-
-  setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
 
   setZoom: (zoom) => set({ zoom: clamp(zoom, ZOOM_MIN, ZOOM_MAX) }),
 
@@ -230,10 +217,10 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
 
-  setViewportLocked: (locked) => {
+  setViewportLocked: (locked, canvas, canvasWidth, canvasHeight) => {
     set({ isViewportLocked: locked });
-    if (locked) {
-      get().centerAndFitViewport();
+    if (locked && canvas && canvasWidth !== undefined && canvasHeight !== undefined) {
+      get().centerAndFitViewport(canvas, canvasWidth, canvasHeight);
     }
   },
 
@@ -245,12 +232,12 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   setBlockBuilderMode: (mode) => set({ blockBuilderMode: mode }),
 
-  centerAndFitViewport: () => {
-    const { fabricCanvas, unitSystem } = get();
+  centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => {
+    const { unitSystem } = get();
+    const fabricCanvas = canvas as { wrapperEl: HTMLElement; setViewportTransform: (vp: number[]) => void; renderAll: () => void } | null;
     if (!fabricCanvas) return;
-    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    const el = fabricCanvas.wrapperEl;
     if (!el) return;
-    const { canvasWidth, canvasHeight } = getProjectDimensions();
     const containerW = el.clientWidth;
     const containerH = el.clientHeight;
     const zoom = fitToScreenZoom(containerW, containerH, canvasWidth, canvasHeight, unitSystem);
@@ -267,13 +254,13 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     fabricCanvas.renderAll();
   },
 
-  zoomAndCenter: (newZoom: number) => {
-    const { fabricCanvas, unitSystem } = get();
+  zoomAndCenter: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number) => {
+    const { unitSystem } = get();
+    const fabricCanvas = canvas as { wrapperEl: HTMLElement; setViewportTransform: (vp: number[]) => void; renderAll: () => void } | null;
     if (!fabricCanvas) return;
     const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
-    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    const el = fabricCanvas.wrapperEl;
     if (!el) return;
-    const { canvasWidth, canvasHeight } = getProjectDimensions();
     const containerW = el.clientWidth;
     const containerH = el.clientHeight;
     const vp = computeViewportTransform(
@@ -294,11 +281,11 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
    * recentering the canvas. Preserves the user's pan position so successive
    * zoom clicks feel smooth instead of jumping back to center.
    */
-  zoomAtPoint: (newZoom: number, screenX?: number, screenY?: number) => {
-    const { fabricCanvas } = get();
+  zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => {
+    const fabricCanvas = canvas as { wrapperEl: HTMLElement } | null;
     if (!fabricCanvas) return;
     const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
-    const el = (fabricCanvas as unknown as { wrapperEl: HTMLElement }).wrapperEl;
+    const el = fabricCanvas.wrapperEl;
     if (!el) return;
     const px = screenX ?? el.clientWidth / 2;
     const py = screenY ?? el.clientHeight / 2;

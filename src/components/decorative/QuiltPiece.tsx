@@ -1,4 +1,4 @@
-import { OPACITY } from '@/lib/design-system';
+import { COLORS, OPACITY } from '@/lib/design-system';
 
 interface QuiltPieceProps {
   /** Decorative fabric color — uses brand palette by default */
@@ -27,11 +27,11 @@ interface QuiltPieceProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  primary: '#ff8d49',
-  secondary: '#ffc8a6',
-  accent: '#ffc7c7',
-  bg: '#fdfaf7',
-  surface: '#ffffff',
+  primary: COLORS.primary,
+  secondary: COLORS.secondary,
+  accent: COLORS.accent,
+  bg: COLORS.bg,
+  surface: COLORS.surface,
 };
 
 /**

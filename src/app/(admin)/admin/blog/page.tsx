@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 interface BlogPost {
   id: string;
@@ -93,16 +94,16 @@ export default function AdminBlogPage() {
     }
   }
 
-  function getStatusBadgeClass(status: string) {
+  function getStatusBadgeStyle(status: string) {
     switch (status) {
       case 'published':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success, borderColor: withAlpha(COLORS.success, 0.2) };
       case 'draft':
-        return 'bg-secondary/10 text-dim border-secondary/20';
+        return { backgroundColor: withAlpha(COLORS.secondary, 0.1), color: COLORS.textDim, borderColor: withAlpha(COLORS.secondary, 0.2) };
       case 'archived':
-        return 'bg-default text-dim border-default';
+        return { backgroundColor: withAlpha(COLORS.text, 0.05), color: COLORS.textDim, borderColor: COLORS.border };
       default:
-        return 'bg-default text-dim border-default';
+        return { backgroundColor: withAlpha(COLORS.text, 0.05), color: COLORS.textDim, borderColor: COLORS.border };
     }
   }
 
@@ -173,9 +174,8 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium border ${getStatusBadgeClass(
-                        post.status
-                      )}`}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium border"
+                      style={getStatusBadgeStyle(post.status)}
                     >
                       {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                     </span>
@@ -207,7 +207,8 @@ export default function AdminBlogPage() {
                       </Link>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-150 disabled:opacity-50"
+                        className="text-sm font-medium hover:opacity-80 transition-colors duration-150 disabled:opacity-50"
+                        style={{ color: COLORS.error }}
                         disabled={deletingId === post.id}
                       >
                         {deletingId === post.id ? 'Deleting...' : 'Delete'}

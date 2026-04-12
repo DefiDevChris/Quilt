@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { CANVAS } from '@/lib/design-system';
 
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
@@ -101,12 +102,15 @@ export function StudioTopBar({
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
+  const { getCanvas } = useCanvasContext();
 
   const handleBackToDashboard = () => {
     if (isDirty && onSave) {
@@ -236,7 +240,7 @@ export function StudioTopBar({
             >
               <button
                 type="button"
-                onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked)}
+                onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)}
                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
                   isViewportLocked ? 'hover:bg-[var(--color-border)]' : 'bg-primary/10 hover:bg-primary/20'
                 }`}
@@ -284,7 +288,7 @@ export function StudioTopBar({
               >
                 <button
                   type="button"
-                  onClick={() => useCanvasStore.getState().centerAndFitViewport()}
+                  onClick={() => useCanvasStore.getState().centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)}
                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-border)] transition-colors"
                   aria-label="Recenter viewport"
                 >

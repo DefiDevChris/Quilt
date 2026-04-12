@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type RefObject } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { renderGrid } from '@/lib/canvas-grid';
 import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-utils';
@@ -17,6 +18,7 @@ export function useCanvasInit(
   containerRef: RefObject<HTMLDivElement | null>,
   project: Project
 ) {
+  const { setCanvas } = useCanvasContext();
   const generationRef = useRef(0);
 
   useEffect(() => {
@@ -401,8 +403,8 @@ export function useCanvasInit(
         return;
       }
 
-      useCanvasStore.getState().setFabricCanvas(canvas);
       useCanvasStore.getState().setZoom(initZoom);
+      setCanvas(canvas);
 
       // Expose for E2E testing
       if (typeof window !== 'undefined') {

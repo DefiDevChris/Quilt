@@ -10,7 +10,7 @@ import { COLORS, MOTION, TYPOGRAPHY, RADIUS, SHADOW, FONT_SIZE, withAlpha } from
 const COLOR_ONLY_TRANSITION = `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}, opacity ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`;
 
 // Re-export for convenience
-export { COLORS, TYPOGRAPHY, RADIUS, SHADOW };
+export { COLORS, TYPOGRAPHY, RADIUS, SHADOW, withAlpha };
 
 /**
  * Props for the BrandedSplitPaneModal component
@@ -158,7 +158,7 @@ export function BrandedInput({ label, error, className = '', ...props }: Branded
         {...props}
       />
       {error && (
-        <p className="text-sm text-red-500">{error}</p>
+        <p className="text-sm" style={{ color: COLORS.error }}>{error}</p>
       )}
     </div>
   );

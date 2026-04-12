@@ -22,7 +22,7 @@ export default function ContactPage() {
         <div className="mt-16 max-w-2xl mx-auto">
           <a
             href="mailto:support@quiltcorgi.com"
-            className="block p-12 bg-surface border border-default rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] hover:bg-[#ff8d49]/10 transition-colors duration-150"
+            className="block p-12 bg-surface border border-default rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
           >
             <div className="flex items-center gap-6 mb-8">
               <div className="w-16 h-16 bg-primary/10 text-primary flex items-center justify-center rounded-lg">

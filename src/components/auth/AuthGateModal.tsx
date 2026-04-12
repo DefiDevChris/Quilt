@@ -8,6 +8,7 @@ import {
   BrandedSplitPaneModal,
   COLORS,
   TYPOGRAPHY,
+  withAlpha,
 } from '@/lib/branded-modal';
 
 interface AuthGateModalProps {
@@ -63,7 +64,7 @@ export function AuthGateModal({
           style={{
             fontFamily: TYPOGRAPHY.small.fontFamily,
             color: COLORS.textDim,
-            borderColor: 'rgba(26, 26, 26, 0.05)',
+            borderColor: withAlpha(COLORS.text, 0.05),
           }}
         >
           You can always change these settings later in your profile.

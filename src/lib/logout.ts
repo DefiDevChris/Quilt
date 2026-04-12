@@ -9,10 +9,10 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useYardageStore } from '@/stores/yardageStore';
-import { usePhotoLayoutStore } from '@/stores/photoLayoutStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useSocialQuickView } from '@/stores/socialQuickViewStore';
+import { usePhotoDesignStore } from '@/stores/photoDesignStore';
 
 /**
  * Centralized logout function.
@@ -47,8 +47,8 @@ export async function logout(): Promise<void> {
   usePrintlistStore.getState().reset();
   useProfileStore.getState().reset();
   useYardageStore.getState().reset();
-  usePhotoLayoutStore.getState().reset();
   useLayoutStore.getState().reset();
   useCartStore.getState().reset();
   useSocialQuickView.getState().reset();
+  usePhotoDesignStore.getState().reset();
 }

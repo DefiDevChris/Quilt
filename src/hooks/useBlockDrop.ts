@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
@@ -19,7 +20,8 @@ const BLOCK_HIGHLIGHT_COLOR = CANVAS.blockHighlight;
  * Invalid drops are silently ignored.
  */
 export function useBlockDrop() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const pushUndoState = useCanvasStore((s) => s.pushUndoState);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const dragBlockIdRef = useRef<string | null>(null);

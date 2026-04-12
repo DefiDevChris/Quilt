@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';

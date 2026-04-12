@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 interface Block {
   id: string;
@@ -102,7 +103,7 @@ export default function AdminBlocksPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-pulse rounded-lg h-8 w-8" style={{ backgroundColor: 'rgba(255, 141, 73, 0.2)' }} />
+          <div className="animate-pulse rounded-lg h-8 w-8" style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }} />
         </div>
       ) : blocks.length === 0 ? (
         <div className="bg-[var(--color-bg)] border border-default rounded-lg p-12 text-center">
@@ -144,7 +145,7 @@ export default function AdminBlocksPage() {
                             className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(255, 141, 73, 0.1)' }}>
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}>
                             <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
                             </svg>
@@ -167,7 +168,7 @@ export default function AdminBlocksPage() {
                           <span
                             key={tag}
                             className="text-xs px-1.5 py-0.5 rounded-lg text-dim"
-                            style={{ backgroundColor: 'rgba(255, 141, 73, 0.1)' }}
+                            style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}
                           >
                             {tag}
                           </span>
@@ -192,7 +193,8 @@ export default function AdminBlocksPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(block.id)}
-                          className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-150 disabled:opacity-50"
+                          className="text-sm font-medium hover:opacity-80 transition-colors duration-150 disabled:opacity-50"
+                          style={{ color: COLORS.error }}
                           disabled={deletingId === block.id}
                         >
                           {deletingId === block.id ? '...' : 'Delete'}
@@ -351,7 +353,7 @@ function BlockFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8" style={{ backgroundColor: 'rgba(26, 26, 26, 0.4)' }}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8" style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}>
       <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-default">
@@ -369,7 +371,7 @@ function BlockFormModal({
         </div>
 
         {error && (
-          <div className="rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-red-700 border border-red-200">
+          <div className="rounded-lg px-4 py-3 text-sm font-medium" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), color: COLORS.error, borderColor: withAlpha(COLORS.error, 0.2) }}>
             {error}
           </div>
         )}

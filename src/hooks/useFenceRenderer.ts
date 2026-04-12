@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
@@ -90,7 +91,8 @@ function storeToTemplate(): LayoutTemplate | null {
  * block-cell areas, fabrics can only drop into structural areas.
  */
 export function useFenceRenderer() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const prevKeyRef = useRef('');
   const areasRef = useRef<FenceArea[]>([]);

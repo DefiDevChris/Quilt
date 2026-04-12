@@ -1,4 +1,5 @@
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 
@@ -30,6 +31,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const canRedo = useCanvasStore((s) => s.redoStack.length > 0);
   const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const zoom = useCanvasStore((s) => s.zoom);
+  const { getCanvas } = useCanvasContext();
 
   return [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -127,7 +129,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+=',
       description: 'Zoom in on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom * ZOOM_FACTOR),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom * ZOOM_FACTOR, getCanvas()),
       isActive: () => false,
       icon: <ZoomIn size={20} />,
     },
@@ -137,7 +139,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+-',
       description: 'Zoom out on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom / ZOOM_FACTOR),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom / ZOOM_FACTOR, getCanvas()),
       isActive: () => false,
       icon: <ZoomOut size={20} />,
     },

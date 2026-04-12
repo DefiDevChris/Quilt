@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
 import {
@@ -36,6 +37,8 @@ export function QuiltSettingsDropdown({
 }: QuiltSettingsDropdownProps) {
  const [isOpen, setIsOpen] = useState(false);
  const ref = useRef<HTMLDivElement>(null);
+ const { getCanvas } = useCanvasContext();
+ const fabricCanvas = getCanvas();
 
  const canvasWidth = useProjectStore((s) => s.canvasWidth);
  const canvasHeight = useProjectStore((s) => s.canvasHeight);
@@ -44,7 +47,6 @@ export function QuiltSettingsDropdown({
  const gridSettings = useCanvasStore((s) => s.gridSettings);
  const setGridSettings = useCanvasStore((s) => s.setGridSettings);
  const unitSystem = useCanvasStore((s) => s.unitSystem);
- const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
  const user = useAuthStore((s) => s.user);
  const isPro = user?.role === 'pro' || user?.role === 'admin';
  const dialogs = useStudioDialogs();
@@ -164,12 +166,12 @@ export function QuiltSettingsDropdown({
  setWidthError('');
  setHeightError('');
  triggerRender();
- useCanvasStore.getState().centerAndFitViewport();
+ useCanvasStore.getState().centerAndFitViewport(fabricCanvas, newWidth, newHeight);
  setPendingWidth(null);
  setPendingHeight(null);
  setIsOpen(false);
  },
- [setCanvasWidth, setCanvasHeight, triggerRender]
+ [setCanvasWidth, setCanvasHeight, triggerRender, fabricCanvas]
  );
 
  const confirmCellSizeChange = useCallback(

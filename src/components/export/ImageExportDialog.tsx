@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { exportCanvasImage, generateImageFilename, downloadImage, DPI_OPTIONS, type DpiOption, type ImageFormat } from '@/lib/image-exporter';
 import { exportCanvasSvg, generateSvgFilename, downloadSvg } from '@/lib/svg-exporter';
@@ -16,7 +17,8 @@ interface ImageExportDialogProps {
 }
 
 export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const projectName = useProjectStore((s) => s.projectName);
   const [dpi, setDpi] = useState<DpiOption>(300);
   const [format, setFormat] = useState<ExportFormat>('png');

@@ -1,5 +1,3 @@
-'use client';
-
 import { create } from 'zustand';
 import type { PrintlistItem } from '@/types/printlist';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';

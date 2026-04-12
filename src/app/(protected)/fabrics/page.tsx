@@ -223,9 +223,8 @@ export default function FabricsPage() {
       ) : fabrics.length === 0 ? (
         <div className="py-24 text-center">
           <div className="mb-6">
-            <QuiltPiece size={120} opacity={25} strokeWidth={3} stitchGap={8} color="secondary" />
+            <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
           </div>
-          <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
           <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
             No fabrics found
           </h3>

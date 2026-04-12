@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatCreatorName } from '@/lib/format-utils';
+import { COLORS } from '@/lib/design-system';
 
 interface Report {
   id: string;
@@ -282,7 +283,8 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleRemovePost(post.id)}
                             disabled={actionInProgress === post.id}
-                            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors duration-150"
+                            className="text-sm font-medium hover:opacity-80 disabled:opacity-50 transition-colors duration-150"
+                            style={{ color: COLORS.error }}
                           >
                             {actionInProgress === post.id ? '...' : 'Remove'}
                           </button>
@@ -352,7 +354,8 @@ export default function AdminModerationPage() {
                           <button
                             onClick={() => handleRemoveComment(comment.id)}
                             disabled={actionInProgress === comment.id}
-                            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors duration-150"
+                            className="text-sm font-medium hover:opacity-80 disabled:opacity-50 transition-colors duration-150"
+                            style={{ color: COLORS.error }}
                           >
                             {actionInProgress === comment.id ? '...' : 'Remove'}
                           </button>

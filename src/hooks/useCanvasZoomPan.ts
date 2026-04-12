@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { isInputElement } from '@/lib/dom-utils';
 
 export function useCanvasZoomPan() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
 
   useEffect(() => {
     if (!fabricCanvas) return;
@@ -130,7 +132,7 @@ export function useCanvasZoomPan() {
         const factor = Math.exp(-delta * 0.001);
         const currentZoom = useCanvasStore.getState().zoom;
         const nextZoom = currentZoom * factor;
-        useCanvasStore.getState().zoomAtPoint(nextZoom, evt.offsetX, evt.offsetY);
+        useCanvasStore.getState().zoomAtPoint(nextZoom, canvas, evt.offsetX, evt.offsetY);
       }
 
       canvas.on('mouse:down', onMouseDown as never);

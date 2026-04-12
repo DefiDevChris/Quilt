@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 
 import type { TMat2D } from 'fabric';
@@ -43,7 +44,8 @@ function distancePointToSegment(p: Pt, a: Pt, b: Pt): number {
  * Works on any fabric.Polygon that is not a layout/fence chrome element.
  */
 export function useBendTool() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const activeTool = useCanvasStore((s) => s.activeTool);
 
   useEffect(() => {

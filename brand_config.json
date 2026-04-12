@@ -60,7 +60,7 @@
     "primary": "#ff8d49",
     "secondary": "#ffc8a6",
     "accent": "#ffc7c7",
-    "bg": "#fdfaf7",
+    "bg": "#faf9f7",
     "surface": "#ffffff",
     "text": "#1a1a1a",
     "text_dim": "#4a4a4a",
@@ -158,6 +158,7 @@
 
   "functional_colors": {
     "error": "#ed4956",
+    "success": "#16a34a",
     "fabric_fallback": "#d4ccc4",
     "fabric_grid_mock_bg": "#FFF5E6",
     "mock_surface_bg": "#e6d5c3"

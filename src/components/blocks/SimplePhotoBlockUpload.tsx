@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { Point2D } from '@/lib/photo-layout-types';
+interface Point2D {
+  x: number;
+  y: number;
+}
 
 import { COLORS, CANVAS } from '@/lib/design-system';
 
@@ -482,12 +485,13 @@ export function SimplePhotoBlockUpload({
         {(['upload', 'imagePrep', 'crop'] as Step[]).map((s, index) => (
           <div key={s}>
             <div
-              className={`rounded-full transition-colors duration-150 ${step === s
-                ? 'w-6 h-2 bg-primary'
-                : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
-                  ? 'w-2 h-2 bg-primary/50'
-                  : 'w-2 h-2 bg-[var(--color-border)]/40'
-                }`}
+              className={`rounded-full transition-colors duration-150 ${
+                step === s
+                  ? 'w-6 h-2 bg-primary'
+                  : index < (['upload', 'imagePrep', 'crop'] as Step[]).indexOf(step)
+                    ? 'w-2 h-2 bg-primary/50'
+                    : 'w-2 h-2 bg-[var(--color-border)]/40'
+              }`}
             />
           </div>
         ))}
@@ -499,8 +503,12 @@ export function SimplePhotoBlockUpload({
             onClick={() => fileInputRef.current?.click()}
             className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-bg)]"
           >
-            <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">Click to upload or drag and drop</p>
-            <p className="mt-1 text-[14px] leading-[20px] text-[var(--color-text-dim)]">PNG, JPEG, or WebP (max 20MB)</p>
+            <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
+              Click to upload or drag and drop
+            </p>
+            <p className="mt-1 text-[14px] leading-[20px] text-[var(--color-text-dim)]">
+              PNG, JPEG, or WebP (max 20MB)
+            </p>
           </div>
           <input
             ref={fileInputRef}
@@ -518,20 +526,22 @@ export function SimplePhotoBlockUpload({
             <button
               type="button"
               onClick={() => setPrepMode('straighten')}
-              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'straighten'
-                ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-                }`}
+              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                prepMode === 'straighten'
+                  ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+              }`}
             >
               Straighten
             </button>
             <button
               type="button"
               onClick={() => setPrepMode('perspective')}
-              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${prepMode === 'perspective'
-                ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-                }`}
+              className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                prepMode === 'perspective'
+                  ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+              }`}
             >
               Perspective
             </button>
@@ -563,7 +573,9 @@ export function SimplePhotoBlockUpload({
                     <span className="text-[14px] leading-[20px] font-medium text-[var(--color-text)]/60">
                       Straighten
                     </span>
-                    <span className="text-[14px] leading-[20px] font-mono text-[var(--color-text)]/50">{rotation}°</span>
+                    <span className="text-[14px] leading-[20px] font-mono text-[var(--color-text)]/50">
+                      {rotation}°
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -701,7 +713,12 @@ export function SimplePhotoBlockUpload({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="photo-block-name" className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]">Block Name *</label>
+              <label
+                htmlFor="photo-block-name"
+                className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]"
+              >
+                Block Name *
+              </label>
               <input
                 id="photo-block-name"
                 type="text"
@@ -713,7 +730,12 @@ export function SimplePhotoBlockUpload({
               />
             </div>
             <div>
-              <label htmlFor="photo-block-category" className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]">Category</label>
+              <label
+                htmlFor="photo-block-category"
+                className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]"
+              >
+                Category
+              </label>
               <input
                 id="photo-block-category"
                 type="text"
@@ -725,7 +747,12 @@ export function SimplePhotoBlockUpload({
               />
             </div>
             <div className="col-span-2">
-              <label htmlFor="photo-block-tags" className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]">Tags</label>
+              <label
+                htmlFor="photo-block-tags"
+                className="mb-1 block text-[14px] leading-[20px] font-medium text-[var(--color-text-dim)]"
+              >
+                Tags
+              </label>
               <input
                 id="photo-block-tags"
                 type="text"

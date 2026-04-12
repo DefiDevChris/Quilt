@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { Canvas as FabricCanvas } from 'fabric';
 
 interface HistoryEntry {
@@ -13,6 +14,7 @@ interface HistoryEntry {
 export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
  const undoStack = useCanvasStore((s) => s.undoStack);
  const [baseTimestamp] = useState(() => Date.now());
+ const { getCanvas } = useCanvasContext();
 
  const entries: HistoryEntry[] = useMemo(
  () =>
@@ -24,7 +26,7 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
  );
 
  const jumpToState = (index: number) => {
- const fabricCanvas = useCanvasStore.getState().fabricCanvas;
+ const fabricCanvas = getCanvas();
  if (!fabricCanvas) return;
 
  const canvas = fabricCanvas as FabricCanvas;

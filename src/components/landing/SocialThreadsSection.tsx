@@ -1,8 +1,5 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 // Real screenshot-like mockup using actual app styling
 function SocialThreadsScreenshot() {
@@ -28,8 +25,8 @@ function SocialThreadsScreenshot() {
                 </div>
               </div>
               <p className="text-default mb-3 text-sm leading-relaxed">
-                Finally finished my Ohio Star quilt! The per-patch fabric assignment helped me position the
-                center motifs perfectly.
+                Finally finished my Ohio Star quilt! The per-patch fabric assignment helped me
+                position the center motifs perfectly.
               </p>
               <div className="rounded-lg border border-default mb-3 overflow-hidden">
                 <Image
@@ -190,10 +187,6 @@ export default function SocialThreadsSection() {
       id="social-threads"
       className="px-6 lg:px-12 py-16 lg:py-24 bg-default relative overflow-hidden"
     >
-      {/* Decorative quilt-piece backgrounds — massive, very spread, high opacity, charcoal stitches, flush */}
-      <QuiltPiece color="secondary" size={900} rotation={0} top={-350} right={-300} opacity={30} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
-      <QuiltPiece color="accent" size={800} rotation={0} bottom={-300} left={-200} opacity={32} strokeWidth={5} stitchGap={16} stitchColor="var(--color-text)" />
-
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left - Text content */}
@@ -203,9 +196,7 @@ export default function SocialThreadsSection() {
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Connect With Quilters
-              <span className="block text-primary">
-                Who Get It
-              </span>
+              <span className="block text-primary">Who Get It</span>
             </h2>
 
             <p className="text-[18px] leading-[28px] text-dim mt-4 leading-relaxed">
@@ -266,7 +257,7 @@ export default function SocialThreadsSection() {
                   </svg>
                 }
                 title="Discover Trends"
-                description="See what&apos;s popular and find new techniques to try"
+                description="See what's popular and find new techniques to try"
               />
               <FeatureCard
                 icon={

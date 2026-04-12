@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
 import { TiptapRenderer } from '@/components/editor/TiptapRenderer';
+import { COLORS } from '@/lib/design-system';
 
 interface BlogPostFormData {
   title: string;
@@ -214,7 +215,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-default mb-2">
-            Title <span className="text-red-600">*</span>
+            Title <span style={{ color: COLORS.error }}>*</span>
           </label>
           <input
             type="text"
@@ -260,7 +261,8 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   type="button"
                   aria-label="Remove cover image"
                   onClick={() => setFormData((prev) => ({ ...prev, featuredImageUrl: '' }))}
-                  className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-150"
+                  className="absolute top-2 right-2 p-1.5 text-white rounded-full hover:opacity-90 transition-colors duration-150"
+                  style={{ backgroundColor: COLORS.error }}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -422,7 +424,8 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   <button
                     type="button"
                     onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-red-600 transition-colors duration-150"
+                    className="hover:opacity-80 transition-colors duration-150"
+                    style={{ color: COLORS.error }}
                   >
                     x
                   </button>

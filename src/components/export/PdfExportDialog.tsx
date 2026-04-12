@@ -4,10 +4,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { generatePatternPdf, type PaperSize } from '@/lib/pdf-generator';
+import { useCanvasContext } from '@/contexts/CanvasContext';
+import { generatePatternPdf, generateCutListPdf, generateProjectPdf, type PaperSize, type ProjectPdfConfig } from '@/lib/pdf-engine';
 import { downloadPdf } from '@/lib/dom-utils';
-import { generateCutListPdf } from '@/lib/cutlist-pdf-engine';
-import { generateProjectPdf, type ProjectPdfConfig } from '@/lib/project-pdf-engine';
 import { captureCanvasPng, extractBlocksFromCanvas } from '@/lib/canvas-snapshot';
 import { sanitizeFilename } from '@/lib/string-utils';
 import { ExportDialogShell } from './ExportDialogShell';
@@ -43,7 +42,8 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const printScale = useCanvasStore((s) => s.printScale);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
 
   const [exportMode, setExportMode] = useState<ExportMode>('pattern-pieces');
   const [isGenerating, setIsGenerating] = useState(false);

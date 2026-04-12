@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useFabricLayout } from '@/hooks/useFabricLayout';
-import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 
 interface LayoutState {
   scaleX: number;
@@ -24,7 +24,8 @@ const DEFAULT_STATE: LayoutState = {
 
 export function LayoutAdjuster() {
   const { updatePatternTransform, getPatternInfo } = useFabricLayout();
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const [state, setState] = useState<LayoutState>(DEFAULT_STATE);
 
   // Refresh pattern info when selection changes

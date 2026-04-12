@@ -1,5 +1,3 @@
-'use client';
-
 export function PostSkeleton({ viewMode = 'full' }: { viewMode?: 'full' | 'grid' }) {
   if (viewMode === 'grid') {
     return (

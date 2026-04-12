@@ -2,12 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants';
 import { saveProject, cancelSaveProject } from '@/lib/save-project';
 
 export function useAutoSave() {
-  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {

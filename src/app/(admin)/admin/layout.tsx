@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { SectionTitle } from '@/components/ui/SectionTitle';
+import { COLORS, withAlpha } from '@/lib/design-system';
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
@@ -69,7 +70,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden"
-          style={{ backgroundColor: 'rgba(26, 26, 26, 0.3)' }}
+          style={{ backgroundColor: withAlpha(COLORS.text, 0.3) }}
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -102,7 +103,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 ? 'text-primary'
                 : 'text-dim hover:text-default hover:bg-default'
                 }`}
-              style={isActive(item.href) ? { backgroundColor: 'rgba(255, 141, 73, 0.1)' } : undefined}
+              style={isActive(item.href) ? { backgroundColor: withAlpha(COLORS.primary, 0.1) } : undefined}
             >
               {ICONS[item.icon]}
               {item.label}

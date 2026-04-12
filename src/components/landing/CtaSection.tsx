@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import Mascot from './Mascot';
 import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
