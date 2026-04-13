@@ -65,30 +65,6 @@ test.describe('Auth Pages', () => {
   });
 });
 
-test.describe('Community Page', () => {
-  test('community page loads', async ({ page }) => {
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
-  });
-
-  test('community page has tabs', async ({ page }) => {
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: 'Feed' })).toBeVisible();
-  });
-
-  test('discover tab shows posts', async ({ page }) => {
-    await page.goto('/socialthreads');
-    const posts = page.locator('[data-testid="community-post"]');
-    const count = await posts.count();
-    expect(count).toBeGreaterThanOrEqual(0);
-  });
-
-  test('saved tab is accessible', async ({ page }) => {
-    await page.goto('/socialthreads?tab=saved');
-    await expect(page).toHaveURL(/tab=saved/);
-  });
-});
-
 test.describe('Protected Routes', () => {
   test('dashboard redirects to sign in when not authenticated', async ({ page }) => {
     await page.goto('/dashboard');

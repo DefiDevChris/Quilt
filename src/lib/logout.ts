@@ -2,16 +2,11 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
-import { useCommunityStore } from '@/stores/communityStore';
-import { useCommentStore } from '@/stores/commentStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useNotificationStore } from '@/stores/notificationStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
-import { useProfileStore } from '@/stores/profileStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCartStore } from '@/stores/cartStore';
-import { useSocialQuickView } from '@/stores/socialQuickViewStore';
 import { usePhotoDesignStore } from '@/stores/photoDesignStore';
 
 /**
@@ -40,15 +35,10 @@ export async function logout(): Promise<void> {
   useProjectStore.getState().reset();
   useCanvasStore.getState().reset();
   useBlockStore.getState().reset();
-  useCommunityStore.getState().reset();
-  useCommentStore.getState().reset();
   useFabricStore.getState().reset();
-  useNotificationStore.getState().reset();
   usePrintlistStore.getState().reset();
-  useProfileStore.getState().reset();
   useYardageStore.getState().reset();
   useLayoutStore.getState().reset();
   useCartStore.getState().reset();
-  useSocialQuickView.getState().reset();
   usePhotoDesignStore.getState().reset();
 }

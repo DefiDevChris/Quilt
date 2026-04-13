@@ -85,12 +85,12 @@ test.describe('Block Library Buttons', () => {
     if (await blocksBtn.isVisible()) {
       await blocksBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const traditionalBtn = page.getByRole('button', { name: /traditional/i });
       if (await traditionalBtn.isVisible()) {
         await traditionalBtn.click();
       }
-      
+
       const modernBtn = page.getByRole('button', { name: /modern/i });
       if (await modernBtn.isVisible()) {
         await modernBtn.click();
@@ -103,11 +103,11 @@ test.describe('Block Library Buttons', () => {
     if (await blocksBtn.isVisible()) {
       await blocksBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const searchInput = page.getByPlaceholder(/search/i);
       if (await searchInput.isVisible()) {
         await searchInput.fill('test');
-        
+
         const clearBtn = page.getByRole('button', { name: /clear/i });
         if (await clearBtn.isVisible()) {
           await clearBtn.click();
@@ -129,7 +129,7 @@ test.describe('Fabric Library Buttons', () => {
     if (await fabricsBtn.isVisible()) {
       await fabricsBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const collectionBtn = page.locator('[data-testid="fabric-collection"]').first();
       if (await collectionBtn.isVisible()) {
         await collectionBtn.click();
@@ -142,7 +142,7 @@ test.describe('Fabric Library Buttons', () => {
     if (await fabricsBtn.isVisible()) {
       await fabricsBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const calibrateBtn = page.getByRole('button', { name: /calibrate/i });
       if (await calibrateBtn.isVisible()) {
         await calibrateBtn.click();
@@ -155,7 +155,7 @@ test.describe('Fabric Library Buttons', () => {
     if (await fabricsBtn.isVisible()) {
       await fabricsBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const uploadBtn = page.getByRole('button', { name: /upload/i });
       if (await uploadBtn.isVisible()) {
         await uploadBtn.click();
@@ -176,7 +176,7 @@ test.describe('Export Dialog Buttons', () => {
     if (await exportBtn.isVisible()) {
       await exportBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const pdfBtn = page.getByRole('button', { name: /pdf/i });
       if (await pdfBtn.isVisible()) {
         await pdfBtn.click();
@@ -189,7 +189,7 @@ test.describe('Export Dialog Buttons', () => {
     if (await exportBtn.isVisible()) {
       await exportBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const pngBtn = page.getByRole('button', { name: /png/i });
       if (await pngBtn.isVisible()) {
         await pngBtn.click();
@@ -202,7 +202,7 @@ test.describe('Export Dialog Buttons', () => {
     if (await exportBtn.isVisible()) {
       await exportBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const svgBtn = page.getByRole('button', { name: /svg/i });
       if (await svgBtn.isVisible()) {
         await svgBtn.click();
@@ -215,71 +215,11 @@ test.describe('Export Dialog Buttons', () => {
     if (await exportBtn.isVisible()) {
       await exportBtn.click();
       await page.waitForTimeout(1000);
-      
+
       const fppBtn = page.getByRole('button', { name: /fpp/i });
       if (await fppBtn.isVisible()) {
         await fppBtn.click();
       }
-    }
-  });
-});
-
-test.describe('Community Buttons', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
-    await page.goto('/socialthreads');
-    await page.waitForTimeout(2000);
-  });
-
-  test('create post button', async ({ page }) => {
-    const createBtn = page.getByRole('button', { name: /create post/i });
-    if (await createBtn.isVisible()) {
-      await createBtn.click();
-    }
-  });
-
-  test('like button', async ({ page }) => {
-    const likeBtn = page.getByRole('button', { name: /like/i }).first();
-    if (await likeBtn.isVisible()) {
-      await likeBtn.click();
-    }
-  });
-
-  test('save button', async ({ page }) => {
-    const saveBtn = page.getByRole('button', { name: /save/i }).first();
-    if (await saveBtn.isVisible()) {
-      await saveBtn.click();
-    }
-  });
-
-  test('comment button', async ({ page }) => {
-    const commentBtn = page.getByRole('button', { name: /comment/i }).first();
-    if (await commentBtn.isVisible()) {
-      await commentBtn.click();
-    }
-  });
-
-  test('share button', async ({ page }) => {
-    const shareBtn = page.getByRole('button', { name: /share/i }).first();
-    if (await shareBtn.isVisible()) {
-      await shareBtn.click();
-    }
-  });
-
-  test('tab buttons', async ({ page }) => {
-    const discoverTab = page.getByRole('tab', { name: /discover/i });
-    if (await discoverTab.isVisible()) {
-      await discoverTab.click();
-    }
-    
-    const savedTab = page.getByRole('tab', { name: /saved/i });
-    if (await savedTab.isVisible()) {
-      await savedTab.click();
-    }
-    
-    const trendingTab = page.getByRole('tab', { name: /trending/i });
-    if (await trendingTab.isVisible()) {
-      await trendingTab.click();
     }
   });
 });

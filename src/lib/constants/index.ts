@@ -9,7 +9,6 @@ export * from './pdf';
 export * from './pricing';
 export * from './pagination';
 export * from './fabrics';
-export * from './social';
 
 // ── Miscellaneous / cross-cutting ──
 
@@ -21,6 +20,9 @@ export const ONBOARDING_STORAGE_KEY = 'quilt-studio-onboarding-completed';
 
 /** Tooltip show delay in milliseconds */
 export const TOOLTIP_DELAY_MS = 400;
+
+/** Support email address */
+export const SUPPORT_EMAIL = 'support@quiltcorgi.com';
 
 /** Photo pattern pipeline constraints */
 export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB

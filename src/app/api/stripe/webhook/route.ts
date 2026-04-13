@@ -5,19 +5,8 @@ import { Redis } from '@upstash/redis';
 import { db } from '@/lib/db';
 import { subscriptions, users } from '@/db/schema';
 import { getStripe } from '@/lib/stripe';
-import { createNotification } from '@/lib/create-notification';
 
 export const dynamic = 'force-dynamic';
-
-// Fire-and-forget notification wrapper - notification failures should not
-// fail the webhook handler (which would cause Stripe to retry repeatedly)
-async function sendSafeNotification(params: Parameters<typeof createNotification>[0]) {
-  try {
-    await createNotification(params);
-  } catch (error) {
-    console.error('Failed to send notification:', error);
-  }
-}
 
 // Redis-based deduplication for webhook event IDs using SETNX.
 // Ensures each Stripe event.id is processed exactly once across all instances.
@@ -151,13 +140,6 @@ async function handleCheckoutCompleted(checkoutSession: Stripe.Checkout.Session)
   // upsertSubscription uses ON CONFLICT (idempotent), syncUserRole is a simple UPDATE
   await upsertSubscription(userId, customerId, stripeSubscription);
   await syncUserRole(userId, 'pro');
-
-  await sendSafeNotification({
-    userId,
-    type: 'subscription_activated',
-    title: 'Welcome to Pro!',
-    message: 'Your Pro subscription is now active. You have access to all QuiltCorgi features.',
-  });
 }
 
 async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
@@ -165,22 +147,13 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   const userId = await getUserIdFromCustomerId(customerId);
   if (!userId) return;
 
-  const updated = await upsertSubscription(userId, customerId, sub);
+  await upsertSubscription(userId, customerId, sub);
 
   if (sub.status === 'active' && !sub.cancel_at_period_end) {
     await syncUserRole(userId, 'pro');
   } else if (sub.cancel_at_period_end) {
     // User canceled but still has access until period end — keep Pro
     await syncUserRole(userId, 'pro');
-  }
-
-  if (sub.cancel_at_period_end && updated.status === 'active') {
-    await sendSafeNotification({
-      userId,
-      type: 'subscription_canceled',
-      title: 'Subscription canceling',
-      message: `Your Pro subscription will end on ${new Date((sub.items.data[0]?.current_period_end ?? 0) * 1000).toLocaleDateString()}. You'll retain Pro access until then.`,
-    });
   }
 }
 
@@ -203,14 +176,6 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
 
     await tx.update(users).set({ role: 'free', updatedAt: new Date() }).where(eq(users.id, userId));
   });
-
-  await sendSafeNotification({
-    userId,
-    type: 'subscription_canceled',
-    title: 'Pro subscription ended',
-    message:
-      'Your Pro subscription has ended. You can upgrade again anytime from the billing page.',
-  });
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
@@ -230,21 +195,8 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   }
 }
 
-async function handleTrialWillEnd(sub: Stripe.Subscription) {
-  const customerId = sub.customer as string;
-  const userId = await getUserIdFromCustomerId(customerId);
-  if (!userId) return;
-
-  const trialEnd = sub.trial_end ? new Date(sub.trial_end * 1000) : null;
-
-  await sendSafeNotification({
-    userId,
-    type: 'trial_ending',
-    title: 'Trial ending soon',
-    message: trialEnd
-      ? `Your Pro trial ends on ${trialEnd.toLocaleDateString()}. Add a payment method to keep your Pro features.`
-      : 'Your Pro trial is ending soon. Add a payment method to keep your Pro features.',
-  });
+async function handleTrialWillEnd(_sub: Stripe.Subscription) {
+  // No-op: trial ending acknowledged but no in-app notification system
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -259,15 +211,6 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       updatedAt: new Date(),
     })
     .where(eq(subscriptions.userId, userId));
-
-  await sendSafeNotification({
-    userId,
-    type: 'payment_failed',
-    title: 'Payment failed',
-    message:
-      'We were unable to process your payment. Please update your payment method within 7 days to keep your Pro access.',
-    metadata: { invoiceId: invoice.id },
-  });
 }
 
 export async function POST(request: NextRequest) {

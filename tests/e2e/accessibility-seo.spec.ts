@@ -6,7 +6,7 @@ test.describe('Accessibility - WCAG Compliance', () => {
     await page.goto('/');
     const nav = page.locator('nav');
     await expect(nav).toBeVisible();
-    
+
     const main = page.locator('main');
     await expect(main).toBeVisible();
   });
@@ -30,7 +30,7 @@ test.describe('Accessibility - WCAG Compliance', () => {
     const count = await buttons.count();
     for (let i = 0; i < Math.min(count, 5); i++) {
       const button = buttons.nth(i);
-      const name = await button.getAttribute('aria-label') || await button.textContent();
+      const name = (await button.getAttribute('aria-label')) || (await button.textContent());
       expect(name).toBeTruthy();
     }
   });
@@ -63,16 +63,16 @@ test.describe('Accessibility - WCAG Compliance', () => {
 
 test.describe('SEO Optimization', () => {
   test('all pages have unique titles', async ({ page }) => {
-    const pages = ['/', '/blog', '/socialthreads', '/auth/signin'];
+    const pages = ['/', '/blog', '/auth/signin'];
     const titles = new Set();
-    
+
     for (const route of pages) {
       await page.goto(route);
       const title = await page.title();
       expect(title).toBeTruthy();
       titles.add(title);
     }
-    
+
     expect(titles.size).toBe(pages.length);
   });
 
@@ -87,14 +87,14 @@ test.describe('SEO Optimization', () => {
     const ogTitle = page.locator('meta[property="og:title"]');
     const ogDesc = page.locator('meta[property="og:description"]');
     const ogImage = page.locator('meta[property="og:image"]');
-    
-    if (await ogTitle.count() > 0) {
+
+    if ((await ogTitle.count()) > 0) {
       await expect(ogTitle).toHaveAttribute('content', /.+/);
     }
-    if (await ogDesc.count() > 0) {
+    if ((await ogDesc.count()) > 0) {
       await expect(ogDesc).toHaveAttribute('content', /.+/);
     }
-    if (await ogImage.count() > 0) {
+    if ((await ogImage.count()) > 0) {
       await expect(ogImage).toHaveAttribute('content', /.+/);
     }
   });
@@ -102,7 +102,7 @@ test.describe('SEO Optimization', () => {
   test('Twitter Card tags are present', async ({ page }) => {
     await page.goto('/');
     const twitterCard = page.locator('meta[name="twitter:card"]');
-    if (await twitterCard.count() > 0) {
+    if ((await twitterCard.count()) > 0) {
       await expect(twitterCard).toHaveAttribute('content', /.+/);
     }
   });
@@ -110,7 +110,7 @@ test.describe('SEO Optimization', () => {
   test('canonical URLs are set', async ({ page }) => {
     await page.goto('/');
     const canonical = page.locator('link[rel="canonical"]');
-    if (await canonical.count() > 0) {
+    if ((await canonical.count()) > 0) {
       await expect(canonical).toHaveAttribute('href', /.+/);
     }
   });
@@ -126,7 +126,7 @@ test.describe('SEO Optimization', () => {
     await page.goto('/');
     const images = page.locator('img');
     const count = await images.count();
-    
+
     for (let i = 0; i < Math.min(count, 10); i++) {
       const img = images.nth(i);
       const alt = await img.getAttribute('alt');
@@ -155,13 +155,11 @@ test.describe('Performance Metrics', () => {
         errors.push(msg.text());
       }
     });
-    
+
     await page.goto('/');
     await page.waitForTimeout(2000);
-    
-    const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404')
-    );
+
+    const criticalErrors = errors.filter((e) => !e.includes('favicon') && !e.includes('404'));
     expect(criticalErrors.length).toBe(0);
   });
 
@@ -172,13 +170,11 @@ test.describe('Performance Metrics', () => {
         errors.push(msg.text());
       }
     });
-    
+
     await page.goto('/blog');
     await page.waitForTimeout(2000);
-    
-    const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404')
-    );
+
+    const criticalErrors = errors.filter((e) => !e.includes('favicon') && !e.includes('404'));
     expect(criticalErrors.length).toBe(0);
   });
 
@@ -186,7 +182,7 @@ test.describe('Performance Metrics', () => {
     await page.goto('/');
     const images = page.locator('img');
     const count = await images.count();
-    
+
     for (let i = 0; i < Math.min(count, 5); i++) {
       const img = images.nth(i);
       const src = await img.getAttribute('src');
@@ -201,7 +197,7 @@ test.describe('Mobile Accessibility', () => {
       await page.goto('/');
       const buttons = page.getByRole('button');
       const count = await buttons.count();
-      
+
       for (let i = 0; i < Math.min(count, 5); i++) {
         const button = buttons.nth(i);
         const box = await button.boundingBox();

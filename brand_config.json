@@ -312,9 +312,9 @@
         "route": "/",
         "status": "live",
         "last_updated": "2026-04-10",
-        "purpose": "Homepage marketing — hero, features, workspace preview, capabilities, community preview, CTA",
+        "purpose": "Homepage marketing — hero, features, workspace preview, capabilities, CTA",
         "layout": "Full-width with PublicNav header and Footer",
-        "components": ["PublicNav", "HeroSection", "FeatureHighlights", "WorkspacePreview", "CoreCapabilities", "SocialThreadsSection", "CtaSection", "Footer"],
+        "components": ["PublicNav", "HeroSection", "FeatureHighlights", "WorkspacePreview", "CoreCapabilities", "CtaSection", "Footer"],
         "images": ["/og-image.png", "/logo.png"],
         "icons": [],
         "graphics": [],
@@ -555,19 +555,6 @@
         "consistency_notes": "REMEDIATED — animate-spin rounded-full replaced with animate-pulse rounded-lg bg-[#ffc8a6]."
       },
       {
-        "page": "social-threads",
-        "route": "/socialthreads",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Community social feed",
-        "layout": "ResponsiveShell with SocialFeedPage",
-        "components": ["SocialFeedPage", "FeedContent", "CreatePostComposer", "SocialLayout"],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — animate-spin on loading replaced with animate-pulse. SocialFeedPage, FeedContent, PostDetail, CreatePostComposer, SocialLayout fixed: Material tokens replaced, rounded-full on cards/containers→rounded-lg (buttons keep rounded-full per brand spec), shadow-elevation removed."
-      },
-      {
         "page": "blog",
         "route": "/blog",
         "status": "live",
@@ -722,32 +709,6 @@
         "icons": [],
         "graphics": [],
         "consistency_notes": "CLEAN — zero brand violations. Already compliant."
-      },
-      {
-        "page": "social-post-detail",
-        "route": "/socialthreads/[postId]",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Individual social post detail view",
-        "layout": "Within SocialLayout",
-        "components": ["PostDetail"],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — bg-neutral→bg-[#fdfaf7], border-neutral-200→border-[#e8e1da], rounded-full on cards/containers→rounded-lg (buttons keep rounded-full per brand spec), bg-primary/*→bg-[#ff8d49]/*."
-      },
-      {
-        "page": "members-profile",
-        "route": "/members/[username]",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Member profile page — public quilter profile",
-        "layout": "Full-width with PublicNav + Footer",
-        "components": [],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "CLEAN — zero Tailwind violations. Already brand-compliant."
       },
       {
         "page": "quick-start-workflows",

@@ -81,7 +81,13 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
             setError('Add shapes to the printlist first.');
             return;
           }
-          pdfBytes = await generatePatternPdf(items, paperSize, printScale, logoPng);
+          const config: import('@/lib/pdf-engine').PatternPdfConfig = {
+            items,
+            paperSize,
+            scale: printScale,
+            logoPngBytes: logoPng,
+          };
+          pdfBytes = await generatePatternPdf(config);
           filename = `${safeName}-pattern.pdf`;
           break;
         }
@@ -93,7 +99,14 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
           }
           // Extract blocks for key block page labels
           const cutlistBlocks = await extractBlocksFromCanvas(fabricCanvas);
-          pdfBytes = await generateCutListPdf(items, paperSize, unitSystem, logoPng, cutlistBlocks);
+          const config: import('@/lib/pdf-engine').CutlistPdfConfig = {
+            items,
+            paperSize,
+            unitSystem,
+            logoPng: logoPng,
+            blocks: cutlistBlocks,
+          };
+          pdfBytes = await generateCutListPdf(config);
           filename = `${safeName}-cutlist.pdf`;
           break;
         }

@@ -13,8 +13,6 @@ export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'trialing',
 ]);
 
-// Phase 17: Community, Profiles & Blog
-export const commentStatusEnum = pgEnum('comment_status', ['visible', 'hidden', 'deleted']);
 export const blogPostStatusEnum = pgEnum('blog_post_status', ['draft', 'published', 'archived']);
 export const blogPostCategoryEnum = pgEnum('blog_post_category', [
   'Product Updates',

@@ -5,14 +5,14 @@ test.describe('End-to-End User Flows', () => {
   test('complete signup to project creation flow', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    
+
     const signupLink = page.getByRole('link', { name: /start designing free/i }).first();
     await expect(signupLink).toHaveAttribute('href', '/auth/signup');
   });
 
   test('unauthenticated user redirected from protected routes', async ({ page }) => {
     const protectedRoutes = ['/dashboard', '/studio/test', '/projects', '/settings'];
-    
+
     for (const route of protectedRoutes) {
       await page.goto(route);
       await page.waitForURL(/signin/, { timeout: 10000 });
@@ -22,15 +22,12 @@ test.describe('End-to-End User Flows', () => {
 
   test('authenticated user can navigate app', async ({ page }) => {
     await mockAuth(page, 'pro');
-    
+
     await page.goto('/dashboard');
     await expect(page.getByText(/new design/i)).toBeVisible({ timeout: 10000 });
-    
+
     await page.goto('/projects');
     await expect(page.getByPlaceholder(/search/i)).toBeVisible({ timeout: 10000 });
-    
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
   });
 });
 
@@ -43,10 +40,10 @@ test.describe('Project Lifecycle', () => {
   test('create, edit, and save project', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForTimeout(2000);
-    
+
     await page.goto('/studio/test-project-1');
     await expect(page.locator('canvas')).toBeVisible({ timeout: 10000 });
-    
+
     await page.keyboard.press('Control+S');
     await page.waitForTimeout(1000);
   });
@@ -54,37 +51,12 @@ test.describe('Project Lifecycle', () => {
   test('project auto-saves changes', async ({ page }) => {
     await page.goto('/studio/test-project-1');
     await expect(page.locator('canvas')).toBeVisible({ timeout: 10000 });
-    
+
     await page.waitForTimeout(3000);
     const saved = page.getByText(/saved/i);
     if (await saved.isVisible({ timeout: 15000 })) {
       await expect(saved).toBeVisible();
     }
-  });
-});
-
-test.describe('Community Engagement Flow', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
-  });
-
-  test('browse and interact with community posts', async ({ page }) => {
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
-    
-    await page.goto('/socialthreads?tab=trending');
-    await expect(page).toHaveURL(/tab=trending/);
-    
-    await page.goto('/socialthreads?tab=saved');
-    await expect(page).toHaveURL(/tab=saved/);
-  });
-
-  test('navigate between community and blog', async ({ page }) => {
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
-    
-    await page.goto('/blog');
-    await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
   });
 });
 
@@ -97,7 +69,7 @@ test.describe('Design Workflow', () => {
   test('complete design workflow', async ({ page }) => {
     await page.goto('/studio/test-project-1');
     await expect(page.locator('canvas')).toBeVisible({ timeout: 10000 });
-    
+
     await page.keyboard.press('Control+A');
     await page.keyboard.press('Control+C');
     await page.keyboard.press('Control+V');
@@ -108,12 +80,12 @@ test.describe('Design Workflow', () => {
   test('worktable switching preserves state', async ({ page }) => {
     await page.goto('/studio/test-project-1');
     await expect(page.getByText(/worktable/i)).toBeVisible({ timeout: 10000 });
-    
+
     const tab2 = page.getByRole('tab', { name: /worktable 2/i });
     if (await tab2.isVisible()) {
       await tab2.click();
       await page.waitForTimeout(1000);
-      
+
       const tab1 = page.getByRole('tab', { name: /worktable 1/i });
       await tab1.click();
     }
@@ -129,7 +101,7 @@ test.describe('Export Workflow', () => {
   test('export options are available', async ({ page }) => {
     await page.goto('/studio/test-project-1');
     await expect(page.locator('canvas')).toBeVisible({ timeout: 10000 });
-    
+
     const exportButton = page.getByRole('button', { name: /export/i });
     if (await exportButton.isVisible()) {
       await exportButton.click();
@@ -146,10 +118,7 @@ test.describe('Mobile Responsive Flow', () => {
     if (isMobile) {
       await page.goto('/');
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-      
-      await page.goto('/socialthreads');
-      await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
-      
+
       await page.goto('/blog');
       await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
     }
@@ -175,7 +144,7 @@ test.describe('Admin Workflow', () => {
   test('admin can access all admin features', async ({ page }) => {
     await page.goto('/admin');
     await expect(page.getByText(/admin|moderation/i)).toBeVisible({ timeout: 10000 });
-    
+
     await page.goto('/admin/moderation');
     await expect(page.getByText(/moderation|posts/i)).toBeVisible({ timeout: 10000 });
   });
@@ -217,11 +186,8 @@ test.describe('Cross-Browser Compatibility', () => {
   test('app works in all browsers', async ({ page, browserName }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    
+
     await page.goto('/blog');
     await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
-    
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
   });
 });

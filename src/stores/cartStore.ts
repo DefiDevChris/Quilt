@@ -129,10 +129,14 @@ export const useCartStore = create<CartState>((set, get) => ({
   clearCart: async () => {
     const state = get();
 
-    // Clear Shopify cart if it exists
+    // Clear Shopify cart lines if cart exists
     if (state.shopifyCartId && isShopifyEnabled()) {
       try {
-        await cartLinesRemove(state.shopifyCartId, []);
+        const shopifyCart = await getCart(state.shopifyCartId);
+        if (shopifyCart && shopifyCart.lines.length > 0) {
+          const lineIds = shopifyCart.lines.map((line) => line.id);
+          await cartLinesRemove(state.shopifyCartId, lineIds);
+        }
       } catch (error) {
         console.warn('Failed to clear Shopify cart:', error);
       }

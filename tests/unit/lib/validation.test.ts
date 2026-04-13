@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { createProjectSchema, updateProjectSchema, paginationSchema, notificationQuerySchema, updateProfileSchema } from '@/lib/validation';
+import {
+  createProjectSchema,
+  updateProjectSchema,
+  paginationSchema,
+  updateProfileSchema,
+} from '@/lib/validation';
 
 describe('createProjectSchema', () => {
   it('accepts valid input with defaults', () => {
@@ -103,43 +108,11 @@ describe('paginationSchema', () => {
   });
 });
 
-describe('notificationQuerySchema', () => {
-  it('transforms string "true" to boolean true', () => {
-    const result = notificationQuerySchema.parse({ unreadOnly: 'true' });
-    expect(result.unreadOnly).toBe(true);
-  });
-
-  it('transforms undefined unreadOnly to false', () => {
-    const result = notificationQuerySchema.parse({});
-    expect(result.unreadOnly).toBe(false);
-  });
-
-  it('provides default limit', () => {
-    const result = notificationQuerySchema.parse({});
-    expect(result.limit).toBe(20);
-  });
-
-  it('accepts valid limit', () => {
-    const result = notificationQuerySchema.parse({ limit: 10 });
-    expect(result.limit).toBe(10);
-  });
-
-  it('rejects limit below minimum', () => {
-    const result = notificationQuerySchema.safeParse({ limit: 0 });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects limit above maximum', () => {
-    const result = notificationQuerySchema.safeParse({ limit: 51 });
-    expect(result.success).toBe(false);
-  });
-});
-
 describe('updateProfileSchema', () => {
   it('accepts valid websiteUrl with https', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      websiteUrl: 'https://example.com'
+      websiteUrl: 'https://example.com',
     });
     expect(result.success).toBe(true);
   });
@@ -147,7 +120,7 @@ describe('updateProfileSchema', () => {
   it('rejects websiteUrl without https', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      websiteUrl: 'http://example.com'
+      websiteUrl: 'http://example.com',
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe('Website URL must use https.');
@@ -156,7 +129,7 @@ describe('updateProfileSchema', () => {
   it('rejects invalid websiteUrl', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      websiteUrl: 'not-a-url'
+      websiteUrl: 'not-a-url',
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe('Website URL must use https.');
@@ -164,7 +137,7 @@ describe('updateProfileSchema', () => {
 
   it('accepts undefined websiteUrl', () => {
     const result = updateProfileSchema.safeParse({
-      displayName: 'Test User'
+      displayName: 'Test User',
     });
     expect(result.success).toBe(true);
   });
@@ -172,7 +145,7 @@ describe('updateProfileSchema', () => {
   it('accepts valid username', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      username: 'testuser123'
+      username: 'testuser123',
     });
     expect(result.success).toBe(true);
   });
@@ -180,7 +153,7 @@ describe('updateProfileSchema', () => {
   it('rejects username too short', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      username: 'ab'
+      username: 'ab',
     });
     expect(result.success).toBe(false);
   });
@@ -188,25 +161,29 @@ describe('updateProfileSchema', () => {
   it('rejects username with uppercase', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      username: 'TestUser'
+      username: 'TestUser',
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe('Username must be lowercase alphanumeric with hyphens only');
+    expect(result.error?.issues[0]?.message).toBe(
+      'Username must be lowercase alphanumeric with hyphens only'
+    );
   });
 
   it('rejects username with invalid characters', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      username: 'test_user'
+      username: 'test_user',
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe('Username must be lowercase alphanumeric with hyphens only');
+    expect(result.error?.issues[0]?.message).toBe(
+      'Username must be lowercase alphanumeric with hyphens only'
+    );
   });
 
   it('accepts username with hyphens', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
-      username: 'test-user'
+      username: 'test-user',
     });
     expect(result.success).toBe(true);
   });

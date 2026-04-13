@@ -6,7 +6,6 @@ import {
   BLOCKS_PAGINATION_MAX_LIMIT,
   FABRICS_PAGINATION_DEFAULT_LIMIT,
   FABRICS_PAGINATION_MAX_LIMIT,
-  COMMUNITY_PAGINATION_DEFAULT_LIMIT,
   ACCEPTED_IMAGE_TYPES,
   MOBILE_UPLOADS_DEFAULT_LIMIT,
   MOBILE_UPLOADS_MAX_LIMIT,
@@ -177,38 +176,6 @@ export const presignedUrlSchema = z.object({
   purpose: z.enum(['fabric', 'thumbnail', 'export', 'block', 'mobile-upload']),
 });
 
-export const communitySearchSchema = z.object({
-  search: z.string().optional(),
-  sort: z.enum(['newest', 'popular']).default('newest'),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
-});
-
-export const createCommunityPostExtendedSchema = z.object({
-  projectId: z.string().uuid(),
-  title: z.string().min(1).max(100),
-  description: z.string().max(2000).optional(),
-  category: z.enum(['general', 'show-and-tell', 'wip', 'help', 'inspiration']).optional(),
-});
-
-export const createCommunityPostSimpleSchema = z.object({
-  title: z.string().min(1).max(255),
-  description: z.string().max(2000).optional(),
-  imageUrl: assetUrlSchema.optional(),
-  projectId: z.string().uuid().optional(),
-  category: z.enum(['general', 'show-and-tell', 'wip', 'help', 'inspiration']).default('general'),
-});
-
-export const createCommentSchema = z.object({
-  content: z.string().min(1).max(2000),
-  replyToId: z.string().uuid().optional(),
-});
-
-export const commentsPaginationSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
-});
-
 // Blog post category enum values matching the database
 export const BLOG_POST_CATEGORIES = [
   'Product Updates',
@@ -260,33 +227,6 @@ export const templateQuerySchema = z.object({
   skillLevel: z.enum(['beginner', 'confident-beginner', 'intermediate', 'advanced']).optional(),
   search: z.string().max(200).optional(),
   sort: z.enum(['popular', 'name', 'newest']).default('popular'),
-});
-
-// --- Community / Social Feed Schemas ---
-
-export const communityFeedSchema = z.object({
-  sort: z.enum(['newest', 'popular']).default('newest'),
-  search: z.string().optional(),
-  category: z.string().optional(),
-  creatorId: z.string().optional(),
-  tab: z.string().optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(48).default(COMMUNITY_PAGINATION_DEFAULT_LIMIT),
-});
-
-// --- Notification Schemas ---
-
-export const notificationQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
-  unreadOnly: z.preprocess((val) => {
-    if (val === 'true' || val === true) return true;
-    return false;
-  }, z.boolean().default(false)),
-});
-
-export const markNotificationsReadSchema = z.object({
-  notificationIds: z.union([z.literal('all'), z.array(z.string().uuid())]),
 });
 
 // --- Profile Schemas ---

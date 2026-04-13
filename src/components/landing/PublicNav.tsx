@@ -56,12 +56,6 @@ export default function PublicNav() {
             Features
           </a>
           <a
-            href="#social-threads"
-            className="text-dim hover:text-primary transition-colors duration-150 font-medium"
-          >
-            Social Threads
-          </a>
-          <a
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
@@ -136,13 +130,6 @@ export default function PublicNav() {
             onClick={() => setMenuOpen(false)}
           >
             Features
-          </a>
-          <a
-            href="#social-threads"
-            className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-            onClick={() => setMenuOpen(false)}
-          >
-            Social Threads
           </a>
           <a
             href="/blog"

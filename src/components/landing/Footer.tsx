@@ -52,23 +52,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Resources */}
           <div>
             <h4
               className="font-bold text-[var(--color-text)] mb-4 text-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Social
+              Resources
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <Link href="/socialthreads" className="hover:text-primary transition-colors duration-150">
-                  Gallery
+                <Link href="/blog" className="hover:text-primary transition-colors duration-150">
+                  Blog
                 </Link>
               </li>
               <li>
-                <Link href="/socialthreads" className="hover:text-primary transition-colors duration-150">
-                  Discussions
+                <Link href="/help" className="hover:text-primary transition-colors duration-150">
+                  Help Center
                 </Link>
               </li>
             </ul>
@@ -108,7 +108,9 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-[var(--color-text-dim)]">&copy; 2026 QuiltCorgi. All rights reserved.</p>
+          <p className="text-sm text-[var(--color-text-dim)]">
+            &copy; 2026 QuiltCorgi. All rights reserved.
+          </p>
           <div className="flex items-center gap-6 text-sm text-[var(--color-text-dim)]">
             <Link href="/privacy" className="hover:text-primary transition-colors duration-150">
               Privacy

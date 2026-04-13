@@ -50,17 +50,6 @@ test.describe('Dashboard', () => {
     await expect(page).toHaveURL('/projects');
   });
 
-  test('community link navigates to social threads', async ({ page }) => {
-    test.skip(true, 'Requires authenticated user');
-
-    await page.goto('/dashboard');
-
-    const communityLink = page.getByRole('link', { name: /community threads|social/i });
-    await communityLink.click();
-
-    await expect(page).toHaveURL('/socialthreads');
-  });
-
   test('profile link navigates to profile page', async ({ page }) => {
     test.skip(true, 'Requires authenticated user');
 

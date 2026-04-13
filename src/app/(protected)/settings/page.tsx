@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { ProfileEditForm } from '@/components/community/profiles/ProfileEditForm';
+import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
 import { BillingSection } from '@/components/billing/BillingSection';
 import { DeleteAccountSection } from '@/components/settings/DeleteAccountSection';
 import { PageHeader } from '@/components/ui/PageHeader';

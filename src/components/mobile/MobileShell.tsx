@@ -5,16 +5,12 @@ import Link from 'next/link';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import { MobileDrawer } from '@/components/mobile/MobileDrawer';
 import { UploadSheet } from '@/components/mobile/UploadSheet';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
-import { MobileNotifications } from '@/components/mobile/MobileNotifications';
-import { useNotificationStore } from '@/stores/notificationStore';
 import { useAuthStore } from '@/stores/authStore';
 
 export function MobileShell({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
-  const isNotificationsOpen = useNotificationStore((s) => s.isOpen);
 
   const isAuthenticated = !!user;
 
@@ -49,7 +45,7 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
           Quilt Studio
         </Link>
         {isAuthenticated ? (
-          <NotificationBell />
+          <div className="w-10 h-10" />
         ) : (
           <Link href="/auth/signin" className="text-sm font-medium text-primary hover:underline">
             Sign In
@@ -60,10 +56,7 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
       <MobileBottomNav onFabPress={handleFabPress} />
       <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
       {isAuthenticated && (
-        <>
-          <UploadSheet isOpen={uploadSheetOpen} onClose={() => setUploadSheetOpen(false)} />
-          {isNotificationsOpen && <MobileNotifications />}
-        </>
+        <UploadSheet isOpen={uploadSheetOpen} onClose={() => setUploadSheetOpen(false)} />
       )}
     </div>
   );

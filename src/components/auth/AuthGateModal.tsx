@@ -4,12 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AuthFormInner } from './AuthFormInner';
-import {
-  BrandedSplitPaneModal,
-  COLORS,
-  TYPOGRAPHY,
-  withAlpha,
-} from '@/lib/branded-modal';
+import { BrandedSplitPaneModal, COLORS, TYPOGRAPHY, withAlpha } from '@/lib/branded-modal';
 
 interface AuthGateModalProps {
   isOpen: boolean;
@@ -35,7 +30,7 @@ export function AuthGateModal({
             <Image src="/logo.png" alt="QuiltCorgi" fill className="object-contain" priority />
           </div>
         </div>
-        
+
         <h1
           className="font-bold mb-4 leading-tight"
           style={{
@@ -110,12 +105,12 @@ export function AuthGateModal({
         <p className="text-sm" style={{ color: COLORS.textDim }}>
           Want to explore first?{' '}
           <Link
-            href="/socialthreads"
+            href="/shop"
             onClick={onClose}
             className="hover:underline font-medium"
             style={{ color: COLORS.primary }}
           >
-            Browse the community
+            Browse the shop
           </Link>
         </p>
       </div>

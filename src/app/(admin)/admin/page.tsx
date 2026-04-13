@@ -1,47 +1,43 @@
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema/blocks';
 import { blogPosts } from '@/db/schema/blogPosts';
-import { reports } from '@/db/schema/reports';
-import { socialPosts } from '@/db/schema/socialPosts';
 import { fabrics } from '@/db/schema/fabrics';
 import { mobileUploads } from '@/db/schema/mobileUploads';
 import { users } from '@/db/schema/users';
 import { count, eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION, withAlpha } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW, withAlpha } from '@/lib/design-system';
 
 async function getStats() {
-  const [blockCount, blogCount, reportCount, socialCount, fabricCount, userCount, pendingUploads] =
-    await Promise.all([
-      db.select({ count: count() }).from(blocks).then((r) => r[0]?.count ?? 0),
-      db
-        .select({ count: count() })
-        .from(blogPosts)
-        .where(eq(blogPosts.status, 'published'))
-        .then((r) => r[0]?.count ?? 0),
-      db
-        .select({ count: count() })
-        .from(reports)
-        .then((r) => r[0]?.count ?? 0),
-      db.select({ count: count() }).from(socialPosts).then((r) => r[0]?.count ?? 0),
-      db
-        .select({ count: count() })
-        .from(fabrics)
-        .where(eq(fabrics.isDefault, true))
-        .then((r) => r[0]?.count ?? 0),
-      db.select({ count: count() }).from(users).then((r) => r[0]?.count ?? 0),
-      db
-        .select({ count: count() })
-        .from(mobileUploads)
-        .where(eq(mobileUploads.status, 'pending'))
-        .then((r) => r[0]?.count ?? 0),
-    ]);
+  const [blockCount, blogCount, fabricCount, userCount, pendingUploads] = await Promise.all([
+    db
+      .select({ count: count() })
+      .from(blocks)
+      .then((r) => r[0]?.count ?? 0),
+    db
+      .select({ count: count() })
+      .from(blogPosts)
+      .where(eq(blogPosts.status, 'published'))
+      .then((r) => r[0]?.count ?? 0),
+    db
+      .select({ count: count() })
+      .from(fabrics)
+      .where(eq(fabrics.isDefault, true))
+      .then((r) => r[0]?.count ?? 0),
+    db
+      .select({ count: count() })
+      .from(users)
+      .then((r) => r[0]?.count ?? 0),
+    db
+      .select({ count: count() })
+      .from(mobileUploads)
+      .where(eq(mobileUploads.status, 'pending'))
+      .then((r) => r[0]?.count ?? 0),
+  ]);
 
   return {
     blockCount,
     blogCount,
-    reportCount,
-    socialCount,
     fabricCount,
     userCount,
     pendingUploads,
@@ -62,59 +58,36 @@ async function getRecentBlogPosts() {
   return posts;
 }
 
-async function getRecentSocialPosts() {
-  const { userProfiles } = await import('@/db/schema/userProfiles');
-  const rows = await db
-    .select({
-      id: socialPosts.id,
-      title: socialPosts.title,
-      likeCount: socialPosts.likeCount,
-      createdAt: socialPosts.createdAt,
-      displayName: userProfiles.displayName,
-    })
-    .from(socialPosts)
-    .leftJoin(userProfiles, eq(userProfiles.userId, socialPosts.userId))
-    .orderBy(desc(socialPosts.createdAt))
-    .limit(5);
-  return rows.map((r) => ({
-    ...r,
-    creatorName: r.displayName ?? 'Anonymous',
-  }));
-}
-
 export default async function AdminDashboardPage() {
   const stats = await getStats();
   const recentPosts = await getRecentBlogPosts();
-  const recentSocial = await getRecentSocialPosts();
 
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold text-[var(--color-text)]">Welcome back, Admin</h2>
-        <p className="text-sm text-[var(--color-text-dim)] mt-1">Here&apos;s what&apos;s happening with QuiltCorgi.</p>
+        <p className="text-sm text-[var(--color-text-dim)] mt-1">
+          Here&apos;s what&apos;s happening with QuiltCorgi.
+        </p>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="System Blocks" value={stats.blockCount} href="/admin/blocks" />
         <StatCard label="Published Posts" value={stats.blogCount} href="/admin/blog" />
-        <StatCard label="Pending Reports" value={stats.reportCount} href="/admin/moderation" />
         <StatCard label="System Fabrics" value={stats.fabricCount} href="/admin/libraries" />
+        <StatCard label="Total Users" value={stats.userCount} href="/admin/libraries" />
       </div>
 
       {/* Secondary stat row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatCard label="Social Posts" value={stats.socialCount} href="/admin/moderation" />
-        <StatCard label="Total Users" value={stats.userCount} href="/admin/moderation" />
+      <div className="grid grid-cols-2 gap-4">
         <StatCard label="Pending Uploads" value={stats.pendingUploads} href="/admin/libraries" />
       </div>
 
       {/* Quick actions */}
       <div>
-        <h3 className="text-sm font-semibold text-[var(--color-text-dim)] mb-4">
-          Quick Actions
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h3 className="text-sm font-semibold text-[var(--color-text-dim)] mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <QuickActionCard
             title="New Block"
             description="Add a system block to the library"
@@ -146,21 +119,6 @@ export default async function AdminDashboardPage() {
             }
           />
           <QuickActionCard
-            title="Moderate Social"
-            description="Review reports and community posts"
-            href="/admin/moderation"
-            icon={
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-            }
-          />
-          <QuickActionCard
             title="Manage Shop"
             description="Configure pricing and availability"
             href="/admin/libraries"
@@ -178,116 +136,77 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Recent activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent blog posts */}
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6" style={{ boxShadow: SHADOW.brand }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">
-              Recent Blog Posts
-            </h3>
-            <Link
-              href="/admin/blog"
-              className="text-xs font-medium"
-              style={{ color: COLORS.primary }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
-            >
-              View all
-            </Link>
-          </div>
-          {recentPosts.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No blog posts yet</p>
-          ) : (
-            <ul className="space-y-3">
-              {recentPosts.map((post) => (
-                <li key={post.id} className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      href={`/admin/blog/${post.id}`}
-                      className="text-sm font-medium truncate"
-                      style={{ color: 'var(--color-text)' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
-                    >
-                      {post.title}
-                    </Link>
-                    <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <span
-                    className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${post.status === 'published'
+      {/* Recent blog posts */}
+      <div
+        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6"
+        style={{ boxShadow: SHADOW.brand }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">Recent Blog Posts</h3>
+          <Link
+            href="/admin/blog"
+            className="text-xs font-medium"
+            style={{ color: COLORS.primary }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
+          >
+            View all
+          </Link>
+        </div>
+        {recentPosts.length === 0 ? (
+          <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No blog posts yet</p>
+        ) : (
+          <ul className="space-y-3">
+            {recentPosts.map((post) => (
+              <li key={post.id} className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <Link
+                    href={`/admin/blog/${post.id}`}
+                    className="text-sm font-medium truncate"
+                    style={{ color: 'var(--color-text)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
+                  >
+                    {post.title}
+                  </Link>
+                  <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <span
+                  className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${
+                    post.status === 'published'
                       ? ''
                       : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
-                      }`}
-                    style={post.status === 'published' ? { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success } : undefined}
-                  >
-                    {post.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* Recent social posts */}
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6" style={{ boxShadow: SHADOW.brand }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">
-              Recent Social Posts
-            </h3>
-            <Link
-              href="/admin/moderation"
-              className="text-xs font-medium"
-              style={{ color: COLORS.primary }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
-            >
-              Moderate
-            </Link>
-          </div>
-          {recentSocial.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No social posts yet</p>
-          ) : (
-            <ul className="space-y-3">
-              {recentSocial.map((post) => (
-                <li key={post.id} className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{post.title}</p>
-                    <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
-                      by {post.creatorName} &middot; {post.likeCount} likes
-                    </p>
-                  </div>
-                  <span className="text-xs text-[var(--color-text-dim)]">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                  }`}
+                  style={
+                    post.status === 'published'
+                      ? { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success }
+                      : undefined
+                  }
+                >
+                  {post.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
 }
 
-function StatCard({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: number;
-  href: string;
-}) {
+function StatCard({ label, value, href }: { label: string; value: number; href: string }) {
   return (
     <Link
       href={href}
       className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block"
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold" style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}>
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
+          style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}
+        >
           {value}
         </div>
         <p className="text-sm font-medium text-[var(--color-text-dim)]">{label}</p>
@@ -322,7 +241,9 @@ function QuickActionCard({
           {icon}
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>{title}</p>
+          <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+            {title}
+          </p>
           <p className="text-xs text-[var(--color-text-dim)] mt-1">{description}</p>
         </div>
       </div>

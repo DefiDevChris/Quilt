@@ -27,7 +27,7 @@ export async function generatePatternPdf(config: PatternPdfConfig): Promise<Uint
 
   const { pdfDoc, fonts } = await createPdfDocument();
 
-  const logoImage: PDFImage | null = await embedLogo(pdfDoc, config.logoPngBytes);
+  const logoImage = await embedLogo(pdfDoc, config.logoPngBytes);
   const branding: PdfBranding = { logoImage };
 
   const shapes: ShapeData[] = [];

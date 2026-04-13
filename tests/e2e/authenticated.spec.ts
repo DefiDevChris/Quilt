@@ -186,27 +186,6 @@ test.describe('History and Save', () => {
   });
 });
 
-test.describe('Community Interactions', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
-  });
-
-  test('can view community feed', async ({ page }) => {
-    await page.goto('/socialthreads');
-    await expect(page.getByRole('heading', { name: /feed/i })).toBeVisible();
-  });
-
-  test('can switch to saved tab', async ({ page }) => {
-    await page.goto('/socialthreads?tab=saved');
-    await expect(page).toHaveURL(/tab=saved/);
-  });
-
-  test('can switch to trending tab', async ({ page }) => {
-    await page.goto('/socialthreads?tab=trending');
-    await expect(page).toHaveURL(/tab=trending/);
-  });
-});
-
 test.describe('Photo to Design', () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page, 'pro');
