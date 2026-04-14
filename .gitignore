@@ -29,6 +29,8 @@ dist/
 build/
 target/
 *.out
+.next/
+out/
 
 # Testing
 .coverage
@@ -114,6 +116,15 @@ QUILT_BLOCK_VERIFICATION.md
 
 # Plans/docs (generated)
 docs/plans/
+
+# Large data directories
+downloaded_quilts/
+quilt_dataset/
+temp/
+test-results-json/
+
+# One-time use scripts
+scripts/
 
 # Test screenshots
 *.png
