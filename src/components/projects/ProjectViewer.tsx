@@ -165,7 +165,9 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
               <path d="M12 8v4M12 16h.01" />
             </svg>
           </div>
-          <h1 className="text-[32px] leading-[40px] font-bold text-[var(--color-text)] mb-2">Design Not Available</h1>
+          <h1 className="text-[32px] leading-[40px] font-bold text-[var(--color-text)] mb-2">
+            Design Not Available
+          </h1>
           <p className="text-[var(--color-text-dim)] mb-6">
             {error ?? 'This design may have been removed or made private.'}
           </p>
@@ -184,7 +186,9 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
       <main className="max-w-4xl mx-auto px-6 py-8 lg:py-12">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-[32px] leading-[40px] md:text-[40px] leading-[52px] font-bold text-[var(--color-text)] mb-2">{project.name}</h1>
+          <h1 className="text-[32px] leading-[40px] md:text-[40px] leading-[52px] font-bold text-[var(--color-text)] mb-2">
+            {project.name}
+          </h1>
           {project.description && (
             <p className="text-[var(--color-text-dim)] leading-relaxed">{project.description}</p>
           )}

@@ -83,25 +83,37 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       switch (level) {
         case 1:
           return (
-            <h1 key={key} className="text-[40px] leading-[52px] font-bold text-[var(--color-text)] mt-8 mb-4">
+            <h1
+              key={key}
+              className="text-[40px] leading-[52px] font-bold text-[var(--color-text)] mt-8 mb-4"
+            >
               {children}
             </h1>
           );
         case 2:
           return (
-            <h2 key={key} className="text-[32px] leading-[40px] font-bold text-[var(--color-text)] mt-6 mb-3">
+            <h2
+              key={key}
+              className="text-[32px] leading-[40px] font-bold text-[var(--color-text)] mt-6 mb-3"
+            >
               {children}
             </h2>
           );
         case 3:
           return (
-            <h3 key={key} className="text-[24px] leading-[32px] font-semibold text-[var(--color-text)] mt-5 mb-2">
+            <h3
+              key={key}
+              className="text-[24px] leading-[32px] font-semibold text-[var(--color-text)] mt-5 mb-2"
+            >
               {children}
             </h3>
           );
         default:
           return (
-            <h4 key={key} className="text-[16px] leading-[24px] font-semibold text-[var(--color-text)] mt-4 mb-2">
+            <h4
+              key={key}
+              className="text-[16px] leading-[24px] font-semibold text-[var(--color-text)] mt-4 mb-2"
+            >
               {children}
             </h4>
           );
@@ -143,7 +155,10 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       const language = (node.attrs?.language as string) ?? '';
       return (
         <pre key={key} className="bg-[var(--color-bg)] rounded-lg p-4 mb-4 overflow-x-auto">
-          <code className="text-[14px] leading-[20px] font-mono text-[var(--color-text)]" data-language={language}>
+          <code
+            className="text-[14px] leading-[20px] font-mono text-[var(--color-text)]"
+            data-language={language}
+          >
             {children}
           </code>
         </pre>
@@ -165,16 +180,16 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       };
 
       return (
-        <figure key={key} className={`mb-4 ${alignClasses[align as keyof typeof alignClasses] || alignClasses.center}`}>
+        <figure
+          key={key}
+          className={`mb-4 ${alignClasses[align as keyof typeof alignClasses] || alignClasses.center}`}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={src}
-            alt={alt}
-            className="w-full h-auto object-cover"
-            loading="lazy"
-          />
+          <img src={src} alt={alt} className="w-full h-auto object-cover" loading="lazy" />
           {alt && (
-            <figcaption className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mt-2 text-center">{alt}</figcaption>
+            <figcaption className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mt-2 text-center">
+              {alt}
+            </figcaption>
           )}
         </figure>
       );
@@ -208,7 +223,9 @@ export function TiptapRenderer({ content }: TiptapRendererProps) {
     // Handle simple text-only content
     if ('text' in doc && typeof (doc as { text?: string }).text === 'string') {
       return (
-        <p className="mb-4 text-[var(--color-text)] leading-relaxed">{(doc as { text: string }).text}</p>
+        <p className="mb-4 text-[var(--color-text)] leading-relaxed">
+          {(doc as { text: string }).text}
+        </p>
       );
     }
     return null;

@@ -15,10 +15,11 @@ export default function AdminLibrariesPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab as 'fabrics' | 'blocks' | 'shop')}
-            className={`px-4 py-2 font-medium text-sm transition-colors duration-150 ${activeTab === tab
-              ? 'border-b-2 border-primary text-primary'
-              : 'text-dim hover:text-default'
-              }`}
+            className={`px-4 py-2 font-medium text-sm transition-colors duration-150 ${
+              activeTab === tab
+                ? 'border-b-2 border-primary text-primary'
+                : 'text-dim hover:text-default'
+            }`}
           >
             {tab === 'shop' ? 'Shop Management' : tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -86,7 +87,9 @@ function FabricForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <h3 className="text-lg font-semibold text-default">Add New System Fabric</h3>
       <div className="space-y-2">
-        <label htmlFor="fabric-name" className="text-sm font-medium text-default">Name *</label>
+        <label htmlFor="fabric-name" className="text-sm font-medium text-default">
+          Name *
+        </label>
         <input
           id="fabric-name"
           required
@@ -98,7 +101,9 @@ function FabricForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="fabric-image-url" className="text-sm font-medium text-default">Image URL *</label>
+        <label htmlFor="fabric-image-url" className="text-sm font-medium text-default">
+          Image URL *
+        </label>
         <input
           id="fabric-image-url"
           required
@@ -111,7 +116,9 @@ function FabricForm() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="fabric-thumbnail-url" className="text-sm font-medium text-default">Thumbnail URL</label>
+          <label htmlFor="fabric-thumbnail-url" className="text-sm font-medium text-default">
+            Thumbnail URL
+          </label>
           <input
             id="fabric-thumbnail-url"
             type="text"
@@ -122,7 +129,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="fabric-manufacturer" className="text-sm font-medium text-default">Manufacturer</label>
+          <label htmlFor="fabric-manufacturer" className="text-sm font-medium text-default">
+            Manufacturer
+          </label>
           <input
             id="fabric-manufacturer"
             type="text"
@@ -133,7 +142,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="fabric-sku" className="text-sm font-medium text-default">SKU</label>
+          <label htmlFor="fabric-sku" className="text-sm font-medium text-default">
+            SKU
+          </label>
           <input
             id="fabric-sku"
             type="text"
@@ -144,7 +155,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="fabric-collection" className="text-sm font-medium text-default">Collection</label>
+          <label htmlFor="fabric-collection" className="text-sm font-medium text-default">
+            Collection
+          </label>
           <input
             id="fabric-collection"
             type="text"
@@ -155,7 +168,9 @@ function FabricForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="fabric-color-family" className="text-sm font-medium text-default">Color Family</label>
+          <label htmlFor="fabric-color-family" className="text-sm font-medium text-default">
+            Color Family
+          </label>
           <input
             id="fabric-color-family"
             type="text"
@@ -243,7 +258,9 @@ function BlockForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <h3 className="text-lg font-semibold text-default">Add New System Block</h3>
       <div className="space-y-2">
-        <label htmlFor="lib-block-name" className="text-sm font-medium text-default">Name *</label>
+        <label htmlFor="lib-block-name" className="text-sm font-medium text-default">
+          Name *
+        </label>
         <input
           id="lib-block-name"
           required
@@ -256,7 +273,9 @@ function BlockForm() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="lib-block-category" className="text-sm font-medium text-default">Category *</label>
+          <label htmlFor="lib-block-category" className="text-sm font-medium text-default">
+            Category *
+          </label>
           <input
             id="lib-block-category"
             required
@@ -268,7 +287,9 @@ function BlockForm() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="lib-block-subcategory" className="text-sm font-medium text-default">Subcategory</label>
+          <label htmlFor="lib-block-subcategory" className="text-sm font-medium text-default">
+            Subcategory
+          </label>
           <input
             id="lib-block-subcategory"
             type="text"
@@ -280,7 +301,9 @@ function BlockForm() {
         </div>
       </div>
       <div className="space-y-2">
-        <label htmlFor="lib-block-svg-data" className="text-sm font-medium text-default">SVG Data *</label>
+        <label htmlFor="lib-block-svg-data" className="text-sm font-medium text-default">
+          SVG Data *
+        </label>
         <textarea
           id="lib-block-svg-data"
           required
@@ -292,7 +315,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="lib-block-fabric-json" className="text-sm font-medium text-default">FabricJS JSON (optional)</label>
+        <label htmlFor="lib-block-fabric-json" className="text-sm font-medium text-default">
+          FabricJS JSON (optional)
+        </label>
         <textarea
           id="lib-block-fabric-json"
           name="fabricJsDataStr"
@@ -303,7 +328,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="lib-block-tags" className="text-sm font-medium text-default">Tags (comma separated)</label>
+        <label htmlFor="lib-block-tags" className="text-sm font-medium text-default">
+          Tags (comma separated)
+        </label>
         <input
           id="lib-block-tags"
           type="text"
@@ -314,7 +341,9 @@ function BlockForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="lib-block-thumbnail" className="text-sm font-medium text-default">Thumbnail URL</label>
+        <label htmlFor="lib-block-thumbnail" className="text-sm font-medium text-default">
+          Thumbnail URL
+        </label>
         <input
           id="lib-block-thumbnail"
           type="text"
@@ -458,7 +487,9 @@ function ShopManagement() {
         <h4 className="text-sm font-semibold text-default">Bulk Toggle by Manufacturer</h4>
         <div className="flex items-end gap-3">
           <div className="flex-1 space-y-1">
-            <label htmlFor="bulk-manufacturer" className="text-xs text-dim">Manufacturer name</label>
+            <label htmlFor="bulk-manufacturer" className="text-xs text-dim">
+              Manufacturer name
+            </label>
             <input
               id="bulk-manufacturer"
               type="text"
@@ -474,8 +505,12 @@ function ShopManagement() {
             disabled={bulkSaving || !bulkManufacturer.trim()}
             className="px-3 py-2 text-xs font-medium rounded-full disabled:opacity-50 transition-colors duration-150"
             style={{ backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.2))}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.1))}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.2))
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = withAlpha(COLORS.success, 0.1))
+            }
           >
             Mark All Purchasable
           </button>
@@ -485,8 +520,12 @@ function ShopManagement() {
             disabled={bulkSaving || !bulkManufacturer.trim()}
             className="px-3 py-2 text-xs font-medium rounded-full disabled:opacity-50 transition-colors duration-150"
             style={{ backgroundColor: withAlpha(COLORS.error, 0.1), color: COLORS.error }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.2))}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.1))}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.2))
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = withAlpha(COLORS.error, 0.1))
+            }
           >
             Remove All
           </button>
@@ -544,11 +583,16 @@ function ShopManagement() {
                       type="button"
                       onClick={() => handleToggleField(fabric.id, 'inStock', fabric.inStock)}
                       className="inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150"
-                      style={{ backgroundColor: fabric.inStock ? COLORS.success : withAlpha(COLORS.secondary, 0.6) }}
+                      style={{
+                        backgroundColor: fabric.inStock
+                          ? COLORS.success
+                          : withAlpha(COLORS.secondary, 0.6),
+                      }}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-full bg-surface transition-transform duration-150 ${fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
-                          }`}
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-surface transition-transform duration-150 ${
+                          fabric.inStock ? 'translate-x-4' : 'translate-x-0.5'
+                        }`}
                       />
                     </button>
                   </td>
@@ -558,12 +602,14 @@ function ShopManagement() {
                       onClick={() =>
                         handleToggleField(fabric.id, 'isPurchasable', fabric.isPurchasable)
                       }
-                      className={`inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150 ${fabric.isPurchasable ? 'bg-primary' : 'bg-secondary/60'
-                        }`}
+                      className={`inline-flex h-5 w-9 items-center rounded-full transition-colors duration-150 ${
+                        fabric.isPurchasable ? 'bg-primary' : 'bg-secondary/60'
+                      }`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 rounded-full bg-surface transition-transform duration-150 ${fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
-                          }`}
+                        className={`inline-block h-3.5 w-3.5 rounded-full bg-surface transition-transform duration-150 ${
+                          fabric.isPurchasable ? 'translate-x-4' : 'translate-x-0.5'
+                        }`}
                       />
                     </button>
                   </td>

@@ -10,11 +10,10 @@ import {
   BlockBuilderToolbarUnified,
   BlockBuilderCallbacks,
 } from '@/components/blocks/BlockBuilderToolbarUnified';
-import { CANVAS } from '@/lib/design-system';
+import { CANVAS, COLORS } from '@/lib/design-system';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 import { hexToRgb } from '@/lib/color-math';
-import { COLORS } from '@/lib/design-system';
 
 /**
  * Shared props for drafting tab components.
@@ -519,7 +518,9 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
           </div>
 
           <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">Category</label>
+            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
+              Category
+            </label>
             <input
               type="text"
               value={category}

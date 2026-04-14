@@ -88,32 +88,41 @@ export function VerifyEmailForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-default">
-          Verify your email
-        </h1>
+        <h1 className="text-headline-md font-bold text-default">Verify your email</h1>
         <p className="mt-2 text-sm text-dim text-center">
           We sent a verification code to your email. Enter it below to verify your account.
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
+        <div
+          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          style={{
+            backgroundColor: withAlpha(COLORS.error, 0.05),
+            borderColor: withAlpha(COLORS.error, 0.2),
+            color: COLORS.error,
+          }}
+        >
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.success, 0.05), borderColor: withAlpha(COLORS.success, 0.2), color: COLORS.success }}>
+        <div
+          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          style={{
+            backgroundColor: withAlpha(COLORS.success, 0.05),
+            borderColor: withAlpha(COLORS.success, 0.2),
+            color: COLORS.success,
+          }}
+        >
           {success}
         </div>
       )}
 
       <form onSubmit={handleVerify} className="space-y-4">
         <div>
-          <label
-            htmlFor="verify-email"
-            className="block text-sm font-medium text-dim mb-1.5"
-          >
+          <label htmlFor="verify-email" className="block text-sm font-medium text-dim mb-1.5">
             Email
           </label>
           <input
@@ -129,10 +138,7 @@ export function VerifyEmailForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="code"
-            className="block text-sm font-medium text-dim mb-1.5"
-          >
+          <label htmlFor="code" className="block text-sm font-medium text-dim mb-1.5">
             Verification Code
           </label>
           <input

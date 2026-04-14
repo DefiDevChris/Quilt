@@ -33,7 +33,12 @@ export function useAutoSave() {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(
             new CustomEvent('quiltcorgi:save-error', {
-              detail: { message: err instanceof Error ? err.message : 'Auto-save failed. Your changes may not be saved.' },
+              detail: {
+                message:
+                  err instanceof Error
+                    ? err.message
+                    : 'Auto-save failed. Your changes may not be saved.',
+              },
             })
           );
         }

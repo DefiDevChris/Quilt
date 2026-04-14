@@ -158,7 +158,9 @@ export function BrandedInput({ label, error, className = '', ...props }: Branded
         {...props}
       />
       {error && (
-        <p className="text-sm" style={{ color: COLORS.error }}>{error}</p>
+        <p className="text-sm" style={{ color: COLORS.error }}>
+          {error}
+        </p>
       )}
     </div>
   );
@@ -189,10 +191,7 @@ export function BrandedButton({
         borderRadius: RADIUS.full,
         fontSize: FONT_SIZE.body,
         lineHeight: FONT_SIZE.bodyLineHeight,
-        boxShadow:
-          variant === 'primary'
-            ? SHADOW.elevated
-            : 'none',
+        boxShadow: variant === 'primary' ? SHADOW.elevated : 'none',
         transition: COLOR_ONLY_TRANSITION,
       }}
       {...props}

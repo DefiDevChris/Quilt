@@ -19,16 +19,16 @@ export default function AboutPage() {
         />
         <div className="text-[18px] leading-[28px] text-dim space-y-8 max-w-2xl">
           <p>
-            Quilt Studio was born from a simple idea: quilting design software should be as joyful and
-            creative as quilting itself. We&apos;ve built a modern, browser-based studio that empowers
-            quilters of all skill levels to bring their visions to life.
+            Quilt Studio was born from a simple idea: quilting design software should be as joyful
+            and creative as quilting itself. We&apos;ve built a modern, browser-based studio that
+            empowers quilters of all skill levels to bring their visions to life.
           </p>
           <div className="h-px w-full bg-[var(--color-border)]/30" />
           <p>
-            Whether you&apos;re drafting a custom block, calculating complex yardage, or exploring new
-            colorways, Quilt Studio provides the intuitive tools you need without the steep learning
-            curve. Join our community of passionate makers and start designing your next masterpiece
-            today.
+            Whether you&apos;re drafting a custom block, calculating complex yardage, or exploring
+            new colorways, Quilt Studio provides the intuitive tools you need without the steep
+            learning curve. Join our community of passionate makers and start designing your next
+            masterpiece today.
           </p>
         </div>
       </main>

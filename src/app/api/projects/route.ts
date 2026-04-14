@@ -11,8 +11,7 @@ import {
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 import { z } from 'zod';
-import { isPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
+import { isPro, type UserRole } from '@/lib/role-utils';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -160,8 +159,8 @@ export async function POST(request: NextRequest) {
       gridSettings,
     } = parsed.data;
 
-    let canvasWidth = bodyWidth;
-    let canvasHeight = bodyHeight;
+    const canvasWidth = bodyWidth;
+    const canvasHeight = bodyHeight;
 
     const [newProject] = await db
       .insert(projects)

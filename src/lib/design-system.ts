@@ -80,11 +80,23 @@ export const CANVAS = {
   fabricHighlight: cc.fabric_highlight,
   strokeDefault: cc.stroke_default,
   fenceLabelBg: withAlpha(ac.canvas.fence_label_bg.hex, ac.canvas.fence_label_bg.alpha),
-  fenceLabelBgLight: withAlpha(ac.canvas.fence_label_bg_light.hex, ac.canvas.fence_label_bg_light.alpha),
-  selectionHighlight: withAlpha(ac.canvas.selection_highlight.hex, ac.canvas.selection_highlight.alpha),
+  fenceLabelBgLight: withAlpha(
+    ac.canvas.fence_label_bg_light.hex,
+    ac.canvas.fence_label_bg_light.alpha
+  ),
+  selectionHighlight: withAlpha(
+    ac.canvas.selection_highlight.hex,
+    ac.canvas.selection_highlight.alpha
+  ),
   gridLineDimmed: withAlpha(ac.canvas.grid_line_dimmed.hex, ac.canvas.grid_line_dimmed.alpha),
-  calibrationBackdrop: withAlpha(ac.canvas.calibration_backdrop.hex, ac.canvas.calibration_backdrop.alpha),
-  dotIndicatorInactive: withAlpha(ac.canvas.dot_indicator_inactive.hex, ac.canvas.dot_indicator_inactive.alpha),
+  calibrationBackdrop: withAlpha(
+    ac.canvas.calibration_backdrop.hex,
+    ac.canvas.calibration_backdrop.alpha
+  ),
+  dotIndicatorInactive: withAlpha(
+    ac.canvas.dot_indicator_inactive.hex,
+    ac.canvas.dot_indicator_inactive.alpha
+  ),
   mockGridBg: withAlpha(ac.canvas.mock_grid_bg.hex, ac.canvas.mock_grid_bg.alpha),
   mockQuiltStitch: cc.mock_quilt_stitch,
 } as const;
@@ -245,16 +257,46 @@ export const DECORATION = {
 export const MASCOT = {
   positions: {
     1: [
-      { pose: 'sitting' as const, size: 'lg' as const, position: { bottom: 32, right: 32 }, opacity: 0.4 },
+      {
+        pose: 'sitting' as const,
+        size: 'lg' as const,
+        position: { bottom: 32, right: 32 },
+        opacity: 0.4,
+      },
     ],
     2: [
-      { pose: 'sitting' as const, size: 'lg' as const, position: { bottom: 32, right: 32 }, opacity: 0.4 },
-      { pose: 'wagging' as const, size: 'md' as const, position: { bottom: 32, left: 32 }, opacity: 0.3 },
+      {
+        pose: 'sitting' as const,
+        size: 'lg' as const,
+        position: { bottom: 32, right: 32 },
+        opacity: 0.4,
+      },
+      {
+        pose: 'wagging' as const,
+        size: 'md' as const,
+        position: { bottom: 32, left: 32 },
+        opacity: 0.3,
+      },
     ],
     3: [
-      { pose: 'sitting' as const, size: 'lg' as const, position: { bottom: 32, right: 32 }, opacity: 0.4 },
-      { pose: 'wagging' as const, size: 'md' as const, position: { bottom: 32, left: 32 }, opacity: 0.3 },
-      { pose: 'walking' as const, size: 'sm' as const, position: { top: 96, right: 32 }, opacity: 0.25 },
+      {
+        pose: 'sitting' as const,
+        size: 'lg' as const,
+        position: { bottom: 32, right: 32 },
+        opacity: 0.4,
+      },
+      {
+        pose: 'wagging' as const,
+        size: 'md' as const,
+        position: { bottom: 32, left: 32 },
+        opacity: 0.3,
+      },
+      {
+        pose: 'walking' as const,
+        size: 'sm' as const,
+        position: { top: 96, right: 32 },
+        opacity: 0.25,
+      },
     ],
   },
   maxPerScreen: 1,

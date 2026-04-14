@@ -13,6 +13,13 @@ import {
   type ShopifyCart,
 } from '@/lib/shopify';
 
+/** Maximum quantity in yards allowed per item (100 yards) */
+const MAX_YARDS = 100;
+/** Minimum quantity increment (0.25 yards) */
+const MIN_YARD_INCREMENT = 0.25;
+/** Local storage key for cart persistence */
+const CART_STORAGE_KEY = 'quilt-studio-cart-id';
+
 /**
  * Cart Item representing a fabric yardage selection
  * Syncs local fabric data with Shopify cart data
@@ -79,6 +86,12 @@ interface CartState {
    */
   restoreFromShopify: () => Promise<void>;
 
+  /**
+   * Restore cart ID from localStorage (synchronous).
+   * Call once during app initialization.
+   */
+  restoreCartIdFromStorage: () => void;
+
   /** Reset cart to initial state */
   reset: () => void;
 }
@@ -100,18 +113,33 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: (item) =>
     set((state) => {
+      // Validate shopifyVariantId
+      if (!item.shopifyVariantId) {
+        return { ...state, error: 'Invalid item: missing Shopify variant ID' };
+      }
+      // Validate price
+      if (item.pricePerYard <= 0) {
+        return { ...state, error: 'Invalid item: price must be greater than 0' };
+      }
+      // Clamp quantity to valid range
+      const quantity = Math.max(MIN_YARD_INCREMENT, Math.min(MAX_YARDS, item.quantityInYards));
+
       const existingIndex = state.items.findIndex((i) => i.fabricId === item.fabricId);
       if (existingIndex >= 0) {
         // Update existing item
         const updatedItems = [...state.items];
+        const newQty = Math.max(
+          MIN_YARD_INCREMENT,
+          Math.min(MAX_YARDS, updatedItems[existingIndex].quantityInYards + item.quantityInYards)
+        );
         updatedItems[existingIndex] = {
           ...updatedItems[existingIndex],
-          quantityInYards: updatedItems[existingIndex].quantityInYards + item.quantityInYards,
+          quantityInYards: newQty,
         };
-        return { items: updatedItems };
+        return { items: updatedItems, error: null };
       }
       // Add new item
-      return { items: [...state.items, item] };
+      return { items: [...state.items, { ...item, quantityInYards: quantity }], error: null };
     }),
 
   removeItem: (fabricId) =>
@@ -120,11 +148,21 @@ export const useCartStore = create<CartState>((set, get) => ({
     })),
 
   updateItemQuantity: (fabricId, quantityInYards) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.fabricId === fabricId ? { ...item, quantityInYards } : item
-      ),
-    })),
+    set((state) => {
+      // Validate quantity
+      if (quantityInYards < MIN_YARD_INCREMENT) {
+        return { ...state, error: `Minimum quantity is ${MIN_YARD_INCREMENT} yards` };
+      }
+      if (quantityInYards > MAX_YARDS) {
+        return { ...state, error: `Maximum quantity is ${MAX_YARDS} yards` };
+      }
+      return {
+        items: state.items.map((item) =>
+          item.fabricId === fabricId ? { ...item, quantityInYards } : item
+        ),
+        error: null,
+      };
+    }),
 
   clearCart: async () => {
     const state = get();
@@ -140,6 +178,13 @@ export const useCartStore = create<CartState>((set, get) => ({
       } catch (error) {
         console.warn('Failed to clear Shopify cart:', error);
       }
+    }
+
+    // Clear persisted cart ID
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    } catch {
+      // Storage unavailable — ignore
     }
 
     set({
@@ -234,6 +279,21 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   reset: () => set(INITIAL_STATE),
 
+  /**
+   * Restore the cart ID from localStorage on app init.
+   * Call this once during app initialization.
+   */
+  restoreCartIdFromStorage: () => {
+    try {
+      const cartId = localStorage.getItem(CART_STORAGE_KEY);
+      if (cartId) {
+        set({ shopifyCartId: cartId });
+      }
+    } catch {
+      // Storage unavailable — ignore
+    }
+  },
+
   syncWithShopify: async (buyerEmail?: string) => {
     const state = get();
 
@@ -253,6 +313,12 @@ export const useCartStore = create<CartState>((set, get) => ({
         cartId = result.cartId;
         checkoutUrl = result.checkoutUrl;
         set({ shopifyCartId: cartId, checkoutUrl });
+        // Persist cart ID to localStorage for future sessions
+        try {
+          localStorage.setItem(CART_STORAGE_KEY, cartId);
+        } catch {
+          // Storage unavailable — ignore
+        }
       }
 
       // Fetch current Shopify cart to compare
@@ -303,17 +369,25 @@ export const useCartStore = create<CartState>((set, get) => ({
         }
       }
 
-      // Execute operations
-      if (linesToAdd.length > 0 && cartId) {
-        await addToCart(cartId, linesToAdd);
-      }
+      // Execute operations with error handling
+      try {
+        if (linesToAdd.length > 0 && cartId) {
+          await addToCart(cartId, linesToAdd);
+        }
 
-      if (linesToUpdate.length > 0 && cartId) {
-        await cartLinesUpdate(cartId, linesToUpdate);
-      }
+        if (linesToUpdate.length > 0 && cartId) {
+          await cartLinesUpdate(cartId, linesToUpdate);
+        }
 
-      if (lineIdsToRemove.length > 0 && cartId) {
-        await cartLinesRemove(cartId, lineIdsToRemove);
+        if (lineIdsToRemove.length > 0 && cartId) {
+          await cartLinesRemove(cartId, lineIdsToRemove);
+        }
+      } catch (error) {
+        console.error('Failed to sync cart lines with Shopify:', error);
+        set({
+          error: error instanceof Error ? error.message : 'Failed to sync cart with Shopify',
+        });
+        // Don't throw — allow the user to continue using the local cart
       }
 
       // Update buyer identity if email provided

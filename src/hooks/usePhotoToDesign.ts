@@ -23,7 +23,10 @@ export function usePhotoToDesign() {
     } catch {
       workerRef.current = null;
     }
-    return () => { workerRef.current?.terminate(); workerRef.current = null; };
+    return () => {
+      workerRef.current?.terminate();
+      workerRef.current = null;
+    };
   }, []);
 
   const process = useCallback(
@@ -94,7 +97,9 @@ export function usePhotoToDesign() {
               abortSignal: abortRef.current?.signal,
               onProgress: (stage, stageName, percentage) => {
                 if (generation !== generationRef.current) return;
-                usePhotoDesignStore.getState().setProcessingProgress({ stage, stageName, percentage });
+                usePhotoDesignStore
+                  .getState()
+                  .setProcessingProgress({ stage, stageName, percentage });
               },
             });
             if (generation !== generationRef.current) return;
@@ -131,7 +136,10 @@ export function usePhotoToDesign() {
   }, []);
 
   useEffect(() => {
-    return () => { workerRef.current?.terminate(); abortRef.current?.abort(); };
+    return () => {
+      workerRef.current?.terminate();
+      abortRef.current?.abort();
+    };
   }, []);
 
   return { process, abort };

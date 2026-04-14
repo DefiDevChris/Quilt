@@ -182,7 +182,12 @@ export function RecommendedDimensionsModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
           <div>
-            <h2 id="recommended-dimensions-title" className="text-[24px] leading-[32px] text-[var(--color-text)]">Recommended Dimensions</h2>
+            <h2
+              id="recommended-dimensions-title"
+              className="text-[24px] leading-[32px] text-[var(--color-text)]"
+            >
+              Recommended Dimensions
+            </h2>
             <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mt-1">
               Maintains exact aspect ratio
             </p>
@@ -213,12 +218,14 @@ export function RecommendedDimensionsModal({
                   {selectedPattern.displayName}
                 </span>
                 <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
-                  Original: {selectedPattern.dimensions.width}&quot; &times; {selectedPattern.dimensions.height}&quot;
+                  Original: {selectedPattern.dimensions.width}&quot; &times;{' '}
+                  {selectedPattern.dimensions.height}&quot;
                 </span>
               </div>
               {selectedPattern.blockLayout && (
                 <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
-                  Layout: {selectedPattern.blockLayout.cols} &times; {selectedPattern.blockLayout.rows} blocks
+                  Layout: {selectedPattern.blockLayout.cols} &times;{' '}
+                  {selectedPattern.blockLayout.rows} blocks
                 </span>
               )}
             </div>
@@ -232,10 +239,11 @@ export function RecommendedDimensionsModal({
                   key={rec.label}
                   type="button"
                   onClick={() => onSelect(rec.width, rec.height)}
-                  className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${rec.isClosest
-                    ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                    : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
-                    }`}
+                  className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${
+                    rec.isClosest
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                      : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
+                  }`}
                 >
                   <span className="text-[16px] leading-[24px] text-[var(--color-text)]">
                     {rec.label}
@@ -256,10 +264,20 @@ export function RecommendedDimensionsModal({
 
           {/* Custom dimensions */}
           <div className="border-t border-[var(--color-border)] pt-6">
-            <h3 id="custom-dimensions-heading" className="text-[18px] leading-[28px] text-[var(--color-text)] mb-3">Custom Dimensions</h3>
+            <h3
+              id="custom-dimensions-heading"
+              className="text-[18px] leading-[28px] text-[var(--color-text)] mb-3"
+            >
+              Custom Dimensions
+            </h3>
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label htmlFor="custom-width" className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2">Width (in)</label>
+                <label
+                  htmlFor="custom-width"
+                  className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2"
+                >
+                  Width (in)
+                </label>
                 <input
                   id="custom-width"
                   type="number"
@@ -286,27 +304,61 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={() => setLockAspect(!lockAspect)}
                 aria-label={lockAspect ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
-                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${lockAspect ? 'bg-[var(--color-primary)] text-[var(--color-text)] border-[var(--color-primary)]' : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] border-[var(--color-border)]'
-                  }`}
+                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center border rounded-lg transition-colors duration-150 ${
+                  lockAspect
+                    ? 'bg-[var(--color-primary)] text-[var(--color-text)] border-[var(--color-primary)]'
+                    : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] border-[var(--color-border)]'
+                }`}
                 title={lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   {lockAspect ? (
                     <>
-                      <rect x="5" y="7" width="6" height="5" rx="0" stroke="currentColor" strokeWidth="2" />
-                      <path d="M6 7V5a2 2 0 014 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                      <rect
+                        x="5"
+                        y="7"
+                        width="6"
+                        height="5"
+                        rx="0"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M6 7V5a2 2 0 014 0v2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="square"
+                      />
                     </>
                   ) : (
                     <>
-                      <rect x="5" y="7" width="6" height="5" rx="0" stroke="currentColor" strokeWidth="2" />
-                      <path d="M6 7V5a2 2 0 013.7-.8" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                      <rect
+                        x="5"
+                        y="7"
+                        width="6"
+                        height="5"
+                        rx="0"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M6 7V5a2 2 0 013.7-.8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="square"
+                      />
                     </>
                   )}
                 </svg>
               </button>
 
               <div className="flex-1">
-                <label htmlFor="custom-height" className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2">Height (in)</label>
+                <label
+                  htmlFor="custom-height"
+                  className="block text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-2"
+                >
+                  Height (in)
+                </label>
                 <input
                   id="custom-height"
                   type="number"

@@ -112,8 +112,7 @@ export const useLayoutStore = create<LayoutStoreState>((set) => ({
 
   setHasCornerstones: (hasCornerstones) => set({ hasCornerstones }),
 
-  setBindingWidth: (bindingWidth) =>
-    set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
+  setBindingWidth: (bindingWidth) => set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
 
   setPreviewMode: (previewMode) => set({ previewMode }),
 

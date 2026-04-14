@@ -153,6 +153,49 @@ export async function elementExists(page: Page, selector: string): Promise<boole
   return (await page.locator(selector).count()) > 0;
 }
 
+export async function mockProject(page: Page, projectId: string = 'test-project-1') {
+  await page.route(`**/api/projects/${projectId}`, async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: projectId,
+          name: 'Test Project',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          canvasState: { objects: [], version: '1.0' },
+          history: [
+            { id: 'h1', action: 'Project created', timestamp: new Date().toISOString(), state: {} },
+            { id: 'h2', action: 'Added block', timestamp: new Date().toISOString(), state: {} },
+            { id: 'h3', action: 'Moved block', timestamp: new Date().toISOString(), state: {} },
+          ],
+        }),
+      });
+    } else if (route.request().method() === 'PUT' || route.request().method() === 'PATCH') {
+      await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+    } else {
+      await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+    }
+  });
+
+  await page.route(`**/api/projects/${projectId}/save`, async (route) => {
+    await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+  });
+
+  await page.route(`**/api/projects/${projectId}/history`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([
+        { id: 'h1', action: 'Project created', timestamp: new Date().toISOString() },
+        { id: 'h2', action: 'Added block', timestamp: new Date().toISOString() },
+        { id: 'h3', action: 'Moved block', timestamp: new Date().toISOString() },
+      ]),
+    });
+  });
+}
+
 export async function getElementText(page: Page, selector: string): Promise<string | null> {
   const element = page.locator(selector);
   if ((await element.count()) === 0) return null;

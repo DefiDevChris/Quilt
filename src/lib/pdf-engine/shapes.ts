@@ -2,21 +2,19 @@
  * PDF Shape Processing — extract polylines from SVG, compute bounding boxes.
  */
 
-import { PDF_POINTS_PER_INCH, PIXELS_PER_INCH, type ShapePolyline, type BoundingBox } from './types';
 import {
-  svgPathToPolyline,
-  extractPathFromSvg,
-  computeSeamOffset,
-} from '@/lib/seam-allowance';
+  PDF_POINTS_PER_INCH,
+  PIXELS_PER_INCH,
+  type ShapePolyline,
+  type BoundingBox,
+} from './types';
+import { svgPathToPolyline, extractPathFromSvg, computeSeamOffset } from '@/lib/seam-allowance';
 import { boundingBoxWithMinMax } from '@/lib/geometry-utils';
 
 /**
  * Extract cut line and seam line polylines from SVG data.
  */
-export function extractShapePolyline(
-  svgData: string,
-  seamAllowance: number
-): ShapePolyline | null {
+export function extractShapePolyline(svgData: string, seamAllowance: number): ShapePolyline | null {
   const pathD = extractPathFromSvg(svgData);
   if (!pathD) return null;
 

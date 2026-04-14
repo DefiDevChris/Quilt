@@ -7,142 +7,150 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { FabricListItem } from '@/types/fabric';
 
 interface FabricCardProps {
- fabric: FabricListItem;
- onDragStart: (e: React.DragEvent, fabric: FabricListItem) => void;
- onRemove?: () => void;
- onClick?: () => void;
+  fabric: FabricListItem;
+  onDragStart: (e: React.DragEvent, fabric: FabricListItem) => void;
+  onRemove?: () => void;
+  onClick?: () => void;
 }
 
 export function FabricCard({ fabric, onDragStart, onRemove, onClick }: FabricCardProps) {
- const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
- const addFabricPreset = useProjectStore((s) => s.addFabricPreset);
- const setWhereUsedFabric = useFabricStore((s) => s.setWhereUsedFabric);
- const { getCanvas } = useCanvasContext();
- const fabricCanvas = getCanvas();
- const [showMenu, setShowMenu] = useState(false);
- const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
- const menuRef = useRef<HTMLDivElement>(null);
+  const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
+  const addFabricPreset = useProjectStore((s) => s.addFabricPreset);
+  const setWhereUsedFabric = useFabricStore((s) => s.setWhereUsedFabric);
+  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = getCanvas();
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
+  const menuRef = useRef<HTMLDivElement>(null);
 
- useEffect(() => {
- if (!showMenu) return;
- const handleClick = (e: MouseEvent) => {
- if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
- setShowMenu(false);
- }
- };
- document.addEventListener('mousedown', handleClick);
- return () => document.removeEventListener('mousedown', handleClick);
- }, [showMenu]);
+  useEffect(() => {
+    if (!showMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showMenu]);
 
- const handleContextMenu = (e: React.MouseEvent) => {
- e.preventDefault();
- setMenuPos({ x: e.clientX, y: e.clientY });
- setShowMenu(true);
- };
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuPos({ x: e.clientX, y: e.clientY });
+    setShowMenu(true);
+  };
 
- const handleAddToPresets = () => {
- addFabricPreset({ id: fabric.id, name: fabric.name, imageUrl: fabric.imageUrl });
- setShowMenu(false);
- };
+  const handleAddToPresets = () => {
+    addFabricPreset({ id: fabric.id, name: fabric.name, imageUrl: fabric.imageUrl });
+    setShowMenu(false);
+  };
 
- const handleWhereUsed = async () => {
- setShowMenu(false);
- setWhereUsedFabric(fabric.id, fabric.imageUrl);
+  const handleWhereUsed = async () => {
+    setShowMenu(false);
+    setWhereUsedFabric(fabric.id, fabric.imageUrl);
 
- if (!fabricCanvas) return;
- const fabricModule = await import('fabric');
- const canvas = fabricCanvas as InstanceType<typeof fabricModule.Canvas>;
- const allObjects = canvas.getObjects();
+    if (!fabricCanvas) return;
+    const fabricModule = await import('fabric');
+    const canvas = fabricCanvas as InstanceType<typeof fabricModule.Canvas>;
+    const allObjects = canvas.getObjects();
 
- const matchingObjects = allObjects.filter((obj: unknown) => {
- const o = obj as Record<string, unknown>;
- const fill = o.fill;
- let objImageUrl = '';
- if (fill && typeof fill !== 'string') {
- const pattern = fill as { source?: { src?: string } };
- objImageUrl = pattern.source?.src ?? '';
- }
- const objFabricId = (obj as unknown as { fabricId?: string }).fabricId ?? '';
+    const matchingObjects = allObjects.filter((obj: unknown) => {
+      const o = obj as Record<string, unknown>;
+      const fill = o.fill;
+      let objImageUrl = '';
+      if (fill && typeof fill !== 'string') {
+        const pattern = fill as { source?: { src?: string } };
+        objImageUrl = pattern.source?.src ?? '';
+      }
+      const objFabricId = (obj as unknown as { fabricId?: string }).fabricId ?? '';
 
- return (
- (fabric.id && objFabricId === fabric.id) ||
- (fabric.imageUrl && objImageUrl === fabric.imageUrl)
- );
- });
+      return (
+        (fabric.id && objFabricId === fabric.id) ||
+        (fabric.imageUrl && objImageUrl === fabric.imageUrl)
+      );
+    });
 
- if (matchingObjects.length > 0) {
- const selection = new fabricModule.ActiveSelection(
- matchingObjects as InstanceType<typeof fabricModule.FabricObject>[],
- { canvas }
- );
- canvas.setActiveObject(selection);
- canvas.renderAll();
- }
- };
+    if (matchingObjects.length > 0) {
+      const selection = new fabricModule.ActiveSelection(
+        matchingObjects as InstanceType<typeof fabricModule.FabricObject>[],
+        { canvas }
+      );
+      canvas.setActiveObject(selection);
+      canvas.renderAll();
+    }
+  };
 
- return (
- <>
- <div
- draggable
- onDragStart={(e) => onDragStart(e, fabric)}
- onClick={onClick}
- onContextMenu={handleContextMenu}
- className="group relative cursor-grab rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden hover:border-[var(--color-primary)] transition-colors"
- title={fabric.name}
- >
- <div className="aspect-square">
- {imgSrc ? (
- <img
- src={imgSrc}
- alt={fabric.name}
- className="h-full w-full object-cover"
- loading="lazy"
- />
- ) : (
- <div className="h-full w-full flex items-center justify-center bg-[var(--color-border)]">
- <span className="text-2xl text-[var(--color-text-dim)]">🧵</span>
- </div>
- )}
- </div>
- <div className="absolute inset-x-0 bottom-0 bg-[var(--color-bg)] px-1.5 pb-1 pt-4">
- <p className="text-xs text-[var(--color-text)] truncate">{fabric.name}</p>
- {fabric.manufacturer && (
- <p className="text-[9px] text-[var(--color-text)]/70 truncate">{fabric.manufacturer}</p>
- )}
- </div>
- {onRemove && (
- <button
- type="button"
- onClick={onRemove}
- className="absolute top-1 right-1 w-5 h-5 rounded-lg bg-[var(--color-accent)]/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-[var(--color-accent)] transition-colors duration-150"
- title="Remove from presets"
- >
- ✕
- </button>
- )}
- </div>
- {showMenu && (
- <div
- ref={menuRef}
- className="fixed z-50 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] py-1"
- style={{ left: menuPos.x, top: menuPos.y }}
- >
- <button
- type="button"
- onClick={handleAddToPresets}
- className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
- >
- Add to Presets
- </button>
- <button
- type="button"
- onClick={handleWhereUsed}
- className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
- >
- Where Used
- </button>
- </div>
- )}
- </>
- );
+  return (
+    <>
+      <div
+        draggable
+        onDragStart={(e) => onDragStart(e, fabric)}
+        onClick={onClick}
+        onContextMenu={handleContextMenu}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick?.();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Fabric: ${fabric.name}`}
+        className="group relative cursor-grab rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden hover:border-[var(--color-primary)] transition-colors"
+      >
+        <div className="aspect-square">
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={fabric.name}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-[var(--color-border)]">
+              <span className="text-2xl text-[var(--color-text-dim)]">🧵</span>
+            </div>
+          )}
+        </div>
+        <div className="absolute inset-x-0 bottom-0 bg-[var(--color-bg)] px-1.5 pb-1 pt-4">
+          <p className="text-xs text-[var(--color-text)] truncate">{fabric.name}</p>
+          {fabric.manufacturer && (
+            <p className="text-[9px] text-[var(--color-text)]/70 truncate">{fabric.manufacturer}</p>
+          )}
+        </div>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="absolute top-1 right-1 w-5 h-5 rounded-lg bg-[var(--color-accent)]/80 text-white text-xs opacity-0 group-hover:opacity-100 hover:bg-[var(--color-accent)] transition-colors duration-150"
+            title="Remove from presets"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      {showMenu && (
+        <div
+          ref={menuRef}
+          className="fixed z-50 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] py-1"
+          style={{ left: menuPos.x, top: menuPos.y }}
+        >
+          <button
+            type="button"
+            onClick={handleAddToPresets}
+            className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+          >
+            Add to Presets
+          </button>
+          <button
+            type="button"
+            onClick={handleWhereUsed}
+            className="w-full px-3 py-2 text-left text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+          >
+            Where Used
+          </button>
+        </div>
+      )}
+    </>
+  );
 }

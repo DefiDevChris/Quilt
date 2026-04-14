@@ -35,8 +35,8 @@ export default function ContactPage() {
             </div>
             <div className="space-y-4">
               <p className="text-[18px] leading-[28px] text-dim">
-                Have a question about your subscription, a feature request, or need help with a project?
-                Our team is standing by to assist you.
+                Have a question about your subscription, a feature request, or need help with a
+                project? Our team is standing by to assist you.
               </p>
               <div className="flex items-center gap-2 text-[18px] leading-[28px] text-default mt-8">
                 support@quiltcorgi.com

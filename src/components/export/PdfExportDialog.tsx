@@ -5,7 +5,13 @@ import { usePrintlistStore } from '@/stores/printlistStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
-import { generatePatternPdf, generateCutListPdf, generateProjectPdf, type PaperSize, type ProjectPdfConfig } from '@/lib/pdf-engine';
+import {
+  generatePatternPdf,
+  generateCutListPdf,
+  generateProjectPdf,
+  type PaperSize,
+  type ProjectPdfConfig,
+} from '@/lib/pdf-engine';
 import { downloadPdf } from '@/lib/dom-utils';
 import { captureCanvasPng, extractBlocksFromCanvas } from '@/lib/canvas-snapshot';
 import { sanitizeFilename } from '@/lib/string-utils';
@@ -185,8 +191,17 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
     >
       {/* Mode selector */}
       <div className="mb-4">
-        <label id="pdf-export-type-label" className="mb-1 block text-xs font-medium text-[var(--color-text)]">Export Type</label>
-        <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-labelledby="pdf-export-type-label">
+        <label
+          id="pdf-export-type-label"
+          className="mb-1 block text-xs font-medium text-[var(--color-text)]"
+        >
+          Export Type
+        </label>
+        <div
+          className="grid grid-cols-4 gap-2"
+          role="radiogroup"
+          aria-labelledby="pdf-export-type-label"
+        >
           {(Object.keys(MODE_INFO) as ExportMode[]).map((mode) => (
             <button
               key={mode}
@@ -194,16 +209,19 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
               role="radio"
               aria-checked={exportMode === mode}
               onClick={() => setExportMode(mode)}
-              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${exportMode === mode
-                ? 'border-primary bg-primary text-white'
-                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
-                }`}
+              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${
+                exportMode === mode
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
+              }`}
             >
               {MODE_INFO[mode].label}
             </button>
           ))}
         </div>
-        <p className="mt-1 text-[10px] text-[var(--color-text-dim)]">{MODE_INFO[exportMode].description}</p>
+        <p className="mt-1 text-[10px] text-[var(--color-text-dim)]">
+          {MODE_INFO[exportMode].description}
+        </p>
       </div>
 
       {/* Printlist summary — for pattern-pieces and cut-list modes */}
@@ -220,7 +238,12 @@ export function PdfExportDialog({ isOpen, onClose }: PdfExportDialogProps) {
 
       {/* Paper size */}
       <div className="mb-4">
-        <label htmlFor="pdf-paper-size" className="mb-1 block text-xs font-medium text-[var(--color-text)]">Paper Size</label>
+        <label
+          htmlFor="pdf-paper-size"
+          className="mb-1 block text-xs font-medium text-[var(--color-text)]"
+        >
+          Paper Size
+        </label>
         <select
           id="pdf-paper-size"
           value={paperSize}

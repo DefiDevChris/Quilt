@@ -17,10 +17,7 @@ interface QuickStartWorkflowsProps {
   recentProjects: ReadonlyArray<RecentProject>;
 }
 
-export function QuickStartWorkflows({
-  onNewProject,
-  recentProjects,
-}: QuickStartWorkflowsProps) {
+export function QuickStartWorkflows({ onNewProject, recentProjects }: QuickStartWorkflowsProps) {
   const [resumeOpen, setResumeOpen] = useState(false);
   const resumeRef = useRef<HTMLDivElement>(null);
 
@@ -45,9 +42,7 @@ export function QuickStartWorkflows({
 
   return (
     <section className="mb-8" aria-label="Quick start workflows">
-      <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">
-        Quick Start
-      </h2>
+      <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Quick Start</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Start New Project */}
         <button
@@ -104,11 +99,17 @@ export function QuickStartWorkflows({
             >
               {recentProjects.length === 0 ? (
                 <div className="px-4 py-6 text-center">
-                  <p className="text-sm" style={{ color: COLORS.textDim }}>No projects yet.</p>
+                  <p className="text-sm" style={{ color: COLORS.textDim }}>
+                    No projects yet.
+                  </p>
                   <button
                     type="button"
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = COLORS_HOVER.primary; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = COLORS.primary; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = COLORS_HOVER.primary;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = COLORS.primary;
+                    }}
                     onClick={() => {
                       setResumeOpen(false);
                       onNewProject();
@@ -122,18 +123,29 @@ export function QuickStartWorkflows({
               ) : (
                 <ul className="max-h-72 overflow-y-auto">
                   {recentProjects.map((project) => (
-                    <li key={project.id} className="border-b last:border-b-0" style={{ borderColor: COLORS.border }}>
+                    <li
+                      key={project.id}
+                      className="border-b last:border-b-0"
+                      style={{ borderColor: COLORS.border }}
+                    >
                       <Link
                         href={`/studio/${project.id}`}
                         role="option"
                         aria-selected="false"
                         className="flex items-center justify-between px-4 py-3"
-                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
                         onClick={() => setResumeOpen(false)}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate" style={{ color: COLORS.text }}>
+                          <p
+                            className="text-sm font-medium truncate"
+                            style={{ color: COLORS.text }}
+                          >
                             {project.name}
                           </p>
                           <p className="text-xs mt-0.5" style={{ color: COLORS.textDim }}>
@@ -166,8 +178,12 @@ export function QuickStartWorkflows({
                 href="/projects"
                 onClick={() => setResumeOpen(false)}
                 className="block px-4 py-2.5 text-center text-sm font-medium border-t"
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
                 style={{ color: COLORS.primary, borderColor: COLORS.border }}
               >
                 View all in My Quiltbook →

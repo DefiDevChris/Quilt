@@ -99,13 +99,27 @@ export function ForgotPasswordForm() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
+        <div
+          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          style={{
+            backgroundColor: withAlpha(COLORS.error, 0.05),
+            borderColor: withAlpha(COLORS.error, 0.2),
+            color: COLORS.error,
+          }}
+        >
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.success, 0.05), borderColor: withAlpha(COLORS.success, 0.2), color: COLORS.success }}>
+        <div
+          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          style={{
+            backgroundColor: withAlpha(COLORS.success, 0.05),
+            borderColor: withAlpha(COLORS.success, 0.2),
+            color: COLORS.success,
+          }}
+        >
           {success}
         </div>
       )}
@@ -113,10 +127,7 @@ export function ForgotPasswordForm() {
       {step === 'request' ? (
         <form onSubmit={handleRequestReset} className="space-y-4">
           <div>
-            <label
-              htmlFor="reset-email"
-              className="block text-sm font-medium text-dim mb-1.5"
-            >
+            <label htmlFor="reset-email" className="block text-sm font-medium text-dim mb-1.5">
               Email
             </label>
             <input
@@ -142,10 +153,7 @@ export function ForgotPasswordForm() {
       ) : (
         <form onSubmit={handleConfirmReset} className="space-y-4">
           <div>
-            <label
-              htmlFor="reset-code"
-              className="block text-sm font-medium text-dim mb-1.5"
-            >
+            <label htmlFor="reset-code" className="block text-sm font-medium text-dim mb-1.5">
               Reset Code
             </label>
             <input
@@ -163,10 +171,7 @@ export function ForgotPasswordForm() {
           </div>
 
           <div>
-            <label
-              htmlFor="new-password"
-              className="block text-sm font-medium text-dim mb-1.5"
-            >
+            <label htmlFor="new-password" className="block text-sm font-medium text-dim mb-1.5">
               New Password
             </label>
             <div className="relative">

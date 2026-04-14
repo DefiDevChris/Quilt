@@ -4,6 +4,7 @@
 
 import type { PDFFont, PDFImage } from 'pdf-lib';
 import type { UnitSystem } from '@/types/canvas';
+import type { Point } from '@/types/geometry';
 
 export type { Point } from '@/types/geometry';
 

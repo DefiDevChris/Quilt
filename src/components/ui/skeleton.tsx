@@ -51,6 +51,9 @@ interface SkeletonRowProps {
 
 export function SkeletonRow({ width = '100%', height = '16px' }: SkeletonRowProps) {
   return (
-    <div style={{ width, height }} className="animate-pulse bg-[var(--color-border)] rounded-full" />
+    <div
+      style={{ width, height }}
+      className="animate-pulse bg-[var(--color-border)] rounded-full"
+    />
   );
 }

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BrandedPage } from '@/components/layout/BrandedPage';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import Mascot from '@/components/landing/Mascot';
 import { COLORS, COLORS_HOVER, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
 interface ProjectListItem {
@@ -59,7 +59,11 @@ export default function AllProjectsPage() {
         <div className="h-12 rounded-lg" style={{ backgroundColor: COLORS.border }}></div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-48 rounded-lg" style={{ backgroundColor: COLORS.border }}></div>
+            <div
+              key={i}
+              className="h-48 rounded-lg"
+              style={{ backgroundColor: COLORS.border }}
+            ></div>
           ))}
         </div>
       </div>
@@ -74,7 +78,10 @@ export default function AllProjectsPage() {
         description={`${projects.length} ${projects.length === 1 ? 'curated design' : 'curated designs'}`}
         action={
           <div className="flex items-center gap-4">
-            <div className="flex items-center rounded-lg p-1" style={{ backgroundColor: COLORS.border }}>
+            <div
+              className="flex items-center rounded-lg p-1"
+              style={{ backgroundColor: COLORS.border }}
+            >
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-full transition-colors`}
@@ -82,9 +89,12 @@ export default function AllProjectsPage() {
                   transitionDuration: `${MOTION.transitionDuration}ms`,
                   transitionTimingFunction: MOTION.transitionEasing,
                   ...(viewMode === 'grid'
-                    ? { backgroundColor: COLORS.surface, color: COLORS.primary, boxShadow: SHADOW.brand }
-                    : { color: COLORS.secondary }
-                  ),
+                    ? {
+                        backgroundColor: COLORS.surface,
+                        color: COLORS.primary,
+                        boxShadow: SHADOW.brand,
+                      }
+                    : { color: COLORS.secondary }),
                 }}
                 onMouseEnter={(e) => {
                   if (viewMode !== 'grid') {
@@ -107,9 +117,12 @@ export default function AllProjectsPage() {
                   transitionDuration: `${MOTION.transitionDuration}ms`,
                   transitionTimingFunction: MOTION.transitionEasing,
                   ...(viewMode === 'list'
-                    ? { backgroundColor: COLORS.surface, color: COLORS.primary, boxShadow: SHADOW.brand }
-                    : { color: COLORS.secondary }
-                  ),
+                    ? {
+                        backgroundColor: COLORS.surface,
+                        color: COLORS.primary,
+                        boxShadow: SHADOW.brand,
+                      }
+                    : { color: COLORS.secondary }),
                 }}
                 onMouseEnter={(e) => {
                   if (viewMode !== 'list') {
@@ -152,13 +165,14 @@ export default function AllProjectsPage() {
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center py-32 text-center">
-          <div className="mb-6">
-            <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
-          </div>
-          <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
+          <Mascot pose="sitting" size="xl" className="mb-6 opacity-30" />
+          <h3
+            className="text-[24px] leading-[32px] font-semibold text-[var(--color-text)] mb-3"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             No projects yet
           </h3>
-          <p className="text-body-md text-[var(--color-text-dim)] mb-10 max-w-sm leading-relaxed">
+          <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-10 max-w-sm leading-relaxed">
             Start your first quilt design and build your collection of curated patterns.
           </p>
           <Link
@@ -194,10 +208,9 @@ export default function AllProjectsPage() {
             <Link
               key={project.id}
               href={`/studio/${project.id}`}
-              className={`group block transition-colors ${viewMode === 'grid'
-                ? 'rounded-lg p-4'
-                : 'rounded-lg p-4 flex items-center gap-4'
-                }`}
+              className={`group block transition-colors ${
+                viewMode === 'grid' ? 'rounded-lg p-4' : 'rounded-lg p-4 flex items-center gap-4'
+              }`}
               style={{
                 backgroundColor: COLORS.surface,
                 border: `1px solid ${COLORS.border}`,
@@ -224,8 +237,14 @@ export default function AllProjectsPage() {
                     style={{ backgroundColor: COLORS.border }}
                   />
                 ) : (
-                  <div className="w-full h-full rounded-lg flex items-center justify-center" style={{ backgroundColor: COLORS.border }}>
-                    <span style={{ color: COLORS.secondary, opacity: OPACITY.disabled }} className="font-bold text-lg">
+                  <div
+                    className="w-full h-full rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: COLORS.border }}
+                  >
+                    <span
+                      style={{ color: COLORS.secondary, opacity: OPACITY.disabled }}
+                      className="font-bold text-lg"
+                    >
                       {project.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -249,7 +268,10 @@ export default function AllProjectsPage() {
                 >
                   {project.name}
                 </h3>
-                <div className="flex items-center gap-1 mt-2 text-xs" style={{ color: COLORS.textDim }}>
+                <div
+                  className="flex items-center gap-1 mt-2 text-xs"
+                  style={{ color: COLORS.textDim }}
+                >
                   <Calendar size={12} />
                   <span>Updated {formatDate(project.updatedAt)}</span>
                 </div>

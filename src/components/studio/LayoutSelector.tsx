@@ -172,7 +172,9 @@ function LayoutCard({
               </div>
             )}
           </div>
-          <p className="text-[11px] text-[var(--color-text-dim)] leading-tight mt-0.5">{card.description}</p>
+          <p className="text-[11px] text-[var(--color-text-dim)] leading-tight mt-0.5">
+            {card.description}
+          </p>
         </div>
 
         <svg
@@ -303,15 +305,47 @@ function LayoutConfigForm({
 
         {card.hasGridConfig && (
           <div className="space-y-2">
-            <SliderRow label="Rows" value={rows} min={1} max={20} step={1} suffix={`\u2192 ${rows * blockSize}\u2033`} onChange={setRows} />
-            <SliderRow label="Cols" value={cols} min={1} max={20} step={1} suffix={`\u2192 ${cols * blockSize}\u2033`} onChange={setCols} />
-            <SliderRow label="Block size" value={blockSize} min={2} max={24} step={0.5} suffix={`${blockSize}\u2033`} onChange={setBlockSize} />
+            <SliderRow
+              label="Rows"
+              value={rows}
+              min={1}
+              max={20}
+              step={1}
+              suffix={`\u2192 ${rows * blockSize}\u2033`}
+              onChange={setRows}
+            />
+            <SliderRow
+              label="Cols"
+              value={cols}
+              min={1}
+              max={20}
+              step={1}
+              suffix={`\u2192 ${cols * blockSize}\u2033`}
+              onChange={setCols}
+            />
+            <SliderRow
+              label="Block size"
+              value={blockSize}
+              min={2}
+              max={24}
+              step={0.5}
+              suffix={`${blockSize}\u2033`}
+              onChange={setBlockSize}
+            />
           </div>
         )}
 
         {card.hasSashing && (
           <div className="mt-2">
-            <SliderRow label="Sashing" value={sashing.width} min={0.25} max={6} step={0.25} suffix={`${sashing.width}\u2033`} onChange={(v) => setSashing({ width: v })} />
+            <SliderRow
+              label="Sashing"
+              value={sashing.width}
+              min={0.25}
+              max={6}
+              step={0.25}
+              suffix={`${sashing.width}\u2033`}
+              onChange={(v) => setSashing({ width: v })}
+            />
           </div>
         )}
 
@@ -335,7 +369,10 @@ function LayoutConfigForm({
           <div className="mt-2 space-y-1.5">
             {borders.map((border: BorderConfig, i: number) => (
               <div key={border.id ?? i} className="flex items-center gap-2">
-                <span className="text-[10px] text-[var(--color-text-dim)] w-12 flex-shrink-0">
+                <span
+                  id={`border-label-${i + 1}`}
+                  className="text-[10px] text-[var(--color-text-dim)] w-12 flex-shrink-0"
+                >
                   Border {i + 1}
                 </span>
                 <input
@@ -345,6 +382,7 @@ function LayoutConfigForm({
                   step={0.5}
                   value={border.width}
                   onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })}
+                  aria-labelledby={`border-label-${i + 1}`}
                   className="flex-1 accent-[var(--color-primary)] h-1"
                 />
                 <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-8 text-right">
@@ -353,6 +391,7 @@ function LayoutConfigForm({
                 <button
                   type="button"
                   onClick={() => removeBorder(i)}
+                  aria-label={`Remove border ${i + 1}`}
                   className="text-[10px] text-[var(--color-accent)] hover:text-[var(--color-accent)]/80 w-4"
                 >
                   \u2715
@@ -363,6 +402,7 @@ function LayoutConfigForm({
               <button
                 type="button"
                 onClick={addBorder}
+                aria-label="Add border"
                 className="text-[10px] text-[var(--color-primary)] hover:opacity-80"
               >
                 + Add Border
@@ -373,7 +413,15 @@ function LayoutConfigForm({
 
         {card.hasBinding && (
           <div className="mt-2">
-            <SliderRow label="Binding" value={bindingWidth} min={0} max={2} step={0.125} suffix={`${bindingWidth}\u2033`} onChange={setBindingWidth} />
+            <SliderRow
+              label="Binding"
+              value={bindingWidth}
+              min={0}
+              max={2}
+              step={0.125}
+              suffix={`${bindingWidth}\u2033`}
+              onChange={setBindingWidth}
+            />
           </div>
         )}
 
@@ -433,10 +481,14 @@ function SliderRow({
   readonly suffix: string;
   readonly onChange: (value: number) => void;
 }) {
+  const id = `slider-${label.toLowerCase().replace(/\s+/g, '-')}`;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[11px] text-[var(--color-text-dim)] w-16 flex-shrink-0">{label}</span>
+      <label htmlFor={id} className="text-[11px] text-[var(--color-text-dim)] w-16 flex-shrink-0">
+        {label}
+      </label>
       <input
+        id={id}
         type="range"
         min={min}
         max={max}

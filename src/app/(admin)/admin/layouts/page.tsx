@@ -120,7 +120,10 @@ export default function AdminLayoutsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-pulse rounded-lg h-8 w-8" style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }} />
+          <div
+            className="animate-pulse rounded-lg h-8 w-8"
+            style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }}
+          />
         </div>
       ) : layouts.length === 0 ? (
         <div className="bg-[var(--color-bg)] border border-default rounded-lg p-12 text-center">
@@ -132,9 +135,7 @@ export default function AdminLayoutsPage() {
             <table className="w-full">
               <thead className="bg-[var(--color-bg)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                    Name
-                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden sm:table-cell">
                     Category
                   </th>
@@ -144,25 +145,45 @@ export default function AdminLayoutsPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden md:table-cell">
                     Created
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-dim">
-                    Actions
-                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-dim">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-default bg-[var(--color-bg)]">
                 {layouts.map((layout) => (
-                  <tr key={layout.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
+                  <tr
+                    key={layout.id}
+                    className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150"
+                  >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}>
-                          <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
+                        <div
+                          className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}
+                        >
+                          <svg
+                            className="w-5 h-5 text-dim"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z"
+                            />
                           </svg>
                         </div>
                         <div className="min-w-0">
                           <p className="font-medium text-default truncate">{layout.name}</p>
                           {layout.isDefault && (
-                            <span className="text-xs px-1.5 py-0.5 rounded-lg" style={{ backgroundColor: withAlpha(COLORS.primary, 0.1), color: COLORS.textDim }}>
+                            <span
+                              className="text-xs px-1.5 py-0.5 rounded-lg"
+                              style={{
+                                backgroundColor: withAlpha(COLORS.primary, 0.1),
+                                color: COLORS.textDim,
+                              }}
+                            >
                               System
                             </span>
                           )}
@@ -176,15 +197,21 @@ export default function AdminLayoutsPage() {
                       <button
                         type="button"
                         onClick={() => handleTogglePublish(layout.id, layout.isPublished)}
-                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ${layout.isPublished ? 'bg-primary' : ''
-                          }`}
-                        style={!layout.isPublished ? { backgroundColor: withAlpha(COLORS.primary, 0.3) } : undefined}
+                        className={`inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ${
+                          layout.isPublished ? 'bg-primary' : ''
+                        }`}
+                        style={
+                          !layout.isPublished
+                            ? { backgroundColor: withAlpha(COLORS.primary, 0.3) }
+                            : undefined
+                        }
                         role="switch"
                         aria-checked={layout.isPublished}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-surface)] transition-colors duration-150 ${layout.isPublished ? 'translate-x-6' : 'translate-x-1'
-                            }`}
+                          className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-surface)] transition-colors duration-150 ${
+                            layout.isPublished ? 'translate-x-6' : 'translate-x-1'
+                          }`}
                         />
                       </button>
                     </td>
@@ -221,8 +248,8 @@ export default function AdminLayoutsPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-dim">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
-                layouts
+                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
+                {pagination.total} layouts
               </p>
               <div className="flex gap-2">
                 <button
@@ -353,7 +380,10 @@ function LayoutFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8" style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}>
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8"
+      style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}
+    >
       <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-default">
@@ -365,13 +395,25 @@ function LayoutFormModal({
             className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
             <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         {error && (
-          <div className="rounded-lg px-4 py-3 text-sm font-medium" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), color: COLORS.error, borderColor: withAlpha(COLORS.error, 0.2) }}>
+          <div
+            className="rounded-lg px-4 py-3 text-sm font-medium"
+            style={{
+              backgroundColor: withAlpha(COLORS.error, 0.05),
+              color: COLORS.error,
+              borderColor: withAlpha(COLORS.error, 0.2),
+            }}
+          >
             {error}
           </div>
         )}
@@ -379,7 +421,9 @@ function LayoutFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="layout-name" className="text-sm font-medium text-default">Name *</label>
+              <label htmlFor="layout-name" className="text-sm font-medium text-default">
+                Name *
+              </label>
               <input
                 id="layout-name"
                 required
@@ -392,7 +436,9 @@ function LayoutFormModal({
               />
             </div>
             <div>
-              <label htmlFor="layout-category" className="text-sm font-medium text-default">Category</label>
+              <label htmlFor="layout-category" className="text-sm font-medium text-default">
+                Category
+              </label>
               <select
                 id="layout-category"
                 name="category"
@@ -427,7 +473,9 @@ function LayoutFormModal({
           </div>
 
           <div>
-            <label htmlFor="layout-thumbnail-svg" className="text-sm font-medium text-default">Thumbnail SVG</label>
+            <label htmlFor="layout-thumbnail-svg" className="text-sm font-medium text-default">
+              Thumbnail SVG
+            </label>
             <textarea
               id="layout-thumbnail-svg"
               name="thumbnailSvg"
@@ -453,7 +501,9 @@ function LayoutFormModal({
               <input
                 type="checkbox"
                 checked={formData.isPublished}
-                onChange={(e) => setFormData((prev) => ({ ...prev, isPublished: e.target.checked }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, isPublished: e.target.checked }))
+                }
                 className="rounded-lg border-default"
               />
               <span className="text-sm text-default">Published</span>

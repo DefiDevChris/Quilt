@@ -5,11 +5,13 @@ import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 export default function CtaSection() {
   return (
     <section className="px-6 lg:px-12 py-16 lg:py-24 bg-default relative overflow-hidden">
-
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="bg-primary/10 p-10 md:p-16 text-center border border-default rounded-lg relative overflow-hidden">
           {/* Decorative stitch outline via SVG overlay */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            preserveAspectRatio="none"
+          >
             <rect
               x="8"
               y="8"
@@ -27,7 +29,11 @@ export default function CtaSection() {
 
           {/* Mascots */}
           <Mascot pose="jumping" size="md" className="absolute top-4 left-6 z-10 hidden sm:block" />
-          <Mascot pose="fetching" size="md" className="absolute bottom-4 right-6 z-10 hidden sm:block" />
+          <Mascot
+            pose="fetching"
+            size="md"
+            className="absolute bottom-4 right-6 z-10 hidden sm:block"
+          />
 
           <div className="relative z-10">
             <div className="flex items-center justify-center gap-2 mb-4">

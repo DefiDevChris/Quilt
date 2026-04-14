@@ -158,12 +158,12 @@ export function QuickInfo() {
 
   return (
     <div
+      role="region"
+      aria-label="Object dimensions info"
       className="absolute z-40 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-2 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
-      <div className="mb-1 text-caption font-semibold text-[var(--color-text-dim)]">
-        Quick Info
-      </div>
+      <div className="mb-1 text-caption font-semibold text-[var(--color-text-dim)]">Quick Info</div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
         {fields.map(({ key, label, suffix }) => (
           <div key={key} className="flex items-center gap-1 text-xs">
@@ -180,6 +180,7 @@ export function QuickInfo() {
                   if (e.key === 'Enter') applyEdit(key, editValue);
                   if (e.key === 'Escape') setEditField(null);
                 }}
+                aria-label={`${label} value`}
                 className="w-16 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-1 py-0 font-mono text-xs text-[var(--color-text)] outline-none focus:outline-2 focus:outline-[var(--color-primary)]"
                 autoFocus
               />
@@ -195,8 +196,8 @@ export function QuickInfo() {
                   setEditField(key);
                   setEditValue(String(info[key]));
                 }}
+                aria-label={`Edit ${label}, current value: ${info[key]}${suffix}`}
                 className="cursor-text rounded px-0.5 font-mono text-[var(--color-text)] hover:bg-[var(--color-primary)]/10"
-                title="Click to edit"
               >
                 {info[key]}
                 {suffix}

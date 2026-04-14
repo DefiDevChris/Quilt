@@ -77,7 +77,10 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
 
       {/* Details */}
       <div className="p-3 space-y-2.5">
-        <p className="text-[14px] font-medium text-[var(--color-text)] truncate" title={displayName}>
+        <p
+          className="text-[14px] font-medium text-[var(--color-text)] truncate"
+          title={displayName}
+        >
           {displayName}
         </p>
 
@@ -89,10 +92,11 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
               type="button"
               onClick={() => onUpdateType(upload.id, opt.value)}
               disabled={upload.status !== 'pending'}
-              className={`px-2 py-0.5 text-[14px] font-medium rounded-full transition-colors ${upload.assignedType === opt.value
-                ? TYPE_COLORS[opt.value]
-                : 'bg-transparent text-[var(--color-text-dim)]/60 hover:bg-[var(--color-border)]/50'
-                } disabled:opacity-50`}
+              className={`px-2 py-0.5 text-[14px] font-medium rounded-full transition-colors ${
+                upload.assignedType === opt.value
+                  ? TYPE_COLORS[opt.value]
+                  : 'bg-transparent text-[var(--color-text-dim)]/60 hover:bg-[var(--color-border)]/50'
+              } disabled:opacity-50`}
               style={upload.assignedType === opt.value ? getTypeColor(opt.value) : undefined}
             >
               {opt.label}
@@ -119,13 +123,16 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
           <button
             type="button"
             onClick={handleDelete}
-            className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${confirmDelete
-              ? ''
-              : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
-              }`}
-            style={confirmDelete
-              ? { backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }
-              : undefined}
+            className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${
+              confirmDelete
+                ? ''
+                : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
+            }`}
+            style={
+              confirmDelete
+                ? { backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }
+                : undefined
+            }
             onMouseEnter={(e) => {
               if (!confirmDelete) {
                 e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;

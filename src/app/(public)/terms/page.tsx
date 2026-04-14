@@ -22,7 +22,9 @@ export default function TermsPage() {
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-0.5 w-12 bg-default" />
-            <p className="text-[14px] leading-[20px] font-normal text-dim">Effective: March 30, 2026</p>
+            <p className="text-[14px] leading-[20px] font-normal text-dim">
+              Effective: March 30, 2026
+            </p>
           </div>
         </div>
 
@@ -30,8 +32,8 @@ export default function TermsPage() {
           <p>
             Welcome to Quilt Studio! These Terms of Service (&ldquo;Terms&rdquo;) govern your access
             to and use of the Quilt Studio website, design studio, community features, and related
-            services (collectively, the &ldquo;Service&rdquo;). The Service is operated by
-            Quilt Studio LLC (&ldquo;Quilt Studio,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or
+            services (collectively, the &ldquo;Service&rdquo;). The Service is operated by Quilt
+            Studio LLC (&ldquo;Quilt Studio,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or
             &ldquo;our&rdquo;), a Wyoming limited liability company.
           </p>
           <p>
@@ -42,12 +44,14 @@ export default function TermsPage() {
           {/* 1. Eligibility */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />1. Eligibility</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              1. Eligibility
+            </h2>
             <p>
               You must be at least 13 years old to create an account or use the Service. If you are
               under 18, you represent that you have your parent or legal guardian&rsquo;s permission
-              to use the Service. By using Quilt Studio, you represent and warrant that you meet these
-              requirements and have the legal capacity to enter into these Terms.
+              to use the Service. By using Quilt Studio, you represent and warrant that you meet
+              these requirements and have the legal capacity to enter into these Terms.
             </p>
           </section>
 
@@ -143,6 +147,71 @@ export default function TermsPage() {
             </p>
           </section>
 
+          {/* 3b. Fabric Shop Purchases */}
+          <section>
+            <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              3b. Fabric Shop Purchases
+            </h2>
+            <p className="mb-3">
+              Quilt Studio operates an online fabric shop offering quilting fabrics, pre-cuts,
+              notions, patterns, and related products. All shop purchases are processed through
+              Shopify, a third-party e-commerce platform.
+            </p>
+            <p className="mb-3">
+              <strong>Product information.</strong> We strive to display accurate product
+              descriptions, images, and pricing. However, colors may appear differently depending on
+              your device and screen settings. Product availability is subject to change without
+              notice.
+            </p>
+            <p className="mb-3">
+              <strong>Orders and payment.</strong> When you place an order through the shop, you
+              will be redirected to Shopify&rsquo;s secure checkout. Payment is processed by Shopify
+              Payments or other payment methods made available through Shopify. Your purchase is
+              subject to Shopify&rsquo;s{' '}
+              <a
+                href="https://www.shopify.com/legal/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-default underline underline-offset-4 hover:text-primary transition-colors duration-150"
+              >
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a
+                href="https://www.shopify.com/legal/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-default underline underline-offset-4 hover:text-primary transition-colors duration-150"
+              >
+                Privacy Policy
+              </a>
+              .
+            </p>
+            <p className="mb-3">
+              <strong>Shipping.</strong> Shipping rates and delivery times are determined at
+              checkout based on your location and the products in your order. We ship to addresses
+              within the regions supported by our Shopify store.
+            </p>
+            <p className="mb-3">
+              <strong>Returns and refunds.</strong> We accept returns of unused, uncut fabric and
+              unopened products within 30 days of delivery. To initiate a return, contact us at{' '}
+              <a
+                href="mailto:support@quiltcorgi.com"
+                className="text-default underline underline-offset-4 hover:text-primary transition-colors duration-150"
+              >
+                support@quiltcorgi.com
+              </a>{' '}
+              with your order number. Return shipping costs are the responsibility of the customer
+              unless the product was defective or we made an error. Cut fabric cannot be returned
+              unless defective.
+            </p>
+            <p className="mb-3">
+              <strong>Order limitations.</strong> We reserve the right to limit quantities, cancel
+              orders, or restrict purchases if fraud or unauthorized activity is suspected.
+            </p>
+          </section>
+
           {/* 4. User Content & Intellectual Property */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
@@ -181,8 +250,8 @@ export default function TermsPage() {
               5. Community Guidelines &amp; Acceptable Use
             </h2>
             <p className="mb-3">
-              Quilt Studio is a community built by and for quilters. We want everyone to feel welcome.
-              By using the community features, you agree to:
+              Quilt Studio is a community built by and for quilters. We want everyone to feel
+              welcome. By using the community features, you agree to:
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Treat other quilters with kindness and respect.</li>
@@ -264,7 +333,9 @@ export default function TermsPage() {
           {/* 7. Disclaimers */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />7. Disclaimers</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              7. Disclaimers
+            </h2>
             <p className="mb-3">
               THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo; WITHOUT
               WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
@@ -352,7 +423,9 @@ export default function TermsPage() {
           {/* 10. Termination */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />10. Termination</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              10. Termination
+            </h2>
             <p className="mb-3">
               You may stop using the Service and delete your account at any time. Upon account
               deletion, your personal data will be handled in accordance with our Privacy Policy.
@@ -384,7 +457,9 @@ export default function TermsPage() {
           {/* 12. Governing Law */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />12. Governing Law</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              12. Governing Law
+            </h2>
             <p>
               These Terms are governed by and construed in accordance with the laws of the State of
               Wyoming, without regard to its conflict-of-law principles. Subject to the arbitration
@@ -396,7 +471,9 @@ export default function TermsPage() {
           {/* 13. Miscellaneous */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />13. Miscellaneous</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              13. Miscellaneous
+            </h2>
             <p className="mb-3">
               <strong>Entire agreement.</strong> These Terms, together with the Privacy Policy,
               constitute the entire agreement between you and Quilt Studio regarding the Service.
@@ -418,7 +495,9 @@ export default function TermsPage() {
           {/* 14. Contact */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />14. Contact Us</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              14. Contact Us
+            </h2>
             <p>
               If you have questions about these Terms, please reach out:{' '}
               <a

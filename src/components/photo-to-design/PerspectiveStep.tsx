@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePhotoDesignStore } from '@/stores/photoDesignStore';
-import { computeHomography, invertMatrix3x3, warpImageData } from '@/lib/photo-to-design/perspective';
+import {
+  computeHomography,
+  invertMatrix3x3,
+  warpImageData,
+} from '@/lib/photo-to-design/perspective';
 import type { Point } from '@/lib/photo-to-design/types';
 
 const HANDLE_RADIUS = 14;
@@ -109,7 +113,10 @@ export function PerspectiveStep() {
     (e: React.MouseEvent) => {
       if (dragging === null || !corners) return;
       const pos = getMousePos(e);
-      const clamped = { x: Math.max(0, Math.min(canvasSize.width, pos.x)), y: Math.max(0, Math.min(canvasSize.height, pos.y)) };
+      const clamped = {
+        x: Math.max(0, Math.min(canvasSize.width, pos.x)),
+        y: Math.max(0, Math.min(canvasSize.height, pos.y)),
+      };
       const updated = [...corners] as [Point, Point, Point, Point];
       updated[dragging] = clamped;
       setCorners(updated);
@@ -125,12 +132,29 @@ export function PerspectiveStep() {
     const srcH = sourceImageData.height;
     const scaleX = srcW / canvasSize.width;
     const scaleY = srcH / canvasSize.height;
-    const scaledCorners = corners.map((c) => ({ x: c.x * scaleX, y: c.y * scaleY })) as [Point, Point, Point, Point];
+    const scaledCorners = corners.map((c) => ({ x: c.x * scaleX, y: c.y * scaleY })) as [
+      Point,
+      Point,
+      Point,
+      Point,
+    ];
 
-    const topW = Math.sqrt((scaledCorners[1].x - scaledCorners[0].x) ** 2 + (scaledCorners[1].y - scaledCorners[0].y) ** 2);
-    const botW = Math.sqrt((scaledCorners[2].x - scaledCorners[3].x) ** 2 + (scaledCorners[2].y - scaledCorners[3].y) ** 2);
-    const leftH = Math.sqrt((scaledCorners[3].x - scaledCorners[0].x) ** 2 + (scaledCorners[3].y - scaledCorners[0].y) ** 2);
-    const rightH = Math.sqrt((scaledCorners[2].x - scaledCorners[1].x) ** 2 + (scaledCorners[2].y - scaledCorners[1].y) ** 2);
+    const topW = Math.sqrt(
+      (scaledCorners[1].x - scaledCorners[0].x) ** 2 +
+        (scaledCorners[1].y - scaledCorners[0].y) ** 2
+    );
+    const botW = Math.sqrt(
+      (scaledCorners[2].x - scaledCorners[3].x) ** 2 +
+        (scaledCorners[2].y - scaledCorners[3].y) ** 2
+    );
+    const leftH = Math.sqrt(
+      (scaledCorners[3].x - scaledCorners[0].x) ** 2 +
+        (scaledCorners[3].y - scaledCorners[0].y) ** 2
+    );
+    const rightH = Math.sqrt(
+      (scaledCorners[2].x - scaledCorners[1].x) ** 2 +
+        (scaledCorners[2].y - scaledCorners[1].y) ** 2
+    );
 
     const outW = Math.round(Math.max(topW, botW));
     const outH = Math.round(Math.max(leftH, rightH));
@@ -179,10 +203,16 @@ export function PerspectiveStep() {
           <div className="flex flex-col gap-1.5">
             {LABEL_FULL.map((label, i) => (
               <div key={label} className="flex items-center gap-2">
-                <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                  dragging === i ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'bg-white border-[var(--color-primary)]'
-                }`}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${dragging === i ? 'bg-white' : 'bg-[var(--color-primary)]'}`} />
+                <div
+                  className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                    dragging === i
+                      ? 'bg-[var(--color-primary)] border-[var(--color-primary)]'
+                      : 'bg-white border-[var(--color-primary)]'
+                  }`}
+                >
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${dragging === i ? 'bg-white' : 'bg-[var(--color-primary)]'}`}
+                  />
                 </div>
                 <span className="text-[11px] text-[var(--color-text-dim)]">{label}</span>
               </div>
@@ -192,17 +222,23 @@ export function PerspectiveStep() {
 
         {/* Bottom actions */}
         <div className="p-3 border-t border-[var(--color-border)]/20 flex flex-col gap-2">
-          <button onClick={handleApply}
-            className="w-full px-3 py-2 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[13px] font-medium hover:bg-[#e67d3f] transition-colors">
+          <button
+            onClick={handleApply}
+            className="w-full px-3 py-2 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[13px] font-medium hover:bg-[#e67d3f] transition-colors"
+          >
             Next
           </button>
           <div className="flex gap-2">
-            <button onClick={handleBack}
-              className="flex-1 px-3 py-1.5 rounded-full border-2 border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-medium hover:bg-[var(--color-primary)]/10 transition-colors">
+            <button
+              onClick={handleBack}
+              className="flex-1 px-3 py-1.5 rounded-full border-2 border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-medium hover:bg-[var(--color-primary)]/10 transition-colors"
+            >
               Back
             </button>
-            <button onClick={handleSkip}
-              className="flex-1 px-3 py-1.5 rounded-full border border-[var(--color-border)] text-[12px] font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)]/10 transition-colors">
+            <button
+              onClick={handleSkip}
+              className="flex-1 px-3 py-1.5 rounded-full border border-[var(--color-border)] text-[12px] font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)]/10 transition-colors"
+            >
               Skip
             </button>
           </div>

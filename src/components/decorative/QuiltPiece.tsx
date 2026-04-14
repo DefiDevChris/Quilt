@@ -161,10 +161,7 @@ export function QuiltPieceBand({
   }));
 
   return (
-    <div
-      className={`relative overflow-hidden ${className}`}
-      style={{ height }}
-    >
+    <div className={`relative overflow-hidden ${className}`} style={{ height }}>
       {pieces.map((p, i) => (
         <QuiltPiece
           key={i}

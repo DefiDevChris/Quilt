@@ -93,7 +93,14 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
+        <div
+          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          style={{
+            backgroundColor: withAlpha(COLORS.error, 0.05),
+            borderColor: withAlpha(COLORS.error, 0.2),
+            color: COLORS.error,
+          }}
+        >
           {error}
         </div>
       )}
@@ -147,10 +154,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
             Password
           </label>
           {!isSignUp && !compact && (
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-primary hover:underline"
-            >
+            <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
               Forgot password?
             </Link>
           )}
@@ -202,9 +206,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           </button>
         </div>
         {isSignUp && (
-          <p className="mt-1.5 text-sm text-dim">
-            Must include uppercase, lowercase, and numbers
-          </p>
+          <p className="mt-1.5 text-sm text-dim">Must include uppercase, lowercase, and numbers</p>
         )}
       </div>
 

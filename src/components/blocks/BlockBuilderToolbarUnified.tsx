@@ -75,7 +75,13 @@ export function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[
       group: 'shapes',
       icon: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <polygon points="14,4 4,24 24,24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
+          <polygon
+            points="14,4 4,24 24,24"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            fill="none"
+          />
         </svg>
       ),
       onClick: () => callbacks.onModeChange('triangle'),
@@ -232,12 +238,13 @@ export function BlockBuilderToolbarUnified({
                     aria-pressed={isActive}
                     aria-disabled={tool.isDisabled ?? false}
                     onClick={tool.isDisabled ? undefined : tool.onClick}
-                    className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${tool.isDisabled
-                      ? 'text-[var(--color-text-dim)]/25 cursor-default'
-                      : isActive
-                        ? 'text-[var(--color-primary)]'
-                        : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-                      }`}
+                    className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${
+                      tool.isDisabled
+                        ? 'text-[var(--color-text-dim)]/25 cursor-default'
+                        : isActive
+                          ? 'text-[var(--color-primary)]'
+                          : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+                    }`}
                   >
                     <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
                       {tool.icon}

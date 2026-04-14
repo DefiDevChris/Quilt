@@ -12,8 +12,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { isPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
+import { isPro, type UserRole } from '@/lib/role-utils';
 
 async function getOwnedProject(projectId: string, userId: string) {
   const [project] = await db

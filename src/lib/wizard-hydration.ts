@@ -10,9 +10,8 @@
  * responsible for actually invoking the store setters.
  */
 import type { InitialSetupConfig, Project } from '@/types/project';
-import type { LayoutPreset } from '@/lib/layout-library';
 import type { LayoutType, SashingConfig, BorderConfig } from '@/lib/layout-utils';
-import { LAYOUT_PRESETS } from '@/lib/layout-library';
+import { LAYOUT_PRESETS, type LayoutPreset } from '@/lib/layout-library';
 
 /**
  * Minimal subset of `useLayoutStore` setters that the hydrator needs.
@@ -91,7 +90,11 @@ export function applyInitialSetup(
 ): HydrationResult {
   const setup = project.canvasData?.initialSetup;
   if (!setup) {
-    return { hydrated: false, canvasWidth: project.canvasWidth, canvasHeight: project.canvasHeight };
+    return {
+      hydrated: false,
+      canvasWidth: project.canvasWidth,
+      canvasHeight: project.canvasHeight,
+    };
   }
 
   let result: { width: number; height: number } | null = null;

@@ -62,7 +62,7 @@ describe('Fabric Drop Logic', () => {
 
     it('should reject drops on non-fence elements', () => {
       const isFenceElement = false;
-      const isAllowed = isFenceElement && ALLOWED_ROLES.includes('sashing' as any);
+      const isAllowed = isFenceElement && ALLOWED_ROLES.includes('sashing');
       expect(isAllowed).toBe(false);
     });
   });

@@ -272,7 +272,7 @@
     "favicon": "/favicon.png",
     "og_image": "/og-image.png",
     "pwa_icon": "/icon-192.png",
-    "backgrounds": ["/background.png", "/backgroundd.png"],
+    "backgrounds": ["/background.png"],
     "cursors": "/cursors/bend.cur",
     "mascots": "/mascots&avatars/corgi1.png through corgi29.png (29 total)",
     "icons": {

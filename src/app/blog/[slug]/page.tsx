@@ -91,17 +91,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Header */}
         <header className="max-w-3xl mx-auto px-6 md:px-12 pt-12 md:pt-20 pb-12">
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-[14px] leading-[20px] text-primary">
-              {post.category}
-            </span>
+            <span className="text-[14px] leading-[20px] text-primary">{post.category}</span>
             <span className="w-6 h-px border-default" />
             <time className="text-[14px] leading-[20px] text-dim">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })
                 : ''}
             </time>
           </div>

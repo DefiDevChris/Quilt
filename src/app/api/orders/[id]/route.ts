@@ -7,10 +7,7 @@ import { eq } from 'drizzle-orm';
  * GET /api/orders/[id] - Returns single order with full details
  * Requires auth, validates userId matches
  */
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
 
@@ -21,11 +18,7 @@ export async function GET(
     const { id } = await params;
 
     // Fetch order
-    const [order] = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.id, id))
-      .limit(1);
+    const [order] = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
 
     if (!order) {
       return Response.json({ error: 'Order not found' }, { status: 404 });
@@ -52,9 +45,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('Failed to fetch order:', error);
-    return Response.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

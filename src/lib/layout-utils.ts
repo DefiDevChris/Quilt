@@ -6,7 +6,14 @@
  * All outputs are in pixels. Callers convert from units using pxPerUnit.
  */
 
-export type LayoutType = 'none' | 'free-form' | 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion';
+export type LayoutType =
+  | 'none'
+  | 'free-form'
+  | 'grid'
+  | 'sashing'
+  | 'on-point'
+  | 'strippy'
+  | 'medallion';
 
 export interface SashingConfig {
   width: number;

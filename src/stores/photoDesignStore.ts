@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import type { EngineOutput, GridSpec } from '@/lib/photo-to-design/types';
-import type { Point } from '@/lib/photo-to-design/types';
+import type { EngineOutput, GridSpec, Point } from '@/lib/photo-to-design/types';
 
 type WizardStep = 'upload' | 'perspective' | 'grid' | 'review';
 

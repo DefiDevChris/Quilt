@@ -3,14 +3,16 @@
  */
 
 import { PDFDocument, type PDFPage, type PDFFont } from 'pdf-lib';
-import {
-  createPdfDocument,
-  embedLogo,
-  drawContentPageHeader,
-  drawBrandedFooter,
-} from './index';
+import { createPdfDocument, embedLogo, drawContentPageHeader, drawBrandedFooter } from './index';
 import { drawValidationSquare, drawGrainLine, drawPolylinePoints } from './templates';
-import { PDF_PAGE_SIZES, PDF_POINTS_PER_INCH, type CutlistPdfConfig, type BlockSnapshot, type PdfFonts } from './types';
+import {
+  PDF_PAGE_SIZES,
+  PDF_POINTS_PER_INCH,
+  type CutlistPdfConfig,
+  type BlockSnapshot,
+  type PdfFonts,
+  type PdfBranding,
+} from './types';
 import { extractShapePolyline } from './shapes';
 import { calculateEdgeDimensions } from '@/lib/edge-dimension-utils';
 import { deduplicateBy } from '@/lib/dedup-utils';
@@ -27,7 +29,7 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
   const { pdfDoc, fonts } = await createPdfDocument();
 
   const logoImage = await embedLogo(pdfDoc, config.logoPng);
-  const branding = { logoImage };
+  const branding: PdfBranding = { logoImage };
 
   const pages: PDFPage[] = [];
 
@@ -42,7 +44,11 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
   buildKeyBlockPage(keyPage, config.items, config.blocks, fonts, margin, branding);
 
   // Template Pages
-  const uniqueShapes = deduplicateBy(config.items, (item) => item.svgData, (item) => item.quantity);
+  const uniqueShapes = deduplicateBy(
+    config.items,
+    (item) => item.svgData,
+    (item) => item.quantity
+  );
   let isFirstTemplate = true;
 
   for (const { item, count: totalQuantity, label } of uniqueShapes) {
@@ -71,11 +77,29 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
       isFirstTemplate = false;
     }
 
-    page.drawText(`Piece ${label} — Cut ${totalQuantity}`, { x: mx, y, size: 12, font: fonts.bold, color: PDF_SEMANTIC.black });
-    page.drawText(item.shapeName, { x: mx, y: y - 14, size: 8, font: fonts.regular, color: PDF_SEMANTIC.midGray });
+    page.drawText(`Piece ${label} — Cut ${totalQuantity}`, {
+      x: mx,
+      y,
+      size: 12,
+      font: fonts.bold,
+      color: PDF_SEMANTIC.black,
+    });
+    page.drawText(item.shapeName, {
+      x: mx,
+      y: y - 14,
+      size: 8,
+      font: fonts.regular,
+      color: PDF_SEMANTIC.midGray,
+    });
 
     const dimText = `Finished: ${cutBbox.width.toFixed(2)}" x ${cutBbox.height.toFixed(2)}"`;
-    page.drawText(dimText, { x: mx + fonts.regular.widthOfTextAtSize(item.shapeName, 8) + 12, y: y - 14, size: 8, font: fonts.regular, color: PDF_SEMANTIC.midGray });
+    page.drawText(dimText, {
+      x: mx + fonts.regular.widthOfTextAtSize(item.shapeName, 8) + 12,
+      y: y - 14,
+      size: 8,
+      font: fonts.regular,
+      color: PDF_SEMANTIC.midGray,
+    });
     y -= 32;
 
     const centerX = pageW / 2;
@@ -87,7 +111,11 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
         x: drawOriginX + (p.x - outerBbox.minX) * pts,
         y: drawOriginY + (outerBbox.height - (p.y - outerBbox.minY)) * pts,
       }));
-      drawPolylinePoints(page, seamPts, { color: PDF_SEMANTIC.sewLine, lineWidth: 0.5, dashArray: [3, 3] });
+      drawPolylinePoints(page, seamPts, {
+        color: PDF_SEMANTIC.sewLine,
+        lineWidth: 0.5,
+        dashArray: [3, 3],
+      });
     }
 
     const cutPts = cutLine.map((p) => ({
@@ -105,7 +133,13 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
       const labelX = midPdfX + offset * Math.cos(perpAngle);
       const labelY = midPdfY + offset * Math.sin(perpAngle);
       const labelW = fonts.regular.widthOfTextAtSize(edge.formattedLength, 7);
-      page.drawText(edge.formattedLength, { x: labelX - labelW / 2, y: labelY - 3, size: 7, font: fonts.regular, color: PDF_SEMANTIC.darkGray });
+      page.drawText(edge.formattedLength, {
+        x: labelX - labelW / 2,
+        y: labelY - 3,
+        size: 7,
+        font: fonts.regular,
+        color: PDF_SEMANTIC.darkGray,
+      });
     }
 
     const grainX = centerX;
@@ -115,10 +149,33 @@ export async function generateCutListPdf(config: CutlistPdfConfig): Promise<Uint
 
     // Legend
     const legendY = drawOriginY - 16;
-    page.drawLine({ start: { x: mx, y: legendY + 4 }, end: { x: mx + 20, y: legendY + 4 }, thickness: 1, color: PDF_SEMANTIC.black });
-    page.drawText('= Cut line', { x: mx + 24, y: legendY, size: 7, font: fonts.regular, color: PDF_SEMANTIC.mediumGray });
-    page.drawLine({ start: { x: mx + 80, y: legendY + 4 }, end: { x: mx + 100, y: legendY + 4 }, thickness: 0.5, color: PDF_SEMANTIC.lightGray, dashArray: [3, 3] });
-    page.drawText('= Sew line (¼" seam allowance)', { x: mx + 104, y: legendY, size: 7, font: fonts.regular, color: PDF_SEMANTIC.mediumGray });
+    page.drawLine({
+      start: { x: mx, y: legendY + 4 },
+      end: { x: mx + 20, y: legendY + 4 },
+      thickness: 1,
+      color: PDF_SEMANTIC.black,
+    });
+    page.drawText('= Cut line', {
+      x: mx + 24,
+      y: legendY,
+      size: 7,
+      font: fonts.regular,
+      color: PDF_SEMANTIC.mediumGray,
+    });
+    page.drawLine({
+      start: { x: mx + 80, y: legendY + 4 },
+      end: { x: mx + 100, y: legendY + 4 },
+      thickness: 0.5,
+      color: PDF_SEMANTIC.lightGray,
+      dashArray: [3, 3],
+    });
+    page.drawText('= Sew line (¼" seam allowance)', {
+      x: mx + 104,
+      y: legendY,
+      size: 7,
+      font: fonts.regular,
+      color: PDF_SEMANTIC.mediumGray,
+    });
   }
 
   const totalPages = pages.length;
@@ -135,23 +192,45 @@ function buildKeyBlockPage(
   _blocks: BlockSnapshot[],
   fonts: PdfFonts,
   margin: number,
-  branding: { logoImage: ReturnType<PDFDocument['embedPng']> | null }
+  branding: PdfBranding
 ): void {
   const pts = PDF_POINTS_PER_INCH;
   const mx = margin * pts;
 
   let y = drawContentPageHeader(page, 'Cut List — Shape Key', fonts, margin, branding);
 
-  page.drawText('All measurements include seam allowance. Print at 100% / Actual Size.', { x: mx, y, size: 8, font: fonts.regular, color: PDF_SEMANTIC.midGray });
+  page.drawText('All measurements include seam allowance. Print at 100% / Actual Size.', {
+    x: mx,
+    y,
+    size: 8,
+    font: fonts.regular,
+    color: PDF_SEMANTIC.midGray,
+  });
   y -= 20;
 
-  const uniqueShapes = deduplicateBy(items, (item) => item.svgData, (item) => item.quantity);
+  const uniqueShapes = deduplicateBy(
+    items,
+    (item) => item.svgData,
+    (item) => item.quantity
+  );
 
   for (const { item, count: totalQuantity, label } of uniqueShapes) {
     if (y < mx + 30) break;
-    page.drawText(`Piece ${label}`, { x: mx, y, size: 9, font: fonts.bold, color: PDF_SEMANTIC.black });
+    page.drawText(`Piece ${label}`, {
+      x: mx,
+      y,
+      size: 9,
+      font: fonts.bold,
+      color: PDF_SEMANTIC.black,
+    });
     const desc = `${item.shapeName} — Cut ${totalQuantity}`;
-    page.drawText(desc, { x: mx + 60, y, size: 8, font: fonts.regular, color: PDF_SEMANTIC.darkGray });
+    page.drawText(desc, {
+      x: mx + 60,
+      y,
+      size: 8,
+      font: fonts.regular,
+      color: PDF_SEMANTIC.darkGray,
+    });
     y -= 14;
   }
 }

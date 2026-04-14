@@ -86,11 +86,17 @@ export function LayoutAdjuster() {
 
       <div className="space-y-2">
         <div>
-          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
+          <label
+            htmlFor="scale-x-slider"
+            className="flex items-center justify-between text-xs text-[var(--color-text-dim)]"
+          >
             <span>Scale X</span>
-            <span className="text-xs text-[var(--color-text-dim)] font-mono">{state.scaleX.toFixed(2)}</span>
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">
+              {state.scaleX.toFixed(2)}
+            </span>
           </label>
           <input
+            id="scale-x-slider"
             type="range"
             min={10}
             max={300}
@@ -101,11 +107,17 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
+          <label
+            htmlFor="scale-y-slider"
+            className="flex items-center justify-between text-xs text-[var(--color-text-dim)]"
+          >
             <span>Scale Y</span>
-            <span className="text-xs text-[var(--color-text-dim)] font-mono">{state.scaleY.toFixed(2)}</span>
+            <span className="text-xs text-[var(--color-text-dim)] font-mono">
+              {state.scaleY.toFixed(2)}
+            </span>
           </label>
           <input
+            id="scale-y-slider"
             type="range"
             min={10}
             max={300}
@@ -116,13 +128,17 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
+          <label
+            htmlFor="rotation-slider"
+            className="flex items-center justify-between text-xs text-[var(--color-text-dim)]"
+          >
             <span>Rotation</span>
             <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.rotation)}°
             </span>
           </label>
           <input
+            id="rotation-slider"
             type="range"
             min={0}
             max={360}
@@ -133,13 +149,17 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
+          <label
+            htmlFor="offset-x-slider"
+            className="flex items-center justify-between text-xs text-[var(--color-text-dim)]"
+          >
             <span>Offset X</span>
             <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.offsetX)}px
             </span>
           </label>
           <input
+            id="offset-x-slider"
             type="range"
             min={-200}
             max={200}
@@ -150,13 +170,17 @@ export function LayoutAdjuster() {
         </div>
 
         <div>
-          <label className="flex items-center justify-between text-xs text-[var(--color-text-dim)]">
+          <label
+            htmlFor="offset-y-slider"
+            className="flex items-center justify-between text-xs text-[var(--color-text-dim)]"
+          >
             <span>Offset Y</span>
             <span className="text-xs text-[var(--color-text-dim)] font-mono">
               {Math.round(state.offsetY)}px
             </span>
           </label>
           <input
+            id="offset-y-slider"
             type="range"
             min={-200}
             max={200}

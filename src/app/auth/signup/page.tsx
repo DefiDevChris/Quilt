@@ -8,11 +8,7 @@ export const metadata: Metadata = {
 
 export default function SignUpPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="h-8 w-8 animate-pulse rounded-lg bg-secondary" />
-      }
-    >
+    <Suspense fallback={<div className="h-8 w-8 animate-pulse rounded-lg bg-secondary" />}>
       <AuthForm mode="signup" />
     </Suspense>
   );

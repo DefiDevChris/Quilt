@@ -8,7 +8,10 @@ import { COLORS, SHADOW, MOTION, OPACITY, RADIUS, CANVAS, COLORS_HOVER } from '@
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-4 text-[var(--color-text-dim)] font-medium">
-      <div className="w-6 h-6 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0" style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}>
+      <div
+        className="w-6 h-6 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0"
+        style={{ backgroundColor: `${COLORS.primary}1a`, color: COLORS.primary }}
+      >
         <svg
           width="14"
           height="14"
@@ -27,12 +30,54 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 
 /* 6x6 quilt grid -- a simplified Ohio Star / Nine-Patch pattern */
 const QUILT_GRID: string[][] = [
-  [COLORS.primary, COLORS.fabricGridMockBg, COLORS.accent, COLORS.fabricGridMockBg, COLORS.primary, COLORS.fabricGridMockBg],
-  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
-  [COLORS.accent, COLORS.primary, COLORS.fabricGridMockBg, COLORS.primary, COLORS.accent, COLORS.primary],
-  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
-  [COLORS.primary, COLORS.fabricGridMockBg, COLORS.accent, COLORS.fabricGridMockBg, COLORS.primary, COLORS.fabricGridMockBg],
-  [COLORS.fabricGridMockBg, COLORS.accent, COLORS.primary, COLORS.accent, COLORS.fabricGridMockBg, COLORS.accent],
+  [
+    COLORS.primary,
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+    COLORS.fabricGridMockBg,
+    COLORS.primary,
+    COLORS.fabricGridMockBg,
+  ],
+  [
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+    COLORS.primary,
+    COLORS.accent,
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+  ],
+  [
+    COLORS.accent,
+    COLORS.primary,
+    COLORS.fabricGridMockBg,
+    COLORS.primary,
+    COLORS.accent,
+    COLORS.primary,
+  ],
+  [
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+    COLORS.primary,
+    COLORS.accent,
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+  ],
+  [
+    COLORS.primary,
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+    COLORS.fabricGridMockBg,
+    COLORS.primary,
+    COLORS.fabricGridMockBg,
+  ],
+  [
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+    COLORS.primary,
+    COLORS.accent,
+    COLORS.fabricGridMockBg,
+    COLORS.accent,
+  ],
 ];
 
 function StudioPreviewMockup() {
@@ -67,7 +112,10 @@ function StudioPreviewMockup() {
             <span className="font-bold text-[var(--color-text)] hidden sm:inline">QuiltCorgi</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="px-2 py-0.5 text-[var(--color-text)] font-bold text-[8px]" style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}>
+            <div
+              className="px-2 py-0.5 text-[var(--color-text)] font-bold text-[8px]"
+              style={{ backgroundColor: COLORS.primary, borderRadius: RADIUS.lg }}
+            >
               Main
             </div>
             <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
@@ -127,9 +175,12 @@ function StudioPreviewMockup() {
               ) : (
                 <div
                   key={i}
-                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${(tool as { active?: boolean }).active ? '' : 'text-[var(--color-text-dim)]'
-                    }`}
-                  style={(tool as { active?: boolean }).active ? { color: COLORS.primary } : undefined}
+                  className={`w-10 py-0.5 flex flex-col items-center gap-0.5 ${
+                    (tool as { active?: boolean }).active ? '' : 'text-[var(--color-text-dim)]'
+                  }`}
+                  style={
+                    (tool as { active?: boolean }).active ? { color: COLORS.primary } : undefined
+                  }
                 >
                   <svg
                     width="12"
@@ -142,7 +193,9 @@ function StudioPreviewMockup() {
                     {(tool as { icon: React.ReactNode }).icon}
                   </svg>
                   <span className="text-[5px] leading-[1.1] w-full text-center whitespace-pre-line">
-                    {(tool as { label: string }).label?.replace(/\s+/g, '\n').replace(/\.\.\./g, '...')}
+                    {(tool as { label: string }).label
+                      ?.replace(/\s+/g, '\n')
+                      .replace(/\.\.\./g, '...')}
                   </span>
                 </div>
               )
@@ -161,11 +214,7 @@ function StudioPreviewMockup() {
             />
             <div className="relative grid grid-cols-6 gap-[2px] p-[2px] bg-[var(--color-border)]/30 w-full max-w-[220px] aspect-square rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
               {QUILT_GRID.flat().map((color, i) => (
-                <div
-                  key={i}
-                  className="aspect-square"
-                  style={{ backgroundColor: color }}
-                />
+                <div key={i} className="aspect-square" style={{ backgroundColor: color }} />
               ))}
             </div>
             {/* Floating toolbar */}
@@ -174,7 +223,11 @@ function StudioPreviewMockup() {
                 <div
                   key={i}
                   className={`w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? '' : 'text-[var(--color-text-dim)]'}`}
-                  style={i === 0 ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary } : undefined}
+                  style={
+                    i === 0
+                      ? { backgroundColor: `${COLORS.primary}26`, color: COLORS.primary }
+                      : undefined
+                  }
                 >
                   <svg
                     width="8"
@@ -255,12 +308,15 @@ export default function CoreCapabilities() {
 
             <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-8">
               Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
-              positioning fabric motifs with precision, or drafting custom blocks in the Block Builder
-              &mdash; every tool is made to help you create something you&apos;ll be proud of.
+              positioning fabric motifs with precision, or drafting custom blocks in the Block
+              Builder &mdash; every tool is made to help you create something you&apos;ll be proud
+              of.
             </p>
 
             <ul className="space-y-4 mb-10">
-              <CheckItem>Yardage calculations and sub-cutting charts &mdash; done for you</CheckItem>
+              <CheckItem>
+                Yardage calculations and sub-cutting charts &mdash; done for you
+              </CheckItem>
               <CheckItem>Per-patch fabric assignment with pattern previews</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
               <CheckItem>Block Builder for drafting custom blocks by seam line</CheckItem>

@@ -2,20 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useCartStore } from '@/stores/cartStore';
-import { Search, SlidersHorizontal, ShoppingBag, X, Sparkles, Package } from 'lucide-react';
-import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { COLORS, SHADOW, COLORS_HOVER } from '@/lib/design-system';
-import {
-  CharmPackIcon,
-  JellyRollIcon,
-  LayerCakeIcon,
-  FabricByYardIcon,
-  QuiltingNotionsIcon,
-  BattingIcon,
-  QuiltPatternIcon,
-  ThreadIcon,
-  ShoppingBagLargeIcon,
-} from '@/components/shop/ShopIcons';
+import { ShoppingBagLargeIcon } from '@/components/shop/ShopIcons';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 interface ShopFabric {
   id: string;
@@ -28,29 +18,51 @@ interface ShopFabric {
   value: string | null;
   hex: string | null;
   pricePerYard: string | null;
+  description: string | null;
   inStock: boolean;
   shopifyVariantId: string | null;
 }
 
 type SortOption = 'name' | 'price-asc' | 'price-desc' | 'newest';
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ComponentType<{ size?: number; color?: string; className?: string }>;
-  image?: string;
-}
+const COLOR_SWATCHES: Record<string, { hex: string; label: string }> = {
+  red: { hex: '#E63946', label: 'Red' },
+  orange: { hex: '#FF8C00', label: 'Orange' },
+  yellow: { hex: '#FFD700', label: 'Yellow' },
+  green: { hex: '#228B22', label: 'Green' },
+  blue: { hex: '#4169E1', label: 'Blue' },
+  purple: { hex: '#800080', label: 'Purple' },
+  pink: { hex: '#FFC0CB', label: 'Pink' },
+  brown: { hex: '#7B3F00', label: 'Brown' },
+  white: { hex: '#F8F8F8', label: 'White' },
+  gray: { hex: '#D3D3D3', label: 'Gray' },
+  black: { hex: '#1A1A1A', label: 'Black' },
+};
 
-const CATEGORIES: Category[] = [
-  { id: 'charm-packs', name: '5" Charm Packs', description: 'Pre-cut 5" squares', icon: CharmPackIcon, image: '/images/shop/charm-packs.jpg' },
-  { id: 'jelly-rolls', name: '2.5" Jelly Rolls', description: 'Pre-cut strips', icon: JellyRollIcon, image: '/images/shop/jelly-rolls.jpg' },
-  { id: 'layer-cakes', name: '10" Layer Cakes', description: 'Pre-cut 10" squares', icon: LayerCakeIcon, image: '/images/shop/layer-cakes.jpg' },
-  { id: 'by-the-yard', name: 'Fabric by the Yard', description: 'Cut to your needs', icon: FabricByYardIcon, image: '/images/shop/fabric-by-yard.jpg' },
-  { id: 'notions', name: 'Quilting Notions', description: 'Tools & supplies', icon: QuiltingNotionsIcon, image: '/images/shop/quilting-notions.jpg' },
-  { id: 'batting', name: 'Batting & Backing', description: 'Foundation fabrics', icon: BattingIcon, image: '/images/shop/batting-backing.jpg' },
-  { id: 'patterns', name: 'Quilt Patterns', description: 'Design inspiration', icon: QuiltPatternIcon, image: '/images/shop/quilt-patterns.jpg' },
-  { id: 'thread', name: 'Quilting Thread', description: 'Premium threads', icon: ThreadIcon, image: '/images/shop/quilting-thread.jpg' },
+const MANUFACTURERS = [
+  'Alison Glass',
+  'Andover Fabrics',
+  'Charisma Horton',
+  'Makower UK',
+];
+
+const COLLECTIONS = [
+  'Color Camp - Bloom',
+  'Color Camp - Grove',
+  'Color Camp - Sun',
+  'Countryside Classics',
+  'Dream Weaver',
+  'Our Simple Life',
+  'Snowberry',
+];
+
+const THEMES = [
+  'Floral',
+  'Geometric',
+  'Modern',
+  'Solid',
+  'Tonal',
+  'Traditional',
 ];
 
 export default function ShopPage() {
@@ -58,21 +70,29 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [shopEnabled, setShopEnabled] = useState<boolean | null>(null);
   const [search, setSearch] = useState('');
-  const [manufacturer, setManufacturer] = useState('');
-  const [colorFamily, setColorFamily] = useState('');
-  const [valueFilter, setValueFilter] = useState('');
+  const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [selectedValue, setSelectedValue] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState<SortOption>('name');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    collection: true,
+    manufacturer: true,
+    color: true,
+    theme: false,
+    value: false,
+  });
 
   const addItem = useCartStore((s) => s.addItem);
   const toggleDrawer = useCartStore((s) => s.toggleDrawer);
 
-  // Check if shop is enabled
   useEffect(() => {
     fetch('/api/shop/settings')
       .then((res) => (res.ok ? res.json() : { data: { enabled: false } }))
@@ -85,11 +105,11 @@ export default function ShopPage() {
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
-      if (manufacturer) params.set('manufacturer', manufacturer);
-      if (colorFamily) params.set('colorFamily', colorFamily);
-      if (valueFilter) params.set('value', valueFilter);
+      if (selectedManufacturers.length) params.set('manufacturer', selectedManufacturers.join(','));
+      if (selectedCollections.length) params.set('collection', selectedCollections.join(','));
+      if (selectedColors.length) params.set('colorFamily', selectedColors.join(','));
+      if (selectedValue) params.set('value', selectedValue);
       if (inStockOnly) params.set('inStock', 'true');
-      if (activeCategory !== 'all') params.set('category', activeCategory);
       params.set('sort', sort);
       params.set('page', String(page));
       params.set('limit', '24');
@@ -111,12 +131,10 @@ export default function ShopPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, manufacturer, colorFamily, valueFilter, inStockOnly, activeCategory, sort, page]);
+  }, [search, selectedManufacturers, selectedCollections, selectedColors, selectedValue, inStockOnly, sort, page]);
 
   useEffect(() => {
-    if (shopEnabled) {
-      fetchFabrics();
-    }
+    if (shopEnabled) fetchFabrics();
   }, [shopEnabled, fetchFabrics]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -138,478 +156,461 @@ export default function ShopPage() {
     toggleDrawer();
   };
 
-  const clearFilters = () => {
+  const toggleFilter = (list: string[], setList: (v: string[]) => void, value: string) => {
+    setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+    setPage(1);
+  };
+
+  const clearAllFilters = () => {
     setSearch('');
-    setManufacturer('');
-    setColorFamily('');
-    setValueFilter('');
+    setSelectedManufacturers([]);
+    setSelectedCollections([]);
+    setSelectedColors([]);
+    setSelectedThemes([]);
+    setSelectedValue('');
     setInStockOnly(false);
     setSort('name');
     setPage(1);
   };
 
-  const hasActiveFilters = manufacturer || colorFamily || valueFilter || inStockOnly || search;
+  const activeFilterCount =
+    selectedManufacturers.length +
+    selectedCollections.length +
+    selectedColors.length +
+    selectedThemes.length +
+    (selectedValue ? 1 : 0) +
+    (inStockOnly ? 1 : 0);
 
-  // Loading shop settings
+  const toggleSection = (section: string) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
   if (shopEnabled === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
         <div className="animate-pulse space-y-4 text-center">
-          <div className="h-8 rounded-full w-48 mx-auto" style={{ backgroundColor: `${COLORS.primary}33` }} />
-          <div className="h-4 rounded-full w-32 mx-auto" style={{ backgroundColor: `${COLORS.primary}1a` }} />
+          <div className="h-8 rounded w-48 mx-auto" style={{ backgroundColor: `${COLORS.primary}33` }} />
         </div>
       </div>
     );
   }
 
-  // Shop not enabled
   if (!shopEnabled) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center relative overflow-hidden">
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-12 text-center max-w-md relative z-10" style={{ boxShadow: SHADOW.brand }}>
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-12 text-center max-w-md" style={{ boxShadow: SHADOW.brand }}>
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${COLORS.primary}1a` }}>
-            <ShoppingBag size={28} style={{ color: COLORS.primary }} />
+            <ShoppingBagLargeIcon size={32} color={COLORS.primary} />
           </div>
-          <h1
-            className="text-[32px] leading-[40px] font-semibold mb-2"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-          >
+          <h1 className="text-[28px] font-semibold mb-2" style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}>
             Shop Coming Soon
           </h1>
-          <p style={{ color: COLORS.textDim }}>
-            Our fabric shop is being set up. Check back soon for a curated selection of quilting
-            fabrics!
-          </p>
+          <p style={{ color: COLORS.textDim }}>We're curating our fabric collection. Check back soon!</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-[var(--color-bg)] relative overflow-hidden">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 50%, ${COLORS.accent} 100%)` }}>
-        {/* Background image overlay */}
-        <div className="absolute inset-0 opacity-20">
-          <img
-            src="/images/shop/hero-fabric-drapes.jpg"
-            alt=""
-            className="w-full h-full object-cover"
-            aria-hidden="true"
-          />
-        </div>
-        
-        {/* Decorative pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-8 left-8 w-32 h-32 rounded-full border-4 border-white" />
-          <div className="absolute top-20 right-20 w-48 h-48 rounded-full border-4 border-white" />
-          <div className="absolute bottom-12 left-1/4 w-24 h-24 rounded-full border-4 border-white" />
-          <div className="absolute bottom-20 right-1/3 w-40 h-40 rounded-full border-4 border-white" />
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <QuiltPieceRow count={3} size={12} gap={5} />
+  const activeFilters = [
+    ...selectedManufacturers.map((v) => ({ label: v, type: 'manufacturer' as const, value: v })),
+    ...selectedCollections.map((v) => ({ label: v, type: 'collection' as const, value: v })),
+    ...selectedColors.map((v) => ({ label: COLOR_SWATCHES[v]?.label ?? v, type: 'color' as const, value: v })),
+    ...selectedThemes.map((v) => ({ label: v, type: 'theme' as const, value: v })),
+    ...(selectedValue ? [{ label: selectedValue, type: 'value' as const, value: selectedValue }] : []),
+    ...(inStockOnly ? [{ label: 'In Stock', type: 'stock' as const, value: 'true' }] : []),
+  ];
+
+  const removeFilter = (f: (typeof activeFilters)[0]) => {
+    if (f.type === 'manufacturer') toggleFilter(selectedManufacturers, setSelectedManufacturers, f.value);
+    else if (f.type === 'collection') toggleFilter(selectedCollections, setSelectedCollections, f.value);
+    else if (f.type === 'color') toggleFilter(selectedColors, setSelectedColors, f.value);
+    else if (f.type === 'theme') toggleFilter(selectedThemes, setSelectedThemes, f.value);
+    else if (f.type === 'value') setSelectedValue('');
+    else if (f.type === 'stock') setInStockOnly(false);
+    setPage(1);
+  };
+
+  // ---- Filter Panel ----
+  const FilterPanel = ({ className = '', isMobile = false }: { className?: string; isMobile?: boolean }) => (
+    <div className={className}>
+      {/* Collections */}
+      <div className="border-b border-[var(--color-border)]">
+        <button
+          onClick={() => toggleSection('collection')}
+          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
+          style={{ color: COLORS.text }}
+        >
+          Collections
+          {openSections.collection ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
+        </button>
+        {openSections.collection && (
+          <div className="pb-3 space-y-1">
+            {COLLECTIONS.map((c) => (
+              <label key={c} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedCollections.includes(c)}
+                  onChange={() => toggleFilter(selectedCollections, setSelectedCollections, c)}
+                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
+                />
+                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{c}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Manufacturer */}
+      <div className="border-b border-[var(--color-border)]">
+        <button
+          onClick={() => toggleSection('manufacturer')}
+          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
+          style={{ color: COLORS.text }}
+        >
+          Manufacturer
+          {openSections.manufacturer ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
+        </button>
+        {openSections.manufacturer && (
+          <div className="pb-3 space-y-1">
+            {MANUFACTURERS.map((m) => (
+              <label key={m} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedManufacturers.includes(m)}
+                  onChange={() => toggleFilter(selectedManufacturers, setSelectedManufacturers, m)}
+                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
+                />
+                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{m}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Color */}
+      <div className="border-b border-[var(--color-border)]">
+        <button
+          onClick={() => toggleSection('color')}
+          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
+          style={{ color: COLORS.text }}
+        >
+          Color
+          {openSections.color ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
+        </button>
+        {openSections.color && (
+          <div className="pb-3">
+            <div className="grid grid-cols-6 gap-1.5">
+              {Object.entries(COLOR_SWATCHES).map(([name, { hex }]) => {
+                const isActive = selectedColors.includes(name);
+                const isLight = ['white', 'yellow'].includes(name);
+                return (
+                  <button
+                    key={name}
+                    onClick={() => toggleFilter(selectedColors, setSelectedColors, name)}
+                    title={COLOR_SWATCHES[name].label}
+                    className="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-150"
+                    style={{
+                      backgroundColor: hex,
+                      borderColor: isActive ? COLORS.primary : 'var(--color-border)',
+                      boxShadow: isActive ? `0 0 0 1px ${COLORS.primary}` : 'none',
+                    }}
+                  >
+                    {isActive && (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path d="M2 5L4.5 7.5L8 2.5" stroke={isLight ? '#333' : '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                );
+              })}
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* Theme / Subject */}
+      <div className="border-b border-[var(--color-border)]">
+        <button
+          onClick={() => toggleSection('theme')}
+          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
+          style={{ color: COLORS.text }}
+        >
+          Style
+          {openSections.theme ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
+        </button>
+        {openSections.theme && (
+          <div className="pb-3 space-y-1">
+            {THEMES.map((t) => (
+              <label key={t} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedThemes.includes(t)}
+                  onChange={() => toggleFilter(selectedThemes, setSelectedThemes, t)}
+                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
+                />
+                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{t}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Value */}
+      <div className="border-b border-[var(--color-border)]">
+        <button
+          onClick={() => toggleSection('value')}
+          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
+          style={{ color: COLORS.text }}
+        >
+          Value
+          {openSections.value ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
+        </button>
+        {openSections.value && (
+          <div className="pb-3 space-y-1">
+            {['Light', 'Medium', 'Dark'].map((v) => (
+              <label key={v} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="value"
+                  checked={selectedValue === v}
+                  onChange={() => { setSelectedValue(selectedValue === v ? '' : v); setPage(1); }}
+                  className="accent-[var(--color-primary)]"
+                />
+                <span className="text-xs" style={{ color: COLORS.textDim }}>{v}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* In Stock */}
+      <div className="py-2.5">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={(e) => { setInStockOnly(e.target.checked); setPage(1); }}
+            className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
+          />
+          <span className="text-xs font-medium" style={{ color: COLORS.text }}>In Stock Only</span>
+        </label>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[var(--color-bg)]">
+      {/* Top bar */}
+      <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-30">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <h1
-              className="text-[48px] sm:text-[56px] leading-[1.1] font-semibold mb-4"
-              style={{ fontFamily: 'var(--font-display)', color: '#ffffff' }}
+              className="text-lg font-semibold"
+              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
             >
               Fabric Shop
             </h1>
-            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)' }}>
-              Discover our curated collection of premium quilting fabrics, pre-cuts, and notions
-            </p>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              <button
-                onClick={() => document.getElementById('browse-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-3 rounded-full font-semibold transition-colors duration-150"
-                style={{
-                  backgroundColor: '#ffffff',
-                  color: COLORS.primary,
-                  boxShadow: SHADOW.brand,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = `${COLORS.bg}`)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#ffffff')}
-              >
-                Browse Fabrics
-              </button>
-              <button
-                onClick={() => document.getElementById('categories-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-3 rounded-full font-semibold transition-colors duration-150 border-2"
-                style={{
-                  borderColor: '#ffffff',
-                  color: '#ffffff',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                Shop by Category
-              </button>
+            <QuiltPieceRow count={3} size={6} gap={3} />
+          </div>
+          {/* Mobile filter button */}
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+            style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
+          >
+            <SlidersHorizontal size={14} />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ backgroundColor: COLORS.primary, color: COLORS.text }}>
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile filter overlay */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-[var(--color-surface)] shadow-xl overflow-y-auto">
+            <div className="p-4 flex items-center justify-between border-b border-[var(--color-border)]">
+              <h2 className="text-sm font-semibold" style={{ color: COLORS.text }}>Filters</h2>
+              <div className="flex items-center gap-2">
+                {activeFilterCount > 0 && (
+                  <button onClick={clearAllFilters} className="text-xs" style={{ color: COLORS.primary }}>Clear all</button>
+                )}
+                <button onClick={() => setShowMobileFilters(false)}><X size={18} style={{ color: COLORS.textDim }} /></button>
+              </div>
+            </div>
+            <div className="p-4">
+              <FilterPanel />
             </div>
           </div>
         </div>
-        
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-            <path d="M0 60 L0 30 Q360 0 720 30 Q1080 60 1440 30 L1440 60 Z" fill="var(--color-bg)" />
-          </svg>
-        </div>
-      </div>
+      )}
 
-      {/* Categories Section */}
-      <div id="categories-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-8">
-          <h2
-            className="text-[32px] leading-[40px] font-semibold mb-2"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-          >
-            Shop by Category
-          </h2>
-          <p style={{ color: COLORS.textDim }}>Find exactly what you need for your next project</p>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {CATEGORIES.map((category) => {
-            const IconComponent = category.icon;
-            const isActive = activeCategory === category.id;
-            return (
-              <button
-                key={category.id}
-                onClick={() => {
-                  setActiveCategory(isActive ? 'all' : category.id);
-                  setPage(1);
-                }}
-                className="group bg-[var(--color-surface)] border rounded-lg overflow-hidden text-left transition-colors duration-150 hover:bg-[var(--color-bg)]"
-                style={{
-                  borderColor: isActive ? COLORS.primary : COLORS.border,
-                  boxShadow: SHADOW.brand,
-                }}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-6">
+          {/* Desktop sidebar */}
+          <aside className="hidden lg:block w-52 flex-shrink-0">
+            <div className="sticky top-16">
+              <FilterPanel />
+            </div>
+          </aside>
+
+          {/* Main */}
+          <div className="flex-1 min-w-0 py-4">
+            {/* Search + Sort bar */}
+            <div className="flex items-center gap-3 mb-4">
+              <form onSubmit={handleSearch} className="flex-1 relative">
+                <label htmlFor="shop-search" className="sr-only">Search fabrics</label>
+                <Search
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                  style={{ color: COLORS.textDim }}
+                />
+                <input
+                  id="shop-search"
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search fabrics..."
+                  className="w-full pl-9 pr-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-sm"
+                  style={{ color: COLORS.text, outlineColor: COLORS.primary }}
+                />
+              </form>
+              <select
+                value={sort}
+                onChange={(e) => { setSort(e.target.value as SortOption); setPage(1); }}
+                className="px-3 py-2 rounded-lg text-sm bg-[var(--color-surface)] border border-[var(--color-border)]"
+                style={{ color: COLORS.textDim }}
               >
-                {/* Category image */}
-                {category.image && (
-                  <div className="aspect-[4/3] relative overflow-hidden">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-colors duration-150"
-                      style={{
-                        filter: isActive ? 'none' : 'grayscale(30%) brightness(0.9)',
-                      }}
-                      loading="lazy"
-                    />
-                    {/* Overlay gradient */}
-                    <div 
-                      className="absolute inset-0"
-                      style={{
-                        background: isActive 
-                          ? `linear-gradient(to top, ${COLORS.primary}40 0%, transparent 60%)`
-                          : 'linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 60%)',
-                      }}
-                    />
-                  </div>
-                )}
-                
-                {/* Category info */}
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <IconComponent size={20} color={isActive ? COLORS.primary : COLORS.textDim} />
-                    <h3
-                      className="text-sm font-semibold"
-                      style={{ color: isActive ? COLORS.primary : COLORS.text }}
-                    >
-                      {category.name}
-                    </h3>
-                  </div>
-                  <p className="text-xs" style={{ color: COLORS.textDim }}>
-                    {category.description}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+                <option value="name">Sort: Name A–Z</option>
+                <option value="price-asc">Sort: Price Low → High</option>
+                <option value="price-desc">Sort: Price High → Low</option>
+                <option value="newest">Sort: Newest</option>
+              </select>
+            </div>
 
-      {/* Browse Section */}
-      <div id="browse-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {/* Search + Filter Bar */}
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4 mb-6" style={{ boxShadow: SHADOW.brand }}>
-          <div className="flex items-center gap-3">
-            <form onSubmit={handleSearch} className="flex-1 relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: COLORS.textDim }} />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search fabrics by name, manufacturer, or collection..."
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-sm placeholder:text-[var(--color-text-dim)]"
-                style={{ color: COLORS.text, outlineColor: COLORS.primary }}
-              />
-            </form>
-
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors duration-150 ${showFilters || hasActiveFilters
-                ? ''
-                : 'bg-[var(--color-bg)] hover:bg-[var(--color-border)]'
-                }`}
-              style={{
-                ...(showFilters || hasActiveFilters
-                  ? { backgroundColor: COLORS.primary, color: COLORS.text }
-                  : { color: COLORS.textDim }),
-              }}
-            >
-              <SlidersHorizontal size={16} />
-              Filters
-              {hasActiveFilters && <span className="ml-1 w-2 h-2 rounded-full bg-[var(--color-surface)]" />}
-            </button>
-
-            {/* Sort */}
-            <select
-              value={sort}
-              onChange={(e) => {
-                setSort(e.target.value as SortOption);
-                setPage(1);
-              }}
-              className="px-4 py-2.5 rounded-full text-sm bg-[var(--color-bg)] border focus:outline-2"
-              style={{ color: COLORS.text, borderColor: COLORS.border, outlineColor: COLORS.primary }}
-            >
-              <option value="name">Name A-Z</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="newest">Newest</option>
-            </select>
-          </div>
-
-          {/* Filter Panel */}
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold" style={{ color: COLORS.text }}>Refine Your Search</h3>
-                {hasActiveFilters && (
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="text-xs transition-colors duration-150"
-                    style={{ color: COLORS.primary }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+            {/* Active filter pills */}
+            {activeFilters.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                {activeFilters.map((f) => (
+                  <span
+                    key={`${f.type}-${f.value}`}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs"
+                    style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                   >
-                    Clear all
+                    {f.label}
+                    <button onClick={() => removeFilter(f)} className="hover:opacity-70">
+                      <X size={11} />
+                    </button>
+                  </span>
+                ))}
+                <button onClick={clearAllFilters} className="text-xs font-medium ml-1" style={{ color: COLORS.textDim }}>
+                  Clear all
+                </button>
+              </div>
+            )}
+
+            {/* Results count */}
+            <p className="text-xs mb-4" style={{ color: COLORS.textDim }}>
+              <span className="font-semibold" style={{ color: COLORS.text }}>{total}</span> fabrics
+            </p>
+
+            {/* Grid */}
+            {loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden animate-pulse">
+                    <div className="aspect-square" style={{ backgroundColor: `${COLORS.primary}1a` }} />
+                    <div className="p-2.5 space-y-1.5">
+                      <div className="h-2.5 rounded w-3/4" style={{ backgroundColor: `${COLORS.primary}33` }} />
+                      <div className="h-2 rounded w-1/2" style={{ backgroundColor: `${COLORS.primary}1a` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : fabrics.length === 0 ? (
+              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg py-16 text-center">
+                <ShoppingBagLargeIcon size={48} color={COLORS.primary} />
+                <p className="text-base font-medium mt-4 mb-1" style={{ color: COLORS.text }}>No fabrics found</p>
+                <p className="text-sm mb-4" style={{ color: COLORS.textDim }}>
+                  {activeFilterCount > 0 ? 'Try adjusting your filters.' : 'More fabrics coming soon.'}
+                </p>
+                {activeFilterCount > 0 && (
+                  <button onClick={clearAllFilters} className="text-sm font-medium" style={{ color: COLORS.primary }}>
+                    Clear all filters
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium" style={{ color: COLORS.textDim }}>Manufacturer</label>
-                  <input
-                    type="text"
-                    value={manufacturer}
-                    onChange={(e) => {
-                      setManufacturer(e.target.value);
-                      setPage(1);
-                    }}
-                    placeholder="All manufacturers"
-                    className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-sm focus:outline-2"
-                    style={{ color: COLORS.text, outlineColor: COLORS.primary }}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium" style={{ color: COLORS.textDim }}>Color Family</label>
-                  <select
-                    value={colorFamily}
-                    onChange={(e) => {
-                      setColorFamily(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-sm focus:outline-2"
-                    style={{ color: COLORS.text, outlineColor: COLORS.primary }}
-                  >
-                    <option value="">All colors</option>
-                    <option value="red">Red</option>
-                    <option value="orange">Orange</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="green">Green</option>
-                    <option value="blue">Blue</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="brown">Brown</option>
-                    <option value="white">White</option>
-                    <option value="gray">Gray</option>
-                    <option value="black">Black</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium" style={{ color: COLORS.textDim }}>Value</label>
-                  <select
-                    value={valueFilter}
-                    onChange={(e) => {
-                      setValueFilter(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-sm focus:outline-2"
-                    style={{ color: COLORS.text, outlineColor: COLORS.primary }}
-                  >
-                    <option value="">All values</option>
-                    <option value="Light">Light</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Dark">Dark</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium" style={{ color: COLORS.textDim }}>Availability</label>
-                  <label className="flex items-center gap-2 px-3 py-2 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={inStockOnly}
-                      onChange={(e) => {
-                        setInStockOnly(e.target.checked);
-                        setPage(1);
-                      }}
-                      className="rounded-full border text-[var(--color-text)] focus:outline-2"
-                      style={{ borderColor: COLORS.border, outlineColor: COLORS.primary }}
-                    />
-                    <span className="text-sm" style={{ color: COLORS.text }}>In stock only</span>
-                  </label>
-                </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+                {fabrics.map((fabric) => (
+                  <FabricCard key={fabric.id} fabric={fabric} onAddToCart={handleAddToCart} />
+                ))}
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Results header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Package size={18} style={{ color: COLORS.primary }} />
-            <p className="text-sm font-medium" style={{ color: COLORS.text }}>
-              {total} fabric{total !== 1 ? 's' : ''} found
-            </p>
-            {activeCategory !== 'all' && (
-              <span
-                className="text-xs px-2 py-1 rounded-full"
-                style={{ backgroundColor: `${COLORS.primary}20`, color: COLORS.primary }}
-              >
-                {CATEGORIES.find(c => c.id === activeCategory)?.name}
-              </span>
             )}
-          </div>
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="flex items-center gap-1 text-xs transition-colors duration-150"
-              style={{ color: COLORS.primary }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-            >
-              <X size={12} />
-              Clear filters
-            </button>
-          )}
-        </div>
 
-        {/* Fabric Grid */}
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden animate-pulse" style={{ boxShadow: SHADOW.brand }}>
-                <div className="aspect-square" style={{ backgroundColor: `${COLORS.primary}1a` }} />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 rounded-full w-3/4" style={{ backgroundColor: `${COLORS.primary}33` }} />
-                  <div className="h-3 rounded-full w-1/2" style={{ backgroundColor: `${COLORS.primary}1a` }} />
-                  <div className="h-8 rounded-full mt-2" style={{ backgroundColor: `${COLORS.primary}1a` }} />
-                </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1.5 mt-8 pb-8">
+                <button
+                  disabled={page <= 1}
+                  onClick={() => setPage(page - 1)}
+                  className="px-3 py-1.5 rounded text-xs disabled:opacity-40"
+                  style={{ color: COLORS.textDim }}
+                >
+                  ← Prev
+                </button>
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const p = i + 1;
+                  if (totalPages > 7) {
+                    if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
+                      return (
+                        <button
+                          key={p}
+                          onClick={() => setPage(p)}
+                          className="w-7 h-7 rounded text-xs font-medium"
+                          style={{
+                            backgroundColor: p === page ? COLORS.primary : 'transparent',
+                            color: p === page ? COLORS.text : COLORS.textDim,
+                          }}
+                        >
+                          {p}
+                        </button>
+                      );
+                    }
+                    if (p === page - 2 || p === page + 2) {
+                      return <span key={p} className="text-xs" style={{ color: COLORS.textDim }}>…</span>;
+                    }
+                    return null;
+                  }
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className="w-7 h-7 rounded text-xs font-medium"
+                      style={{
+                        backgroundColor: p === page ? COLORS.primary : 'transparent',
+                        color: p === page ? COLORS.text : COLORS.textDim,
+                      }}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+                <button
+                  disabled={page >= totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="px-3 py-1.5 rounded text-xs disabled:opacity-40"
+                  style={{ color: COLORS.textDim }}
+                >
+                  Next →
+                </button>
               </div>
-            ))}
-          </div>
-        ) : fabrics.length === 0 ? (
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-12 text-center" style={{ boxShadow: SHADOW.brand }}>
-            <div className="flex justify-center mb-4">
-              <ShoppingBagLargeIcon size={64} color={COLORS.primary} />
-            </div>
-            <p className="text-lg font-medium mb-2" style={{ color: COLORS.text }}>No fabrics found</p>
-            <p className="text-sm" style={{ color: COLORS.textDim }}>
-              {hasActiveFilters
-                ? 'Try adjusting your filters or search terms.'
-                : 'No purchasable fabrics are available yet.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {fabrics.map((fabric) => (
-              <ShopFabricCard key={fabric.id} fabric={fabric} onAddToCart={handleAddToCart} />
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 mt-8">
-            <button
-              type="button"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-50 transition-colors duration-150"
-              style={{ borderColor: COLORS.border, color: COLORS.textDim, boxShadow: SHADOW.brand }}
-            >
-              Previous
-            </button>
-            <span className="text-sm" style={{ color: COLORS.textDim }}>
-              Page {page} of {totalPages}
-            </span>
-            <button
-              type="button"
-              disabled={page >= totalPages}
-              onClick={() => setPage(page + 1)}
-              className="px-5 py-2 rounded-full bg-[var(--color-surface)] border text-sm hover:bg-[var(--color-bg)] disabled:opacity-50 transition-colors duration-150"
-              style={{ borderColor: COLORS.border, color: COLORS.textDim, boxShadow: SHADOW.brand }}
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Newsletter / Community Section */}
-      <div className="bg-[var(--color-surface)] border-t border-[var(--color-border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles size={24} style={{ color: COLORS.primary }} />
-            </div>
-            <h2
-              className="text-[32px] leading-[40px] font-semibold mb-3"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-            >
-              Join the QuiltCorgi Community
-            </h2>
-            <p className="mb-6" style={{ color: COLORS.textDim }}>
-              Get notified about new fabrics, exclusive collections, and quilting inspiration delivered to your inbox.
-            </p>
-            <div className="flex items-center gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 px-4 py-3 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-sm placeholder:text-[var(--color-text-dim)] focus:outline-2"
-                style={{ color: COLORS.text, outlineColor: COLORS.primary }}
-              />
-              <button
-                className="px-6 py-3 rounded-full font-semibold transition-colors duration-150 whitespace-nowrap"
-                style={{
-                  backgroundColor: COLORS.primary,
-                  color: COLORS.text,
-                  boxShadow: SHADOW.brand,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
-              >
-                Subscribe
-              </button>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -617,76 +618,65 @@ export default function ShopPage() {
   );
 }
 
-function ShopFabricCard({
+function FabricCard({
   fabric,
   onAddToCart,
 }: {
   fabric: ShopFabric;
   onAddToCart: (f: ShopFabric) => void;
 }) {
-  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : 'Price TBD';
+  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '—';
 
   return (
-    <div className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden transition-colors duration-150" style={{ boxShadow: SHADOW.brand }}>
+    <div className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
       {/* Swatch */}
       <div className="aspect-square relative overflow-hidden bg-[var(--color-bg)]">
-        {fabric.hex ? (
-          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
-        ) : (
+        {fabric.imageUrl.startsWith('/') ? (
           <img
-            src={fabric.thumbnailUrl ?? fabric.imageUrl}
+            src={fabric.imageUrl}
             alt={fabric.name}
             className="w-full h-full object-cover"
             loading="lazy"
           />
-        )}
-        
-        {/* Stock badge */}
-        {!fabric.inStock && (
-          <div className="absolute top-2 right-2 px-2 py-1 rounded-full text-[10px] font-medium" style={{ backgroundColor: `${COLORS.error}20`, color: COLORS.error }}>
-            Out of Stock
-          </div>
-        )}
+        ) : fabric.hex ? (
+          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
+        ) : null}
       </div>
 
       {/* Info */}
-      <div className="p-3 space-y-1">
-        <h3 className="text-sm font-medium truncate" style={{ color: COLORS.text }} title={fabric.name}>
+      <div className="p-2.5 space-y-0.5">
+        <h3 className="text-[11px] font-medium leading-snug" style={{ color: COLORS.text }}>
           {fabric.name}
         </h3>
-        {fabric.manufacturer && (
-          <p className="text-xs truncate" style={{ color: COLORS.textDim }}>{fabric.manufacturer}</p>
+        {fabric.collection && (
+          <p className="text-[10px]" style={{ color: COLORS.textDim }}>
+            {fabric.collection}
+          </p>
+        )}
+        {fabric.description && (
+          <p className="text-[10px] line-clamp-2 leading-tight" style={{ color: COLORS.textDim }}>
+            {fabric.description.split('\n')[0]}
+          </p>
         )}
         <div className="flex items-center justify-between pt-1">
-          <span className="text-sm font-semibold" style={{ color: COLORS.text }}>{price}</span>
-          {fabric.colorFamily && (
-            <span 
-              className="text-[10px] capitalize px-2 py-0.5 rounded-full" 
-              style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
-            >
-              {fabric.colorFamily}
-            </span>
-          )}
+          <span className="text-sm font-semibold" style={{ color: COLORS.text }}>
+            {price}<span className="text-[10px] font-normal" style={{ color: COLORS.textDim }}>/yd</span>
+          </span>
         </div>
 
         <button
           type="button"
           onClick={() => onAddToCart(fabric)}
           disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="mt-2 w-full py-2 rounded-full text-xs font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full mt-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
           style={{
             backgroundColor: COLORS.primary,
             color: COLORS.text,
-            boxShadow: SHADOW.brand,
           }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
         >
-          {!fabric.shopifyVariantId
-            ? 'Not Available'
-            : !fabric.inStock
-              ? 'Out of Stock'
-              : 'Add to Cart'}
+          {!fabric.shopifyVariantId ? 'Coming Soon' : !fabric.inStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
     </div>

@@ -36,12 +36,13 @@ export function ToolIcon({
       aria-pressed={isActive}
       aria-disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${disabled
+      className={`w-[72px] flex flex-col items-center justify-center gap-1 transition-colors duration-150 py-2 ${
+        disabled
           ? 'text-dim/25 cursor-default'
           : isActive
             ? 'text-primary'
             : 'text-dim hover:text-default'
-        }`}
+      }`}
     >
       <span aria-hidden="true" className="[&>svg]:w-7 [&>svg]:h-7">
         {tool.icon}

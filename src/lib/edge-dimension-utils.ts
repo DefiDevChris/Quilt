@@ -73,10 +73,7 @@ export function calculateEdgeDimensions(
  * Imperial: fractional inches with " suffix (e.g., "3 1/2"")
  * Metric: rounded mm (e.g., "89mm")
  */
-function formatEdgeLength(
-  lengthInUnits: number,
-  unitSystem: 'imperial' | 'metric'
-): string {
+function formatEdgeLength(lengthInUnits: number, unitSystem: 'imperial' | 'metric'): string {
   if (unitSystem === 'metric') {
     // Assume input is in mm
     return `${Math.round(lengthInUnits)}mm`;

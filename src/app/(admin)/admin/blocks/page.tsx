@@ -103,7 +103,10 @@ export default function AdminBlocksPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-pulse rounded-lg h-8 w-8" style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }} />
+          <div
+            className="animate-pulse rounded-lg h-8 w-8"
+            style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }}
+          />
         </div>
       ) : blocks.length === 0 ? (
         <div className="bg-[var(--color-bg)] border border-default rounded-lg p-12 text-center">
@@ -115,26 +118,23 @@ export default function AdminBlocksPage() {
             <table className="w-full">
               <thead className="bg-[var(--color-bg)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                    Block
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                    Category
-                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Block</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Category</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden md:table-cell">
                     Tags
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-dim hidden sm:table-cell">
                     Created
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-dim">
-                    Actions
-                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-dim">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-default bg-[var(--color-bg)]">
                 {blocks.map((block) => (
-                  <tr key={block.id} className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150">
+                  <tr
+                    key={block.id}
+                    className="hover:bg-[var(--color-bg)]/60 transition-colors duration-150"
+                  >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {block.thumbnailUrl ? (
@@ -145,9 +145,22 @@ export default function AdminBlocksPage() {
                             className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}>
-                            <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}
+                          >
+                            <svg
+                              className="w-5 h-5 text-dim"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"
+                              />
                             </svg>
                           </div>
                         )}
@@ -211,8 +224,8 @@ export default function AdminBlocksPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-dim">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
-                blocks
+                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
+                {pagination.total} blocks
               </p>
               <div className="flex gap-2">
                 <button
@@ -243,10 +256,7 @@ export default function AdminBlocksPage() {
       )}
 
       {showCreateModal && (
-        <BlockFormModal
-          onClose={() => setShowCreateModal(false)}
-          onCreated={handleCreated}
-        />
+        <BlockFormModal onClose={() => setShowCreateModal(false)} onCreated={handleCreated} />
       )}
 
       {editingBlock && (
@@ -353,7 +363,10 @@ function BlockFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8" style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}>
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8"
+      style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}
+    >
       <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-default">
@@ -365,13 +378,25 @@ function BlockFormModal({
             className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
           >
             <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         {error && (
-          <div className="rounded-lg px-4 py-3 text-sm font-medium" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), color: COLORS.error, borderColor: withAlpha(COLORS.error, 0.2) }}>
+          <div
+            className="rounded-lg px-4 py-3 text-sm font-medium"
+            style={{
+              backgroundColor: withAlpha(COLORS.error, 0.05),
+              color: COLORS.error,
+              borderColor: withAlpha(COLORS.error, 0.2),
+            }}
+          >
             {error}
           </div>
         )}
@@ -379,7 +404,9 @@ function BlockFormModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="block-name" className="text-sm font-medium text-default">Name *</label>
+              <label htmlFor="block-name" className="text-sm font-medium text-default">
+                Name *
+              </label>
               <input
                 id="block-name"
                 required
@@ -391,7 +418,9 @@ function BlockFormModal({
               />
             </div>
             <div>
-              <label htmlFor="block-category" className="text-sm font-medium text-default">Category *</label>
+              <label htmlFor="block-category" className="text-sm font-medium text-default">
+                Category *
+              </label>
               <input
                 id="block-category"
                 required
@@ -405,7 +434,9 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label htmlFor="block-subcategory" className="text-sm font-medium text-default">Subcategory</label>
+            <label htmlFor="block-subcategory" className="text-sm font-medium text-default">
+              Subcategory
+            </label>
             <input
               id="block-subcategory"
               type="text"
@@ -427,12 +458,14 @@ function BlockFormModal({
               onChange={handleChange}
               rows={5}
               className="w-full px-3 py-2 border border-default rounded-lg bg-[var(--color-surface)] font-mono text-sm"
-              placeholder="<svg viewBox=&quot;0 0 300 300&quot;>...</svg>"
+              placeholder='<svg viewBox="0 0 300 300">...</svg>'
             />
           </div>
 
           <div>
-            <label htmlFor="block-tags" className="text-sm font-medium text-default">Tags (comma separated)</label>
+            <label htmlFor="block-tags" className="text-sm font-medium text-default">
+              Tags (comma separated)
+            </label>
             <input
               id="block-tags"
               type="text"
@@ -445,7 +478,9 @@ function BlockFormModal({
           </div>
 
           <div>
-            <label htmlFor="block-thumbnail-url" className="text-sm font-medium text-default">Thumbnail URL</label>
+            <label htmlFor="block-thumbnail-url" className="text-sm font-medium text-default">
+              Thumbnail URL
+            </label>
             <input
               id="block-thumbnail-url"
               type="text"

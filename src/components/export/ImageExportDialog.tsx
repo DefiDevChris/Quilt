@@ -4,7 +4,14 @@ import { useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
-import { exportCanvasImage, generateImageFilename, downloadImage, DPI_OPTIONS, type DpiOption, type ImageFormat } from '@/lib/image-exporter';
+import {
+  exportCanvasImage,
+  generateImageFilename,
+  downloadImage,
+  DPI_OPTIONS,
+  type DpiOption,
+  type ImageFormat,
+} from '@/lib/image-exporter';
 import { exportCanvasSvg, generateSvgFilename, downloadSvg } from '@/lib/svg-exporter';
 import { COLORS } from '@/lib/design-system';
 import { ExportDialogShell } from './ExportDialogShell';
@@ -71,8 +78,17 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
     >
       {/* Format Selector */}
       <div className="mb-4">
-        <label id="image-format-label" className="text-xs font-medium text-[var(--color-text)] block mb-1">Format</label>
-        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-labelledby="image-format-label">
+        <label
+          id="image-format-label"
+          className="text-xs font-medium text-[var(--color-text)] block mb-1"
+        >
+          Format
+        </label>
+        <div
+          className="grid grid-cols-3 gap-2"
+          role="radiogroup"
+          aria-labelledby="image-format-label"
+        >
           {(['png', 'jpeg', 'svg'] as const).map((fmt) => (
             <button
               key={fmt}
@@ -80,12 +96,17 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
               role="radio"
               aria-checked={format === fmt}
               onClick={() => setFormat(fmt)}
-              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${format === fmt
-                ? 'border-primary bg-primary text-white'
-                : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
-                }`}
+              className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${
+                format === fmt
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
+              }`}
             >
-              {fmt === 'png' ? 'PNG (lossless)' : fmt === 'jpeg' ? 'JPEG (smaller)' : 'SVG (vector)'}
+              {fmt === 'png'
+                ? 'PNG (lossless)'
+                : fmt === 'jpeg'
+                  ? 'JPEG (smaller)'
+                  : 'SVG (vector)'}
             </button>
           ))}
         </div>
@@ -94,10 +115,17 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
       {/* DPI Selector — hidden for SVG */}
       {format !== 'svg' && (
         <div className="mb-4">
-          <label id="image-dpi-label" className="text-xs font-medium text-[var(--color-text)] block mb-1">
+          <label
+            id="image-dpi-label"
+            className="text-xs font-medium text-[var(--color-text)] block mb-1"
+          >
             Resolution (DPI)
           </label>
-          <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-labelledby="image-dpi-label">
+          <div
+            className="grid grid-cols-4 gap-2"
+            role="radiogroup"
+            aria-labelledby="image-dpi-label"
+          >
             {DPI_OPTIONS.map((opt) => (
               <button
                 key={opt}
@@ -105,10 +133,11 @@ export function ImageExportDialog({ isOpen, onClose }: ImageExportDialogProps) {
                 role="radio"
                 aria-checked={dpi === opt}
                 onClick={() => setDpi(opt)}
-                className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${dpi === opt
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
-                  }`}
+                className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${
+                  dpi === opt
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-[var(--color-border)] bg-white text-[var(--color-text)] hover:bg-[var(--color-primary)]/10'
+                }`}
               >
                 {opt}
               </button>

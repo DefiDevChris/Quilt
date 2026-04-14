@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+    <rect width="800" height="800" fill="#FFD700"/>
+    <rect x="150" y="150" width="100" height="100" fill="rgba(255,255,255,0.08)" transform="rotate(45 200 200)"/><rect x="500" y="300" width="120" height="120" fill="rgba(255,255,255,0.06)" transform="rotate(30 560 360)"/>
+    <rect x="50" y="680" width="700" height="80" rx="10" fill="rgba(0,0,0,0.4)"/>
+    <text x="400" y="725" font-family="Arial" font-size="28" fill="white" text-anchor="middle" dominant-baseline="middle">
+      Fabric 50 — Gold
+    </text>
+  </svg>

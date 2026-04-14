@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 import { mockAuth } from './helpers/auth';
 import { mockProject } from './helpers/canvas';
 
+declare global {
+  interface Window {
+    useCanvasStore?: { getState: () => Record<string, unknown> };
+  }
+}
+
 test.describe('Undo/Redo Functionality', () => {
   test.beforeEach(async ({ page }) => {
     // Setup authentication and project mocks
@@ -34,7 +40,7 @@ test.describe('Undo/Redo Functionality', () => {
     // We use evaluate to check the actual fabric objects
     let objectCount = await page.evaluate(() => {
       // @ts-ignore - access from store
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     
@@ -48,7 +54,7 @@ test.describe('Undo/Redo Functionality', () => {
     
     // 5. Verify object count is 0
     objectCount = await page.evaluate(() => {
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     expect(objectCount).toBe(0);
@@ -59,7 +65,7 @@ test.describe('Undo/Redo Functionality', () => {
     
     // 7. Verify object count is back to 1
     objectCount = await page.evaluate(() => {
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     expect(objectCount).toBe(1);
@@ -76,7 +82,7 @@ test.describe('Undo/Redo Functionality', () => {
     
     // Verify 1 object
     let objectCount = await page.evaluate(() => {
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     expect(objectCount).toBe(1);
@@ -86,7 +92,7 @@ test.describe('Undo/Redo Functionality', () => {
     
     // Verify 0 objects
     objectCount = await page.evaluate(() => {
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     expect(objectCount).toBe(0);
@@ -96,7 +102,7 @@ test.describe('Undo/Redo Functionality', () => {
     
     // Verify 1 object
     objectCount = await page.evaluate(() => {
-      const store = (window as any).useCanvasStore?.getState();
+      const store = window.useCanvasStore?.getState();
       return store?.fabricCanvas?.getObjects().length || 0;
     });
     expect(objectCount).toBe(1);

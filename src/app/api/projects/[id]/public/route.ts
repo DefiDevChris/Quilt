@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { projects } from '@/db/schema';
-import { userProfiles } from '@/db/schema';
+import { projects, userProfiles } from '@/db/schema';
 import { downloadCanvasDataFromS3 } from '@/lib/s3';
 import { notFoundResponse } from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';

@@ -11,8 +11,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
-import { isPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
+import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,11 +39,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     // Pro gate: quilt processing requires Pro
     if (assignedType === 'quilt' && !isPro(session.user.role as UserRole)) {
-      return errorResponse(
-        'Photo to Quilt requires a Pro subscription.',
-        'PRO_REQUIRED',
-        403
-      );
+      return errorResponse('Photo to Quilt requires a Pro subscription.', 'PRO_REQUIRED', 403);
     }
 
     // Block and fabric processing also require Pro (consistent with existing pipelines)
@@ -52,11 +47,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       (assignedType === 'block' || assignedType === 'fabric') &&
       !isPro(session.user.role as UserRole)
     ) {
-      return errorResponse(
-        'Processing uploads requires a Pro subscription.',
-        'PRO_REQUIRED',
-        403
-      );
+      return errorResponse('Processing uploads requires a Pro subscription.', 'PRO_REQUIRED', 403);
     }
 
     // Atomically transition from pending → processing

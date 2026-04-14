@@ -39,9 +39,9 @@ function tokenizeSvgPath(d: string): PathCommand[] {
     const args =
       argStr.length > 0
         ? argStr
-          .split(/[\s,]+/)
-          .map(Number)
-          .filter((n) => !isNaN(n))
+            .split(/[\s,]+/)
+            .map(Number)
+            .filter((n) => !isNaN(n))
         : [];
     commands.push({ type, args });
   }

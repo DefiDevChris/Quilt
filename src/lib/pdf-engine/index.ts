@@ -63,7 +63,13 @@ export function drawBrandedFooter(
 
   const pageText = `Page ${pageNum} of ${totalPages}`;
   const pageTextWidth = font.widthOfTextAtSize(pageText, 7);
-  page.drawText(pageText, { x: pageWidth - mx - pageTextWidth, y, size: 7, font, color: PDF_SEMANTIC.mediumGray });
+  page.drawText(pageText, {
+    x: pageWidth - mx - pageTextWidth,
+    y,
+    size: 7,
+    font,
+    color: PDF_SEMANTIC.mediumGray,
+  });
 }
 
 export function drawContentPageHeader(
@@ -84,13 +90,31 @@ export function drawContentPageHeader(
     const logoH = 16;
     const logoW = (branding.logoImage.width / branding.logoImage.height) * logoH;
     page.drawImage(branding.logoImage, { x: mx, y: cursorY - logoH, width: logoW, height: logoH });
-    page.drawText('Quilt Studio', { x: mx + logoW + 6, y: cursorY - 12, size: 9, font: fonts.regular, color: PDF_COLOR.primary });
+    page.drawText('Quilt Studio', {
+      x: mx + logoW + 6,
+      y: cursorY - 12,
+      size: 9,
+      font: fonts.regular,
+      color: PDF_COLOR.primary,
+    });
   } else {
-    page.drawText('Quilt Studio', { x: mx, y: cursorY - 12, size: 9, font: fonts.regular, color: PDF_COLOR.primary });
+    page.drawText('Quilt Studio', {
+      x: mx,
+      y: cursorY - 12,
+      size: 9,
+      font: fonts.regular,
+      color: PDF_COLOR.primary,
+    });
   }
 
   cursorY -= 24;
-  page.drawText(title, { x: mx, y: cursorY, size: 16, font: fonts.bold, color: PDF_SEMANTIC.charcoal });
+  page.drawText(title, {
+    x: mx,
+    y: cursorY,
+    size: 16,
+    font: fonts.bold,
+    color: PDF_SEMANTIC.charcoal,
+  });
 
   const ruleY = cursorY - 6;
   page.drawLine({
@@ -149,11 +173,23 @@ export function drawTable(
 
   let y = startY;
 
-  page.drawRectangle({ x: startX, y: y - rowH, width: tableW, height: rowH, color: PDF_COLOR.border });
+  page.drawRectangle({
+    x: startX,
+    y: y - rowH,
+    width: tableW,
+    height: rowH,
+    color: PDF_COLOR.border,
+  });
 
   let colX = startX + 4;
   for (let c = 0; c < colCount; c++) {
-    page.drawText(headers[c], { x: colX, y: y - rowH + 4, size: headerSize, font: fonts.bold, color: PDF_SEMANTIC.charcoal });
+    page.drawText(headers[c], {
+      x: colX,
+      y: y - rowH + 4,
+      size: headerSize,
+      font: fonts.bold,
+      color: PDF_SEMANTIC.charcoal,
+    });
     colX += colWidths[c];
   }
 
@@ -162,13 +198,24 @@ export function drawTable(
   for (const row of rows) {
     colX = startX + 4;
     for (let c = 0; c < Math.min(row.length, colCount); c++) {
-      page.drawText(row[c], { x: colX, y: y - rowH + 4, size: bodySize, font: fonts.regular, color: PDF_SEMANTIC.charcoal });
+      page.drawText(row[c], {
+        x: colX,
+        y: y - rowH + 4,
+        size: bodySize,
+        font: fonts.regular,
+        color: PDF_SEMANTIC.charcoal,
+      });
       colX += colWidths[c];
     }
     y -= rowH;
   }
 
-  page.drawLine({ start: { x: startX, y }, end: { x: startX + tableW, y }, thickness: 0.5, color: PDF_SEMANTIC.mediumGray });
+  page.drawLine({
+    start: { x: startX, y },
+    end: { x: startX + tableW, y },
+    thickness: 0.5,
+    color: PDF_SEMANTIC.mediumGray,
+  });
 
   return y - 8;
 }

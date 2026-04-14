@@ -6,7 +6,16 @@
  * Pure computation — no React or Fabric.js dependency.
  */
 
-import { PDFDocument, PDFPage, PDFFont, PDFImage, rgb, LineCapStyle, StandardFonts, type RGB } from 'pdf-lib';
+import {
+  PDFDocument,
+  PDFPage,
+  PDFFont,
+  PDFImage,
+  rgb,
+  LineCapStyle,
+  StandardFonts,
+  type RGB,
+} from 'pdf-lib';
 import { PDF_POINTS_PER_INCH } from '@/lib/constants';
 import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 

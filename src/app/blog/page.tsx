@@ -4,6 +4,7 @@ import { blogPosts, users, userProfiles } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import FeaturedCarousel from '@/components/blog/FeaturedCarousel';
 import AsymmetricPostFeed from '@/components/blog/AsymmetricPostFeed';
+import Mascot from '@/components/landing/Mascot';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,22 +36,9 @@ export default async function BlogPage() {
 
   if (!posts.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <div className="w-20 h-20 mx-auto mb-8 flex items-center justify-center rounded-lg bg-primary/10">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1"
-              className="text-primary"
-            >
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-              <path d="M8 7h6M8 11h8" />
-            </svg>
-          </div>
+      <div className="min-h-screen flex items-center justify-center px-6 relative">
+        <div className="max-w-md text-center relative">
+          <Mascot pose="sitting" size="xl" className="mx-auto mb-8 opacity-40" />
           <h2
             className="text-[32px] leading-[40px] font-semibold text-default mb-4"
             style={{ fontFamily: 'var(--font-display)' }}

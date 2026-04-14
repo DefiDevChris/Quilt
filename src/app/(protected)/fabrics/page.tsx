@@ -104,7 +104,10 @@ export default function FabricsPage() {
 
       {/* Scope toggle (Pro only) */}
       {isPro && (
-        <div className="flex gap-2 p-1 rounded-lg w-fit" style={{ backgroundColor: COLORS.border, border: `1px solid ${COLORS.border}` }}>
+        <div
+          className="flex gap-2 p-1 rounded-lg w-fit"
+          style={{ backgroundColor: COLORS.border, border: `1px solid ${COLORS.border}` }}
+        >
           {(['system', 'user'] as const).map((s) => (
             <button
               key={s}
@@ -119,12 +122,12 @@ export default function FabricsPage() {
                 transitionTimingFunction: MOTION.transitionEasing,
                 ...(scope === s
                   ? { backgroundColor: COLORS.text, color: COLORS.bg, boxShadow: SHADOW.brand }
-                  : { color: COLORS.textDim }
-                ),
+                  : { color: COLORS.textDim }),
               }}
               onMouseEnter={(e) => {
                 if (scope !== s) {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = `${COLORS.border}99`;
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    `${COLORS.border}99`;
                 }
               }}
               onMouseLeave={(e) => {
@@ -167,11 +170,13 @@ export default function FabricsPage() {
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = `${COLORS.primary}40`;
-              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color = COLORS.primary;
+              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color =
+                COLORS.primary;
             }}
             onBlur={(e) => {
               e.currentTarget.style.borderColor = COLORS.border;
-              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color = COLORS.textDim;
+              (e.currentTarget.previousElementSibling as SVGSVGElement).style.color =
+                COLORS.textDim;
             }}
           />
         </div>
@@ -207,7 +212,10 @@ export default function FabricsPage() {
       </div>
 
       {/* Results count */}
-      <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: COLORS.border }}>
+      <div
+        className="flex items-center justify-between border-b pb-4"
+        style={{ borderColor: COLORS.border }}
+      >
         <p className="text-xs" style={{ color: COLORS.textDim }}>
           Showing {loading ? '...' : total} Entries
         </p>
@@ -217,7 +225,11 @@ export default function FabricsPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className="aspect-square rounded-lg animate-pulse border" style={{ backgroundColor: `${COLORS.border}80`, borderColor: `${COLORS.border}1a` }} />
+            <div
+              key={i}
+              className="aspect-square rounded-lg animate-pulse border"
+              style={{ backgroundColor: `${COLORS.border}80`, borderColor: `${COLORS.border}1a` }}
+            />
           ))}
         </div>
       ) : fabrics.length === 0 ? (
@@ -264,8 +276,13 @@ export default function FabricsPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: `${COLORS.border}4d` }}>
-                      <p className="text-[10px]" style={{ color: `${COLORS.textDim}66` }}>No Preview</p>
+                    <div
+                      className="h-full w-full flex items-center justify-center"
+                      style={{ backgroundColor: `${COLORS.border}4d` }}
+                    >
+                      <p className="text-[10px]" style={{ color: `${COLORS.textDim}66` }}>
+                        No Preview
+                      </p>
                     </div>
                   )}
                   <div
@@ -276,18 +293,27 @@ export default function FabricsPage() {
                       transitionTimingFunction: MOTION.transitionEasing,
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.text}0d`;
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                        `${COLORS.text}0d`;
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.backgroundColor = `${COLORS.text}00`;
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor =
+                        `${COLORS.text}00`;
                     }}
                   />
                 </div>
 
                 <div className="p-4" style={{ backgroundColor: COLORS.surface }}>
-                  <p className="text-xs font-bold truncate" style={{ color: COLORS.text }}>{fabric.name}</p>
+                  <p className="text-xs font-bold truncate" style={{ color: COLORS.text }}>
+                    {fabric.name}
+                  </p>
                   {fabric.manufacturer && (
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textDim, opacity: OPACITY.dim }}>{fabric.manufacturer}</p>
+                    <p
+                      className="text-[10px] mt-1"
+                      style={{ color: COLORS.textDim, opacity: OPACITY.dim }}
+                    >
+                      {fabric.manufacturer}
+                    </p>
                   )}
                 </div>
               </div>
@@ -321,8 +347,12 @@ export default function FabricsPage() {
             Previous
           </button>
           <div className="flex flex-col items-center">
-            <span className="text-xs" style={{ color: COLORS.textDim }}>Index</span>
-            <span className="text-sm font-bold" style={{ color: COLORS.text }}>{page} <span style={{ color: `${COLORS.textDim}66` }}>/</span> {totalPages}</span>
+            <span className="text-xs" style={{ color: COLORS.textDim }}>
+              Index
+            </span>
+            <span className="text-sm font-bold" style={{ color: COLORS.text }}>
+              {page} <span style={{ color: `${COLORS.textDim}66` }}>/</span> {totalPages}
+            </span>
           </div>
           <button
             type="button"

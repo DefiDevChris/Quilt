@@ -240,9 +240,15 @@ export function StudioTopBar({
             >
               <button
                 type="button"
-                onClick={() => useCanvasStore.getState().setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)}
+                onClick={() =>
+                  useCanvasStore
+                    .getState()
+                    .setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)
+                }
                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                  isViewportLocked ? 'hover:bg-[var(--color-border)]' : 'bg-primary/10 hover:bg-primary/20'
+                  isViewportLocked
+                    ? 'hover:bg-[var(--color-border)]'
+                    : 'bg-primary/10 hover:bg-primary/20'
                 }`}
                 aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
               >
@@ -288,7 +294,11 @@ export function StudioTopBar({
               >
                 <button
                   type="button"
-                  onClick={() => useCanvasStore.getState().centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)}
+                  onClick={() =>
+                    useCanvasStore
+                      .getState()
+                      .centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)
+                  }
                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-border)] transition-colors"
                   aria-label="Recenter viewport"
                 >

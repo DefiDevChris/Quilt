@@ -4,8 +4,14 @@ import { useEffect } from 'react';
 import { gridPointToPixel } from '@/lib/blockbuilder-utils';
 import { CANVAS } from '@/lib/design-system';
 import type {
-  DrawSegment, Patch, ArcSegment, Segment, BlockBuilderMode,
-  SnapHelpers, SegmentHelpers, MinimalCanvas,
+  DrawSegment,
+  Patch,
+  ArcSegment,
+  Segment,
+  BlockBuilderMode,
+  SnapHelpers,
+  SegmentHelpers,
+  MinimalCanvas,
 } from './types';
 
 const SEAM_LINE_COLOR = CANVAS.seamLine;
@@ -76,7 +82,10 @@ export function useBlockBuilderCanvas({
       for (let row = 0; row <= gridRows; row++) {
         const y = row * snap.gridSize;
         const line = new fabric.Line([0, y, canvasSize, y], {
-          stroke: CANVAS.gridLine, strokeWidth: 1, selectable: false, evented: false,
+          stroke: CANVAS.gridLine,
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
         });
         (line as unknown as { _isGridLine: boolean })._isGridLine = true;
         c.add(line);
@@ -84,7 +93,10 @@ export function useBlockBuilderCanvas({
       for (let col = 0; col <= gridCols; col++) {
         const x = col * snap.gridSize;
         const line = new fabric.Line([x, 0, x, canvasSize], {
-          stroke: CANVAS.gridLine, strokeWidth: 1, selectable: false, evented: false,
+          stroke: CANVAS.gridLine,
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
         });
         (line as unknown as { _isGridLine: boolean })._isGridLine = true;
         c.add(line);
@@ -92,12 +104,19 @@ export function useBlockBuilderCanvas({
 
       // Draw patch fills
       for (const patch of patches) {
-        const pixelVerts = patch.vertices.map((v) => ({ x: v.x * snap.gridSize, y: v.y * snap.gridSize }));
+        const pixelVerts = patch.vertices.map((v) => ({
+          x: v.x * snap.gridSize,
+          y: v.y * snap.gridSize,
+        }));
         if (pixelVerts.length < 3) continue;
         const fabricId = patchFills[patch.id];
         const fill = fabricId ? `url(#fabric-${fabricId})` : 'transparent';
         const polygon = new fabric.Polygon(pixelVerts, {
-          fill, stroke: 'transparent', strokeWidth: 0, selectable: false, evented: false,
+          fill,
+          stroke: 'transparent',
+          strokeWidth: 0,
+          selectable: false,
+          evented: false,
         });
         c.add(polygon);
       }
@@ -106,11 +125,17 @@ export function useBlockBuilderCanvas({
       if (selectedPatchId) {
         const selectedPatch = patches.find((p) => p.id === selectedPatchId);
         if (selectedPatch) {
-          const pixelVerts = selectedPatch.vertices.map((v) => ({ x: v.x * snap.gridSize, y: v.y * snap.gridSize }));
+          const pixelVerts = selectedPatch.vertices.map((v) => ({
+            x: v.x * snap.gridSize,
+            y: v.y * snap.gridSize,
+          }));
           if (pixelVerts.length >= 3) {
             const highlight = new fabric.Polygon(pixelVerts, {
-              fill: 'transparent', stroke: PENCIL_PREVIEW_COLOR,
-              strokeWidth: 2, selectable: false, evented: false,
+              fill: 'transparent',
+              stroke: PENCIL_PREVIEW_COLOR,
+              strokeWidth: 2,
+              selectable: false,
+              evented: false,
             });
             c.add(highlight);
           }
@@ -130,14 +155,23 @@ export function useBlockBuilderCanvas({
           const sweepFlag = arc.clockwise ? 1 : 0;
           const pathObj = new fabric.Path(
             `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`,
-            { fill: '', stroke: SEAM_LINE_COLOR, strokeWidth: SEAM_LINE_WIDTH, selectable: false, evented: false }
+            {
+              fill: '',
+              stroke: SEAM_LINE_COLOR,
+              strokeWidth: SEAM_LINE_WIDTH,
+              selectable: false,
+              evented: false,
+            }
           );
           c.add(pathObj);
         } else {
           const fromPx = gridPointToPixel((seg as Segment).from, snap.gridSize);
           const toPx = gridPointToPixel((seg as Segment).to, snap.gridSize);
           const line = new fabric.Line([fromPx.x, fromPx.y, toPx.x, toPx.y], {
-            stroke: SEAM_LINE_COLOR, strokeWidth: SEAM_LINE_WIDTH, selectable: false, evented: false,
+            stroke: SEAM_LINE_COLOR,
+            strokeWidth: SEAM_LINE_WIDTH,
+            selectable: false,
+            evented: false,
           });
           c.add(line);
         }
@@ -190,7 +224,16 @@ export function useBlockBuilderCanvas({
       cleanup?.();
     };
   }, [
-    isOpen, canvasSize, patches, patchFills, selectedPatchId,
-    activeMode, snap, gridCols, gridRows, segments, tools,
+    isOpen,
+    canvasSize,
+    patches,
+    patchFills,
+    selectedPatchId,
+    activeMode,
+    snap,
+    gridCols,
+    gridRows,
+    segments,
+    tools,
   ]);
 }

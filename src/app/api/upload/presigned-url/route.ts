@@ -8,8 +8,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
-import { isPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
+import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 

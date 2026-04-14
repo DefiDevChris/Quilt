@@ -49,12 +49,12 @@ export default function PublicNav() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-6">
-          <a
-            href="#features"
+          <Link
+            href="/#features"
             className="text-dim hover:text-primary transition-colors duration-150 font-medium"
           >
             Features
-          </a>
+          </Link>
           <a
             href="/blog"
             target="_blank"
@@ -124,13 +124,13 @@ export default function PublicNav() {
 
       {menuOpen && (
         <div className="lg:hidden border-t border-default bg-surface px-6 py-4 space-y-3">
-          <a
-            href="#features"
+          <Link
+            href="/#features"
             className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Features
-          </a>
+          </Link>
           <a
             href="/blog"
             target="_blank"

@@ -247,7 +247,9 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
 
         {/* Cover Image */}
         <div>
-          <label htmlFor="blog-cover-image" className="block text-sm font-medium text-default mb-2">Cover Image</label>
+          <label htmlFor="blog-cover-image" className="block text-sm font-medium text-default mb-2">
+            Cover Image
+          </label>
           <div className="space-y-3">
             {formData.featuredImageUrl ? (
               <div className="relative aspect-video max-w-lg rounded-lg overflow-hidden border border-default">
@@ -275,7 +277,10 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                 </button>
               </div>
             ) : (
-              <label htmlFor="blog-cover-upload" className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-default rounded-lg cursor-pointer hover:bg-default transition-colors duration-150">
+              <label
+                htmlFor="blog-cover-upload"
+                className="flex flex-col items-center justify-center w-full max-w-lg h-32 border-2 border-dashed border-default rounded-lg cursor-pointer hover:bg-default transition-colors duration-150"
+              >
                 <div className="text-center">
                   <svg
                     className="mx-auto h-8 w-8 text-dim"
@@ -306,7 +311,9 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
             )}
             {!formData.featuredImageUrl && (
               <>
-                <label htmlFor="blog-cover-url" className="sr-only">Cover Image URL</label>
+                <label htmlFor="blog-cover-url" className="sr-only">
+                  Cover Image URL
+                </label>
                 <input
                   id="blog-cover-url"
                   type="url"

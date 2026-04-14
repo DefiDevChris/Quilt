@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
+import Mascot from '@/components/landing/Mascot';
 
 export const metadata: Metadata = {
   title: 'Page Not Found',
@@ -13,8 +14,16 @@ export default function NotFound() {
       <PublicNav />
       <main className="min-h-[60vh] flex items-center justify-center px-6 bg-default">
         <div className="text-center max-w-md">
-          <h1 className="text-[40px] leading-[52px] font-normal text-primary mb-4" style={{ fontFamily: 'var(--font-display)' }}>404</h1>
-          <h2 className="text-[24px] leading-[32px] font-normal text-default mb-4">Page Not Found</h2>
+          <Mascot pose="walking" size="lg" className="mx-auto mb-6 opacity-30" />
+          <h1
+            className="text-[40px] leading-[52px] font-normal text-primary mb-4"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            404
+          </h1>
+          <h2 className="text-[24px] leading-[32px] font-normal text-default mb-4">
+            Page Not Found
+          </h2>
           <p className="text-[18px] leading-[28px] text-dim mb-8">
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved,
             deleted, or never existed.

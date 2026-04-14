@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findSimilarObjects, getAvailableSimilarityModes } from '@/lib/select-similar-engine';
-import type { SimilarityMode } from '@/lib/select-similar-engine';
+import { findSimilarObjects, getAvailableSimilarityModes, type SimilarityMode } from '@/lib/select-similar-engine';
 
 describe('select-similar-engine', () => {
   describe('getAvailableSimilarityModes', () => {

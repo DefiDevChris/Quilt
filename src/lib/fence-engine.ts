@@ -10,11 +10,7 @@
 
 import type { LayoutTemplate, LayoutCategory } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
-import {
-  computeLayout,
-  type LayoutConfig,
-  type LayoutResult,
-} from '@/lib/layout-utils';
+import { computeLayout, type LayoutConfig, type LayoutResult } from '@/lib/layout-utils';
 import { DEFAULT_LAYOUT } from '@/lib/design-system';
 
 /** Map template category to the internal LayoutType used by computeLayout. */
@@ -239,10 +235,7 @@ function computeBindingAreas(result: LayoutResult, template: LayoutTemplate): Fe
 /**
  * Build a LayoutConfig from a LayoutTemplate for use with computeLayout.
  */
-function templateToLayoutConfig(
-  template: LayoutTemplate,
-  pxPerUnit: number
-): LayoutConfig {
+function templateToLayoutConfig(template: LayoutTemplate, pxPerUnit: number): LayoutConfig {
   return {
     type: categoryToLayoutType(template.category),
     rows: template.gridRows,

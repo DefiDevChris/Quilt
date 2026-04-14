@@ -1,16 +1,30 @@
 import { NextRequest } from 'next/server';
-import { eq, and, ilike, gte, lte, asc, desc, count, type SQL } from 'drizzle-orm';
+import { eq, and, or, ilike, gte, lte, asc, desc, count, inArray, type SQL } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics, siteSettings } from '@/db/schema';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
+// Category IDs map to Shopify collection names via ilike matching.
+const CATEGORY_COLLECTION_MAP: Record<string, string> = {
+  'charm-packs': 'charm pack',
+  'jelly-rolls': 'jelly roll',
+  'layer-cakes': 'layer cake',
+  'by-the-yard': 'fat quarter',
+  notions: 'notion',
+  batting: 'batting',
+  patterns: 'pattern',
+  thread: 'thread',
+};
+
 const querySchema = z.object({
   search: z.string().optional(),
   manufacturer: z.string().optional(),
+  collection: z.string().optional(),
   colorFamily: z.string().optional(),
   value: z.string().optional(),
+  category: z.string().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
   inStock: z.enum(['true', 'false']).optional(),
@@ -34,16 +48,14 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (setting?.value !== true) {
-      return Response.json(
-        { success: false, error: 'Shop is not available' },
-        { status: 503 }
-      );
+      return Response.json({ success: false, error: 'Shop is not available' }, { status: 503 });
     }
 
     const url = request.nextUrl;
     const parsed = querySchema.safeParse({
       search: url.searchParams.get('search') ?? undefined,
       manufacturer: url.searchParams.get('manufacturer') ?? undefined,
+      collection: url.searchParams.get('collection') ?? undefined,
       colorFamily: url.searchParams.get('colorFamily') ?? undefined,
       value: url.searchParams.get('value') ?? undefined,
       minPrice: url.searchParams.get('minPrice') ?? undefined,
@@ -61,8 +73,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { search, manufacturer, colorFamily, value, minPrice, maxPrice, inStock, sort, page, limit } =
-      parsed.data;
+    const {
+      search,
+      manufacturer,
+      collection,
+      colorFamily,
+      value,
+      category,
+      minPrice,
+      maxPrice,
+      inStock,
+      sort,
+      page,
+      limit,
+    } = parsed.data;
 
     // Build filters — always require isPurchasable
     const conditions: SQL[] = [eq(fabrics.isPurchasable, true)];
@@ -71,13 +95,34 @@ export async function GET(request: NextRequest) {
       conditions.push(ilike(fabrics.name, `%${search}%`));
     }
     if (manufacturer) {
-      conditions.push(eq(fabrics.manufacturer, manufacturer));
+      const mfgs = manufacturer.split(',').map((s) => s.trim()).filter(Boolean);
+      if (mfgs.length === 1) {
+        conditions.push(eq(fabrics.manufacturer, mfgs[0]));
+      } else if (mfgs.length > 1) {
+        conditions.push(inArray(fabrics.manufacturer, mfgs));
+      }
     }
     if (colorFamily) {
-      conditions.push(eq(fabrics.colorFamily, colorFamily));
+      const colors = colorFamily.split(',').map((s) => s.trim()).filter(Boolean);
+      if (colors.length === 1) {
+        conditions.push(eq(fabrics.colorFamily, colors[0]));
+      } else if (colors.length > 1) {
+        conditions.push(inArray(fabrics.colorFamily, colors));
+      }
     }
     if (value) {
       conditions.push(eq(fabrics.value, value));
+    }
+    if (collection) {
+      const colls = collection.split(',').map((s) => s.trim()).filter(Boolean);
+      if (colls.length === 1) {
+        conditions.push(eq(fabrics.collection, colls[0]));
+      } else if (colls.length > 1) {
+        conditions.push(inArray(fabrics.collection, colls));
+      }
+    }
+    if (category && CATEGORY_COLLECTION_MAP[category]) {
+      conditions.push(ilike(fabrics.collection, `%${CATEGORY_COLLECTION_MAP[category]}%`));
     }
     if (minPrice !== undefined) {
       conditions.push(gte(fabrics.pricePerYard, String(minPrice)));
@@ -115,6 +160,7 @@ export async function GET(request: NextRequest) {
           value: fabrics.value,
           hex: fabrics.hex,
           pricePerYard: fabrics.pricePerYard,
+          description: fabrics.description,
           inStock: fabrics.inStock,
           shopifyVariantId: fabrics.shopifyVariantId,
         })

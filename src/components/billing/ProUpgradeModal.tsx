@@ -51,8 +51,8 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
               </h2>
               <div className="h-1 w-20 bg-primary mb-8" />
               <p className="text-dim text-[16px] leading-[24px] max-w-xs">
-                Unlock professional access to advanced pattern generation,
-                high-resolution exports, and complete fabric calibration tools.
+                Unlock professional access to advanced pattern generation, high-resolution exports,
+                and complete fabric calibration tools.
               </p>
             </div>
           </div>

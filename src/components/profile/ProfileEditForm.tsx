@@ -260,7 +260,9 @@ export function ProfileEditForm() {
             className="w-full px-5 py-4 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#ff8d49] resize-none placeholder:text-dim transition-colors duration-150"
             placeholder="Tell the community about your quilting journey..."
           />
-          {fieldErrors.bio && <p className="text-primary text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>}
+          {fieldErrors.bio && (
+            <p className="text-primary text-[14px] leading-[20px] mt-2">{fieldErrors.bio}</p>
+          )}
         </div>
       </div>
 
@@ -270,10 +272,11 @@ export function ProfileEditForm() {
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'public')}
-            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'public'
-              ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-              : 'border-default bg-surface hover:border-[#ff8d49]/50'
-              }`}
+            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${
+              form.privacyMode === 'public'
+                ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'border-default bg-surface hover:border-[#ff8d49]/50'
+            }`}
           >
             <div className="text-[16px] leading-[24px] text-default">Open Studio</div>
             <div className="mt-1 text-[14px] leading-[20px] text-dim leading-relaxed">
@@ -283,10 +286,11 @@ export function ProfileEditForm() {
           <button
             type="button"
             onClick={() => updateField('privacyMode', 'private')}
-            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${form.privacyMode === 'private'
-              ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-              : 'border-default bg-surface hover:border-[#ff8d49]/50'
-              }`}
+            className={`rounded-lg border px-6 py-5 text-left transition-colors duration-150 ${
+              form.privacyMode === 'private'
+                ? 'border-[#ff8d49] bg-primary/10 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'border-default bg-surface hover:border-[#ff8d49]/50'
+            }`}
           >
             <div className="text-[16px] leading-[24px] text-default">Private Workshop</div>
             <div className="mt-1 text-[14px] leading-[20px] text-dim leading-relaxed">
@@ -387,16 +391,10 @@ function AvatarUpload({
       <label className="relative cursor-pointer">
         <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white shadow-[0_1px_2px_rgba(26,26,26,0.08)] bg-default relative">
           {avatarPreview ? (
-            <img
-              src={avatarPreview}
-              alt="Avatar preview"
-              className="w-full h-full object-cover"
-            />
+            <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-2xl text-dim opacity-40">
-                {initials || '?'}
-              </span>
+              <span className="text-2xl text-dim opacity-40">{initials || '?'}</span>
             </div>
           )}
           <div className="absolute inset-0 bg-default/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">

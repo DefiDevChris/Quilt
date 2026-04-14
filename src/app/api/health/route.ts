@@ -9,9 +9,6 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch {
-    return Response.json(
-      { status: 'error', timestamp: new Date().toISOString() },
-      { status: 503 }
-    );
+    return Response.json({ status: 'error', timestamp: new Date().toISOString() }, { status: 503 });
   }
 }

@@ -1,31 +1,31 @@
 /**
  * Shopify Storefront API Client
- * 
+ *
  * This module provides a lightweight GraphQL client for interacting with
  * the Shopify Storefront API using Next.js native fetch.
- * 
+ *
  * ENVIRONMENT VARIABLES REQUIRED:
  * - NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: Your Shopify store domain (e.g., "my-store.myshopify.com")
  * - NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN: Your Storefront API access token
- * 
+ *
  * FEATURE FLAG:
  * - NEXT_PUBLIC_ENABLE_SHOP: Set to 'true' to enable Shopify integration
- * 
+ *
  * NOTE ON DECIMAL QUANTITIES IN SHOPIFY:
  * Shopify's Storefront API supports decimal quantities if enabled in your store settings.
  * If your store does NOT support decimal quantities, you have two options:
- * 
+ *
  * Option 1: Enable decimal quantities in Shopify Admin
  *   - Go to Settings > Products > Inventory
  *   - Enable "Track quantity" and allow decimal values
  *   - This allows customers to add e.g., 1.5 yards directly
- * 
+ *
  * Option 2: Use smaller base units (recommended for fabric stores)
  *   - Create product variants where 1 unit = 0.25 yards (or 0.5 yards)
  *   - Convert yardage to base units before adding to cart:
  *     const baseUnits = Math.ceil(yards / 0.25); // For quarter-yard increments
  *   - Display to users as "1.5 yards" but send "6" units to Shopify
- * 
+ *
  * For this implementation, we assume decimal quantities are ENABLED in Shopify.
  * If not, modify the addToCart function to convert yards to your base unit.
  */
@@ -37,11 +37,11 @@ const isShopEnabled = process.env.NEXT_PUBLIC_ENABLE_SHOP === 'true';
 // Admin API (for inventory sync, webhooks, etc.)
 const adminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const shopifyAdminEndpoint = shopifyDomain
-  ? `https://${shopifyDomain}/admin/api/2024-01/graphql.json`
+  ? `https://${shopifyDomain}/admin/api/2025-01/graphql.json`
   : '';
 
 const SHOPIFY_GRAPHQL_ENDPOINT = shopifyDomain
-  ? `https://${shopifyDomain}/api/2024-01/graphql.json`
+  ? `https://${shopifyDomain}/api/2025-01/graphql.json`
   : '';
 
 const HEADERS: HeadersInit = {
@@ -52,7 +52,10 @@ const HEADERS: HeadersInit = {
 /**
  * Generic GraphQL request helper
  */
-async function shopifyGraphQLRequest<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+async function shopifyGraphQLRequest<T>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> {
   if (!isShopEnabled) {
     throw new Error('Shopify integration is disabled. Set NEXT_PUBLIC_ENABLE_SHOP=true');
   }
@@ -84,7 +87,10 @@ async function shopifyGraphQLRequest<T>(query: string, variables?: Record<string
 /**
  * Admin API GraphQL request helper (for inventory sync, orders, etc.)
  */
-async function shopifyAdminGraphQLRequest<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+async function shopifyAdminGraphQLRequest<T>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> {
   if (!shopifyDomain || !adminAccessToken) {
     throw new Error('Shopify Admin API not configured. Set SHOPIFY_ADMIN_ACCESS_TOKEN');
   }
@@ -372,7 +378,7 @@ export async function createCart(): Promise<CreateCartResult> {
  * Add items to an existing cart
  * @param cartId - The Shopify cart ID
  * @param lines - Array of variant IDs and quantities
- * 
+ *
  * NOTE: Quantity can be a decimal if your Shopify store supports it.
  * See the note at the top of this file about handling decimal quantities.
  */
@@ -426,10 +432,7 @@ export async function cartLinesUpdate(
  * @param cartId - The Shopify cart ID
  * @param lineIds - Array of line IDs to remove
  */
-export async function cartLinesRemove(
-  cartId: string,
-  lineIds: string[]
-): Promise<ShopifyCart> {
+export async function cartLinesRemove(cartId: string, lineIds: string[]): Promise<ShopifyCart> {
   const data = await shopifyGraphQLRequest<{
     cartLinesRemove: { cart: ShopifyCartResponse };
   }>(CART_LINES_REMOVE_MUTATION, { cartId, lineIds });

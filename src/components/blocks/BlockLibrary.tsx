@@ -50,6 +50,7 @@ export function BlockLibrary({
   const [activeTab, setActiveTab] = useState<TabType>('library');
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [recentlyUsed, setRecentlyUsed] = useState<string[]>([]);
 
   const fetchBlocks = useBlockStore((s) => s.fetchBlocks);
 
@@ -83,7 +84,6 @@ export function BlockLibrary({
     [onBlockDragStart]
   );
 
-  const [recentlyUsed, setRecentlyUsed] = useState<string[]>([]);
   useEffect(() => {
     setRecentlyUsed(getRecentlyUsedBlocks());
   }, []);
@@ -96,20 +96,22 @@ export function BlockLibrary({
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${activeTab === 'library'
-              ? 'border-b-2 border-primary text-default'
-              : 'text-dim hover:text-default'
-              }`}
+            className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${
+              activeTab === 'library'
+                ? 'border-b-2 border-primary text-default'
+                : 'text-dim hover:text-default'
+            }`}
           >
             Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('myblocks')}
-            className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${activeTab === 'myblocks'
-              ? 'border-b-2 border-primary text-default'
-              : 'text-dim hover:text-default'
-              }`}
+            className={`flex-1 px-3 py-2.5 text-[14px] leading-[20px] transition-colors duration-150 ${
+              activeTab === 'myblocks'
+                ? 'border-b-2 border-primary text-default'
+                : 'text-dim hover:text-default'
+            }`}
           >
             My Blocks
           </button>
@@ -122,9 +124,7 @@ export function BlockLibrary({
             {recentlyUsed.length > 0 && (
               <div className="px-3 py-2 border-b border-default">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[14px] leading-[20px] text-dim">
-                    Recently Used
-                  </span>
+                  <span className="text-[14px] leading-[20px] text-dim">Recently Used</span>
                 </div>
                 <div className="grid grid-cols-4 gap-1.5">
                   {recentlyUsed.slice(0, 4).map((id) => {
@@ -220,10 +220,11 @@ export function BlockLibrary({
                       key={filter}
                       type="button"
                       onClick={() => setBlockFilter(filter)}
-                      className={`rounded-full px-3 py-1 text-[14px] leading-[20px] transition-colors duration-150 ${blockFilter === filter
-                        ? 'bg-primary text-default shadow-brand'
-                        : 'bg-default text-dim hover:text-default'
-                        }`}
+                      className={`rounded-full px-3 py-1 text-[14px] leading-[20px] transition-colors duration-150 ${
+                        blockFilter === filter
+                          ? 'bg-primary text-default shadow-brand'
+                          : 'bg-default text-dim hover:text-default'
+                      }`}
                     >
                       {FILTER_LABELS[filter]}
                     </button>
@@ -234,7 +235,9 @@ export function BlockLibrary({
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-dim">Upgrade to Pro to create custom blocks</p>
+                  <p className="text-[14px] leading-[20px] text-dim">
+                    Upgrade to Pro to create custom blocks
+                  </p>
                 </div>
               ) : isLoadingUserBlocks ? (
                 <div className="grid grid-cols-3 gap-2">
@@ -280,10 +283,11 @@ export function BlockLibrary({
                             ? 'Click again to confirm delete'
                             : 'Delete block'
                         }
-                        className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === block.id
-                          ? 'bg-primary ring-2 ring-primary/50 !opacity-100'
-                          : 'bg-primary'
-                          }`}
+                        className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                          confirmDeleteId === block.id
+                            ? 'bg-primary ring-2 ring-primary/50 !opacity-100'
+                            : 'bg-primary'
+                        }`}
                       >
                         {confirmDeleteId === block.id ? '\u2713' : '\u2715'}
                       </button>

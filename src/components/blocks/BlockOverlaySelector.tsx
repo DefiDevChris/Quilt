@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { BLOCK_OVERLAYS, LAYOUT_OVERLAYS, type BlockOverlay } from '@/lib/quilt-overlay-registry';
 import { RecommendedDimensionsModal } from './RecommendedDimensionsModal';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 type OverlayType = 'block' | 'layout';
 
@@ -26,6 +27,7 @@ export function BlockOverlaySelector({
   const [pendingOverlay, setPendingOverlay] = useState<{ path: string; type: OverlayType } | null>(
     null
   );
+  const dialogRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   const filteredBlocks = BLOCK_OVERLAYS.filter((b) => {
     const matchesSearch =
@@ -42,14 +44,31 @@ export function BlockOverlaySelector({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/60">
-      <div className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/60"
+      role="presentation"
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="overlay-selector-title"
+        tabIndex={-1}
+        className="flex w-[800px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
-          <h2 className="text-[24px] leading-[32px] text-[var(--color-text)]">Overlay Templates</h2>
+          <h2
+            id="overlay-selector-title"
+            className="text-[24px] leading-[32px] text-[var(--color-text)]"
+          >
+            Overlay Templates
+          </h2>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close"
             className="p-2 rounded-lg hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -70,20 +89,22 @@ export function BlockOverlaySelector({
               <button
                 type="button"
                 onClick={() => setActiveType('block')}
-                className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-l-lg ${activeType === 'block'
-                  ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
-                  : 'text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10'
-                  }`}
+                className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-l-lg ${
+                  activeType === 'block'
+                    ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
+                    : 'text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10'
+                }`}
               >
                 Blocks ({BLOCK_OVERLAYS.length})
               </button>
               <button
                 type="button"
                 onClick={() => setActiveType('layout')}
-                className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-r-lg ${activeType === 'layout'
-                  ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
-                  : 'text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10'
-                  }`}
+                className={`flex-1 p-3 text-[14px] leading-[20px] transition-colors duration-150 rounded-r-lg ${
+                  activeType === 'layout'
+                    ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
+                    : 'text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10'
+                }`}
               >
                 Layouts ({LAYOUT_OVERLAYS.length})
               </button>
@@ -94,6 +115,7 @@ export function BlockOverlaySelector({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search blocks and layouts..."
+              aria-label="Search blocks and layouts"
               className="w-full border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg p-4 text-[16px] leading-[24px] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-2 focus:outline-[var(--color-primary)] transition-colors duration-150"
             />
           </div>
@@ -106,10 +128,11 @@ export function BlockOverlaySelector({
                   key={d}
                   type="button"
                   onClick={() => setDifficultyFilter(d)}
-                  className={`border border-[var(--color-border)] px-4 py-2 text-[14px] leading-[20px] rounded-full transition-colors duration-150 ${difficultyFilter === d
-                    ? 'bg-[var(--color-primary)] text-[var(--color-text)] border-[var(--color-primary)]'
-                    : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] hover:border-[var(--color-primary)]/50'
-                    }`}
+                  className={`border border-[var(--color-border)] px-4 py-2 text-[14px] leading-[20px] rounded-full transition-colors duration-150 ${
+                    difficultyFilter === d
+                      ? 'bg-[var(--color-primary)] text-[var(--color-text)] border-[var(--color-primary)]'
+                      : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] hover:border-[var(--color-primary)]/50'
+                  }`}
                 >
                   {d}
                 </button>
@@ -126,10 +149,11 @@ export function BlockOverlaySelector({
                     key={block.id}
                     type="button"
                     onClick={() => onSelect(block.svgPath, 'block')}
-                    className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === block.svgPath
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                      : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
-                      }`}
+                    className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${
+                      currentOverlay === block.svgPath
+                        ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                        : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
+                    }`}
                   >
                     <div className="mb-4 w-full aspect-square border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg">
                       <img
@@ -157,10 +181,11 @@ export function BlockOverlaySelector({
                       setPendingOverlay({ path: layout.svgPath, type: 'layout' });
                       setShowDimensions(true);
                     }}
-                    className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${currentOverlay === layout.svgPath
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                      : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
-                      }`}
+                    className={`group flex flex-col items-start border rounded-lg p-4 text-left transition-colors duration-150 ${
+                      currentOverlay === layout.svgPath
+                        ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                        : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/50'
+                    }`}
                   >
                     <div className="mb-4 w-full aspect-[3/4] border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg">
                       <img
@@ -182,10 +207,10 @@ export function BlockOverlaySelector({
 
             {((activeType === 'block' && filteredBlocks.length === 0) ||
               (activeType === 'layout' && filteredLayouts.length === 0)) && (
-                <div className="py-12 text-center text-[16px] leading-[24px] text-[var(--color-text-dim)]">
-                  No matches found
-                </div>
-              )}
+              <div className="py-12 text-center text-[16px] leading-[24px] text-[var(--color-text-dim)]">
+                No matches found
+              </div>
+            )}
           </div>
         </div>
       </div>

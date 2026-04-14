@@ -9,7 +9,11 @@ interface IconProps {
   className?: string;
 }
 
-export function FabricSwatchIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function FabricSwatchIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="6" y="6" width="36" height="36" rx="4" fill={color} opacity="0.15" />
@@ -21,7 +25,11 @@ export function FabricSwatchIcon({ size = 48, color = 'var(--color-primary)', cl
   );
 }
 
-export function CharmPackIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function CharmPackIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="8" y="8" width="32" height="32" rx="3" fill={color} opacity="0.15" />
@@ -40,7 +48,11 @@ export function CharmPackIcon({ size = 48, color = 'var(--color-primary)', class
   );
 }
 
-export function JellyRollIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function JellyRollIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="12" y="6" width="24" height="36" rx="3" fill={color} opacity="0.15" />
@@ -54,7 +66,11 @@ export function JellyRollIcon({ size = 48, color = 'var(--color-primary)', class
   );
 }
 
-export function LayerCakeIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function LayerCakeIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="8" y="8" width="32" height="32" rx="3" fill={color} opacity="0.15" />
@@ -66,18 +82,38 @@ export function LayerCakeIcon({ size = 48, color = 'var(--color-primary)', class
   );
 }
 
-export function FabricByYardIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function FabricByYardIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="6" y="12" width="36" height="24" rx="3" fill={color} opacity="0.15" />
       <path d="M6 18 Q18 12 30 18 Q42 24 42 30" stroke={color} strokeWidth="2" fill="none" />
-      <path d="M6 24 Q18 18 30 24 Q42 30 42 36" stroke={color} strokeWidth="2" fill="none" opacity="0.7" />
-      <path d="M6 30 Q18 24 30 30 Q42 36 42 42" stroke={color} strokeWidth="2" fill="none" opacity="0.5" />
+      <path
+        d="M6 24 Q18 18 30 24 Q42 30 42 36"
+        stroke={color}
+        strokeWidth="2"
+        fill="none"
+        opacity="0.7"
+      />
+      <path
+        d="M6 30 Q18 24 30 30 Q42 36 42 42"
+        stroke={color}
+        strokeWidth="2"
+        fill="none"
+        opacity="0.5"
+      />
     </svg>
   );
 }
 
-export function QuiltingNotionsIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function QuiltingNotionsIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <circle cx="16" cy="16" r="4" fill={color} />
@@ -91,7 +127,11 @@ export function QuiltingNotionsIcon({ size = 48, color = 'var(--color-primary)',
   );
 }
 
-export function BattingIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function BattingIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="8" y="12" width="32" height="24" rx="3" fill={color} opacity="0.15" />
@@ -103,7 +143,11 @@ export function BattingIcon({ size = 48, color = 'var(--color-primary)', classNa
   );
 }
 
-export function PatternBookIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function PatternBookIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="10" y="8" width="28" height="32" rx="3" fill={color} opacity="0.15" />
@@ -115,7 +159,11 @@ export function PatternBookIcon({ size = 48, color = 'var(--color-primary)', cla
   );
 }
 
-export function MachineQuiltingIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function MachineQuiltingIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="16" y="8" width="16" height="12" rx="2" fill={color} opacity="0.3" />
@@ -127,7 +175,11 @@ export function MachineQuiltingIcon({ size = 48, color = 'var(--color-primary)',
   );
 }
 
-export function QuiltPatternIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function QuiltPatternIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="8" y="8" width="32" height="32" rx="3" fill={color} opacity="0.15" />
@@ -139,7 +191,11 @@ export function QuiltPatternIcon({ size = 48, color = 'var(--color-primary)', cl
   );
 }
 
-export function ThreadIcon({ size = 48, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function ThreadIcon({
+  size = 48,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
       <rect x="16" y="12" width="16" height="24" rx="8" fill={color} opacity="0.2" />
@@ -151,7 +207,11 @@ export function ThreadIcon({ size = 48, color = 'var(--color-primary)', classNam
   );
 }
 
-export function ShoppingBagLargeIcon({ size = 64, color = 'var(--color-primary)', className = '' }: IconProps) {
+export function ShoppingBagLargeIcon({
+  size = 64,
+  color = 'var(--color-primary)',
+  className = '',
+}: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className}>
       <path d="M20 20 L44 20 L48 52 L16 52 Z" fill={color} opacity="0.15" />

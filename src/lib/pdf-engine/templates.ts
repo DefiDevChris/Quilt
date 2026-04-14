@@ -27,8 +27,20 @@ export function drawValidationSquare(page: PDFPage, font: PDFFont, x: number, y:
   const line1 = "This square should measure exactly 1 inch. If it doesn't, check your";
   const line2 = "printer settings — ensure 'Actual Size' or '100%' is selected.";
 
-  page.drawText(line1, { x: x + size + 6, y: y - labelSize - 2, size: labelSize, font, color: PDF_SEMANTIC.mediumGray });
-  page.drawText(line2, { x: x + size + 6, y: y - labelSize * 2 - 5, size: labelSize, font, color: PDF_SEMANTIC.mediumGray });
+  page.drawText(line1, {
+    x: x + size + 6,
+    y: y - labelSize - 2,
+    size: labelSize,
+    font,
+    color: PDF_SEMANTIC.mediumGray,
+  });
+  page.drawText(line2, {
+    x: x + size + 6,
+    y: y - labelSize * 2 - 5,
+    size: labelSize,
+    font,
+    color: PDF_SEMANTIC.mediumGray,
+  });
 }
 
 /**
@@ -61,13 +73,19 @@ export function drawGrainLine(
   // End arrowhead
   page.drawLine({
     start: { x: endX, y: endY },
-    end: { x: endX - arrowLen * Math.cos(angle - arrowAngle), y: endY - arrowLen * Math.sin(angle - arrowAngle) },
+    end: {
+      x: endX - arrowLen * Math.cos(angle - arrowAngle),
+      y: endY - arrowLen * Math.sin(angle - arrowAngle),
+    },
     thickness: 0.75,
     color: PDF_SEMANTIC.black,
   });
   page.drawLine({
     start: { x: endX, y: endY },
-    end: { x: endX - arrowLen * Math.cos(angle + arrowAngle), y: endY - arrowLen * Math.sin(angle + arrowAngle) },
+    end: {
+      x: endX - arrowLen * Math.cos(angle + arrowAngle),
+      y: endY - arrowLen * Math.sin(angle + arrowAngle),
+    },
     thickness: 0.75,
     color: PDF_SEMANTIC.black,
   });
@@ -75,13 +93,19 @@ export function drawGrainLine(
   // Start arrowhead
   page.drawLine({
     start: { x, y },
-    end: { x: x + arrowLen * Math.cos(angle - arrowAngle), y: y + arrowLen * Math.sin(angle - arrowAngle) },
+    end: {
+      x: x + arrowLen * Math.cos(angle - arrowAngle),
+      y: y + arrowLen * Math.sin(angle - arrowAngle),
+    },
     thickness: 0.75,
     color: PDF_SEMANTIC.black,
   });
   page.drawLine({
     start: { x, y },
-    end: { x: x + arrowLen * Math.cos(angle + arrowAngle), y: y + arrowLen * Math.sin(angle + arrowAngle) },
+    end: {
+      x: x + arrowLen * Math.cos(angle + arrowAngle),
+      y: y + arrowLen * Math.sin(angle + arrowAngle),
+    },
     thickness: 0.75,
     color: PDF_SEMANTIC.black,
   });
@@ -90,7 +114,13 @@ export function drawGrainLine(
   const midY = (y + endY) / 2;
   const labelText = 'GRAIN';
   const labelWidth = font.widthOfTextAtSize(labelText, 7);
-  page.drawText(labelText, { x: midX - labelWidth / 2, y: midY + 4, size: 7, font, color: PDF_SEMANTIC.black });
+  page.drawText(labelText, {
+    x: midX - labelWidth / 2,
+    y: midY + 4,
+    size: 7,
+    font,
+    color: PDF_SEMANTIC.black,
+  });
 }
 
 /**

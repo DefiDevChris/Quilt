@@ -31,10 +31,7 @@ export function BlockBuilderFabricPicker({ onFabricDragStart }: BlockBuilderFabr
       <div className="p-4">
         <div className="grid grid-cols-3 gap-2">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-full bg-primary/10/40 animate-pulse"
-            />
+            <div key={i} className="aspect-square rounded-full bg-primary/10/40 animate-pulse" />
           ))}
         </div>
       </div>
@@ -58,15 +55,13 @@ export function BlockBuilderFabricPicker({ onFabricDragStart }: BlockBuilderFabr
       <div className="flex-1 overflow-y-auto p-2">
         <div className="grid grid-cols-3 gap-1.5">
           {filtered.slice(0, 60).map((fabric) => (
-            <FabricSwatch
-              key={fabric.id}
-              fabric={fabric}
-              onDragStart={onFabricDragStart}
-            />
+            <FabricSwatch key={fabric.id} fabric={fabric} onDragStart={onFabricDragStart} />
           ))}
         </div>
         {filtered.length === 0 && (
-          <div className="text-center text-xs text-[var(--color-text-dim)] py-8">No fabrics found</div>
+          <div className="text-center text-xs text-[var(--color-text-dim)] py-8">
+            No fabrics found
+          </div>
         )}
         {filtered.length > 60 && (
           <div className="text-center text-xs text-[var(--color-text-dim)] py-4">
@@ -103,10 +98,7 @@ function FabricSwatch({
             loading="lazy"
           />
         ) : (
-          <div
-            className="h-full w-full"
-            style={{ backgroundColor: fabric.hex || '#ccc' }}
-          />
+          <div className="h-full w-full" style={{ backgroundColor: fabric.hex || '#ccc' }} />
         )}
       </div>
       <div className="absolute inset-x-0 bottom-0 bg-[var(--color-bg)] px-1 pb-0.5 pt-2">

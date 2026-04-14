@@ -6,8 +6,9 @@ import {
   rgbToHsl,
   labDistance,
   findClosestColor,
+  type RGB,
+  type LAB,
 } from '@/lib/color-math';
-import type { RGB, LAB } from '@/lib/color-math';
 
 // ---------------------------------------------------------------------------
 // hexToRgb

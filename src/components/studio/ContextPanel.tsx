@@ -70,18 +70,28 @@ export function ContextPanel({
       )}
 
       {/* ── Library tabs ─────────────────────────────────── */}
-      <div className="flex border-b border-[var(--color-border)]/40 flex-shrink-0">
+      <div
+        role="tablist"
+        aria-label="Library"
+        className="flex border-b border-[var(--color-border)]/40 flex-shrink-0"
+      >
         <LibraryTabButton
+          id="tab-layouts"
+          panelId="tabpanel-layouts"
           label="Layouts"
           active={activeTab === 'layouts'}
           onClick={() => setActiveTab('layouts')}
         />
         <LibraryTabButton
+          id="tab-blocks"
+          panelId="tabpanel-blocks"
           label="Blocks"
           active={activeTab === 'blocks'}
           onClick={() => setActiveTab('blocks')}
         />
         <LibraryTabButton
+          id="tab-fabrics"
+          panelId="tabpanel-fabrics"
           label="Fabrics"
           active={activeTab === 'fabrics'}
           onClick={() => setActiveTab('fabrics')}
@@ -89,21 +99,27 @@ export function ContextPanel({
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto">
         {activeTab === 'layouts' && (
-          <LayoutSelector
-            onLayoutSelect={() => {
-              /* handled by LayoutSelector */
-            }}
-          />
+          <div id="tabpanel-layouts" role="tabpanel" aria-labelledby="tab-layouts" tabIndex={0}>
+            <LayoutSelector
+              onLayoutSelect={() => {
+                /* handled by LayoutSelector */
+              }}
+            />
+          </div>
         )}
         {activeTab === 'blocks' && (
-          <BlockLibrary
-            onBlockDragStart={onBlockDragStart}
-            onOpenDrafting={onOpenDrafting}
-            onOpenPhotoUpload={onOpenPhotoUpload}
-          />
+          <div id="tabpanel-blocks" role="tabpanel" aria-labelledby="tab-blocks" tabIndex={0}>
+            <BlockLibrary
+              onBlockDragStart={onBlockDragStart}
+              onOpenDrafting={onOpenDrafting}
+              onOpenPhotoUpload={onOpenPhotoUpload}
+            />
+          </div>
         )}
         {activeTab === 'fabrics' && (
-          <FabricLibrary onFabricDragStart={onFabricDragStart} onOpenUpload={onOpenUpload} />
+          <div id="tabpanel-fabrics" role="tabpanel" aria-labelledby="tab-fabrics" tabIndex={0}>
+            <FabricLibrary onFabricDragStart={onFabricDragStart} onOpenUpload={onOpenUpload} />
+          </div>
         )}
       </div>
     </aside>
@@ -111,10 +127,14 @@ export function ContextPanel({
 }
 
 function LibraryTabButton({
+  id,
+  panelId,
   label,
   active,
   onClick,
 }: {
+  readonly id: string;
+  readonly panelId: string;
   readonly label: string;
   readonly active: boolean;
   readonly onClick: () => void;
@@ -122,6 +142,11 @@ function LibraryTabButton({
   return (
     <button
       type="button"
+      id={id}
+      role="tab"
+      aria-selected={active}
+      aria-controls={panelId}
+      tabIndex={active ? 0 : -1}
       onClick={onClick}
       className={`flex-1 px-3 py-2 text-[14px] leading-[20px] font-medium transition-colors ${
         active

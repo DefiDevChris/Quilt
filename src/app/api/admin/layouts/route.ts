@@ -18,7 +18,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const [rows, [totalRow]] = await Promise.all([
-      db.select().from(layoutTemplates).orderBy(desc(layoutTemplates.createdAt)).limit(limit).offset(offset),
+      db
+        .select()
+        .from(layoutTemplates)
+        .orderBy(desc(layoutTemplates.createdAt))
+        .limit(limit)
+        .offset(offset),
       db.select({ count: count() }).from(layoutTemplates),
     ]);
 

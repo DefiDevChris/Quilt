@@ -18,14 +18,28 @@ export function BlockCard({ block, onPreview, onDragStart, isSelected, onSelect 
 
   return (
     <div
-      className={`group relative flex flex-col items-center rounded-lg border p-2 transition-colors duration-150 ${block.isLocked
+      role="button"
+      tabIndex={0}
+      aria-label={`Block: ${block.name}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (onSelect && !block.isLocked) {
+            onSelect(block.id);
+          } else {
+            onPreview(block);
+          }
+        }
+      }}
+      className={`group relative flex flex-col items-center rounded-lg border p-2 transition-colors duration-150 ${
+        block.isLocked
           ? 'opacity-70 border-[var(--color-border)] bg-[var(--color-bg)]'
           : isSelected
             ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 ring-2 ring-[var(--color-primary)]/30 cursor-pointer'
             : isDragging
               ? 'opacity-50 border-[var(--color-primary)] bg-[var(--color-primary)]/5'
               : 'border-[var(--color-border)] bg-[var(--color-bg)] cursor-grab active:cursor-grabbing hover:border-[var(--color-primary)]/50'
-        }`}
+      }`}
       draggable={!block.isLocked}
       onDragStart={(e) => {
         if (block.isLocked) {

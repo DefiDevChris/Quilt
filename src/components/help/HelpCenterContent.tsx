@@ -140,7 +140,9 @@ function VideoTutorialsSection() {
           <div className="p-3">
             <h4 className="text-sm font-medium text-[var(--color-text)] mb-1">{video.title}</h4>
             <p className="text-xs text-[var(--color-text-dim)] line-clamp-2">{video.description}</p>
-            <span className="text-xs text-[var(--color-text-dim)] mt-1 inline-block">{video.duration}</span>
+            <span className="text-xs text-[var(--color-text-dim)] mt-1 inline-block">
+              {video.duration}
+            </span>
           </div>
         </div>
       ))}
@@ -151,7 +153,9 @@ function VideoTutorialsSection() {
 function ContactSection() {
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8">
-      <h3 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-2">Contact Support</h3>
+      <h3 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-2">
+        Contact Support
+      </h3>
       <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)] mb-6">
         Can&apos;t find what you need? Reach out and we&apos;ll help you out.
       </p>
@@ -198,10 +202,15 @@ export function HelpCenterContent() {
     <div>
       {/* Hero */}
       <div className="text-center mb-12">
-        <h2 className="text-[40px] leading-[52px] font-normal text-[var(--color-text)] mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+        <h2
+          className="text-[40px] leading-[52px] font-normal text-[var(--color-text)] mb-4"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
           Documentation
         </h2>
-        <p className="text-[var(--color-text-dim)] text-[16px] leading-[24px] max-w-sm mx-auto">Find answers, learn the tools, get support.</p>
+        <p className="text-[var(--color-text-dim)] text-[16px] leading-[24px] max-w-sm mx-auto">
+          Find answers, learn the tools, get support.
+        </p>
       </div>
 
       {/* Search */}
@@ -227,7 +236,9 @@ export function HelpCenterContent() {
 
       {/* FAQ Section */}
       <section className="mb-16">
-        <h2 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-6">Frequently Asked Questions</h2>
+        <h2 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-6">
+          Frequently Asked Questions
+        </h2>
         <FaqSection
           entries={faqResults}
           selectedCategory={selectedCategory}
@@ -237,7 +248,9 @@ export function HelpCenterContent() {
 
       {/* Video Tutorials */}
       <section className="mb-16">
-        <h2 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-6">Video Tutorials</h2>
+        <h2 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-6">
+          Video Tutorials
+        </h2>
         <VideoTutorialsSection />
       </section>
 

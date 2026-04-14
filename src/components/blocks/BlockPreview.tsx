@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { BlockListItem } from '@/types/block';
-import type { Block } from '@/types/block';
+import type { BlockListItem, Block } from '@/types/block';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface BlockPreviewProps {
   block: BlockListItem;
@@ -16,6 +16,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const dialogRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   async function handleUpgrade() {
     setIsUpgrading(true);
@@ -58,22 +59,30 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40"
-
+      role="presentation"
       onClick={onClose}
     >
       <div
-        className="relative w-80 rounded-lg bg-surface border border-default p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="block-preview-title"
+        tabIndex={-1}
+        className="relative w-80 rounded-lg bg-surface border border-default p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
+          aria-label="Close preview"
           className="absolute right-3 top-3 text-dim hover:text-default transition-colors duration-150"
         >
           ✕
         </button>
 
-        <h3 className="mb-3 text-[18px] leading-[28px] text-default">{block.name}</h3>
+        <h3 id="block-preview-title" className="mb-3 text-[18px] leading-[28px] text-default">
+          {block.name}
+        </h3>
 
         <div className="mb-4 flex items-center justify-center rounded-lg border border-default bg-default p-4">
           {loading ? (
@@ -83,7 +92,9 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
           ) : block.isLocked ? (
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <span className="mb-2 text-3xl">🔒</span>
-              <p className="text-[14px] leading-[20px] text-dim">Upgrade to Pro to use this block</p>
+              <p className="text-[14px] leading-[20px] text-dim">
+                Upgrade to Pro to use this block
+              </p>
               <button
                 type="button"
                 onClick={handleUpgrade}

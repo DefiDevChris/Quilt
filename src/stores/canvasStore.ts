@@ -67,6 +67,9 @@ interface CanvasStoreState {
   /** When true, patches are temporarily recolored by shade category. */
   shadeViewActive: boolean;
 
+  /** The Fabric.js canvas instance, or null. */
+  fabricCanvas: unknown | null;
+
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
@@ -87,13 +90,23 @@ interface CanvasStoreState {
   setBlockDraftingMode: (mode: BlockDraftingMode) => void;
   setReferenceImageOpacity: (opacity: number) => void;
 
-  setViewportLocked: (locked: boolean, canvas?: unknown, canvasWidth?: number, canvasHeight?: number) => void;
+  setViewportLocked: (
+    locked: boolean,
+    canvas?: unknown,
+    canvasWidth?: number,
+    canvasHeight?: number
+  ) => void;
   toggleSeamAllowance: () => void;
   setPrintScale: (scale: number) => void;
   setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
   setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
-  zoomAndCenter: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
+  zoomAndCenter: (
+    newZoom: number,
+    canvas: unknown,
+    canvasWidth: number,
+    canvasHeight: number
+  ) => void;
   zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
@@ -103,6 +116,7 @@ interface CanvasStoreState {
   setSelectedPatch: (patch: unknown | null) => void;
   setShadeViewActive: (active: boolean) => void;
   toggleShadeView: () => void;
+  setFabricCanvas: (canvas: unknown | null) => void;
   toggleReferencePanel: () => void;
   reset: () => void;
 }
@@ -143,6 +157,7 @@ const INITIAL_STATE = {
   showReferencePanel: false,
   selectedPatch: null as unknown | null,
   shadeViewActive: false,
+  fabricCanvas: null,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -234,7 +249,11 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => {
     const { unitSystem } = get();
-    const fabricCanvas = canvas as { wrapperEl: HTMLElement; setViewportTransform: (vp: number[]) => void; renderAll: () => void } | null;
+    const fabricCanvas = canvas as {
+      wrapperEl: HTMLElement;
+      setViewportTransform: (vp: number[]) => void;
+      renderAll: () => void;
+    } | null;
     if (!fabricCanvas) return;
     const el = fabricCanvas.wrapperEl;
     if (!el) return;
@@ -256,7 +275,11 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
 
   zoomAndCenter: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number) => {
     const { unitSystem } = get();
-    const fabricCanvas = canvas as { wrapperEl: HTMLElement; setViewportTransform: (vp: number[]) => void; renderAll: () => void } | null;
+    const fabricCanvas = canvas as {
+      wrapperEl: HTMLElement;
+      setViewportTransform: (vp: number[]) => void;
+      renderAll: () => void;
+    } | null;
     if (!fabricCanvas) return;
     const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
     const el = fabricCanvas.wrapperEl;
@@ -328,6 +351,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setSelectedPatch: (patch) => set({ selectedPatch: patch }),
   setShadeViewActive: (active) => set({ shadeViewActive: active }),
   toggleShadeView: () => set((s) => ({ shadeViewActive: !s.shadeViewActive })),
+  setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),

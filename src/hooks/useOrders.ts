@@ -10,8 +10,8 @@ export interface Order {
   subtotalCents: number | null;
   taxCents: number | null;
   shippingCents: number | null;
-  lineItems: any;
-  shippingAddress: any;
+  lineItems: unknown[];
+  shippingAddress: Record<string, unknown> | null;
   checkoutUrl: string | null;
   processedAt: string | null;
   createdAt: string;

@@ -7,10 +7,7 @@ import { errorResponse, notFoundResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
 

@@ -11,37 +11,40 @@ export function useSegments(gridCols: number, gridRows: number) {
   const segmentsRef = useRef<readonly DrawSegment[]>(segments);
   segmentsRef.current = segments;
 
-  const segmentsIntersectAtGridPoint = useCallback(
-    (a: Segment, b: Segment): GridPoint | null => {
-      const pointsA: GridPoint[] = [];
-      const drA = a.to.row - a.from.row;
-      const dcA = a.to.col - a.from.col;
-      const stepsA = Math.max(Math.abs(drA), Math.abs(dcA));
-      if (stepsA === 0) return null;
-      for (let i = 1; i < stepsA; i++) {
-        const t = i / stepsA;
-        pointsA.push({ row: Math.round(a.from.row + drA * t), col: Math.round(a.from.col + dcA * t) });
-      }
+  const segmentsIntersectAtGridPoint = useCallback((a: Segment, b: Segment): GridPoint | null => {
+    const pointsA: GridPoint[] = [];
+    const drA = a.to.row - a.from.row;
+    const dcA = a.to.col - a.from.col;
+    const stepsA = Math.max(Math.abs(drA), Math.abs(dcA));
+    if (stepsA === 0) return null;
+    for (let i = 1; i < stepsA; i++) {
+      const t = i / stepsA;
+      pointsA.push({
+        row: Math.round(a.from.row + drA * t),
+        col: Math.round(a.from.col + dcA * t),
+      });
+    }
 
-      const pointsB: GridPoint[] = [];
-      const drB = b.to.row - b.from.row;
-      const dcB = b.to.col - b.from.col;
-      const stepsB = Math.max(Math.abs(drB), Math.abs(dcB));
-      if (stepsB === 0) return null;
-      for (let i = 1; i < stepsB; i++) {
-        const t = i / stepsB;
-        pointsB.push({ row: Math.round(b.from.row + drB * t), col: Math.round(b.from.col + dcB * t) });
-      }
+    const pointsB: GridPoint[] = [];
+    const drB = b.to.row - b.from.row;
+    const dcB = b.to.col - b.from.col;
+    const stepsB = Math.max(Math.abs(drB), Math.abs(dcB));
+    if (stepsB === 0) return null;
+    for (let i = 1; i < stepsB; i++) {
+      const t = i / stepsB;
+      pointsB.push({
+        row: Math.round(b.from.row + drB * t),
+        col: Math.round(b.from.col + dcB * t),
+      });
+    }
 
-      for (const pa of pointsA) {
-        for (const pb of pointsB) {
-          if (pa.row === pb.row && pa.col === pb.col) return pa;
-        }
+    for (const pa of pointsA) {
+      for (const pb of pointsB) {
+        if (pa.row === pb.row && pa.col === pb.col) return pa;
       }
-      return null;
-    },
-    []
-  );
+    }
+    return null;
+  }, []);
 
   const splitSegmentAtIntersection = useCallback(
     (seg: Segment, splitPoint: GridPoint): [Segment, Segment] | null => {
@@ -51,7 +54,10 @@ export function useSegments(gridCols: number, gridRows: number) {
       const maxC = Math.max(seg.from.col, seg.to.col);
       if (splitPoint.row <= minR || splitPoint.row >= maxR) return null;
       if (splitPoint.col <= minC || splitPoint.col >= maxC) return null;
-      return [{ from: seg.from, to: splitPoint }, { from: splitPoint, to: seg.to }];
+      return [
+        { from: seg.from, to: splitPoint },
+        { from: splitPoint, to: seg.to },
+      ];
     },
     []
   );

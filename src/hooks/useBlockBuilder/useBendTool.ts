@@ -23,10 +23,13 @@ export function useBendTool(snap: SnapHelpers, segs: SegmentHelpers) {
 
   const onMouseDown = useCallback(
     (pointer: { x: number; y: number }, _c: MinimalCanvas) => {
-      const lineSegments = segs.segmentsRef.current.filter(
-        (s): s is Segment => !('center' in s)
+      const lineSegments = segs.segmentsRef.current.filter((s): s is Segment => !('center' in s));
+      const found = segs.findNearestSegment(
+        pointer.x,
+        pointer.y,
+        lineSegments,
+        snap.gridSize * 0.5
       );
-      const found = segs.findNearestSegment(pointer.x, pointer.y, lineSegments, snap.gridSize * 0.5);
       if (!found) return;
       segmentRef.current = { index: found.index, seg: found.seg };
     },
@@ -57,8 +60,12 @@ export function useBendTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const pathObj = new fabric.Path(
         `M ${fromPx.x} ${fromPx.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${toPx.x} ${toPx.y}`,
         {
-          fill: '', stroke: PENCIL_PREVIEW_COLOR, strokeWidth: SEAM_LINE_WIDTH,
-          strokeDashArray: [6, 4], selectable: false, evented: false,
+          fill: '',
+          stroke: PENCIL_PREVIEW_COLOR,
+          strokeWidth: SEAM_LINE_WIDTH,
+          strokeDashArray: [6, 4],
+          selectable: false,
+          evented: false,
         }
       );
       c.add(pathObj);

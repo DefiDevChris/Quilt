@@ -260,7 +260,14 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
     return (
       <form onSubmit={handleSubmit} className="w-full space-y-6">
         {error && (
-          <div className="rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
+          <div
+            className="rounded-lg px-4 py-3 text-sm"
+            style={{
+              backgroundColor: withAlpha(COLORS.error, 0.05),
+              borderColor: withAlpha(COLORS.error, 0.2),
+              color: COLORS.error,
+            }}
+          >
             {error}
           </div>
         )}
@@ -380,7 +387,14 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="rounded-lg px-4 py-3 text-body-sm" style={{ backgroundColor: withAlpha(COLORS.error, 0.05), borderColor: withAlpha(COLORS.error, 0.2), color: COLORS.error }}>
+          <div
+            className="rounded-lg px-4 py-3 text-body-sm"
+            style={{
+              backgroundColor: withAlpha(COLORS.error, 0.05),
+              borderColor: withAlpha(COLORS.error, 0.2),
+              color: COLORS.error,
+            }}
+          >
             {error}
           </div>
         )}
@@ -427,8 +441,9 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
           />
           {usernameMessage && (
             <p
-              className={`mt-1 text-body-sm ${usernameStatus === 'available' ? 'text-success' : 'text-error'
-                }`}
+              className={`mt-1 text-body-sm ${
+                usernameStatus === 'available' ? 'text-success' : 'text-error'
+              }`}
             >
               {usernameMessage}
               {usernameStatus === 'checking' && (
@@ -462,14 +477,16 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
           <label className="block text-body-sm font-medium text-secondary mb-3">
             Social visibility
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="group" aria-label="Social visibility">
             <button
               type="button"
               onClick={() => setPrivacyMode('public')}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'public'
-                ? 'border-primary bg-primary/10 text-default'
-                : 'border-default text-secondary hover:border-default'
-                }`}
+              aria-pressed={privacyMode === 'public'}
+              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${
+                privacyMode === 'public'
+                  ? 'border-primary bg-primary/10 text-default'
+                  : 'border-default text-secondary hover:border-default'
+              }`}
             >
               <div className="text-body-md font-medium">Public</div>
               <div className="mt-0.5 text-body-sm text-secondary/80">
@@ -479,10 +496,12 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             <button
               type="button"
               onClick={() => setPrivacyMode('private')}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${privacyMode === 'private'
-                ? 'border-primary bg-primary/10 text-default'
-                : 'border-default text-secondary hover:border-default'
-                }`}
+              aria-pressed={privacyMode === 'private'}
+              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${
+                privacyMode === 'private'
+                  ? 'border-primary bg-primary/10 text-default'
+                  : 'border-default text-secondary hover:border-default'
+              }`}
             >
               <div className="text-body-md font-medium">Private</div>
               <div className="mt-0.5 text-body-sm text-secondary/80">
@@ -510,10 +529,11 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
                   setUploadedImage(null);
                   setUploadedFile(null);
                 }}
-                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors duration-150 ${selectedCorgi === corgi.id
-                  ? 'border-primary shadow-[0_1px_2px_rgba(26,26,26,0.08)] ring-2 ring-primary/30'
-                  : 'border-default hover:border-primary/50'
-                  }`}
+                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors duration-150 ${
+                  selectedCorgi === corgi.id
+                    ? 'border-primary shadow-[0_1px_2px_rgba(26,26,26,0.08)] ring-2 ring-primary/30'
+                    : 'border-default hover:border-primary/50'
+                }`}
                 aria-label={corgi.alt}
               >
                 <Image src={corgi.src} alt={corgi.alt} fill sizes="64px" className="object-cover" />

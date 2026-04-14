@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+    <rect width="800" height="800" fill="#E6E6FA"/>
+    <path d="M200 300 Q250 200 300 300 Q250 400 200 300" fill="rgba(255,255,255,0.1)"/><path d="M500 400 Q550 300 600 400 Q550 500 500 400" fill="rgba(255,255,255,0.08)"/>
+    <rect x="50" y="680" width="700" height="80" rx="10" fill="rgba(0,0,0,0.4)"/>
+    <text x="400" y="725" font-family="Arial" font-size="28" fill="white" text-anchor="middle" dominant-baseline="middle">
+      Fabric 44 — Lavender
+    </text>
+  </svg>

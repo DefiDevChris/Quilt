@@ -111,7 +111,13 @@ export function UploadStep() {
             : 'border-[var(--color-border)] hover:border-[var(--color-primary)]/50'
         }`}
       >
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-[var(--color-text-dim)]">
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          className="text-[var(--color-text-dim)]"
+        >
           <path
             d="M12 16V4m0 0l-4 4m4-4l4 4M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2"
             stroke="currentColor"
@@ -136,9 +142,7 @@ export function UploadStep() {
         onChange={handleFileSelect}
       />
 
-      {error && (
-        <p className="text-[14px] leading-[20px] text-red-600">{error}</p>
-      )}
+      {error && <p className="text-[14px] leading-[20px] text-red-600">{error}</p>}
     </div>
   );
 }

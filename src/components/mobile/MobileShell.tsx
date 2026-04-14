@@ -41,7 +41,10 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
             <line x1="4" y1="17" x2="16" y2="17" />
           </svg>
         </button>
-        <Link href="/dashboard" className="text-[16px] leading-[24px] font-bold text-default tracking-wide">
+        <Link
+          href="/dashboard"
+          className="text-[16px] leading-[24px] font-bold text-default tracking-wide"
+        >
           Quilt Studio
         </Link>
         {isAuthenticated ? (

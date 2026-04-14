@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ChevronRight, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
@@ -13,6 +13,7 @@ import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { BrandedPage } from '@/components/layout/BrandedPage';
 import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
+import { QuiltPlaceholder } from '@/components/ui/QuiltPlaceholder';
 
 const MobileUploadsPanel = dynamic(
   () => import('@/components/uploads/MobileUploadsPanel').then((m) => m.MobileUploadsPanel),
@@ -222,12 +223,11 @@ function DashboardPageContent() {
               type="button"
               onClick={() => projects[0] && (window.location.href = `/studio/${projects[0].id}`)}
               disabled={projects.length === 0}
-              className={`group relative overflow-hidden p-8 text-left border transition-colors rounded-lg ${projects.length > 0 ? '' : 'cursor-not-allowed'}`}
+              className={`group relative overflow-hidden p-8 text-left border transition-colors rounded-lg ${projects.length > 0 ? 'hover:border-[var(--color-primary)]/30' : 'opacity-60 cursor-not-allowed'}`}
               style={{
                 backgroundColor: COLORS.surface,
                 borderColor: COLORS.border,
-                boxShadow: SHADOW.brand,
-                opacity: projects.length > 0 ? 1 : 0.4,
+                boxShadow: projects.length > 0 ? SHADOW.brand : 'none',
                 transitionDuration: `${MOTION.transitionDuration}ms`,
                 transitionTimingFunction: MOTION.transitionEasing,
               }}
@@ -274,6 +274,12 @@ function DashboardPageContent() {
                 icon: '/icons/quilt-projects.png',
                 count: projectCount,
                 description: 'Manage your designs',
+              },
+              {
+                label: 'Simple Designer',
+                href: '/designer',
+                icon: '/icons/quilt-13-dashed-squares-Photoroom.png',
+                description: 'Plan your pre-sewn block layout',
               },
               {
                 label: 'Fabric Library',
@@ -453,12 +459,7 @@ function DashboardPageContent() {
                         unoptimized
                       />
                     ) : (
-                      <div
-                        className="w-full h-full flex items-center justify-center"
-                        style={{ color: COLORS.textDim }}
-                      >
-                        <LayoutGrid size={40} strokeWidth={1.5} className="opacity-30" />
-                      </div>
+                      <QuiltPlaceholder className="w-full h-full opacity-50" />
                     )}
                   </div>
                   <div className="p-4 space-y-2">

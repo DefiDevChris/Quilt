@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useCanvasStore } from '@/stores/canvasStore';
-import type { ToolType } from '@/stores/canvasStore';
+import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import {
   ZOOM_MIN,
   ZOOM_MAX,

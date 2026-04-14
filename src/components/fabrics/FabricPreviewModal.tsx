@@ -50,7 +50,11 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-[var(--color-text)]/40" onClick={onClose} aria-hidden="true" />
+      <div
+        className="fixed inset-0 z-50 bg-[var(--color-text)]/40"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div
         ref={dialogRef}
         role="dialog"
@@ -85,9 +89,18 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         {/* Info */}
         <div className="p-5 space-y-3">
           <div>
-            <h3 id="fabric-preview-title" className="text-lg font-semibold text-[var(--color-text)]">{fabric.name}</h3>
-            {fabric.manufacturer && <p className="text-sm text-[var(--color-text-dim)]">{fabric.manufacturer}</p>}
-            {fabric.collection && <p className="text-xs text-[var(--color-text-dim)]">{fabric.collection}</p>}
+            <h3
+              id="fabric-preview-title"
+              className="text-lg font-semibold text-[var(--color-text)]"
+            >
+              {fabric.name}
+            </h3>
+            {fabric.manufacturer && (
+              <p className="text-sm text-[var(--color-text-dim)]">{fabric.manufacturer}</p>
+            )}
+            {fabric.collection && (
+              <p className="text-xs text-[var(--color-text-dim)]">{fabric.collection}</p>
+            )}
           </div>
 
           {/* Price + Stock (purchasable only) */}

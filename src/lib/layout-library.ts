@@ -13,7 +13,9 @@ export interface LayoutPreset {
   name: string;
   description: string;
   category: 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion' | 'free-form';
-  config: Omit<LayoutConfig, 'type'> & { type: 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion' | 'free-form' };
+  config: Omit<LayoutConfig, 'type'> & {
+    type: 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion' | 'free-form';
+  };
 }
 
 /**

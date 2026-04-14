@@ -147,10 +147,11 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 px-2 py-1.5 text-xs font-medium ${activeTab === tab.key
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-                }`}
+              className={`flex-1 px-2 py-1.5 text-xs font-medium ${
+                activeTab === tab.key
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+              }`}
             >
               {tab.label}
             </button>
@@ -258,7 +259,9 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               {fabricPresets.length === 0 ? (
                 <div className="py-8 text-center">
                   <p className="text-sm text-[var(--color-text-dim)]">No presets yet</p>
-                  <p className="text-xs text-[var(--color-text-dim)] mt-1">Right-click any fabric to add</p>
+                  <p className="text-xs text-[var(--color-text-dim)] mt-1">
+                    Right-click any fabric to add
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -289,8 +292,12 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 <SkeletonGrid count={9} columns={3} />
               ) : shopFabrics.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)] mb-1">No shop fabrics available</p>
-                  <p className="text-xs text-[var(--color-text-dim)]">Check back after the shop is stocked.</p>
+                  <p className="text-sm text-[var(--color-text-dim)] mb-1">
+                    No shop fabrics available
+                  </p>
+                  <p className="text-xs text-[var(--color-text-dim)]">
+                    Check back after the shop is stocked.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -312,7 +319,9 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">Upgrade to Pro to upload custom fabrics</p>
+                  <p className="text-sm text-[var(--color-text-dim)]">
+                    Upgrade to Pro to upload custom fabrics
+                  </p>
                 </div>
               ) : isLoadingUserFabrics ? (
                 <SkeletonGrid count={6} columns={3} />
@@ -345,10 +354,11 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                             ? 'Click again to confirm delete'
                             : 'Delete fabric'
                         }
-                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-xs text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${confirmDeleteId === fabric.id
-                          ? 'bg-error ring-2 ring-error/50 !opacity-100'
-                          : 'bg-error'
-                          }`}
+                        className={`absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center rounded-full text-xs text-white opacity-60 sm:opacity-0 sm:group-hover:flex sm:group-hover:opacity-100 ${
+                          confirmDeleteId === fabric.id
+                            ? 'bg-error ring-2 ring-error/50 !opacity-100'
+                            : 'bg-error'
+                        }`}
                       >
                         {confirmDeleteId === fabric.id ? '✓' : '✕'}
                       </button>

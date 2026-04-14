@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   calculateHorizontalDistribution,
   calculateVerticalDistribution,
+  type ObjectBounds,
 } from '@/lib/alignment-engine';
-import type { ObjectBounds } from '@/lib/alignment-engine';
 
 function makeObject(
   id: string,

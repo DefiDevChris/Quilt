@@ -109,7 +109,6 @@ export function renderGrid(
 
   // --- Infinite background grid removed as per user request ---
 
-
   ctx.save();
   ctx.transform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
 

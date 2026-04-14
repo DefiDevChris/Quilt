@@ -12,7 +12,7 @@ interface AdminOrder {
   status: string;
   totalCents: number;
   currency: string;
-  lineItems: any;
+  lineItems: unknown[];
   createdAt: string;
   userEmail: string | null;
   userName: string | null;
@@ -185,9 +185,7 @@ export default function AdminOrdersPage() {
         </div>
 
         {orders.length === 0 && (
-          <div className="py-12 text-center text-[#4a4a4a] font-['Inter']">
-            No orders found
-          </div>
+          <div className="py-12 text-center text-[#4a4a4a] font-['Inter']">No orders found</div>
         )}
       </div>
 

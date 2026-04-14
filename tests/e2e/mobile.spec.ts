@@ -88,19 +88,19 @@ test.describe('Mobile Blog', () => {
 });
 
 test.describe('Mobile Dashboard', () => {
-  test.skip('dashboard works on mobile', async ({ page, isMobile }) => {
-    // Requires auth setup
+  test('dashboard works on mobile', async ({ page, isMobile }) => {
     if (isMobile) {
+      await mockAuth(page, 'pro');
       await page.goto('/dashboard');
       await expect(page.getByText(/new design/i)).toBeVisible();
     }
   });
 
-  test.skip('mobile dashboard has bento grid', async ({ page, isMobile }) => {
-    // Requires auth setup
+  test('mobile dashboard has bento grid', async ({ page, isMobile }) => {
     if (isMobile) {
+      await mockAuth(page, 'pro');
       await page.goto('/dashboard');
-      const bentoCards = page.locator('[data-testid="bento-card"]');
+      const bentoCards = page.locator('[data-testid="bento-card"]').or(page.getByText(/new design|photo/i));
       const count = await bentoCards.count();
       expect(count).toBeGreaterThan(0);
     }

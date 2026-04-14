@@ -8,10 +8,7 @@ import { errorResponse, notFoundResponse } from '@/lib/api-responses';
 export const dynamic = 'force-dynamic';
 
 // PATCH - Update a block
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
 
@@ -38,11 +35,7 @@ export async function PATCH(
     if (body.thumbnailUrl !== undefined) updateData.thumbnailUrl = body.thumbnailUrl;
     if (body.fabricJsData !== undefined) updateData.fabricJsData = body.fabricJsData;
 
-    const [updated] = await db
-      .update(blocks)
-      .set(updateData)
-      .where(eq(blocks.id, id))
-      .returning();
+    const [updated] = await db.update(blocks).set(updateData).where(eq(blocks.id, id)).returning();
 
     return Response.json({ success: true, data: updated });
   } catch {

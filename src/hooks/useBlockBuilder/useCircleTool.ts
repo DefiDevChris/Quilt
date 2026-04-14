@@ -47,8 +47,12 @@ export function useCircleTool(snap: SnapHelpers, segs: SegmentHelpers) {
         left: (center.col - radius) * snap.gridSize,
         top: (center.row - radius) * snap.gridSize,
         radius: radius * snap.gridSize,
-        fill: 'transparent', stroke: PENCIL_PREVIEW_COLOR,
-        strokeWidth: 1.5, strokeDashArray: [6, 4], selectable: false, evented: false,
+        fill: 'transparent',
+        stroke: PENCIL_PREVIEW_COLOR,
+        strokeWidth: 1.5,
+        strokeDashArray: [6, 4],
+        selectable: false,
+        evented: false,
       });
       c.add(circle);
       previewRef.current = circle;
@@ -63,7 +67,10 @@ export function useCircleTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const gridPt = snap.snapToGridPoint(pointer.x, pointer.y);
       if (gridPt) {
         const center = centerRef.current;
-        const radius = Math.max(Math.abs(gridPt.row - center.row), Math.abs(gridPt.col - center.col));
+        const radius = Math.max(
+          Math.abs(gridPt.row - center.row),
+          Math.abs(gridPt.col - center.col)
+        );
         if (radius > 0) segs.addShapeSegments(generateCircle(center.row, center.col, radius));
       }
       centerRef.current = null;

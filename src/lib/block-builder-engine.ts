@@ -63,11 +63,7 @@ export function generateFreeformTriangle(p1: GridPoint, p2: GridPoint, p3: GridP
  * Circle: approximate a circle centered at (centerRow, centerCol) with given radius.
  * Returns segments forming a circle approximation using grid points.
  */
-export function generateCircle(
-  centerRow: number,
-  centerCol: number,
-  radius: number
-): Segment[] {
+export function generateCircle(centerRow: number, centerCol: number, radius: number): Segment[] {
   const segments: Segment[] = [];
   const steps = Math.max(8, Math.round(2 * Math.PI * radius));
 
@@ -90,12 +86,7 @@ export function generateCircle(
  * Rectangle: outline from (r1,c1) to (r2,c2), snapped to grid.
  * Normalizes so r1 <= r2, c1 <= c2.
  */
-export function generateRectangle(
-  r1: number,
-  c1: number,
-  r2: number,
-  c2: number
-): Segment[] {
+export function generateRectangle(r1: number, c1: number, r2: number, c2: number): Segment[] {
   const minR = Math.min(r1, r2);
   const maxR = Math.max(r1, r2);
   const minC = Math.min(c1, c2);
@@ -115,10 +106,7 @@ export function generateRectangle(
  *
  * Returns a single ArcSegment replacing the original straight segment.
  */
-export function generateBend(
-  seg: Segment,
-  center: GridPoint,
-): ArcSegment {
+export function generateBend(seg: Segment, center: GridPoint): ArcSegment {
   // Determine clockwise direction based on center position relative to segment
   // Cross product of (to-from) × (center-from) determines which side the center is on
   const dr = seg.to.row - seg.from.row;
@@ -161,12 +149,7 @@ export function pixelToGridCell(
 /**
  * Check if a cell is within grid bounds.
  */
-export function isValidCell(
-  row: number,
-  col: number,
-  gridCols: number,
-  gridRows: number
-): boolean {
+export function isValidCell(row: number, col: number, gridCols: number, gridRows: number): boolean {
   return row >= 0 && row < gridRows && col >= 0 && col < gridCols;
 }
 

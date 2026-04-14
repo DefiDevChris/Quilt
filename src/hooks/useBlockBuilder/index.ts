@@ -51,7 +51,13 @@ export function useBlockBuilder({
       const snapX = col * gridSize;
       const snapY = row * gridSize;
       const dist = Math.sqrt((x - snapX) ** 2 + (y - snapY) ** 2);
-      if (dist <= gridSize * SNAP_RADIUS_FRACTION && row >= 0 && row <= gridRows && col >= 0 && col <= gridCols) {
+      if (
+        dist <= gridSize * SNAP_RADIUS_FRACTION &&
+        row >= 0 &&
+        row <= gridRows &&
+        col >= 0 &&
+        col <= gridCols
+      ) {
         return { row, col };
       }
       return null;
@@ -71,9 +77,17 @@ export function useBlockBuilder({
 
   // ── Segment state ─────────────────────────────────────────────────────────
   const {
-    segments, patches, setPatches, patchFills, selectedPatchId,
-    segmentsRef, addShapeSegments, setPatchFill,
-    clearSegments: baseClear, undoSegment, replaceSegmentAt,
+    segments,
+    patches,
+    setPatches,
+    patchFills,
+    selectedPatchId,
+    segmentsRef,
+    addShapeSegments,
+    setPatchFill,
+    clearSegments: baseClear,
+    undoSegment,
+    replaceSegmentAt,
   } = useSegments(gridCols, gridRows);
 
   // ── Patch detection ───────────────────────────────────────────────────────
@@ -105,9 +119,14 @@ export function useBlockBuilder({
           const t = Math.max(0, Math.min(1, ((x - fromPx.x) * dx + (y - fromPx.y) * dy) / lenSq));
           dist = Math.sqrt((x - (fromPx.x + t * dx)) ** 2 + (y - (fromPx.y + t * dy)) ** 2);
         }
-        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = i;
+        }
       }
-      return bestDist <= tolerance && bestIdx >= 0 ? { index: bestIdx, seg: segsArr[bestIdx] } : null;
+      return bestDist <= tolerance && bestIdx >= 0
+        ? { index: bestIdx, seg: segsArr[bestIdx] }
+        : null;
     },
     [gridSize]
   );
@@ -121,7 +140,13 @@ export function useBlockBuilder({
   const triangle = useTriangleTool(snap, segHelpers);
   const bend = useBendTool(snap, segHelpers);
 
-  type AnyTool = typeof pencil | typeof rectangle | typeof circle | typeof triangle | typeof bend | null;
+  type AnyTool =
+    | typeof pencil
+    | typeof rectangle
+    | typeof circle
+    | typeof triangle
+    | typeof bend
+    | null;
   const tools: Record<BlockBuilderMode, AnyTool> = {
     select: null,
     pencil,
@@ -133,9 +158,19 @@ export function useBlockBuilder({
 
   // ── Canvas rendering + event wiring ───────────────────────────────────────
   useBlockBuilderCanvas({
-    draftCanvasRef, isOpen, canvasSize, gridCols, gridRows,
-    activeMode, segments, patches, patchFills, selectedPatchId,
-    snap, segs: segHelpers, tools,
+    draftCanvasRef,
+    isOpen,
+    canvasSize,
+    gridCols,
+    gridRows,
+    activeMode,
+    segments,
+    patches,
+    patchFills,
+    selectedPatchId,
+    snap,
+    segs: segHelpers,
+    tools,
   });
 
   // ── Clear resets all tool state ───────────────────────────────────────────
@@ -148,5 +183,13 @@ export function useBlockBuilder({
     bend.reset();
   }, [baseClear, pencil, rectangle, circle, triangle, bend]);
 
-  return { segments, patches, patchFills, selectedPatchId, clearSegments, undoSegment, setPatchFill };
+  return {
+    segments,
+    patches,
+    patchFills,
+    selectedPatchId,
+    clearSegments,
+    undoSegment,
+    setPatchFill,
+  };
 }

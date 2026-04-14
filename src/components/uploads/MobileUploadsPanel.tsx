@@ -103,15 +103,19 @@ export function MobileUploadsPanel() {
               key={chip.value}
               type="button"
               onClick={() => setFilter(chip.value)}
-              className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${filter === chip.value
-                ? 'text-[var(--color-text)]'
-                : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
-                }`}
-              style={filter === chip.value
-                ? { backgroundColor: COLORS.primary, boxShadow: SHADOW.brand }
-                : undefined}
+              className={`px-3 py-1.5 text-[14px] font-medium rounded-full transition-colors duration-150 ${
+                filter === chip.value
+                  ? 'text-[var(--color-text)]'
+                  : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
+              }`}
+              style={
+                filter === chip.value
+                  ? { backgroundColor: COLORS.primary, boxShadow: SHADOW.brand }
+                  : undefined
+              }
               onMouseEnter={(e) => {
-                if (filter !== chip.value) e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
+                if (filter !== chip.value)
+                  e.currentTarget.style.backgroundColor = `${COLORS.primary}1a`;
               }}
               onMouseLeave={(e) => {
                 if (filter !== chip.value) e.currentTarget.style.backgroundColor = '';
@@ -126,8 +130,13 @@ export function MobileUploadsPanel() {
 
       {/* Error */}
       {error && (
-        <div className="px-4 py-3 rounded-full border" style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}>
-          <p className="text-[14px]" style={{ color: COLORS.primary }}>{error}</p>
+        <div
+          className="px-4 py-3 rounded-full border"
+          style={{ backgroundColor: `${COLORS.primary}1a`, borderColor: `${COLORS.primary}33` }}
+        >
+          <p className="text-[14px]" style={{ color: COLORS.primary }}>
+            {error}
+          </p>
         </div>
       )}
 
@@ -135,7 +144,10 @@ export function MobileUploadsPanel() {
       {isLoading && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+            <div
+              key={i}
+              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+            >
               <div className="aspect-square bg-[var(--color-bg)] animate-pulse" />
               <div className="p-3 space-y-2">
                 <div className="h-4 bg-[var(--color-border)] rounded-full animate-pulse" />
@@ -149,7 +161,10 @@ export function MobileUploadsPanel() {
       {/* Empty state */}
       {!isLoading && filteredUploads.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: `${COLORS.primary}1a` }}>
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+            style={{ backgroundColor: `${COLORS.primary}1a` }}
+          >
             <svg
               width="28"
               height="28"
@@ -164,7 +179,9 @@ export function MobileUploadsPanel() {
               <line x1="12" y1="18" x2="12" y2="18.01" />
             </svg>
           </div>
-          <p className="text-body-lg font-medium text-[var(--color-text)] mb-1">No uploads waiting</p>
+          <p className="text-body-lg font-medium text-[var(--color-text)] mb-1">
+            No uploads waiting
+          </p>
           <p className="text-body-sm text-secondary max-w-xs">
             Take photos on your phone and they&apos;ll appear here for you to sort and process.
           </p>

@@ -270,65 +270,7 @@ test.describe('Blog RSS and Feeds', () => {
   });
 });
 
-test.describe('Blog Admin Features (Authenticated)', () => {
-  test.skip('blog admin panel requires authentication', async ({ page }) => {
-    await page.goto('/admin/blog');
-
-    // Should redirect to sign in or show unauthorized
-    await page.waitForURL(/auth\/signin|unauthorized|forbidden/);
-  });
-
-  test.skip('blog post creation form loads', async ({ page }) => {
-    // Requires admin authentication
-    await page.goto('/admin/blog/new');
-
-    // Should show rich text editor
-    await expect(page.locator('.tiptap-editor, [data-tiptap-editor]')).toBeVisible();
-  });
-
-  test.skip('blog post editor has formatting tools', async ({ page }) => {
-    // Requires admin authentication
-    await page.goto('/admin/blog/new');
-
-    // Should have formatting toolbar
-    await expect(
-      page.getByRole('button', { name: /bold|italic|heading|link/i }).first()
-    ).toBeVisible();
-  });
-
-  test.skip('blog post preview works', async ({ page }) => {
-    // Requires admin authentication
-    await page.goto('/admin/blog/new');
-
-    // Fill in some content
-    const titleInput = page.getByLabel(/title/i);
-    await titleInput.fill('Test Blog Post');
-
-    // Click preview
-    const previewButton = page.getByRole('button', { name: /preview/i });
-    if (await previewButton.isVisible()) {
-      await previewButton.click();
-
-      // Should show preview
-      await expect(page.getByText('Test Blog Post')).toBeVisible();
-    }
-  });
-
-  test.skip('blog post publishing works', async ({ page }) => {
-    // Requires admin authentication
-    await page.goto('/admin/blog/new');
-
-    // Fill in required fields and publish
-    const titleInput = page.getByLabel(/title/i);
-    await titleInput.fill('Test Published Post');
-
-    const contentEditor = page.locator('.tiptap-editor');
-    await contentEditor.fill('This is test content for publishing.');
-
-    // This would actually publish - so skip in tests
-    test.skip(true, 'Would publish real content');
-  });
-});
+// Blog admin tests moved to blog-admin.spec.ts
 
 test.describe('Blog Performance and SEO', () => {
   test('blog pages load within reasonable time', async ({ page }) => {

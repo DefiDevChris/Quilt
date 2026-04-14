@@ -29,8 +29,13 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
         startRef.current = gridPt;
         const px = gridPointToPixel(gridPt, snap.gridSize);
         const dot = new fabric.Circle({
-          left: px.x - 3, top: px.y - 3, radius: 3,
-          fill: PENCIL_PREVIEW_COLOR, selectable: false, evented: false, stroke: '',
+          left: px.x - 3,
+          top: px.y - 3,
+          radius: 3,
+          fill: PENCIL_PREVIEW_COLOR,
+          selectable: false,
+          evented: false,
+          stroke: '',
         });
         c.add(dot);
         previewRef.current = dot;
@@ -44,8 +49,13 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
         if (previewRef.current) c.remove(previewRef.current);
         const px = gridPointToPixel(gridPt, snap.gridSize);
         const dot = new fabric.Circle({
-          left: px.x - 3, top: px.y - 3, radius: 3,
-          fill: PENCIL_PREVIEW_COLOR, selectable: false, evented: false, stroke: '',
+          left: px.x - 3,
+          top: px.y - 3,
+          radius: 3,
+          fill: PENCIL_PREVIEW_COLOR,
+          selectable: false,
+          evented: false,
+          stroke: '',
         });
         c.add(dot);
         previewRef.current = dot;
@@ -67,8 +77,11 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const startPx = gridPointToPixel(startRef.current, snap.gridSize);
       const endPx = gridPointToPixel(gridPt, snap.gridSize);
       const line = new fabric.Line([startPx.x, startPx.y, endPx.x, endPx.y], {
-        stroke: PENCIL_PREVIEW_COLOR, strokeWidth: 1.5,
-        strokeDashArray: [6, 4], selectable: false, evented: false,
+        stroke: PENCIL_PREVIEW_COLOR,
+        strokeWidth: 1.5,
+        strokeDashArray: [6, 4],
+        selectable: false,
+        evented: false,
       });
       c.add(line);
       previewRef.current = line;

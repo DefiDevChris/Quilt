@@ -38,6 +38,7 @@ export const fabrics = pgTable(
     shopifyProductId: varchar('shopifyProductId', { length: 255 }),
     shopifyVariantId: varchar('shopifyVariantId', { length: 255 }),
     pricePerYard: numeric('pricePerYard', { precision: 10, scale: 2 }),
+    description: text('description'),
     inStock: boolean('inStock').notNull().default(false),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })

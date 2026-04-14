@@ -204,7 +204,6 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40 p-4"
-
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-project-wizard-title"
@@ -276,7 +275,8 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   disabled={!name.trim()}
                   className="bg-primary text-[var(--color-text)] px-6 py-2 text-[14px] leading-[20px] font-medium hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
                 >
-                  Next Step</button>
+                  Next Step
+                </button>
               </div>
             </div>
           )}

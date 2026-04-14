@@ -40,8 +40,10 @@ export function computeHomography(
   const b: number[] = [];
 
   for (let i = 0; i < 4; i++) {
-    const sx = src[i].x, sy = src[i].y;
-    const dx = dst[i].x, dy = dst[i].y;
+    const sx = src[i].x,
+      sy = src[i].y;
+    const dx = dst[i].x,
+      dy = dst[i].y;
 
     A.push([sx, sy, 1, 0, 0, 0, -sx * dx, -sy * dx]);
     b.push(dx);
@@ -66,7 +68,10 @@ function solveLinearSystem8x8(A: number[][], b: number[]): number[] {
     let maxVal = Math.abs(M[col][col]);
     for (let row = col + 1; row < n; row++) {
       const val = Math.abs(M[row][col]);
-      if (val > maxVal) { maxVal = val; maxRow = row; }
+      if (val > maxVal) {
+        maxVal = val;
+        maxRow = row;
+      }
     }
     if (maxRow !== col) {
       [M[col], M[maxRow]] = [M[maxRow], M[col]];
@@ -169,10 +174,23 @@ export function warpImageData(
       const w11 = fx * fy;
 
       const outIdx = (dy * outWidth + dx) * 4;
-      out[outIdx] = srcPixels[i00] * w00 + srcPixels[i10] * w10 + srcPixels[i01] * w01 + srcPixels[i11] * w11;
-      out[outIdx + 1] = srcPixels[i00 + 1] * w00 + srcPixels[i10 + 1] * w10 + srcPixels[i01 + 1] * w01 + srcPixels[i11 + 1] * w11;
-      out[outIdx + 2] = srcPixels[i00 + 2] * w00 + srcPixels[i10 + 2] * w10 + srcPixels[i01 + 2] * w01 + srcPixels[i11 + 2] * w11;
-      out[outIdx + 3] = srcPixels[i00 + 3] * w00 + srcPixels[i10 + 3] * w10 + srcPixels[i01 + 3] * w01 + srcPixels[i11 + 3] * w11;
+      out[outIdx] =
+        srcPixels[i00] * w00 + srcPixels[i10] * w10 + srcPixels[i01] * w01 + srcPixels[i11] * w11;
+      out[outIdx + 1] =
+        srcPixels[i00 + 1] * w00 +
+        srcPixels[i10 + 1] * w10 +
+        srcPixels[i01 + 1] * w01 +
+        srcPixels[i11 + 1] * w11;
+      out[outIdx + 2] =
+        srcPixels[i00 + 2] * w00 +
+        srcPixels[i10 + 2] * w10 +
+        srcPixels[i01 + 2] * w01 +
+        srcPixels[i11 + 2] * w11;
+      out[outIdx + 3] =
+        srcPixels[i00 + 3] * w00 +
+        srcPixels[i10 + 3] * w10 +
+        srcPixels[i01 + 3] * w01 +
+        srcPixels[i11 + 3] * w11;
     }
   }
 

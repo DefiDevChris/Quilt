@@ -97,13 +97,29 @@ export default function AdminBlogPage() {
   function getStatusBadgeStyle(status: string) {
     switch (status) {
       case 'published':
-        return { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success, borderColor: withAlpha(COLORS.success, 0.2) };
+        return {
+          backgroundColor: withAlpha(COLORS.success, 0.1),
+          color: COLORS.success,
+          borderColor: withAlpha(COLORS.success, 0.2),
+        };
       case 'draft':
-        return { backgroundColor: withAlpha(COLORS.secondary, 0.1), color: COLORS.textDim, borderColor: withAlpha(COLORS.secondary, 0.2) };
+        return {
+          backgroundColor: withAlpha(COLORS.secondary, 0.1),
+          color: COLORS.textDim,
+          borderColor: withAlpha(COLORS.secondary, 0.2),
+        };
       case 'archived':
-        return { backgroundColor: withAlpha(COLORS.text, 0.05), color: COLORS.textDim, borderColor: COLORS.border };
+        return {
+          backgroundColor: withAlpha(COLORS.text, 0.05),
+          color: COLORS.textDim,
+          borderColor: COLORS.border,
+        };
       default:
-        return { backgroundColor: withAlpha(COLORS.text, 0.05), color: COLORS.textDim, borderColor: COLORS.border };
+        return {
+          backgroundColor: withAlpha(COLORS.text, 0.05),
+          color: COLORS.textDim,
+          borderColor: COLORS.border,
+        };
     }
   }
 
@@ -134,21 +150,11 @@ export default function AdminBlogPage() {
         <table className="w-full">
           <thead className="bg-default">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                Title
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                Category
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">
-                Published
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-dim">
-                Actions
-              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Title</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Category</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-dim">Published</th>
+              <th className="px-4 py-3 text-right text-xs font-semibold text-dim">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-default/30 bg-surface">

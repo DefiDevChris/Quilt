@@ -481,9 +481,13 @@ export function SimplePhotoBlockUpload({
   return (
     <div className="space-y-4">
       {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2">
+      <div
+        className="flex items-center justify-center gap-2"
+        role="tablist"
+        aria-label="Upload steps"
+      >
         {(['upload', 'imagePrep', 'crop'] as Step[]).map((s, index) => (
-          <div key={s}>
+          <div key={s} role="tab" aria-selected={step === s} aria-label={s}>
             <div
               className={`rounded-full transition-colors duration-150 ${
                 step === s
@@ -500,7 +504,16 @@ export function SimplePhotoBlockUpload({
       {step === 'upload' && (
         <div className="space-y-4">
           <div
+            role="button"
+            tabIndex={0}
+            aria-label="Upload photo"
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-bg)]"
           >
             <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
@@ -522,10 +535,15 @@ export function SimplePhotoBlockUpload({
 
       {step === 'imagePrep' && (
         <div className="space-y-4">
-          <div className="flex items-center gap-1 bg-[var(--color-bg)] rounded-full p-1">
+          <div
+            className="flex items-center gap-1 bg-[var(--color-bg)] rounded-full p-1"
+            role="group"
+            aria-label="Prep mode"
+          >
             <button
               type="button"
               onClick={() => setPrepMode('straighten')}
+              aria-pressed={prepMode === 'straighten'}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                 prepMode === 'straighten'
                   ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'
@@ -537,6 +555,7 @@ export function SimplePhotoBlockUpload({
             <button
               type="button"
               onClick={() => setPrepMode('perspective')}
+              aria-pressed={prepMode === 'perspective'}
               className={`flex-1 px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                 prepMode === 'perspective'
                   ? 'bg-[var(--color-bg)] text-[var(--color-text)] shadow'

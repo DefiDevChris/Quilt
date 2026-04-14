@@ -24,7 +24,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
             <Image src="/logo.png" alt="QuiltCorgi" fill className="object-contain" priority />
           </div>
         </div>
-        
+
         <h1
           className="font-bold mb-4 leading-tight"
           style={{

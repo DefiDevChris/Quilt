@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-const EXEMPT_PATHS = [
-  '/api/stripe/webhook',
-  '/api/auth/cognito/signout',
-];
+const EXEMPT_PATHS = ['/api/stripe/webhook', '/api/auth/cognito/signout'];
 
 /**
  * Verify CSRF by checking the Origin (or Referer fallback) header
@@ -29,8 +26,7 @@ export function verifyCsrf(request: NextRequest): boolean {
     return false;
   }
 
-  const expectedOrigin =
-    process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+  const expectedOrigin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
 
   return source === expectedOrigin;
 }
@@ -51,8 +47,5 @@ export function csrfGuard(request: NextRequest): NextResponse | null {
     return null;
   }
 
-  return NextResponse.json(
-    { success: false, error: 'CSRF validation failed' },
-    { status: 403 }
-  );
+  return NextResponse.json({ success: false, error: 'CSRF validation failed' }, { status: 403 });
 }

@@ -179,8 +179,7 @@ export function pointInPolygon(
     const xj = vertices[j].x;
     const yj = vertices[j].y;
 
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
     if (intersect) inside = !inside;
   }
 
@@ -191,11 +190,7 @@ export function pointInPolygon(
  * Find which patch contains the given point (in pixel coordinates).
  * Returns the patch ID or null if no patch contains the point.
  */
-export function findPatchAtPoint(
-  x: number,
-  y: number,
-  patches: readonly Patch[]
-): string | null {
+export function findPatchAtPoint(x: number, y: number, patches: readonly Patch[]): string | null {
   // Check patches in reverse order (top-most first)
   for (let i = patches.length - 1; i >= 0; i--) {
     const patch = patches[i];

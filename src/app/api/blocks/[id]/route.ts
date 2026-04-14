@@ -10,8 +10,7 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { FREE_BLOCK_LIMIT } from '@/lib/constants';
-import { isPro } from '@/lib/role-utils';
-import type { UserRole } from '@/lib/role-utils';
+import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 

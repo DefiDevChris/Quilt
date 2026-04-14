@@ -27,8 +27,13 @@ export function useTriangleTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const fabric = await import('fabric');
       const px = gridPointToPixel(gridPt, snap.gridSize);
       const dot = new fabric.Circle({
-        left: px.x - 4, top: px.y - 4, radius: 4,
-        fill: PENCIL_PREVIEW_COLOR, selectable: false, evented: false, stroke: '',
+        left: px.x - 4,
+        top: px.y - 4,
+        radius: 4,
+        fill: PENCIL_PREVIEW_COLOR,
+        selectable: false,
+        evented: false,
+        stroke: '',
       });
       c.add(dot);
       previewRef.current = dot;
@@ -52,8 +57,12 @@ export function useTriangleTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const cPt = gridPointToPixel({ row: start.row, col: gridPt.col }, snap.gridSize);
 
       const path = new fabric.Path(`M ${a.x} ${a.y} L ${b.x} ${b.y} L ${cPt.x} ${cPt.y} Z`, {
-        fill: CANVAS.selectionHighlight, stroke: PENCIL_PREVIEW_COLOR,
-        strokeWidth: 1.5, strokeDashArray: [6, 4], selectable: false, evented: false,
+        fill: CANVAS.selectionHighlight,
+        stroke: PENCIL_PREVIEW_COLOR,
+        strokeWidth: 1.5,
+        strokeDashArray: [6, 4],
+        selectable: false,
+        evented: false,
       });
       c.add(path);
       previewRef.current = path;

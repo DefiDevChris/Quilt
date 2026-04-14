@@ -43,8 +43,9 @@ export function ProUpgradeButton({ className = '', variant = 'nav' }: ProUpgrade
       <button
         type="button"
         onClick={() => setShowUpgrade(true)}
-        className={`flex items-center border border-primary px-4 py-2 text-[14px] leading-[20px] text-primary hover:bg-primary hover:text-surface transition-colors duration-150 rounded-full ${variant === 'nav' ? 'mr-4' : ''
-          } ${className}`}
+        className={`flex items-center border border-primary px-4 py-2 text-[14px] leading-[20px] text-primary hover:bg-primary hover:text-surface transition-colors duration-150 rounded-full ${
+          variant === 'nav' ? 'mr-4' : ''
+        } ${className}`}
       >
         Go Pro
       </button>

@@ -100,6 +100,8 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
                   <button
                     type="button"
                     onClick={() => toggle(entry.id)}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${entry.id}`}
                     className="w-full flex items-center justify-between px-3 py-2.5 text-body-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors text-left"
                   >
                     <span>{entry.title}</span>
@@ -120,7 +122,10 @@ function FaqAccordion({ entries }: { readonly entries: readonly FaqEntry[] }) {
                     </svg>
                   </button>
                   {isOpen && (
-                    <div className="px-3 pb-3 text-body-sm text-[var(--color-text-dim)] leading-relaxed">
+                    <div
+                      id={`faq-answer-${entry.id}`}
+                      className="px-3 pb-3 text-body-sm text-[var(--color-text-dim)] leading-relaxed"
+                    >
                       {entry.content}
                     </div>
                   )}
@@ -254,6 +259,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
                   placeholder="Search help..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search help articles"
                   className="w-full pl-9 pr-3 py-2 text-body-sm bg-[var(--color-bg)] rounded-lg border-none outline-none placeholder:text-[var(--color-text-dim)]/60 text-[var(--color-text)] focus:ring-1 focus:ring-primary/40"
                 />
               </div>

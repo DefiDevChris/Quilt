@@ -22,33 +22,29 @@ const GRID_CONFIG: Array<{
   h: string;
   mobileH: string;
 }> = [
-    { col: 'md:col-span-2', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[300px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-3', row: 'md:row-span-1', h: 'md:h-[280px]', mobileH: 'h-[280px]' },
-    { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-    { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
-  ];
+  { col: 'md:col-span-2', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[300px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-2', h: 'md:h-[520px]', mobileH: 'h-[350px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-3', row: 'md:row-span-1', h: 'md:h-[280px]', mobileH: 'h-[280px]' },
+  { col: 'md:col-span-1', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+  { col: 'md:col-span-2', row: 'md:row-span-1', h: 'md:h-[250px]', mobileH: 'h-[250px]' },
+];
 
 export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
   if (!posts?.length) return null;
 
   return (
     <section className="relative w-full py-16 md:py-24">
-      <header
-        className="max-w-[1400px] mx-auto px-6 md:px-12 mb-12 md:mb-16"
-      >
+      <header className="max-w-[1400px] mx-auto px-6 md:px-12 mb-12 md:mb-16">
         <div className="flex items-center gap-4 mb-4">
           <span className="w-12 h-px" style={{ backgroundColor: COLORS.primary }} />
-          <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
-            Stories
-          </span>
+          <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">Stories</span>
         </div>
         <h2
           className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] text-[var(--color-text)]"

@@ -24,8 +24,8 @@ interface AdminOrderDetail {
   subtotalCents: number | null;
   taxCents: number | null;
   shippingCents: number | null;
-  lineItems: any;
-  shippingAddress: any;
+  lineItems: unknown[];
+  shippingAddress: Record<string, unknown> | null;
   createdAt: string;
   statusHistory: Array<{
     id: string;
@@ -172,8 +172,14 @@ export default function AdminOrderDetailPage() {
         </h2>
         <div className="flex gap-4 items-end">
           <div className="flex-1">
-            <label className="block text-sm text-[#4a4a4a] font-['Inter'] mb-2">Status</label>
+            <label
+              htmlFor="order-status"
+              className="block text-sm text-[#4a4a4a] font-['Inter'] mb-2"
+            >
+              Status
+            </label>
             <select
+              id="order-status"
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value)}
               className="w-full px-4 py-2 rounded-lg border border-[#d4d4d4] font-['Inter'] text-[#1a1a1a] bg-[#ffffff]"
@@ -186,8 +192,14 @@ export default function AdminOrderDetailPage() {
             </select>
           </div>
           <div className="flex-[2]">
-            <label className="block text-sm text-[#4a4a4a] font-['Inter'] mb-2">Reason (optional)</label>
+            <label
+              htmlFor="status-reason"
+              className="block text-sm text-[#4a4a4a] font-['Inter'] mb-2"
+            >
+              Reason (optional)
+            </label>
             <input
+              id="status-reason"
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}

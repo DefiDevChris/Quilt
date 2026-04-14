@@ -22,7 +22,9 @@ export default function PrivacyPage() {
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-0.5 w-12 bg-default" />
-            <p className="text-[14px] leading-[20px] font-normal text-dim">Effective: March 30, 2026</p>
+            <p className="text-[14px] leading-[20px] font-normal text-dim">
+              Effective: March 30, 2026
+            </p>
           </div>
         </div>
 
@@ -175,6 +177,10 @@ export default function PrivacyPage() {
                     <strong>Upstash</strong> &mdash; rate limiting to protect the Service from
                     abuse.
                   </li>
+                  <li>
+                    <strong>Shopify</strong> &mdash; e-commerce platform, product catalog, cart
+                    management, and order fulfillment for fabric and notion purchases.
+                  </li>
                 </ul>
                 These providers are contractually obligated to use your data only for the services
                 they provide to us.
@@ -187,8 +193,8 @@ export default function PrivacyPage() {
               <li>
                 <strong>Legal requirements.</strong> We may disclose your information if required by
                 law, regulation, legal process, or governmental request, or if we believe disclosure
-                is necessary to protect the rights, property, or safety of Quilt Studio, our users, or
-                the public.
+                is necessary to protect the rights, property, or safety of Quilt Studio, our users,
+                or the public.
               </li>
               <li>
                 <strong>Business transfers.</strong> In the event of a merger, acquisition, or sale
@@ -205,7 +211,9 @@ export default function PrivacyPage() {
           {/* 4. Data Retention */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />4. Data Retention</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              4. Data Retention
+            </h2>
             <p className="mb-3">
               We retain your information for as long as your account is active or as needed to
               provide you the Service. Specifically:
@@ -241,7 +249,9 @@ export default function PrivacyPage() {
           {/* 5. Security */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />5. Data Security</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              5. Data Security
+            </h2>
             <p className="mb-3">
               We take the security of your data seriously. Our security measures include:
             </p>
@@ -339,50 +349,35 @@ export default function PrivacyPage() {
               7. Cookies &amp; Authentication
             </h2>
             <p className="mb-3">
-              Quilt Studio uses only essential cookies that are necessary for the Service to function.
-              We do not use cookies for advertising, analytics, or tracking purposes.
+              Quilt Studio uses only essential cookies that are necessary for the Service to
+              function. We do not use cookies for advertising, analytics, or tracking purposes.
             </p>
             <p className="mb-3">The cookies we use are:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                  qc_id_token
-                </code>{' '}
+                <code className="text-sm bg-default px-1.5 py-0.5 rounded">qc_id_token</code>{' '}
                 &mdash; Your authentication token (expires with your session, typically 1 hour).
               </li>
               <li>
-                <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                  qc_access_token
-                </code>{' '}
+                <code className="text-sm bg-default px-1.5 py-0.5 rounded">qc_access_token</code>{' '}
                 &mdash; API access token (expires with your session).
               </li>
               <li>
-                <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                  qc_refresh_token
-                </code>{' '}
+                <code className="text-sm bg-default px-1.5 py-0.5 rounded">qc_refresh_token</code>{' '}
                 &mdash; Used to renew your session (max age: 30 days).
               </li>
               <li>
-                <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                  qc_user_role
-                </code>{' '}
+                <code className="text-sm bg-default px-1.5 py-0.5 rounded">qc_user_role</code>{' '}
                 &mdash; Stores your account role for access control (max age: 1 hour).
               </li>
             </ul>
             <p className="mt-3">
               All cookies are set as{' '}
-              <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                HttpOnly
-              </code>
-              ,{' '}
-              <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                Secure
-              </code>{' '}
-              (in production), and{' '}
-              <code className="text-sm bg-default px-1.5 py-0.5 rounded">
-                SameSite=Lax
-              </code>
-              . They cannot be accessed by client-side JavaScript.
+              <code className="text-sm bg-default px-1.5 py-0.5 rounded">HttpOnly</code>,{' '}
+              <code className="text-sm bg-default px-1.5 py-0.5 rounded">Secure</code> (in
+              production), and{' '}
+              <code className="text-sm bg-default px-1.5 py-0.5 rounded">SameSite=Lax</code>. They
+              cannot be accessed by client-side JavaScript.
             </p>
             <p className="mt-3">
               Because we only use essential cookies, there is no cookie consent banner&mdash;these
@@ -499,7 +494,9 @@ export default function PrivacyPage() {
           {/* 12. Contact */}
           <section>
             <h2 className="text-[24px] leading-[32px] font-normal text-default mb-6 flex items-center gap-3">
-              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />12. Contact Us</h2>
+              <div className="w-1.5 h-1.5 bg-primary/60 rounded-lg" />
+              12. Contact Us
+            </h2>
             <p>
               If you have questions, concerns, or requests regarding this Privacy Policy or our data
               practices, please reach out:{' '}

@@ -22,9 +22,8 @@ function collectGroups(
   scope: 'selected' | 'all',
   selectedGroupDescriptors?: readonly PatchDescriptor[]
 ): readonly PatchDescriptor[] {
-  const source = scope === 'selected' && selectedGroupDescriptors
-    ? selectedGroupDescriptors
-    : objects;
+  const source =
+    scope === 'selected' && selectedGroupDescriptors ? selectedGroupDescriptors : objects;
   return source.filter((obj) => obj.__isBlockGroup === true);
 }
 
@@ -109,17 +108,12 @@ export function getShadeBreakdown(
  * Return true if any block group in the objects array has shade metadata
  * (at least one patch with a non-'unknown' shade).
  */
-export function hasShadeMetadata(
-  objects: readonly PatchDescriptor[]
-): boolean {
+export function hasShadeMetadata(objects: readonly PatchDescriptor[]): boolean {
   const groups = objects.filter((obj) => obj.__isBlockGroup === true);
 
   for (const group of groups) {
     for (const patch of patchChildren(group)) {
-      if (
-        patch.__shade !== undefined &&
-        patch.__shade !== 'unknown'
-      ) {
+      if (patch.__shade !== undefined && patch.__shade !== 'unknown') {
         return true;
       }
     }

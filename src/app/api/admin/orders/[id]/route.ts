@@ -6,10 +6,7 @@ import { eq } from 'drizzle-orm';
 /**
  * PATCH /api/admin/orders/[id] - Admin order status override
  */
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
 
@@ -68,9 +65,6 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Failed to update order:', error);
-    return Response.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

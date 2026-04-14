@@ -23,10 +23,15 @@ function MockTopBar({ worktable }: { worktable: string }) {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </div>
-        <span className="font-bold text-[var(--color-text)] hidden md:inline text-[9px]">QuiltCorgi</span>
+        <span className="font-bold text-[var(--color-text)] hidden md:inline text-[9px]">
+          QuiltCorgi
+        </span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="px-2 py-0.5 text-[var(--color-text)] rounded-lg font-bold text-[8px]" style={{ backgroundColor: `${COLORS.primary}33` }}>
+        <div
+          className="px-2 py-0.5 text-[var(--color-text)] rounded-lg font-bold text-[8px]"
+          style={{ backgroundColor: `${COLORS.primary}33` }}
+        >
           {worktable}
         </div>
         <span className="text-[var(--color-text-dim)] text-[10px]">+</span>
@@ -63,8 +68,9 @@ function MockToolbar({ sections }: { sections: ToolSection[] }) {
             {section.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className={`flex flex-col items-center gap-0.5 py-1 rounded-full ${tool.active ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'
-                  }`}
+                className={`flex flex-col items-center gap-0.5 py-1 rounded-full ${
+                  tool.active ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'
+                }`}
                 style={tool.active ? { backgroundColor: `${COLORS.primary}1a` } : undefined}
               >
                 <svg
@@ -135,7 +141,10 @@ function MockAccordionPanel({
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-lg flex items-center justify-center text-[var(--color-surface)]" style={{ border: `1px solid ${COLORS.primary}`, backgroundColor: COLORS.primary }}>
+                <div
+                  className="w-3 h-3 rounded-lg flex items-center justify-center text-[var(--color-surface)]"
+                  style={{ border: `1px solid ${COLORS.primary}`, backgroundColor: COLORS.primary }}
+                >
                   <svg
                     width="7"
                     height="7"
@@ -363,7 +372,13 @@ function QuiltWorktableMockup() {
           />
 
           <div className="relative bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] p-2 flex">
-            <div className="grid grid-cols-3 gap-2 p-2" style={{ backgroundColor: `${COLORS.primary}1a`, border: `4px solid ${COLORS.primary}99` }}>
+            <div
+              className="grid grid-cols-3 gap-2 p-2"
+              style={{
+                backgroundColor: `${COLORS.primary}1a`,
+                border: `4px solid ${COLORS.primary}99`,
+              }}
+            >
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
@@ -375,7 +390,12 @@ function QuiltWorktableMockup() {
                     <polygon points="100,0 100,100 50,50" fill={COLORS.accent} opacity="0.8" />
                     <polygon points="0,100 100,100 50,50" fill="white" />
                   </svg>
-                  {i === 4 && <div className="absolute inset-0 z-10" style={{ border: `2px solid ${COLORS.primary}` }} />}
+                  {i === 4 && (
+                    <div
+                      className="absolute inset-0 z-10"
+                      style={{ border: `2px solid ${COLORS.primary}` }}
+                    />
+                  )}
                 </div>
               ))}
             </div>
@@ -549,8 +569,7 @@ function ImageWorktableMockup() {
               <div
                 className="w-full h-full border border-white/50"
                 style={{
-                  backgroundImage:
-                    `linear-gradient(to right, ${CANVAS.mockGridBg} 1px, transparent 1px), linear-gradient(to bottom, ${CANVAS.mockGridBg} 1px, transparent 1px)`,
+                  backgroundImage: `linear-gradient(to right, ${CANVAS.mockGridBg} 1px, transparent 1px), linear-gradient(to bottom, ${CANVAS.mockGridBg} 1px, transparent 1px)`,
                   backgroundSize: '33.33% 33.33%',
                 }}
               />
@@ -689,7 +708,8 @@ const tabs = [
     id: 'quilt',
     label: 'Quilt Worktable',
     shortLabel: 'Quilt',
-    caption: 'Choose from four layout modes &mdash; grid, sashing, on-point, or go completely free-form.',
+    caption:
+      'Choose from four layout modes &mdash; grid, sashing, on-point, or go completely free-form.',
     component: <QuiltWorktableMockup />,
   },
   {
@@ -723,7 +743,6 @@ export default function WorkspacePreview() {
 
   return (
     <section className="py-16 lg:py-24 bg-[var(--color-bg)] px-6 lg:px-12 text-center overflow-hidden relative">
-
       <div className="max-w-6xl mx-auto relative z-10">
         <div>
           <div className="flex items-center justify-center gap-4 mb-4">
@@ -741,8 +760,8 @@ export default function WorkspacePreview() {
             </div>
           </div>
           <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-16 max-w-2xl mx-auto">
-            Each layout preset handles a different stage of your quilting journey &mdash; from simple grids
-            to sashing, on-point, strippy, medallion, and free-form arrangements.
+            Each layout preset handles a different stage of your quilting journey &mdash; from
+            simple grids to sashing, on-point, strippy, medallion, and free-form arrangements.
           </p>
         </div>
 
@@ -753,10 +772,11 @@ export default function WorkspacePreview() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(idx)}
-                className={`relative px-5 py-2.5 rounded-full text-sm font-bold transition-colors duration-150 ${activeTab === idx
-                  ? 'text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)]'
-                  }`}
+                className={`relative px-5 py-2.5 rounded-full text-sm font-bold transition-colors duration-150 ${
+                  activeTab === idx
+                    ? 'text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                    : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)]'
+                }`}
                 style={activeTab === idx ? { backgroundColor: `${COLORS.primary}1a` } : undefined}
               >
                 <span className="relative z-10 hidden sm:inline">{tab.label}</span>
