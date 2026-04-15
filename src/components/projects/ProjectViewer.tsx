@@ -8,7 +8,6 @@ import Footer from '@/components/landing/Footer';
 
 interface Creator {
   displayName: string | null;
-  username: string | null;
   avatarUrl: string | null;
 }
 
@@ -205,13 +204,11 @@ export function ProjectViewer({ projectId }: ProjectViewerProps) {
                   />
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[14px] leading-[20px] font-bold text-[var(--color-text-dim)]">
-                    {(project.creator.displayName ?? project.creator.username ?? '?')
-                      .charAt(0)
-                      .toUpperCase()}
+                    {(project.creator.displayName ?? '?').charAt(0).toUpperCase()}
                   </div>
                 )}
                 <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
-                  {project.creator.displayName ?? project.creator.username}
+                  {project.creator.displayName}
                 </span>
               </div>
             )}

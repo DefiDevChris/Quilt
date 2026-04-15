@@ -58,10 +58,8 @@ export default function PrivacyPage() {
                 AWS Cognito.
               </li>
               <li>
-                <strong>Profile information.</strong> If you choose to set up a community profile,
-                we collect your display name, username, bio, avatar image, location, website URL,
-                and optional social media handles (Instagram, YouTube, TikTok). You may also provide
-                a public email address.
+                <strong>Profile information.</strong> If you choose to set up a profile, we collect
+                your display name and avatar image. That is all.
               </li>
               <li>
                 <strong>Payment information.</strong> All billing and payment processing is handled
@@ -80,10 +78,6 @@ export default function PrivacyPage() {
               <li>
                 <strong>Fabric images.</strong> Pro subscribers can upload custom fabric images,
                 which are stored securely on AWS S3 and served via CloudFront CDN.
-              </li>
-              <li>
-                <strong>Community content.</strong> When you post in Social Threads, leave comments,
-                or like content, we collect and store that content along with your user identifier.
               </li>
               <li>
                 <strong>Communications.</strong> If you contact us for support, we collect your
@@ -131,7 +125,6 @@ export default function PrivacyPage() {
               <li>Create and manage your account.</li>
               <li>Process subscriptions and payments through Stripe.</li>
               <li>Store and sync your quilt designs, fabric libraries, and project data.</li>
-              <li>Enable community features such as Social Threads, comments, and profiles.</li>
               <li>
                 Send you transactional emails (account verification, password resets, billing
                 notifications).
@@ -186,11 +179,6 @@ export default function PrivacyPage() {
                 they provide to us.
               </li>
               <li>
-                <strong>Community content.</strong> Content you post publicly in Social Threads
-                (including posts, comments, your profile, and shared project thumbnails) is visible
-                to other users of the Service.
-              </li>
-              <li>
                 <strong>Legal requirements.</strong> We may disclose your information if required by
                 law, regulation, legal process, or governmental request, or if we believe disclosure
                 is necessary to protect the rights, property, or safety of Quilt Studio, our users,
@@ -225,10 +213,6 @@ export default function PrivacyPage() {
               <li>
                 <strong>Project and design data</strong> is retained while your account exists or
                 until you delete individual projects.
-              </li>
-              <li>
-                <strong>Community content</strong> (posts, comments) may persist after account
-                deletion if it has been interacted with by other users (e.g., replies exist).
               </li>
               <li>
                 <strong>Payment records</strong> are retained as required by applicable tax and

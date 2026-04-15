@@ -109,81 +109,30 @@ describe('paginationSchema', () => {
 });
 
 describe('updateProfileSchema', () => {
-  it('accepts valid websiteUrl with https', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      websiteUrl: 'https://example.com',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects websiteUrl without https', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      websiteUrl: 'http://example.com',
-    });
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe('Website URL must use https.');
-  });
-
-  it('rejects invalid websiteUrl', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      websiteUrl: 'not-a-url',
-    });
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe('Website URL must use https.');
-  });
-
-  it('accepts undefined websiteUrl', () => {
+  it('accepts valid displayName', () => {
     const result = updateProfileSchema.safeParse({
       displayName: 'Test User',
     });
     expect(result.success).toBe(true);
   });
 
-  it('accepts valid username', () => {
+  it('rejects empty displayName', () => {
     const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      username: 'testuser123',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects username too short', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      username: 'ab',
+      displayName: '',
     });
     expect(result.success).toBe(false);
   });
 
-  it('rejects username with uppercase', () => {
+  it('rejects displayName over 60 chars', () => {
     const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      username: 'TestUser',
+      displayName: 'a'.repeat(61),
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe(
-      'Username must be lowercase alphanumeric with hyphens only'
-    );
   });
 
-  it('rejects username with invalid characters', () => {
+  it('accepts displayName at max length', () => {
     const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      username: 'test_user',
-    });
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.message).toBe(
-      'Username must be lowercase alphanumeric with hyphens only'
-    );
-  });
-
-  it('accepts username with hyphens', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-      username: 'test-user',
+      displayName: 'a'.repeat(60),
     });
     expect(result.success).toBe(true);
   });

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { compressImageForUpload } from '@/lib/image-compression';
 import { uploadToS3 } from '@/lib/image-processing';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
@@ -12,7 +11,6 @@ interface UploadSheetProps {
 }
 
 export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -67,11 +65,6 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }
-
-  function handleShareToSocial() {
-    onClose();
-    router.push('/dashboard');
   }
 
   return (
@@ -170,37 +163,6 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
               {pendingCount} photo{pendingCount !== 1 ? 's' : ''} waiting on desktop
             </p>
           )}
-
-          {/* Share to Social */}
-          <button
-            type="button"
-            onClick={handleShareToSocial}
-            className="w-full flex items-center gap-4 p-4 rounded-lg hover:bg-default transition-colors text-left"
-          >
-            <div
-              className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: 'var(--color-secondary)/20' }}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#ff8d49"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[var(--color-text)]">Share to Social</p>
-              <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
-                Post a quilt photo with your story
-              </p>
-            </div>
-          </button>
         </div>
 
         {/* Upload error */}

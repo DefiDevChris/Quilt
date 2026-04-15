@@ -224,16 +224,8 @@ export default function TermsPage() {
               using the Service (&ldquo;User Content&rdquo;).
             </p>
             <p className="mb-3">
-              By posting or sharing User Content in the community features (such as Social Threads),
-              you grant Quilt Studio a non-exclusive, worldwide, royalty-free license to host,
-              display, and distribute that content within the Service for the purpose of operating
-              and improving the platform. This license ends when you delete your content or your
-              account, except where the content has been shared with others and they have not
-              deleted it, or where we are required to retain it by law.
-            </p>
-            <p className="mb-3">
               You may set your projects as private or public. Private projects are visible only to
-              you and will not be shared in the community.
+              you and will not be shared with others.
             </p>
             <p>
               Quilt Studio&rsquo;s name, logo, the design studio interface, and all related software

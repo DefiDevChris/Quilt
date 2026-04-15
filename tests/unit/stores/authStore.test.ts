@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, useAuthDerived, getAuthDerived } from '@/stores/authStore';
 
 const defaultUser = {
   id: '123',
@@ -7,7 +7,6 @@ const defaultUser = {
   email: 'jane@example.com',
   image: null,
   role: 'free' as const,
-  privacyMode: 'public' as const,
 };
 
 describe('authStore', () => {
@@ -42,7 +41,7 @@ describe('authStore', () => {
       role: 'pro',
     });
 
-    expect(useAuthStore.getState().isPro).toBe(true);
+    expect(getAuthDerived().isPro).toBe(true);
   });
 
   it('isPro returns true for admin role', () => {
@@ -51,7 +50,7 @@ describe('authStore', () => {
       role: 'admin',
     });
 
-    expect(useAuthStore.getState().isPro).toBe(true);
+    expect(getAuthDerived().isPro).toBe(true);
   });
 
   it('isPro returns false for free role', () => {
@@ -60,7 +59,7 @@ describe('authStore', () => {
       role: 'free',
     });
 
-    expect(useAuthStore.getState().isPro).toBe(false);
+    expect(getAuthDerived().isPro).toBe(false);
   });
 
   it('isAdmin returns true only for admin role', () => {
@@ -69,7 +68,7 @@ describe('authStore', () => {
       role: 'admin',
     });
 
-    expect(useAuthStore.getState().isAdmin).toBe(true);
+    expect(getAuthDerived().isAdmin).toBe(true);
   });
 
   it('isAdmin returns false for pro role', () => {
@@ -78,25 +77,7 @@ describe('authStore', () => {
       role: 'pro',
     });
 
-    expect(useAuthStore.getState().isAdmin).toBe(false);
-  });
-
-  it('isPrivate returns true for private mode', () => {
-    useAuthStore.getState().setUser({
-      ...defaultUser,
-      privacyMode: 'private',
-    });
-
-    expect(useAuthStore.getState().isPrivate).toBe(true);
-  });
-
-  it('isPrivate returns false for public mode', () => {
-    useAuthStore.getState().setUser({
-      ...defaultUser,
-      privacyMode: 'public',
-    });
-
-    expect(useAuthStore.getState().isPrivate).toBe(false);
+    expect(getAuthDerived().isAdmin).toBe(false);
   });
 
   it('reset restores initial state', () => {
@@ -106,8 +87,5 @@ describe('authStore', () => {
     const state = useAuthStore.getState();
     expect(state.user).toBeNull();
     expect(state.isLoading).toBe(true);
-    expect(state.isPro).toBe(false);
-    expect(state.isAdmin).toBe(false);
-    expect(state.isPrivate).toBe(false);
   });
 });

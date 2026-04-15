@@ -7,7 +7,7 @@ import type { Project } from '@/types/project';
 import { StudioDialogsProvider } from '@/components/studio/StudioDialogs';
 import { CanvasProvider } from '@/contexts/CanvasContext';
 
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { applyInitialSetup, markSetupModalDismissed } from '@/lib/wizard-hydration';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -26,7 +26,7 @@ export function DesignerClient({ designId }: DesignerClientProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
 
   useEffect(() => {
     let cancelled = false;

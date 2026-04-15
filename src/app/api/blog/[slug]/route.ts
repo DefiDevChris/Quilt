@@ -40,8 +40,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         updatedAt: blogPosts.updatedAt,
         authorName: users.name,
         authorAvatarUrl: userProfiles.avatarUrl,
-        authorBio: userProfiles.bio,
-        authorUsername: userProfiles.username,
       })
       .from(blogPosts)
       .leftJoin(users, eq(blogPosts.authorId, users.id))
@@ -69,8 +67,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       author: {
         name: post.authorName ?? 'QuiltCorgi Team',
         avatarUrl: post.authorAvatarUrl ?? null,
-        bio: post.authorBio ?? null,
-        username: post.authorUsername ?? null,
       },
     };
 

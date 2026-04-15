@@ -8,7 +8,7 @@ import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, useAuthDerived } from '@/stores/authStore';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { BrandedPage } from '@/components/layout/BrandedPage';
@@ -43,7 +43,7 @@ interface ProjectListItem {
 
 function DashboardPageContent() {
   const user = useAuthStore((s) => s.user);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const isLoadingAuth = useAuthStore((s) => s.isLoading);
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [projectCount, setProjectCount] = useState<number | null>(null);

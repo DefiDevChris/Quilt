@@ -6,15 +6,11 @@ interface AuthUser {
   email: string;
   image: string | null;
   role: 'free' | 'pro' | 'admin';
-  privacyMode: 'public' | 'private';
 }
 
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
-  isPro: boolean;
-  isAdmin: boolean;
-  isPrivate: boolean;
   setUser: (user: AuthUser | null) => void;
   reset: () => void;
 }
@@ -22,9 +18,6 @@ interface AuthState {
 const INITIAL_STATE = {
   user: null as AuthUser | null,
   isLoading: true,
-  isPro: false,
-  isAdmin: false,
-  isPrivate: false,
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -33,9 +26,30 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       user,
       isLoading: false,
-      isPro: user?.role === 'pro' || user?.role === 'admin',
-      isAdmin: user?.role === 'admin',
-      isPrivate: user?.privacyMode === 'private',
     }),
   reset: () => set({ ...INITIAL_STATE }),
 }));
+
+/** Derived state helpers — computed from user, not stored redundantly. */
+export function useAuthDerived(): {
+  isPro: boolean;
+  isAdmin: boolean;
+} {
+  const user = useAuthStore((s) => s.user);
+  return {
+    isPro: user?.role === 'pro' || user?.role === 'admin',
+    isAdmin: user?.role === 'admin',
+  };
+}
+
+/** Get derived auth state outside of React components (for hooks/utils). */
+export function getAuthDerived(): {
+  isPro: boolean;
+  isAdmin: boolean;
+} {
+  const user = useAuthStore.getState().user;
+  return {
+    isPro: user?.role === 'pro' || user?.role === 'admin',
+    isAdmin: user?.role === 'admin',
+  };
+}

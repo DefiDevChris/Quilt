@@ -77,7 +77,7 @@ describe('Designer Projects API Routes', () => {
 
     it('returns 201 on valid input', async () => {
       const mockSession = {
-        user: { id: 'user-1', email: 'test@test.com', role: 'pro', name: '', image: null, privacyMode: 'public' as const },
+        user: { id: 'user-1', email: 'test@test.com', role: 'pro', name: '', image: null },
       };
       vi.mocked(getRequiredSession).mockResolvedValue(mockSession);
 

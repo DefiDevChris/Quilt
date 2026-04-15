@@ -2,30 +2,44 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { usePhotoDesignStore } from '@/stores/photoDesignStore';
-import { usePhotoToDesign } from '@/hooks/usePhotoToDesign';
-import type { Patch } from '@/lib/photo-to-design/types';
+import type { Patch, Point } from '@/lib/photo-to-design/types';
+
+interface ReviewCanvasProps {
+  process: (imageData: ImageData) => void;
+  abort: () => void;
+  addPatchAtPoint: (imageData: ImageData, point: Point) => void;
+}
 
 const STAGE_LABELS: Record<string, string> = {
-  edgeDetection: 'Detecting edges',
-  seamTracing: 'Tracing seams',
-  graphConstruction: 'Building graph',
-  regularization: 'Regularizing geometry',
-  svgGeneration: 'Generating outlines',
+  prescale: 'Preparing image',
+  encode: 'Analyzing photo',
+  autoMask: 'Finding patches',
+  vectorize: 'Simplifying outlines',
+  canonicalize: 'Snapping to grid',
+  validate: 'Checking patches',
+  interactive: 'Adding patch',
   starting: 'Starting',
 };
+
+const STAGE_COUNT = 6;
 
 /**
  * Review Canvas — photo with SVG patch outline overlay, compact results panel.
  * Patches are outline-only (no fill, no color) — showing seam lines.
+ *
+ * Click-to-add (U6): clicking on the photo runs a single-point SAM decoder
+ * and appends the resulting patch. `Cmd/Ctrl+Z` undoes the most recent
+ * interactive addition, popping back to whatever patch set existed before.
  */
-export function ReviewCanvas() {
+export function ReviewCanvas({ process, abort, addPatchAtPoint }: ReviewCanvasProps) {
   const correctedImageData = usePhotoDesignStore((s) => s.correctedImageData);
   const result = usePhotoDesignStore((s) => s.result);
   const isProcessing = usePhotoDesignStore((s) => s.isProcessing);
+  const isInteractiveProcessing = usePhotoDesignStore((s) => s.isInteractiveProcessing);
   const processingProgress = usePhotoDesignStore((s) => s.processingProgress);
   const processingError = usePhotoDesignStore((s) => s.processingError);
+  const patchUndoStack = usePhotoDesignStore((s) => s.patchUndoStack);
 
-  const { process, abort } = usePhotoToDesign();
   const photoCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -51,6 +65,25 @@ export function ReviewCanvas() {
     usePhotoDesignStore.getState().reset();
   }, []);
 
+  const handleUndo = useCallback(() => {
+    usePhotoDesignStore.getState().undoLastPatch();
+  }, []);
+
+  // Cmd/Ctrl+Z keybind — only active when this canvas is mounted, and only
+  // when there's something to undo (otherwise bubble up to browser default).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.shiftKey) return;
+      if (e.key !== 'z' && e.key !== 'Z') return;
+      const s = usePhotoDesignStore.getState();
+      if (s.patchUndoStack.length === 0) return;
+      e.preventDefault();
+      s.undoLastPatch();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   const imageWidth = correctedImageData?.width ?? 600;
   const imageHeight = correctedImageData?.height ?? 400;
 
@@ -60,22 +93,43 @@ export function ReviewCanvas() {
   const displayW = Math.round(imageWidth * displayScale);
   const displayH = Math.round(imageHeight * displayScale);
 
+  const canInteract = !!result && !!correctedImageData && !isProcessing && !isInteractiveProcessing;
+
+  const handlePhotoClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!canInteract || !correctedImageData) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      const x = (offsetX / rect.width) * correctedImageData.width;
+      const y = (offsetY / rect.height) * correctedImageData.height;
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      addPatchAtPoint(correctedImageData, { x, y });
+    },
+    [canInteract, correctedImageData, addPatchAtPoint]
+  );
+
   return (
     <div className="flex items-start justify-start gap-3 px-4 py-2 h-full overflow-hidden">
       {/* Photo with SVG outline overlay */}
       <div
         className="relative border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex-shrink-0"
-        style={{ width: displayW, height: displayH }}
+        style={{
+          width: displayW,
+          height: displayH,
+          cursor: canInteract ? 'crosshair' : 'default',
+        }}
+        onClick={handlePhotoClick}
       >
         <canvas
           ref={photoCanvasRef}
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
           style={{ width: displayW, height: displayH }}
         />
 
         {result && (
           <svg
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             viewBox={`0 0 ${imageWidth} ${imageHeight}`}
             width={displayW}
             height={displayH}
@@ -100,7 +154,7 @@ export function ReviewCanvas() {
               <div
                 className="h-full bg-[var(--color-primary)] transition-all duration-300 rounded-full"
                 style={{
-                  width: `${processingProgress ? (processingProgress.stage / 5) * 100 : 0}%`,
+                  width: `${processingProgress ? (processingProgress.stage / STAGE_COUNT) * 100 : 0}%`,
                 }}
               />
             </div>
@@ -109,6 +163,12 @@ export function ReviewCanvas() {
                 ? (STAGE_LABELS[processingProgress.stageName] ?? processingProgress.stageName)
                 : 'Starting...'}
             </span>
+          </div>
+        )}
+
+        {isInteractiveProcessing && !isProcessing && (
+          <div className="absolute top-2 right-2 bg-[var(--color-surface)] text-[var(--color-text-dim)] text-[11px] px-2 py-1 rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+            Adding patch…
           </div>
         )}
       </div>
@@ -142,6 +202,11 @@ export function ReviewCanvas() {
                   <div className="text-[10px] text-[var(--color-text-dim)]">ms</div>
                 </div>
               </div>
+
+              <p className="text-[11px] text-[var(--color-text-dim)] leading-snug">
+                Click a missed area to add a patch.{' '}
+                {patchUndoStack.length > 0 && <>Press ⌘/Ctrl+Z to undo.</>}
+              </p>
             </>
           )}
 
@@ -162,6 +227,13 @@ export function ReviewCanvas() {
               className="flex-1 px-3 py-1.5 rounded-full border-2 border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-medium hover:bg-[var(--color-primary)]/10 transition-colors"
             >
               Back
+            </button>
+            <button
+              onClick={handleUndo}
+              disabled={patchUndoStack.length === 0}
+              className="flex-1 px-3 py-1.5 rounded-full border border-[var(--color-border)] text-[12px] font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-border)]/10 transition-colors disabled:opacity-50"
+            >
+              Undo
             </button>
             <button
               onClick={handleRescan}

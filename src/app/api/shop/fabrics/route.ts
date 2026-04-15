@@ -95,7 +95,10 @@ export async function GET(request: NextRequest) {
       conditions.push(ilike(fabrics.name, `%${search}%`));
     }
     if (manufacturer) {
-      const mfgs = manufacturer.split(',').map((s) => s.trim()).filter(Boolean);
+      const mfgs = manufacturer
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       if (mfgs.length === 1) {
         conditions.push(eq(fabrics.manufacturer, mfgs[0]));
       } else if (mfgs.length > 1) {
@@ -103,7 +106,10 @@ export async function GET(request: NextRequest) {
       }
     }
     if (colorFamily) {
-      const colors = colorFamily.split(',').map((s) => s.trim()).filter(Boolean);
+      const colors = colorFamily
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       if (colors.length === 1) {
         conditions.push(eq(fabrics.colorFamily, colors[0]));
       } else if (colors.length > 1) {
@@ -114,7 +120,10 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(fabrics.value, value));
     }
     if (collection) {
-      const colls = collection.split(',').map((s) => s.trim()).filter(Boolean);
+      const colls = collection
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       if (colls.length === 1) {
         conditions.push(eq(fabrics.collection, colls[0]));
       } else if (colls.length > 1) {

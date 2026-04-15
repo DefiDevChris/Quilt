@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { COLORS, withAlpha, TYPOGRAPHY, RADIUS, MOTION, SHADOW } from '@/lib/design-system';
@@ -14,15 +14,6 @@ const CORGI_IMAGES = Array.from({ length: CORGI_COUNT }, (_, i) => ({
   alt: `Corgi ${i + 1}`,
 }));
 
-function normalizeUsername(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/[^a-z0-9\-]/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 60);
-}
-
 interface OnboardingFormProps {
   /** When true, renders in compact mode (for modal use) */
   compact?: boolean;
@@ -31,58 +22,12 @@ interface OnboardingFormProps {
 export function OnboardingForm({ compact = false }: OnboardingFormProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
-  const [usernameInput, setUsernameInput] = useState('');
-  const [usernameStatus, setUsernameStatus] = useState<
-    'idle' | 'checking' | 'available' | 'taken' | 'invalid'
-  >('idle');
-  const [usernameMessage, setUsernameMessage] = useState('');
-  const [bio, setBio] = useState('');
-  const [privacyMode, setPrivacyMode] = useState<'public' | 'private'>('public');
   const [selectedCorgi, setSelectedCorgi] = useState<number | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const checkUsername = useCallback(async (value: string) => {
-    const normalized = normalizeUsername(value);
-    if (normalized.length < 3) {
-      setUsernameStatus('invalid');
-      setUsernameMessage(normalized.length === 0 ? '' : 'At least 3 characters.');
-      return;
-    }
-
-    setUsernameStatus('checking');
-    try {
-      const res = await fetch(
-        `/api/profile/check-username?username=${encodeURIComponent(normalized)}`
-      );
-      const data = await res.json();
-      if (data.available) {
-        setUsernameStatus('available');
-        setUsernameMessage('Username is available!');
-      } else {
-        setUsernameStatus('taken');
-        setUsernameMessage(data.message ?? 'Username is already taken.');
-      }
-    } catch {
-      setUsernameStatus('invalid');
-      setUsernameMessage('Could not check availability.');
-    }
-  }, []);
-
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function handleUsernameChange(value: string) {
-    setUsernameInput(value);
-    clearTimeout(debounceRef.current ?? undefined);
-    if (!value.trim()) {
-      setUsernameStatus('idle');
-      setUsernameMessage('');
-      return;
-    }
-    debounceRef.current = setTimeout(() => checkUsername(value), 400);
-  }
 
   useEffect(() => {
     async function loadSession() {
@@ -157,17 +102,6 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
       return;
     }
 
-    const uname = normalizeUsername(usernameInput);
-    if (uname.length < 3) {
-      setError('Username must be at least 3 characters.');
-      return;
-    }
-
-    if (usernameStatus !== 'available') {
-      setError('Please choose an available username.');
-      return;
-    }
-
     // Auto-assign a random corgi if no avatar selected
     if (!selectedCorgi && !uploadedImage) {
       const randomId = Math.floor(Math.random() * CORGI_COUNT) + 1;
@@ -187,28 +121,18 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
         avatarUrl = `/mascots&avatars/corgi${fallbackId}.png`;
       }
 
-      // Step 1: Create profile with name, username, bio, privacy, and corgi avatar
+      // Step 1: Create profile with name and corgi avatar
       const profileRes = await fetch('/api/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           displayName: name,
-          username: uname,
-          bio: bio.trim() || undefined,
           avatarUrl,
-          privacyMode,
         }),
       });
 
       if (!profileRes.ok) {
         const data = await profileRes.json();
-        if (data.code === 'USERNAME_CONFLICT') {
-          setUsernameStatus('taken');
-          setUsernameMessage('Username was just taken. Please choose another.');
-          setError('That username is no longer available.');
-          setIsSaving(false);
-          return;
-        }
         setError(data.error ?? 'Something went wrong. Please try again.');
         setIsSaving(false);
         return;
@@ -245,16 +169,7 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
     }
   }
 
-  const isComplete = displayName.trim().length > 0 && usernameStatus === 'available';
-
-  const usernameBorderColor =
-    usernameStatus === 'available'
-      ? withAlpha(COLORS.success, 1)
-      : usernameStatus === 'taken'
-        ? withAlpha(COLORS.error, 1)
-        : usernameStatus === 'invalid'
-          ? withAlpha(COLORS.error, 1)
-          : COLORS.border;
+  const isComplete = displayName.trim().length > 0;
 
   if (compact) {
     return (
@@ -298,51 +213,6 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             autoComplete="name"
             maxLength={60}
           />
-        </div>
-
-        {/* Username */}
-        <div>
-          <label
-            htmlFor="username"
-            className="block text-sm font-semibold mb-1.5"
-            style={{ color: COLORS.text }}
-          >
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            required
-            value={usernameInput}
-            onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full px-4 py-3 rounded-lg text-default placeholder:text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors shadow-sm ${usernameBorderColor}`}
-            style={{
-              backgroundColor: withAlpha(COLORS.bg, 0.8),
-              border: `1px solid ${usernameBorderColor}`,
-              boxShadow: SHADOW.inset,
-              transition: COLOR_ONLY_TRANSITION,
-            }}
-            placeholder="quilter_jane"
-            autoComplete="username"
-            maxLength={60}
-          />
-          {usernameMessage && (
-            <p
-              className="mt-1 text-sm"
-              style={{ color: usernameStatus === 'available' ? COLORS.success : COLORS.error }}
-            >
-              {usernameMessage}
-              {usernameStatus === 'checking' && (
-                <span
-                  className="inline-block w-3 h-3 ml-1 rounded-full animate-pulse align-middle"
-                  style={{ backgroundColor: COLORS.secondary }}
-                />
-              )}
-            </p>
-          )}
-          <p className="mt-1 text-xs" style={{ color: COLORS.textDim }}>
-            Lowercase letters, numbers, and hyphens only.
-          </p>
         </div>
 
         {/* Submit */}
@@ -418,97 +288,6 @@ export function OnboardingForm({ compact = false }: OnboardingFormProps) {
             autoComplete="name"
             maxLength={60}
           />
-        </div>
-
-        {/* Username */}
-        <div>
-          <label
-            htmlFor="username"
-            className="block text-body-sm font-medium text-secondary mb-1.5"
-          >
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            required
-            value={usernameInput}
-            onChange={(e) => handleUsernameChange(e.target.value)}
-            className={`w-full bg-default border-b ${usernameBorderColor} focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-default placeholder:text-dim outline-none transition-colors duration-150`}
-            placeholder="quilter_jane"
-            autoComplete="username"
-            maxLength={60}
-          />
-          {usernameMessage && (
-            <p
-              className={`mt-1 text-body-sm ${
-                usernameStatus === 'available' ? 'text-success' : 'text-error'
-              }`}
-            >
-              {usernameMessage}
-              {usernameStatus === 'checking' && (
-                <span className="inline-block w-3 h-3 ml-1 bg-accent rounded-lg animate-pulse align-middle" />
-              )}
-            </p>
-          )}
-          <p className="mt-1 text-body-sm text-secondary/60">
-            Lowercase letters, numbers, and hyphens only.
-          </p>
-        </div>
-
-        {/* Bio */}
-        <div>
-          <label htmlFor="bio" className="block text-body-sm font-medium text-secondary mb-1.5">
-            Bio <span className="text-secondary/60">(optional)</span>
-          </label>
-          <textarea
-            id="bio"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            rows={3}
-            maxLength={500}
-            className="w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-body-md text-default placeholder:text-dim outline-none transition-colors duration-150 resize-none"
-            placeholder="Tell the community a little about yourself..."
-          />
-        </div>
-
-        {/* Privacy Toggle */}
-        <div>
-          <label className="block text-body-sm font-medium text-secondary mb-3">
-            Social visibility
-          </label>
-          <div className="flex gap-2" role="group" aria-label="Social visibility">
-            <button
-              type="button"
-              onClick={() => setPrivacyMode('public')}
-              aria-pressed={privacyMode === 'public'}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${
-                privacyMode === 'public'
-                  ? 'border-primary bg-primary/10 text-default'
-                  : 'border-default text-secondary hover:border-default'
-              }`}
-            >
-              <div className="text-body-md font-medium">Public</div>
-              <div className="mt-0.5 text-body-sm text-secondary/80">
-                View, post, comment &amp; heart
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setPrivacyMode('private')}
-              aria-pressed={privacyMode === 'private'}
-              className={`flex-1 rounded-lg border-2 px-4 py-3 text-center transition-colors duration-150 ${
-                privacyMode === 'private'
-                  ? 'border-primary bg-primary/10 text-default'
-                  : 'border-default text-secondary hover:border-default'
-              }`}
-            >
-              <div className="text-body-md font-medium">Private</div>
-              <div className="mt-0.5 text-body-sm text-secondary/80">
-                Completely hidden from others
-              </div>
-            </button>
-          </div>
         </div>
 
         {/* Avatar Selection */}

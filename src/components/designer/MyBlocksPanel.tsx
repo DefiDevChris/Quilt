@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { BlockUploadDialog } from '@/components/designer/BlockUploadDialog';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 
 interface DesignerBlock {
   id: string;
@@ -16,7 +16,7 @@ interface MyBlocksPanelProps {
 }
 
 export function MyBlocksPanel({ onBlockUploaded }: MyBlocksPanelProps) {
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const [blocks, setBlocks] = useState<DesignerBlock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

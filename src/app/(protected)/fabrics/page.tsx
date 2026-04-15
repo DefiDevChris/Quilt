@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BrandedPage } from '@/components/layout/BrandedPage';
@@ -31,7 +31,7 @@ interface FabricsResponse {
 type Scope = 'system' | 'user';
 
 export default function FabricsPage() {
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const [fabrics, setFabrics] = useState<FabricItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');

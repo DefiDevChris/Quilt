@@ -25,8 +25,7 @@ test.describe('API Authentication', () => {
     const endpoints = [
       '/api/projects',
       '/api/blocks',
-      '/api/fabrics',
-      '/api/community/posts'
+      '/api/fabrics'
     ];
 
     for (const endpoint of endpoints) {
@@ -124,12 +123,6 @@ test.describe('API Pagination', () => {
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(Array.isArray(body)).toBe(true);
-  });
-
-  test('community posts API supports pagination', async ({ request }) => {
-    const response = await request.get('/api/community/posts?limit=10&offset=0');
-    // Will be 401 without auth, but endpoint exists
-    expect([200, 401]).toContain(response.status());
   });
 });
 

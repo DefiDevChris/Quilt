@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -63,7 +63,7 @@ interface StudioDialogsProviderProps {
 }
 
 export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) {
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const { getCanvas } = useCanvasContext();
 
   // Dialog open/close state

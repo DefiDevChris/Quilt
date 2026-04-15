@@ -8,7 +8,15 @@ import {
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
+import { getAuthDerived } from '@/stores/authStore';
 import { saveTempProject } from '@/lib/temp-project-storage';
+
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: {
+    getState: vi.fn(),
+  },
+  getAuthDerived: vi.fn(),
+}));
 
 // Mock global fetch
 const mockFetch = vi.fn().mockImplementation(async (url, options) => {
@@ -53,15 +61,13 @@ describe('save-project', () => {
     useCanvasStore.getState().setGridSettings({ enabled: true, size: 1, snapToGrid: true });
 
     // Mock auth as pro user so server save path is taken
-    vi.spyOn(useAuthStore, 'getState').mockReturnValue({
-      isPro: true,
+    vi.mocked(useAuthStore.getState).mockReturnValue({
       user: { id: 'test-user', email: 'test@test.com' },
       isLoading: false,
-      isAdmin: false,
-      isPrivate: false,
       setUser: vi.fn(),
       reset: vi.fn(),
     } as unknown as ReturnType<typeof useAuthStore.getState>);
+    vi.mocked(getAuthDerived).mockReturnValue({ isPro: true, isAdmin: false });
 
     // Reset fetch mock
     mockFetch.mockReset();
@@ -273,15 +279,13 @@ describe('save-project', () => {
 
   describe('free-user save path', () => {
     it('saves to temp storage when not pro', async () => {
-      vi.spyOn(useAuthStore, 'getState').mockReturnValue({
-        isPro: false,
+      vi.mocked(useAuthStore.getState).mockReturnValue({
         user: null,
         isLoading: false,
-        isAdmin: false,
-        isPrivate: false,
         setUser: vi.fn(),
         reset: vi.fn(),
-      });
+      } as unknown as ReturnType<typeof useAuthStore.getState>);
+      vi.mocked(getAuthDerived).mockReturnValue({ isPro: false, isAdmin: false });
       await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
       expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith(
         'test-project',

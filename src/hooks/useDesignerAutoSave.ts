@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useDesignerStore } from '@/stores/designerStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, getAuthDerived } from '@/stores/authStore';
 import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants';
 
 const MAX_SAVE_RETRIES = 3;
@@ -129,7 +129,7 @@ export function useDesignerAutoSave({ fabricCanvas, projectId }: DesignerAutoSav
     // Reset version when project changes
     currentVersion = 1;
 
-    const { isPro } = useAuthStore.getState();
+    const { isPro } = getAuthDerived();
     if (!isPro) return;
 
     // Create abort controller for cleanup
@@ -144,12 +144,7 @@ export function useDesignerAutoSave({ fabricCanvas, projectId }: DesignerAutoSav
       isSavingRef.current = true;
       const currentController = abortControllerRef.current;
 
-      saveDesignerProject(
-        projectId,
-        fabricCanvas,
-        currentVersion,
-        currentController?.signal
-      )
+      saveDesignerProject(projectId, fabricCanvas, currentVersion, currentController?.signal)
         .then((result) => {
           if (result.ok) {
             retryCountRef.current = 0;

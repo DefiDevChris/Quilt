@@ -139,7 +139,6 @@ export const API_RATE_LIMITS = {
   blocks: { limit: 30, windowMs: 60 * 1000 },
   fabrics: { limit: 30, windowMs: 60 * 1000 },
   projects: { limit: 20, windowMs: 60 * 1000 },
-  like: { limit: 30, windowMs: 60 * 1000 },
   save: { limit: 30, windowMs: 60 * 1000 },
   stripe: { limit: 10, windowMs: 60 * 1000 },
   upload: { limit: 20, windowMs: 60 * 1000 },

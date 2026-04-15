@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { FabricCard } from '@/components/fabrics/FabricCard';
@@ -43,7 +43,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const fetchFabrics = useFabricStore((s) => s.fetchFabrics);
   const fetchUserFabrics = useFabricStore((s) => s.fetchUserFabrics);
   const deleteUserFabric = useFabricStore((s) => s.deleteUserFabric);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const fabricPresets = useProjectStore((s) => s.fabricPresets);
   const removeFabricPreset = useProjectStore((s) => s.removeFabricPreset);
   const shopEnabled = useShopEnabled();

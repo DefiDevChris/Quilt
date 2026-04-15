@@ -233,26 +233,6 @@ export const templateQuerySchema = z.object({
 
 export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(60),
-  bio: z.string().max(500).optional(),
-  location: z.string().max(100).optional(),
-  websiteUrl: z
-    .string()
-    .refine((val) => val === '' || /^https:\/\//.test(val), {
-      message: 'Website URL must use https.',
-    })
-    .optional()
-    .or(z.literal('')),
-  instagramHandle: z.string().max(50).optional(),
-  youtubeHandle: z.string().max(50).optional(),
-  tiktokHandle: z.string().max(50).optional(),
-  publicEmail: z.string().email().optional().or(z.literal('')),
-  username: z
-    .string()
-    .min(3)
-    .max(60)
-    .regex(/^[a-z0-9-]+$/, 'Username must be lowercase alphanumeric with hyphens only')
-    .optional(),
-  privacyMode: z.enum(['public', 'private']).default('public'),
 });
 
 // --- Admin Schemas ---

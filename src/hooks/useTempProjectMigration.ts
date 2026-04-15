@@ -4,12 +4,12 @@
  */
 
 import { useEffect } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { loadTempProject, deleteTempProject } from '@/lib/temp-project-storage';
 
 export function useTempProjectMigration() {
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const projectId = useProjectStore((s) => s.projectId);
 
   useEffect(() => {

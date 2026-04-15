@@ -191,22 +191,6 @@ export function QuiltPatternIcon({
   );
 }
 
-export function ThreadIcon({
-  size = 48,
-  color = 'var(--color-primary)',
-  className = '',
-}: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>
-      <rect x="16" y="12" width="16" height="24" rx="8" fill={color} opacity="0.2" />
-      <rect x="18" y="16" width="12" height="16" rx="6" fill={color} />
-      <rect x="20" y="20" width="8" height="8" rx="4" fill={color} opacity="0.5" />
-      <path d="M24 36 L24 44" stroke={color} strokeWidth="2" />
-      <path d="M22 40 Q24 38 26 40" stroke={color} strokeWidth="1.5" fill="none" />
-    </svg>
-  );
-}
-
 export function ShoppingBagLargeIcon({
   size = 64,
   color = 'var(--color-primary)',

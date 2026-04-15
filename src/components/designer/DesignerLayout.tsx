@@ -26,13 +26,7 @@ interface DesignerLayoutProps {
   readonly project: Project;
 }
 
-function DesignerTopBar({
-  project,
-  fabricCanvas,
-}: {
-  project: Project;
-  fabricCanvas: unknown;
-}) {
+function DesignerTopBar({ project, fabricCanvas }: { project: Project; fabricCanvas: unknown }) {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   useEffect(() => {
@@ -54,9 +48,7 @@ function DesignerTopBar({
         {project.name}
       </h1>
       <div className="flex items-center gap-2">
-        {saveStatus === 'saved' && (
-          <span className="text-xs text-green-600">Saved</span>
-        )}
+        {saveStatus === 'saved' && <span className="text-xs text-green-600">Saved</span>}
         {saveStatus === 'error' && (
           <span className="text-xs text-[var(--color-primary)]">Save failed</span>
         )}
@@ -114,7 +106,5 @@ function DesignerLayoutInner({ project }: DesignerLayoutProps) {
 }
 
 export function DesignerLayout({ project }: DesignerLayoutProps) {
-  return (
-    <DesignerLayoutInner project={project} />
-  );
+  return <DesignerLayoutInner project={project} />;
 }

@@ -23,22 +23,22 @@ vi.mock('@/stores/designerStore', () => ({
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: {
     getState: vi.fn(() => ({
-      isPro: true,
       user: {
         id: 'user-1',
         email: 'test@test.com',
         role: 'pro',
         name: '',
         image: null,
-        privacyMode: 'public' as const,
       },
       isLoading: false,
-      isAdmin: false,
-      isPrivate: false,
       setUser: vi.fn(),
       reset: vi.fn(),
     })),
   },
+  getAuthDerived: vi.fn(() => ({
+    isPro: true,
+    isAdmin: false,
+  })),
 }));
 
 vi.mock('@/lib/constants', () => ({
@@ -52,7 +52,7 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 import { useDesignerStore } from '@/stores/designerStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, getAuthDerived } from '@/stores/authStore';
 import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants';
 
 const { useDesignerAutoSave } = await import('@/hooks/useDesignerAutoSave');
@@ -86,21 +86,9 @@ describe('useDesignerAutoSave', () => {
   });
 
   it('does not save when user is not pro', () => {
-    vi.mocked(useAuthStore.getState).mockReturnValue({
+    vi.mocked(getAuthDerived).mockReturnValue({
       isPro: false,
-      user: {
-        id: 'user-1',
-        email: 'test@test.com',
-        role: 'free',
-        name: '',
-        image: null,
-        privacyMode: 'public' as const,
-      },
-      isLoading: false,
       isAdmin: false,
-      isPrivate: false,
-      setUser: vi.fn(),
-      reset: vi.fn(),
     });
 
     renderHook(() =>

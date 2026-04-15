@@ -12,11 +12,10 @@ vi.mock('@/stores/authStore', () => {
     user: null,
     setUser: vi.fn(),
     isLoading: false,
-    isPro: false,
-    isAdmin: false,
   };
   return {
     useAuthStore: (selector: (s: typeof store) => unknown) => selector(store),
+    useAuthDerived: vi.fn(() => ({ isPro: false, isAdmin: false })),
   };
 });
 

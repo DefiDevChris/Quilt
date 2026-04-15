@@ -8,7 +8,7 @@ import { StudioDialogsProvider } from '@/components/studio/StudioDialogs';
 import { StudioLayout } from '@/components/studio/StudioLayout';
 import { CanvasProvider } from '@/contexts/CanvasContext';
 
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
@@ -28,7 +28,7 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
 
   // Cleanup expired temp projects on mount
   useEffect(() => {

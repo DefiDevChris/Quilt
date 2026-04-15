@@ -9,7 +9,6 @@ type BlogCategory =
   | 'Product Updates'
   | 'Behind the Scenes'
   | 'Tutorials'
-  | 'Community'
   | 'Tips'
   | 'Inspiration'
   | 'History'
@@ -74,8 +73,7 @@ const introducingQuiltcorgi: TiptapDoc = {
       'Design quilts using a drag-and-drop canvas with grid snapping',
       'Choose from 50 traditional quilt blocks',
       'Upload and calibrate your own fabrics',
-      'Export your designs as high-resolution images or PDFs',
-      'Share your work with the QuiltCorgi community'
+      'Export your designs as high-resolution images or PDFs'
     ),
     heading(2, 'Built for Quilters'),
     p(
@@ -172,25 +170,19 @@ const meetTheCommunity: TiptapDoc = {
     heading(2, 'Share Your Designs'),
     p(
       text(
-        'With a single click, you can share any of your projects to the community feed. Other quilters can like your work, leave comments, and save designs for inspiration. It is like a gallery for the quilting world.'
+        'With a single click, you can share any of your projects publicly. Other quilters can view your work and get inspired. It is like a gallery for the quilting world.'
       )
     ),
-    heading(2, 'Get Feedback'),
+    heading(2, 'Get Inspired'),
     p(
       text(
-        'Stuck on a color choice? Not sure about your layout? Post your work-in-progress and get feedback from fellow quilters. The community is supportive, constructive, and full of great ideas.'
+        'Browse shared designs from quilters around the world. Explore different categories and find your next project idea. See how others approach color choices, layouts, and block combinations.'
       )
     ),
-    heading(2, 'Find Inspiration'),
+    heading(2, 'Build Your Portfolio'),
     p(
       text(
-        'Browse the community feed to discover designs from quilters around the world. Filter by category -- from show-and-tell finished quilts to works in progress -- and find your next project idea.'
-      )
-    ),
-    heading(2, 'Build Your Profile'),
-    p(
-      text(
-        'Create a quilter profile to showcase your work. Add a bio, link your social accounts, and build a following within the QuiltCorgi community.'
+        'Create a quilter profile to showcase your work. Build a collection of your best designs and share them with the quilting community.'
       )
     ),
   ],
@@ -294,7 +286,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
     content: meetTheCommunity,
     excerpt:
       'Quilting has always been a community craft. With QuiltCorgi, we bring that same spirit online.',
-    category: 'Community',
+    category: 'Inspiration',
     tags: ['community', 'sharing'],
     status: 'published',
     publishedAt: new Date('2026-02-19T12:00:00Z'),

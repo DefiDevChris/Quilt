@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { usePhotoDesignStore } from '@/stores/photoDesignStore';
 import { usePhotoToDesign } from '@/hooks/usePhotoToDesign';
 import { UploadStep } from './UploadStep';
@@ -15,11 +15,19 @@ import { ReviewCanvas } from './ReviewCanvas';
  */
 export function PhotoToDesignWizard() {
   const step = usePhotoDesignStore((s) => s.step);
+  const sourceImageData = usePhotoDesignStore((s) => s.sourceImageData);
   const correctedImageData = usePhotoDesignStore((s) => s.correctedImageData);
   const gridSpec = usePhotoDesignStore((s) => s.gridSpec);
   const reset = usePhotoDesignStore((s) => s.reset);
 
-  const { process } = usePhotoToDesign();
+  const engine = usePhotoToDesign();
+  const { preload, process } = engine;
+
+  // Eager-load SAM2 the moment the user picks an image so the model is warm
+  // by the time they finish perspective + grid calibration.
+  useEffect(() => {
+    if (sourceImageData) preload();
+  }, [sourceImageData, preload]);
 
   // When entering 'review' step with grid spec set, fire the engine
   useEffect(() => {
@@ -80,7 +88,13 @@ export function PhotoToDesignWizard() {
         {step === 'upload' && <UploadStep />}
         {step === 'perspective' && <PerspectiveStep />}
         {step === 'grid' && <GridCalibrationStep />}
-        {step === 'review' && <ReviewCanvas />}
+        {step === 'review' && (
+          <ReviewCanvas
+            process={engine.process}
+            abort={engine.abort}
+            addPatchAtPoint={engine.addPatchAtPoint}
+          />
+        )}
       </div>
     </div>
   );

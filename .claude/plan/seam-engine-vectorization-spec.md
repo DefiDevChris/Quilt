@@ -1,5 +1,7 @@
 # Seam Engine Implementation Spec — Image Vectorization Pipeline
 
+> **SUPERSEDED 2026-04-14** — the classical CV pipeline (color+texture+edge SLIC clustering) described here was replaced by the SAM-based pipeline in [`seam-engine-sam-rfc.md`](./seam-engine-sam-rfc.md). Kept for historical context only; do NOT implement against this spec.
+
 ## Overview
 
 Replace the placeholder `src/lib/photo-to-design/seam-engine.ts` with a color+texture+edge vectorization pipeline that:

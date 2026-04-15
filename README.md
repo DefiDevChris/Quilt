@@ -9,7 +9,6 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 - **Photo-to-Design** — Snap a photo of any quilt and recreate it digitally. OpenCV extracts individual pieces, then shape auto-correction matches block cells to 50 known quilt block SVGs (Nine Patch, Ohio Star, Drunkard's Path, etc.). Edge snapping eliminates gaps between pieces. Matched blocks appear as clean, editable Fabric.js Groups — each patch individually fillable with fabrics from the library. Unmatched pieces fall back to raw polygons.
 - **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
 - **Print-Ready Patterns** — PDF export with quilt overview, fabric requirements, cutting directions, block assembly diagrams, and individual cutting templates at exact 1:1 scale with seam allowance.
-- **Social Feed** — Share your designs, discover inspiration, and get feedback with likes and comments.
 - **Pro Features** — Photo-to-Design, unlimited projects, full export, fabric calibration.
 
 ## Tech Stack
@@ -39,7 +38,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 - **Primary container**: Light peach (`#ffedd5`)
 - **CTA gradient**: `linear-gradient(to right, #f97316, #fb7185)` (orange to rose)
 - **Text**: `on-surface` (`#4a3b32`), `secondary` (`#6b5a4d`)
-- **Glassmorphism**: 4 variants — `glass-card`, `glass-elevated`, `glass-panel`, `glass-panel-social`
+- **Glassmorphism**: 3 variants — `glass-card`, `glass-elevated`, `glass-panel`
 
 **Typography**: Outfit (display), Manrope (body), JetBrains Mono (measurements)
 
@@ -48,15 +47,11 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Design, cutting charts, yardage estimator, social posting
+- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Design, cutting charts, yardage estimator
 
 ## Roles
 
 `free | pro | admin` — defined in `src/lib/role-utils.ts`
-
-- Free: like, save, comment — cannot post
-- Pro: like, save, comment, post
-- Admin: all permissions + moderation
 
 ## Getting Started
 
@@ -103,11 +98,9 @@ src/
     auth/                 # Sign in/up/verify/forgot-password pages
     blog/                 # Blog list and individual post pages
     dashboard/            # Bento grid dashboard
-    socialthreads/        # Social feed
     studio/[projectId]/   # Design canvas (desktop only)
     templates/            # Template browser
   components/             # React components, organized by domain
-    social/               # FeedContent, SocialLayout
     mobile/               # MobileShell, MobileBottomNav (3 items)
     studio/               # Studio panels and controls
     blocks/               # BlockBuilderWorktable, BlockBuilderTab, BlockBuilderToolbar, BlockLibrary, SimplePhotoBlockUpload

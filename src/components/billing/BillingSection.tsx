@@ -313,7 +313,6 @@ export function BillingSection() {
               'Design Studio with core tools',
               '20 essential layout blocks',
               '10 curated fabric swatches',
-              'Community thread access',
               'Local project storage',
             ].map((item) => (
               <li

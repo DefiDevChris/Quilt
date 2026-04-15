@@ -40,8 +40,6 @@ async function seedBlogPosts() {
     await db.insert(userProfiles).values({
       userId: newUser.id,
       displayName: 'QuiltCorgi Team',
-      username: 'quiltcorgi-team',
-      bio: 'The team behind QuiltCorgi - building tools for quilters everywhere.',
     });
     console.log('Created user profile\n');
   }

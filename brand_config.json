@@ -429,7 +429,7 @@
         "route": "(global styles)",
         "status": "live",
         "last_updated": "2026-04-10",
-        "purpose": "Global CSS with brand variables, social feed styles, and utility classes",
+        "purpose": "Global CSS with brand variables and utility classes",
         "layout": "N/A",
         "components": [],
         "images": [],
@@ -787,32 +787,6 @@
         "graphics": []
       },
       {
-        "page": "profile-edit-form",
-        "route": "(shared component)",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Profile editing form — display name, bio, location, social links, avatar upload, privacy toggle",
-        "layout": "Form section used within settings/profile pages",
-        "components": [],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — replaced ALL font-black uppercase tracking patterns with brand typography scale, replaced ALL Material tokens (bg-neutral, text-neutral, bg-error, bg-success, border-on-surface, bg-surface) with brand hex colors, replaced shadow-elevation-1 with brand shadow, replaced animate-spin with animate-pulse, replaced transition-all duration-300/500 with transition-colors duration-150, replaced hover:scale-110 with hover:bg-[#ff8d49]/10, replaced rounded-full on cards/containers with rounded-lg (avatar keeps rounded-full), replaced editorial UI text with warm quilting-friendly language."
-      },
-      {
-        "page": "user-profile-page",
-        "route": "(shared component)",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Public member profile — avatar, bio, stats, project grid, about tab",
-        "layout": "Full-width with centered max-w-5xl content",
-        "components": [],
-        "images": [],
-        "icons": ["Calendar", "MapPin", "Globe", "Pencil (lucide-react)"],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — replaced ALL font-black uppercase tracking patterns with brand typography, replaced ALL Material tokens (bg-neutral, text-neutral, bg-neutral-container-high, border-outline-variant, ring-outline-variant) with brand hex colors, replaced shadow-elevation-* with brand shadow, replaced animate-spin with animate-pulse, replaced transition-all duration-500/700 with transition-colors duration-150, removed hover:scale-105, hover:-translate-y-1, removed framer-motion y animations, replaced rounded-full on cards with rounded-lg (avatar keeps rounded-full), renamed 'Posts' tab to 'Projects', 'PostCard' to 'ProjectCard'."
-      },
-      {
         "page": "block-overlay-selector",
         "route": "(shared component)",
         "status": "live",
@@ -876,19 +850,6 @@
         "icons": [],
         "graphics": [],
         "consistency_notes": "REMEDIATED — removed Sparkles icon (AI slop), replaced font-black uppercase tracking with brand typography, replaced Material tokens (bg-surface, text-surface, border-on-surface, text-on-surface) with brand hex colors, replaced transition-all with transition-colors duration-150, replaced 'Elevate to Pro' with 'Go Pro', hover:bg-on-surface replaced with hover:bg-[#ff8d49] hover:text-[#ffffff]."
-      },
-      {
-        "page": "social-split-pane",
-        "route": "(shared component)",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Community split-pane navigation — Saved, Feed/Thread, Profile strips with animated expansion",
-        "layout": "Full-height component with vertical strips (desktop) and tab bar (mobile)",
-        "components": ["SavedStripVertical", "SavedStripHorizontal", "FeedStripVertical", "FeedStripHorizontal", "ProfileStripVertical", "ProfileStripHorizontal", "SavedContent", "ProfileContentPanel", "StudioDivider", "PanelSlot"],
-        "images": ["/icons/quilt-10-pincushion-Photoroom.png", "/icons/quilt-01-spool-Photoroom.png", "/icons/quilt-04-scissors-Photoroom.png", "/mascots&avatars/corgi20.png", "/mascots&avatars/corgi12.png", "/mascots&avatars/corgi28.png"],
-        "icons": ["Bookmark", "Heart (lucide-react)"],
-        "graphics": ["QuiltPiece SVG patterns (hearts, flying geese, measuring tape)"],
-        "consistency_notes": "REMEDIATED — replaced ALL Material tokens (bg-neutral, text-neutral-800, text-neutral-600, bg-neutral-100, bg-neutral-200, border-neutral-200) with brand hex colors, replaced ALL shadow-elevation-* references with brand shadow, replaced ALL transition-all duration-300/500/700 with transition-colors duration-150 (strip hover effects), removed group-hover:shadow-elevation transitions, renamed 'Feed' to 'Thread' in UI text, replaced 'posts' count label with 'designs', rounded-full on non-avatar cards replaced with rounded-lg, StudioDivider hover uses transition-colors instead of transition-all."
       },
       {
         "page": "block-card",

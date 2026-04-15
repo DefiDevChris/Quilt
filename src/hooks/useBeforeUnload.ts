@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { deleteTempProject } from '@/lib/temp-project-storage';
 
 export function useBeforeUnload() {
   const isDirty = useProjectStore((s) => s.isDirty);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
   const projectId = useProjectStore((s) => s.projectId);
 
   useEffect(() => {

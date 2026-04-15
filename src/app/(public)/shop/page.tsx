@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useCartStore } from '@/stores/cartStore';
-import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { COLORS, SHADOW, COLORS_HOVER } from '@/lib/design-system';
+import { Search, ChevronDown, Sparkles, ShoppingBag } from 'lucide-react';
+import { COLORS, SHADOW, COLORS_HOVER, RADIUS, MOTION } from '@/lib/design-system';
 import { ShoppingBagLargeIcon } from '@/components/shop/ShopIcons';
-import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 
 interface ShopFabric {
   id: string;
@@ -39,12 +38,7 @@ const COLOR_SWATCHES: Record<string, { hex: string; label: string }> = {
   black: { hex: '#1A1A1A', label: 'Black' },
 };
 
-const MANUFACTURERS = [
-  'Alison Glass',
-  'Andover Fabrics',
-  'Charisma Horton',
-  'Makower UK',
-];
+const MANUFACTURERS = ['Alison Glass', 'Andover Fabrics', 'Charisma Horton', 'Makower UK'];
 
 const COLLECTIONS = [
   'Color Camp - Bloom',
@@ -56,14 +50,361 @@ const COLLECTIONS = [
   'Snowberry',
 ];
 
-const THEMES = [
-  'Floral',
-  'Geometric',
-  'Modern',
-  'Solid',
-  'Tonal',
-  'Traditional',
-];
+const THEMES = ['Floral', 'Geometric', 'Modern', 'Solid', 'Tonal', 'Traditional'];
+
+// ─── Collapsible Filter Section ───────────────────────────────────────
+
+function FilterSection({
+  title,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-[var(--color-border)] last:border-b-0">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-3 text-sm font-medium"
+        style={{ color: COLORS.text, fontFamily: 'var(--font-display)' }}
+      >
+        {title}
+        <ChevronDown
+          size={14}
+          style={{
+            color: COLORS.textDim,
+            transition: `transform ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        />
+      </button>
+      {isOpen && <div className="pb-3">{children}</div>}
+    </div>
+  );
+}
+
+// ─── Color Swatch ─────────────────────────────────────────────────────
+
+function ColorSwatch({
+  name,
+  hex,
+  isSelected,
+  onClick,
+}: {
+  name: string;
+  hex: string;
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  const isLight = ['white', 'yellow'].includes(name);
+  return (
+    <button
+      onClick={onClick}
+      title={COLOR_SWATCHES[name].label}
+      className="w-7 h-7 rounded-full flex items-center justify-center"
+      style={{
+        backgroundColor: hex,
+        border: `2px solid ${isSelected ? COLORS.primary : COLORS.border}`,
+        boxShadow: isSelected ? `0 0 0 1px ${COLORS.surface}, 0 0 0 3px ${COLORS.primary}` : 'none',
+        transition: `box-shadow ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+      }}
+    >
+      {isSelected && (
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+          <path
+            d="M2.5 6L5 8.5L9.5 3.5"
+            stroke={isLight ? COLORS.text : COLORS.surface}
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// ─── Filter Panel ─────────────────────────────────────────────────────
+
+function FilterPanel({
+  openSections,
+  toggleSection,
+  selectedManufacturers,
+  setSelectedManufacturers,
+  selectedCollections,
+  setSelectedCollections,
+  selectedColors,
+  setSelectedColors,
+  selectedThemes,
+  setSelectedThemes,
+  selectedValue,
+  setSelectedValue,
+  inStockOnly,
+  setInStockOnly,
+  onClearAll,
+  activeFilterCount,
+}: {
+  openSections: Record<string, boolean>;
+  toggleSection: (s: string) => void;
+  selectedManufacturers: string[];
+  setSelectedManufacturers: (v: string[]) => void;
+  selectedCollections: string[];
+  setSelectedCollections: (v: string[]) => void;
+  selectedColors: string[];
+  setSelectedColors: (v: string[]) => void;
+  selectedThemes: string[];
+  setSelectedThemes: (v: string[]) => void;
+  selectedValue: string;
+  setSelectedValue: (v: string) => void;
+  inStockOnly: boolean;
+  setInStockOnly: (v: boolean) => void;
+  onClearAll: () => void;
+  activeFilterCount: number;
+}) {
+  const toggle = (list: string[], setList: (v: string[]) => void, val: string) => {
+    setList(list.includes(val) ? list.filter((v) => v !== val) : [...list, val]);
+  };
+
+  return (
+    <div>
+      {activeFilterCount > 0 && (
+        <button
+          onClick={onClearAll}
+          className="w-full mb-4 py-2 text-xs font-medium rounded-full"
+          style={{
+            backgroundColor: `${COLORS.primary}12`,
+            color: COLORS.primary,
+          }}
+        >
+          Clear {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''}
+        </button>
+      )}
+
+      <FilterSection
+        title="Collections"
+        isOpen={openSections.collection}
+        onToggle={() => toggleSection('collection')}
+      >
+        <div className="space-y-1.5">
+          {COLLECTIONS.map((c) => (
+            <label key={c} className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedCollections.includes(c)}
+                onChange={() => toggle(selectedCollections, setSelectedCollections, c)}
+                className="rounded accent-[var(--color-primary)] w-3.5 h-3.5"
+              />
+              <span className="text-[13px]" style={{ color: COLORS.textDim }}>
+                {c}
+              </span>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection
+        title="Manufacturer"
+        isOpen={openSections.manufacturer}
+        onToggle={() => toggleSection('manufacturer')}
+      >
+        <div className="space-y-1.5">
+          {MANUFACTURERS.map((m) => (
+            <label key={m} className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedManufacturers.includes(m)}
+                onChange={() => toggle(selectedManufacturers, setSelectedManufacturers, m)}
+                className="rounded accent-[var(--color-primary)] w-3.5 h-3.5"
+              />
+              <span className="text-[13px]" style={{ color: COLORS.textDim }}>
+                {m}
+              </span>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection
+        title="Color"
+        isOpen={openSections.color}
+        onToggle={() => toggleSection('color')}
+      >
+        <div className="grid grid-cols-6 gap-1.5">
+          {Object.entries(COLOR_SWATCHES).map(([name, { hex }]) => (
+            <ColorSwatch
+              key={name}
+              name={name}
+              hex={hex}
+              isSelected={selectedColors.includes(name)}
+              onClick={() => toggle(selectedColors, setSelectedColors, name)}
+            />
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection
+        title="Style"
+        isOpen={openSections.theme}
+        onToggle={() => toggleSection('theme')}
+      >
+        <div className="space-y-1.5">
+          {THEMES.map((t) => (
+            <label key={t} className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedThemes.includes(t)}
+                onChange={() => toggle(selectedThemes, setSelectedThemes, t)}
+                className="rounded accent-[var(--color-primary)] w-3.5 h-3.5"
+              />
+              <span className="text-[13px]" style={{ color: COLORS.textDim }}>
+                {t}
+              </span>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection
+        title="Value"
+        isOpen={openSections.value}
+        onToggle={() => toggleSection('value')}
+      >
+        <div className="space-y-1.5">
+          {['Light', 'Medium', 'Dark'].map((v) => (
+            <label key={v} className="flex items-center gap-2.5 cursor-pointer">
+              <input
+                type="radio"
+                name="value-filter"
+                checked={selectedValue === v}
+                onChange={() => setSelectedValue(selectedValue === v ? '' : v)}
+                className="accent-[var(--color-primary)] w-3.5 h-3.5"
+              />
+              <span className="text-[13px]" style={{ color: COLORS.textDim }}>
+                {v}
+              </span>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      <div className="pt-3">
+        <label className="flex items-center gap-2.5 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={(e) => setInStockOnly(e.target.checked)}
+            className="rounded accent-[var(--color-primary)] w-3.5 h-3.5"
+          />
+          <span className="text-[13px] font-medium" style={{ color: COLORS.text }}>
+            In Stock Only
+          </span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+// ─── Fabric Card ──────────────────────────────────────────────────────
+
+function FabricCard({
+  fabric,
+  onAddToCart,
+}: {
+  fabric: ShopFabric;
+  onAddToCart: (f: ShopFabric) => void;
+}) {
+  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '';
+  const isAvailable = fabric.inStock && fabric.shopifyVariantId;
+
+  return (
+    <div>
+      {/* Image */}
+      <div
+        className="aspect-square overflow-hidden mb-3 bg-[var(--color-bg)]"
+        style={{ borderRadius: RADIUS.lg }}
+      >
+        {fabric.imageUrl.startsWith('/') ? (
+          <img
+            src={fabric.imageUrl}
+            alt={fabric.name}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : fabric.hex ? (
+          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ backgroundColor: `${COLORS.primary}10` }}
+          >
+            <Sparkles size={20} style={{ color: COLORS.primary, opacity: 0.3 }} />
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div>
+        {fabric.collection && (
+          <p
+            className="text-[11px] uppercase tracking-wide mb-1"
+            style={{ color: COLORS.primary, fontFamily: 'var(--font-display)' }}
+          >
+            {fabric.collection}
+          </p>
+        )}
+        <h3
+          className="text-[14px] font-medium leading-snug"
+          style={{ color: COLORS.text, fontFamily: 'var(--font-display)' }}
+        >
+          {fabric.name}
+        </h3>
+        {fabric.manufacturer && (
+          <p className="text-[12px] mt-0.5" style={{ color: COLORS.textDim }}>
+            {fabric.manufacturer}
+          </p>
+        )}
+        <div className="flex items-center justify-between mt-2.5">
+          <span className="text-[14px] font-semibold" style={{ color: COLORS.text }}>
+            {price}
+            <span className="text-[11px] font-normal" style={{ color: COLORS.textDim }}>
+              /yd
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={() => onAddToCart(fabric)}
+            disabled={!isAvailable}
+            className="px-3.5 py-1.5 text-[11px] font-medium disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: isAvailable ? COLORS.primary : `${COLORS.primary}22`,
+              color: isAvailable ? COLORS.text : COLORS.textDim,
+              borderRadius: RADIUS.full,
+              transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
+            }}
+            onMouseEnter={(e) => {
+              if (isAvailable) e.currentTarget.style.backgroundColor = COLORS_HOVER.primary;
+            }}
+            onMouseLeave={(e) => {
+              if (isAvailable) e.currentTarget.style.backgroundColor = COLORS.primary;
+            }}
+          >
+            {!fabric.shopifyVariantId
+              ? 'Coming Soon'
+              : !fabric.inStock
+                ? 'Out of Stock'
+                : 'Add to Cart'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────
 
 export default function ShopPage() {
   const [fabrics, setFabrics] = useState<ShopFabric[]>([]);
@@ -80,12 +421,11 @@ export default function ShopPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     collection: true,
-    manufacturer: true,
-    color: true,
+    manufacturer: false,
+    color: false,
     theme: false,
     value: false,
   });
@@ -131,7 +471,16 @@ export default function ShopPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, selectedManufacturers, selectedCollections, selectedColors, selectedValue, inStockOnly, sort, page]);
+  }, [
+    search,
+    selectedManufacturers,
+    selectedCollections,
+    selectedColors,
+    selectedValue,
+    inStockOnly,
+    sort,
+    page,
+  ]);
 
   useEffect(() => {
     if (shopEnabled) fetchFabrics();
@@ -140,7 +489,6 @@ export default function ShopPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
-    fetchFabrics();
   };
 
   const handleAddToCart = (fabric: ShopFabric) => {
@@ -154,11 +502,6 @@ export default function ShopPage() {
       fabricImageUrl: fabric.thumbnailUrl ?? fabric.imageUrl,
     });
     toggleDrawer();
-  };
-
-  const toggleFilter = (list: string[], setList: (v: string[]) => void, value: string) => {
-    setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
-    setPage(1);
   };
 
   const clearAllFilters = () => {
@@ -185,368 +528,202 @@ export default function ShopPage() {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+  // ─── Loading ────────────────────────────────────────────────────
+
   if (shopEnabled === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
-        <div className="animate-pulse space-y-4 text-center">
-          <div className="h-8 rounded w-48 mx-auto" style={{ backgroundColor: `${COLORS.primary}33` }} />
-        </div>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: COLORS.bg }}
+      >
+        <div
+          className="w-8 h-8 rounded-full animate-pulse"
+          style={{ backgroundColor: `${COLORS.primary}33` }}
+        />
       </div>
     );
   }
 
   if (!shopEnabled) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-12 text-center max-w-md" style={{ boxShadow: SHADOW.brand }}>
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${COLORS.primary}1a` }}>
-            <ShoppingBagLargeIcon size={32} color={COLORS.primary} />
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: COLORS.bg }}
+      >
+        <div className="text-center">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: `${COLORS.primary}10` }}
+          >
+            <ShoppingBag size={24} style={{ color: COLORS.primary }} />
           </div>
-          <h1 className="text-[28px] font-semibold mb-2" style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}>
+          <h1
+            className="text-[28px] font-semibold mb-2"
+            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+          >
             Shop Coming Soon
           </h1>
-          <p style={{ color: COLORS.textDim }}>We're curating our fabric collection. Check back soon!</p>
+          <p style={{ color: COLORS.textDim }}>
+            We are curating our fabric collection. Check back soon.
+          </p>
         </div>
       </div>
     );
   }
 
-  const activeFilters = [
-    ...selectedManufacturers.map((v) => ({ label: v, type: 'manufacturer' as const, value: v })),
-    ...selectedCollections.map((v) => ({ label: v, type: 'collection' as const, value: v })),
-    ...selectedColors.map((v) => ({ label: COLOR_SWATCHES[v]?.label ?? v, type: 'color' as const, value: v })),
-    ...selectedThemes.map((v) => ({ label: v, type: 'theme' as const, value: v })),
-    ...(selectedValue ? [{ label: selectedValue, type: 'value' as const, value: selectedValue }] : []),
-    ...(inStockOnly ? [{ label: 'In Stock', type: 'stock' as const, value: 'true' }] : []),
-  ];
-
-  const removeFilter = (f: (typeof activeFilters)[0]) => {
-    if (f.type === 'manufacturer') toggleFilter(selectedManufacturers, setSelectedManufacturers, f.value);
-    else if (f.type === 'collection') toggleFilter(selectedCollections, setSelectedCollections, f.value);
-    else if (f.type === 'color') toggleFilter(selectedColors, setSelectedColors, f.value);
-    else if (f.type === 'theme') toggleFilter(selectedThemes, setSelectedThemes, f.value);
-    else if (f.type === 'value') setSelectedValue('');
-    else if (f.type === 'stock') setInStockOnly(false);
-    setPage(1);
-  };
-
-  // ---- Filter Panel ----
-  const FilterPanel = ({ className = '', isMobile = false }: { className?: string; isMobile?: boolean }) => (
-    <div className={className}>
-      {/* Collections */}
-      <div className="border-b border-[var(--color-border)]">
-        <button
-          onClick={() => toggleSection('collection')}
-          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
-          style={{ color: COLORS.text }}
-        >
-          Collections
-          {openSections.collection ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
-        </button>
-        {openSections.collection && (
-          <div className="pb-3 space-y-1">
-            {COLLECTIONS.map((c) => (
-              <label key={c} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selectedCollections.includes(c)}
-                  onChange={() => toggleFilter(selectedCollections, setSelectedCollections, c)}
-                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
-                />
-                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{c}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Manufacturer */}
-      <div className="border-b border-[var(--color-border)]">
-        <button
-          onClick={() => toggleSection('manufacturer')}
-          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
-          style={{ color: COLORS.text }}
-        >
-          Manufacturer
-          {openSections.manufacturer ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
-        </button>
-        {openSections.manufacturer && (
-          <div className="pb-3 space-y-1">
-            {MANUFACTURERS.map((m) => (
-              <label key={m} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selectedManufacturers.includes(m)}
-                  onChange={() => toggleFilter(selectedManufacturers, setSelectedManufacturers, m)}
-                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
-                />
-                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{m}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Color */}
-      <div className="border-b border-[var(--color-border)]">
-        <button
-          onClick={() => toggleSection('color')}
-          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
-          style={{ color: COLORS.text }}
-        >
-          Color
-          {openSections.color ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
-        </button>
-        {openSections.color && (
-          <div className="pb-3">
-            <div className="grid grid-cols-6 gap-1.5">
-              {Object.entries(COLOR_SWATCHES).map(([name, { hex }]) => {
-                const isActive = selectedColors.includes(name);
-                const isLight = ['white', 'yellow'].includes(name);
-                return (
-                  <button
-                    key={name}
-                    onClick={() => toggleFilter(selectedColors, setSelectedColors, name)}
-                    title={COLOR_SWATCHES[name].label}
-                    className="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-150"
-                    style={{
-                      backgroundColor: hex,
-                      borderColor: isActive ? COLORS.primary : 'var(--color-border)',
-                      boxShadow: isActive ? `0 0 0 1px ${COLORS.primary}` : 'none',
-                    }}
-                  >
-                    {isActive && (
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5L4.5 7.5L8 2.5" stroke={isLight ? '#333' : '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Theme / Subject */}
-      <div className="border-b border-[var(--color-border)]">
-        <button
-          onClick={() => toggleSection('theme')}
-          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
-          style={{ color: COLORS.text }}
-        >
-          Style
-          {openSections.theme ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
-        </button>
-        {openSections.theme && (
-          <div className="pb-3 space-y-1">
-            {THEMES.map((t) => (
-              <label key={t} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selectedThemes.includes(t)}
-                  onChange={() => toggleFilter(selectedThemes, setSelectedThemes, t)}
-                  className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
-                />
-                <span className="text-xs group-hover:text-[var(--color-text)]" style={{ color: COLORS.textDim }}>{t}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Value */}
-      <div className="border-b border-[var(--color-border)]">
-        <button
-          onClick={() => toggleSection('value')}
-          className="w-full flex items-center justify-between py-2.5 text-xs font-semibold uppercase tracking-wide"
-          style={{ color: COLORS.text }}
-        >
-          Value
-          {openSections.value ? <ChevronUp size={14} style={{ color: COLORS.textDim }} /> : <ChevronDown size={14} style={{ color: COLORS.textDim }} />}
-        </button>
-        {openSections.value && (
-          <div className="pb-3 space-y-1">
-            {['Light', 'Medium', 'Dark'].map((v) => (
-              <label key={v} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="value"
-                  checked={selectedValue === v}
-                  onChange={() => { setSelectedValue(selectedValue === v ? '' : v); setPage(1); }}
-                  className="accent-[var(--color-primary)]"
-                />
-                <span className="text-xs" style={{ color: COLORS.textDim }}>{v}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* In Stock */}
-      <div className="py-2.5">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={inStockOnly}
-            onChange={(e) => { setInStockOnly(e.target.checked); setPage(1); }}
-            className="rounded border-[var(--color-border)] accent-[var(--color-primary)]"
-          />
-          <span className="text-xs font-medium" style={{ color: COLORS.text }}>In Stock Only</span>
-        </label>
-      </div>
-    </div>
-  );
+  // ─── Render ─────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Top bar */}
-      <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-30">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1
-              className="text-lg font-semibold"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-            >
-              Fabric Shop
-            </h1>
-            <QuiltPieceRow count={3} size={6} gap={3} />
-          </div>
-          {/* Mobile filter button */}
-          <button
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-            style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.bg }}>
+      {/* ── Hero ─────────────────────────────────────────────────── */}
+      <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 py-10">
+          <p
+            className="text-[11px] uppercase tracking-wide mb-2 font-medium"
+            style={{ color: COLORS.primary, fontFamily: 'var(--font-display)' }}
           >
-            <SlidersHorizontal size={14} />
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ backgroundColor: COLORS.primary, color: COLORS.text }}>
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+            Fabric Shop
+          </p>
+          <h1
+            className="text-[36px] sm:text-[44px] font-semibold leading-tight"
+            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+          >
+            Beautiful Fabrics
+            <br />
+            <span style={{ color: COLORS.primary }}>for Your Next Quilt</span>
+          </h1>
+          <p className="text-[16px] mt-3 max-w-lg" style={{ color: COLORS.textDim }}>
+            Premium cotton fabrics from top designers. Hand-picked for quilters who care about every
+            stitch.
+          </p>
         </div>
       </div>
 
-      {/* Mobile filter overlay */}
-      {showMobileFilters && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-72 bg-[var(--color-surface)] shadow-xl overflow-y-auto">
-            <div className="p-4 flex items-center justify-between border-b border-[var(--color-border)]">
-              <h2 className="text-sm font-semibold" style={{ color: COLORS.text }}>Filters</h2>
-              <div className="flex items-center gap-2">
-                {activeFilterCount > 0 && (
-                  <button onClick={clearAllFilters} className="text-xs" style={{ color: COLORS.primary }}>Clear all</button>
-                )}
-                <button onClick={() => setShowMobileFilters(false)}><X size={18} style={{ color: COLORS.textDim }} /></button>
-              </div>
-            </div>
-            <div className="p-4">
-              <FilterPanel />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
-          {/* Desktop sidebar */}
+      {/* ── Main: sidebar + grid ─────────────────────────────────── */}
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 py-8">
+        <div className="flex gap-10">
+          {/* Sidebar */}
           <aside className="hidden lg:block w-52 flex-shrink-0">
-            <div className="sticky top-16">
-              <FilterPanel />
+            <div className="sticky top-24">
+              <h2
+                className="text-[13px] font-semibold mb-3 pb-2 border-b border-[var(--color-border)]"
+                style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              >
+                Filters
+              </h2>
+              <FilterPanel
+                openSections={openSections}
+                toggleSection={toggleSection}
+                selectedManufacturers={selectedManufacturers}
+                setSelectedManufacturers={setSelectedManufacturers}
+                selectedCollections={selectedCollections}
+                setSelectedCollections={setSelectedCollections}
+                selectedColors={selectedColors}
+                setSelectedColors={setSelectedColors}
+                selectedThemes={selectedThemes}
+                setSelectedThemes={setSelectedThemes}
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
+                inStockOnly={inStockOnly}
+                setInStockOnly={setInStockOnly}
+                onClearAll={clearAllFilters}
+                activeFilterCount={activeFilterCount}
+              />
             </div>
           </aside>
 
-          {/* Main */}
-          <div className="flex-1 min-w-0 py-4">
-            {/* Search + Sort bar */}
-            <div className="flex items-center gap-3 mb-4">
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Search + sort */}
+            <div className="flex items-center gap-3 mb-6">
               <form onSubmit={handleSearch} className="flex-1 relative">
-                <label htmlFor="shop-search" className="sr-only">Search fabrics</label>
                 <Search
-                  size={15}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
                   style={{ color: COLORS.textDim }}
                 />
                 <input
-                  id="shop-search"
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search fabrics..."
-                  className="w-full pl-9 pr-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-sm"
-                  style={{ color: COLORS.text, outlineColor: COLORS.primary }}
+                  placeholder="Search fabrics"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-border)] text-sm"
+                  style={{
+                    borderRadius: RADIUS.full,
+                    color: COLORS.text,
+                  }}
                 />
               </form>
               <select
                 value={sort}
-                onChange={(e) => { setSort(e.target.value as SortOption); setPage(1); }}
-                className="px-3 py-2 rounded-lg text-sm bg-[var(--color-surface)] border border-[var(--color-border)]"
-                style={{ color: COLORS.textDim }}
+                onChange={(e) => {
+                  setSort(e.target.value as SortOption);
+                  setPage(1);
+                }}
+                className="px-4 py-2.5 text-sm bg-[var(--color-surface)] border border-[var(--color-border)]"
+                style={{
+                  borderRadius: RADIUS.full,
+                  color: COLORS.textDim,
+                }}
               >
-                <option value="name">Sort: Name A–Z</option>
-                <option value="price-asc">Sort: Price Low → High</option>
-                <option value="price-desc">Sort: Price High → Low</option>
-                <option value="newest">Sort: Newest</option>
+                <option value="name">Name A to Z</option>
+                <option value="price-asc">Price low to high</option>
+                <option value="price-desc">Price high to low</option>
+                <option value="newest">Newest</option>
               </select>
             </div>
 
-            {/* Active filter pills */}
-            {activeFilters.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 mb-3">
-                {activeFilters.map((f) => (
-                  <span
-                    key={`${f.type}-${f.value}`}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs"
-                    style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
-                  >
-                    {f.label}
-                    <button onClick={() => removeFilter(f)} className="hover:opacity-70">
-                      <X size={11} />
-                    </button>
-                  </span>
-                ))}
-                <button onClick={clearAllFilters} className="text-xs font-medium ml-1" style={{ color: COLORS.textDim }}>
-                  Clear all
-                </button>
-              </div>
-            )}
-
-            {/* Results count */}
-            <p className="text-xs mb-4" style={{ color: COLORS.textDim }}>
-              <span className="font-semibold" style={{ color: COLORS.text }}>{total}</span> fabrics
+            {/* Count */}
+            <p className="text-[13px] mb-6" style={{ color: COLORS.textDim }}>
+              <span className="font-semibold" style={{ color: COLORS.text }}>
+                {total}
+              </span>{' '}
+              fabric{total !== 1 ? 's' : ''}
             </p>
 
             {/* Grid */}
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden animate-pulse">
-                    <div className="aspect-square" style={{ backgroundColor: `${COLORS.primary}1a` }} />
-                    <div className="p-2.5 space-y-1.5">
-                      <div className="h-2.5 rounded w-3/4" style={{ backgroundColor: `${COLORS.primary}33` }} />
-                      <div className="h-2 rounded w-1/2" style={{ backgroundColor: `${COLORS.primary}1a` }} />
-                    </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-5 gap-y-8">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div
+                      className="aspect-square mb-3"
+                      style={{ backgroundColor: `${COLORS.primary}10`, borderRadius: RADIUS.lg }}
+                    />
+                    <div
+                      className="h-3 w-2/3 mb-1.5 rounded"
+                      style={{ backgroundColor: `${COLORS.primary}15` }}
+                    />
+                    <div
+                      className="h-3 w-1/3 rounded"
+                      style={{ backgroundColor: `${COLORS.primary}0d` }}
+                    />
                   </div>
                 ))}
               </div>
             ) : fabrics.length === 0 ? (
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg py-16 text-center">
-                <ShoppingBagLargeIcon size={48} color={COLORS.primary} />
-                <p className="text-base font-medium mt-4 mb-1" style={{ color: COLORS.text }}>No fabrics found</p>
-                <p className="text-sm mb-4" style={{ color: COLORS.textDim }}>
-                  {activeFilterCount > 0 ? 'Try adjusting your filters.' : 'More fabrics coming soon.'}
+              <div className="py-20 text-center">
+                <ShoppingBag size={32} style={{ color: COLORS.textDim, margin: '0 auto' }} />
+                <p className="text-[16px] font-medium mt-4 mb-1" style={{ color: COLORS.text }}>
+                  No fabrics found
+                </p>
+                <p className="text-[13px]" style={{ color: COLORS.textDim }}>
+                  {activeFilterCount > 0
+                    ? 'Try adjusting your filters.'
+                    : 'More fabrics are being added soon.'}
                 </p>
                 {activeFilterCount > 0 && (
-                  <button onClick={clearAllFilters} className="text-sm font-medium" style={{ color: COLORS.primary }}>
-                    Clear all filters
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-[13px] font-medium mt-4 px-4 py-2 rounded-full"
+                    style={{ color: COLORS.primary, backgroundColor: `${COLORS.primary}10` }}
+                  >
+                    Clear filters
                   </button>
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-5 gap-y-8">
                 {fabrics.map((fabric) => (
                   <FabricCard key={fabric.id} fabric={fabric} onAddToCart={handleAddToCart} />
                 ))}
@@ -555,46 +732,31 @@ export default function ShopPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-8 pb-8">
+              <div className="flex items-center justify-center gap-1.5 mt-12 pb-8">
                 <button
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="px-3 py-1.5 rounded text-xs disabled:opacity-40"
+                  className="px-3.5 py-1.5 text-[13px] font-medium disabled:opacity-40 rounded-full"
                   style={{ color: COLORS.textDim }}
-                >
-                  ← Prev
-                </button>
-                {Array.from({ length: totalPages }).map((_, i) => {
-                  const p = i + 1;
-                  if (totalPages > 7) {
-                    if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
-                      return (
-                        <button
-                          key={p}
-                          onClick={() => setPage(p)}
-                          className="w-7 h-7 rounded text-xs font-medium"
-                          style={{
-                            backgroundColor: p === page ? COLORS.primary : 'transparent',
-                            color: p === page ? COLORS.text : COLORS.textDim,
-                          }}
-                        >
-                          {p}
-                        </button>
-                      );
-                    }
-                    if (p === page - 2 || p === page + 2) {
-                      return <span key={p} className="text-xs" style={{ color: COLORS.textDim }}>…</span>;
-                    }
-                    return null;
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = `${COLORS.primary}10`)
                   }
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  Prev
+                </button>
+                {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+                  const p = totalPages <= 5 ? i + 1 : Math.max(1, page - 2) + i;
+                  if (p > totalPages) return null;
                   return (
                     <button
                       key={p}
                       onClick={() => setPage(p)}
-                      className="w-7 h-7 rounded text-xs font-medium"
+                      className="w-8 h-8 text-[13px] font-medium rounded-full"
                       style={{
                         backgroundColor: p === page ? COLORS.primary : 'transparent',
                         color: p === page ? COLORS.text : COLORS.textDim,
+                        transition: `background-color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
                       }}
                     >
                       {p}
@@ -604,80 +766,19 @@ export default function ShopPage() {
                 <button
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="px-3 py-1.5 rounded text-xs disabled:opacity-40"
+                  className="px-3.5 py-1.5 text-[13px] font-medium disabled:opacity-40 rounded-full"
                   style={{ color: COLORS.textDim }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = `${COLORS.primary}10`)
+                  }
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  Next →
+                  Next
                 </button>
               </div>
             )}
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function FabricCard({
-  fabric,
-  onAddToCart,
-}: {
-  fabric: ShopFabric;
-  onAddToCart: (f: ShopFabric) => void;
-}) {
-  const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '—';
-
-  return (
-    <div className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
-      {/* Swatch */}
-      <div className="aspect-square relative overflow-hidden bg-[var(--color-bg)]">
-        {fabric.imageUrl.startsWith('/') ? (
-          <img
-            src={fabric.imageUrl}
-            alt={fabric.name}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : fabric.hex ? (
-          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
-        ) : null}
-      </div>
-
-      {/* Info */}
-      <div className="p-2.5 space-y-0.5">
-        <h3 className="text-[11px] font-medium leading-snug" style={{ color: COLORS.text }}>
-          {fabric.name}
-        </h3>
-        {fabric.collection && (
-          <p className="text-[10px]" style={{ color: COLORS.textDim }}>
-            {fabric.collection}
-          </p>
-        )}
-        {fabric.description && (
-          <p className="text-[10px] line-clamp-2 leading-tight" style={{ color: COLORS.textDim }}>
-            {fabric.description.split('\n')[0]}
-          </p>
-        )}
-        <div className="flex items-center justify-between pt-1">
-          <span className="text-sm font-semibold" style={{ color: COLORS.text }}>
-            {price}<span className="text-[10px] font-normal" style={{ color: COLORS.textDim }}>/yd</span>
-          </span>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => onAddToCart(fabric)}
-          disabled={!fabric.inStock || !fabric.shopifyVariantId}
-          className="w-full mt-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{
-            backgroundColor: COLORS.primary,
-            color: COLORS.text,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = COLORS_HOVER.primary)}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = COLORS.primary)}
-        >
-          {!fabric.shopifyVariantId ? 'Coming Soon' : !fabric.inStock ? 'Out of Stock' : 'Add to Cart'}
-        </button>
       </div>
     </div>
   );

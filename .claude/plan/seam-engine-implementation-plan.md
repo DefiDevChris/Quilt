@@ -1,5 +1,7 @@
 # Seam Engine Implementation Plan
 
+> **SUPERSEDED 2026-04-14** — this classical-CV plan (SLIC + clustering + contours) was replaced by the SAM-based pipeline in [`seam-engine-sam-rfc.md`](./seam-engine-sam-rfc.md). Kept for historical context only; do NOT implement against this plan.
+
 Companion to `seam-engine-vectorization-spec.md`. Spec = algorithms; this = sequencing, risks, and acceptance gates.
 
 ## Ground-Truth Findings (Pre-Planning)

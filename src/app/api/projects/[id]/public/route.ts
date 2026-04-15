@@ -46,7 +46,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const [creator] = await db
     .select({
       displayName: userProfiles.displayName,
-      username: userProfiles.username,
       avatarUrl: userProfiles.avatarUrl,
     })
     .from(userProfiles)

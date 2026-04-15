@@ -42,7 +42,6 @@
     "playwright-report",
     "drizzle",
     ".playwright-mcp",
-    "tests",
-    "social-threads"
+    "tests"
   ]
 }

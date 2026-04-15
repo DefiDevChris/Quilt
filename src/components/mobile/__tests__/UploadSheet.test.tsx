@@ -13,10 +13,9 @@ describe('UploadSheet', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  it('renders two options when open', () => {
+  it('renders upload option when open', () => {
     render(<UploadSheet isOpen={true} onClose={() => {}} />);
     expect(screen.getByText('Upload Photo')).toBeDefined();
-    expect(screen.getByText('Share to Social')).toBeDefined();
   });
 
   it('calls onClose when backdrop is clicked', () => {

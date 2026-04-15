@@ -1,6 +1,6 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, getAuthDerived } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { saveTempProject } from '@/lib/temp-project-storage';
 
@@ -63,7 +63,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
 
   if (!projectId || !fabricCanvas) return;
 
-  const isPro = useAuthStore.getState().isPro;
+  const { isPro } = getAuthDerived();
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
 

@@ -10,6 +10,7 @@ global.fetch = mockFetch;
 // Mock auth store
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: vi.fn(() => true), // isPro = true by default
+  useAuthDerived: vi.fn(() => ({ isPro: true, isAdmin: false })),
 }));
 
 // Mock BlockUploadDialog

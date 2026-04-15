@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';
@@ -44,13 +44,13 @@ export function BlockLibrary({
   const deleteUserBlock = useBlockStore((s) => s.deleteUserBlock);
   const selectedBlockId = useBlockStore((s) => s.selectedBlockId);
   const setSelectedBlockId = useBlockStore((s) => s.setSelectedBlockId);
-  const isPro = useAuthStore((s) => s.isPro);
+  const { isPro } = useAuthDerived();
 
   const [previewBlock, setPreviewBlock] = useState<BlockListItem | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('library');
   const [blockFilter, setBlockFilter] = useState<BlockFilter>('all');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [recentlyUsed, setRecentlyUsed] = useState<string[]>([]);
+  const [recentlyUsed, setRecentlyUsed] = useState<string[]>(getRecentlyUsedBlocks());
 
   const fetchBlocks = useBlockStore((s) => s.fetchBlocks);
 
@@ -83,10 +83,6 @@ export function BlockLibrary({
     },
     [onBlockDragStart]
   );
-
-  useEffect(() => {
-    setRecentlyUsed(getRecentlyUsedBlocks());
-  }, []);
 
   return (
     <>
