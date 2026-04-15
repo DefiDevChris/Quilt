@@ -157,6 +157,7 @@ export async function POST(request: NextRequest) {
       canvasWidth: bodyWidth,
       canvasHeight: bodyHeight,
       gridSettings,
+      canvasData,
     } = parsed.data;
 
     const canvasWidth = bodyWidth;
@@ -171,6 +172,7 @@ export async function POST(request: NextRequest) {
         canvasWidth,
         canvasHeight,
         gridSettings,
+        ...(canvasData ? { canvasData } : {}),
       })
       .returning();
 

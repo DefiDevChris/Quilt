@@ -1,65 +1,79 @@
 import type { ProcessParams } from '@/types/photo-to-design';
 
-/**
- * Mapping from ReviewScreen slider values (0–100) to OpenCV ProcessParams.
- *
- * Each slider controls one or more CV parameters. The ranges are chosen
- * to produce visually useful results across typical quilt photographs.
- */
-
 export interface SliderValues {
-  lighting: number;       // 0-100 → claheClipLimit 1.0-8.0
-  smoothing: number;      // 0-100 → bilateral d 3-21, sigma 20-150
-  heavyPrints: boolean;   // → gaussianBlurSize (off or 5)
-  colors: number;         // 0-100 → kColors (0=auto, 2-30)
-  minPatchSize: number;   // 0-100 → minPatchArea 100-5000 px
-  edgeEnhance: boolean;   // → edgeEnhance flag
-  edgeSensitivity: number;// 0-100 → cannyLow 10-100, cannyHigh 30-230
-  gridSnap: number;       // 0-100 → gridSnapTolerance 2-22 px
-}
-
-function lerp(min: number, max: number, t: number): number {
-  return min + (max - min) * (t / 100);
-}
-
-function clampOdd(value: number): number {
-  return value % 2 === 0 ? value + 1 : value;
+  lighting: number;
+  smoothing: number;
+  heavyPrints: boolean;
+  colors: number;
+  minPatchSize: number;
+  edgeEnhance: boolean;
+  edgeSensitivity: number;
+  gridSnap: number;
+  pixelsPerUnit: number;
+  unit: 'in' | 'cm';
 }
 
 /**
- * Convert slider values to ProcessParams for the worker.
+ * Convert slider values to ProcessParams for the CV pipeline.
+ * Matches the spec formula exactly.
  */
 export function slidersToProcessParams(
   sliders: SliderValues,
+  totalPixels: number,
   pixelsPerUnit: number,
-  unit: 'in' | 'cm',
+  unit: 'in' | 'cm'
 ): ProcessParams {
-  const claheClipLimit = lerp(1.0, 8.0, sliders.lighting);
-  const bilateralD = clampOdd(Math.round(lerp(3, 21, sliders.smoothing)));
-  const bilateralSigmaColor = Math.round(lerp(20, 150, sliders.smoothing));
-  const bilateralSigmaSpace = Math.round(lerp(20, 150, sliders.smoothing));
-  const gaussianBlurSize = sliders.heavyPrints ? 5 : 0;
-  const kColors = sliders.colors === 0 ? 0 : Math.round(lerp(2, 30, sliders.colors));
-  const minPatchArea = Math.round(lerp(100, 5000, sliders.minPatchSize));
-  const cannyLow = Math.round(lerp(10, 100, sliders.edgeSensitivity));
-  const cannyHigh = Math.round(lerp(30, 230, sliders.edgeSensitivity));
-  const gridSnapTolerance = Math.round(lerp(2, 22, sliders.gridSnap));
-
   return {
-    claheClipLimit,
+    claheClipLimit: 1.0 + (sliders.lighting / 100) * 7.0,
     claheGridSize: 8,
-    gaussianBlurSize,
-    bilateralD,
-    bilateralSigmaColor,
-    bilateralSigmaSpace,
-    kColors,
-    minPatchArea,
+
+    gaussianBlurSize: sliders.heavyPrints ? (sliders.smoothing > 50 ? 7 : 5) : 0,
+
+    bilateralD: (() => {
+      const d = Math.round(3 + (sliders.smoothing / 100) * 18);
+      return d % 2 === 0 ? d + 1 : d;
+    })(),
+    bilateralSigmaColor: 20 + (sliders.smoothing / 100) * 130,
+    bilateralSigmaSpace: 20 + (sliders.smoothing / 100) * 130,
+
+    kColors: sliders.colors === 0 ? 0 : Math.round(2 + (sliders.colors / 100) * 28),
+
+    minPatchArea: Math.round((0.0001 + (sliders.minPatchSize / 100) * 0.05) * totalPixels),
+
     edgeEnhance: sliders.edgeEnhance,
-    cannyLow,
-    cannyHigh,
-    gridSnapEnabled: sliders.gridSnap > 0,
-    gridSnapTolerance,
+    cannyLow: Math.round(10 + (1 - sliders.edgeSensitivity / 100) * 90),
+    cannyHigh: Math.round(30 + (1 - sliders.edgeSensitivity / 100) * 200),
+
+    gridSnapEnabled: sliders.gridSnap > 5,
+    gridSnapTolerance: Math.round(2 + (sliders.gridSnap / 100) * 20),
+
     pixelsPerUnit,
     unit,
   };
+}
+
+/**
+ * Legacy overload: convert slider values to ProcessParams without
+ * totalPixels/pixelsPerUnit context. Uses defaults.
+ */
+export function slidersToProcessParamsSimple(sliders: SliderValues): ProcessParams {
+  return slidersToProcessParams(sliders, 1_000_000, 1, 'in');
+}
+
+/**
+ * Default ProcessParams when no calibration has been done yet.
+ */
+export function defaultProcessParams(): ProcessParams {
+  return slidersToProcessParamsSimple({
+    lighting: 30,
+    smoothing: 50,
+    heavyPrints: false,
+    colors: 0,
+    minPatchSize: 30,
+    edgeEnhance: false,
+    edgeSensitivity: 50,
+    gridSnap: 50,
+    pixelsPerUnit: 1,
+    unit: 'in',
+  });
 }

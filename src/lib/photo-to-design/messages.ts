@@ -1,5 +1,11 @@
 /// <reference lib="webworker" />
-import type { Point, Patch, ShapeTemplate, DetectedGrid, ProcessParams } from '@/types/photo-to-design';
+import type {
+  Point,
+  Patch,
+  ShapeTemplate,
+  DetectedGrid,
+  ProcessParams,
+} from '@/types/photo-to-design';
 
 // ── Main → Worker ──────────────────────────────────────────────────────────
 
@@ -7,10 +13,19 @@ export type InMessage =
   | { type: 'init'; requestId: string; payload?: undefined }
   | { type: 'loadImage'; requestId: string; payload: { imageData: ImageData } }
   | { type: 'autoDetectCorners'; requestId: string; payload: { imageData: ImageData } }
-  | { type: 'warpPerspective'; requestId: string; payload: { corners: Point[]; imageData: ImageData } }
-  | { type: 'process'; requestId: string; payload: { params: ProcessParams; quality: 'preview' | 'full' } }
+  | {
+      type: 'warpPerspective';
+      requestId: string;
+      payload: { corners: Point[]; imageData: ImageData };
+    }
+  | {
+      type: 'process';
+      requestId: string;
+      payload: { params: ProcessParams; quality: 'preview' | 'full' };
+    }
   | { type: 'splitPatch'; requestId: string; payload: { patchId: number; line: [Point, Point] } }
   | { type: 'mergePatches'; requestId: string; payload: { aId: number; bId: number } }
+  | { type: 'findSeamPair'; requestId: string; payload: { point: Point } }
   | { type: 'floodFill'; requestId: string; payload: { point: Point; targetId: number } }
   | { type: 'undo'; requestId: string; payload?: undefined }
   | { type: 'redo'; requestId: string; payload?: undefined }
@@ -20,6 +35,17 @@ export type InMessage =
 
 export type OutMessage =
   | { type: 'response'; requestId: string; payload: { ok: boolean } }
+  | {
+      type: 'response';
+      requestId: string;
+      payload: { ok: boolean; corners: [Point, Point, Point, Point] | null };
+    }
+  | {
+      type: 'response';
+      requestId: string;
+      payload: { ok: boolean; pair: { aId: number; bId: number } | null };
+    }
+  | { type: 'response'; requestId: string; payload: { ok: boolean; imageData: ImageData } }
   | { type: 'ready'; requestId: '' }
   | { type: 'progress'; requestId: string; stage: string; percent: number }
   | {

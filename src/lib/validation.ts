@@ -66,6 +66,12 @@ export const createProjectSchema = z.object({
   canvasWidth: z.number().min(1).max(200).default(48),
   canvasHeight: z.number().min(1).max(200).default(48),
   gridSettings: gridSettingsSchema.default({ enabled: true, size: 1, snapToGrid: true }),
+  /**
+   * Optional pre-populated canvas payload. Used by feature surfaces (e.g.
+   * Photo-to-Design) that create a project seeded with structured canvas
+   * data such as `photoToDesign: StudioImportPayload` + `initialSetup`.
+   */
+  canvasData: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const updateProjectSchema = z.object({

@@ -36,13 +36,28 @@ Copy `build_js/bin/opencv.js` and `build_js/bin/opencv.wasm` to `public/opencv/`
 
 ## Stock Build (Fallback)
 
-If a custom build is not feasible, use `@techstark/opencv-js`:
+If a custom build is not feasible, use the stock OpenCV.js distribution:
 
 ```bash
-npm install @techstark/opencv-js
+curl -sL -o public/opencv/opencv.js "https://docs.opencv.org/4.10.0/opencv.js"
 ```
 
-The stock build is ~8+ MB and includes all OpenCV modules. This works for development but should be replaced with a custom build before launch.
+This ships the full ~10 MB WASM bundle. Works for development but should be
+replaced with a custom `core,imgproc` build before launch. The file is
+gitignored so the bundle never lands in the repo.
+
+### Known quirks of the stock 4.10 build
+
+The stock distribution omits a few enums/methods the Photo-to-Design pipeline
+originally relied on; `pipeline.ts` works around each:
+
+- `cv.COLOR_RGBA2Lab` and `cv.COLOR_Lab2RGBA` are missing → go via
+  `COLOR_RGBA2RGB` → `COLOR_RGB2Lab` (and the reverse).
+- `cv.bilateralFilter` rejects 4-channel RGBA Mats → strip alpha first.
+- `Mat.reshape` is not exposed → build sample matrices directly from
+  `mat.data` Float32/Int32 arrays.
+- `cv.TermCriteria` is a plain JS struct, not a wrapped C++ object →
+  never call `.delete()` on it.
 
 ## TODO
 

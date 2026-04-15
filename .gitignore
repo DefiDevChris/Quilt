@@ -124,7 +124,8 @@ quilt_dataset/
 temp/
 test-results-json/
 
-# OpenCV.js (custom build — stock or gitignored)
+# OpenCV.js (custom build — stock or gitignored; 10 MB)
+public/opencv/opencv.js
 public/opencv/opencv.wasm
 
 # One-time use scripts

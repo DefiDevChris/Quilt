@@ -1,5 +1,5 @@
 import type { InMessage, OutMessage } from './messages';
-import type { ProcessParams, Patch, ShapeTemplate, DetectedGrid } from '@/types/photo-to-design';
+import type { ProcessParams, Point } from '@/types/photo-to-design';
 import { usePhotoDesignStore } from '@/stores/photoDesignStore';
 
 /**
@@ -11,7 +11,10 @@ import { usePhotoDesignStore } from '@/stores/photoDesignStore';
  */
 export class PhotoDesignClient {
   private worker: Worker;
-  private pending = new Map<string, { resolve: (value: unknown) => void; reject: (error: Error) => void }>();
+  private pending = new Map<
+    string,
+    { resolve: (value: unknown) => void; reject: (error: Error) => void }
+  >();
   private previewDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -52,6 +55,53 @@ export class PhotoDesignClient {
     return this.call('process', { params, quality: 'full' });
   }
 
+  // ── Manual-edit wrappers ───────────────────────────────────────────────
+
+  splitPatch(patchId: number, line: [Point, Point]): Promise<void> {
+    return this.call('splitPatch', { patchId, line });
+  }
+
+  mergePatches(aId: number, bId: number): Promise<void> {
+    return this.call('mergePatches', { aId, bId });
+  }
+
+  /**
+   * Sample both sides of a boundary near `point` and return the two patch
+   * IDs on either side. Used by Erase Seam to pick the pair automatically
+   * from a single click.
+   */
+  findSeamPair(point: Point): Promise<{ pair: { aId: number; bId: number } | null }> {
+    return this.call('findSeamPair', { point });
+  }
+
+  floodFill(point: Point, targetId: number): Promise<void> {
+    return this.call('floodFill', { point, targetId });
+  }
+
+  undo(): Promise<void> {
+    return this.call('undo');
+  }
+
+  redo(): Promise<void> {
+    return this.call('redo');
+  }
+
+  /**
+   * Send `dispose` to the worker (frees OpenCV mats) and then terminate.
+   * Use this on unmount of the Photo-to-Design feature to fully release the
+   * ~200 MB WASM heap before navigation.
+   */
+  async disposeWorker(): Promise<void> {
+    try {
+      // Fire-and-forget — we don't actually get a reply because the worker
+      // may self-close. Give it a short window to run cleanup, then terminate.
+      this.worker.postMessage({ type: 'dispose', requestId: crypto.randomUUID() } as InMessage);
+      await new Promise((r) => setTimeout(r, 20));
+    } finally {
+      this.dispose();
+    }
+  }
+
   // ── Internal ───────────────────────────────────────────────────────────
 
   private route(msg: OutMessage) {
@@ -86,7 +136,7 @@ export class PhotoDesignClient {
         break;
 
       case 'editResult':
-        // Phase 6: update patches after manual edit
+        usePhotoDesignStore.getState().applyEditResult(msg.changedPatches, msg.removedIds);
         usePhotoDesignStore.getState().setProcessing(false);
         break;
 

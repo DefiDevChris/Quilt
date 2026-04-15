@@ -9,7 +9,8 @@ export interface PhotoDesignState {
 
   // ── Upload ─────────────────────────────────────────────────────────
   sourceFile: File | null;
-  sourceObjectUrl: string | null;
+  sourceObjectUrl: string | null; // original file URL (for display)
+  downscaledObjectUrl: string | null; // downscaled URL (for CV operations)
   sourceDimensions: { width: number; height: number } | null;
 
   // ── Perspective ────────────────────────────────────────────────────
@@ -78,6 +79,7 @@ function createDefaultState(): PhotoDesignState {
     stage: 'upload',
     sourceFile: null,
     sourceObjectUrl: null,
+    downscaledObjectUrl: null,
     sourceDimensions: null,
     corners: null,
     correctedImageUrl: null,
@@ -112,16 +114,30 @@ interface PhotoDesignActions {
   setStage: (stage: Stage) => void;
   canAdvance: (target: Stage) => boolean;
 
-  setSourceFile: (file: File, objectUrl: string, dimensions: { width: number; height: number }) => void;
+  setSourceFile: (
+    file: File,
+    objectUrl: string,
+    dimensions: { width: number; height: number },
+    downscaledUrl: string
+  ) => void;
   setCorners: (corners: [Point, Point, Point, Point]) => void;
   setCorrectedImageUrl: (url: string | null) => void;
-  setCalibration: (points: [Point, Point], distance: number, unit: 'in' | 'cm', pixelsPerUnit: number) => void;
+  setCalibration: (
+    points: [Point, Point],
+    distance: number,
+    unit: 'in' | 'cm',
+    pixelsPerUnit: number
+  ) => void;
 
-  setSlider: <K extends keyof PhotoDesignState['sliders']>(key: K, value: PhotoDesignState['sliders'][K]) => void;
+  setSlider: <K extends keyof PhotoDesignState['sliders']>(
+    key: K,
+    value: PhotoDesignState['sliders'][K]
+  ) => void;
 
   setProcessing: (isProcessing: boolean, stage?: string, percent?: number) => void;
   setPreviewResult: (outlines: Float32Array, colors: string[], patchCount: number) => void;
   setFullResult: (patches: Patch[], templates: ShapeTemplate[], grid: DetectedGrid) => void;
+  applyEditResult: (changedPatches: Patch[], removedIds: number[]) => void;
   setUndoRedoState: (canUndo: boolean, canRedo: boolean) => void;
 
   setSelectedPatchId: (id: number | null) => void;
@@ -163,8 +179,13 @@ export const usePhotoDesignStore = create<PhotoDesignStore>()((set, get) => ({
   },
 
   // ── Upload ───────────────────────────────────────────────────────
-  setSourceFile: (file, objectUrl, dimensions) =>
-    set({ sourceFile: file, sourceObjectUrl: objectUrl, sourceDimensions: dimensions }),
+  setSourceFile: (file, objectUrl, dimensions, downscaledUrl) =>
+    set({
+      sourceFile: file,
+      sourceObjectUrl: objectUrl,
+      downscaledObjectUrl: downscaledUrl,
+      sourceDimensions: dimensions,
+    }),
 
   // ── Perspective ──────────────────────────────────────────────────
   setCorners: (corners) => set({ corners }),
@@ -199,6 +220,62 @@ export const usePhotoDesignStore = create<PhotoDesignStore>()((set, get) => ({
   setFullResult: (patches, templates, grid) =>
     set({ patches, templates, grid, previewPatchCount: patches.length }),
 
+  applyEditResult: (changedPatches, removedIds) =>
+    set((state) => {
+      const current = state.patches ?? [];
+      const removedSet = new Set(removedIds);
+      const byId = new Map<number, Patch>();
+      for (const p of current) {
+        if (!removedSet.has(p.id)) byId.set(p.id, p);
+      }
+      for (const p of changedPatches) byId.set(p.id, p);
+      const nextPatches = Array.from(byId.values());
+
+      // Update template instance counts from the new patch set so the
+      // right sidebar stays in sync without a full re-classification.
+      const existing = state.templates ?? [];
+      const idsByTemplate = new Map<string, number[]>();
+      for (const p of nextPatches) {
+        const arr = idsByTemplate.get(p.templateId) ?? [];
+        arr.push(p.id);
+        idsByTemplate.set(p.templateId, arr);
+      }
+      const nextTemplates: ShapeTemplate[] = existing.map((t) => ({
+        ...t,
+        instanceIds: idsByTemplate.get(t.id) ?? [],
+        instanceCount: (idsByTemplate.get(t.id) ?? []).length,
+      }));
+
+      // If an edit produced a brand-new templateId (e.g. "custom-123"), add a
+      // synthetic template so the Studio export keeps a row for it.
+      for (const [tid, ids] of idsByTemplate) {
+        if (!nextTemplates.some((t) => t.id === tid)) {
+          nextTemplates.push({
+            id: tid,
+            name: tid.startsWith('custom-') ? 'Custom' : tid,
+            normalizedPolygon: [],
+            realWorldSize: { w: 0, h: 0 },
+            instanceCount: ids.length,
+            instanceIds: ids,
+          });
+        }
+      }
+
+      return {
+        patches: nextPatches,
+        templates: nextTemplates,
+        previewPatchCount: nextPatches.length,
+        selectedPatchId:
+          state.selectedPatchId !== null && removedSet.has(state.selectedPatchId)
+            ? null
+            : state.selectedPatchId,
+        hoveredPatchId:
+          state.hoveredPatchId !== null && removedSet.has(state.hoveredPatchId)
+            ? null
+            : state.hoveredPatchId,
+      };
+    }),
+
   setUndoRedoState: (canUndo, canRedo) => set({ canUndo, canRedo }),
 
   // ── Review ───────────────────────────────────────────────────────
@@ -216,9 +293,15 @@ export const usePhotoDesignStore = create<PhotoDesignStore>()((set, get) => ({
 
   dispose: () => {
     const state = get();
-    // Revoke object URL if present
+    // Revoke object URLs if present
     if (state.sourceObjectUrl) {
       URL.revokeObjectURL(state.sourceObjectUrl);
+    }
+    if (state.downscaledObjectUrl) {
+      URL.revokeObjectURL(state.downscaledObjectUrl);
+    }
+    if (state.correctedImageUrl) {
+      URL.revokeObjectURL(state.correctedImageUrl);
     }
     set(createDefaultState());
   },
