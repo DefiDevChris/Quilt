@@ -15,13 +15,6 @@ test.describe('Dashboard Buttons', () => {
     }
   });
 
-  test('photo to design button', async ({ page }) => {
-    const photoBtn = page.getByText(/photo to design/i);
-    if (await photoBtn.isVisible()) {
-      await photoBtn.click();
-    }
-  });
-
   test('view all projects button', async ({ page }) => {
     const viewAllBtn = page.getByRole('button', { name: /view all|all projects/i });
     if (await viewAllBtn.isVisible()) {

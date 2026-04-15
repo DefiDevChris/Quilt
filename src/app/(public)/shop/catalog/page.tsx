@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useCartStore } from '@/stores/cartStore';
 import { Search, ChevronDown, Sparkles, ShoppingBag } from 'lucide-react';
-import { COLORS, SHADOW, COLORS_HOVER, RADIUS, MOTION } from '@/lib/design-system';
-import { ShoppingBagLargeIcon } from '@/components/shop/ShopIcons';
+import { COLORS, COLORS_HOVER, RADIUS, MOTION } from '@/lib/design-system';
 import ShopHeader from '@/components/shop/ShopHeader';
 import ShopFooter from '@/components/shop/ShopFooter';
 import { CartDrawer } from '@/components/shop/CartDrawer';
@@ -412,6 +411,7 @@ function FabricCard({
 export default function ShopPage() {
   const [fabrics, setFabrics] = useState<ShopFabric[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [shopEnabled, setShopEnabled] = useState<boolean | null>(null);
   const [search, setSearch] = useState('');
   const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>([]);
@@ -433,8 +433,8 @@ export default function ShopPage() {
     value: false,
   });
 
-  const addItem = useCartStore((s) => s.addItem);
-  const toggleDrawer = useCartStore((s) => s.toggleDrawer);
+  const addItemAndSync = useCartStore((s) => s.addItemAndSync);
+  const setDrawerOpen = useCartStore((s) => s.setDrawerOpen);
 
   useEffect(() => {
     fetch('/api/shop/settings')
@@ -445,6 +445,7 @@ export default function ShopPage() {
 
   const fetchFabrics = useCallback(async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
@@ -462,6 +463,7 @@ export default function ShopPage() {
         setFabrics([]);
         setTotal(0);
         setTotalPages(1);
+        setFetchError('Could not load fabrics. Please try again.');
         return;
       }
 
@@ -471,6 +473,7 @@ export default function ShopPage() {
       setTotalPages(json.data.pagination.totalPages);
     } catch {
       setFabrics([]);
+      setFetchError('Could not load fabrics. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -494,9 +497,10 @@ export default function ShopPage() {
     setPage(1);
   };
 
-  const handleAddToCart = (fabric: ShopFabric) => {
+  const handleAddToCart = async (fabric: ShopFabric) => {
     if (!fabric.shopifyVariantId || !fabric.inStock) return;
-    addItem({
+    setDrawerOpen(true);
+    await addItemAndSync({
       fabricId: fabric.id,
       shopifyVariantId: fabric.shopifyVariantId,
       quantityInYards: 0.25,
@@ -504,7 +508,6 @@ export default function ShopPage() {
       fabricName: fabric.name,
       fabricImageUrl: fabric.thumbnailUrl ?? fabric.imageUrl,
     });
-    toggleDrawer();
   };
 
   const clearAllFilters = () => {
@@ -578,6 +581,7 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: COLORS.bg }}>
+      <ShopHeader />
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 py-10">
@@ -684,6 +688,30 @@ export default function ShopPage() {
               fabric{total !== 1 ? 's' : ''}
             </p>
 
+            {/* Fetch error banner */}
+            {fetchError && !loading && (
+              <div
+                className="mb-4 px-4 py-3 rounded-lg text-[13px]"
+                style={{
+                  backgroundColor: `${COLORS.error}0d`,
+                  borderColor: `${COLORS.error}33`,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  color: COLORS.error,
+                }}
+                role="alert"
+              >
+                {fetchError}{' '}
+                <button
+                  type="button"
+                  onClick={fetchFabrics}
+                  className="font-semibold underline ml-1"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             {/* Grid */}
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-5 gap-y-8">
@@ -783,6 +811,8 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+      <ShopFooter />
+      <CartDrawer />
     </div>
   );
 }

@@ -134,7 +134,7 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
     { key: 'myfabrics', label: 'My Fabrics' },
   ];
   if (shopEnabled) {
-    tabs.push({ key: 'shop', label: 'Shop' });
+    tabs.push({ key: 'shop', label: 'QuiltCorgi' });
   }
 
   return (

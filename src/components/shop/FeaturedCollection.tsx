@@ -7,7 +7,7 @@ export default function FeaturedCollection() {
     <section className="py-24" style={{ backgroundColor: COLORS.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="rounded-2xl overflow-hidden flex flex-col md:flex-row items-center border"
+          className="rounded-lg overflow-hidden flex flex-col md:flex-row items-center border"
           style={{
             backgroundColor: `${COLORS.secondary}33`,
             borderColor: `${COLORS.secondary}4d`,
@@ -29,11 +29,9 @@ export default function FeaturedCollection() {
             >
               New Fabric Collections
             </h2>
-            <p
-              className="text-lg mb-8 leading-relaxed"
-              style={{ color: COLORS.textDim }}
-            >
-              Shop our latest original designs, created with love for your next quilting project. High-quality cottons in exclusive, vibrant prints.
+            <p className="text-lg mb-8 leading-relaxed" style={{ color: COLORS.textDim }}>
+              Shop our latest original designs, created with love for your next quilting project.
+              High-quality cottons in exclusive, vibrant prints.
             </p>
             <div>
               <a

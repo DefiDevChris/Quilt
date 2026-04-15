@@ -374,24 +374,10 @@ export function useCanvasInit(
           delete sanitized.backgroundImage;
         }
 
-        // Photo-to-Design one-shot hydration: strip the photoToDesign key
-        // before loadFromJSON (it's our domain shape, not Fabric JSON) and
-        // keep a reference to build polygons after the canvas loads.
-        const ptdPayload = sanitized.photoToDesign as
-          | import('@/types/photo-to-design').StudioImportPayload
-          | undefined;
-        if (ptdPayload) {
-          delete sanitized.photoToDesign;
-        }
-
         try {
           await canvas.loadFromJSON(sanitized);
         } catch (err) {
           console.error('Failed to load canvas state from JSON:', err);
-        }
-
-        if (ptdPayload) {
-          await hydratePhotoToDesignPatches(canvas, fabric, ptdPayload, project);
         }
       }
       canvas.renderAll();
@@ -456,62 +442,4 @@ export function useCanvasInit(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- Only re-init on project.id change
   }, [project.id, fabricCanvasRef, gridCanvasRef, containerRef]);
-}
-
-/**
- * One-shot hydration of a Photo-to-Design `StudioImportPayload` into the
- * Studio's Fabric canvas. Creates one Fabric polygon per patch at the
- * payload's real-world coordinates, scaled to the artboard. Once the
- * polygons are added, clears `project.canvasData.photoToDesign` so the
- * import never re-fires on subsequent renders.
- */
-async function hydratePhotoToDesignPatches(
-  canvas: import('fabric').Canvas,
-  fabric: typeof import('fabric'),
-  payload: import('@/types/photo-to-design').StudioImportPayload,
-  project: Project
-): Promise<void> {
-  const pxPerUnit = getPixelsPerUnit(project.unitSystem);
-
-  for (const patch of payload.patches) {
-    if (!patch.polygon || patch.polygon.length < 3) continue;
-
-    // Convert real-world (inches / cm) coordinates to canvas pixels using the
-    // Studio's pixels-per-unit. A patch polygon drawn at [10, 5] inches lands
-    // at 10*pxPerUnit, 5*pxPerUnit on the canvas.
-    const points = patch.polygon.map((p) => ({
-      x: p.x * pxPerUnit,
-      y: p.y * pxPerUnit,
-    }));
-
-    const polygon = new fabric.Polygon(points, {
-      fill: patch.fill,
-      stroke: '#1a1a1a',
-      strokeWidth: 1,
-      objectCaching: false,
-      originX: 'left',
-      originY: 'top',
-    });
-
-    // Custom metadata used by Studio printlist / export features.
-    (polygon as unknown as { metadata?: Record<string, unknown> }).metadata = {
-      source: 'photo-to-design',
-      templateId: patch.templateId,
-      colorPalette: patch.colorPalette,
-      swatch: patch.swatch,
-      patchId: patch.id,
-    };
-
-    canvas.add(polygon);
-  }
-
-  canvas.renderAll();
-
-  // Strip the payload from in-memory canvasData so subsequent saves and
-  // re-reads don't re-hydrate.
-  if ('photoToDesign' in project.canvasData) {
-    const { photoToDesign: _consumed, ...rest } = project.canvasData;
-    void _consumed;
-    project.canvasData = rest as Project['canvasData'];
-  }
 }

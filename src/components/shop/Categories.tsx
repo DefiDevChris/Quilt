@@ -29,10 +29,11 @@ export default function Categories() {
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
-                    (e.target as HTMLImageElement).parentElement!.style.backgroundColor = `${COLORS.primary}20`;
+                    (e.target as HTMLImageElement).parentElement!.style.backgroundColor =
+                      `${COLORS.primary}20`;
                   }}
                 />
               </div>

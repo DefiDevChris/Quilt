@@ -22,8 +22,16 @@ export function verifyWebhookSignature(
   hmacHeader: string,
   secret: string
 ): boolean {
-  const hash = createHmac('sha256', secret).update(rawBody).digest('base64');
-  return timingSafeEqual(Buffer.from(hash), Buffer.from(hmacHeader));
+  if (!secret || !hmacHeader) return false;
+
+  const expected = Buffer.from(
+    createHmac('sha256', secret).update(rawBody, 'utf8').digest('base64')
+  );
+  const provided = Buffer.from(hmacHeader);
+
+  // timingSafeEqual throws if buffers differ in length — guard explicitly
+  if (expected.length !== provided.length) return false;
+  return timingSafeEqual(expected, provided);
 }
 
 /**

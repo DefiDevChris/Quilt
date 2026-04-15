@@ -16,14 +16,6 @@ test.describe('Authenticated Dashboard', () => {
     const newDesignCard = page.getByText(/new design/i);
     await expect(newDesignCard).toBeVisible({ timeout: 10000 });
   });
-
-  test('photo to design card is visible', async ({ page }) => {
-    await page.goto('/dashboard');
-    const photoCard = page.getByText(/photo to design/i);
-    if (await photoCard.isVisible()) {
-      await expect(photoCard).toBeVisible();
-    }
-  });
 });
 
 test.describe('Authenticated Projects', () => {
@@ -189,18 +181,6 @@ test.describe('History and Save', () => {
 test.describe('Photo to Design', () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page, 'pro');
-  });
-
-  test('photo to design dialog opens', async ({ page }) => {
-    await page.goto('/dashboard');
-    const photoButton = page.getByText(/photo to design/i);
-    if (await photoButton.isVisible()) {
-      await photoButton.click();
-      const upload = page.getByText(/upload/i);
-      if (await upload.isVisible({ timeout: 5000 })) {
-        await expect(upload).toBeVisible();
-      }
-    }
   });
 });
 

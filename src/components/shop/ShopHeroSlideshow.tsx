@@ -15,6 +15,14 @@ const slides = [
   },
   {
     id: 2,
+    image: '/images/shop/quilt-patterns.jpg',
+    title: 'Design Your Own Quilt',
+    subtitle: 'FREE DESIGN STUDIO',
+    cta: 'OPEN THE STUDIO',
+    href: '/design-studio',
+  },
+  {
+    id: 3,
     image: '/images/shop/fabric-shop-shelves.jpg',
     title: 'Fresh Arrivals',
     subtitle: 'FRESH ARRIVALS',
@@ -22,7 +30,7 @@ const slides = [
     href: '#new',
   },
   {
-    id: 3,
+    id: 4,
     image: '/images/shop/fabric-collection.jpg',
     title: 'Essential Solids',
     subtitle: 'ESSENTIAL SOLIDS',
@@ -56,7 +64,10 @@ export default function ShopHeroSlideshow() {
   }, [isAutoPlaying, nextSlide]);
 
   return (
-    <section className="relative w-full overflow-hidden border-b" style={{ borderColor: `${COLORS.text}1a` }}>
+    <section
+      className="relative w-full overflow-hidden border-b"
+      style={{ borderColor: `${COLORS.text}1a` }}
+    >
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
@@ -67,11 +78,7 @@ export default function ShopHeroSlideshow() {
           style={{ height: '750px' }}
         >
           <div className="relative w-full h-full">
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
             <div
               className="absolute inset-0"
               style={{

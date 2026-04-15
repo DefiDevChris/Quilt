@@ -24,7 +24,6 @@ test.describe('Dashboard', () => {
   test('dashboard shows quick start workflows', async ({ page }) => {
     await page.goto('/dashboard');
     await expect(page.getByText(/new design/i)).toBeVisible();
-    await expect(page.getByText(/photo to design/i)).toBeVisible();
   });
 
   test('new design button opens project dialog', async ({ page }) => {
@@ -59,7 +58,9 @@ test.describe('Projects Page', () => {
 
   test('projects page loads with projects list', async ({ page }) => {
     await page.goto('/projects');
-    await expect(page.getByRole('heading', { name: /all projects|my projects|quiltbook/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /all projects|my projects|quiltbook/i })
+    ).toBeVisible();
   });
 
   test('projects page shows project count', async ({ page }) => {
@@ -157,7 +158,9 @@ test.describe('Project Creation', () => {
     const newDesignButton = page.getByRole('button', { name: /new design/i });
     if (await newDesignButton.isVisible()) {
       await newDesignButton.click();
-      await expect(page.getByRole('dialog').or(page.getByText(/project name|create project/i))).toBeVisible();
+      await expect(
+        page.getByRole('dialog').or(page.getByText(/project name|create project/i))
+      ).toBeVisible();
     }
   });
 
@@ -225,9 +228,9 @@ test.describe('Project Management', () => {
     const actionMenu = page.locator('[aria-label*="actions"], button:has(svg)').first();
     if (await actionMenu.isVisible()) {
       await actionMenu.click();
-      const duplicateButton = page.getByRole('menuitem', { name: /duplicate|copy/i }).or(
-        page.getByText(/duplicate|copy/i)
-      );
+      const duplicateButton = page
+        .getByRole('menuitem', { name: /duplicate|copy/i })
+        .or(page.getByText(/duplicate|copy/i));
       if (await duplicateButton.isVisible()) {
         await duplicateButton.click();
         await expect(page.getByText(/duplicate.*created|copy.*created|success/i)).toBeVisible();
@@ -240,7 +243,9 @@ test.describe('Project Management', () => {
     const actionMenu = page.locator('[aria-label*="actions"], button:has(svg)').first();
     if (await actionMenu.isVisible()) {
       await actionMenu.click();
-      const renameButton = page.getByRole('menuitem', { name: /rename/i }).or(page.getByText(/rename/i));
+      const renameButton = page
+        .getByRole('menuitem', { name: /rename/i })
+        .or(page.getByText(/rename/i));
       if (await renameButton.isVisible()) {
         await renameButton.click();
         const nameInput = page.getByLabel(/new.*name|project.*name|name/i);
@@ -271,7 +276,9 @@ test.describe('Project Management', () => {
     const actionMenu = page.locator('[aria-label*="actions"], button:has(svg)').first();
     if (await actionMenu.isVisible()) {
       await actionMenu.click();
-      const deleteButton = page.getByRole('menuitem', { name: /delete/i }).or(page.getByText(/delete/i));
+      const deleteButton = page
+        .getByRole('menuitem', { name: /delete/i })
+        .or(page.getByText(/delete/i));
       if (await deleteButton.isVisible()) {
         await deleteButton.click();
         const confirmButton = page.getByRole('button', { name: /confirm|yes|delete/i });

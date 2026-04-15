@@ -1,21 +1,14 @@
-import type { StudioImportPayload } from './photo-to-design';
-
 /**
  * One-shot setup payload written by the New Project wizard into
  * `project.canvasData.initialSetup`. The studio bootstrap reads it on
  * first mount, hydrates the relevant stores, and then clears it.
  */
-export type InitialSetupConfig =
-  | {
-      kind: 'layout';
-      presetId: string;
-      blockSize: number;
-      rotated: boolean;
-    }
-  | {
-      kind: 'photo-to-design';
-      unit: 'in' | 'cm';
-    };
+export type InitialSetupConfig = {
+  kind: 'layout';
+  presetId: string;
+  blockSize: number;
+  rotated: boolean;
+};
 
 export interface Worktable {
   id: string;
@@ -31,7 +24,6 @@ export interface Project {
   description: string | null;
   canvasData: Record<string, unknown> & {
     initialSetup?: InitialSetupConfig;
-    photoToDesign?: StudioImportPayload;
   };
   worktables: Worktable[];
   unitSystem: 'imperial' | 'metric';

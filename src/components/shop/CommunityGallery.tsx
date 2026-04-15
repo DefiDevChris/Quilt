@@ -35,7 +35,11 @@ export default function CommunityGallery() {
             Made with QuiltCorgi
           </h2>
           <p style={{ color: COLORS.textDim }}>
-            Tag <span className="font-medium" style={{ color: COLORS.primary }}>#quiltcorgi</span> to share your work.
+            Tag{' '}
+            <span className="font-medium" style={{ color: COLORS.primary }}>
+              #quiltcorgi
+            </span>{' '}
+            to share your work.
           </p>
         </div>
 
@@ -44,14 +48,14 @@ export default function CommunityGallery() {
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
-              className="group relative rounded-[20px] overflow-hidden"
+              className="relative rounded-lg overflow-hidden"
               style={{ aspectRatio: '1/1' }}
             >
               <div className="aspect-square overflow-hidden">
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -60,7 +64,8 @@ export default function CommunityGallery() {
                 />
               </div>
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/20 transition-colors duration-300"
+              <div
+                className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/20 transition-colors duration-300"
                 style={{
                   backgroundColor: 'transparent',
                 }}

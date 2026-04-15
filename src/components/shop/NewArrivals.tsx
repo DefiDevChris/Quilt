@@ -51,9 +51,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
             >
               New Arrivals
             </h2>
-            <p style={{ color: COLORS.textDim }}>
-              Fresh fabrics just landed.
-            </p>
+            <p style={{ color: COLORS.textDim }}>Fresh fabrics just landed.</p>
           </div>
           <a
             href="/shop/catalog"
@@ -75,10 +73,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
           {newArrivals.map((fabric) => {
             const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '';
             return (
-              <div
-                key={fabric.id}
-                className="group flex flex-col"
-              >
+              <div key={fabric.id} className="group flex flex-col">
                 <a href="#" className="block flex-grow">
                   <div
                     className="relative mb-2 border rounded overflow-hidden transition-shadow duration-300"
@@ -88,7 +83,8 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
                       backgroundColor: COLORS.surface,
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+                      (e.currentTarget as HTMLDivElement).style.boxShadow =
+                        '0 1px 3px rgba(0,0,0,0.06)';
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
@@ -98,13 +94,10 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
                       <img
                         src={fabric.imageUrl}
                         alt={fabric.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-cover"
                       />
                     ) : fabric.hex ? (
-                      <div
-                        className="w-full h-full group-hover:scale-105 transition-transform duration-700"
-                        style={{ backgroundColor: fabric.hex }}
-                      />
+                      <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center"

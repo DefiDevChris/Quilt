@@ -77,10 +77,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
           {kits.map((kit) => {
             const price = kit.pricePerYard ? `$${Number(kit.pricePerYard).toFixed(2)}` : '';
             return (
-              <div
-                key={kit.id}
-                className="group flex flex-col text-center"
-              >
+              <div key={kit.id} className="group flex flex-col text-center">
                 <a href="#" className="block flex-grow">
                   <div
                     className="relative aspect-[4/5] mb-3 border rounded-lg overflow-hidden transition-shadow duration-300"
@@ -89,7 +86,8 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                       backgroundColor: COLORS.bg,
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+                      (e.currentTarget as HTMLDivElement).style.boxShadow =
+                        '0 1px 3px rgba(0,0,0,0.06)';
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
@@ -99,13 +97,10 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                       <img
                         src={kit.imageUrl}
                         alt={kit.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-cover"
                       />
                     ) : kit.hex ? (
-                      <div
-                        className="w-full h-full group-hover:scale-105 transition-transform duration-700"
-                        style={{ backgroundColor: kit.hex }}
-                      />
+                      <div className="w-full h-full" style={{ backgroundColor: kit.hex }} />
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center"

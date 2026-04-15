@@ -497,15 +497,6 @@ export function isShopifyEnabled(): boolean {
   return isShopEnabled && !!shopifyDomain && !!storefrontToken;
 }
 
-/**
- * Get the Shopify checkout URL for a given cart ID
- * This is a direct redirect URL - no API call needed
- */
-export function getCheckoutUrl(cartId: string): string {
-  // The checkout URL format is standard across Shopify stores
-  return `https://${shopifyDomain}/checkouts/${cartId.split('/').pop()}`;
-}
-
 // ============================================================
 // Admin API Functions (for inventory sync, etc.)
 // ============================================================

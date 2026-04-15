@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, and, or, ilike, gte, lte, asc, desc, count, inArray, type SQL } from 'drizzle-orm';
+import { eq, and, ilike, gte, lte, asc, desc, count, inArray, type SQL } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics, siteSettings } from '@/db/schema';
 import { z } from 'zod';
@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
       collection: url.searchParams.get('collection') ?? undefined,
       colorFamily: url.searchParams.get('colorFamily') ?? undefined,
       value: url.searchParams.get('value') ?? undefined,
+      category: url.searchParams.get('category') ?? undefined,
       minPrice: url.searchParams.get('minPrice') ?? undefined,
       maxPrice: url.searchParams.get('maxPrice') ?? undefined,
       inStock: url.searchParams.get('inStock') ?? undefined,

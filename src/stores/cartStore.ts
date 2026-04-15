@@ -66,6 +66,12 @@ interface CartState {
   setError: (error: string | null) => void;
 
   /**
+   * Add a single item to the cart and sync to Shopify so a checkoutUrl is created.
+   * Use this from the shop catalog/landing pages instead of plain addItem.
+   */
+  addItemAndSync: (item: CartItem) => Promise<void>;
+
+  /**
    * Add project yardage to cart
    * Maps yardage calculation results to cart items
    * Filters out fabrics that are not purchasable or lack shopifyVariantId
@@ -199,6 +205,27 @@ export const useCartStore = create<CartState>((set, get) => ({
   setDrawerOpen: (isDrawerOpen) => set({ isDrawerOpen }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
+
+  addItemAndSync: async (item) => {
+    if (!item.shopifyVariantId) {
+      set({ error: 'Invalid item: missing Shopify variant ID' });
+      return;
+    }
+
+    get().addItem(item);
+
+    if (!isShopifyEnabled()) {
+      // No Shopify configured — local-only cart is the best we can do.
+      return;
+    }
+
+    try {
+      await get().syncWithShopify();
+    } catch (error) {
+      // Error already surfaced via syncWithShopify; swallow to avoid unhandled rejection.
+      console.warn('addItemAndSync: sync failed', error);
+    }
+  },
 
   addProjectYardageToCart: async (
     yardageData: YardageResult[],

@@ -4,8 +4,18 @@ import { ArrowRight } from 'lucide-react';
 import { COLORS } from '@/lib/design-system';
 
 const patterns = [
-  { id: 1, name: 'Garden Path Quilt Pattern', format: 'PDF', image: '/images/pattern-garden-path.jpg' },
-  { id: 2, name: 'Flying Geese Pillow Set', format: 'Printed', image: '/images/pattern-geese-pillows.jpg' },
+  {
+    id: 1,
+    name: 'Garden Path Quilt Pattern',
+    format: 'PDF',
+    image: '/images/pattern-garden-path.jpg',
+  },
+  {
+    id: 2,
+    name: 'Flying Geese Pillow Set',
+    format: 'Printed',
+    image: '/images/pattern-geese-pillows.jpg',
+  },
   { id: 3, name: 'Striped Table Runner', format: 'PDF', image: '/images/pattern-table-runner.jpg' },
 ];
 
@@ -46,7 +56,7 @@ export default function Patterns() {
             }}
           >
             Shop all patterns
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+            <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
           </a>
         </div>
 
@@ -55,13 +65,13 @@ export default function Patterns() {
           {patterns.map((pattern) => (
             <article
               key={pattern.id}
-              className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
               <div className="aspect-[4/5] overflow-hidden">
                 <img
                   src={pattern.image}
                   alt={pattern.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -81,12 +91,11 @@ export default function Patterns() {
                 </h3>
                 <span
                   className={`inline-block px-3 py-1 text-xs uppercase tracking-wider rounded-full ${
-                    pattern.format === 'PDF'
-                      ? 'bg-primary/30'
-                      : 'bg-accent/60'
+                    pattern.format === 'PDF' ? 'bg-primary/30' : 'bg-accent/60'
                   }`}
                   style={{
-                    backgroundColor: pattern.format === 'PDF' ? `${COLORS.primary}33` : `${COLORS.accent}66`,
+                    backgroundColor:
+                      pattern.format === 'PDF' ? `${COLORS.primary}33` : `${COLORS.accent}66`,
                     color: COLORS.text,
                     fontFamily: 'var(--font-display)',
                   }}

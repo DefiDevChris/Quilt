@@ -10,10 +10,10 @@ import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore, useAuthDerived } from '@/stores/authStore';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
-import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 import { BrandedPage } from '@/components/layout/BrandedPage';
 import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
 import { QuiltPlaceholder } from '@/components/ui/QuiltPlaceholder';
+import { useMobileUploadStore } from '@/stores/mobileUploadStore';
 
 const MobileUploadsPanel = dynamic(
   () => import('@/components/uploads/MobileUploadsPanel').then((m) => m.MobileUploadsPanel),
@@ -43,15 +43,13 @@ interface ProjectListItem {
 
 function DashboardPageContent() {
   const user = useAuthStore((s) => s.user);
-  const { isPro, isAdmin } = useAuthDerived();
+  const { isPro } = useAuthDerived();
   const isLoadingAuth = useAuthStore((s) => s.isLoading);
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [projectCount, setProjectCount] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
-  const uploads = useMobileUploadStore((s) => s.uploads);
-  const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
-  const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
+
   const searchParams = useSearchParams();
   const _action = searchParams?.get('action') ?? '';
   const _preloadUrl = searchParams?.get('preloadUrl') ?? '';
@@ -68,6 +66,10 @@ function DashboardPageContent() {
       // silent
     }
   }, []);
+
+  const uploads = useMobileUploadStore((s) => s.uploads);
+  const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
+  const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
 
   useEffect(() => {
     if (!isLoadingAuth && user) {
@@ -222,47 +224,6 @@ function DashboardPageContent() {
                 </p>
               </div>
             </button>
-
-            {/* Photo-to-Design entry point. Visible to admins during the
-                internal rollout; server-side gate in /photo-to-design/page.tsx
-                is the authoritative access check (by role + env stage). */}
-            {isAdmin && (
-              <Link
-                href="/photo-to-design"
-                className="group relative overflow-hidden p-8 text-left border transition-colors rounded-lg"
-                style={{
-                  backgroundColor: COLORS.surface,
-                  borderColor: COLORS.border,
-                  boxShadow: SHADOW.brand,
-                  transitionDuration: `${MOTION.transitionDuration}ms`,
-                  transitionTimingFunction: MOTION.transitionEasing,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = `${COLORS.primary}4d`;
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = COLORS.border;
-                }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <Image
-                    src="/icons/quilt-12-ruler-Photoroom.png"
-                    alt=""
-                    width={48}
-                    height={48}
-                    className="w-12 h-12"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-semibold text-xl" style={{ color: COLORS.text }}>
-                    Photo to Design
-                  </p>
-                  <p className="text-sm" style={{ color: COLORS.textDim }}>
-                    Import a quilt photo as editable polygons
-                  </p>
-                </div>
-              </Link>
-            )}
           </div>
         </div>
 
@@ -279,12 +240,6 @@ function DashboardPageContent() {
                 icon: '/icons/quilt-projects.png',
                 count: projectCount,
                 description: 'Manage your designs',
-              },
-              {
-                label: 'Simple Designer',
-                href: '/designer',
-                icon: '/icons/quilt-13-dashed-squares-Photoroom.png',
-                description: 'Plan your pre-sewn block layout',
               },
               {
                 label: 'Fabric Library',

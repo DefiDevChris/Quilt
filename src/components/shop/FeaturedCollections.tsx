@@ -82,14 +82,14 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
               {/* Collection Hero Image */}
               <div className="w-full md:w-1/2">
                 <div
-                  className="aspect-[16/10] md:aspect-[16/9] lg:aspect-[3/2] rounded-2xl overflow-hidden shadow-lg group"
+                  className="aspect-[16/10] md:aspect-[16/9] lg:aspect-[3/2] rounded-lg overflow-hidden shadow-lg"
                   style={{ backgroundColor: `${COLORS.primary}10` }}
                 >
                   {collection.fabrics[0]?.imageUrl?.startsWith('/') ? (
                     <img
                       src={collection.fabrics[0].imageUrl}
                       alt={collection.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div
@@ -131,7 +131,8 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
                             backgroundColor: COLORS.surface,
                           }}
                           onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+                            (e.currentTarget as HTMLDivElement).style.boxShadow =
+                              '0 1px 3px rgba(0,0,0,0.06)';
                           }}
                           onMouseLeave={(e) => {
                             (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
@@ -162,7 +163,10 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
                           {fabric.name}
                         </p>
                         {fabric.shopifyVariantId && fabric.inStock && price && (
-                          <p className="text-[11px] font-bold mb-1" style={{ color: COLORS.primary }}>
+                          <p
+                            className="text-[11px] font-bold mb-1"
+                            style={{ color: COLORS.primary }}
+                          >
                             {price}
                           </p>
                         )}

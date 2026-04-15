@@ -1,12 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useCartStore, type CartItem } from '@/stores/cartStore';
 import { isShopifyEnabled } from '@/lib/shopify';
 import { X, Minus, Plus, Trash2, ShoppingBag, Copy } from 'lucide-react';
 import { COLORS, COLORS_HOVER, SHADOW } from '@/lib/design-system';
 
 const CART_ITEMS_STORAGE_KEY = 'quilt-studio-cart-items';
+
+// Module-level guards so navigating between shop pages doesn't re-hydrate
+// items into the store and accumulate quantities on top of existing items.
+let cartItemsHydrated = false;
+let cartIdRestored = false;
 
 /**
  * Slide-out cart drawer. Persists items in localStorage.
@@ -24,12 +29,11 @@ export function CartDrawer() {
   const setError = useCartStore((s) => s.setError);
   const restoreCartIdFromStorage = useCartStore((s) => s.restoreCartIdFromStorage);
   const restoreFromShopify = useCartStore((s) => s.restoreFromShopify);
-  const initialized = useRef(false);
 
-  // Initialize cart once on mount: restore cart ID from localStorage, then fetch from Shopify
+  // Initialize cart once per page load: restore cart ID from localStorage, then fetch from Shopify
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    if (cartIdRestored) return;
+    cartIdRestored = true;
 
     restoreCartIdFromStorage();
 
@@ -47,8 +51,14 @@ export function CartDrawer() {
     tryRestore();
   }, [restoreCartIdFromStorage, restoreFromShopify]);
 
-  // Load cart items from localStorage on mount
+  // Load cart items from localStorage once per page load.
+  // Skip if the store already has items (avoids double-add on remount).
   useEffect(() => {
+    if (cartItemsHydrated) return;
+    cartItemsHydrated = true;
+
+    if (useCartStore.getState().items.length > 0) return;
+
     try {
       const stored = localStorage.getItem(CART_ITEMS_STORAGE_KEY);
       if (stored) {

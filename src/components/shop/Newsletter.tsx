@@ -30,18 +30,12 @@ export default function Newsletter() {
           >
             Get first dibs on new fabrics.
           </h2>
-          <p
-            className="text-lg mb-10"
-            style={{ color: COLORS.textDim }}
-          >
+          <p className="text-lg mb-10" style={{ color: COLORS.textDim }}>
             Weekly drops, pattern ideas, and studio notes—no spam, just sewing joy.
           </p>
 
           {isSubmitted ? (
-            <div
-              className="rounded-2xl p-8"
-              style={{ backgroundColor: `${COLORS.primary}33` }}
-            >
+            <div className="rounded-lg p-8" style={{ backgroundColor: `${COLORS.primary}33` }}>
               <p
                 className="text-2xl mb-2"
                 style={{
@@ -53,12 +47,13 @@ export default function Newsletter() {
               >
                 You&apos;re on the list!
               </p>
-              <p style={{ color: COLORS.textDim }}>
-                Watch your inbox for fabric inspiration.
-              </p>
+              <p style={{ color: COLORS.textDim }}>Watch your inbox for fabric inspiration.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"
+            >
               <input
                 type="email"
                 value={email}

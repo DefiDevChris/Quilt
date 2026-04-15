@@ -35,11 +35,6 @@ test.describe('Dashboard Features (Authenticated)', () => {
     await newDesignCard.click();
   });
 
-  test('photo to design card is visible', async ({ page }) => {
-    await page.goto('/dashboard');
-    await expect(page.getByText(/photo to design/i)).toBeVisible();
-  });
-
   test('recent projects section exists', async ({ page }) => {
     await page.goto('/dashboard');
     await expect(page.getByText(/recent|projects/i)).toBeVisible();

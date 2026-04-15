@@ -12,7 +12,12 @@
       "primary_asset": "logo.png",
       "path": "/logo.png",
       "description": "Official QuiltCorgi logo. Primary lockup on light backgrounds (--bg or --surface). Use Next.js <Image> with priority on header/hero, alt='QuiltCorgi'. Clear space: minimum 1.5x logo height on all sides. Never distort, filter, or recolor.",
-      "variants": ["primary (logo.png)", "favicon (favicon.png)", "og-image (og-image.png)", "PWA icon (icon-192.png)"]
+      "variants": [
+        "primary (logo.png)",
+        "favicon (favicon.png)",
+        "og-image (og-image.png)",
+        "PWA icon (icon-192.png)"
+      ]
     },
     "mascot": {
       "name": "Corgi",
@@ -44,8 +49,46 @@
         "sharing": "Ready to show your work? The community would love to see it.",
         "discovery": "Found a design you love? Save it for inspiration."
       },
-      "words_that_fit": ["stitch", "piece", "block", "share", "inspire", "connect", "create", "community", "quilter", "design", "pattern", "fabric", "layout", "gallery", "explore", "discover", "save", "follow", "project", "work-in-progress"],
-      "words_that_dont": ["post", "like", "follow (unless following a pattern)", "feed", "social", "network", "platform", "users", "content", "engagement", "viral", "trending", "badge", "gamify", "leverage", "synergize"],
+      "words_that_fit": [
+        "stitch",
+        "piece",
+        "block",
+        "share",
+        "inspire",
+        "connect",
+        "create",
+        "community",
+        "quilter",
+        "design",
+        "pattern",
+        "fabric",
+        "layout",
+        "gallery",
+        "explore",
+        "discover",
+        "save",
+        "follow",
+        "project",
+        "work-in-progress"
+      ],
+      "words_that_dont": [
+        "post",
+        "like",
+        "follow (unless following a pattern)",
+        "feed",
+        "social",
+        "network",
+        "platform",
+        "users",
+        "content",
+        "engagement",
+        "viral",
+        "trending",
+        "badge",
+        "gamify",
+        "leverage",
+        "synergize"
+      ],
       "rules": [
         "Always say 'quilter' not 'user' in UI-facing text",
         "No exclamation points unless truly earned",
@@ -222,11 +265,20 @@
     "buttons": {
       "primary": "bg-[#ff8d49] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#e67d3f] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
       "secondary": "bg-transparent border-2 border-[#ff8d49] text-[#ff8d49] rounded-full hover:bg-[#ff8d49]/10 transition-colors duration-150",
-      "rules": ["Pill shape (rounded-full) for CTA buttons, tabs, filters, small interactive elements", "No gradients", "No press animations", "Hover is background shift only"]
+      "rules": [
+        "Pill shape (rounded-full) for CTA buttons, tabs, filters, small interactive elements",
+        "No gradients",
+        "No press animations",
+        "Hover is background shift only"
+      ]
     },
     "cards": {
       "base": "bg-white border border-[#d4d4d4] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
-      "rules": ["Quilt image fills card, no decorative overlays", "No hover effects that obscure content", "Click to view details"]
+      "rules": [
+        "Quilt image fills card, no decorative overlays",
+        "No hover effects that obscure content",
+        "Click to view details"
+      ]
     },
     "inputs": {
       "base": "border border-[#d4d4d4] rounded-full focus:outline-2 focus:outline-[#ff8d49]",
@@ -313,7 +365,15 @@
         "last_updated": "2026-04-10",
         "purpose": "Homepage marketing — hero, features, workspace preview, capabilities, CTA",
         "layout": "Full-width with PublicNav header and Footer",
-        "components": ["PublicNav", "HeroSection", "FeatureHighlights", "WorkspacePreview", "CoreCapabilities", "CtaSection", "Footer"],
+        "components": [
+          "PublicNav",
+          "HeroSection",
+          "FeatureHighlights",
+          "WorkspacePreview",
+          "CoreCapabilities",
+          "CtaSection",
+          "Footer"
+        ],
         "images": ["/og-image.png", "/logo.png"],
         "icons": [],
         "graphics": [],
@@ -456,7 +516,12 @@
         "last_updated": "2026-04-10",
         "purpose": "Main dashboard — greeting, quick actions, recent projects, studio tools sidebar",
         "layout": "max-w-7xl two-column layout within ResponsiveShell",
-        "components": ["NewProjectWizard", "ProUpgradeButton", "QuickStartWorkflows", "MobileUploadsPanel"],
+        "components": [
+          "NewProjectWizard",
+          "ProUpgradeButton",
+          "QuickStartWorkflows",
+          "MobileUploadsPanel"
+        ],
         "images": [],
         "icons": ["ArrowLeft (lucide-react)"],
         "graphics": [],
@@ -717,7 +782,10 @@
         "purpose": "Quick start workflow cards — New Project, Resume, Photo to Design",
         "layout": "3-column grid of interactive cards with resume popover dropdown",
         "components": [],
-        "images": ["/icons/quilt-13-dashed-squares-Photoroom.png", "/icons/quilt-12-ruler-Photoroom.png"],
+        "images": [
+          "/icons/quilt-13-dashed-squares-Photoroom.png",
+          "/icons/quilt-12-ruler-Photoroom.png"
+        ],
         "icons": [],
         "graphics": [],
         "consistency_notes": "REMEDIATED — replaced ALL text-neutral/bg-neutral with brand hex colors, replaced rounded-full with rounded-xl on cards (avatar icons use rounded-full), removed ALL shadow-elevation references (brand shadow only), removed group-hover:scale-105 on images, fixed transition-all duration-200 to transition-colors duration-150, fixed 'Start your first quilt' button to bg-[#ff8d49] text-[#2d2a26]."
@@ -755,7 +823,11 @@
         "last_updated": "2026-04-10",
         "purpose": "Reusable decorative fabric-square component with optional dashed stitch outline",
         "description": "Renders an SVG with opaque fabric fill (brand colors) and optional thick dashed 'stitch' border. Used as background decoration across pages. QuiltPieceRow renders small decorative dots. QuiltPieceBand renders scattered pieces across a horizontal band.",
-        "variants": ["QuiltPiece (single square)", "QuiltPieceRow (small dots row)", "QuiltPieceBand (scattered band)"],
+        "variants": [
+          "QuiltPiece (single square)",
+          "QuiltPieceRow (small dots row)",
+          "QuiltPieceBand (scattered band)"
+        ],
         "usage": "Place as absolute-positioned decorative elements behind content. opacity typically 5-15%. stitch prop controls dashed outline visibility.",
         "graphics": []
       },
@@ -953,19 +1025,6 @@
         "icons": [],
         "graphics": [],
         "consistency_notes": "REMEDIATED — replaced bg-neutral-800 text-neutral with bg-[#ff8d49] text-[#2d2a26], replaced transition-all with transition-colors duration-150, replaced border-neutral-200 with border-[#e8e1da], button uses brand pill style with shadow."
-      },
-      {
-        "page": "simple-photo-block-upload",
-        "route": "(shared component)",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Photo-to-block upload wizard — upload, image prep, crop",
-        "layout": "Multi-step wizard within block builder",
-        "components": [],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — replaced transition-all with transition-colors duration-150, replaced transition-transform duration-200 with transition-colors duration-150."
       },
       {
         "page": "app-shell",

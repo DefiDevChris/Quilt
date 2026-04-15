@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
-import { COLORS, darkenHex } from '@/lib/design-system';
+import { useState } from 'react';
+import Link from 'next/link';
+import { Search, User, ShoppingBag, Menu, X, Palette } from 'lucide-react';
+import { COLORS } from '@/lib/design-system';
 import { useCartStore } from '@/stores/cartStore';
 
 const navLinks = [
@@ -17,20 +18,11 @@ const navLinks = [
 ];
 
 export default function ShopHeader() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const cartItems = useCartStore((s) => s.items);
   const toggleDrawer = useCartStore((s) => s.toggleDrawer);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const itemCount = cartItems.reduce((sum, item) => sum + (item.quantityInYards / 0.25), 0);
+  const itemCount = cartItems.reduce((sum, item) => sum + item.quantityInYards / 0.25, 0);
 
   return (
     <header
@@ -42,18 +34,34 @@ export default function ShopHeader() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center gap-8">
-          {/* Logo */}
-          <a
-            href="/shop"
-            className="text-4xl font-bold shrink-0"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: COLORS.primary,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            QuiltCorgi
-          </a>
+          {/* Logo + Studio link */}
+          <div className="flex items-center gap-6 shrink-0">
+            <a
+              href="/shop"
+              className="text-4xl font-bold"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: COLORS.primary,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              QuiltCorgi
+            </a>
+            <Link
+              href="/design-studio"
+              className="hidden lg:inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider transition-colors"
+              style={{ color: COLORS.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = COLORS.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = COLORS.text;
+              }}
+            >
+              <Palette className="w-4 h-4" strokeWidth={1.75} />
+              Design Studio
+            </Link>
+          </div>
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-2xl relative">
@@ -153,10 +161,7 @@ export default function ShopHeader() {
       </div>
 
       {/* Navigation Bar */}
-      <div
-        className="border-t"
-        style={{ borderColor: `${COLORS.text}1a` }}
-      >
+      <div className="border-t" style={{ borderColor: `${COLORS.text}1a` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex overflow-x-auto py-3 space-x-8 no-scrollbar">
             {navLinks.map((link) => (
@@ -189,6 +194,15 @@ export default function ShopHeader() {
           }}
         >
           <nav className="flex flex-col px-6 py-4 space-y-4">
+            <Link
+              href="/design-studio"
+              className="inline-flex items-center gap-2 text-base font-bold uppercase tracking-wider transition-colors"
+              style={{ color: COLORS.primary }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Palette className="w-4 h-4" strokeWidth={1.75} />
+              Design Studio
+            </Link>
             {navLinks.map((link) => (
               <a
                 key={link.name}

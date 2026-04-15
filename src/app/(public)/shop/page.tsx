@@ -37,8 +37,8 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [shopEnabled, setShopEnabled] = useState<boolean | null>(null);
 
-  const addItem = useCartStore((s) => s.addItem);
-  const toggleDrawer = useCartStore((s) => s.toggleDrawer);
+  const addItemAndSync = useCartStore((s) => s.addItemAndSync);
+  const setDrawerOpen = useCartStore((s) => s.setDrawerOpen);
 
   useEffect(() => {
     fetch('/api/shop/settings')
@@ -74,9 +74,10 @@ export default function ShopPage() {
     if (shopEnabled) fetchFabrics();
   }, [shopEnabled, fetchFabrics]);
 
-  const handleAddToCart = (fabric: ShopFabric) => {
+  const handleAddToCart = async (fabric: ShopFabric) => {
     if (!fabric.shopifyVariantId || !fabric.inStock) return;
-    addItem({
+    setDrawerOpen(true);
+    await addItemAndSync({
       fabricId: fabric.id,
       shopifyVariantId: fabric.shopifyVariantId,
       quantityInYards: 0.25,
@@ -84,7 +85,6 @@ export default function ShopPage() {
       fabricName: fabric.name,
       fabricImageUrl: fabric.thumbnailUrl ?? fabric.imageUrl,
     });
-    toggleDrawer();
   };
 
   // ─── Loading ────────────────────────────────────────────────────

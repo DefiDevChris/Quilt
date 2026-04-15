@@ -49,11 +49,19 @@ export default function PublicNav() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-6">
+          {shopEnabled && (
+            <Link
+              href="/shop"
+              className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+            >
+              Shop
+            </Link>
+          )}
           <Link
-            href="/#features"
+            href="/design-studio"
             className="text-dim hover:text-primary transition-colors duration-150 font-medium"
           >
-            Features
+            Design Studio
           </Link>
           <a
             href="/blog"
@@ -63,14 +71,6 @@ export default function PublicNav() {
           >
             Blog
           </a>
-          {shopEnabled && (
-            <Link
-              href="/shop"
-              className="text-dim hover:text-primary transition-colors duration-150 font-medium"
-            >
-              Shop
-            </Link>
-          )}
 
           {isAuthenticated ? (
             <Link
@@ -124,12 +124,21 @@ export default function PublicNav() {
 
       {menuOpen && (
         <div className="lg:hidden border-t border-default bg-surface px-6 py-4 space-y-3">
+          {shopEnabled && (
+            <Link
+              href="/shop"
+              className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+              onClick={() => setMenuOpen(false)}
+            >
+              Shop
+            </Link>
+          )}
           <Link
-            href="/#features"
+            href="/design-studio"
             className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
-            Features
+            Design Studio
           </Link>
           <a
             href="/blog"
@@ -140,15 +149,6 @@ export default function PublicNav() {
           >
             Blog
           </a>
-          {shopEnabled && (
-            <Link
-              href="/shop"
-              className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-              onClick={() => setMenuOpen(false)}
-            >
-              Shop
-            </Link>
-          )}
           {isAuthenticated ? (
             <Link
               href="/dashboard"
