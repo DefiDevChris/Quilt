@@ -118,6 +118,5 @@ export const config = {
     '/settings/:path*',
     '/admin/:path*',
     '/auth/:path*',
-    '/onboarding/:path*',
   ],
 };

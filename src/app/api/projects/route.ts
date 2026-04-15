@@ -54,7 +54,6 @@ export async function GET(request: NextRequest) {
           description: projects.description,
           thumbnailUrl: projects.thumbnailUrl,
           unitSystem: projects.unitSystem,
-          isPublic: projects.isPublic,
           lastSavedAt: projects.lastSavedAt,
           createdAt: projects.createdAt,
           updatedAt: projects.updatedAt,

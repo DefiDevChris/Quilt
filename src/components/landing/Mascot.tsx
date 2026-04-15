@@ -10,7 +10,6 @@ type Pose =
   | 'fetching'
   | 'scratching'
   | 'licking'
-  | 'waving'
   | 'running'
   | 'begging'
   | 'howling';
@@ -38,7 +37,6 @@ const poseMap: Record<Pose, string> = {
   begging: '/mascots&avatars/corgi20.png',
   scratching: '/mascots&avatars/corgi26.png',
   licking: '/mascots&avatars/corgi23.png',
-  waving: '/mascots&avatars/corgi12.png',
 };
 
 export default function Mascot({

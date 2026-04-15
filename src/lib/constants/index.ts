@@ -15,9 +15,6 @@ export * from './fabrics';
 /** S3 presigned URL expiry */
 export const S3_UPLOAD_EXPIRY_SECONDS = 300;
 
-/** Onboarding completion flag stored in localStorage */
-export const ONBOARDING_STORAGE_KEY = 'quilt-studio-onboarding-completed';
-
 /** Tooltip show delay in milliseconds */
 export const TOOLTIP_DELAY_MS = 400;
 

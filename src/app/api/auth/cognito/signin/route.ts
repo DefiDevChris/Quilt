@@ -14,6 +14,21 @@ const signinSchema = z.object({
   password: z.string().min(1),
 });
 
+async function ensureUserProfile(userId: string, email: string): Promise<void> {
+  const [existing] = await db
+    .select({ id: userProfiles.id })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
+  if (existing) return;
+
+  const displayName = email.split('@')[0].slice(0, 60) || 'Quilter';
+  await db
+    .insert(userProfiles)
+    .values({ userId, displayName })
+    .onConflictDoNothing({ target: userProfiles.userId });
+}
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   const rl = await checkRateLimit(`signin:${ip}`, AUTH_RATE_LIMITS.signin);
@@ -47,13 +62,9 @@ export async function POST(request: NextRequest) {
       cookieStore.set('qc_dev_user_id', existing.id, { httpOnly: true, path: '/', maxAge: 86400 });
       cookieStore.set('qc_user_role', existing.role, { httpOnly: true, path: '/', maxAge: 86400 });
 
-      const [profile] = await db
-        .select({ id: userProfiles.id })
-        .from(userProfiles)
-        .where(eq(userProfiles.userId, existing.id))
-        .limit(1);
+      await ensureUserProfile(existing.id, email);
 
-      return Response.json({ success: true, needsOnboarding: !profile });
+      return Response.json({ success: true });
     }
 
     const tokens = await cognitoSignIn(email, password);
@@ -99,14 +110,9 @@ export async function POST(request: NextRequest) {
       await setRoleCookie(existing.role);
     }
 
-    // Check if user has completed onboarding (has a profile)
-    const [profile] = await db
-      .select({ id: userProfiles.id })
-      .from(userProfiles)
-      .where(eq(userProfiles.userId, userId))
-      .limit(1);
+    await ensureUserProfile(userId, email);
 
-    return Response.json({ success: true, needsOnboarding: !profile });
+    return Response.json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Sign in failed';
 

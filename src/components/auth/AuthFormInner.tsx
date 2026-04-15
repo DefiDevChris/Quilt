@@ -47,9 +47,9 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           return;
         }
 
-        // Dev bypass: skip email verification, go straight to onboarding
+        // Dev bypass: skip email verification, go straight to dashboard
         if (data.data?.devMode) {
-          router.push('/onboarding');
+          router.push(callbackUrl);
           router.refresh();
           return;
         }
@@ -78,7 +78,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       }
 
       onSuccess?.();
-      router.push(data.needsOnboarding ? '/onboarding' : callbackUrl);
+      router.push(callbackUrl);
       router.refresh();
     } catch {
       setError('Something went wrong. Please try again.');

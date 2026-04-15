@@ -93,7 +93,7 @@ API routes: check `session.user.role` for auth. 403 `PRO_REQUIRED` for pro endpo
 
 ## Removed (DO NOT REINTRODUCE)
 
-Query `mempalace_search("removed features do not reintroduce", wing="quilt")` for the full list. Key items: FloatingToolbar, LayoutRolePanel, SelectionPanel, PrintlistPanel, ProGate, all `panels/` directory, useLayoutEngine, useLayoutRenderer, layout-renderer, cn, logger, Minimap, Smart Guides, Serendipity Tool, Text Tool, Applique Tab.
+Query `mempalace_search("removed features do not reintroduce", wing="quilt")` for the full list. Key items: FloatingToolbar, LayoutRolePanel, SelectionPanel, PrintlistPanel, ProGate, all `panels/` directory, useLayoutEngine, useLayoutRenderer, layout-renderer, cn, logger, Minimap, Smart Guides, Serendipity Tool, Text Tool, Applique Tab, **user avatars** (`userProfiles.avatarUrl`, corgi mascot picker, `/api/profile/avatar`, `/api/upload/avatar-presign`), **onboarding flow** (profile auto-created on first signin with `displayName = email prefix`), **public project sharing** (`/share/[id]`, `projects.isPublic`, `/api/projects/[id]/public`, `ProjectViewer`), `src/lib/fraction-utils.ts` (merged into `fraction-math.ts`).
 
 ## PM2
 
