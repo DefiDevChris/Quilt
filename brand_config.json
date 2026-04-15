@@ -288,7 +288,6 @@
         "quilt-13-dashed-squares-Photoroom.png",
         "quilt-book.png",
         "quilt-mobile-uploads.png",
-        "quilt-photo-camera.png",
         "quilt-profile.png",
         "quilt-projects.png",
         "quilt-quilt.png",
@@ -718,7 +717,7 @@
         "purpose": "Quick start workflow cards — New Project, Resume, Photo to Design",
         "layout": "3-column grid of interactive cards with resume popover dropdown",
         "components": [],
-        "images": ["/icons/quilt-13-dashed-squares-Photoroom.png", "/icons/quilt-12-ruler-Photoroom.png", "/icons/quilt-photo-camera.png"],
+        "images": ["/icons/quilt-13-dashed-squares-Photoroom.png", "/icons/quilt-12-ruler-Photoroom.png"],
         "icons": [],
         "graphics": [],
         "consistency_notes": "REMEDIATED — replaced ALL text-neutral/bg-neutral with brand hex colors, replaced rounded-full with rounded-xl on cards (avatar icons use rounded-full), removed ALL shadow-elevation references (brand shadow only), removed group-hover:scale-105 on images, fixed transition-all duration-200 to transition-colors duration-150, fixed 'Start your first quilt' button to bg-[#ff8d49] text-[#2d2a26]."

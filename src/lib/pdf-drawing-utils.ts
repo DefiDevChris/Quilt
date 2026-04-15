@@ -698,16 +698,3 @@ export interface PdfFonts {
   regular: PDFFont;
   bold: PDFFont;
 }
-
-/**
- * Initialize a new PDF document with standard fonts.
- * Used by all PDF generation engines.
- */
-export async function createPdfDocument(): Promise<{ pdfDoc: PDFDocument; fonts: PdfFonts }> {
-  const pdfDoc = await PDFDocument.create();
-  const fonts: PdfFonts = {
-    regular: await pdfDoc.embedFont(StandardFonts.Helvetica),
-    bold: await pdfDoc.embedFont(StandardFonts.HelveticaBold),
-  };
-  return { pdfDoc, fonts };
-}

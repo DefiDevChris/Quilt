@@ -64,7 +64,7 @@ export default function ShopHeroSlideshow() {
           className={`transition-opacity duration-1000 ${
             index === currentSlide ? 'opacity-100' : 'opacity-0 hidden'
           }`}
-          style={{ height: '400px' }}
+          style={{ height: '650px' }}
         >
           <div className="relative w-full h-full">
             <img
@@ -158,6 +158,17 @@ export default function ShopHeroSlideshow() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
+      </div>
+
+      {/* Promo Strip */}
+      <div
+        className="absolute bottom-0 left-0 right-0 px-4 py-2 text-center text-xs font-bold tracking-widest uppercase"
+        style={{
+          backgroundColor: `${COLORS.surface}ee`,
+          color: COLORS.primary,
+        }}
+      >
+        Free Shipping on Orders Over $50
       </div>
     </section>
   );

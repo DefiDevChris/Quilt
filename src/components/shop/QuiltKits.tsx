@@ -1,6 +1,6 @@
 'use client';
 
-import { COLORS, darkenHex } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 
 interface Fabric {
   id: string;
@@ -27,10 +27,22 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
   const kits = fabrics.slice(6, 10);
 
   return (
-    <section id="kits" className="py-16 border-t" style={{ backgroundColor: COLORS.surface, borderColor: `${COLORS.text}1a` }}>
+    <section
+      id="kits"
+      className="py-24 border-t"
+      style={{
+        backgroundColor: COLORS.surface,
+        borderColor: `${COLORS.text}1a`,
+        borderTopColor: COLORS.primary,
+        borderTopWidth: '3px',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex justify-between items-end mb-10 border-b pb-4" style={{ borderColor: `${COLORS.text}1a` }}>
+        <div
+          className="flex justify-between items-end mb-10 border-b pb-4"
+          style={{ borderColor: `${COLORS.text}1a` }}
+        >
           <div>
             <h2
               className="text-3xl mb-2"
@@ -71,8 +83,17 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
               >
                 <a href="#" className="block flex-grow">
                   <div
-                    className="relative aspect-[4/5] mb-4 border rounded-lg overflow-hidden"
-                    style={{ borderColor: `${COLORS.text}1a`, backgroundColor: COLORS.bg }}
+                    className="relative aspect-[4/5] mb-3 border rounded-lg overflow-hidden transition-shadow duration-300"
+                    style={{
+                      borderColor: `${COLORS.text}1a`,
+                      backgroundColor: COLORS.bg,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                    }}
                   >
                     {kit.imageUrl?.startsWith('/') ? (
                       <img
@@ -93,7 +114,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                     )}
                   </div>
                   <h3
-                    className="font-medium leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2 px-2"
+                    className="font-medium leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2 px-2"
                     style={{ color: COLORS.text }}
                   >
                     {kit.name}
@@ -101,14 +122,14 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                 </a>
                 <div className="mt-auto pt-2">
                   {price && (
-                    <p className="font-bold mb-4" style={{ color: COLORS.text }}>
+                    <p className="font-bold mb-3" style={{ color: COLORS.primary }}>
                       {price}
                     </p>
                   )}
                   {kit.shopifyVariantId && kit.inStock && (
                     <button
                       onClick={() => onAddToCart(kit)}
-                      className="w-full rounded-full py-2.5 text-sm font-bold tracking-wide transition-colors"
+                      className="w-full rounded-full py-2.5 text-sm font-bold tracking-wide transition-all duration-200 opacity-80 group-hover:opacity-100"
                       style={{
                         backgroundColor: COLORS.text,
                         color: COLORS.surface,

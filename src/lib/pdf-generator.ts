@@ -24,15 +24,13 @@ import {
   type PaperConfig,
 } from '@/lib/bin-packer';
 import {
-  embedLogo,
   drawCoverBranding,
   drawPageHeader,
-  drawBrandedFooter,
   drawValidationSquare,
-  createPdfDocument,
   type PdfFonts,
   type PdfBranding,
 } from '@/lib/pdf-drawing-utils';
+import { createPdfDocument, embedLogo, drawBrandedFooter } from '@/lib/pdf-engine';
 import { PDF_COLOR, PDF_SEMANTIC } from './pdf-colors';
 
 export type PaperSize = 'letter' | 'a4';

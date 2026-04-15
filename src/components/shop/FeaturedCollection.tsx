@@ -4,7 +4,7 @@ import { COLORS, darkenHex } from '@/lib/design-system';
 
 export default function FeaturedCollection() {
   return (
-    <section className="py-16" style={{ backgroundColor: COLORS.bg }}>
+    <section className="py-24" style={{ backgroundColor: COLORS.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className="rounded-2xl overflow-hidden flex flex-col md:flex-row items-center border"

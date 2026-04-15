@@ -149,14 +149,14 @@ export default function ShopPage() {
             />
           </div>
         ) : (
-          <>
+          <div className="space-y-16">
             <CuratedPicks fabrics={fabrics} onAddToCart={handleAddToCart} />
             <FeaturedCollections fabrics={fabrics} onAddToCart={handleAddToCart} />
             <NewArrivals fabrics={fabrics} onAddToCart={handleAddToCart} />
             <FeaturedCollection />
             <QuiltKits fabrics={fabrics} onAddToCart={handleAddToCart} />
             <Testimonial />
-          </>
+          </div>
         )}
       </main>
       <ShopFooter />
