@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
 export const userProfiles = pgTable(
@@ -10,7 +10,6 @@ export const userProfiles = pgTable(
       .unique()
       .references(() => users.id, { onDelete: 'cascade' }),
     displayName: varchar('displayName', { length: 60 }).notNull(),
-    avatarUrl: text('avatarUrl'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()

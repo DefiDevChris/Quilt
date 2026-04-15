@@ -16,26 +16,13 @@ export function SessionSync({ children }: { children: React.ReactNode }) {
         if (cancelled) return;
 
         if (data.success && data.data?.user) {
-          const user = {
+          setUser({
             id: data.data.user.id,
             name: data.data.user.name ?? '',
             email: data.data.user.email ?? '',
-            image: null as string | null,
+            image: null,
             role: data.data.user.role ?? 'free',
-          };
-
-          // Fetch profile to get avatar
-          try {
-            const profileRes = await fetch('/api/profile');
-            const profileData = await profileRes.json();
-            if (profileData.success && profileData.data) {
-              user.image = profileData.data.avatarUrl ?? null;
-            }
-          } catch {
-            // profile fetch failed — ignore
-          }
-
-          setUser(user);
+          });
         } else {
           setUser(null);
         }

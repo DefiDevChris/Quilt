@@ -23,8 +23,3 @@ export const TOOLTIP_DELAY_MS = 400;
 
 /** Support email address */
 export const SUPPORT_EMAIL = 'support@quiltcorgi.com';
-
-/** Photo pattern pipeline constraints */
-export const PHOTO_PATTERN_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
-export const PHOTO_PATTERN_MIN_DIMENSION = 200; // px
-export const PHOTO_PATTERN_REFERENCE_OPACITY_DEFAULT = 0.4;

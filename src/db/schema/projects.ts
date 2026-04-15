@@ -4,7 +4,6 @@ import {
   varchar,
   text,
   jsonb,
-  boolean,
   integer,
   timestamp,
   doublePrecision,
@@ -36,7 +35,6 @@ export const projects = pgTable(
     canvasWidth: doublePrecision('canvasWidth').notNull().default(48.0),
     canvasHeight: doublePrecision('canvasHeight').notNull().default(48.0),
     thumbnailUrl: text('thumbnailUrl'),
-    isPublic: boolean('isPublic').notNull().default(false),
     version: integer('version').notNull().default(1),
     lastSavedAt: timestamp('lastSavedAt', { mode: 'date', withTimezone: true })
       .notNull()

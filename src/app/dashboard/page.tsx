@@ -35,7 +35,6 @@ interface ProjectListItem {
   description: string | null;
   thumbnailUrl: string | null;
   unitSystem: string;
-  isPublic: boolean;
   lastSavedAt: string;
   createdAt: string;
   updatedAt: string;

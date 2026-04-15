@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogPosts, users } from '@/db/schema';
 import {
   getRequiredSession,
   unauthorizedResponse,
@@ -39,11 +39,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         createdAt: blogPosts.createdAt,
         updatedAt: blogPosts.updatedAt,
         authorName: users.name,
-        authorAvatarUrl: userProfiles.avatarUrl,
       })
       .from(blogPosts)
       .leftJoin(users, eq(blogPosts.authorId, users.id))
-      .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
       .where(and(...conditions))
       .limit(1);
 
@@ -66,7 +64,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       readTimeMinutes: calculateReadTime(post.content),
       author: {
         name: post.authorName ?? 'QuiltCorgi Team',
-        avatarUrl: post.authorAvatarUrl ?? null,
       },
     };
 

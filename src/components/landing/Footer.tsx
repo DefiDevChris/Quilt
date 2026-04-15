@@ -40,14 +40,17 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <a href="#features" className="hover:text-primary transition-colors duration-150">
+                <Link
+                  href="/design-studio"
+                  className="hover:text-primary transition-colors duration-150"
+                >
                   Design Studio
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#features" className="hover:text-primary transition-colors duration-150">
-                  Yardage Calculator
-                </a>
+                <Link href="/shop" className="hover:text-primary transition-colors duration-150">
+                  Shop
+                </Link>
               </li>
             </ul>
           </div>

@@ -62,7 +62,7 @@ npm run db:push
 npm run dev
 ```
 
-Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials. Set `AWS_SECRET_NAME=skip` for local development.
+Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials.
 
 ## Commands
 
@@ -123,7 +123,7 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 
 - `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
 - `/admin/*` — cookie + role check (`admin` role only)
-- `/dashboard` — public, but protected actions trigger `AuthGateModal`
+- `/dashboard` — public, but protected actions redirect guests to sign-in
 
 ## Mobile
 

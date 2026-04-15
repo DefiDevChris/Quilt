@@ -80,6 +80,9 @@ export async function proxy(req: NextRequest) {
 
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
   if (isProtectedRoute && !isAuthenticated) {
+    if (pathname.startsWith('/studio')) {
+      return NextResponse.redirect(new URL('/design-studio', req.url));
+    }
     const signInUrl = new URL('/auth/signin', req.url);
     signInUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(signInUrl);

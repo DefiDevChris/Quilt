@@ -1,166 +1,52 @@
-'use client';
+import { Metadata } from 'next';
+import ShopClient from './ShopClient';
+import { getShopSettings, getShopFabrics } from '@/lib/shop';
+import type { ShopFabric } from '@/types/fabric';
 
-import { useState, useEffect, useCallback } from 'react';
-import { ShoppingBag } from 'lucide-react';
-import { COLORS } from '@/lib/design-system';
-import { useCartStore } from '@/stores/cartStore';
-import ShopHeader from '@/components/shop/ShopHeader';
-import ShopHeroSlideshow from '@/components/shop/ShopHeroSlideshow';
-import Categories from '@/components/shop/Categories';
-import CuratedPicks from '@/components/shop/CuratedPicks';
-import NewArrivals from '@/components/shop/NewArrivals';
-import FeaturedCollection from '@/components/shop/FeaturedCollection';
-import FeaturedCollections from '@/components/shop/FeaturedCollections';
-import QuiltKits from '@/components/shop/QuiltKits';
-import Testimonial from '@/components/shop/Testimonial';
-import ShopFooter from '@/components/shop/ShopFooter';
-import { CartDrawer } from '@/components/shop/CartDrawer';
+const HERO_IMAGE = '/images/shop/hero-fabric-drapes.jpg';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://quiltcorgi.com';
 
-interface ShopFabric {
-  id: string;
-  name: string;
-  imageUrl: string;
-  thumbnailUrl: string | null;
-  manufacturer: string | null;
-  collection: string | null;
-  colorFamily: string | null;
-  value: string | null;
-  hex: string | null;
-  pricePerYard: string | null;
-  description: string | null;
-  inStock: boolean;
-  shopifyVariantId: string | null;
+export async function generateMetadata(): Promise<Metadata> {
+  const title = 'Shop Premium Quilting Fabrics | QuiltCorgi';
+  const description =
+    'Discover premium cotton fabrics from top designers. Hand-picked for quilters who care about every stitch. Shop charm packs, jelly rolls, layer cakes, and fabric by the yard.';
+  const url = `${SITE_URL}/shop`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'QuiltCorgi',
+      type: 'website',
+      images: [
+        {
+          url: HERO_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: 'QuiltCorgi Fabric Shop - Premium Quilting Fabrics',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [HERO_IMAGE],
+    },
+  };
 }
 
-export default function ShopPage() {
-  const [fabrics, setFabrics] = useState<ShopFabric[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [shopEnabled, setShopEnabled] = useState<boolean | null>(null);
+export default async function ShopPage() {
+  const [{ enabled }, initialFabrics] = await Promise.all([
+    getShopSettings(),
+    getShopFabrics({ sort: 'newest', limit: 24 }),
+  ]);
 
-  const addItemAndSync = useCartStore((s) => s.addItemAndSync);
-  const setDrawerOpen = useCartStore((s) => s.setDrawerOpen);
-
-  useEffect(() => {
-    fetch('/api/shop/settings')
-      .then((res) => (res.ok ? res.json() : { data: { enabled: false } }))
-      .then((json) => setShopEnabled(json.data?.enabled === true))
-      .catch(() => setShopEnabled(false));
-  }, []);
-
-  const fetchFabrics = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('sort', 'newest');
-      params.set('page', '1');
-      params.set('limit', '24');
-
-      const res = await fetch(`/api/shop/fabrics?${params.toString()}`);
-      if (!res.ok) {
-        setFabrics([]);
-        return;
-      }
-
-      const json = await res.json();
-      setFabrics(json.data.fabrics);
-    } catch {
-      setFabrics([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (shopEnabled) fetchFabrics();
-  }, [shopEnabled, fetchFabrics]);
-
-  const handleAddToCart = async (fabric: ShopFabric) => {
-    if (!fabric.shopifyVariantId || !fabric.inStock) return;
-    setDrawerOpen(true);
-    await addItemAndSync({
-      fabricId: fabric.id,
-      shopifyVariantId: fabric.shopifyVariantId,
-      quantityInYards: 0.25,
-      pricePerYard: fabric.pricePerYard ? Number(fabric.pricePerYard) : 0,
-      fabricName: fabric.name,
-      fabricImageUrl: fabric.thumbnailUrl ?? fabric.imageUrl,
-    });
-  };
-
-  // ─── Loading ────────────────────────────────────────────────────
-
-  if (shopEnabled === null) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: COLORS.bg }}
-      >
-        <div
-          className="w-8 h-8 rounded-full animate-pulse"
-          style={{ backgroundColor: `${COLORS.primary}33` }}
-        />
-      </div>
-    );
-  }
-
-  if (!shopEnabled) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: COLORS.bg }}
-      >
-        <div className="text-center">
-          <div
-            className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: `${COLORS.primary}10` }}
-          >
-            <ShoppingBag size={24} style={{ color: COLORS.primary }} />
-          </div>
-          <h1
-            className="text-[28px] font-semibold mb-2"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-          >
-            Shop Coming Soon
-          </h1>
-          <p style={{ color: COLORS.textDim }}>
-            We are curating our fabric collection. Check back soon.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Render ─────────────────────────────────────────────────────
-
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: COLORS.bg }}>
-      <ShopHeader />
-      <main>
-        <ShopHeroSlideshow />
-        <Categories />
-        {loading ? (
-          <div
-            className="py-20 flex items-center justify-center"
-            style={{ backgroundColor: COLORS.bg }}
-          >
-            <div
-              className="w-8 h-8 rounded-full animate-pulse"
-              style={{ backgroundColor: `${COLORS.primary}33` }}
-            />
-          </div>
-        ) : (
-          <div className="space-y-16">
-            <CuratedPicks fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <FeaturedCollections fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <NewArrivals fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <FeaturedCollection />
-            <QuiltKits fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <Testimonial />
-          </div>
-        )}
-      </main>
-      <ShopFooter />
-      <CartDrawer />
-    </div>
-  );
+  return <ShopClient initialFabrics={initialFabrics as ShopFabric[]} shopEnabled={enabled} />;
 }

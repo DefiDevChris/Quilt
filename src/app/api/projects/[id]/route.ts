@@ -143,7 +143,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       'gridSettings',
       'fabricPresets',
       'thumbnailUrl',
-      'isPublic',
       'activeWorktable',
     ];
     for (const key of ALLOWED_FIELDS) {

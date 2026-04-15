@@ -58,22 +58,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    resolveAlias: {
-      fs: { browser: './src/lib/empty-module.ts' },
-      path: { browser: './src/lib/empty-module.ts' },
-    },
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-      };
-    }
-    return config;
-  },
   async headers() {
     return [
       {

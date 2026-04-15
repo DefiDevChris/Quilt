@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { eq, and, ilike, desc, count, arrayContains } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogPosts, users } from '@/db/schema';
 import { blogSearchSchema, createBlogPostSchema } from '@/lib/validation';
 import { escapeLikePattern } from '@/lib/escape-like';
 import {
@@ -67,11 +67,9 @@ export async function GET(request: NextRequest) {
           content: blogPosts.content,
           createdAt: blogPosts.createdAt,
           authorName: users.name,
-          authorAvatarUrl: userProfiles.avatarUrl,
         })
         .from(blogPosts)
         .leftJoin(users, eq(blogPosts.authorId, users.id))
-        .leftJoin(userProfiles, eq(blogPosts.authorId, userProfiles.userId))
         .where(whereClause)
         .orderBy(desc(blogPosts.createdAt))
         .limit(limit)
@@ -90,7 +88,6 @@ export async function GET(request: NextRequest) {
       category: post.category,
       tags: post.tags,
       authorName: post.authorName ?? 'QuiltCorgi Team',
-      authorAvatarUrl: post.authorAvatarUrl ?? null,
       createdAt: post.createdAt,
       readTimeMinutes: calculateReadTime(post.content),
     }));

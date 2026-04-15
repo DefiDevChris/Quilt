@@ -32,7 +32,6 @@ export interface Project {
   canvasWidth: number;
   canvasHeight: number;
   thumbnailUrl: string | null;
-  isPublic: boolean;
   /** Which worktable mode is active: 'quilt' (main canvas) or 'block-builder'. */
   activeWorktable?: 'quilt' | 'block-builder';
   lastSavedAt: Date;

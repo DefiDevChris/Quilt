@@ -14,7 +14,29 @@ import {
 } from '@/lib/constants';
 import { DEFAULT_CANVAS } from '@/lib/design-system';
 import { clamp } from '@/lib/math-utils';
-import { fitToScreenZoom, computeViewportTransform } from '@/lib/canvas-utils';
+import { fitToScreenZoom, computeViewportTransform, clampPan } from '@/lib/canvas-utils';
+import { useProjectStore } from '@/stores/projectStore';
+
+/**
+ * Lower bound for zoom: fit-to-screen for the current quilt in the given
+ * canvas wrapper. Falls back to the hard-coded ZOOM_MIN when dimensions are
+ * unavailable. Keeps the quilt from shrinking below fully-visible.
+ */
+function getDynamicMinZoom(canvas: unknown): number {
+  const fabricCanvas = canvas as { wrapperEl?: HTMLElement } | null;
+  const el = fabricCanvas?.wrapperEl;
+  if (!el) return ZOOM_MIN;
+  const { canvasWidth, canvasHeight } = useProjectStore.getState();
+  const { unitSystem } = useCanvasStore.getState();
+  const fit = fitToScreenZoom(
+    el.clientWidth,
+    el.clientHeight,
+    canvasWidth,
+    canvasHeight,
+    unitSystem
+  );
+  return Math.max(ZOOM_MIN, fit);
+}
 
 export type ToolType =
   | 'select'
@@ -281,11 +303,15 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
       renderAll: () => void;
     } | null;
     if (!fabricCanvas) return;
-    const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
     const el = fabricCanvas.wrapperEl;
     if (!el) return;
     const containerW = el.clientWidth;
     const containerH = el.clientHeight;
+    const minZoom = Math.max(
+      ZOOM_MIN,
+      fitToScreenZoom(containerW, containerH, canvasWidth, canvasHeight, unitSystem)
+    );
+    const clamped = clamp(newZoom, minZoom, ZOOM_MAX);
     const vp = computeViewportTransform(
       containerW,
       containerH,
@@ -307,21 +333,38 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => {
     const fabricCanvas = canvas as { wrapperEl: HTMLElement } | null;
     if (!fabricCanvas) return;
-    const clamped = clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
     const el = fabricCanvas.wrapperEl;
     if (!el) return;
+    const clamped = clamp(newZoom, getDynamicMinZoom(fabricCanvas), ZOOM_MAX);
     const px = screenX ?? el.clientWidth / 2;
     const py = screenY ?? el.clientHeight / 2;
     // Lazy import to avoid pulling fabric into the store at module load
     void import('fabric').then((fabric) => {
-      (
-        fabricCanvas as unknown as {
-          zoomToPoint: (point: import('fabric').Point, zoom: number) => void;
-          renderAll: () => void;
-        }
-      ).zoomToPoint(new fabric.Point(px, py), clamped);
+      const c = fabricCanvas as unknown as {
+        zoomToPoint: (point: import('fabric').Point, zoom: number) => void;
+        renderAll: () => void;
+        viewportTransform: number[];
+        setViewportTransform: (vp: number[]) => void;
+      };
+      c.zoomToPoint(new fabric.Point(px, py), clamped);
+      const vt = c.viewportTransform;
+      if (vt) {
+        const { canvasWidth, canvasHeight } = useProjectStore.getState();
+        const { unitSystem } = get();
+        const clampedPan = clampPan(
+          vt[4],
+          vt[5],
+          vt[0],
+          el.clientWidth,
+          el.clientHeight,
+          canvasWidth,
+          canvasHeight,
+          unitSystem
+        );
+        c.setViewportTransform([vt[0], vt[1], vt[2], vt[3], clampedPan.panX, clampedPan.panY]);
+      }
       set({ zoom: clamped });
-      (fabricCanvas as unknown as { renderAll: () => void }).renderAll();
+      c.renderAll();
     });
   },
 

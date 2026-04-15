@@ -9,7 +9,6 @@ interface ProfileFormData {
 
 interface ProfileData {
   displayName: string;
-  avatarUrl: string | null;
 }
 
 const EMPTY_FORM: ProfileFormData = {
@@ -21,11 +20,8 @@ const DISPLAY_NAME_MAX = 60;
 export function ProfileEditForm() {
   const user = useAuthStore((s) => s.user);
   const [form, setForm] = useState<ProfileFormData>(EMPTY_FORM);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -44,8 +40,6 @@ export function ProfileEditForm() {
         setForm({
           displayName: profile.displayName ?? '',
         });
-        setAvatarUrl(profile.avatarUrl);
-        setAvatarPreview(profile.avatarUrl);
       }
     } catch {
       setError('Failed to load profile');
@@ -65,57 +59,6 @@ export function ProfileEditForm() {
       delete next[field];
       return next;
     });
-  }
-
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const previewUrl = URL.createObjectURL(file);
-    setAvatarPreview(previewUrl);
-    setIsUploadingAvatar(true);
-
-    try {
-      const presignedRes = await fetch('/api/upload/presigned-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type,
-          purpose: 'thumbnail',
-        }),
-      });
-
-      const presignedJson = await presignedRes.json();
-      if (!presignedRes.ok) {
-        throw new Error(presignedJson.error ?? 'Failed to get upload URL');
-      }
-
-      const { uploadUrl, publicUrl } = presignedJson.data;
-
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': file.type },
-        body: file,
-      });
-
-      const avatarRes = await fetch('/api/profile/avatar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ avatarUrl: publicUrl }),
-      });
-
-      if (!avatarRes.ok) {
-        throw new Error('Failed to update avatar');
-      }
-
-      setAvatarUrl(publicUrl);
-    } catch (err) {
-      setAvatarPreview(avatarUrl);
-      setError(err instanceof Error ? err.message : 'Failed to upload avatar');
-    } finally {
-      setIsUploadingAvatar(false);
-    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -181,13 +124,6 @@ export function ProfileEditForm() {
       <div className="space-y-10">
         <p className="text-[14px] leading-[20px] text-primary mb-6">Your Profile</p>
 
-        <AvatarUpload
-          avatarPreview={avatarPreview}
-          displayName={form.displayName}
-          isUploading={isUploadingAvatar}
-          onChange={handleAvatarChange}
-        />
-
         <FieldInput
           label="Display Name"
           value={form.displayName}
@@ -221,62 +157,6 @@ export function ProfileEditForm() {
         </button>
       </div>
     </form>
-  );
-}
-
-function AvatarUpload({
-  avatarPreview,
-  displayName,
-  isUploading,
-  onChange,
-}: {
-  avatarPreview: string | null;
-  displayName: string;
-  isUploading: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  const initials = displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((p) => p.charAt(0).toUpperCase())
-    .join('');
-
-  return (
-    <div className="flex items-center gap-8 group">
-      <label className="relative cursor-pointer">
-        <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-white shadow-[0_1px_2px_rgba(26,26,26,0.08)] bg-default relative">
-          {avatarPreview ? (
-            <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-2xl text-dim opacity-40">{initials || '?'}</span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-default/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="white"
-              className="w-6 h-6"
-            >
-              <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110-8 4 4 0 010 8z" />
-            </svg>
-          </div>
-        </div>
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={onChange}
-          className="hidden"
-        />
-      </label>
-      <div>
-        <p className="text-[14px] leading-[20px] text-default mb-1.5">Profile Photo</p>
-        <p className="text-[14px] leading-[20px] text-dim">
-          {isUploading ? 'Uploading...' : 'Click to update your photo'}
-        </p>
-      </div>
-    </div>
   );
 }
 

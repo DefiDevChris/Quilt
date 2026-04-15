@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogPosts, users } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { TiptapRenderer } from '@/components/editor/TiptapRenderer';
 import Link from 'next/link';
@@ -38,11 +38,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       category: blogPosts.category,
       publishedAt: blogPosts.publishedAt,
       authorName: users.name,
-      authorAvatarUrl: userProfiles.avatarUrl,
     })
     .from(blogPosts)
     .leftJoin(users, eq(blogPosts.authorId, users.id))
-    .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
     .limit(1);
 
@@ -112,13 +110,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </h1>
 
           <div className="flex items-center gap-4">
-            {post.authorAvatarUrl && (
-              <img
-                src={post.authorAvatarUrl}
-                alt={post.authorName ?? 'Author'}
-                className="w-10 h-10 rounded-full bg-primary/10 object-cover"
-              />
-            )}
             <span className="text-[14px] leading-[20px] text-default">{post.authorName}</span>
           </div>
         </header>

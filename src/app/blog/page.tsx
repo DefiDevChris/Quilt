@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
-import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogPosts, users } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import FeaturedCarousel from '@/components/blog/FeaturedCarousel';
 import AsymmetricPostFeed from '@/components/blog/AsymmetricPostFeed';
@@ -25,11 +25,9 @@ export default async function BlogPage() {
       category: blogPosts.category,
       createdAt: blogPosts.createdAt,
       authorName: users.name,
-      authorAvatarUrl: userProfiles.avatarUrl,
     })
     .from(blogPosts)
     .leftJoin(users, eq(blogPosts.authorId, users.id))
-    .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
     .where(eq(blogPosts.status, 'published'))
     .orderBy(desc(blogPosts.publishedAt))
     .limit(30);

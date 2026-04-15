@@ -2,8 +2,10 @@
 
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { isInputElement } from '@/lib/dom-utils';
+import { clampPan } from '@/lib/canvas-utils';
 
 export function useCanvasZoomPan() {
   const { getCanvas } = useCanvasContext();
@@ -43,6 +45,28 @@ export function useCanvasZoomPan() {
         canvas.selection = false;
       }
 
+      function applyPanClamp() {
+        const vt = canvas.viewportTransform;
+        if (!vt) return;
+        const el = canvas.wrapperEl;
+        if (!el) return;
+        const { canvasWidth, canvasHeight } = useProjectStore.getState();
+        const { unitSystem } = useCanvasStore.getState();
+        const clamped = clampPan(
+          vt[4],
+          vt[5],
+          vt[0],
+          el.clientWidth,
+          el.clientHeight,
+          canvasWidth,
+          canvasHeight,
+          unitSystem
+        );
+        if (clamped.panX !== vt[4] || clamped.panY !== vt[5]) {
+          canvas.setViewportTransform([vt[0], vt[1], vt[2], vt[3], clamped.panX, clamped.panY]);
+        }
+      }
+
       function onMouseMove(e: { e: MouseEvent }) {
         if (!isPanning) return;
         const dx = e.e.clientX - lastPanX;
@@ -50,6 +74,7 @@ export function useCanvasZoomPan() {
         lastPanX = e.e.clientX;
         lastPanY = e.e.clientY;
         canvas.relativePan(new fabric.Point(dx, dy));
+        applyPanClamp();
         canvas.renderAll();
       }
 

@@ -161,3 +161,33 @@ export function inchesToCm(inches: number): number {
 export function cmToInches(cm: number): number {
   return cm / 2.54;
 }
+
+// Quilters cut in 1/8" increments, so any finer precision is cosmetic.
+export function roundToEighthNearest(value: number): number {
+  return Math.round(value * 8) / 8;
+}
+
+// Format a decimal inch value as a quilter-friendly mixed fraction rounded to eighths.
+//   3        → "3"
+//   0.25     → "1/4"
+//   2.125    → "2 1/8"
+//   2.125, '-' → "2-1/8"
+export function formatFraction(value: number, separator: string = ' '): string {
+  const rounded = roundToEighthNearest(value);
+  const whole = Math.floor(rounded);
+  const eighths = Math.round((rounded - whole) * 8);
+
+  if (eighths === 0) {
+    return `${whole}`;
+  }
+
+  const g = gcd(eighths, 8);
+  const numerator = eighths / g;
+  const denominator = 8 / g;
+
+  if (whole === 0) {
+    return `${numerator}/${denominator}`;
+  }
+
+  return `${whole}${separator}${numerator}/${denominator}`;
+}

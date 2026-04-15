@@ -124,10 +124,6 @@ quilt_dataset/
 temp/
 test-results-json/
 
-# OpenCV.js (custom build — stock or gitignored; 10 MB)
-public/opencv/opencv.js
-public/opencv/opencv.wasm
-
 # One-time use scripts
 scripts/
 
@@ -140,7 +136,6 @@ public/favicon.png
 public/icon-192.png
 public/logo.png
 public/og-image.png
-public/test-fairgrounds.jpg
 public/fabrics/10227-B.jpg
 public/fabrics/10227-B1.jpg
 public/fabrics/10227-B2.jpg

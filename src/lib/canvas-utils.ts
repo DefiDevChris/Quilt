@@ -95,3 +95,41 @@ export function computeViewportTransform(
   const panY = (containerHeight - quiltHPx * zoom) / 2;
   return { zoom, panX, panY };
 }
+
+/**
+ * Clamp pan offsets so the quilt can't be dragged off-screen.
+ * If the quilt is smaller than the viewport on an axis, it stays centered.
+ * Otherwise the quilt edges cannot cross the opposite viewport edges.
+ */
+export function clampPan(
+  panX: number,
+  panY: number,
+  zoom: number,
+  containerWidth: number,
+  containerHeight: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  unitSystem: UnitSystem
+): { panX: number; panY: number } {
+  const pxPerUnit = getPixelsPerUnit(unitSystem);
+  const quiltWPx = canvasWidth * pxPerUnit * zoom;
+  const quiltHPx = canvasHeight * pxPerUnit * zoom;
+
+  let clampedX: number;
+  if (quiltWPx <= containerWidth) {
+    clampedX = (containerWidth - quiltWPx) / 2;
+  } else {
+    const minX = containerWidth - quiltWPx;
+    clampedX = Math.min(0, Math.max(minX, panX));
+  }
+
+  let clampedY: number;
+  if (quiltHPx <= containerHeight) {
+    clampedY = (containerHeight - quiltHPx) / 2;
+  } else {
+    const minY = containerHeight - quiltHPx;
+    clampedY = Math.min(0, Math.max(minY, panY));
+  }
+
+  return { panX: clampedX, panY: clampedY };
+}

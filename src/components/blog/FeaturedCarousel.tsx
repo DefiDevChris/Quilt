@@ -14,7 +14,6 @@ export interface BlogPost {
   category: string;
   createdAt: Date | null;
   authorName: string | null;
-  authorAvatarUrl: string | null;
 }
 
 const FALLBACK = [
