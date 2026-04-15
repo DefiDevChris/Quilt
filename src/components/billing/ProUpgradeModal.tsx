@@ -65,7 +65,6 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
               <ul className="space-y-6 mb-12">
                 {[
                   '50 traditional quilt blocks + custom block builder',
-                  'Photo-to-Design extraction pipeline',
                   'Unlimited projects and archives',
                   'Print-ready 1:1 scale PDF export',
                   '2,700+ solid fabric swatches',

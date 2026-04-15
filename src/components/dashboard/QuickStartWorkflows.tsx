@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatRelativeTime } from '@/lib/format-time';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
+import { COLORS, COLORS_HOVER, SHADOW } from '@/lib/design-system';
 
 interface RecentProject {
   id: string;
@@ -43,7 +43,7 @@ export function QuickStartWorkflows({ onNewProject, recentProjects }: QuickStart
   return (
     <section className="mb-8" aria-label="Quick start workflows">
       <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Quick Start</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Start New Project */}
         <button
           type="button"
@@ -191,25 +191,6 @@ export function QuickStartWorkflows({ onNewProject, recentProjects }: QuickStart
             </div>
           )}
         </div>
-
-        {/* Photo to Design */}
-        <Link
-          href="/photo-to-design"
-          className="min-h-[140px] rounded-lg p-6 text-left overflow-hidden bg-[var(--color-bg)] border border-[var(--color-border)] hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)] flex items-center justify-between gap-4"
-          aria-label="Photo to Design workflow"
-        >
-          <div>
-            <p className="text-[var(--color-text)] font-semibold text-lg mb-1">Photo to Design</p>
-            <p className="text-[var(--color-text-dim)] text-sm">Extract blocks with AI</p>
-          </div>
-          <Image
-            src="/icons/quilt-photo-camera.png"
-            alt=""
-            width={72}
-            height={72}
-            className="w-[72px] h-[72px] shrink-0 opacity-80 group-hover:opacity-100 transition-colors duration-150"
-          />
-        </Link>
       </div>
     </section>
   );

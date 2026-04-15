@@ -7,26 +7,26 @@ import { COLORS, darkenHex } from '@/lib/design-system';
 const slides = [
   {
     id: 1,
-    image: '/images/hero-collection-1.jpg',
+    image: '/images/shop/hero-fabric-drapes.jpg',
     title: 'Spring Collection',
-    subtitle: 'Fresh fabrics for your next project',
-    cta: 'Explore Now',
+    subtitle: 'NEW COLLECTION',
+    cta: 'SHOP NOW',
     href: '#new',
   },
   {
     id: 2,
-    image: '/images/hero-collection-2.jpg',
-    title: 'Stitch Your Story',
-    subtitle: 'Curated cottons, precuts, and patterns',
-    cta: 'Shop New Arrivals',
+    image: '/images/shop/fabric-shop-shelves.jpg',
+    title: 'Fresh Arrivals',
+    subtitle: 'FRESH ARRIVALS',
+    cta: 'SHOP NOW',
     href: '#new',
   },
   {
     id: 3,
-    image: '/images/hero-collection-3.jpg',
-    title: 'Cozy Creations',
-    subtitle: 'From our studio to your sewing table',
-    cta: 'Browse Kits',
+    image: '/images/shop/fabric-collection.jpg',
+    title: 'Essential Solids',
+    subtitle: 'ESSENTIAL SOLIDS',
+    cta: 'BROWSE KITS',
     href: '#kits',
   },
 ];
@@ -56,17 +56,17 @@ export default function ShopHeroSlideshow() {
   }, [isAutoPlaying, nextSlide]);
 
   return (
-    <section className="relative w-full h-screen overflow-hidden">
+    <section className="relative w-full overflow-hidden border-b" style={{ borderColor: `${COLORS.text}1a` }}>
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+          className={`transition-opacity duration-1000 ${
+            index === currentSlide ? 'opacity-100' : 'opacity-0 hidden'
           }`}
+          style={{ height: '400px' }}
         >
-          {/* Background Image */}
-          <div className="absolute inset-0">
+          <div className="relative w-full h-full">
             <img
               src={slide.image}
               alt={slide.title}
@@ -75,59 +75,45 @@ export default function ShopHeroSlideshow() {
             <div
               className="absolute inset-0"
               style={{
-                background: `linear-gradient(to right, ${COLORS.text}66, ${COLORS.text}33, transparent)`,
+                background: `linear-gradient(to right, ${COLORS.surface}f2, ${COLORS.surface}cc, transparent)`,
               }}
             />
           </div>
 
           {/* Content */}
-          <div className="relative z-20 h-full flex items-center">
-            <div className="w-full px-6 lg:px-12">
-              <div className="max-w-xl">
-                <span
-                  className="inline-block px-4 py-1.5 mb-6 text-xs uppercase tracking-widest rounded-full"
-                  style={{
-                    backgroundColor: COLORS.primary,
-                    color: COLORS.surface,
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  New Collection
-                </span>
-                <h1
-                  className="text-5xl lg:text-7xl leading-tight mb-4"
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 300,
-                    color: COLORS.surface,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  {slide.title}
-                </h1>
-                <p
-                  className="text-lg lg:text-xl mb-8"
-                  style={{ color: `${COLORS.surface}e6`, fontWeight: 300 }}
-                >
-                  {slide.subtitle}
-                </p>
-                <a
-                  href={slide.href}
-                  className="inline-flex items-center px-8 py-3.5 text-sm font-medium rounded-full transition-colors duration-200"
-                  style={{
-                    backgroundColor: COLORS.primary,
-                    color: COLORS.text,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = darkenHex(COLORS.primary, 0.1);
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = COLORS.primary;
-                  }}
-                >
-                  {slide.cta}
-                </a>
-              </div>
+          <div className="absolute inset-0 flex items-center max-w-7xl mx-auto px-8 sm:px-12 lg:px-16">
+            <div className="max-w-lg">
+              <p
+                className="font-bold tracking-widest uppercase text-sm mb-4"
+                style={{ color: COLORS.primary }}
+              >
+                {slide.subtitle}
+              </p>
+              <h2
+                className="text-5xl md:text-6xl mb-6 leading-tight"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  color: COLORS.text,
+                }}
+              >
+                {slide.title}
+              </h2>
+              <a
+                href={slide.href}
+                className="inline-block px-10 py-3.5 rounded-full font-bold tracking-wide transition-colors shadow-sm"
+                style={{
+                  backgroundColor: COLORS.primary,
+                  color: COLORS.surface,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = darkenHex(COLORS.primary, 0.1);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = COLORS.primary;
+                }}
+              >
+                {slide.cta}
+              </a>
             </div>
           </div>
         </div>
@@ -136,9 +122,9 @@ export default function ShopHeroSlideshow() {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-white hover:bg-white/30 transition-colors"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-white hover:bg-white/30 transition-colors"
         style={{
-          backgroundColor: `${COLORS.surface}20`,
+          backgroundColor: `${COLORS.surface}33`,
           backdropFilter: 'blur(8px)',
         }}
         aria-label="Previous slide"
@@ -147,9 +133,9 @@ export default function ShopHeroSlideshow() {
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-white hover:bg-white/30 transition-colors"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full text-white hover:bg-white/30 transition-colors"
         style={{
-          backgroundColor: `${COLORS.surface}20`,
+          backgroundColor: `${COLORS.surface}33`,
           backdropFilter: 'blur(8px)',
         }}
         aria-label="Next slide"
@@ -158,30 +144,20 @@ export default function ShopHeroSlideshow() {
       </button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
+      <div className="absolute bottom-6 left-0 right-0 flex justify-center space-x-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             className="rounded-full transition-all duration-300"
             style={{
-              height: '10px',
-              width: index === currentSlide ? '32px' : '10px',
-              backgroundColor: index === currentSlide ? COLORS.surface : `${COLORS.surface}80`,
+              height: '12px',
+              width: index === currentSlide ? '32px' : '12px',
+              backgroundColor: index === currentSlide ? COLORS.primary : `${COLORS.surface}cc`,
             }}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 z-30 hidden lg:block">
-        <span
-          className="text-xs uppercase tracking-widest"
-          style={{ color: `${COLORS.surface}b3`, fontFamily: 'var(--font-display)' }}
-        >
-          Scroll to explore
-        </span>
       </div>
     </section>
   );

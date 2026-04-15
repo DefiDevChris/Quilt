@@ -67,10 +67,10 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
 
-  // Drop transient backgroundImage references (e.g., blob: URLs from the
-  // photo-to-design pipeline) before persisting. Blob URLs are session-bound
-  // and fail with ERR_FILE_NOT_FOUND on reload, causing loadFromJSON to throw
-  // and the entire canvas to appear empty.
+  // Drop transient backgroundImage references (e.g., blob: URLs) before
+  // persisting. Blob URLs are session-bound and fail with ERR_FILE_NOT_FOUND
+  // on reload, causing loadFromJSON to throw and the entire canvas to appear
+  // empty.
   const bgImage = (canvasData as Record<string, unknown>).backgroundImage as
     | { src?: string }
     | undefined;

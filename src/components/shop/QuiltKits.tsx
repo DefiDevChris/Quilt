@@ -1,6 +1,5 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
 import { COLORS, darkenHex } from '@/lib/design-system';
 
 interface Fabric {
@@ -24,38 +23,31 @@ interface QuiltKitsProps {
   onAddToCart: (fabric: Fabric) => void;
 }
 
-const difficulties = ['Beginner-friendly', 'Easy', 'Intermediate'];
-
 export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
-  const kits = fabrics.slice(6, 9);
+  const kits = fabrics.slice(6, 10);
 
   return (
-    <section id="kits" className="py-20 lg:py-28" style={{ backgroundColor: COLORS.surface }}>
-      <div className="w-full px-6 lg:px-12">
+    <section id="kits" className="py-16 border-t" style={{ backgroundColor: COLORS.surface, borderColor: `${COLORS.text}1a` }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-12">
+        <div className="flex justify-between items-end mb-10 border-b pb-4" style={{ borderColor: `${COLORS.text}1a` }}>
           <div>
-            <span
-              className="text-xs uppercase tracking-widest mb-3 block"
-              style={{ color: COLORS.textDim, fontFamily: 'var(--font-display)' }}
-            >
-              Bestselling Kits
-            </span>
             <h2
-              className="text-4xl lg:text-5xl"
+              className="text-3xl mb-2"
               style={{
                 fontFamily: 'var(--font-display)',
-                fontWeight: 300,
                 color: COLORS.text,
-                fontStyle: 'italic',
               }}
             >
-              Everything you need to start
+              Shop New Quilt Kits
             </h2>
+            <p style={{ color: COLORS.textDim }}>
+              Discover the latest and greatest quilt kits, curated for your next masterpiece.
+            </p>
           </div>
           <a
             href="/shop/catalog"
-            className="inline-flex items-center mt-4 lg:mt-0 text-sm font-medium transition-colors group"
+            className="text-sm font-bold tracking-wider uppercase transition-colors pb-1"
             style={{ color: COLORS.text }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
@@ -64,85 +56,75 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
               e.currentTarget.style.color = COLORS.text;
             }}
           >
-            Browse all kits
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+            Shop All &rarr;
           </a>
         </div>
 
         {/* Kit Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {kits.map((kit, index) => {
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+          {kits.map((kit) => {
             const price = kit.pricePerYard ? `$${Number(kit.pricePerYard).toFixed(2)}` : '';
-            const difficulty = difficulties[index % difficulties.length];
             return (
-              <article
+              <div
                 key={kit.id}
-                className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+                className="group flex flex-col text-center"
               >
-                <div className="aspect-[4/5] overflow-hidden">
-                  {kit.imageUrl?.startsWith('/') ? (
-                    <img
-                      src={kit.imageUrl}
-                      alt={kit.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : kit.hex ? (
-                    <div
-                      className="w-full h-full group-hover:scale-105 transition-transform duration-500"
-                      style={{ backgroundColor: kit.hex }}
-                    />
-                  ) : (
-                    <div
-                      className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: `${COLORS.primary}10` }}
-                    />
-                  )}
-                </div>
-                <div className="p-6">
+                <a href="#" className="block flex-grow">
+                  <div
+                    className="relative aspect-[4/5] mb-4 border rounded-lg overflow-hidden"
+                    style={{ borderColor: `${COLORS.text}1a`, backgroundColor: COLORS.bg }}
+                  >
+                    {kit.imageUrl?.startsWith('/') ? (
+                      <img
+                        src={kit.imageUrl}
+                        alt={kit.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : kit.hex ? (
+                      <div
+                        className="w-full h-full group-hover:scale-105 transition-transform duration-700"
+                        style={{ backgroundColor: kit.hex }}
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: `${COLORS.primary}10` }}
+                      />
+                    )}
+                  </div>
                   <h3
-                    className="text-xl font-light mb-3"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      color: COLORS.text,
-                    }}
+                    className="font-medium leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2 px-2"
+                    style={{ color: COLORS.text }}
                   >
                     {kit.name}
                   </h3>
-                  <span
-                    className="inline-block px-3 py-1 text-xs uppercase tracking-wider rounded-full border"
-                    style={{
-                      borderColor: `${COLORS.text}20`,
-                      color: COLORS.textDim,
-                      fontFamily: 'var(--font-display)',
-                    }}
-                  >
-                    {difficulty}
-                  </span>
+                </a>
+                <div className="mt-auto pt-2">
                   {price && (
-                    <p className="text-base font-medium mt-3" style={{ color: COLORS.text }}>
+                    <p className="font-bold mb-4" style={{ color: COLORS.text }}>
                       {price}
                     </p>
                   )}
                   {kit.shopifyVariantId && kit.inStock && (
                     <button
                       onClick={() => onAddToCart(kit)}
-                      className="mt-4 w-full py-2.5 text-sm font-medium rounded-full transition-colors duration-200"
+                      className="w-full rounded-full py-2.5 text-sm font-bold tracking-wide transition-colors"
                       style={{
-                        backgroundColor: COLORS.primary,
-                        color: COLORS.text,
+                        backgroundColor: COLORS.text,
+                        color: COLORS.surface,
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = darkenHex(COLORS.primary, 0.1);
-                      }}
-                      onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = COLORS.primary;
                       }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = COLORS.text;
+                      }}
                     >
-                      Add to Cart
+                      ADD TO CART
                     </button>
                   )}
                 </div>
-              </article>
+              </div>
             );
           })}
         </div>

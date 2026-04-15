@@ -144,7 +144,7 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     category: 'account',
     title: 'What do I get with Pro?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, Photo-to-Design, PDF export, and server-side project sync.',
+      'Pro gives you unlimited projects, the full Fabric Library, PDF export, and server-side project sync.',
   },
   {
     id: 'ac-2',
@@ -252,15 +252,6 @@ export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
     description: 'A quick intro to the Studio workspace, worktables, and your first quilt.',
     category: 'getting-started',
     duration: '5 min',
-    thumbnailUrl: null,
-  },
-  {
-    id: 'vt-2',
-    title: 'Using Photo-to-Design',
-    description:
-      'Turn any photo into a quilt design using our 5-step wizard with OpenCV processing.',
-    category: 'design-tools',
-    duration: '8 min',
     thumbnailUrl: null,
   },
   {

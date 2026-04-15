@@ -355,7 +355,6 @@ export function BillingSection() {
               'Complete 50-block library + custom blocks',
               'Full 2,700+ fabric library + custom uploads',
               'SVG, PDF, & high-resolution PNG exports',
-              'Photo-to-Design pipeline',
               'Print-ready 1:1 scale PDF patterns',
               'Server-side project sync',
             ].map((item) => (

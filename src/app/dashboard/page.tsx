@@ -183,42 +183,6 @@ function DashboardPageContent() {
               </div>
             </button>
 
-            <Link
-              href="/photo-to-design"
-              className="group relative overflow-hidden p-8 text-left border transition-colors rounded-lg"
-              style={{
-                backgroundColor: COLORS.surface,
-                borderColor: COLORS.border,
-                boxShadow: SHADOW.brand,
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = `${COLORS.primary}4d`;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = COLORS.border;
-              }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <Image
-                  src="/icons/quilt-photo-camera.png"
-                  alt=""
-                  width={48}
-                  height={48}
-                  className="w-12 h-12"
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="font-semibold text-xl" style={{ color: COLORS.text }}>
-                  Photo to Design
-                </p>
-                <p className="text-sm" style={{ color: COLORS.textDim }}>
-                  Extract a pattern from a photo of a quilt
-                </p>
-              </div>
-            </Link>
-
             <button
               type="button"
               onClick={() => projects[0] && (window.location.href = `/studio/${projects[0].id}`)}

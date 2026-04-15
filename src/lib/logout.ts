@@ -7,7 +7,6 @@ import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCartStore } from '@/stores/cartStore';
-import { usePhotoDesignStore } from '@/stores/photoDesignStore';
 
 /**
  * Centralized logout function.
@@ -40,5 +39,4 @@ export async function logout(): Promise<void> {
   useYardageStore.getState().reset();
   useLayoutStore.getState().reset();
   useCartStore.getState().reset();
-  usePhotoDesignStore.getState().reset();
 }

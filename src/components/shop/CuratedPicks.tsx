@@ -25,35 +25,30 @@ interface CuratedPicksProps {
 }
 
 export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps) {
-  const picks = fabrics.slice(0, 3);
+  const picks = fabrics.slice(0, 4);
 
   return (
-    <section id="fabrics" className="py-20 lg:py-28" style={{ backgroundColor: COLORS.bg }}>
-      <div className="w-full px-6 lg:px-12">
+    <section id="fabrics" className="py-16 border-t" style={{ backgroundColor: COLORS.surface, borderColor: `${COLORS.text}1a` }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-12">
+        <div className="flex justify-between items-end mb-10 border-b pb-4" style={{ borderColor: `${COLORS.text}1a` }}>
           <div>
-            <span
-              className="text-xs uppercase tracking-widest mb-3 block"
-              style={{ color: COLORS.textDim, fontFamily: 'var(--font-display)' }}
-            >
-              Curated Picks
-            </span>
             <h2
-              className="text-4xl lg:text-5xl"
+              className="text-3xl mb-2"
               style={{
                 fontFamily: 'var(--font-display)',
-                fontWeight: 300,
                 color: COLORS.text,
-                fontStyle: 'italic',
               }}
             >
-              This week&apos;s favorites
+              This Week&apos;s Favorites
             </h2>
+            <p style={{ color: COLORS.textDim }}>
+              Our top picks for your next quilting project.
+            </p>
           </div>
           <a
             href="/shop/catalog"
-            className="inline-flex items-center mt-4 lg:mt-0 text-sm font-medium transition-colors group"
+            className="text-sm font-bold tracking-wider uppercase transition-colors pb-1"
             style={{ color: COLORS.text }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
@@ -62,87 +57,85 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
               e.currentTarget.style.color = COLORS.text;
             }}
           >
-            View all new fabrics
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+            Shop All &rarr;
           </a>
         </div>
 
         {/* Fabric Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
           {picks.map((fabric) => {
             const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '';
             return (
-              <article
+              <div
                 key={fabric.id}
-                className="group bg-white rounded-[28px] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+                className="group flex flex-col"
               >
-                <div className="aspect-[4/5] overflow-hidden">
-                  {fabric.imageUrl?.startsWith('/') ? (
-                    <img
-                      src={fabric.imageUrl}
-                      alt={fabric.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : fabric.hex ? (
-                    <div
-                      className="w-full h-full group-hover:scale-105 transition-transform duration-500"
-                      style={{ backgroundColor: fabric.hex }}
-                    />
-                  ) : (
-                    <div
-                      className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: `${COLORS.primary}10` }}
-                    />
-                  )}
-                </div>
-                <div className="p-6">
+                <a href="#" className="block flex-grow">
+                  <div
+                    className="relative mb-3 border rounded overflow-hidden"
+                    style={{ height: '180px', borderColor: `${COLORS.text}1a`, backgroundColor: COLORS.bg }}
+                  >
+                    {fabric.imageUrl?.startsWith('/') ? (
+                      <img
+                        src={fabric.imageUrl}
+                        alt={fabric.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : fabric.hex ? (
+                      <div
+                        className="w-full h-full group-hover:scale-105 transition-transform duration-700"
+                        style={{ backgroundColor: fabric.hex }}
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: `${COLORS.primary}10` }}
+                      />
+                    )}
+                  </div>
                   {fabric.collection && (
                     <p
-                      className="text-xs uppercase tracking-wide mb-1"
-                      style={{ color: COLORS.primary, fontFamily: 'var(--font-display)' }}
+                      className="text-xs uppercase tracking-wider mb-1"
+                      style={{ color: COLORS.textDim }}
                     >
                       {fabric.collection}
                     </p>
                   )}
                   <h3
-                    className="text-xl font-light mb-1"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      color: COLORS.text,
-                    }}
+                    className="font-medium leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2"
+                    style={{ color: COLORS.text }}
                   >
                     {fabric.name}
                   </h3>
-                  {fabric.manufacturer && (
-                    <p className="text-sm mb-3" style={{ color: COLORS.textDim }}>
-                      {fabric.manufacturer}
-                    </p>
-                  )}
+                </a>
+                <div className="mt-auto pt-3 flex items-center justify-between">
                   {price && (
-                    <p className="text-base font-medium" style={{ color: COLORS.text }}>
+                    <p className="font-bold" style={{ color: COLORS.text }}>
                       {price}/yd
                     </p>
                   )}
                   {fabric.shopifyVariantId && fabric.inStock && (
                     <button
                       onClick={() => onAddToCart(fabric)}
-                      className="mt-4 w-full py-2.5 text-sm font-medium rounded-full transition-colors duration-200"
+                      className="text-sm font-bold px-5 py-1.5 rounded-full transition-colors border-2"
                       style={{
-                        backgroundColor: COLORS.primary,
-                        color: COLORS.text,
+                        color: COLORS.primary,
+                        borderColor: COLORS.primary,
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = darkenHex(COLORS.primary, 0.1);
+                        e.currentTarget.style.backgroundColor = COLORS.primary;
+                        e.currentTarget.style.color = COLORS.surface;
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = COLORS.primary;
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = COLORS.primary;
                       }}
                     >
-                      Add to Cart
+                      Add
                     </button>
                   )}
                 </div>
-              </article>
+              </div>
             );
           })}
         </div>

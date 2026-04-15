@@ -307,10 +307,9 @@ export default function CoreCapabilities() {
             </div>
 
             <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-8">
-              Whether you&apos;re snapping a photo of a quilt and recreating it digitally,
-              positioning fabric motifs with precision, or drafting custom blocks in the Block
-              Builder &mdash; every tool is made to help you create something you&apos;ll be proud
-              of.
+              Whether you&apos;re positioning fabric motifs with precision, or drafting custom
+              blocks in the Block Builder &mdash; every tool is made to help you create something
+              you&apos;ll be proud of.
             </p>
 
             <ul className="space-y-4 mb-10">
@@ -320,9 +319,7 @@ export default function CoreCapabilities() {
               <CheckItem>Per-patch fabric assignment with pattern previews</CheckItem>
               <CheckItem>True 1:1 scale PDF patterns with seam allowances</CheckItem>
               <CheckItem>Block Builder for drafting custom blocks by seam line</CheckItem>
-              <CheckItem>Photo-to-Design: extract quilt pieces from photos using OpenCV</CheckItem>
               <CheckItem>Print-ready cutting charts and rotary templates</CheckItem>
-              <CheckItem>Snap a photo of a quilt and recreate it digitally (Pro)</CheckItem>
               <CheckItem>Six layout presets on a single persistent canvas</CheckItem>
             </ul>
 

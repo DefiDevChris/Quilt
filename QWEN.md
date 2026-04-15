@@ -2,13 +2,13 @@
 
 > **IMPORTANT:** This file MUST stay identical to `QWEN.md` at all times.
 
-> **Context retrieval:** For detailed feature docs (Studio architecture, Photo-to-Design pipeline, PDF export, Shop, Social, Mobile uploads, removed-features list), query **mempalace** (`mempalace_search` with wing `quilt`). Only coding conventions and daily-use commands live here.
+> **Context retrieval:** For detailed feature docs (Studio architecture, PDF export, Shop, Social, Mobile uploads, removed-features list), query **mempalace** (`mempalace_search` with wing `quilt`). Only coding conventions and daily-use commands live here.
 
 ## Project Overview
 
 Next.js 16 quilt design app — Fabric.js canvas, Zustand state, PostgreSQL/Drizzle, AWS Cognito auth, Stripe payments. Users pick layouts, assign blocks/fabrics, export print-ready PDF patterns.
 
-**Flagship features:** Design Studio, Photo-to-Design (seam tracing → SVG patch outlines), Block Photo Upload, PDF Pattern Export.
+**Flagship features:** Design Studio, Block Photo Upload, PDF Pattern Export.
 
 ## Commands
 

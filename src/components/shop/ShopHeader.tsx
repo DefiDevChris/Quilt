@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
-import { COLORS, MOTION } from '@/lib/design-system';
+import { COLORS, darkenHex } from '@/lib/design-system';
 import { useCartStore } from '@/stores/cartStore';
 
 const navLinks = [
-  { name: 'Fabrics', href: '#fabrics' },
+  { name: 'Fabric', href: '#fabrics' },
   { name: 'Precuts', href: '#categories' },
   { name: 'Kits', href: '#kits' },
-  { name: 'Patterns', href: '#patterns' },
+  { name: 'Thread', href: '#categories' },
+  { name: 'Batting', href: '#categories' },
   { name: 'Notions', href: '#categories' },
   { name: 'New', href: '#new' },
+  { name: 'Sale', href: '#fabrics' },
 ];
 
 export default function ShopHeader() {
@@ -32,146 +34,157 @@ export default function ShopHeader() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'shadow-sm'
-          : ''
-      }`}
+      className="w-full border-b sticky top-0 z-50"
       style={{
-        backgroundColor: isScrolled ? `${COLORS.bg}e6` : 'transparent',
-        backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+        backgroundColor: COLORS.surface,
+        borderColor: `${COLORS.text}1a`,
       }}
     >
-      <div className="w-full px-6 lg:px-12">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex justify-between items-center gap-8">
           {/* Logo */}
-          <a href="/shop" className="flex items-center">
-            <span
-              className="text-2xl lg:text-3xl"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 300,
-                color: isScrolled ? COLORS.text : COLORS.surface,
-                fontStyle: 'italic',
-                transition: `color ${MOTION.transitionDuration}ms ${MOTION.transitionEasing}`,
-              }}
-            >
-              QuiltCorgi
-            </span>
+          <a
+            href="/shop"
+            className="text-4xl font-bold shrink-0"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: COLORS.primary,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            QuiltCorgi
           </a>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium transition-colors duration-200"
-                style={{
-                  color: isScrolled ? `${COLORS.text}cc` : `${COLORS.surface}cc`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = COLORS.primary;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = isScrolled ? `${COLORS.text}cc` : `${COLORS.surface}cc`;
-                }}
-              >
-                {link.name}
-              </a>
-            ))}
-          </nav>
-
-          {/* Utility Icons */}
-          <div className="flex items-center space-x-4">
-            <button
-              className="p-2 transition-colors"
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-2xl relative">
+            <input
+              type="text"
+              placeholder="Search for fabric, patterns, kits, and more..."
+              className="w-full pl-5 pr-12 py-3 border-2 rounded-full text-sm transition-colors"
               style={{
-                color: isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`,
+                borderColor: `${COLORS.text}1a`,
+                color: COLORS.text,
               }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = COLORS.primary;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = `${COLORS.text}1a`;
+              }}
+            />
+            <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+              style={{ color: COLORS.textDim }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = COLORS.primary;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`;
+                e.currentTarget.style.color = COLORS.textDim;
               }}
               aria-label="Search"
             >
               <Search className="w-5 h-5" strokeWidth={1.5} />
             </button>
+          </div>
+
+          {/* Icons */}
+          <div className="flex items-center space-x-6 shrink-0">
             <button
-              className="p-2 transition-colors"
-              style={{
-                color: isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`,
-              }}
+              className="transition-colors flex flex-col items-center gap-1"
+              style={{ color: COLORS.text }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = COLORS.primary;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`;
+                e.currentTarget.style.color = COLORS.text;
               }}
               aria-label="Account"
             >
-              <User className="w-5 h-5" strokeWidth={1.5} />
+              <User className="w-6 h-6" />
+              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
+                Sign In
+              </span>
             </button>
             <button
               onClick={toggleDrawer}
-              className="p-2 relative transition-colors"
-              style={{
-                color: isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`,
-              }}
+              className="transition-colors flex flex-col items-center gap-1 relative"
+              style={{ color: COLORS.text }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = COLORS.primary;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`;
+                e.currentTarget.style.color = COLORS.text;
               }}
               aria-label="Cart"
             >
-              <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
-              {cartItems.length > 0 && (
-                <span
-                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-medium"
-                  style={{
-                    backgroundColor: COLORS.primary,
-                    color: COLORS.surface,
-                  }}
-                >
-                  {Math.min(Math.round(itemCount), 9)}
-                </span>
-              )}
+              <div className="relative">
+                <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+                {cartItems.length > 0 && (
+                  <span
+                    className="absolute -top-2 -right-2 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2"
+                    style={{
+                      backgroundColor: COLORS.secondary,
+                      color: COLORS.text,
+                      borderColor: COLORS.surface,
+                    }}
+                  >
+                    {Math.min(Math.round(itemCount), 9)}
+                  </span>
+                )}
+              </div>
+              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
+                Cart
+              </span>
             </button>
             <button
-              className="lg:hidden p-2 transition-colors"
-              style={{
-                color: isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`,
-              }}
+              className="md:hidden transition-colors"
+              style={{ color: COLORS.text }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Menu"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = COLORS.primary;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = isScrolled ? `${COLORS.text}70` : `${COLORS.surface}70`;
-              }}
             >
               {isMobileMenuOpen ? (
-                <X className="w-5 h-5" strokeWidth={1.5} />
+                <X className="w-6 h-6" strokeWidth={1.5} />
               ) : (
-                <Menu className="w-5 h-5" strokeWidth={1.5} />
+                <Menu className="w-6 h-6" strokeWidth={1.5} />
               )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Navigation Bar */}
+      <div
+        className="border-t"
+        style={{ borderColor: `${COLORS.text}1a` }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex overflow-x-auto py-3 space-x-8 no-scrollbar">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="whitespace-nowrap text-sm font-bold uppercase tracking-wider transition-colors"
+                style={{ color: COLORS.text }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = COLORS.primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = COLORS.text;
+                }}
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
+
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden border-t"
+          className="md:hidden border-t"
           style={{
-            backgroundColor: `${COLORS.bg}f2`,
-            backdropFilter: 'blur(12px)',
+            backgroundColor: COLORS.surface,
             borderColor: `${COLORS.text}1a`,
           }}
         >
@@ -180,13 +193,13 @@ export default function ShopHeader() {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-base font-medium transition-colors"
-                style={{ color: `${COLORS.text}cc` }}
+                className="text-base font-bold uppercase tracking-wider transition-colors"
+                style={{ color: COLORS.text }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = COLORS.primary;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = `${COLORS.text}cc`;
+                  e.currentTarget.style.color = COLORS.text;
                 }}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

@@ -750,32 +750,6 @@
         "consistency_notes": "CLEAN — zero brand violations. Already compliant before remediation."
       },
       {
-        "page": "photo-to-design-wizard",
-        "route": "/photo-to-design",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Photo-to-design pipeline — upload, analyze, review pieces, import to studio",
-        "layout": "Multi-step wizard with progress indicator, image preview, piece review grid",
-        "components": ["PhotoToLayoutPromo"],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — removed ALL bg-gradient-to-r gradients (solid bg-[#ff8d49] instead), removed glass-panel class, removed bg-white/50, replaced ALL rounded-full with rounded-lg, replaced ALL animate-spin with animate-pulse opacity, replaced ALL Material tokens (text-neutral, bg-neutral, text-on-surface, text-secondary, text-error, text-warning, bg-surface-container, border-outline-variant) with brand hex colors, fixed all buttons to brand primary style, replaced glass-panel on scan settings/piece scale toggles with bg-[#ffffff] border border-[#e8e1da] rounded-lg."
-      },
-      {
-        "page": "photo-to-layout-promo",
-        "route": "(promo component on /photo-to-design)",
-        "status": "live",
-        "last_updated": "2026-04-10",
-        "purpose": "Promo/modal for photo-to-layout feature with source selection",
-        "layout": "Modal with source selection buttons, upload card previews, progress indicator",
-        "components": [],
-        "images": [],
-        "icons": [],
-        "graphics": [],
-        "consistency_notes": "REMEDIATED — replaced bg-neutral with bg-[#ffffff], replaced rounded-full on cards/containers with rounded-lg (buttons keep rounded-full per brand spec), replaced animate-spin with animate-pulse, removed hover:scale transforms, replaced all Material tokens with brand hex colors, fixed badge to bg-[#ff8d49] text-[#2d2a26], fixed upload cards to brand styling, fixed error/warning blocks to brand colors, added QuiltPiece decorations."
-      },
-      {
         "component": "QuiltPiece",
         "path": "src/components/decorative/QuiltPiece.tsx",
         "status": "live",

@@ -6,7 +6,7 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
 export const metadata: Metadata = {
   title: `${APP_NAME} — Your Next Quilt Starts Here`,
   description:
-    'Design quilts in your browser with a growing block library, drag-and-drop fabrics, photo-to-design tools, and 1:1 PDF export. Free to start.',
+    'Design quilts in your browser with a growing block library, drag-and-drop fabrics, and 1:1 PDF export. Free to start.',
   openGraph: {
     title: `${APP_NAME} — Your Next Quilt Starts Here`,
     description:

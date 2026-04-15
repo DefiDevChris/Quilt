@@ -7,13 +7,12 @@ import { UploadCard } from './UploadCard';
 import type { MobileUploadAssignedType } from '@/types/mobile-upload';
 import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
-type FilterType = 'all' | 'fabric' | 'block' | 'quilt';
+type FilterType = 'all' | 'fabric' | 'block';
 
 const FILTER_CHIPS: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'fabric', label: 'Fabric' },
   { value: 'block', label: 'Block' },
-  { value: 'quilt', label: 'Quilt' },
 ];
 
 export function MobileUploadsPanel() {
@@ -45,7 +44,7 @@ export function MobileUploadsPanel() {
   );
 
   const handleProcess = useCallback(
-    async (id: string, type: 'fabric' | 'block' | 'quilt') => {
+    async (id: string, type: 'fabric' | 'block') => {
       const result = await processUpload(id, type);
       if (!result) return;
 
@@ -56,11 +55,6 @@ export function MobileUploadsPanel() {
         case 'block':
           router.push(
             `/dashboard?tab=blocks&upload=true&preloadUrl=${encodeURIComponent(upload.imageUrl)}&uploadId=${id}`
-          );
-          break;
-        case 'quilt':
-          router.push(
-            `/dashboard?action=photo-to-design&preloadUrl=${encodeURIComponent(upload.imageUrl)}&uploadId=${id}`
           );
           break;
         case 'fabric':

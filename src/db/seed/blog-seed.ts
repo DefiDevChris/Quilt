@@ -118,9 +118,7 @@ const whyFreeQuiltTool: TiptapDoc = {
         ' includes the full design canvas, block library, fabric uploads, basic exports, and community sharing. '
       ),
       bold('Pro'),
-      text(
-        ' adds advanced features like photo-to-quilt conversion, PDF export, cutting charts, and priority support.'
-      )
+      text(' adds advanced features like PDF export, cutting charts, and priority support.')
     ),
     p(
       text(
@@ -545,44 +543,5 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
     tags: ['intermediate', 'layout', 'grid', 'tutorial'],
     status: 'published',
     publishedAt: new Date('2026-03-18T12:00:00Z'),
-  },
-  {
-    title: 'Photo to Quilt: Turn Any Image into a Pattern',
-    slug: 'photo-to-quilt-guide',
-    content: {
-      type: 'doc',
-      content: [
-        p(
-          text(
-            "QuiltCorgi's Photo to Design tool converts any photograph into a quilt design. Upload a photo and our computer vision engine detects the shapes, colors, and layout automatically."
-          )
-        ),
-        heading(2, 'How It Works'),
-        bulletList(
-          'Upload any photo of a quilt or image you want to recreate',
-          'The engine detects individual pieces using contour detection',
-          'Colors are mapped to your fabric library',
-          'Pieces are placed on the design canvas in the original layout'
-        ),
-        heading(2, 'Getting the Best Results'),
-        p(
-          text(
-            'For best results, use a photo taken straight-on with even lighting. The perspective correction tool can fix mild angles. High-contrast quilts with clearly defined pieces produce the most accurate results.'
-          )
-        ),
-        heading(2, 'After Import'),
-        p(
-          text(
-            'Once imported, every piece is fully editable. Change colors, swap fabrics, resize blocks, and adjust the layout just like any other design. The photo gives you a starting point — make it your own.'
-          )
-        ),
-      ],
-    },
-    excerpt:
-      'Convert any photograph into a quilt layout using computer vision. Detect pieces, map colors, and edit the result.',
-    category: 'Tutorials',
-    tags: ['advanced', 'photo', 'patchwork', 'image', 'tutorial'],
-    status: 'published',
-    publishedAt: new Date('2026-03-20T12:00:00Z'),
   },
 ];

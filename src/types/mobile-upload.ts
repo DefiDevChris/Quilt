@@ -1,5 +1,5 @@
 export type MobileUploadStatus = 'pending' | 'processing' | 'completed' | 'failed';
-export type MobileUploadAssignedType = 'unassigned' | 'fabric' | 'block' | 'quilt';
+export type MobileUploadAssignedType = 'unassigned' | 'fabric' | 'block';
 
 export interface MobileUpload {
   id: string;

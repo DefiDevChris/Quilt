@@ -19,7 +19,7 @@ interface MobileUploadState {
   updateType: (id: string, assignedType: MobileUploadAssignedType) => Promise<void>;
   processUpload: (
     id: string,
-    assignedType: 'fabric' | 'block' | 'quilt'
+    assignedType: 'fabric' | 'block'
   ) => Promise<{ redirectAction: string } | null>;
   completeUpload: (id: string, entityId: string, entityType: string) => Promise<void>;
   deleteUpload: (id: string) => Promise<void>;

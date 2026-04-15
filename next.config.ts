@@ -36,8 +36,8 @@ const csp = [
   "worker-src 'self' blob:",
   // Stripe payment frame + Stripe fraud-detection beacon
   'frame-src https://js.stripe.com https://hooks.stripe.com',
-  // API calls: self + Stripe + Google OAuth + S3 presigned uploads + HuggingFace CDN (SAM2 model weights)
-  "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.s3.us-east-2.amazonaws.com https://*.s3.us-west-1.amazonaws.com https://*.s3.us-west-2.amazonaws.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://*.xethub.hf.co",
+  // API calls: self + Stripe + Google OAuth + S3 presigned uploads
+  "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.s3.us-east-2.amazonaws.com https://*.s3.us-west-1.amazonaws.com https://*.s3.us-west-2.amazonaws.com",
   // Block all plugins (Flash, etc.)
   "object-src 'none'",
   // Disallow framing this site

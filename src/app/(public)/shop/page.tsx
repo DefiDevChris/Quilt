@@ -6,17 +6,13 @@ import { COLORS } from '@/lib/design-system';
 import { useCartStore } from '@/stores/cartStore';
 import ShopHeader from '@/components/shop/ShopHeader';
 import ShopHeroSlideshow from '@/components/shop/ShopHeroSlideshow';
-import CuratedPicks from '@/components/shop/CuratedPicks';
 import Categories from '@/components/shop/Categories';
+import CuratedPicks from '@/components/shop/CuratedPicks';
 import NewArrivals from '@/components/shop/NewArrivals';
 import FeaturedCollection from '@/components/shop/FeaturedCollection';
+import FeaturedCollections from '@/components/shop/FeaturedCollections';
 import QuiltKits from '@/components/shop/QuiltKits';
 import Testimonial from '@/components/shop/Testimonial';
-import Patterns from '@/components/shop/Patterns';
-import CommunityGallery from '@/components/shop/CommunityGallery';
-import About from '@/components/shop/About';
-import Newsletter from '@/components/shop/Newsletter';
-import QuickLinks from '@/components/shop/QuickLinks';
 import ShopFooter from '@/components/shop/ShopFooter';
 import { CartDrawer } from '@/components/shop/CartDrawer';
 
@@ -141,9 +137,10 @@ export default function ShopPage() {
       <ShopHeader />
       <main>
         <ShopHeroSlideshow />
+        <Categories />
         {loading ? (
           <div
-            className="py-20 lg:py-28 flex items-center justify-center"
+            className="py-20 flex items-center justify-center"
             style={{ backgroundColor: COLORS.bg }}
           >
             <div
@@ -154,16 +151,11 @@ export default function ShopPage() {
         ) : (
           <>
             <CuratedPicks fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <Categories />
+            <FeaturedCollections fabrics={fabrics} onAddToCart={handleAddToCart} />
             <NewArrivals fabrics={fabrics} onAddToCart={handleAddToCart} />
             <FeaturedCollection />
             <QuiltKits fabrics={fabrics} onAddToCart={handleAddToCart} />
             <Testimonial />
-            <Patterns />
-            <CommunityGallery />
-            <About />
-            <Newsletter />
-            <QuickLinks />
           </>
         )}
       </main>

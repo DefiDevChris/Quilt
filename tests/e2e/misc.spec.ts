@@ -243,34 +243,6 @@ test.describe('Shop Page', () => {
   });
 });
 
-test.describe('Photo-to-Design Page', () => {
-  test('photo-to-design page loads', async ({ page }) => {
-    await mockAuth(page, 'pro');
-    try {
-      await page.goto('/photo-to-design', { timeout: 5000 });
-      const content = await page.content();
-      if (content) {
-        expect(content.length).toBeGreaterThan(50);
-      }
-    } catch {
-      expect(true).toBe(true);
-    }
-  });
-
-  test('photo upload button exists', async ({ page }) => {
-    await mockAuth(page, 'pro');
-    try {
-      await page.goto('/photo-to-design', { timeout: 5000 });
-      const uploadButton = page.getByRole('button', { name: /upload|select photo/i });
-      if (await uploadButton.isVisible()) {
-        await expect(uploadButton).toBeVisible();
-      }
-    } catch {
-      expect(true).toBe(true);
-    }
-  });
-});
-
 test.describe('Share Page', () => {
   test('share page loads', async ({ page }) => {
     await page.route('**/api/projects/test-share-id/public', async (route) => {

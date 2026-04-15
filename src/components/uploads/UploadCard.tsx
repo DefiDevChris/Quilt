@@ -9,14 +9,12 @@ const TYPE_OPTIONS: { value: MobileUploadAssignedType; label: string }[] = [
   { value: 'unassigned', label: 'Unassigned' },
   { value: 'fabric', label: 'Fabric' },
   { value: 'block', label: 'Block' },
-  { value: 'quilt', label: 'Quilt' },
 ];
 
 const TYPE_COLORS: Record<MobileUploadAssignedType, string> = {
   unassigned: 'bg-[var(--color-border)]/50 text-[var(--color-text-dim)]',
   fabric: '',
   block: '',
-  quilt: '',
 };
 
 function getTypeColor(type: MobileUploadAssignedType): React.CSSProperties | undefined {
@@ -27,7 +25,7 @@ function getTypeColor(type: MobileUploadAssignedType): React.CSSProperties | und
 interface UploadCardProps {
   upload: MobileUpload;
   onUpdateType: (id: string, type: MobileUploadAssignedType) => void;
-  onProcess: (id: string, type: 'fabric' | 'block' | 'quilt') => void;
+  onProcess: (id: string, type: 'fabric' | 'block') => void;
   onDelete: (id: string) => void;
 }
 
@@ -39,12 +37,14 @@ export function UploadCard({ upload, onUpdateType, onProcess, onDelete }: Upload
     upload.originalFilename?.replace(/\.[^.]+$/, '') ??
     `Upload ${new Date(upload.createdAt).toLocaleDateString()}`;
 
-  const canProcess = upload.assignedType !== 'unassigned' && upload.status === 'pending';
+  const canProcess =
+    (upload.assignedType === 'fabric' || upload.assignedType === 'block') &&
+    upload.status === 'pending';
 
   async function handleProcess() {
-    if (!canProcess || upload.assignedType === 'unassigned') return;
+    if (!canProcess) return;
     setProcessing(true);
-    onProcess(upload.id, upload.assignedType);
+    onProcess(upload.id, upload.assignedType as 'fabric' | 'block');
   }
 
   function handleDelete() {

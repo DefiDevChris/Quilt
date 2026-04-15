@@ -6,10 +6,9 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 - **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two worktable modes: Worktable (full quilt canvas) and Block Builder (dedicated 3-pane drafting workspace for custom blocks).
 - **Block Library** — 50 traditional quilt block SVGs. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
-- **Photo-to-Design** — Snap a photo of any quilt and recreate it digitally. OpenCV extracts individual pieces, then shape auto-correction matches block cells to 50 known quilt block SVGs (Nine Patch, Ohio Star, Drunkard's Path, etc.). Edge snapping eliminates gaps between pieces. Matched blocks appear as clean, editable Fabric.js Groups — each patch individually fillable with fabrics from the library. Unmatched pieces fall back to raw polygons.
 - **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
 - **Print-Ready Patterns** — PDF export with quilt overview, fabric requirements, cutting directions, block assembly diagrams, and individual cutting templates at exact 1:1 scale with seam allowance.
-- **Pro Features** — Photo-to-Design, unlimited projects, full export, fabric calibration.
+- **Pro Features** — Unlimited projects, full export, fabric calibration.
 
 ## Tech Stack
 
@@ -47,7 +46,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), Photo-to-Design, cutting charts, yardage estimator
+- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), cutting charts, yardage estimator
 
 ## Roles
 
