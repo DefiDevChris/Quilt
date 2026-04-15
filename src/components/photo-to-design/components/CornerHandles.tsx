@@ -16,7 +16,13 @@ interface CornerHandlesProps {
 
 type CornerIndex = 0 | 1 | 2 | 3; // TL, TR, BR, BL
 
-export function CornerHandles({ corners, onChange, imageRect, imageToScreen, screenToImage }: CornerHandlesProps) {
+export function CornerHandles({
+  corners,
+  onChange,
+  imageRect,
+  imageToScreen,
+  screenToImage,
+}: CornerHandlesProps) {
   const [dragging, setDragging] = useState<CornerIndex | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,25 +59,27 @@ export function CornerHandles({ corners, onChange, imageRect, imageToScreen, scr
     };
   }, [dragging, corners, onChange, imageRect, screenToImage]);
 
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent, index: CornerIndex) => {
-      e.preventDefault();
-      e.stopPropagation();
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      setDragging(index);
-    },
-    [],
-  );
+  const handlePointerDown = useCallback((e: React.PointerEvent, index: CornerIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDragging(index);
+  }, []);
 
+  // Handles live in the viewport (position: fixed) anchored to the image's
+  // getBoundingClientRect. The previous implementation used `absolute inset-0`
+  // of a flex parent, which put (0, 0) at the parent origin — but the image
+  // is centered inside that parent, so the handles landed at the viewport
+  // edges instead of the image corners.
   return (
-    <div ref={containerRef} className="pointer-events-none absolute inset-0">
+    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-10">
       {screenPositions.map((pos, index) => (
         <div
           key={index}
           className="pointer-events-auto absolute"
           style={{
-            top: pos.y - HANDLE_RADIUS,
-            left: pos.x - HANDLE_RADIUS,
+            top: imageRect.top + pos.y - HANDLE_RADIUS,
+            left: imageRect.left + pos.x - HANDLE_RADIUS,
             width: HANDLE_SIZE,
             height: HANDLE_SIZE,
           }}

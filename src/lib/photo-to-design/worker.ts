@@ -29,6 +29,7 @@ let correctedImageData: ImageData | null = null;
 
 /** Persisted label map after the last successful full pipeline run. */
 let labelMat: any = null;
+let labelMatName: string | null = null;
 let labelMapWidth = 0;
 let labelMapHeight = 0;
 /** Scale factor applied in stage 1 (scaledSize / originalSize). */
@@ -571,10 +572,14 @@ function handleProcess(
         scaledHeight: number;
       };
 
-      // Persist label-map + metadata for subsequent edits.
-      if (labelMat) {
-        labelMat.delete();
+      // Persist label-map + metadata for subsequent edits. The mat lives in
+      // the worker-scope MatRegistry (`reg`) so handleDispose/deleteAll owns
+      // its lifetime — we only clear the slot under its tracked name,
+      // otherwise the next `reg.deleteAll()` double-frees it.
+      if (labelMatName && reg) {
+        reg.delete(labelMatName);
         labelMat = null;
+        labelMatName = null;
       }
       if (reg) {
         const persistName = `persisted-label-${Date.now()}`;
@@ -586,6 +591,7 @@ function handleProcess(
         ) as any;
         (persisted.data32S as Int32Array).set(fullResult.labelMat.data32S as Int32Array);
         labelMat = persisted;
+        labelMatName = persistName;
         labelMapWidth = fullResult.scaledWidth;
         labelMapHeight = fullResult.scaledHeight;
         labelMapScale = fullResult.scale;
@@ -882,6 +888,7 @@ function handleDispose(_requestId: string) {
   cv = null;
   reg = null;
   labelMat = null;
+  labelMatName = null;
   labelMapWidth = 0;
   labelMapHeight = 0;
   labelMapScale = 1;
