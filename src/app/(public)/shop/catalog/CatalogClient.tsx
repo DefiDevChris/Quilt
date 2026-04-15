@@ -409,7 +409,7 @@ export default function CatalogClient({
   const [fabrics, setFabrics] = useState<ShopFabric[]>(initialFabrics);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  
+
   const [search, setSearch] = useState('');
   const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
@@ -563,6 +563,32 @@ export default function CatalogClient({
   return (
     <div className="min-h-screen" style={{ backgroundColor: COLORS.bg }}>
       <ShopHeader />
+      {/* ── Hero 3-panel banner ─────────────────────────────────── */}
+      <div className="grid grid-cols-3 gap-1 max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 pt-6">
+        {[
+          { src: '/images/shop/fabric-by-yard.jpg', alt: 'Fabric by the yard' },
+          { src: '/images/shop/fabric-shop-shelves.jpg', alt: 'Fabric shop shelves' },
+          { src: '/images/shop/featured-store.jpg', alt: 'Fabric store interior' },
+        ].map((img, i) => (
+          <div
+            key={i}
+            className="aspect-[4/3] overflow-hidden"
+            style={{ borderRadius: i === 0 ? `${RADIUS.lg} 0 0 0` : i === 2 ? `0 ${RADIUS.lg} 0 0` : '0' }}
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.parentElement!.style.backgroundColor = `${COLORS.primary}15`;
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 py-10">

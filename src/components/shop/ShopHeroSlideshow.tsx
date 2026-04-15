@@ -7,7 +7,7 @@ import { COLORS, darkenHex } from '@/lib/design-system';
 const slides = [
   {
     id: 1,
-    image: '/images/shop/hero-fabric-drapes.jpg',
+    image: '/images/shop/fabric-by-yard.jpg',
     title: 'Spring Collection',
     subtitle: 'NEW COLLECTION',
     cta: 'SHOP NOW',
@@ -15,7 +15,7 @@ const slides = [
   },
   {
     id: 2,
-    image: '/images/shop/quilt-patterns.jpg',
+    image: '/images/shop/featured-store.jpg',
     title: 'Design Your Own Quilt',
     subtitle: 'FREE DESIGN STUDIO',
     cta: 'OPEN THE STUDIO',
@@ -72,9 +72,8 @@ export default function ShopHeroSlideshow() {
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0 hidden'
-          }`}
+          className={`transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0 hidden'
+            }`}
           style={{ height: '750px' }}
         >
           <div className="relative w-full h-full">

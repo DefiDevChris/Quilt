@@ -66,7 +66,7 @@ export default function Testimonial() {
               style={{ backgroundColor: `${COLORS.primary}10` }}
             >
               <img
-                src="/images/shop/hero-fabric-drapes.jpg"
+                src="/images/shop/fabric-by-yard.jpg"
                 alt="Quilti Maker's Tote with sewing supplies"
                 className="w-full h-full object-cover"
                 onError={(e) => {

@@ -3,7 +3,7 @@ import ShopClient from './ShopClient';
 import { getShopSettings, getShopFabrics } from '@/lib/shop';
 import type { ShopFabric } from '@/types/fabric';
 
-const HERO_IMAGE = '/images/shop/hero-fabric-drapes.jpg';
+const HERO_IMAGE = '/images/shop/fabric-by-yard.jpg';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://quiltcorgi.com';
 
 export async function generateMetadata(): Promise<Metadata> {
