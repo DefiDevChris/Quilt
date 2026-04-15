@@ -64,7 +64,7 @@ export default function ShopHeroSlideshow() {
           className={`transition-opacity duration-1000 ${
             index === currentSlide ? 'opacity-100' : 'opacity-0 hidden'
           }`}
-          style={{ height: '650px' }}
+          style={{ height: '750px' }}
         >
           <div className="relative w-full h-full">
             <img
