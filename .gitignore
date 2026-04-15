@@ -131,3 +131,356 @@ scripts/
 *.png
 !/quilt_blocks/*.svg
 !/public/**
+public/background.png
+public/favicon.png
+public/icon-192.png
+public/logo.png
+public/og-image.png
+public/test-fairgrounds.jpg
+public/fabrics/10227-B.jpg
+public/fabrics/10227-B1.jpg
+public/fabrics/10227-B2.jpg
+public/fabrics/10227-B3.jpg
+public/fabrics/10227-B4.jpg
+public/fabrics/10227-C.jpg
+public/fabrics/10227-C1.jpg
+public/fabrics/10227-E.jpg
+public/fabrics/10227-E1.jpg
+public/fabrics/10227-E2.jpg
+public/fabrics/10227-E3.jpg
+public/fabrics/10227-E4.jpg
+public/fabrics/10227-G.jpg
+public/fabrics/10227-G1.jpg
+public/fabrics/10227-G2.jpg
+public/fabrics/10227-G3.jpg
+public/fabrics/10227-G4.jpg
+public/fabrics/10227-G5.jpg
+public/fabrics/10227-K.jpg
+public/fabrics/10227-K1.jpg
+public/fabrics/10227-K2.jpg
+public/fabrics/10227-L.jpg
+public/fabrics/10227-L1.jpg
+public/fabrics/10227-L2.jpg
+public/fabrics/10227-O.jpg
+public/fabrics/10227-O1.jpg
+public/fabrics/10227-O2.jpg
+public/fabrics/10227-O3.jpg
+public/fabrics/10227-O4.jpg
+public/fabrics/10227-P.jpg
+public/fabrics/10227-P1.jpg
+public/fabrics/10227-P2.jpg
+public/fabrics/10227-P3.jpg
+public/fabrics/10227-P4.jpg
+public/fabrics/10227-P5.jpg
+public/fabrics/10227-P6.jpg
+public/fabrics/10227-R.jpg
+public/fabrics/10227-R1.jpg
+public/fabrics/10227-R2.jpg
+public/fabrics/10227-R3.jpg
+public/fabrics/10227-T.jpg
+public/fabrics/10227-T1.jpg
+public/fabrics/10227-T2.jpg
+public/fabrics/10227-T3.jpg
+public/fabrics/10227-V.jpg
+public/fabrics/10227-V1.jpg
+public/fabrics/10227-V2.jpg
+public/fabrics/10227-Y.jpg
+public/fabrics/10227-Y1.jpg
+public/fabrics/10227-Y2.jpg
+public/fabrics/10228-G.jpg
+public/fabrics/10228-L.jpg
+public/fabrics/10228-R.jpg
+public/fabrics/10229-G.jpg
+public/fabrics/10229-R.jpg
+public/fabrics/10229-T.jpg
+public/fabrics/10230-L.jpg
+public/fabrics/10230-LG.jpg
+public/fabrics/10230-LR.jpg
+public/fabrics/10230-LT.jpg
+public/fabrics/10230-R.jpg
+public/fabrics/10230-T.jpg
+public/fabrics/10231-E.jpg
+public/fabrics/10231-G.jpg
+public/fabrics/10231-T.jpg
+public/fabrics/10232-G.jpg
+public/fabrics/10232-R.jpg
+public/fabrics/10232-T.jpg
+public/fabrics/10233-E.jpg
+public/fabrics/10233-G.jpg
+public/fabrics/10233-L.jpg
+public/fabrics/10234-G.jpg
+public/fabrics/10234-LT.jpg
+public/fabrics/10234-R.jpg
+public/fabrics/10393-C.jpg
+public/fabrics/10393-E.jpg
+public/fabrics/10393-G.jpg
+public/fabrics/10393-Y.jpg
+public/fabrics/10394-B.jpg
+public/fabrics/10394-E.jpg
+public/fabrics/10394-G.jpg
+public/fabrics/10395-B.jpg
+public/fabrics/10395-C.jpg
+public/fabrics/10395-E.jpg
+public/fabrics/10396-B.jpg
+public/fabrics/10396-E.jpg
+public/fabrics/10396-L.jpg
+public/fabrics/10397-B.jpg
+public/fabrics/10397-C.jpg
+public/fabrics/10397-E.jpg
+public/fabrics/10397-Y.jpg
+public/fabrics/10398-B.jpg
+public/fabrics/10398-E.jpg
+public/fabrics/10398-Y.jpg
+public/fabrics/10399-B.jpg
+public/fabrics/10399-E.jpg
+public/fabrics/10399-Y.jpg
+public/fabrics/10400-B.jpg
+public/fabrics/10400-G.jpg
+public/fabrics/10400-L.jpg
+public/fabrics/10420-E.jpg
+public/fabrics/10420-G.jpg
+public/fabrics/10420-P.jpg
+public/fabrics/10420-R.jpg
+public/fabrics/10420-T.jpg
+public/fabrics/10420-Y.jpg
+public/fabrics/10421-E.jpg
+public/fabrics/10421-G.jpg
+public/fabrics/10421-O.jpg
+public/fabrics/10421-P.jpg
+public/fabrics/10421-Y.jpg
+public/fabrics/10422-B.jpg
+public/fabrics/10422-E.jpg
+public/fabrics/10422-O.jpg
+public/fabrics/10422-O1.jpg
+public/fabrics/10422-R.jpg
+public/fabrics/10423-E.jpg
+public/fabrics/10423-P.jpg
+public/fabrics/10423-T.jpg
+public/fabrics/10423-Y.jpg
+public/fabrics/10424-E.jpg
+public/fabrics/10424-G.jpg
+public/fabrics/10424-N.jpg
+public/fabrics/10424-O.jpg
+public/fabrics/10424-T.jpg
+public/fabrics/10424-Y.jpg
+public/fabrics/10425-G.jpg
+public/fabrics/10425-O.jpg
+public/fabrics/10425-P.jpg
+public/fabrics/10425-R.jpg
+public/fabrics/10425-T.jpg
+public/fabrics/10425-Y.jpg
+public/fabrics/10426-E.jpg
+public/fabrics/10426-O.jpg
+public/fabrics/10426-P1.jpg
+public/fabrics/10426-P2.jpg
+public/fabrics/10426-Y.jpg
+public/fabrics/10427-P.jpg
+public/fabrics/10427-R.jpg
+public/fabrics/10427-R1.jpg
+public/fabrics/10427-Y.jpg
+public/fabrics/10427-Y1.jpg
+public/fabrics/10428-G.jpg
+public/fabrics/10428-LE.jpg
+public/fabrics/10428-LG.jpg
+public/fabrics/10428-O.jpg
+public/fabrics/10428-P.jpg
+public/fabrics/10429-E.jpg
+public/fabrics/10429-LE.jpg
+public/fabrics/10429-P.jpg
+public/fabrics/10429-R.jpg
+public/fabrics/10429-T.jpg
+public/fabrics/10429-Y.jpg
+public/fabrics/10430-E.jpg
+public/fabrics/10430-L.jpg
+public/fabrics/10430-LB.jpg
+public/fabrics/10430-O.jpg
+public/fabrics/10430-P.jpg
+public/fabrics/10430-V.jpg
+public/fabrics/10431-E.jpg
+public/fabrics/10431-G.jpg
+public/fabrics/10431-R.jpg
+public/fabrics/10431-Y.jpg
+public/fabrics/MU_270_G_daffodil.jpg
+public/fabrics/MU_270_Q_daffodil.jpg
+public/fabrics/MU_271_G_strawberry.jpg
+public/fabrics/MU_271_Q_strawberry.jpg
+public/fabrics/MU_272_G_pansy.jpg
+public/fabrics/MU_272_Q_pansy.jpg
+public/fabrics/MU_273_G_rose.jpg
+public/fabrics/MU_273_Q_rose.jpg
+public/fabrics/MU_274_G_tulip.jpg
+public/fabrics/MU_274_Q_tulip.jpg
+public/fabrics/MU_275_G_gingham.jpg
+public/fabrics/MU_275_R_gingham.jpg
+public/fabrics/MU_275_Y_gingham.jpg
+public/fabrics/MU_276_G_stripe.jpg
+public/fabrics/MU_276_R_stripe.jpg
+public/fabrics/MU_276_Y_stripe.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10492-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10492-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10492-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10493-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10493-G.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10493-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10494-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10494-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10494-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10495-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10495-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10495-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10496-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10496-G.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10496-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10497-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10497-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10497-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-B.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-L.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-LT.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-P.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-T.jpg
+public/fabrics/Anacapa Isle by Nancy Rink/10498-Y.jpg
+public/fabrics/Back to School by Seek To Spring/10240-B.jpg
+public/fabrics/Back to School by Seek To Spring/10240-K.jpg
+public/fabrics/Back to School by Seek To Spring/10240-L.jpg
+public/fabrics/Back to School by Seek To Spring/10241-G.jpg
+public/fabrics/Back to School by Seek To Spring/10241-K.jpg
+public/fabrics/Back to School by Seek To Spring/10241-L.jpg
+public/fabrics/Back to School by Seek To Spring/10242-B.jpg
+public/fabrics/Back to School by Seek To Spring/10242-R.jpg
+public/fabrics/Back to School by Seek To Spring/10242-Y.jpg
+public/fabrics/Back to School by Seek To Spring/10243-K.jpg
+public/fabrics/Back to School by Seek To Spring/10243-L.jpg
+public/fabrics/Back to School by Seek To Spring/10243-Y.jpg
+public/fabrics/Back to School by Seek To Spring/10244-B.jpg
+public/fabrics/Back to School by Seek To Spring/10244-K.jpg
+public/fabrics/Back to School by Seek To Spring/10244-L.jpg
+public/fabrics/Back to School by Seek To Spring/10245-B.jpg
+public/fabrics/Back to School by Seek To Spring/10245-G.jpg
+public/fabrics/Back to School by Seek To Spring/10245-R.jpg
+public/fabrics/Back to School by Seek To Spring/10246-B.jpg
+public/fabrics/Back to School by Seek To Spring/10246-G.jpg
+public/fabrics/Back to School by Seek To Spring/10246-K.jpg
+public/fabrics/Back to School by Seek To Spring/10246-R.jpg
+public/fabrics/Back to School by Seek To Spring/10247-B.jpg
+public/fabrics/Back to School by Seek To Spring/10247-E.jpg
+public/fabrics/Back to School by Seek To Spring/10247-G.jpg
+public/fabrics/Back to School by Seek To Spring/10247-L.jpg
+public/fabrics/Back to School by Seek To Spring/10247-P.jpg
+public/fabrics/Back to School by Seek To Spring/10247-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10420-G.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10420-T.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10421-G.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10421-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10422-B.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10423-T.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10424-G.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10424-T.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10424-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10425-G.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10425-T.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10425-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10426-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10427-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10428-G.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10428-LG.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10429-T.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10429-Y.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10430-LB.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10430-V.jpg
+public/fabrics/Color Camp - Grove by Alison Glass/10431-G.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-B4.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-B5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-C5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-E2.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-E3.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-G5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-G6.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-G7.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-L2.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-L3.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-N4.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-N5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-N6.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-O4.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-O5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-P6.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-P7.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-R5.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-R6.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-V2.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-V3.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-V4.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-Y4.jpg
+public/fabrics/Cottage Cloth III by Renee Nanneman/428-Y5.jpg
+public/icons/quilt-01-spool-Photoroom.png
+public/icons/quilt-02-needle-Photoroom.png
+public/icons/quilt-04-scissors-Photoroom.png
+public/icons/quilt-07-thimble-Photoroom.png
+public/icons/quilt-09-measuring-tape-Photoroom.png
+public/icons/quilt-10-pincushion-Photoroom.png
+public/icons/quilt-12-ruler-Photoroom.png
+public/icons/quilt-13-dashed-squares-Photoroom.png
+public/icons/quilt-book.png
+public/icons/quilt-mobile-uploads.png
+public/icons/quilt-profile.png
+public/icons/quilt-projects.png
+public/icons/quilt-quilt.png
+public/icons/quilt-settings.png
+public/icons/quilt-worktable.png
+public/images/blog/placeholder-1.jpg
+public/images/blog/placeholder-2.jpg
+public/images/blog/placeholder-3.jpg
+public/images/quilts/gallery_quilt_five_1775440598069.png
+public/images/quilts/gallery_quilt_nine_1775440876043.png
+public/images/quilts/gallery_quilt_one_1775440540412.png
+public/images/quilts/gallery_quilt_seven_1775440703829.png
+public/images/quilts/gallery_quilt_three_1775440641353.png
+public/images/quilts/simple_quilt_four_1775442346667.png
+public/images/quilts/simple_quilt_one_1775442292809.png
+public/images/quilts/simple_quilt_three_1775442334013.png
+public/images/quilts/studio_quilt_eight_1775440844687.png
+public/images/quilts/studio_quilt_four_1775440582256.png
+public/images/quilts/studio_quilt_ten_1775440971119.png
+public/images/quilts/studio_quilt_two_1775440552376.png
+public/images/shop/batting-backing.jpg
+public/images/shop/charm-packs.jpg
+public/images/shop/fabric-by-yard.jpg
+public/images/shop/fabric-collection.jpg
+public/images/shop/fabric-shop-shelves.jpg
+public/images/shop/hero-fabric-drapes.jpg
+public/images/shop/jelly-rolls.jpg
+public/images/shop/layer-cakes.jpg
+public/images/shop/quilt-patterns.jpg
+public/images/shop/quilting-notions.jpg
+public/images/shop/quilting-thread.jpg
+public/mascots&avatars/corgi1.png
+public/mascots&avatars/corgi2.png
+public/mascots&avatars/corgi3.png
+public/mascots&avatars/corgi4.png
+public/mascots&avatars/corgi5.png
+public/mascots&avatars/corgi6.png
+public/mascots&avatars/corgi7.png
+public/mascots&avatars/corgi8.png
+public/mascots&avatars/corgi9.png
+public/mascots&avatars/corgi10.png
+public/mascots&avatars/corgi11.png
+public/mascots&avatars/corgi12.png
+public/mascots&avatars/corgi13.png
+public/mascots&avatars/corgi14.png
+public/mascots&avatars/corgi15.png
+public/mascots&avatars/corgi16.png
+public/mascots&avatars/corgi17.png
+public/mascots&avatars/corgi18.png
+public/mascots&avatars/corgi19.png
+public/mascots&avatars/corgi20.png
+public/mascots&avatars/corgi21.png
+public/mascots&avatars/corgi22.png
+public/mascots&avatars/corgi23.png
+public/mascots&avatars/corgi24.png
+public/mascots&avatars/corgi25.png
+public/mascots&avatars/corgi26.png
+public/mascots&avatars/corgi27.png
+public/mascots&avatars/corgi28.png
+public/mascots&avatars/corgi29.png
+tests/fixtures/fairgrounds-quilt.jpg

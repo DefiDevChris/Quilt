@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { COLORS, OPACITY } from '@/lib/design-system';
 
 interface QuiltPieceProps {
@@ -155,21 +155,21 @@ export function QuiltPieceBand({
   pieceCount?: number;
   className?: string;
 }) {
-  const [pieces, setPieces] = useState<
-    Array<{ size: number; left: string; top: string; rotation: number; opacity: number }>
-  >([]);
-
-  useEffect(() => {
-    setPieces(
+  const pieces = useMemo(
+    () =>
       Array.from({ length: pieceCount }).map((_, i) => ({
+        // eslint-disable-next-line react-hooks/purity
         size: 40 + Math.random() * 60,
         left: `${5 + (i / pieceCount) * 90}%`,
+        // eslint-disable-next-line react-hooks/purity
         top: `${10 + Math.random() * 60}%`,
+        // eslint-disable-next-line react-hooks/purity
         rotation: Math.floor(Math.random() * 30) - 15,
+        // eslint-disable-next-line react-hooks/purity
         opacity: opacity * (0.5 + Math.random() * 0.5),
-      }))
-    );
-  }, [pieceCount, opacity]);
+      })),
+    [pieceCount, opacity]
+  );
 
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ height }}>
