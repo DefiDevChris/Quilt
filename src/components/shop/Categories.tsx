@@ -5,10 +5,10 @@ import { COLORS } from '@/lib/design-system';
 const categories = [
   { id: 1, name: 'Fabric', href: '#fabrics', image: '/images/shop/fabric-by-yard.jpg' },
   { id: 2, name: 'Precuts', href: '#categories', image: '/images/shop/fabric-collection.jpg' },
-  { id: 3, name: 'Quilt Kits', href: '#kits', image: '/images/shop/quilt-patterns.jpg' },
+  { id: 3, name: 'Quilt Kits', href: '#kits', image: '/images/shop/featured-store.jpg' },
   { id: 4, name: 'Thread', href: '#categories', image: '/images/shop/quilting-thread.jpg' },
-  { id: 5, name: 'Batting', href: '#categories', image: '/images/shop/batting-backing.jpg' },
-  { id: 6, name: 'Notions', href: '#categories', image: '/images/shop/quilting-notions.jpg' },
+  { id: 5, name: 'Batting', href: '#categories', image: '/images/shop/fabric-collection.jpg' },
+  { id: 6, name: 'Notions', href: '#categories', image: '/images/shop/quilting-thread.jpg' },
 ];
 
 export default function Categories() {

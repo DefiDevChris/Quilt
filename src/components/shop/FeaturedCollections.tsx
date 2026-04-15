@@ -55,7 +55,7 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
   return (
     <section className="py-32" style={{ backgroundColor: `${COLORS.secondary}20` }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-6">
           <h2
             className="text-4xl md:text-5xl mb-6"
             style={{
@@ -71,13 +71,28 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
           </p>
         </div>
 
+        {/* Store interior banner */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="aspect-[21/9] overflow-hidden rounded-lg shadow-sm">
+            <img
+              src="/images/shop/featured-store.jpg"
+              alt="QuiltCorgi fabric store interior"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.parentElement!.style.backgroundColor = `${COLORS.primary}10`;
+              }}
+            />
+          </div>
+        </div>
+
         <div className="space-y-16 md:space-y-24">
           {collections.map((collection, index) => (
             <div
               key={collection.name}
-              className={`flex flex-col md:flex-row gap-8 md:gap-12 items-center ${
-                index % 2 === 1 ? 'md:flex-row-reverse' : ''
-              }`}
+              className={`flex flex-col md:flex-row gap-8 md:gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''
+                }`}
             >
               {/* Collection Hero Image */}
               <div className="w-full md:w-1/2">
