@@ -386,4 +386,90 @@ describe('computeFenceAreas', () => {
       });
     });
   });
+
+  describe('on-point setting triangles', () => {
+    it('should generate setting-triangle areas for on-point layouts', () => {
+      const template = createTemplate({
+        category: 'on-point',
+        gridRows: 2,
+        gridCols: 2,
+        defaultBlockSize: 10,
+      });
+      const areas = computeFenceAreas(template, 28.28, 28.28, 96);
+      const triangles = areas.filter((a) => a.role === 'setting-triangle');
+
+      // 2x2 on-point: side triangles on each edge + corner triangles
+      // Top: 1, Bottom: 1, Left: 1, Right: 1 = 4 side triangles
+      // 4 corner triangles
+      expect(triangles.length).toBeGreaterThan(0);
+    });
+
+    it('should include polygon points on setting triangles', () => {
+      const template = createTemplate({
+        category: 'on-point',
+        gridRows: 2,
+        gridCols: 2,
+        defaultBlockSize: 10,
+      });
+      const areas = computeFenceAreas(template, 28.28, 28.28, 96);
+      const triangles = areas.filter((a) => a.role === 'setting-triangle');
+
+      triangles.forEach((tri) => {
+        expect(tri.points).toBeDefined();
+        expect(tri.points!.length).toBeGreaterThanOrEqual(3);
+        expect(tri.triangleType).toBeDefined();
+        expect(['side', 'corner']).toContain(tri.triangleType);
+      });
+    });
+
+    it('should have both side and corner triangles for 3x3 on-point', () => {
+      const template = createTemplate({
+        category: 'on-point',
+        gridRows: 3,
+        gridCols: 3,
+        defaultBlockSize: 10,
+      });
+      const diag = 10 * Math.SQRT2;
+      const quiltSize = 3 * diag;
+      const areas = computeFenceAreas(template, quiltSize, quiltSize, 96);
+      const triangles = areas.filter((a) => a.role === 'setting-triangle');
+
+      const sides = triangles.filter((t) => t.triangleType === 'side');
+      const corners = triangles.filter((t) => t.triangleType === 'corner');
+
+      // 3x3: 2 top + 2 bottom + 2 left + 2 right = 8 side triangles
+      expect(sides.length).toBe(8);
+      // Always 4 corner triangles
+      expect(corners.length).toBe(4);
+    });
+
+    it('should have bounding box dimensions on setting triangles', () => {
+      const template = createTemplate({
+        category: 'on-point',
+        gridRows: 2,
+        gridCols: 2,
+        defaultBlockSize: 10,
+      });
+      const areas = computeFenceAreas(template, 28.28, 28.28, 96);
+      const triangles = areas.filter((a) => a.role === 'setting-triangle');
+
+      triangles.forEach((tri) => {
+        expect(tri.width).toBeGreaterThan(0);
+        expect(tri.height).toBeGreaterThan(0);
+      });
+    });
+
+    it('should NOT generate setting triangles for straight layouts', () => {
+      const template = createTemplate({
+        category: 'straight',
+        gridRows: 3,
+        gridCols: 3,
+        defaultBlockSize: 10,
+      });
+      const areas = computeFenceAreas(template, 30, 30, 96);
+      const triangles = areas.filter((a) => a.role === 'setting-triangle');
+
+      expect(triangles.length).toBe(0);
+    });
+  });
 });

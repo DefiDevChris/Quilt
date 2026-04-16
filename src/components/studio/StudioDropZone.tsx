@@ -50,6 +50,7 @@ export function StudioDropZone({ project }: StudioDropZoneProps) {
     <CanvasErrorBoundary>
       <div
         className="flex-1 flex overflow-hidden relative"
+        data-canvas-wrapper
         onDragOver={combinedDragOver}
         onDrop={combinedDrop}
       >

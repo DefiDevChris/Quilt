@@ -1,4 +1,4 @@
-import { getPixelsPerUnit } from '@/lib/canvas-utils';
+import { getPixelsPerUnit, computeCanvasGeometry } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { CANVAS, GRID } from '@/lib/design-system';
 import type { UnitSystem } from '@/types/canvas';
@@ -95,13 +95,12 @@ export function renderGrid(
   const w = gridEl.width;
   const h = gridEl.height;
   const { gridSettings, unitSystem, quiltWidth, quiltHeight } = options;
-  const pxPerUnit = getPixelsPerUnit(unitSystem);
-  const quiltWidthPx = quiltWidth * pxPerUnit;
-  const quiltHeightPx = quiltHeight * pxPerUnit;
+
+  // Use the unified geometry so grid and Fabric.js canvases stay aligned
   const zoom = fabricCanvas.getZoom();
   const vpt = fabricCanvas.viewportTransform;
-  const panX = vpt[4];
-  const panY = vpt[5];
+  const geo = computeCanvasGeometry(quiltWidth, quiltHeight, unitSystem, zoom, vpt[4], vpt[5]);
+  const { quiltWidthPx, quiltHeightPx, pxPerUnit } = geo;
 
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = GRID.bg;
