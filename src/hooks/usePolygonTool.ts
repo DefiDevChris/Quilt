@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
@@ -161,6 +162,20 @@ export function usePolygonTool() {
         if (!fabric || !canvas) return;
 
         const pointer = canvas.getScenePoint(e.e);
+
+        // Fence constraint: when a layout is applied, only allow polygon
+        // vertices inside block-cell fence areas
+        const { hasAppliedLayout } = useLayoutStore.getState();
+        if (hasAppliedLayout) {
+          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
+            obj._fenceElement && obj._fenceRole === 'block-cell'
+          );
+          const isInsideCell = fenceAreas.some((obj: Record<string, unknown>) =>
+            (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
+          );
+          if (!isInsideCell) return;
+        }
+
         const snapped = snapPoint(pointer.x, pointer.y);
 
         if (!isDrawing) {

@@ -505,5 +505,10 @@ export function computeFenceAreas(
     y: area.y * finalScaleY,
     width: area.width * finalScaleX,
     height: area.height * finalScaleY,
+    // Scale polygon points through the same factors so setting triangles
+    // render at correct coordinates when finalScaleX/Y differ from 1
+    points: area.points
+      ? area.points.map((p) => ({ x: p.x * finalScaleX, y: p.y * finalScaleY }))
+      : undefined,
   }));
 }

@@ -7,6 +7,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
+import { computeBlockDropScale } from '@/lib/block-drop-scale';
 import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
 const BLOCK_HIGHLIGHT_COLOR = CANVAS.blockHighlight;
@@ -26,6 +27,7 @@ export function useBlockDrop() {
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const dragBlockIdRef = useRef<string | null>(null);
   const highlightRectRef = useRef<import('fabric').FabricObject | null>(null);
+  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleDragStart = useCallback((_e: React.DragEvent, blockId: string) => {
     dragBlockIdRef.current = blockId;
@@ -81,11 +83,16 @@ export function useBlockDrop() {
       e.dataTransfer.dropEffect = 'none';
 
       // Visual feedback: briefly flash the canvas wrapper border to signal
-      // the drop target is invalid (replaces silent failure).
+      // the drop target is invalid. Guard against continuous fire (~60/sec)
+      // by clearing the previous timeout before scheduling a new one.
       const wrapper = (e.currentTarget as HTMLElement)?.closest('[data-canvas-wrapper]');
-      if (wrapper) {
+      if (wrapper && !wrapper.classList.contains('invalid-drop-flash')) {
+        if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
         wrapper.classList.add('invalid-drop-flash');
-        setTimeout(() => wrapper.classList.remove('invalid-drop-flash'), 400);
+        flashTimeoutRef.current = setTimeout(() => {
+          wrapper.classList.remove('invalid-drop-flash');
+          flashTimeoutRef.current = null;
+        }, 400);
       }
     },
     [fabricCanvas, showCellHighlight, clearHighlight]
@@ -172,9 +179,15 @@ export function useBlockDrop() {
         if (hasAppliedLayout && !isFenceCell) {
           // Visual feedback: flash the canvas wrapper to indicate invalid drop
           const wrapper = (e.target as HTMLElement)?.closest?.('[data-canvas-wrapper]');
-          if (wrapper) {
+          if (wrapper && !wrapper.classList.contains('invalid-drop-flash')) {
             wrapper.classList.add('invalid-drop-flash');
             setTimeout(() => wrapper.classList.remove('invalid-drop-flash'), 400);
+          }
+          // Notify user via toast event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('quiltstudio:invalid-drop', {
+              detail: { message: 'Blocks can only be placed in block cells' },
+            }));
           }
           return;
         }
@@ -235,11 +248,14 @@ export function useBlockDrop() {
 
           const tightW = group.width ?? 100;
           const tightH = group.height ?? 100;
+          // Uniform scale: maintain aspect ratio per project conventions
+          // (scaleX === scaleY, see CLAUDE.md Fabric.js section)
+          const uniformScale = computeBlockDropScale(cellW, cellH, tightW, tightH);
           group.set({
             left: cellX + cellW / 2,
             top: cellY + cellH / 2,
-            scaleX: cellW / tightW,
-            scaleY: cellH / tightH,
+            scaleX: uniformScale,
+            scaleY: uniformScale,
             angle: cellRotation,
           });
 

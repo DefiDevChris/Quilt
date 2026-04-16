@@ -160,6 +160,72 @@ export function useCanvasKeyboard() {
 
         // Single-key tool shortcuts (only when no modifier)
         if (!isCtrl && !e.altKey) {
+          // R key: rotate block in fence cell by 90 degrees, or switch
+          // to rectangle tool if no block is selected in a cell
+          if (e.key === 'r' || e.key === 'R') {
+            const active = canvas.getActiveObjects();
+            if (active.length === 1) {
+              const obj = active[0];
+              const meta = obj as unknown as Record<string, unknown>;
+              if (meta['_inFenceCellId']) {
+                e.preventDefault();
+                const currentAngle = (obj.angle ?? 0) as number;
+                obj.set({ angle: (currentAngle + 90) % 360 });
+                obj.setCoords();
+                canvas.requestRenderAll();
+                const json = JSON.stringify(canvas.toJSON());
+                useCanvasStore.getState().pushUndoState(json);
+                useProjectStore.getState().setDirty(true);
+                return;
+              }
+            }
+          }
+
+          // S key: swap blocks between two selected fence cells
+          if (e.key === 's' || e.key === 'S') {
+            const active = canvas.getActiveObjects();
+            if (active.length === 2) {
+              const meta0 = active[0] as unknown as Record<string, unknown>;
+              const meta1 = active[1] as unknown as Record<string, unknown>;
+              const isFence0 = meta0['_fenceElement'] && meta0['_fenceRole'] === 'block-cell';
+              const isFence1 = meta1['_fenceElement'] && meta1['_fenceRole'] === 'block-cell';
+              if (isFence0 && isFence1) {
+                e.preventDefault();
+                const cellId0 = meta0['_fenceAreaId'] as string;
+                const cellId1 = meta1['_fenceAreaId'] as string;
+                // Find blocks assigned to each cell
+                const allObjs = canvas.getObjects();
+                let block0: (typeof allObjs)[0] | null = null;
+                let block1: (typeof allObjs)[0] | null = null;
+                for (const obj of allObjs) {
+                  const r = obj as unknown as Record<string, unknown>;
+                  if (r['_inFenceCellId'] === cellId0) block0 = obj;
+                  if (r['_inFenceCellId'] === cellId1) block1 = obj;
+                }
+                if (block0 || block1) {
+                  // Swap positions and cell assignments
+                  const cell0Center = { x: (active[0].left ?? 0) + ((active[0].width ?? 0) * (active[0].scaleX ?? 1)) / 2, y: (active[0].top ?? 0) + ((active[0].height ?? 0) * (active[0].scaleY ?? 1)) / 2 };
+                  const cell1Center = { x: (active[1].left ?? 0) + ((active[1].width ?? 0) * (active[1].scaleX ?? 1)) / 2, y: (active[1].top ?? 0) + ((active[1].height ?? 0) * (active[1].scaleY ?? 1)) / 2 };
+                  if (block0) {
+                    block0.set({ left: cell1Center.x, top: cell1Center.y });
+                    (block0 as unknown as Record<string, unknown>)['_inFenceCellId'] = cellId1;
+                    block0.setCoords();
+                  }
+                  if (block1) {
+                    block1.set({ left: cell0Center.x, top: cell0Center.y });
+                    (block1 as unknown as Record<string, unknown>)['_inFenceCellId'] = cellId0;
+                    block1.setCoords();
+                  }
+                  canvas.requestRenderAll();
+                  const json = JSON.stringify(canvas.toJSON());
+                  useCanvasStore.getState().pushUndoState(json);
+                  useProjectStore.getState().setDirty(true);
+                  return;
+                }
+              }
+            }
+          }
+
           const TOOL_SHORTCUTS: Record<string, ToolType> = {
             v: 'select',
             r: 'rectangle',
