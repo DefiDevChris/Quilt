@@ -242,14 +242,45 @@ export function useDrawingTool() {
         } else {
           const { fillColor, strokeColor, strokeWidth } = stateRef.current;
 
-          previewShape.set({
-            fill: fillColor,
-            stroke: strokeColor,
-            strokeWidth,
-            strokeDashArray: undefined,
-            selectable: true,
-            evented: true,
-          });
+          if (activeTool === 'triangle') {
+            // Replace the preview Rect with a properly positioned Polygon.
+            // Using relative (0-based) points + left/top avoids the coordinate
+            // drift that occurs when setting absolute points on a Fabric.js Polygon.
+            const finalLeft = previewShape.left ?? startX;
+            const finalTop = previewShape.top ?? startY;
+            const finalW = previewShape.width ?? 0;
+            const finalH = previewShape.height ?? 0;
+
+            canvas.remove(previewShape);
+
+            const triangle = new fabric.Polygon(
+              [
+                { x: 0, y: finalH },       // bottom-left
+                { x: finalW, y: finalH },   // bottom-right
+                { x: 0, y: 0 },             // top-left (apex)
+              ],
+              {
+                left: finalLeft,
+                top: finalTop,
+                fill: fillColor,
+                stroke: strokeColor,
+                strokeWidth,
+                selectable: true,
+                evented: true,
+              }
+            );
+
+            canvas.add(triangle);
+          } else {
+            previewShape.set({
+              fill: fillColor,
+              stroke: strokeColor,
+              strokeWidth,
+              strokeDashArray: undefined,
+              selectable: true,
+              evented: true,
+            });
+          }
 
           const json = JSON.stringify(canvas.toJSON());
           useCanvasStore.getState().pushUndoState(json);
