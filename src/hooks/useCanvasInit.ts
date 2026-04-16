@@ -164,6 +164,19 @@ export function useCanvasInit(
         const maxY = canvasHeight * ppu;
 
         if (!e.target) return;
+        const obj = e.target;
+        const meta = obj as unknown as Record<string, unknown>;
+
+        // Fence elements should never be moved
+        if (meta._fenceElement) {
+          obj.set({ left: obj.left, top: obj.top });
+          return;
+        }
+
+        // Blocks locked into fence cells should not be moved
+        if (meta._inFenceCellId) {
+          return;
+        }
 
         const obj = e.target;
         const left = obj.left ?? 0;
@@ -213,6 +226,10 @@ export function useCanvasInit(
         const us = useCanvasStore.getState().unitSystem;
         const ppu = getPixelsPerUnit(us);
         const obj = e.target;
+
+        // Fence elements and fence-locked blocks should not be scaled
+        const meta = obj as unknown as Record<string, unknown>;
+        if (meta?._fenceElement || meta?._inFenceCellId) return;
         const left = obj?.left ?? 0;
         const top = obj?.top ?? 0;
         const width = (obj?.width ?? 0) * (obj?.scaleX ?? 1);
