@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
 /**
@@ -69,7 +69,7 @@ export function useEasyDrawTool() {
       canvas.freeDrawingBrush = brush;
       canvas.isDrawingMode = true;
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = cursorForTool('easydraw');
 
       // Keep brush settings in sync if the user changes color/width while
       // the tool is active.
@@ -86,10 +86,10 @@ export function useEasyDrawTool() {
         const { hasAppliedLayout } = useLayoutStore.getState();
         if (hasAppliedLayout) {
           const pathBounds = e.path.getBoundingRect();
-          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
-            obj._fenceElement && obj._fenceRole === 'block-cell'
+          const fenceAreas = canvas.getObjects().filter((obj) =>
+            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
           );
-          const overlapsCell = fenceAreas.some((fenceObj: Record<string, unknown>) => {
+          const overlapsCell = fenceAreas.some((fenceObj) => {
             const fo = fenceObj as unknown as { left: number; top: number; width: number; height: number; scaleX: number; scaleY: number };
             const fx = fo.left ?? 0;
             const fy = fo.top ?? 0;

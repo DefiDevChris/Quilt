@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
+import { cursorForTool } from '@/lib/canvas-utils';
 
 import type { TMat2D } from 'fabric';
 
@@ -62,7 +63,7 @@ export function useBendTool() {
       const previousSelection = canvas.selection;
       const previousCursor = canvas.defaultCursor;
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = cursorForTool('bend');
 
       let activeBend: {
         target: PolygonLike;
@@ -117,7 +118,7 @@ export function useBendTool() {
           edgeIndex: closest.edgeIndex,
           originalPoints: closest.target.points.map((p) => ({ x: p.x, y: p.y })),
         };
-        canvas.defaultCursor = 'grabbing';
+        canvas.defaultCursor = 'move';
       }
 
       function onMouseMove(e: { e: MouseEvent }) {
@@ -162,7 +163,8 @@ export function useBendTool() {
         }
 
         target.set({ points: newPoints });
-        target.setBoundingBox?.(true);
+        // In Fabric.js v7, mark dirty and recalc coords to force re-render
+        (target as unknown as { dirty: boolean }).dirty = true;
         target.setCoords();
         canvas.requestRenderAll();
       }
@@ -170,7 +172,7 @@ export function useBendTool() {
       function onMouseUp() {
         if (!activeBend) return;
         activeBend = null;
-        canvas.defaultCursor = 'crosshair';
+        canvas.defaultCursor = cursorForTool('bend');
 
         const json = JSON.stringify(canvas.toJSON());
         useCanvasStore.getState().pushUndoState(json);

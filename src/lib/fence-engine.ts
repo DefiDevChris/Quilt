@@ -297,7 +297,22 @@ function renderFenceTemplate(template: LayoutTemplate, pxPerUnit: number): Fence
 
   const config = templateToLayoutConfig(template, pxPerUnit);
   const result = computeLayout(config, pxPerUnit);
-  return convertResultToFenceAreas(result, template);
+  const areas = convertResultToFenceAreas(result, template);
+
+  // Offset all areas so (0,0) = top-left of the full quilt (outer binding edge).
+  // Without this, inner blocks start at (0,0) and borders/binding extend to
+  // negative coordinates, rendering outside the quilt rectangle.
+  const totalBorderWidth = template.borders.reduce((sum, b) => sum + b.width, 0);
+  const offsetPx = (totalBorderWidth + template.bindingWidth) * pxPerUnit;
+
+  if (offsetPx <= 0) return areas;
+
+  return areas.map((area) => ({
+    ...area,
+    x: area.x + offsetPx,
+    y: area.y + offsetPx,
+    points: area.points ? area.points.map((p) => ({ x: p.x + offsetPx, y: p.y + offsetPx })) : undefined,
+  }));
 }
 
 /**

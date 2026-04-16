@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
 export function usePolygonTool() {
@@ -55,7 +55,7 @@ export function usePolygonTool() {
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = cursorForTool('polygon');
       canvas.discardActiveObject();
       canvas.renderAll();
 
@@ -167,10 +167,10 @@ export function usePolygonTool() {
         // vertices inside block-cell fence areas
         const { hasAppliedLayout } = useLayoutStore.getState();
         if (hasAppliedLayout) {
-          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
-            obj._fenceElement && obj._fenceRole === 'block-cell'
+          const fenceAreas = canvas.getObjects().filter((obj) =>
+            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
           );
-          const isInsideCell = fenceAreas.some((obj: Record<string, unknown>) =>
+          const isInsideCell = fenceAreas.some((obj) =>
             (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
           );
           if (!isInsideCell) return;
