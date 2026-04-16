@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { getPixelsPerUnit } from '@/lib/canvas-utils';
+import { getPixelsPerUnit, computeCanvasGeometry } from '@/lib/canvas-utils';
 import { computeFenceAreas } from '@/lib/fence-engine';
 import { FENCE, CANVAS } from '@/lib/design-system';
 import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
@@ -151,34 +151,35 @@ export function useFenceRenderer() {
       }
 
       const isPreview = useLayoutStore.getState().previewMode;
-      const pxPerUnit = getPixelsPerUnit(unitSystem);
-      const areas = computeFenceAreas(template, quiltWidth, quiltHeight, pxPerUnit);
+      // Use unified geometry so fence coordinates match the grid canvas exactly
+      const geo = computeCanvasGeometry(quiltWidth, quiltHeight, unitSystem, 1, 0, 0);
+      const areas = computeFenceAreas(template, quiltWidth, quiltHeight, geo.pxPerUnit);
       areasRef.current = areas;
 
-      // Render each fence area as a Fabric.js Rect
+      // Render each fence area as a Fabric.js shape (Rect or Polygon)
       for (const area of areas) {
         const fillMap = isPreview ? PREVIEW_FILLS : ROLE_FILLS;
         const strokeMap = isPreview ? PREVIEW_STROKES : ROLE_STROKES;
 
+        // Safe role lookup — fall back to block-cell colors for new roles
+        // not yet in the color map (e.g. setting-triangle added before brand config update)
+        const safeRole = (area.role in (fillMap as Record<string, unknown>))
+          ? area.role
+          : 'block-cell';
         const fill =
           !isPreview && preservedFills[area.id] !== undefined
             ? preservedFills[area.id]
-            : fillMap[area.role];
+            : (fillMap as Record<string, string>)[safeRole];
         const stroke =
           !isPreview && preservedStrokes[area.id] !== undefined
             ? preservedStrokes[area.id]
-            : strokeMap[area.role];
+            : (strokeMap as Record<string, string>)[safeRole];
 
-        const rect = new fabric.Rect({
-          left: area.x,
-          top: area.y,
-          width: area.width,
-          height: area.height,
+        const sharedProps = {
           fill: fill as string | undefined,
           stroke: stroke as string | undefined,
           strokeWidth: area.role === 'binding' ? 1.5 : 0.5,
           strokeDashArray: isPreview ? [4, 3] : undefined,
-          angle: area.rotation ?? 0,
           selectable: !isPreview,
           evented: !isPreview,
           hasControls: false,
@@ -191,16 +192,35 @@ export function useFenceRenderer() {
           hoverCursor: isPreview ? 'default' : 'pointer',
           objectCaching: false,
           perPixelTargeting: false,
-        });
+        };
 
-        const r = rect as unknown as Record<string, unknown>;
+        let shape: FabricObject;
+
+        if (area.points && area.points.length >= 3) {
+          // Render polygon areas (setting triangles) as Fabric.js Polygon
+          shape = new fabric.Polygon(area.points, {
+            ...sharedProps,
+          }) as unknown as FabricObject;
+        } else {
+          // Render rectangular areas as Fabric.js Rect
+          shape = new fabric.Rect({
+            left: area.x,
+            top: area.y,
+            width: area.width,
+            height: area.height,
+            angle: area.rotation ?? 0,
+            ...sharedProps,
+          }) as unknown as FabricObject;
+        }
+
+        const r = shape as unknown as Record<string, unknown>;
         r[FENCE_MARKER] = true;
         r[FENCE_AREA_ID_PROP] = area.id;
         r[FENCE_ROLE_PROP] = area.role;
 
-        canvas.add(rect as unknown as FabricObject);
+        canvas.add(shape);
         // Always keep fence areas in back, behind user blocks
-        canvas.sendObjectToBack(rect as unknown as FabricObject);
+        canvas.sendObjectToBack(shape);
 
         // Render label text inside fence area (if large enough)
         if (area.label && area.width > 20 && area.height > 12) {
