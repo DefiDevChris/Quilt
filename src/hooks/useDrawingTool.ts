@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
 import { isPointInFenceAreaPure } from '@/hooks/useFenceConstraints';
 import { CANVAS } from '@/lib/design-system';
 
@@ -63,18 +63,11 @@ export function useDrawingTool() {
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.getObjects().forEach((obj) => {
-          // Skip objects that are explicitly marked as non-selectable (like guides)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((obj as any).data?.isGuide || (obj as any).data?.isHelper) return;
-          // Skip layout-generated objects
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((obj as any)._layoutElement) return;
-          // Skip fence elements — they must stay locked in place
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((obj as any)._fenceElement) return;
-          // Skip blocks that are locked into fence cells
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((obj as any)._inFenceCellId) {
+          const objMeta = obj as unknown as Record<string, unknown>;
+          if ((objMeta['data'] as Record<string, unknown> | undefined)?.['isGuide'] || (objMeta['data'] as Record<string, unknown> | undefined)?.['isHelper']) return;
+          if (objMeta['_layoutElement']) return;
+          if (objMeta['_fenceElement']) return;
+          if (objMeta['_inFenceCellId']) {
             obj.selectable = true;
             obj.evented = true;
             obj.hasControls = false;
@@ -98,7 +91,7 @@ export function useDrawingTool() {
 
       // For drawing tools, disable selection but keep objects selectable after creation
       canvas.selection = false;
-      canvas.defaultCursor = 'crosshair';
+      canvas.defaultCursor = cursorForTool(activeTool);
       canvas.discardActiveObject();
       canvas.renderAll();
 
@@ -117,10 +110,10 @@ export function useDrawingTool() {
         // inside block-cell fence areas
         const { hasAppliedLayout } = useLayoutStore.getState();
         if (hasAppliedLayout) {
-          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
-            obj._fenceElement && obj._fenceRole === 'block-cell'
+          const fenceAreas = canvas.getObjects().filter((obj) =>
+            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
           );
-          const isInsideCell = fenceAreas.some((obj: Record<string, unknown>) =>
+          const isInsideCell = fenceAreas.some((obj) =>
             (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
           );
           if (!isInsideCell) return;

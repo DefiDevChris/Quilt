@@ -2,6 +2,39 @@ import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants';
 import type { UnitSystem } from '@/types/canvas';
 import type { GridSettings } from '@/types/grid';
 
+const _PENCIL_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M11 1L15 5L4 15L0 11Z" fill="lightyellow" stroke="black" stroke-width="0.8"/><path d="M11 1L15 5L13 7L9 3Z" fill="lightpink"/><path d="M0 11L4 15L0 15Z" fill="dimgray"/></svg>';
+const _PENCIL_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(_PENCIL_SVG)}") 0 15, crosshair`;
+
+const _WAND_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M2 14L11 5" stroke="black" stroke-width="2" stroke-linecap="round"/><circle cx="13" cy="3" r="2" fill="black"/><circle cx="15" cy="7" r="1" fill="black"/><circle cx="10" cy="1" r="1" fill="black"/></svg>';
+const _WAND_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(_WAND_SVG)}") 2 14, crosshair`;
+
+const _CROSSHAIR_PLUS_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><line x1="8" y1="1" x2="8" y2="15" stroke="black" stroke-width="1.2"/><line x1="1" y1="8" x2="15" y2="8" stroke="black" stroke-width="1.2"/></svg>';
+const _CROSSHAIR_PLUS_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(_CROSSHAIR_PLUS_SVG)}") 8 8, crosshair`;
+
+/**
+ * Returns the CSS cursor string for a given tool type.
+ * Centralises cursor management so all hooks stay consistent.
+ */
+export function cursorForTool(tool: string): string {
+  switch (tool) {
+    case 'select':
+      return 'default';
+    case 'pan':
+      return 'grab';
+    case 'easydraw':
+      return _PENCIL_CURSOR;
+    case 'bend':
+      return _WAND_CURSOR;
+    case 'rectangle':
+    case 'triangle':
+    case 'polygon':
+    case 'circle':
+      return _CROSSHAIR_PLUS_CURSOR;
+    default:
+      return 'default';
+  }
+}
+
 export function getPixelsPerUnit(unitSystem: UnitSystem): number {
   return unitSystem === 'imperial' ? PIXELS_PER_INCH : PIXELS_PER_CM;
 }

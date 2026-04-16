@@ -280,13 +280,24 @@ export function useBlockDrop() {
           // Snap to grid for clean placement
           const { gridSettings, unitSystem: us } = useCanvasStore.getState();
           const { canvasWidth, canvasHeight } = useProjectStore.getState();
+          const { blockSize } = useLayoutStore.getState();
           const { getPixelsPerUnit, snapToGrid: snapFn } = await import('@/lib/canvas-utils');
+          const { computeBlockDropScale: calcScale } = await import('@/lib/block-drop-scale');
           const ppu = getPixelsPerUnit(us);
+
+          // Scale block to the configured block cell size so it appears correctly
+          // sized relative to the quilt grid — same logic as fence cell placement
+          const targetSizePx = blockSize * ppu;
+          const rawW = group.width ?? 100;
+          const rawH = group.height ?? 100;
+          const uniformScale = calcScale(targetSizePx, targetSizePx, rawW, rawH);
+          group.set({ scaleX: uniformScale, scaleY: uniformScale });
+
           let dropX = pointer.x;
           let dropY = pointer.y;
 
-          const halfW = ((group.width ?? 0) * (group.scaleX ?? 1)) / 2;
-          const halfH = ((group.height ?? 0) * (group.scaleY ?? 1)) / 2;
+          const halfW = (rawW * uniformScale) / 2;
+          const halfH = (rawH * uniformScale) / 2;
 
           if (gridSettings.snapToGrid) {
             const gridSizePx = gridSettings.size * ppu;

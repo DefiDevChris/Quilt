@@ -278,17 +278,15 @@ export function useFenceRenderer() {
         }
       }
 
-      // Single-pass z-layer sort: fence objects at the back, user blocks on top.
-      // Replaces the O(n*m) per-object sendToBack/bringToFront loop.
-      const allObjects = canvas.getObjects();
-      allObjects.sort((a, b) => {
-        const aR = a as unknown as Record<string, unknown>;
-        const bR = b as unknown as Record<string, unknown>;
-        const aIsFence = aR[FENCE_MARKER] ? 1 : 0;
-        const bIsFence = bR[FENCE_MARKER] ? 1 : 0;
-        // Fence objects sort before (lower index = further back) non-fence objects
-        return aIsFence - bIsFence;
-      });
+      // Send all fence objects to the back so user blocks always render on top.
+      // canvas.getObjects() in Fabric.js v6+ returns a copy of the internal array,
+      // so sorting it is a no-op — we must use sendObjectToBack instead.
+      const allFenceObjects = canvas.getObjects().filter(
+        (obj) => !!(obj as unknown as Record<string, unknown>)[FENCE_MARKER]
+      );
+      for (const fenceObj of allFenceObjects) {
+        canvas.sendObjectToBack(fenceObj);
+      }
 
       canvas.requestRenderAll();
       if (!isPreview) {

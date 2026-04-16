@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { isInputElement } from '@/lib/dom-utils';
-import { clampPan } from '@/lib/canvas-utils';
+import { clampPan, cursorForTool } from '@/lib/canvas-utils';
 
 export function useCanvasZoomPan() {
   const { getCanvas } = useCanvasContext();
@@ -88,7 +88,7 @@ export function useCanvasZoomPan() {
           canvas.wrapperEl?.classList.add('cursor-pan-grab');
           canvas.selection = false;
         } else {
-          canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+          canvas.defaultCursor = cursorForTool(tool);
           canvas.wrapperEl?.classList.remove('cursor-pan-grab');
           if (tool === 'select') {
             canvas.selection = true;
@@ -120,7 +120,7 @@ export function useCanvasZoomPan() {
             canvas.wrapperEl?.classList.add('cursor-pan-grab');
             canvas.selection = false;
           } else {
-            canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+            canvas.defaultCursor = cursorForTool(tool);
             if (tool === 'select') {
               canvas.selection = true;
             }

@@ -178,7 +178,6 @@ export function useCanvasInit(
           return;
         }
 
-        const obj = e.target;
         const left = obj.left ?? 0;
         const top = obj.top ?? 0;
         const width = (obj.width ?? 0) * (obj.scaleX ?? 1);
