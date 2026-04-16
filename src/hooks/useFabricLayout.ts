@@ -158,7 +158,7 @@ export function useFabricDrop() {
     [fabricCanvas, clearHighlight]
   );
 
-  const ALLOWED_ROLES = ['sashing', 'cornerstone', 'border', 'binding', 'edging'] as const;
+  const ALLOWED_ROLES = ['sashing', 'cornerstone', 'border', 'binding', 'edging', 'setting-triangle'] as const;
 
   const handleFabricDragOver = useCallback(
     async (e: React.DragEvent) => {
