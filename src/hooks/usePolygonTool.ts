@@ -161,16 +161,25 @@ export function usePolygonTool() {
         if (stateRef.current.isSpacePressed) return;
         if (!fabric || !canvas) return;
 
-        const pointer = canvas.getScenePoint(e.e);
+        const el = canvas.getElement();
+        const rect = el.getBoundingClientRect();
+        const cssX = e.e.clientX - rect.left;
+        const cssY = e.e.clientY - rect.top;
+        const vt = canvas.viewportTransform || [1, 0, 0, 1, 0, 0];
+        const zoom = canvas.getZoom();
+        const pointer = {
+          x: (cssX - vt[4]) / zoom,
+          y: (cssY - vt[5]) / zoom,
+        };
 
         // Fence constraint: when a layout is applied, only allow polygon
         // vertices inside block-cell fence areas
         const { hasAppliedLayout } = useLayoutStore.getState();
         if (hasAppliedLayout) {
-          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
+          const fenceAreas = canvas.getObjects().filter((obj: any) =>
             obj._fenceElement && obj._fenceRole === 'block-cell'
           );
-          const isInsideCell = fenceAreas.some((obj: Record<string, unknown>) =>
+          const isInsideCell = fenceAreas.some((obj: any) =>
             (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
           );
           if (!isInsideCell) return;
@@ -220,7 +229,16 @@ export function usePolygonTool() {
       function onMouseMove(e: { e: MouseEvent }) {
         if (!fabric || !canvas || !isDrawing || points.length === 0) return;
 
-        const pointer = canvas.getScenePoint(e.e);
+        const el = canvas.getElement();
+        const rect = el.getBoundingClientRect();
+        const cssX = e.e.clientX - rect.left;
+        const cssY = e.e.clientY - rect.top;
+        const vt = canvas.viewportTransform || [1, 0, 0, 1, 0, 0];
+        const zoom = canvas.getZoom();
+        const pointer = {
+          x: (cssX - vt[4]) / zoom,
+          y: (cssY - vt[5]) / zoom,
+        };
         const snapped = snapPoint(pointer.x, pointer.y);
 
         if (points.length === 1) {

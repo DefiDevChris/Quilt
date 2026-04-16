@@ -86,10 +86,10 @@ export function useEasyDrawTool() {
         const { hasAppliedLayout } = useLayoutStore.getState();
         if (hasAppliedLayout) {
           const pathBounds = e.path.getBoundingRect();
-          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
+          const fenceAreas = canvas.getObjects().filter((obj: any) =>
             obj._fenceElement && obj._fenceRole === 'block-cell'
           );
-          const overlapsCell = fenceAreas.some((fenceObj: Record<string, unknown>) => {
+          const overlapsCell = fenceAreas.some((fenceObj: any) => {
             const fo = fenceObj as unknown as { left: number; top: number; width: number; height: number; scaleX: number; scaleY: number };
             const fx = fo.left ?? 0;
             const fy = fo.top ?? 0;

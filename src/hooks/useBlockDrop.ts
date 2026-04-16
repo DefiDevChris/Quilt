@@ -148,10 +148,28 @@ export function useBlockDrop() {
           }
         }
 
-        const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
-        let hitTarget: unknown = canvas.findTarget(
-          e.nativeEvent as unknown as import('fabric').TPointerEvent
-        );
+        const el = canvas.getElement();
+        const rect = el.getBoundingClientRect();
+        // Calculate point relative to canvas element
+        const cssX = e.nativeEvent.clientX - rect.left;
+        const cssY = e.nativeEvent.clientY - rect.top;
+
+        // Convert from CSS pixels to internal canvas coordinates using viewportTransform
+        const vt = canvas.viewportTransform || [1, 0, 0, 1, 0, 0];
+        const zoom = canvas.getZoom();
+        const pointer = {
+          x: (cssX - vt[4]) / zoom,
+          y: (cssY - vt[5]) / zoom,
+        };
+
+        // Create a synthetic event object for findTarget
+        const syntheticEvent = {
+          clientX: e.nativeEvent.clientX,
+          clientY: e.nativeEvent.clientY,
+          type: 'mousemove',
+        } as unknown as import('fabric').TPointerEvent;
+
+        let hitTarget: unknown = canvas.findTarget(syntheticEvent);
 
         for (const { obj, prev } of userBlocksToRestore) {
           obj.evented = prev;
@@ -164,7 +182,7 @@ export function useBlockDrop() {
           const fallbackTarget = allObjects.find((o) => {
             const r = o as unknown as Record<string, unknown>;
             return (
-              r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer)
+              r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(new fabric.Point(pointer.x, pointer.y))
             );
           });
           if (fallbackTarget) {
