@@ -7,6 +7,7 @@
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 
 /** Minimal canvas interface needed for undo/redo (avoids Fabric.js import). */
 interface UndoableCanvas {
@@ -39,9 +40,15 @@ export async function performUndo(canvas?: UndoableCanvas | null): Promise<boole
   const prevJson = useCanvasStore.getState().popUndo(currentJson);
   if (!prevJson) return false;
 
-  await c.loadFromJSON(JSON.parse(prevJson));
+  const parsed = JSON.parse(prevJson);
+  await c.loadFromJSON(parsed);
   c.renderAll();
   useProjectStore.getState().setDirty(true);
+
+  // Layout-aware undo: if the restored canvas has no fence elements but
+  // layoutStore says hasAppliedLayout, clear the layout to stay in sync.
+  syncLayoutStateAfterRestore(parsed);
+
   return true;
 }
 
@@ -61,8 +68,32 @@ export async function performRedo(canvas?: UndoableCanvas | null): Promise<boole
   const nextJson = useCanvasStore.getState().popRedo(currentJson);
   if (!nextJson) return false;
 
-  await c.loadFromJSON(JSON.parse(nextJson));
+  const parsed = JSON.parse(nextJson);
+  await c.loadFromJSON(parsed);
   c.renderAll();
   useProjectStore.getState().setDirty(true);
+
+  // Layout-aware redo: sync layout state with restored canvas
+  syncLayoutStateAfterRestore(parsed);
+
   return true;
+}
+
+/**
+ * After restoring a canvas snapshot via undo/redo, check if the restored
+ * state contains fence elements. If not but layoutStore says hasAppliedLayout,
+ * clear the layout to prevent desync.
+ */
+function syncLayoutStateAfterRestore(canvasJson: { objects?: Array<Record<string, unknown>> }) {
+  const { hasAppliedLayout } = useLayoutStore.getState();
+  if (!hasAppliedLayout) return;
+
+  const objects = canvasJson?.objects ?? [];
+  const hasFenceElements = objects.some(
+    (obj) => obj._fenceElement === true
+  );
+
+  if (!hasFenceElements) {
+    useLayoutStore.getState().clearLayout();
+  }
 }

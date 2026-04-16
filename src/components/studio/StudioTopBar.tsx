@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { CANVAS } from '@/lib/design-system';
 
@@ -26,6 +27,64 @@ function formatTimestamp(date: Date | null): string {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();
+}
+
+/**
+ * Toggle between edit mode (full fence visible, blocks selectable) and
+ * preview mode (fence faded, blocks locked, WYSIWYG view).
+ * Only visible when a layout has been applied.
+ */
+function EditPreviewToggle() {
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+  const previewMode = useLayoutStore((s) => s.previewMode);
+
+  if (!hasAppliedLayout) return null;
+
+  return (
+    <TooltipHint
+      name={previewMode ? 'Switch to Edit Mode' : 'Switch to Preview Mode'}
+      description={
+        previewMode
+          ? 'Show fence areas and enable editing'
+          : 'Hide fence overlay for a clean preview'
+      }
+    >
+      <button
+        type="button"
+        onClick={() => useLayoutStore.getState().setPreviewMode(!previewMode)}
+        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+          previewMode
+            ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
+            : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]'
+        }`}
+        aria-label={previewMode ? 'Switch to edit mode' : 'Switch to preview mode'}
+        aria-pressed={previewMode}
+      >
+        {previewMode ? (
+          /* Eye-off icon for preview mode (fence hidden) */
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M3 3L17 17M10 5C13.9 5 16.8 8 17.8 10C17.3 11 16.5 12.3 15.3 13.3M14 14C12.9 14.7 11.5 15 10 15C6.1 15 3.2 12 2.2 10C2.7 9 3.5 7.7 4.7 6.7"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          /* Eye icon for edit mode (fence visible) */
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M2.2 10C3.2 8 6.1 5 10 5C13.9 5 16.8 8 17.8 10C16.8 12 13.9 15 10 15C6.1 15 3.2 12 2.2 10Z"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <circle cx="10" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.4" />
+          </svg>
+        )}
+      </button>
+    </TooltipHint>
+  );
 }
 
 function ReferenceImageToggle() {
@@ -127,8 +186,20 @@ export function StudioTopBar({
         description: 'Your project has been saved',
       });
     }
+    function handleInvalidDrop(e: Event) {
+      const detail = (e as CustomEvent).detail as { message?: string } | undefined;
+      toast({
+        type: 'error',
+        title: 'Invalid drop',
+        description: detail?.message ?? 'Cannot drop here',
+      });
+    }
     window.addEventListener('quiltstudio:save-success', handleSaveSuccess);
-    return () => window.removeEventListener('quiltstudio:save-success', handleSaveSuccess);
+    window.addEventListener('quiltstudio:invalid-drop', handleInvalidDrop);
+    return () => {
+      window.removeEventListener('quiltstudio:save-success', handleSaveSuccess);
+      window.removeEventListener('quiltstudio:invalid-drop', handleInvalidDrop);
+    };
   }, [toast]);
 
   return (
@@ -227,6 +298,9 @@ export function StudioTopBar({
         {/* Right: Viewport controls + Project info + Settings */}
         <div className="flex items-center gap-4">
           {!isPro && <ProUpgradeButton variant="studio" />}
+
+          {/* Edit/Preview toggle — only visible with applied layout */}
+          <EditPreviewToggle />
 
           {/* Viewport lock/unlock + recenter */}
           <div className="flex items-center gap-1">
