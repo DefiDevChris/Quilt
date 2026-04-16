@@ -69,6 +69,18 @@ export function useDrawingTool() {
           // Skip layout-generated objects
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((obj as any)._layoutElement) return;
+          // Skip fence elements — they must stay locked in place
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((obj as any)._fenceElement) return;
+          // Skip blocks that are locked into fence cells
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((obj as any)._inFenceCellId) {
+            obj.selectable = true;
+            obj.evented = true;
+            obj.hasControls = false;
+            obj.hasBorders = true;
+            return;
+          }
 
           obj.selectable = true;
           obj.evented = true;
@@ -138,22 +150,27 @@ export function useDrawingTool() {
             originY: 'top',
           });
         } else if (activeTool === 'triangle') {
-          // Use a Rect as preview placeholder; the final triangle is created on mouseUp
-          // to avoid Fabric.js Polygon coordinate drift when updating points in-place.
-          previewShape = new fabric.Rect({
-            left: sx,
-            top: sy,
-            width: 0,
-            height: 0,
-            fill: 'transparent',
-            stroke: CANVAS.pencilPreview,
-            strokeWidth: 4,
-            strokeDashArray: [5, 5],
-            selectable: false,
-            evented: false,
-            originX: 'left',
-            originY: 'top',
-          });
+          // Use a Polygon with relative (0,0)-based points and position via left/top.
+          // This avoids the coordinate drift caused by absolute-point polygons in Fabric.js.
+          previewShape = new fabric.Polygon(
+            [
+              { x: 0, y: 0 },
+              { x: 0, y: 0 },
+              { x: 0, y: 0 },
+            ],
+            {
+              left: sx,
+              top: sy,
+              fill: 'transparent',
+              stroke: CANVAS.pencilPreview,
+              strokeWidth: 4,
+              strokeDashArray: [5, 5],
+              selectable: false,
+              evented: false,
+              originX: 'left',
+              originY: 'top',
+            }
+          );
         }
 
         if (previewShape) {
@@ -171,15 +188,42 @@ export function useDrawingTool() {
         const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
         const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
-        // Both rectangle and triangle preview use a bounding-box Rect
-        const width = cx - startX;
-        const height = cy - startY;
-        previewShape.set({
-          left: width >= 0 ? startX : cx,
-          top: height >= 0 ? startY : cy,
-          width: Math.abs(width),
-          height: Math.abs(height),
-        });
+        if (activeTool === 'rectangle') {
+          const width = cx - startX;
+          const height = cy - startY;
+          previewShape.set({
+            left: width >= 0 ? startX : cx,
+            top: height >= 0 ? startY : cy,
+            width: Math.abs(width),
+            height: Math.abs(height),
+          });
+        } else if (activeTool === 'triangle') {
+          // Compute relative points from the drag origin.
+          // The polygon is positioned at (startX, startY) via left/top,
+          // so points are relative to (0, 0) = the top-left of the bounding box.
+          const dx = cx - startX;
+          const dy = cy - startY;
+
+          const minX = Math.min(0, dx);
+          const minY = Math.min(0, dy);
+
+          // Triangle: bottom-left, bottom-right, top-apex
+          // Relative to the bounding box origin
+          const relPoints = [
+            { x: 0 - minX, y: Math.abs(dy) },
+            { x: Math.abs(dx), y: Math.abs(dy) },
+            { x: 0 - minX, y: 0 },
+          ];
+
+          const poly = previewShape as InstanceType<typeof fabric.Polygon>;
+          poly.points = relPoints;
+          poly.set({
+            left: Math.min(startX, cx),
+            top: Math.min(startY, cy),
+          });
+          poly.setBoundingBox(true);
+          poly.setCoords();
+        }
 
         canvas.renderAll();
       }
