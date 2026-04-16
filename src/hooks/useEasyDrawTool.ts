@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
+import { maybeSnap } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
 /**
@@ -25,10 +27,14 @@ export function useEasyDrawTool() {
     fillColor: string;
     strokeColor: string;
     strokeWidth: number;
+    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    unitSystem: 'imperial' | 'metric';
   }>({
     fillColor: CANVAS.pencilPreview,
     strokeColor: CANVAS.seamLine,
     strokeWidth: 2,
+    gridSettings: { enabled: true, size: 1, snapToGrid: true },
+    unitSystem: 'imperial' as 'imperial' | 'metric',
   });
 
   useEffect(() => {
@@ -37,6 +43,8 @@ export function useEasyDrawTool() {
         fillColor: state.fillColor,
         strokeColor: state.strokeColor,
         strokeWidth: Math.max(1, state.strokeWidth),
+        gridSettings: state.gridSettings,
+        unitSystem: state.unitSystem,
       };
     });
   }, []);
@@ -72,6 +80,50 @@ export function useEasyDrawTool() {
 
       function onPathCreated(e: { path?: import('fabric').Path }) {
         if (!e.path) return;
+
+        // Fence constraint: when a layout is applied, reject paths whose
+        // bounding box doesn't overlap any block-cell fence area
+        const { hasAppliedLayout } = useLayoutStore.getState();
+        if (hasAppliedLayout) {
+          const pathBounds = e.path.getBoundingRect();
+          const fenceAreas = canvas.getObjects().filter((obj: Record<string, unknown>) =>
+            obj._fenceElement && obj._fenceRole === 'block-cell'
+          );
+          const overlapsCell = fenceAreas.some((fenceObj: Record<string, unknown>) => {
+            const fo = fenceObj as unknown as { left: number; top: number; width: number; height: number; scaleX: number; scaleY: number };
+            const fx = fo.left ?? 0;
+            const fy = fo.top ?? 0;
+            const fw = (fo.width ?? 0) * (fo.scaleX ?? 1);
+            const fh = (fo.height ?? 0) * (fo.scaleY ?? 1);
+            return (
+              pathBounds.left < fx + fw &&
+              pathBounds.left + pathBounds.width > fx &&
+              pathBounds.top < fy + fh &&
+              pathBounds.top + pathBounds.height > fy
+            );
+          });
+          if (!overlapsCell) {
+            canvas.remove(e.path);
+            canvas.renderAll();
+            return;
+          }
+        }
+
+        // Phase 6: Snap-to-grid post-processing for EasyDraw paths
+        const { gridSettings, unitSystem } = stateRef.current;
+        if (gridSettings.snapToGrid && e.path.path) {
+          const pathData = e.path.path as Array<Array<string | number>>;
+          for (const cmd of pathData) {
+            // SVG path commands: M/L have x,y at indices 1,2; Q has cx,cy,x,y at 1,2,3,4; C has 1-6
+            for (let i = 1; i < cmd.length; i++) {
+              if (typeof cmd[i] === 'number') {
+                cmd[i] = maybeSnap(cmd[i] as number, gridSettings, unitSystem);
+              }
+            }
+          }
+          e.path.setCoords();
+        }
+
         const { fillColor, strokeColor, strokeWidth } = stateRef.current;
         e.path.set({
           fill: fillColor,

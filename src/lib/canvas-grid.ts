@@ -1,4 +1,4 @@
-import { getPixelsPerUnit, computeCanvasGeometry } from '@/lib/canvas-utils';
+import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { CANVAS, GRID } from '@/lib/design-system';
 import type { UnitSystem } from '@/types/canvas';

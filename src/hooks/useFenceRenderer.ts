@@ -5,7 +5,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { getPixelsPerUnit, computeCanvasGeometry } from '@/lib/canvas-utils';
+import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { computeFenceAreas } from '@/lib/fence-engine';
 import { FENCE, CANVAS } from '@/lib/design-system';
 import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
@@ -154,6 +154,28 @@ export function useFenceRenderer() {
       // Use unified geometry so fence coordinates match the grid canvas exactly
       const geo = computeCanvasGeometry(quiltWidth, quiltHeight, unitSystem, 1, 0, 0);
       const areas = computeFenceAreas(template, quiltWidth, quiltHeight, geo.pxPerUnit);
+
+      // Orphan detection: find user blocks assigned to cell IDs that no
+      // longer exist in the new area set and free them for manual placement.
+      const newAreaIds = new Set(areas.map((a) => a.id));
+      const allCanvasObjects = canvas.getObjects();
+      for (const obj of allCanvasObjects) {
+        const r = obj as unknown as Record<string, unknown>;
+        const assignedCellId = r['_inFenceCellId'] as string | undefined;
+        if (assignedCellId && !newAreaIds.has(assignedCellId)) {
+          // Free the orphaned block: remove cell assignment, unlock movement
+          delete r['_inFenceCellId'];
+          obj.set({
+            lockMovementX: false,
+            lockMovementY: false,
+            lockScalingX: false,
+            lockScalingY: false,
+            lockRotation: false,
+          } as Record<string, unknown>);
+          obj.setCoords();
+        }
+      }
+
       areasRef.current = areas;
 
       // Render each fence area as a Fabric.js shape (Rect or Polygon)
@@ -219,15 +241,27 @@ export function useFenceRenderer() {
         r[FENCE_ROLE_PROP] = area.role;
 
         canvas.add(shape);
-        // Always keep fence areas in back, behind user blocks
-        canvas.sendObjectToBack(shape);
 
         // Render label text inside fence area (if large enough)
         if (area.label && area.width > 20 && area.height > 12) {
           const labelFontSize = Math.max(7, Math.min(11, Math.min(area.width, area.height) * 0.15));
+
+          // For polygon areas (setting triangles), compute the centroid as the
+          // average of all vertices so the label sits inside the shape rather
+          // than at the bounding-box center (which can land on the hypotenuse).
+          let labelX: number;
+          let labelY: number;
+          if (area.points && area.points.length >= 3) {
+            labelX = area.points.reduce((sum, p) => sum + p.x, 0) / area.points.length;
+            labelY = area.points.reduce((sum, p) => sum + p.y, 0) / area.points.length;
+          } else {
+            labelX = area.x + area.width / 2;
+            labelY = area.y + area.height / 2;
+          }
+
           const textObj = new fabric.FabricText(area.label, {
-            left: area.x + area.width / 2,
-            top: area.y + area.height / 2,
+            left: labelX,
+            top: labelY,
             originX: 'center',
             originY: 'center',
             fontSize: labelFontSize,
@@ -244,14 +278,17 @@ export function useFenceRenderer() {
         }
       }
 
-      // Ensure all user blocks stay on top of fence areas
+      // Single-pass z-layer sort: fence objects at the back, user blocks on top.
+      // Replaces the O(n*m) per-object sendToBack/bringToFront loop.
       const allObjects = canvas.getObjects();
-      for (const obj of allObjects) {
-        const r = obj as unknown as Record<string, unknown>;
-        if (r['_inFenceCellId']) {
-          canvas.bringObjectToFront(obj as unknown as FabricObject);
-        }
-      }
+      allObjects.sort((a, b) => {
+        const aR = a as unknown as Record<string, unknown>;
+        const bR = b as unknown as Record<string, unknown>;
+        const aIsFence = aR[FENCE_MARKER] ? 1 : 0;
+        const bIsFence = bR[FENCE_MARKER] ? 1 : 0;
+        // Fence objects sort before (lower index = further back) non-fence objects
+        return aIsFence - bIsFence;
+      });
 
       canvas.requestRenderAll();
       if (!isPreview) {

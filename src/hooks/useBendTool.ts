@@ -71,7 +71,9 @@ export function useBendTool() {
       } | null = null;
 
       const HIT_THRESHOLD = 24;
-      const SUBDIVISIONS = 12;
+      // Increased from 12 to 32 for smoother curves at high zoom levels.
+      // True SVG Bezier path support is planned for a future iteration.
+      const SUBDIVISIONS = 32;
 
       function getCanvasPoints(poly: PolygonLike): Pt[] {
         const matrix = poly.calcTransformMatrix();
