@@ -3,12 +3,12 @@
 import { COLORS } from '@/lib/design-system';
 
 const categories = [
-  { id: 1, name: 'Fabric', href: '#fabrics', image: '/images/shop/fabric-by-yard.jpg' },
-  { id: 2, name: 'Precuts', href: '#categories', image: '/images/shop/fabric-collection.jpg' },
-  { id: 3, name: 'Quilt Kits', href: '#kits', image: '/images/shop/featured-store.jpg' },
-  { id: 4, name: 'Thread', href: '#categories', image: '/images/shop/quilting-thread.jpg' },
-  { id: 5, name: 'Batting', href: '#categories', image: '/images/shop/fabric-collection.jpg' },
-  { id: 6, name: 'Notions', href: '#categories', image: '/images/shop/quilting-thread.jpg' },
+  { id: 1, name: 'Quilt Kits', href: '#kits', image: '/images/shop/cat_quilt_kits_1776324534096.png' },
+  { id: 2, name: 'Wide Backing', href: '#categories', image: '/images/shop/cat_wide_backing_1776324545089.png' },
+  { id: 3, name: 'Fabric', href: '#fabrics', image: '/images/shop/cat_fabric_yardage_1776324560984.png' },
+  { id: 4, name: 'Precuts', href: '#categories', image: '/images/shop/cat_precuts_1776324574408.png' },
+  { id: 5, name: 'Thread & Bobbins', href: '#categories', image: '/images/shop/cat_thread_1776324585864.png' },
+  { id: 6, name: 'Notions', href: '#categories', image: '/images/shop/cat_notions_1776324598587.png' },
 ];
 
 export default function Categories() {
@@ -46,7 +46,8 @@ export default function Categories() {
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  style={{ objectPosition: 'right center' }}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                     (e.target as HTMLImageElement).parentElement!.style.backgroundColor =

@@ -52,12 +52,19 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
 
   if (collections.length === 0) return null;
 
+  const heroImages = [
+    '/images/shop/feature_hero_1_1776324896702.png',
+    '/images/shop/feature_hero_2_1776324911925.png',
+    '/images/shop/feature_hero_3_1776324926263.png',
+  ];
+
   return (
     <>
       {collections.map((collection, index) => (
         <CollectionSection
           key={collection.name}
           collection={collection}
+          heroImage={heroImages[index]}
           reverse={index % 2 === 1}
           background={index % 2 === 0 ? COLORS.bg : COLORS.surface}
           onAddToCart={onAddToCart}
@@ -71,6 +78,7 @@ interface CollectionSectionProps {
   collection: CollectionGroup;
   reverse: boolean;
   background: string;
+  heroImage?: string;
   onAddToCart: (fabric: Fabric) => void;
 }
 
@@ -78,6 +86,7 @@ function CollectionSection({
   collection,
   reverse,
   background,
+  heroImage,
   onAddToCart,
 }: CollectionSectionProps) {
   return (
@@ -94,9 +103,9 @@ function CollectionSection({
               className="relative aspect-[16/10] md:aspect-[16/9] lg:aspect-[3/2] rounded-lg overflow-hidden shadow-lg"
               style={{ backgroundColor: `${COLORS.primary}10` }}
             >
-              {collection.fabrics[0]?.imageUrl?.startsWith('/') ? (
+              {heroImage || collection.fabrics[0]?.imageUrl?.startsWith('/') ? (
                 <img
-                  src={collection.fabrics[0].imageUrl}
+                  src={heroImage || collection.fabrics[0].imageUrl}
                   alt={collection.name}
                   className="w-full h-full object-cover"
                 />
@@ -106,25 +115,9 @@ function CollectionSection({
                   style={{ backgroundColor: `${COLORS.primary}15` }}
                 />
               )}
-              {/* Left gradient */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)',
-                }}
-              />
-              {/* Bottom gradient */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 40%, transparent 60%)',
-                }}
-              />
               {/* Title overlay */}
               <h3
-                className="absolute bottom-6 left-6 right-6 text-3xl md:text-4xl text-white drop-shadow-lg"
+                className="absolute bottom-6 left-6 right-6 text-3xl md:text-4xl text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] bg-black/20 w-fit px-4 py-2 rounded-lg backdrop-blur-sm"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 {collection.name}
