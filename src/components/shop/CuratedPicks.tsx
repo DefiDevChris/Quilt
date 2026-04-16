@@ -27,16 +27,7 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
   const picks = fabrics.slice(0, 4);
 
   return (
-    <section
-      id="fabrics"
-      className="py-24 border-t"
-      style={{
-        backgroundColor: COLORS.surface,
-        borderColor: `${COLORS.text}1a`,
-        borderTopColor: COLORS.primary,
-        borderTopWidth: '3px',
-      }}
-    >
+    <section id="fabrics" className="py-24" style={{ backgroundColor: COLORS.surface }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
@@ -45,7 +36,7 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
         >
           <div>
             <h2
-              className="text-3xl mb-2"
+              className="text-3xl md:text-4xl mb-2"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.text,
@@ -53,11 +44,13 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
             >
               This Week&apos;s Favorites
             </h2>
-            <p style={{ color: COLORS.textDim }}>Our top picks for your next quilting project.</p>
+            <p style={{ color: COLORS.textDim }}>
+              Bolts we can&rsquo;t stop reaching for this week.
+            </p>
           </div>
           <a
             href="/shop/catalog"
-            className="text-sm font-bold tracking-wider uppercase transition-colors pb-1"
+            className="text-base font-medium transition-colors pb-1"
             style={{ color: COLORS.text }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
@@ -66,7 +59,7 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
               e.currentTarget.style.color = COLORS.text;
             }}
           >
-            Shop All &rarr;
+            Shop all &rarr;
           </a>
         </div>
 

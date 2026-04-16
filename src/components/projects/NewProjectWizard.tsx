@@ -300,7 +300,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       className={
                         isActive
                           ? 'flex flex-col items-center justify-center p-3 bg-primary text-[var(--color-text)] shadow-brand rounded-full'
-                          : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full'
+                          : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20 transition-colors duration-150 rounded-full'
                       }
                     >
                       <span className="text-[16px] leading-[24px] font-medium mb-1">
@@ -326,7 +326,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                       className={
                         isCustom
                           ? 'w-full px-4 py-3 bg-primary text-[var(--color-text)] text-[16px] leading-[24px] font-medium shadow-brand rounded-full'
-                          : 'w-full px-4 py-3 bg-default text-[var(--color-text)] text-[16px] leading-[24px] font-medium hover:bg-[#ffc8a6]/20 transition-colors duration-150 border border-[var(--color-border)] rounded-full'
+                          : 'w-full px-4 py-3 bg-default text-[var(--color-text)] text-[16px] leading-[24px] font-medium hover:bg-[#f5c4b0]/20 transition-colors duration-150 border border-[var(--color-border)] rounded-full'
                       }
                     >
                       Custom Size
@@ -342,7 +342,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
                     isCustom
                       ? 'bg-primary text-[var(--color-text)] shadow-brand'
-                      : 'bg-default text-[var(--color-text)] hover:bg-[#ffc8a6]/20'
+                      : 'bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20'
                   }`}
                 >
                   <span className="text-[16px] leading-[24px] font-medium">Custom Size</span>
@@ -407,7 +407,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                         className={`px-4 py-2 text-[16px] leading-[24px] font-medium transition-colors duration-150 rounded-full ${
                           Math.abs(cellSize - size) < 0.001
                             ? 'bg-primary text-[var(--color-text)] shadow-brand'
-                            : 'bg-default text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20'
+                            : 'bg-default text-[var(--color-text-dim)] hover:bg-[#f5c4b0]/20'
                         }`}
                       >
                         {fmtCellSize(size)}
@@ -426,7 +426,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                   <button
                     type="button"
                     onClick={handleDismiss}
-                    className="bg-default border border-[var(--color-border)] px-4 py-2 text-[16px] leading-[24px] font-medium text-[var(--color-text-dim)] hover:bg-[#ffc8a6]/20 transition-colors duration-150 rounded-full"
+                    className="bg-default border border-[var(--color-border)] px-4 py-2 text-[16px] leading-[24px] font-medium text-[var(--color-text-dim)] hover:bg-[#f5c4b0]/20 transition-colors duration-150 rounded-full"
                   >
                     Skip
                   </button>

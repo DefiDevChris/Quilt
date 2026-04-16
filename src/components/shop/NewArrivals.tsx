@@ -27,14 +27,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
   const newArrivals = fabrics.slice(3, 7);
 
   return (
-    <section
-      id="new"
-      className="py-24"
-      style={{
-        backgroundColor: COLORS.bg,
-        borderTop: `3px solid ${COLORS.primary}`,
-      }}
-    >
+    <section id="new" className="py-24" style={{ backgroundColor: COLORS.surface }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
@@ -43,7 +36,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
         >
           <div>
             <h2
-              className="text-3xl mb-2"
+              className="text-3xl md:text-4xl mb-2"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.text,
@@ -51,11 +44,11 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
             >
               New Arrivals
             </h2>
-            <p style={{ color: COLORS.textDim }}>Fresh fabrics just landed.</p>
+            <p style={{ color: COLORS.textDim }}>Hot off the bolt, ready for your next piece.</p>
           </div>
           <a
             href="/shop/catalog"
-            className="text-sm font-bold tracking-wider uppercase transition-colors pb-1"
+            className="text-base font-medium transition-colors pb-1"
             style={{ color: COLORS.text }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
@@ -64,7 +57,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
               e.currentTarget.style.color = COLORS.text;
             }}
           >
-            Shop All &rarr;
+            Shop all &rarr;
           </a>
         </div>
 
@@ -106,7 +99,7 @@ export default function NewArrivals({ fabrics, onAddToCart }: NewArrivalsProps) 
                     )}
                     {fabric.collection && (
                       <div
-                        className="absolute top-3 left-3 text-xs font-bold px-3 py-1 rounded-full tracking-wider"
+                        className="absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full"
                         style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                       >
                         New

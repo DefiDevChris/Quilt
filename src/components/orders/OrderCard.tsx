@@ -82,7 +82,7 @@ export default function OrderCard({ order }: OrderCardProps) {
           </p>
           <Link
             href={`/dashboard/orders/${order.id}`}
-            className="text-sm text-[#ff8d49] font-['Inter'] hover:text-[#e67d3f] transition-colors duration-150 ease-out"
+            className="text-sm text-[#f08060] font-['Inter'] hover:text-[#d97054] transition-colors duration-150 ease-out"
           >
             View Details
           </Link>

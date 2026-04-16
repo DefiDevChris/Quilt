@@ -1,6 +1,6 @@
 'use client';
 
-import { COLORS, darkenHex } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 
 export default function FeaturedCollection() {
   return (
@@ -52,7 +52,7 @@ export default function FeaturedCollection() {
               </a>
             </div>
           </div>
-          <div className="w-full md:w-1/2 relative" style={{ minHeight: '700px' }}>
+          <div className="w-full md:w-1/2 relative" style={{ minHeight: '480px' }}>
             <img
               src="/images/shop/fabric-shop-shelves.jpg"
               alt="Colorful fabric patterns"

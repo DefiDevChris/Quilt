@@ -6,29 +6,10 @@ export default function Testimonial() {
   return (
     <section className="py-24" style={{ backgroundColor: `${COLORS.secondary}33` }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center gap-12">
+        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
           <div className="w-full md:w-1/2">
-            <div
-              className="text-6xl leading-none mb-6"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: COLORS.primary,
-              }}
-            >
-              &ldquo;
-            </div>
-            <p
-              className="text-2xl md:text-3xl leading-relaxed mb-8"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: COLORS.text,
-              }}
-            >
-              The quality of the precuts made piecing so much faster—and the colors are even prettier in person. I get compliments on my quilts everywhere I go!
-            </p>
-
             {/* Stars */}
-            <div className="flex space-x-1 mb-4">
+            <div className="flex space-x-1 mb-6">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
@@ -40,25 +21,40 @@ export default function Testimonial() {
                 </svg>
               ))}
             </div>
-
-            <p className="font-medium" style={{ color: COLORS.text }}>
-              - Amber R.
+            <p
+              className="text-2xl md:text-3xl leading-relaxed mb-8"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: COLORS.text,
+              }}
+            >
+              &ldquo;The quality of the precuts made piecing so much faster&mdash;and the colors are
+              even prettier in person. I get compliments on my quilts everywhere I go!&rdquo;
             </p>
-            <div className="mt-8">
-              <a
-                href="#fabrics"
-                className="text-sm font-medium inline-flex items-center transition-colors"
-                style={{ color: COLORS.text }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = COLORS.primary;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = COLORS.text;
-                }}
-              >
-                SHOP NOW <span className="ml-1">&rarr;</span>
-              </a>
-            </div>
+
+            <p className="text-base mb-8" style={{ color: COLORS.textDim }}>
+              <span className="font-semibold" style={{ color: COLORS.text }}>
+                Amber R.
+              </span>
+              <span className="mx-2">·</span>
+              Quilter since 2019
+            </p>
+            <a
+              href="#fabrics"
+              className="inline-block px-8 py-3 rounded-full font-semibold transition-colors shadow-sm text-base"
+              style={{
+                backgroundColor: COLORS.text,
+                color: COLORS.surface,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = COLORS.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = COLORS.text;
+              }}
+            >
+              Shop the collection
+            </a>
           </div>
           <div className="w-full md:w-1/2">
             <div

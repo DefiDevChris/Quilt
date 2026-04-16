@@ -83,7 +83,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full flex items-center gap-4 p-4 rounded-lg bg-default border border-[#ff8d49]/20 transition-colors text-left disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-lg bg-default border border-[#f08060]/20 transition-colors text-left disabled:opacity-50"
           >
             <div
               className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
@@ -112,7 +112,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
                   height="22"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#ff8d49"
+                  stroke="#f08060"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"

@@ -26,7 +26,7 @@ export default function OrderTimeline({ statusHistory }: OrderTimelineProps) {
         <div key={index} className="flex gap-4">
           {/* Timeline dot and line */}
           <div className="flex flex-col items-center">
-            <div className="w-3 h-3 rounded-full bg-[#ff8d49] flex-shrink-0" />
+            <div className="w-3 h-3 rounded-full bg-[#f08060] flex-shrink-0" />
             {index < statusHistory.length - 1 && <div className="w-0.5 flex-1 bg-[#d4d4d4] mt-1" />}
           </div>
 
