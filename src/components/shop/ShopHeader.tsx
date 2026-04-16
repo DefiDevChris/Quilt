@@ -15,7 +15,8 @@ const navLinks = [
   { name: 'Notions', href: '#categories' },
   { name: 'New', href: '#new' },
   { name: 'Sale', href: '#fabrics' },
-];
+  { name: 'Picture my Blocks', href: '/picture-my-blocks', external: true },
+] as const;
 
 export default function ShopHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,8 +35,8 @@ export default function ShopHeader() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center gap-8">
-          {/* Logo + Studio link */}
-          <div className="flex items-center gap-6 shrink-0">
+          {/* Logo */}
+          <div className="flex items-center shrink-0">
             <a
               href="/shop"
               className="text-4xl font-bold"
@@ -47,20 +48,6 @@ export default function ShopHeader() {
             >
               QuiltCorgi
             </a>
-            <Link
-              href="/design-studio"
-              className="hidden lg:inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider transition-colors"
-              style={{ color: COLORS.text }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = COLORS.primary;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = COLORS.text;
-              }}
-            >
-              <Palette className="w-4 h-4" strokeWidth={1.75} />
-              Design Studio
-            </Link>
           </div>
 
           {/* Search Bar */}
@@ -97,6 +84,24 @@ export default function ShopHeader() {
 
           {/* Icons */}
           <div className="flex items-center space-x-6 shrink-0">
+            <Link
+              href="/design-studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:inline-flex items-center gap-1.5 transition-colors flex-col"
+              style={{ color: COLORS.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = COLORS.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = COLORS.text;
+              }}
+            >
+              <Palette className="w-6 h-6" strokeWidth={1.5} />
+              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
+                Studio
+              </span>
+            </Link>
             <button
               className="transition-colors flex flex-col items-center gap-1"
               style={{ color: COLORS.text }}
@@ -161,13 +166,16 @@ export default function ShopHeader() {
       </div>
 
       {/* Navigation Bar */}
-      <div className="border-t" style={{ borderColor: `${COLORS.text}1a` }}>
+      <div className="hidden md:block border-t" style={{ borderColor: `${COLORS.text}1a` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex overflow-x-auto py-3 space-x-8 no-scrollbar">
+          <nav className="flex flex-wrap justify-center items-center py-3 gap-x-8 gap-y-2">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
+                {...('external' in link && link.external
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
                 className="whitespace-nowrap text-sm font-bold uppercase tracking-wider transition-colors"
                 style={{ color: COLORS.text }}
                 onMouseEnter={(e) => {
@@ -196,6 +204,8 @@ export default function ShopHeader() {
           <nav className="flex flex-col px-6 py-4 space-y-4">
             <Link
               href="/design-studio"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-base font-bold uppercase tracking-wider transition-colors"
               style={{ color: COLORS.primary }}
               onClick={() => setIsMobileMenuOpen(false)}
@@ -207,6 +217,9 @@ export default function ShopHeader() {
               <a
                 key={link.name}
                 href={link.href}
+                {...('external' in link && link.external
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
                 className="text-base font-bold uppercase tracking-wider transition-colors"
                 style={{ color: COLORS.text }}
                 onMouseEnter={(e) => {

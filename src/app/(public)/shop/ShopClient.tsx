@@ -9,11 +9,12 @@ import ShopHeroSlideshow from '@/components/shop/ShopHeroSlideshow';
 import Categories from '@/components/shop/Categories';
 import CuratedPicks from '@/components/shop/CuratedPicks';
 import NewArrivals from '@/components/shop/NewArrivals';
-import FeaturedCollection from '@/components/shop/FeaturedCollection';
 import FeaturedCollections from '@/components/shop/FeaturedCollections';
 import QuiltKits from '@/components/shop/QuiltKits';
 import Testimonial from '@/components/shop/Testimonial';
 import ShopFooter from '@/components/shop/ShopFooter';
+import SectionDivider from '@/components/shop/SectionDivider';
+import DesignStudioFeature from '@/components/shop/DesignStudioFeature';
 import { CartDrawer } from '@/components/shop/CartDrawer';
 import type { ShopFabric } from '@/types/fabric';
 
@@ -117,14 +118,17 @@ export default function ShopClient({ initialFabrics, shopEnabled }: ShopClientPr
             />
           </div>
         ) : (
-          <div className="space-y-16">
+          <>
             <CuratedPicks fabrics={fabrics} onAddToCart={handleAddToCart} />
+            <SectionDivider icon="scissors" background={COLORS.surface} />
             <FeaturedCollections fabrics={fabrics} onAddToCart={handleAddToCart} />
             <NewArrivals fabrics={fabrics} onAddToCart={handleAddToCart} />
-            <FeaturedCollection />
+            <SectionDivider icon="spool" background={COLORS.surface} />
+            <DesignStudioFeature />
             <QuiltKits fabrics={fabrics} onAddToCart={handleAddToCart} />
+            <SectionDivider icon="needle" background={COLORS.surface} />
             <Testimonial />
-          </div>
+          </>
         )}
       </main>
       <ShopFooter />

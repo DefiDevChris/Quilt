@@ -63,6 +63,12 @@ export default function PublicNav() {
           >
             Design Studio
           </Link>
+          <Link
+            href="/picture-my-blocks"
+            className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+          >
+            Picture my Blocks
+          </Link>
           <a
             href="/blog"
             target="_blank"
@@ -139,6 +145,13 @@ export default function PublicNav() {
             onClick={() => setMenuOpen(false)}
           >
             Design Studio
+          </Link>
+          <Link
+            href="/picture-my-blocks"
+            className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+            onClick={() => setMenuOpen(false)}
+          >
+            Picture my Blocks
           </Link>
           <a
             href="/blog"

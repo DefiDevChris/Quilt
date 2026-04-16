@@ -151,7 +151,7 @@ export default function AdminOrderDetailPage() {
         <div>
           <button
             onClick={() => router.back()}
-            className="text-sm text-[#ff8d49] font-['Inter'] hover:text-[#e67d3f] transition-colors duration-150 ease-out mb-2"
+            className="text-sm text-[#f08060] font-['Inter'] hover:text-[#d97054] transition-colors duration-150 ease-out mb-2"
           >
             Back to Orders
           </button>
@@ -210,7 +210,7 @@ export default function AdminOrderDetailPage() {
           <button
             onClick={handleStatusUpdate}
             disabled={updating || newStatus === order.status}
-            className="bg-[#ff8d49] text-[#1a1a1a] px-6 py-2 rounded-full font-['Inter'] transition-colors duration-150 ease-out hover:bg-[#e67d3f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[#f08060] text-[#1a1a1a] px-6 py-2 rounded-full font-['Inter'] transition-colors duration-150 ease-out hover:bg-[#d97054] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {updating ? 'Updating...' : 'Update Status'}
           </button>

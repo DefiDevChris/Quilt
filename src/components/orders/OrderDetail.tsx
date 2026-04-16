@@ -58,7 +58,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           <div>
             <Link
               href="/dashboard/orders"
-              className="text-sm text-[#ff8d49] font-['Inter'] hover:text-[#e67d3f] transition-colors duration-150 ease-out mb-2 inline-block"
+              className="text-sm text-[#f08060] font-['Inter'] hover:text-[#d97054] transition-colors duration-150 ease-out mb-2 inline-block"
             >
               Back to Orders
             </Link>

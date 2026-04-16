@@ -18,7 +18,7 @@ export default function CtaSection() {
               width="calc(100% - 16px)"
               height="calc(100% - 16px)"
               fill="none"
-              stroke="#ff8d49"
+              stroke="#f08060"
               strokeWidth="2"
               strokeDasharray="8 6"
               strokeLinecap="round"

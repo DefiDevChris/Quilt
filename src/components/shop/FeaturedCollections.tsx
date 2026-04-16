@@ -53,165 +53,177 @@ export default function FeaturedCollections({ fabrics, onAddToCart }: FeaturedCo
   if (collections.length === 0) return null;
 
   return (
-    <section className="py-32" style={{ backgroundColor: `${COLORS.secondary}20` }}>
+    <>
+      {collections.map((collection, index) => (
+        <CollectionSection
+          key={collection.name}
+          collection={collection}
+          reverse={index % 2 === 1}
+          background={index % 2 === 0 ? COLORS.bg : COLORS.surface}
+          onAddToCart={onAddToCart}
+        />
+      ))}
+    </>
+  );
+}
+
+interface CollectionSectionProps {
+  collection: CollectionGroup;
+  reverse: boolean;
+  background: string;
+  onAddToCart: (fabric: Fabric) => void;
+}
+
+function CollectionSection({
+  collection,
+  reverse,
+  background,
+  onAddToCart,
+}: CollectionSectionProps) {
+  return (
+    <section className="py-24" style={{ backgroundColor: background }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-6">
-          <h2
-            className="text-4xl md:text-5xl mb-6"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: COLORS.text,
-            }}
-          >
-            Fabric Collection Spotlight
-          </h2>
-          <p className="text-lg" style={{ color: COLORS.textDim }}>
-            Discover our carefully curated selections. Each collection is designed to inspire your
-            creativity and bring warmth to your quilting projects.
-          </p>
-        </div>
-
-        {/* Store interior banner */}
-        <div className="max-w-5xl mx-auto mb-16">
-          <div className="aspect-[21/9] overflow-hidden rounded-lg shadow-sm">
-            <img
-              src="/images/shop/featured-store.jpg"
-              alt="QuiltCorgi fabric store interior"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.parentElement!.style.backgroundColor = `${COLORS.primary}10`;
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-16 md:space-y-24">
-          {collections.map((collection, index) => (
+        <div
+          className={`flex flex-col md:flex-row gap-10 md:gap-16 items-center ${
+            reverse ? 'md:flex-row-reverse' : ''
+          }`}
+        >
+          {/* Collection Hero Image with title overlay + gradients */}
+          <div className="w-full md:w-1/2">
             <div
-              key={collection.name}
-              className={`flex flex-col md:flex-row gap-8 md:gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''
-                }`}
+              className="relative aspect-[16/10] md:aspect-[16/9] lg:aspect-[3/2] rounded-lg overflow-hidden shadow-lg"
+              style={{ backgroundColor: `${COLORS.primary}10` }}
             >
-              {/* Collection Hero Image */}
-              <div className="w-full md:w-1/2">
+              {collection.fabrics[0]?.imageUrl?.startsWith('/') ? (
+                <img
+                  src={collection.fabrics[0].imageUrl}
+                  alt={collection.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
                 <div
-                  className="aspect-[16/10] md:aspect-[16/9] lg:aspect-[3/2] rounded-lg overflow-hidden shadow-lg"
-                  style={{ backgroundColor: `${COLORS.primary}10` }}
-                >
-                  {collection.fabrics[0]?.imageUrl?.startsWith('/') ? (
-                    <img
-                      src={collection.fabrics[0].imageUrl}
-                      alt={collection.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: `${COLORS.primary}15` }}
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Collection Info + Fabric Swatches */}
-              <div className="w-full md:w-1/2 flex flex-col justify-center space-y-6 px-4 md:px-8">
-                <h3
-                  className="text-3xl md:text-4xl"
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    color: COLORS.text,
-                  }}
-                >
-                  {collection.name}
-                </h3>
-                <p className="text-lg leading-relaxed" style={{ color: COLORS.textDim }}>
-                  {collection.description}
-                </p>
-
-                {/* Fabric Swatches Grid */}
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
-                  {collection.fabrics.map((fabric) => {
-                    const price = fabric.pricePerYard
-                      ? `$${Number(fabric.pricePerYard).toFixed(2)}`
-                      : '';
-                    return (
-                      <div key={fabric.id} className="group/swatch flex flex-col">
-                        <div
-                          className="relative mb-1 border rounded overflow-hidden transition-shadow duration-300"
-                          style={{
-                            height: '100px',
-                            borderColor: `${COLORS.text}1a`,
-                            backgroundColor: COLORS.surface,
-                          }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLDivElement).style.boxShadow =
-                              '0 1px 3px rgba(0,0,0,0.06)';
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-                          }}
-                        >
-                          {fabric.imageUrl?.startsWith('/') ? (
-                            <img
-                              src={fabric.imageUrl}
-                              alt={fabric.name}
-                              className="w-full h-full object-cover group-hover/swatch:scale-110 transition-transform duration-500"
-                            />
-                          ) : fabric.hex ? (
-                            <div
-                              className="w-full h-full group-hover/swatch:scale-110 transition-transform duration-500"
-                              style={{ backgroundColor: fabric.hex }}
-                            />
-                          ) : (
-                            <div
-                              className="w-full h-full flex items-center justify-center"
-                              style={{ backgroundColor: `${COLORS.primary}10` }}
-                            />
-                          )}
-                        </div>
-                        <p
-                          className="text-[10px] uppercase tracking-widest leading-tight line-clamp-2 mb-1"
-                          style={{ color: COLORS.textDim }}
-                        >
-                          {fabric.name}
-                        </p>
-                        {fabric.shopifyVariantId && fabric.inStock && price && (
-                          <p
-                            className="text-[11px] font-bold mb-1"
-                            style={{ color: COLORS.primary }}
-                          >
-                            {price}
-                          </p>
-                        )}
-                        {fabric.shopifyVariantId && fabric.inStock && (
-                          <button
-                            onClick={() => onAddToCart(fabric)}
-                            className="text-[10px] font-bold px-2 py-1 rounded-full transition-all duration-200 border opacity-0 group-hover/swatch:opacity-100"
-                            style={{
-                              color: COLORS.primary,
-                              borderColor: COLORS.primary,
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = COLORS.primary;
-                              e.currentTarget.style.color = COLORS.surface;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = COLORS.primary;
-                            }}
-                          >
-                            Add
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ backgroundColor: `${COLORS.primary}15` }}
+                />
+              )}
+              {/* Left gradient */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)',
+                }}
+              />
+              {/* Bottom gradient */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 40%, transparent 60%)',
+                }}
+              />
+              {/* Title overlay */}
+              <h3
+                className="absolute bottom-6 left-6 right-6 text-3xl md:text-4xl text-white drop-shadow-lg"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {collection.name}
+              </h3>
             </div>
-          ))}
+          </div>
+
+          {/* Collection Info + Fabric Swatches */}
+          <div className="w-full md:w-1/2 flex flex-col justify-center px-4 md:px-8">
+            <p
+              className="text-base italic mb-3"
+              style={{
+                color: COLORS.primary,
+                fontFamily: 'var(--font-display)',
+              }}
+            >
+              Collection spotlight
+            </p>
+            <p className="text-lg leading-relaxed mb-8" style={{ color: COLORS.textDim }}>
+              {collection.description}
+            </p>
+
+            {/* Fabric Swatches Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+              {collection.fabrics.map((fabric) => {
+                const price = fabric.pricePerYard
+                  ? `$${Number(fabric.pricePerYard).toFixed(2)}`
+                  : '';
+                return (
+                  <div key={fabric.id} className="group/swatch flex flex-col">
+                    <div
+                      className="relative mb-1 border rounded overflow-hidden transition-shadow duration-300"
+                      style={{
+                        height: '100px',
+                        borderColor: `${COLORS.text}1a`,
+                        backgroundColor: COLORS.surface,
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.boxShadow =
+                          '0 1px 3px rgba(0,0,0,0.06)';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                      }}
+                    >
+                      {fabric.imageUrl?.startsWith('/') ? (
+                        <img
+                          src={fabric.imageUrl}
+                          alt={fabric.name}
+                          className="w-full h-full object-cover group-hover/swatch:scale-110 transition-transform duration-500"
+                        />
+                      ) : fabric.hex ? (
+                        <div
+                          className="w-full h-full group-hover/swatch:scale-110 transition-transform duration-500"
+                          style={{ backgroundColor: fabric.hex }}
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ backgroundColor: `${COLORS.primary}10` }}
+                        />
+                      )}
+                    </div>
+                    <p
+                      className="text-[10px] uppercase tracking-widest leading-tight line-clamp-2 mb-1"
+                      style={{ color: COLORS.textDim }}
+                    >
+                      {fabric.name}
+                    </p>
+                    {fabric.shopifyVariantId && fabric.inStock && price && (
+                      <p className="text-[11px] font-bold mb-1" style={{ color: COLORS.primary }}>
+                        {price}
+                      </p>
+                    )}
+                    {fabric.shopifyVariantId && fabric.inStock && (
+                      <button
+                        onClick={() => onAddToCart(fabric)}
+                        className="text-[10px] font-bold px-2 py-1 rounded-full transition-all duration-200 border opacity-0 group-hover/swatch:opacity-100"
+                        style={{
+                          color: COLORS.primary,
+                          borderColor: COLORS.primary,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = COLORS.primary;
+                          e.currentTarget.style.color = COLORS.surface;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = COLORS.primary;
+                        }}
+                      >
+                        Add
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </section>

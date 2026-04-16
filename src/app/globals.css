@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Spline+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 @import 'tailwindcss';
 
 @theme {
   /* Brand colors */
-  --color-primary: #ff8d49;
-  --color-secondary: #ffc8a6;
+  --color-primary: #f08060;
+  --color-secondary: #f5c4b0;
   --color-accent: #ffc7c7;
   --color-bg: #faf9f7;
   --color-surface: #ffffff;
@@ -16,9 +16,9 @@
   --color-error: #ed4956;
 
   /* Fonts */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Spline Sans', system-ui, sans-serif;
-  --font-display: 'Spline Sans', system-ui, sans-serif;
+  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-heading: 'Noto Serif', serif;
+  --font-display: 'Noto Serif', serif;
 
   /* Z-Index layers — see Z_INDEX in design-system.ts */
   --z-overlay: 9999;
@@ -77,13 +77,13 @@
 
 /* Hover variants — color-only transitions per brand rules */
 .hover\:bg-primary-dark:hover {
-  background-color: #e67d3f;
+  background-color: #d97054;
 }
 .hover\:text-primary:hover {
   color: var(--color-primary);
 }
 .hover\:text-primary-dark:hover {
-  color: #e67d3f;
+  color: #d97054;
 }
 .hover\:bg-surface-dark:hover {
   background-color: #f5f0eb;

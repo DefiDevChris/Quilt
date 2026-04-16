@@ -27,16 +27,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
   const kits = fabrics.slice(6, 10);
 
   return (
-    <section
-      id="kits"
-      className="py-24 border-t"
-      style={{
-        backgroundColor: COLORS.surface,
-        borderColor: `${COLORS.text}1a`,
-        borderTopColor: COLORS.primary,
-        borderTopWidth: '3px',
-      }}
-    >
+    <section id="kits" className="py-24" style={{ backgroundColor: COLORS.surface }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
@@ -45,7 +36,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
         >
           <div>
             <h2
-              className="text-3xl mb-2"
+              className="text-3xl md:text-4xl mb-2"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.text,
@@ -54,12 +45,12 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
               Shop New Quilt Kits
             </h2>
             <p style={{ color: COLORS.textDim }}>
-              Discover the latest and greatest quilt kits, curated for your next masterpiece.
+              Everything you need in one bundle &mdash; fabrics, pattern, and a plan.
             </p>
           </div>
           <a
             href="/shop/catalog"
-            className="text-sm font-bold tracking-wider uppercase transition-colors pb-1"
+            className="text-base font-medium transition-colors pb-1"
             style={{ color: COLORS.text }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
@@ -68,7 +59,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
               e.currentTarget.style.color = COLORS.text;
             }}
           >
-            Shop All &rarr;
+            Shop all &rarr;
           </a>
         </div>
 
@@ -124,7 +115,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                   {kit.shopifyVariantId && kit.inStock && (
                     <button
                       onClick={() => onAddToCart(kit)}
-                      className="w-full rounded-full py-2.5 text-sm font-bold tracking-wide transition-all duration-200 opacity-80 group-hover:opacity-100"
+                      className="w-full rounded-full py-2.5 text-sm font-semibold transition-all duration-200 opacity-80 group-hover:opacity-100"
                       style={{
                         backgroundColor: COLORS.text,
                         color: COLORS.surface,
@@ -136,7 +127,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
                         e.currentTarget.style.backgroundColor = COLORS.text;
                       }}
                     >
-                      ADD TO CART
+                      Add to cart
                     </button>
                   )}
                 </div>

@@ -114,7 +114,7 @@ export default function AdminOrdersPage() {
             }}
             className={`px-4 py-2 rounded-full font-['Inter'] text-sm whitespace-nowrap transition-colors duration-150 ease-out ${
               statusFilter === option.value
-                ? 'bg-[#ff8d49] text-[#1a1a1a]'
+                ? 'bg-[#f08060] text-[#1a1a1a]'
                 : 'bg-[#ffffff] text-[#4a4a4a] border border-[#d4d4d4] hover:bg-[#faf9f7]'
             }`}
           >
@@ -173,7 +173,7 @@ export default function AdminOrdersPage() {
                   <td className="py-3 px-4">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="text-[#ff8d49] hover:text-[#e67d3f] transition-colors duration-150 ease-out font-['Inter']"
+                      className="text-[#f08060] hover:text-[#d97054] transition-colors duration-150 ease-out font-['Inter']"
                     >
                       View
                     </Link>
