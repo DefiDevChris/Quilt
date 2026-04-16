@@ -451,10 +451,39 @@ export function computeFenceAreas(
 ): FenceArea[] {
   const footprint = computeTemplateFootprint(template);
 
-  // Medallion and strippy don't have a clean uniform-scale fit — fall back
-  // to their bespoke renderers at natural size.
+  // Medallion and strippy: compute areas at natural size, then scale to
+  // fill the quilt dimensions so they don't float at a smaller size.
   if (!footprint) {
-    return renderFenceTemplate(template, pxPerUnit);
+    const naturalAreas = renderFenceTemplate(template, pxPerUnit);
+    if (naturalAreas.length === 0) return naturalAreas;
+
+    // Compute the bounding box of the natural-size areas
+    let maxX = 0;
+    let maxY = 0;
+    for (const a of naturalAreas) {
+      const right = a.x + a.width;
+      const bottom = a.y + a.height;
+      if (right > maxX) maxX = right;
+      if (bottom > maxY) maxY = bottom;
+    }
+
+    if (maxX <= 0 || maxY <= 0) return naturalAreas;
+
+    const quiltWPx = quiltWidthIn * pxPerUnit;
+    const quiltHPx = quiltHeightIn * pxPerUnit;
+    const sx = quiltWPx / maxX;
+    const sy = quiltHPx / maxY;
+
+    return naturalAreas.map((area) => ({
+      ...area,
+      x: area.x * sx,
+      y: area.y * sy,
+      width: area.width * sx,
+      height: area.height * sy,
+      points: area.points
+        ? area.points.map((p) => ({ x: p.x * sx, y: p.y * sy }))
+        : undefined,
+    }));
   }
 
   if (footprint.width <= 0 || footprint.height <= 0) {
