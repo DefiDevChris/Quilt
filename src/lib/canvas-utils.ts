@@ -97,6 +97,61 @@ export function computeViewportTransform(
 }
 
 /**
+ * Unified canvas geometry — single source of truth for both the HTML5 grid
+ * canvas and the Fabric.js object canvas.
+ *
+ * Both layers MUST use these values to stay aligned. Eliminates the drift
+ * between independent coordinate calculations in canvas-grid.ts and
+ * fence-engine.ts.
+ */
+export interface CanvasGeometry {
+  /** Pixels-per-unit for the active unit system (96 for imperial, ~37.8 for metric) */
+  pxPerUnit: number;
+  /** Quilt width in pixels (quiltWidth * pxPerUnit) */
+  quiltWidthPx: number;
+  /** Quilt height in pixels (quiltHeight * pxPerUnit) */
+  quiltHeightPx: number;
+  /** Current zoom level */
+  zoom: number;
+  /** Horizontal pan offset in screen pixels */
+  panX: number;
+  /** Vertical pan offset in screen pixels */
+  panY: number;
+  /** The 6-element affine transform: [zoom, 0, 0, zoom, panX, panY] */
+  viewportTransform: [number, number, number, number, number, number];
+}
+
+/**
+ * Compute the canonical canvas geometry from quilt dimensions + viewport state.
+ *
+ * This is the **single source of truth** for coordinate mapping. Both
+ * `renderGrid` (HTML5 Canvas) and `useFenceRenderer` (Fabric.js) should
+ * derive pixel positions from this output rather than computing pxPerUnit
+ * and quilt pixel sizes independently.
+ *
+ * Pure function — no store, DOM, or Fabric.js dependencies.
+ */
+export function computeCanvasGeometry(
+  quiltWidth: number,
+  quiltHeight: number,
+  unitSystem: UnitSystem,
+  zoom: number,
+  panX: number,
+  panY: number
+): CanvasGeometry {
+  const pxPerUnit = getPixelsPerUnit(unitSystem);
+  return {
+    pxPerUnit,
+    quiltWidthPx: quiltWidth * pxPerUnit,
+    quiltHeightPx: quiltHeight * pxPerUnit,
+    zoom,
+    panX,
+    panY,
+    viewportTransform: [zoom, 0, 0, zoom, panX, panY],
+  };
+}
+
+/**
  * Clamp pan offsets so the quilt can't be dragged off-screen.
  * If the quilt is smaller than the viewport on an axis, it stays centered.
  * Otherwise the quilt edges cannot cross the opposite viewport edges.
