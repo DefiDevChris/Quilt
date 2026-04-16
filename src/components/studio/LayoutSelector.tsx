@@ -386,7 +386,7 @@ function LayoutConfigForm({
                   className="flex-1 accent-[var(--color-primary)] h-1"
                 />
                 <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-8 text-right">
-                  {border.width}\u2033
+                  {border.width}″
                 </span>
                 <button
                   type="button"
@@ -394,7 +394,7 @@ function LayoutConfigForm({
                   aria-label={`Remove border ${i + 1}`}
                   className="text-[10px] text-[var(--color-accent)] hover:text-[var(--color-accent)]/80 w-4"
                 >
-                  \u2715
+                  ✕
                 </button>
               </div>
             ))}
@@ -429,11 +429,11 @@ function LayoutConfigForm({
           <div className="flex items-center justify-between text-[11px]">
             <span className="text-[var(--color-text-dim)]">Total finished size</span>
             <span className="font-semibold text-[var(--color-text)] font-mono">
-              {size.width}\u2033 \u00d7 {size.height}\u2033
+              {size.width}″ × {size.height}″
             </span>
           </div>
           <div className="flex items-center justify-between text-[10px] mt-1">
-            <span className="text-[var(--color-text-dim)]">Perimeter: {size.perimeter}\u2033</span>
+            <span className="text-[var(--color-text-dim)]">Perimeter: {size.perimeter}″</span>
             <span className="text-[var(--color-text-dim)]">Binding: {size.bindingYardage} yd</span>
           </div>
         </div>

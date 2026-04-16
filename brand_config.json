@@ -139,7 +139,8 @@
         "cornerstone": "#e5d5c5",
         "border": "#d5c8b8",
         "binding": "#8a7c6f",
-        "edging": "#6b5d50"
+        "edging": "#6b5d50",
+        "setting-triangle": "#f0e6dc"
       },
       "strokes": {
         "block-cell": "#b8a698",
@@ -147,7 +148,8 @@
         "cornerstone": "#a89888",
         "border": "#b8a698",
         "binding": "#6b5d50",
-        "edging": "#4a3f35"
+        "edging": "#4a3f35",
+        "setting-triangle": "#c8b8a8"
       }
     },
     "preview": {
@@ -157,7 +159,8 @@
         "cornerstone": "rgba(138, 124, 111, 0.12)",
         "border": "rgba(249, 160, 107, 0.15)",
         "binding": "rgba(249, 160, 107, 0.10)",
-        "edging": "rgba(0, 0, 0, 0.08)"
+        "edging": "rgba(0, 0, 0, 0.08)",
+        "setting-triangle": "rgba(240, 230, 220, 0.15)"
       },
       "strokes": {
         "block-cell": "rgba(249, 160, 107, 0.4)",
@@ -165,7 +168,8 @@
         "cornerstone": "rgba(138, 124, 111, 0.35)",
         "border": "rgba(249, 160, 107, 0.4)",
         "binding": "rgba(249, 160, 107, 0.3)",
-        "edging": "rgba(0, 0, 0, 0.2)"
+        "edging": "rgba(0, 0, 0, 0.2)",
+        "setting-triangle": "rgba(200, 184, 168, 0.35)"
       }
     }
   },

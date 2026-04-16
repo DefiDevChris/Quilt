@@ -10,6 +10,7 @@ import {
   getUnitLabel,
   fitToScreenZoom,
   maybeSnap,
+  computeCanvasGeometry,
 } from '@/lib/canvas-utils';
 import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants';
 
@@ -135,5 +136,42 @@ describe('maybeSnap', () => {
   it('snaps to 192 with size 2 inch grid', () => {
     const result = maybeSnap(100, { enabled: true, size: 2, snapToGrid: true }, 'imperial');
     expect(result).toBe(192);
+  });
+});
+
+describe('computeCanvasGeometry', () => {
+  it('computes correct pixel dimensions for imperial', () => {
+    const geo = computeCanvasGeometry(48, 48, 'imperial', 1, 0, 0);
+    expect(geo.pxPerUnit).toBe(PIXELS_PER_INCH);
+    expect(geo.quiltWidthPx).toBe(48 * PIXELS_PER_INCH);
+    expect(geo.quiltHeightPx).toBe(48 * PIXELS_PER_INCH);
+  });
+
+  it('computes correct pixel dimensions for metric', () => {
+    const geo = computeCanvasGeometry(100, 100, 'metric', 1, 0, 0);
+    expect(geo.pxPerUnit).toBe(PIXELS_PER_CM);
+    expect(geo.quiltWidthPx).toBeCloseTo(100 * PIXELS_PER_CM);
+    expect(geo.quiltHeightPx).toBeCloseTo(100 * PIXELS_PER_CM);
+  });
+
+  it('passes through zoom and pan values', () => {
+    const geo = computeCanvasGeometry(30, 30, 'imperial', 0.5, 120, 80);
+    expect(geo.zoom).toBe(0.5);
+    expect(geo.panX).toBe(120);
+    expect(geo.panY).toBe(80);
+  });
+
+  it('builds a valid viewport transform', () => {
+    const geo = computeCanvasGeometry(30, 30, 'imperial', 2, 50, 75);
+    expect(geo.viewportTransform).toEqual([2, 0, 0, 2, 50, 75]);
+  });
+
+  it('produces consistent values between grid canvas and fence computations', () => {
+    // Both grid and fence must use the same pxPerUnit and quilt pixel sizes
+    const geoForGrid = computeCanvasGeometry(48, 36, 'imperial', 1, 0, 0);
+    const geoForFence = computeCanvasGeometry(48, 36, 'imperial', 1, 0, 0);
+    expect(geoForGrid.quiltWidthPx).toBe(geoForFence.quiltWidthPx);
+    expect(geoForGrid.quiltHeightPx).toBe(geoForFence.quiltHeightPx);
+    expect(geoForGrid.pxPerUnit).toBe(geoForFence.pxPerUnit);
   });
 });

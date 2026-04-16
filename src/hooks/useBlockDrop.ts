@@ -79,6 +79,14 @@ export function useBlockDrop() {
       // Drops outside valid areas are rejected when a layout is applied
       clearHighlight();
       e.dataTransfer.dropEffect = 'none';
+
+      // Visual feedback: briefly flash the canvas wrapper border to signal
+      // the drop target is invalid (replaces silent failure).
+      const wrapper = (e.currentTarget as HTMLElement)?.closest('[data-canvas-wrapper]');
+      if (wrapper) {
+        wrapper.classList.add('invalid-drop-flash');
+        setTimeout(() => wrapper.classList.remove('invalid-drop-flash'), 400);
+      }
     },
     [fabricCanvas, showCellHighlight, clearHighlight]
   );
@@ -162,6 +170,12 @@ export function useBlockDrop() {
 
         // If a layout is applied, only allow drops into fence cells
         if (hasAppliedLayout && !isFenceCell) {
+          // Visual feedback: flash the canvas wrapper to indicate invalid drop
+          const wrapper = (e.target as HTMLElement)?.closest?.('[data-canvas-wrapper]');
+          if (wrapper) {
+            wrapper.classList.add('invalid-drop-flash');
+            setTimeout(() => wrapper.classList.remove('invalid-drop-flash'), 400);
+          }
           return;
         }
 
