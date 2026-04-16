@@ -138,21 +138,22 @@ export function useDrawingTool() {
             originY: 'top',
           });
         } else if (activeTool === 'triangle') {
-          previewShape = new fabric.Polygon(
-            [
-              { x: sx, y: sy },
-              { x: sx, y: sy },
-              { x: sx, y: sy },
-            ],
-            {
-              fill: 'transparent',
-              stroke: CANVAS.pencilPreview,
-              strokeWidth: 4,
-              strokeDashArray: [5, 5],
-              selectable: false,
-              evented: false,
-            }
-          );
+          // Use a Rect as preview placeholder; the final triangle is created on mouseUp
+          // to avoid Fabric.js Polygon coordinate drift when updating points in-place.
+          previewShape = new fabric.Rect({
+            left: sx,
+            top: sy,
+            width: 0,
+            height: 0,
+            fill: 'transparent',
+            stroke: CANVAS.pencilPreview,
+            strokeWidth: 4,
+            strokeDashArray: [5, 5],
+            selectable: false,
+            evented: false,
+            originX: 'left',
+            originY: 'top',
+          });
         }
 
         if (previewShape) {
@@ -170,25 +171,15 @@ export function useDrawingTool() {
         const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
         const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
 
-        if (activeTool === 'rectangle') {
-          const width = cx - startX;
-          const height = cy - startY;
-          previewShape.set({
-            left: width >= 0 ? startX : cx,
-            top: height >= 0 ? startY : cy,
-            width: Math.abs(width),
-            height: Math.abs(height),
-          });
-        } else if (activeTool === 'triangle') {
-          const poly = previewShape as InstanceType<typeof fabric.Polygon>;
-          poly.points = [
-            { x: startX, y: cy },
-            { x: cx, y: cy },
-            { x: startX, y: startY },
-          ];
-          poly.setBoundingBox(true);
-          poly.setCoords();
-        }
+        // Both rectangle and triangle preview use a bounding-box Rect
+        const width = cx - startX;
+        const height = cy - startY;
+        previewShape.set({
+          left: width >= 0 ? startX : cx,
+          top: height >= 0 ? startY : cy,
+          width: Math.abs(width),
+          height: Math.abs(height),
+        });
 
         canvas.renderAll();
       }
@@ -207,14 +198,45 @@ export function useDrawingTool() {
         } else {
           const { fillColor, strokeColor, strokeWidth } = stateRef.current;
 
-          previewShape.set({
-            fill: fillColor,
-            stroke: strokeColor,
-            strokeWidth,
-            strokeDashArray: undefined,
-            selectable: true,
-            evented: true,
-          });
+          if (activeTool === 'triangle') {
+            // Replace the preview Rect with a properly positioned Polygon.
+            // Using relative (0-based) points + left/top avoids the coordinate
+            // drift that occurs when setting absolute points on a Fabric.js Polygon.
+            const finalLeft = previewShape.left ?? startX;
+            const finalTop = previewShape.top ?? startY;
+            const finalW = previewShape.width ?? 0;
+            const finalH = previewShape.height ?? 0;
+
+            canvas.remove(previewShape);
+
+            const triangle = new fabric.Polygon(
+              [
+                { x: 0, y: finalH },       // bottom-left
+                { x: finalW, y: finalH },   // bottom-right
+                { x: 0, y: 0 },             // top-left (apex)
+              ],
+              {
+                left: finalLeft,
+                top: finalTop,
+                fill: fillColor,
+                stroke: strokeColor,
+                strokeWidth,
+                selectable: true,
+                evented: true,
+              }
+            );
+
+            canvas.add(triangle);
+          } else {
+            previewShape.set({
+              fill: fillColor,
+              stroke: strokeColor,
+              strokeWidth,
+              strokeDashArray: undefined,
+              selectable: true,
+              evented: true,
+            });
+          }
 
           const json = JSON.stringify(canvas.toJSON());
           useCanvasStore.getState().pushUndoState(json);

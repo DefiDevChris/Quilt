@@ -266,7 +266,7 @@ export function useBlockDrop() {
           canvas.add(group);
           canvas.setActiveObject(group);
         } else {
-          // ── Freeform placement: drop at pointer, movable ──
+          // ── Freeform placement: drop at pointer with grid snap, movable ──
           const group = new fabric.Group(objects, {
             originX: 'center',
             originY: 'center',
@@ -277,9 +277,33 @@ export function useBlockDrop() {
           groupMeta.__isBlockGroup = true;
           groupMeta.__blockId = blockId;
 
+          // Snap to grid for clean placement
+          const { gridSettings, unitSystem: us } = useCanvasStore.getState();
+          const { canvasWidth, canvasHeight } = useProjectStore.getState();
+          const { getPixelsPerUnit, snapToGrid: snapFn } = await import('@/lib/canvas-utils');
+          const ppu = getPixelsPerUnit(us);
+          let dropX = pointer.x;
+          let dropY = pointer.y;
+
+          const halfW = ((group.width ?? 0) * (group.scaleX ?? 1)) / 2;
+          const halfH = ((group.height ?? 0) * (group.scaleY ?? 1)) / 2;
+
+          if (gridSettings.snapToGrid) {
+            const gridSizePx = gridSettings.size * ppu;
+            // Snap the top-left corner, then offset back to center origin
+            dropX = snapFn(dropX - halfW, gridSizePx) + halfW;
+            dropY = snapFn(dropY - halfH, gridSizePx) + halfH;
+          }
+
+          // Constrain within quilt bounds
+          const maxX = canvasWidth * ppu;
+          const maxY = canvasHeight * ppu;
+          dropX = Math.max(halfW, Math.min(maxX - halfW, dropX));
+          dropY = Math.max(halfH, Math.min(maxY - halfH, dropY));
+
           group.set({
-            left: pointer.x,
-            top: pointer.y,
+            left: dropX,
+            top: dropY,
           });
 
           canvas.add(group);
