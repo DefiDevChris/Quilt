@@ -14,7 +14,8 @@ export type LayoutAreaRole =
   | 'cornerstone'
   | 'border'
   | 'binding'
-  | 'edging';
+  | 'edging'
+  | 'setting-triangle';
 
 export interface TemplateBorderConfig {
   width: number; // inches

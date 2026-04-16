@@ -105,6 +105,31 @@ function convertResultToFenceAreas(result: LayoutResult, template: LayoutTemplat
     }
   }
 
+  // Setting triangles (on-point layouts)
+  for (let i = 0; i < result.settingTriangles.length; i++) {
+    const tri = result.settingTriangles[i];
+    // Compute bounding box for x/y/width/height (used for hit-testing fallback)
+    const xs = tri.points.map((p) => p.x);
+    const ys = tri.points.map((p) => p.y);
+    const minX = Math.min(...xs);
+    const minY = Math.min(...ys);
+    const maxX = Math.max(...xs);
+    const maxY = Math.max(...ys);
+
+    areas.push({
+      id: `setting-tri-${tri.type}-${i}`,
+      role: 'setting-triangle',
+      label: tri.type === 'corner' ? 'Corner' : 'Setting',
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+      points: tri.points,
+      triangleType: tri.type,
+      assignedFabricId: null,
+    });
+  }
+
   // Border strips
   for (const strip of result.borderStrips) {
     areas.push({
