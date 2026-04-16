@@ -165,26 +165,44 @@ export function useCanvasInit(
 
         if (!e.target) return;
 
-        // Constrain to canvas bounds
         const obj = e.target;
         const left = obj.left ?? 0;
         const top = obj.top ?? 0;
         const width = (obj.width ?? 0) * (obj.scaleX ?? 1);
         const height = (obj.height ?? 0) * (obj.scaleY ?? 1);
+        const originX = obj.originX ?? 'left';
+        const originY = obj.originY ?? 'top';
 
         let newLeft = left;
         let newTop = top;
 
-        if (left < 0) newLeft = 0;
-        if (top < 0) newTop = 0;
-        if (left + width > maxX) newLeft = maxX - width;
-        if (top + height > maxY) newTop = maxY - height;
-
-        // Apply snap to grid if enabled
+        // Apply snap to grid if enabled — snap BEFORE constraining so the
+        // object lands on clean grid lines
         if (gridSettings.snapToGrid) {
           const gridSizePx = gridSettings.size * ppu;
-          newLeft = snapToGrid(newLeft, gridSizePx);
-          newTop = snapToGrid(newTop, gridSizePx);
+          if (originX === 'center') {
+            // Snap the center, then convert back
+            const centerX = newLeft;
+            const centerY = newTop;
+            newLeft = snapToGrid(centerX - width / 2, gridSizePx) + width / 2;
+            newTop = snapToGrid(centerY - height / 2, gridSizePx) + height / 2;
+          } else {
+            newLeft = snapToGrid(newLeft, gridSizePx);
+            newTop = snapToGrid(newTop, gridSizePx);
+          }
+        }
+
+        // Constrain to canvas bounds
+        if (originX === 'center') {
+          if (newLeft - width / 2 < 0) newLeft = width / 2;
+          if (newLeft + width / 2 > maxX) newLeft = maxX - width / 2;
+          if (newTop - height / 2 < 0) newTop = height / 2;
+          if (newTop + height / 2 > maxY) newTop = maxY - height / 2;
+        } else {
+          if (newLeft < 0) newLeft = 0;
+          if (newTop < 0) newTop = 0;
+          if (newLeft + width > maxX) newLeft = maxX - width;
+          if (newTop + height > maxY) newTop = maxY - height;
         }
 
         obj.set({ left: newLeft, top: newTop });

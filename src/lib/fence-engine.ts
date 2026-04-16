@@ -461,7 +461,11 @@ export function computeFenceAreas(
     return [];
   }
 
-  // Layout must always match grid dimensions exactly — scale to fill entire quilt
+  // Scale layout to exactly fill the quilt dimensions using independent
+  // X/Y scale factors. This ensures fence areas perfectly cover the quilt
+  // grid with no gaps or overflow — block cells become non-square when the
+  // quilt aspect ratio differs from the layout's natural ratio, which is
+  // correct for quilting (blocks stretch to fit the available space).
   const scaleX = quiltWidthIn / footprint.width;
   const scaleY = quiltHeightIn / footprint.height;
 
@@ -469,46 +473,28 @@ export function computeFenceAreas(
     return [];
   }
 
-  // Use non-uniform scaling to make layout exactly match grid dimensions
-  const scaleFactor = Math.min(scaleX, scaleY);
+  // Render at natural size, then apply non-uniform transform to fill quilt exactly
+  const areas = renderFenceTemplate(template, pxPerUnit);
 
-  const fittedTemplate: LayoutTemplate = {
-    ...template,
-    defaultBlockSize: template.defaultBlockSize * scaleFactor,
-    sashingWidth: template.sashingWidth * scaleFactor,
-    bindingWidth: template.bindingWidth * scaleFactor,
-    borders: template.borders.map((b) => ({
-      ...b,
-      width: b.width * scaleFactor,
-    })),
-  };
-
-  const areas = renderFenceTemplate(fittedTemplate, pxPerUnit);
-
-  // Scale areas to fill entire quilt dimensions exactly
-  const fittedFootprint = computeTemplateFootprint(fittedTemplate);
-  if (!fittedFootprint) return areas;
-
+  const naturalWPx = footprint.width * pxPerUnit;
+  const naturalHPx = footprint.height * pxPerUnit;
   const quiltWPx = quiltWidthIn * pxPerUnit;
   const quiltHPx = quiltHeightIn * pxPerUnit;
-  const fittedWPx = fittedFootprint.width * pxPerUnit;
-  const fittedHPx = fittedFootprint.height * pxPerUnit;
 
-  const finalScaleX = quiltWPx / fittedWPx;
-  const finalScaleY = quiltHPx / fittedHPx;
+  if (naturalWPx <= 0 || naturalHPx <= 0) return areas;
 
-  // Note: offsetX/Y are always 0 because fittedWPx * finalScaleX = quiltWPx
-  // (the second pass stretches the uniformly-scaled template to fill the quilt).
+  const fitX = quiltWPx / naturalWPx;
+  const fitY = quiltHPx / naturalHPx;
+
   return areas.map((area) => ({
     ...area,
-    x: area.x * finalScaleX,
-    y: area.y * finalScaleY,
-    width: area.width * finalScaleX,
-    height: area.height * finalScaleY,
-    // Scale polygon points through the same factors so setting triangles
-    // render at correct coordinates when finalScaleX/Y differ from 1
+    x: area.x * fitX,
+    y: area.y * fitY,
+    width: area.width * fitX,
+    height: area.height * fitY,
+    // Scale polygon points so setting triangles match the stretched grid
     points: area.points
-      ? area.points.map((p) => ({ x: p.x * finalScaleX, y: p.y * finalScaleY }))
+      ? area.points.map((p) => ({ x: p.x * fitX, y: p.y * fitY }))
       : undefined,
   }));
 }
