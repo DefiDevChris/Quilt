@@ -168,7 +168,12 @@ export function useFabricDrop() {
 
       if (fabricCanvas) {
         const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
-        const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
+        const syntheticEvent = {
+          clientX: e.nativeEvent.clientX,
+          clientY: e.nativeEvent.clientY,
+          type: 'mousemove',
+        } as unknown as MouseEvent;
+        const foundTarget = fabric.findTarget(syntheticEvent);
         if (foundTarget) {
           const areaObj = foundTarget as Record<string, unknown>;
           // Highlight when cursor is over a valid fence chrome area
@@ -206,7 +211,13 @@ export function useFabricDrop() {
       const fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
-      const foundTarget = canvas.findTarget(e.nativeEvent);
+      const syntheticEvent = {
+        clientX: e.nativeEvent.clientX,
+        clientY: e.nativeEvent.clientY,
+        type: 'mousemove',
+      } as unknown as import('fabric').TPointerEvent;
+
+      const foundTarget = canvas.findTarget(syntheticEvent);
       if (!foundTarget) {
         clearHighlight();
         return;
@@ -232,7 +243,17 @@ export function useFabricDrop() {
       // Path 2: Block group — apply fabric to the specific patch under the pointer
       if (areaObj.__isBlockGroup) {
         const group = foundTarget as unknown as InstanceType<typeof fabric.Group>;
-        const pointer = canvas.getScenePoint(e.nativeEvent);
+
+        const el = canvas.getElement();
+        const rect = el.getBoundingClientRect();
+        const cssX = e.nativeEvent.clientX - rect.left;
+        const cssY = e.nativeEvent.clientY - rect.top;
+        const vt = canvas.viewportTransform || [1, 0, 0, 1, 0, 0];
+        const zoom = canvas.getZoom();
+        const pointer = {
+          x: (cssX - vt[4]) / zoom,
+          y: (cssY - vt[5]) / zoom,
+        };
 
         // Find which patch child is under the pointer.
         // Transform scene pointer into the group's local coordinate space
