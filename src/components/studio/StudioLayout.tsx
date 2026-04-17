@@ -1,18 +1,4 @@
-'use client';
-
-/**
- * StudioLayout — The Design Studio workspace
- *
- * Three-panel layout:
- * - Left sidebar (Toolbar): Narrow strip of tool buttons for interacting with the canvas
- * - Center (Canvas): Main design area where you build your quilt (the worktable)
- * - Right sidebar (Context Panel): Library tabs where you browse Layouts, Blocks, and Fabrics
- *
- * Top bar: Project name, viewport controls, settings, and actions like undo/redo/zoom
- * Bottom bar: Status info like cursor position and snap settings
- */
-
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { COLORS } from '@/lib/design-system';
 import type { Project } from '@/types/project';
 
@@ -24,13 +10,14 @@ import { ContextMenu } from '@/components/canvas/ContextMenu';
 import { QuickInfo } from '@/components/canvas/QuickInfo';
 import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
-import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
+import { NewProjectWizard, type StudioQuiltSetup } from '@/components/projects/NewProjectWizard';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
@@ -41,64 +28,190 @@ interface StudioLayoutProps {
   readonly project: Project;
 }
 
+function getSavedLayoutState(project: Project, activeWorktableId: string): Record<string, unknown> | null {
+  const activeWorktable =
+    project.worktables?.find((worktable) => worktable.id === activeWorktableId) ??
+    project.worktables?.[0];
+  const canvasData = activeWorktable?.canvasData ?? project.canvasData;
+  const layoutData = (canvasData as Record<string, unknown> | undefined)?.__layoutState as
+    | Record<string, unknown>
+    | undefined;
+
+  if (!layoutData?.layoutType || layoutData.layoutType === 'none') {
+    return null;
+  }
+
+  return layoutData;
+}
+
+function buildLayoutStatePayload(setup: StudioQuiltSetup): Record<string, unknown> {
+  return {
+    layoutType: setup.layoutType,
+    selectedPresetId: setup.presetId,
+    rows: setup.rows,
+    cols: setup.cols,
+    blockSize: setup.blockSize,
+    sashing: setup.sashing,
+    borders: setup.borders,
+    hasCornerstones: setup.hasCornerstones,
+    bindingWidth: setup.bindingWidth,
+    hasAppliedLayout: true,
+  };
+}
+
 export function StudioLayout({ project }: StudioLayoutProps) {
   const dialogs = useStudioDialogs();
   const { getCanvas } = useCanvasContext();
   const fabricCanvas = getCanvas();
+  const [projectState, setProjectState] = useState(project);
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
+  const activeWorktableId = useProjectStore((s) => s.activeWorktableId);
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
 
-  // First-visit setup detection
-  // Uses the unified NewProjectWizard in studio mode.
-  // Users coming from the Dashboard NewProjectWizard will have this suppressed.
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
+  const [quiltSetupDismissible, setQuiltSetupDismissible] = useState(false);
   const quiltSetupShownRef = useRef(false);
 
-  // First-visit detection for the QUILT worktable
-  // Only show modal if user didn't come from the wizard (which already collects all info)
+  const { handleDragStart: handleBlockDragStart } = useBlockDrop();
+  const { handleFabricDragStart } = useFabricDrop();
+
+  useEffect(() => {
+    setProjectState(project);
+  }, [project]);
+
+  const savedLayoutState = useMemo(
+    () => getSavedLayoutState(projectState, activeWorktableId),
+    [projectState, activeWorktableId]
+  );
+
   useEffect(() => {
     if (activeWorktable !== 'quilt' || quiltSetupShownRef.current) return;
+
     const key = `qc-quilt-setup-shown-${project.id}`;
     if (typeof window !== 'undefined' && window.sessionStorage.getItem(key) === '1') {
       quiltSetupShownRef.current = true;
       return;
     }
+
+    if (hasAppliedLayout || savedLayoutState) {
+      quiltSetupShownRef.current = true;
+      return;
+    }
+
     const hasContent = useProjectStore.getState().hasContent;
     if (!hasContent) {
       queueMicrotask(() => setShowQuiltSetup(true));
     }
     quiltSetupShownRef.current = true;
-  }, [activeWorktable, project.id]);
+  }, [activeWorktable, project.id, hasAppliedLayout, savedLayoutState]);
 
-  const handleQuiltSetupConfirm = useCallback(
-    ({ width, height }: { width: number; height: number }) => {
-      useProjectStore.getState().setCanvasWidth(width);
-      useProjectStore.getState().setCanvasHeight(height);
-      useCanvasStore.getState().centerAndFitViewport(fabricCanvas, width, height);
-      if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
-        // Clean up the dimensions storage
-        window.sessionStorage.removeItem(`qc-quilt-setup-dimensions-${project.id}`);
-      }
-      setShowQuiltSetup(false);
+  const syncProjectLayoutState = useCallback(
+    (setup: StudioQuiltSetup) => {
+      const layoutState = buildLayoutStatePayload(setup);
+      const canvasData = { __layoutState: layoutState } as Project['canvasData'];
+
+      setProjectState((current) => {
+        const nextWorktables =
+          current.worktables?.map((worktable, index) => {
+            const shouldUpdate =
+              worktable.id === activeWorktableId ||
+              (!current.worktables?.some((item) => item.id === activeWorktableId) && index === 0);
+
+            return shouldUpdate ? { ...worktable, canvasData } : worktable;
+          }) ?? current.worktables;
+
+        return {
+          ...current,
+          canvasWidth: setup.width,
+          canvasHeight: setup.height,
+          canvasData,
+          worktables: nextWorktables,
+        };
+      });
     },
-    [project.id, fabricCanvas]
+    [activeWorktableId]
   );
 
-  const handleQuiltSetupDismiss = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
-      // Clean up the dimensions storage
-      window.sessionStorage.removeItem(`qc-quilt-setup-dimensions-${project.id}`);
-    }
-    setShowQuiltSetup(false);
-  }, [project.id]);
+  const clearProjectLayoutState = useCallback(() => {
+    setProjectState((current) => {
+      const clearedCanvasData = {} as Project['canvasData'];
+      const nextWorktables =
+        current.worktables?.map((worktable, index) => {
+          const shouldUpdate =
+            worktable.id === activeWorktableId ||
+            (!current.worktables?.some((item) => item.id === activeWorktableId) && index === 0);
 
-  // Block/fabric drag-start callbacks for the ContextPanel libraries
-  const { handleDragStart: handleBlockDragStart } = useBlockDrop();
-  const { handleFabricDragStart } = useFabricDrop();
+          return shouldUpdate ? { ...worktable, canvasData: clearedCanvasData } : worktable;
+        }) ?? current.worktables;
+
+      return {
+        ...current,
+        canvasData: clearedCanvasData,
+        worktables: nextWorktables,
+      };
+    });
+  }, [activeWorktableId]);
+
+  const handleQuiltSetupConfirm = useCallback(
+    ({ setup }: { setup: StudioQuiltSetup }) => {
+      const layoutStore = useLayoutStore.getState();
+      layoutStore.reset();
+      layoutStore.setLayoutType(setup.layoutType);
+      layoutStore.setSelectedPreset(setup.presetId);
+      layoutStore.setRows(setup.rows);
+      layoutStore.setCols(setup.cols);
+      layoutStore.setBlockSize(setup.blockSize);
+      layoutStore.setSashing(setup.sashing);
+      layoutStore.setBorders(setup.borders);
+      layoutStore.setHasCornerstones(setup.hasCornerstones);
+      layoutStore.setBindingWidth(setup.bindingWidth);
+      layoutStore.setExpandedCardId(null);
+      layoutStore.setPreviewMode(false);
+      layoutStore.applyLayout();
+
+      syncProjectLayoutState(setup);
+      useProjectStore.getState().setCanvasDimensions(setup.width, setup.height);
+      useProjectStore.getState().setHasContent(false);
+      useProjectStore.getState().setDirty(true);
+
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(`qc-quilt-setup-shown-${project.id}`, '1');
+      }
+
+      requestAnimationFrame(() => {
+        useCanvasStore.getState().centerAndFitViewport(getCanvas(), setup.width, setup.height);
+      });
+
+      setShowQuiltSetup(false);
+    },
+    [project.id, getCanvas, syncProjectLayoutState]
+  );
+
+  const handleStartOverLayout = useCallback(() => {
+    dialogs.confirmClearLayout(() => {
+      const canvas = getCanvas();
+      if (canvas) {
+        const layoutCanvas = canvas as unknown as {
+          clear: () => void;
+          backgroundColor: string;
+          renderAll: () => void;
+        };
+        layoutCanvas.clear();
+        layoutCanvas.backgroundColor = COLORS.surface;
+        layoutCanvas.renderAll();
+      }
+
+      useCanvasStore.getState().resetHistory();
+      useProjectStore.getState().setHasContent(false);
+      useProjectStore.getState().setDirty(true);
+      useLayoutStore.getState().reset();
+      clearProjectLayoutState();
+      setShowQuiltSetup(true);
+    });
+  }, [clearProjectLayoutState, dialogs, getCanvas]);
 
   const handleSave = useCallback(() => {
     const { projectId } = useProjectStore.getState();
@@ -110,12 +223,19 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const handleNewBlock = useCallback(() => {
     const canvas = getCanvas();
     if (canvas) {
-      canvas.clear();
-      canvas.backgroundColor = COLORS.surface;
-      canvas.renderAll();
+      const layoutCanvas = canvas as unknown as {
+        clear: () => void;
+        backgroundColor: string;
+        renderAll: () => void;
+      };
+      layoutCanvas.clear();
+      layoutCanvas.backgroundColor = COLORS.surface;
+      layoutCanvas.renderAll();
     }
     useCanvasStore.getState().resetHistory();
   }, [getCanvas]);
+
+  const shouldGateCanvas = activeWorktable === 'quilt' && showQuiltSetup;
 
   return (
     <div className="h-screen flex flex-col bg-[var(--color-bg)] select-none">
@@ -125,26 +245,37 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         onOpenHelp={dialogs.openHelp}
         onOpenHistory={dialogs.openHistory}
         onSave={handleSave}
+        onEditQuiltSetup={() => {
+          setQuiltSetupDismissible(true);
+          setShowQuiltSetup(true);
+        }}
       />
 
-      {/* ── Unified 3-pane layout for ALL modes ───────────────── */}
       <div className="flex-1 flex overflow-hidden">
         {activeWorktable === 'block-builder' ? (
-          <BlockBuilderWorktable
-            onDone={() => {
-              useCanvasStore.getState().setActiveWorktable('quilt');
-            }}
-          />
+          <BlockBuilderWorktable />
+        ) : shouldGateCanvas ? (
+          <div className="flex-1 flex items-center justify-center bg-[var(--color-bg)]/80">
+            <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] px-6 py-5 text-center shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+              <h2
+                className="text-[22px] leading-[30px] font-semibold text-[var(--color-text)]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Set up your quilt first
+              </h2>
+              <p className="mt-2 max-w-[420px] text-[14px] leading-[22px] text-[var(--color-text-dim)]">
+                Choose the layout and quilt size before opening the canvas so your blocks and fabrics stay in place.
+              </p>
+            </div>
+          </div>
         ) : (
           <>
-            {/* Left sidebar: toolbar */}
             <Toolbar
               onOpenImageExport={dialogs.openImageExport}
               onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
               onNewBlock={handleNewBlock}
             />
 
-            {/* Center: Canvas area */}
             <div className="flex-1 flex flex-col overflow-hidden relative">
               <div className="flex-1 flex overflow-hidden relative">
                 <div
@@ -152,17 +283,16 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                     showReferencePanel && referenceImageUrl ? 'w-1/2' : 'flex-1'
                   }`}
                 >
-                  <StudioDropZone project={project} />
+                  <StudioDropZone project={projectState} />
                   <ContextMenu />
                   <QuickInfo />
                   <LayoutAdjuster />
                 </div>
 
-                {/* Reference photo split pane */}
                 {showReferencePanel && referenceImageUrl && (
                   <div className="w-1/2 border-l border-[var(--color-border)]/20 bg-[var(--color-bg)]/30 flex flex-col overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--color-border)]/15">
-                      <span className="text-[14px] leading-[20px] font-semibold text-[var(--color-text)]/60 ">
+                      <span className="text-[14px] leading-[20px] font-semibold text-[var(--color-text)]/60">
                         Reference Photo
                       </span>
                       <button
@@ -182,7 +312,6 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                       </button>
                     </div>
                     <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={referenceImageUrl}
                         alt="Original reference photo"
@@ -195,31 +324,35 @@ export function StudioLayout({ project }: StudioLayoutProps) {
               </div>
             </div>
 
-            {/* Right sidebar: context panel */}
             <ContextPanel
               onBlockDragStart={handleBlockDragStart}
               onFabricDragStart={handleFabricDragStart}
               onOpenDrafting={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
               onOpenPhotoUpload={dialogs.openPhotoBlockUpload}
               onOpenUpload={dialogs.openFabricUpload}
+              onStartOverLayout={handleStartOverLayout}
             />
           </>
         )}
       </div>
 
       <BottomBar />
-
-      {/* Duplicate options popup */}
       <DuplicateOptionsPopup />
 
-      {/* First-visit setup modal (unified wizard, studio mode) */}
       <NewProjectWizard
         mode="studio"
         open={showQuiltSetup}
         projectId={project.id}
         onConfirm={handleQuiltSetupConfirm}
-        onClose={handleQuiltSetupDismiss}
-        onDismiss={handleQuiltSetupDismiss}
+        onClose={() => {
+          setShowQuiltSetup(false);
+          setQuiltSetupDismissible(false);
+        }}
+        onDismiss={() => {
+          setShowQuiltSetup(false);
+          setQuiltSetupDismissible(false);
+        }}
+        allowDismiss={quiltSetupDismissible}
       />
     </div>
   );

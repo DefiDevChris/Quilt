@@ -1,13 +1,15 @@
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
-import { CANVAS, GRID } from '@/lib/design-system';
+import { CANVAS, FENCE, GRID } from '@/lib/design-system';
 import type { UnitSystem } from '@/types/canvas';
+import type { FenceArea } from '@/types/fence';
 
 interface GridRenderOptions {
   gridSettings: { enabled: boolean; size: number };
   unitSystem: UnitSystem;
   quiltWidth: number;
   quiltHeight: number;
+  layoutAreas?: FenceArea[];
 }
 
 const CORNER_MARK_LENGTH = 8;
@@ -71,17 +73,62 @@ function renderCornerMarks(
 
   ctx.beginPath();
   for (const corner of corners) {
-    // Horizontal arm
     const hDir = corner.x === 0 ? -1 : 1;
     ctx.moveTo(corner.x, corner.y);
     ctx.lineTo(corner.x + hDir * len, corner.y);
 
-    // Vertical arm
     const vDir = corner.y === 0 ? -1 : 1;
     ctx.moveTo(corner.x, corner.y);
     ctx.lineTo(corner.x, corner.y + vDir * len);
   }
   ctx.stroke();
+}
+
+function renderLayoutAreas(ctx: CanvasRenderingContext2D, areas: FenceArea[], zoom: number): void {
+  if (areas.length === 0) return;
+
+  for (const area of areas) {
+    const isBlockCell = area.role === 'block-cell';
+    const fillMap = isBlockCell ? FENCE.preview.fills : FENCE.normal.fills;
+    const strokeMap = isBlockCell ? FENCE.preview.strokes : FENCE.normal.strokes;
+    const safeRole = (area.role in fillMap ? area.role : 'block-cell') as keyof typeof fillMap;
+
+    ctx.save();
+    ctx.fillStyle = fillMap[safeRole];
+    ctx.strokeStyle = strokeMap[safeRole];
+    ctx.lineWidth = (isBlockCell ? 1.2 : 0.9) / zoom;
+    if (isBlockCell) {
+      ctx.setLineDash([6 / zoom, 4 / zoom]);
+    }
+
+    if (area.points && area.points.length >= 3) {
+      ctx.beginPath();
+      ctx.moveTo(area.points[0].x, area.points[0].y);
+      for (let i = 1; i < area.points.length; i += 1) {
+        ctx.lineTo(area.points[i].x, area.points[i].y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      continue;
+    }
+
+    if (area.rotation) {
+      const centerX = area.x + area.width / 2;
+      const centerY = area.y + area.height / 2;
+      ctx.translate(centerX, centerY);
+      ctx.rotate((area.rotation * Math.PI) / 180);
+      ctx.fillRect(-area.width / 2, -area.height / 2, area.width, area.height);
+      ctx.strokeRect(-area.width / 2, -area.height / 2, area.width, area.height);
+      ctx.restore();
+      continue;
+    }
+
+    ctx.fillRect(area.x, area.y, area.width, area.height);
+    ctx.strokeRect(area.x, area.y, area.width, area.height);
+    ctx.restore();
+  }
 }
 
 export function renderGrid(
@@ -94,7 +141,7 @@ export function renderGrid(
 
   const w = gridEl.width;
   const h = gridEl.height;
-  const { gridSettings, unitSystem, quiltWidth, quiltHeight } = options;
+  const { gridSettings, unitSystem, quiltWidth, quiltHeight, layoutAreas = [] } = options;
 
   // Use the unified geometry so grid and Fabric.js canvases stay aligned
   const zoom = fabricCanvas.getZoom();
@@ -118,7 +165,6 @@ export function renderGrid(
   ctx.lineWidth = 1.5 / zoom;
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 
-  // Grid lines inside the quilt area
   if (gridSettings.size > 0) {
     const gridSizePx = gridSettings.size * pxPerUnit;
     ctx.strokeStyle = CANVAS.gridLineDimmed;
@@ -135,6 +181,8 @@ export function renderGrid(
     }
     ctx.stroke();
   }
+
+  renderLayoutAreas(ctx, layoutAreas, zoom);
 
   renderDimensionLabels(
     ctx,

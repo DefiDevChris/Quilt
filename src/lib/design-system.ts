@@ -149,12 +149,12 @@ export const GRID = {
 const { scale: ts } = brandConfig.typography;
 
 export const FONT_SIZE = {
-  h1: '40px',
-  h1LineHeight: '52px',
-  h2: '32px',
-  h2LineHeight: '40px',
-  h3: '24px',
-  h3LineHeight: '32px',
+  h1: ts.h1.size,
+  h1LineHeight: ts.h1.line_height,
+  h2: ts.h2.size,
+  h2LineHeight: ts.h2.line_height,
+  h3: ts.h3.size,
+  h3LineHeight: ts.h3.line_height,
   body: '18px',
   bodyLineHeight: '28px',
   small: '16px',
@@ -352,3 +352,4 @@ export const BREAKPOINTS = {
 // ─── Exports for external use ─────────────────────────────────────────
 
 export { withAlpha, darkenHex };
+

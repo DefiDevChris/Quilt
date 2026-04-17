@@ -213,7 +213,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        className="btn-primary-sm w-full"
       >
         {isLoading
           ? isSignUp

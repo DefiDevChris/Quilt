@@ -6,7 +6,7 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
-import { computeFenceAreas } from '@/lib/fence-engine';
+import { computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
 import { FENCE, CANVAS } from '@/lib/design-system';
 import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
@@ -48,40 +48,6 @@ const ROLE_STROKES = FENCE.normal.strokes;
 const PREVIEW_STROKES = FENCE.preview.strokes;
 
 /**
- * Build a LayoutTemplate from the current layoutStore state.
- */
-function storeToTemplate(): LayoutTemplate | null {
-  const s = useLayoutStore.getState();
-
-  if (s.layoutType === 'none' || s.layoutType === 'free-form') return null;
-
-  const categoryMap: Record<string, LayoutTemplate['category']> = {
-    grid: 'straight',
-    sashing: 'sashing',
-    'on-point': 'on-point',
-    strippy: 'strippy',
-    medallion: 'medallion',
-  };
-
-  const category = categoryMap[s.layoutType];
-  if (!category) return null;
-
-  return {
-    id: s.selectedPresetId ?? 'custom',
-    name: 'Custom Layout',
-    category,
-    gridRows: s.rows,
-    gridCols: s.cols,
-    defaultBlockSize: s.blockSize,
-    sashingWidth: category === 'sashing' || category === 'strippy' ? s.sashing.width : 0,
-    hasCornerstones: s.hasCornerstones,
-    borders: s.borders.map((b, i) => ({ width: b.width, position: i })),
-    bindingWidth: s.bindingWidth,
-    thumbnailSvg: '',
-  };
-}
-
-/**
  * Hook that reads the active layout from layoutStore, computes fence areas
  * via the fence engine, and draws selectable Fabric.js rectangles on the
  * canvas for each area.
@@ -108,7 +74,18 @@ export function useFenceRenderer() {
     const applyFence = async () => {
       if (disposed) return;
 
-      const template = storeToTemplate();
+      const layoutState = useLayoutStore.getState();
+      const template = layoutSourceToTemplate({
+        layoutType: layoutState.layoutType,
+        selectedPresetId: layoutState.selectedPresetId,
+        rows: layoutState.rows,
+        cols: layoutState.cols,
+        blockSize: layoutState.blockSize,
+        sashing: layoutState.sashing,
+        borders: layoutState.borders,
+        hasCornerstones: layoutState.hasCornerstones,
+        bindingWidth: layoutState.bindingWidth,
+      });
       const project = useProjectStore.getState();
       const quiltWidth = project.canvasWidth;
       const quiltHeight = project.canvasHeight;

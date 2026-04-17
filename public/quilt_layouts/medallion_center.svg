@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
-  <rect x="0" y="0" width="220" height="220" fill="#B0B0B0" stroke="#333333" stroke-width="1" data-role="border" data-shade="border" />
-  <rect x="30" y="30" width="160" height="160" fill="#B0B0B0" stroke="#333333" stroke-width="1" data-role="border" data-shade="border" />
-  <rect x="50" y="50" width="120" height="120" fill="#F8F8F8" stroke="#333333" stroke-width="0.5" data-role="block-cell" data-shade="block-cell" />
-</svg>

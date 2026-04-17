@@ -5,16 +5,17 @@ import Link from 'next/link';
 import { Search, User, ShoppingBag, Menu, X, Palette } from 'lucide-react';
 import { COLORS } from '@/lib/design-system';
 import { useCartStore } from '@/stores/cartStore';
+import Mascot from '@/components/landing/Mascot';
 
 const navLinks = [
-  { name: 'Fabric', href: '#fabrics' },
-  { name: 'Precuts', href: '#categories' },
-  { name: 'Kits', href: '#kits' },
-  { name: 'Thread', href: '#categories' },
-  { name: 'Batting', href: '#categories' },
-  { name: 'Notions', href: '#categories' },
-  { name: 'New', href: '#new' },
-  { name: 'Sale', href: '#fabrics' },
+  { name: 'Fabric', href: '/shop/catalog' },
+  { name: 'Precuts', href: '/shop/catalog?category=charm-packs' },
+  { name: 'Kits', href: '/shop/catalog?category=kits' },
+  { name: 'Thread', href: '/shop/catalog?category=thread' },
+  { name: 'Batting', href: '/shop/catalog?category=batting' },
+  { name: 'Notions', href: '/shop/catalog?category=notions' },
+  { name: 'New', href: '/shop/catalog?sort=newest' },
+  { name: 'Sale', href: '/shop/catalog' },
   { name: 'Picture my Blocks', href: '/picture-my-blocks', external: true },
 ] as const;
 
@@ -39,13 +40,14 @@ export default function ShopHeader() {
           <div className="flex items-center shrink-0">
             <a
               href="/shop"
-              className="text-4xl font-bold"
+              className="text-4xl font-bold flex items-center gap-2"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.primary,
                 letterSpacing: '-0.02em',
               }}
             >
+              <Mascot size="xs" pose="sitting" />
               QuiltCorgi
             </a>
           </div>

@@ -82,6 +82,39 @@ export function StudioClient({ projectId }: StudioClientProps) {
           markSetupModalDismissed(projectData.id);
         }
 
+        const activeCanvasData =
+          projectData.worktables?.find((worktable) => worktable.id === 'main')?.canvasData ??
+          projectData.worktables?.[0]?.canvasData ??
+          projectData.canvasData;
+        const layoutState = (activeCanvasData as Record<string, unknown> | undefined)?.__layoutState as
+          | Record<string, unknown>
+          | undefined;
+
+        if (layoutState?.layoutType && layoutState.layoutType !== 'none') {
+          layoutSetters.reset();
+          layoutSetters.setLayoutType(layoutState.layoutType as Parameters<typeof layoutSetters.setLayoutType>[0]);
+          layoutSetters.setSelectedPreset((layoutState.selectedPresetId as string | null) ?? null);
+          if (typeof layoutState.rows === 'number') layoutSetters.setRows(layoutState.rows);
+          if (typeof layoutState.cols === 'number') layoutSetters.setCols(layoutState.cols);
+          if (typeof layoutState.blockSize === 'number') layoutSetters.setBlockSize(layoutState.blockSize);
+          if (layoutState.sashing) {
+            layoutSetters.setSashing(layoutState.sashing as Record<string, unknown>);
+          }
+          if (Array.isArray(layoutState.borders)) {
+            layoutSetters.setBorders(layoutState.borders as Parameters<typeof layoutSetters.setBorders>[0]);
+          }
+          if (typeof layoutState.hasCornerstones === 'boolean') {
+            layoutSetters.setHasCornerstones(layoutState.hasCornerstones);
+          }
+          if (typeof layoutState.bindingWidth === 'number') {
+            layoutSetters.setBindingWidth(layoutState.bindingWidth);
+          }
+          if (layoutState.hasAppliedLayout) {
+            layoutSetters.applyLayout();
+            markSetupModalDismissed(projectData.id);
+          }
+        }
+
         setProject(projectData);
       } catch {
         if (!cancelled) setError('Failed to load project');

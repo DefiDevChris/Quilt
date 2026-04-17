@@ -5,11 +5,9 @@ import {
   ArrowLeft,
   Download,
   Plus,
-  Minus,
   RotateCw,
   ArrowLeftRight,
   Trash2,
-  Upload,
   Palette,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -21,9 +19,31 @@ import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
-type Step = 'landing' | 'setup' | 'main';
-type LayoutType = 'grid' | 'on-point';
+type Step = 'landing' | 'layout' | 'size' | 'main';
+type LayoutType = 'grid' | 'sashing' | 'on-point';
 type ViewMode = 'edit' | 'preview';
+
+interface SizePreset {
+  rows: number;
+  cols: number;
+}
+
+const SIZE_PRESETS: SizePreset[] = [
+  { rows: 3, cols: 3 },
+  { rows: 4, cols: 4 },
+  { rows: 4, cols: 5 },
+  { rows: 5, cols: 6 },
+  { rows: 6, cols: 7 },
+];
+
+/**
+ * Derive border/sashing presence from layout type. Keeps the setup flow
+ * to just two decisions (layout + size) like the reference app.
+ */
+function layoutFrame(layout: LayoutType): { hasBorders: boolean; hasSashing: boolean } {
+  if (layout === 'grid') return { hasBorders: false, hasSashing: false };
+  return { hasBorders: true, hasSashing: true };
+}
 
 interface Block {
   id: string;
@@ -109,10 +129,10 @@ export function PictureMyBlocksApp() {
   // Step + layout state
   const [step, setStep] = useState<Step>('landing');
   const [layout, setLayout] = useState<LayoutType>('grid');
-  const [hasBorders, setHasBorders] = useState(true);
-  const [hasSashing, setHasSashing] = useState(true);
-  const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(4);
+  const [size, setSize] = useState<SizePreset>(SIZE_PRESETS[1]);
+  const rows = size.rows;
+  const cols = size.cols;
+  const { hasBorders, hasSashing } = layoutFrame(layout);
 
   // Canvas state
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -323,7 +343,7 @@ export function PictureMyBlocksApp() {
               background fabric, and see your quilt before you sew it.
             </p>
             <button
-              onClick={() => setStep('setup')}
+              onClick={() => setStep('layout')}
               className="bg-[var(--color-primary)] text-[var(--color-surface)] px-8 py-4 rounded-full text-xl font-semibold hover:bg-[#d97054] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
               style={{ boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
             >
@@ -348,229 +368,125 @@ export function PictureMyBlocksApp() {
     );
   }
 
-  if (step === 'setup') {
-    const previewBlockSize = 80;
-    const previewSash = hasSashing ? 10 : 0;
-    const previewBorder = hasBorders ? 20 : 0;
-    const previewW = 2 * previewBorder + cols * previewBlockSize + (cols - 1) * previewSash;
-    const previewH = 2 * previewBorder + rows * previewBlockSize + (rows - 1) * previewSash;
-
+  if (step === 'layout') {
     return (
-      <div className="min-h-screen flex flex-col bg-[var(--color-bg)] font-sans relative">
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="absolute inset-0 z-0 opacity-10 bg-[url('/noise.png')] mix-blend-overlay pointer-events-none"></div>
-
-          {/* App Card Container */}
-          <div className="relative z-10 flex w-full max-w-[900px] h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200/60 transition-all duration-300">
-            {/* Left Side: Setup Controls */}
-            <div
-              className="w-[340px] flex-shrink-0 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col z-10 overflow-y-auto block"
-              style={{ boxShadow: '2px 0 20px rgba(0,0,0,0.03)' }}
+      <div className="min-h-screen flex flex-col items-center bg-[var(--color-bg)] p-8">
+        <div className="w-full max-w-4xl">
+          <button
+            onClick={() => setStep('landing')}
+            className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1.5 -ml-3 text-sm font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors duration-150"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+          <h2
+            className="mb-12 text-center text-4xl font-bold text-[var(--color-text)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Pick a layout
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <LayoutCard
+              label="Grid"
+              description="Blocks sit right next to each other, no space between."
+              selected={layout === 'grid'}
+              onSelect={() => {
+                setLayout('grid');
+                setStep('size');
+              }}
             >
-              <div className="p-6 pb-4">
-                <a
-                  href="/shop"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 -ml-3 mb-6 rounded-full hover:bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text-dim)] transition-colors duration-150"
-                >
-                  <ArrowLeft size={16} /> Back to Shop
-                </a>
-                <h2
-                  className="text-2xl leading-tight font-bold text-[var(--color-text)] mb-2"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  Set up your quilt
-                </h2>
-                <p className="text-[var(--color-text-dim)] text-sm mb-8 leading-relaxed">
-                  Configure the dimensions and layout pattern to start placing your blocks.
-                </p>
+              <svg width="80" height="80" viewBox="0 0 60 60" aria-hidden="true">
+                <rect x="5" y="5" width="22" height="22" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="33" y="5" width="22" height="22" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="5" y="33" width="22" height="22" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="33" y="33" width="22" height="22" fill="var(--color-primary)" opacity="0.8" />
+              </svg>
+            </LayoutCard>
+            <LayoutCard
+              label="Grid with sashing"
+              description="Blocks are separated by thin strips of fabric."
+              selected={layout === 'sashing'}
+              onSelect={() => {
+                setLayout('sashing');
+                setStep('size');
+              }}
+            >
+              <svg width="80" height="80" viewBox="0 0 60 60" aria-hidden="true">
+                <rect x="0" y="0" width="60" height="60" fill="var(--color-border)" opacity="0.25" />
+                <rect x="8" y="8" width="18" height="18" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="34" y="8" width="18" height="18" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="8" y="34" width="18" height="18" fill="var(--color-primary)" opacity="0.8" />
+                <rect x="34" y="34" width="18" height="18" fill="var(--color-primary)" opacity="0.8" />
+              </svg>
+            </LayoutCard>
+            <LayoutCard
+              label="On-point"
+              description="Blocks are rotated 45 degrees as diamonds."
+              selected={layout === 'on-point'}
+              onSelect={() => {
+                setLayout('on-point');
+                setStep('size');
+              }}
+            >
+              <svg width="80" height="80" viewBox="0 0 60 60" aria-hidden="true">
+                <rect x="0" y="0" width="60" height="60" fill="var(--color-border)" opacity="0.25" />
+                <g transform="translate(30, 15) rotate(45)">
+                  <rect x="-10" y="-10" width="20" height="20" fill="var(--color-primary)" opacity="0.8" />
+                </g>
+                <g transform="translate(15, 30) rotate(45)">
+                  <rect x="-10" y="-10" width="20" height="20" fill="var(--color-primary)" opacity="0.8" />
+                </g>
+                <g transform="translate(45, 30) rotate(45)">
+                  <rect x="-10" y="-10" width="20" height="20" fill="var(--color-primary)" opacity="0.8" />
+                </g>
+                <g transform="translate(30, 45) rotate(45)">
+                  <rect x="-10" y="-10" width="20" height="20" fill="var(--color-primary)" opacity="0.8" />
+                </g>
+              </svg>
+            </LayoutCard>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-                <div className="space-y-8">
-                  {/* Layout Type Section */}
-                  <section>
-                    <h3 className="text-xs font-bold text-[var(--color-text-dim)] uppercase tracking-wider mb-3">
-                      Layout Type
-                    </h3>
-                    <div className="flex bg-[var(--color-bg)] p-1 rounded-xl border border-[var(--color-border)] select-none">
-                      <div className="relative flex-1 flex">
-                        <div
-                          className="absolute inset-0 bg-[var(--color-surface)] shadow-sm rounded-lg transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
-                          style={{
-                            width: '50%',
-                            transform: layout === 'grid' ? 'translateX(0)' : 'translateX(100%)',
-                            border: '1px solid var(--color-border)',
-                          }}
-                        />
-                        <button
-                          onClick={() => setLayout('grid')}
-                          className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors duration-200 ${layout === 'grid' ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'}`}
-                        >
-                          Grid
-                        </button>
-                        <button
-                          onClick={() => setLayout('on-point')}
-                          className={`relative z-10 flex-1 py-2 text-sm font-bold transition-colors duration-200 ${layout === 'on-point' ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'}`}
-                        >
-                          On Point
-                        </button>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* Dimensions Section */}
-                  <section>
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-xs font-bold text-[var(--color-text-dim)] uppercase tracking-wider">
-                        Dimensions
-                      </h3>
-                    </div>
-
-                    <div className="bg-[var(--color-bg)] rounded-2xl p-4 border border-[var(--color-border)]">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-medium text-[var(--color-text)]">Rows</span>
-                        <div
-                          className="flex items-center gap-3 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)] p-1"
-                          style={{ boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}
-                        >
-                          <CounterButton
-                            icon={<Minus size={14} />}
-                            onClick={() => setRows(clamp(rows - 1, MIN_SIZE, MAX_SIZE))}
-                            disabled={rows <= MIN_SIZE}
-                          />
-                          <span className="text-sm font-semibold text-[var(--color-text)] w-6 text-center tabular-nums">
-                            {rows}
-                          </span>
-                          <CounterButton
-                            icon={<Plus size={14} />}
-                            onClick={() => setRows(clamp(rows + 1, MIN_SIZE, MAX_SIZE))}
-                            disabled={rows >= MAX_SIZE}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="w-full h-px bg-[var(--color-border)] mb-4 opacity-60"></div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-[var(--color-text)]">Columns</span>
-                        <div
-                          className="flex items-center gap-3 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)] p-1"
-                          style={{ boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}
-                        >
-                          <CounterButton
-                            icon={<Minus size={14} />}
-                            onClick={() => setCols(clamp(cols - 1, MIN_SIZE, MAX_SIZE))}
-                            disabled={cols <= MIN_SIZE}
-                          />
-                          <span className="text-sm font-semibold text-[var(--color-text)] w-6 text-center tabular-nums">
-                            {cols}
-                          </span>
-                          <CounterButton
-                            icon={<Plus size={14} />}
-                            onClick={() => setCols(clamp(cols + 1, MIN_SIZE, MAX_SIZE))}
-                            disabled={cols >= MAX_SIZE}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* Extras Section */}
-                  <section>
-                    <h3 className="text-xs font-bold text-[var(--color-text-dim)] uppercase tracking-wider mb-3">
-                      Extras
-                    </h3>
-                    <div className="flex flex-col gap-2">
-                      <OptionToggle
-                        label="Add Borders"
-                        enabled={hasBorders}
-                        onToggle={() => setHasBorders(!hasBorders)}
-                      />
-                      <OptionToggle
-                        label="Add Sashing"
-                        enabled={hasSashing}
-                        onToggle={() => setHasSashing(!hasSashing)}
-                      />
-                    </div>
-                  </section>
-                </div>
-              </div>
-
-              <div className="mt-auto p-6 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+  if (step === 'size') {
+    return (
+      <div className="min-h-screen flex flex-col items-center bg-[var(--color-bg)] p-8">
+        <div className="w-full max-w-4xl">
+          <button
+            onClick={() => setStep('layout')}
+            className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1.5 -ml-3 text-sm font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors duration-150"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+          <h2
+            className="mb-12 text-center text-4xl font-bold text-[var(--color-text)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Pick a size
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {SIZE_PRESETS.map((preset) => {
+              const isSelected =
+                size.rows === preset.rows && size.cols === preset.cols;
+              return (
                 <button
-                  onClick={() => setStep('main')}
-                  className="w-full bg-[var(--color-primary)] text-[var(--color-surface)] px-6 py-3 rounded-xl text-base font-bold hover:bg-[#d97054] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-                  style={{ boxShadow: '0 4px 14px rgba(0,0,0,0.1)' }}
-                >
-                  Design Canvas
-                </button>
-              </div>
-            </div>
-
-            {/* Right Side: Live Preview Canvas */}
-            <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[var(--color-bg)]">
-              <div
-                className="absolute inset-0 z-0 opacity-10"
-                style={{
-                  background:
-                    'radial-gradient(circle at 60% 40%, var(--color-primary), transparent 60%)',
-                }}
-              ></div>
-
-              <div className="z-10 relative flex flex-col items-center">
-                <div className="mb-6 opacity-70">
-                  <div className="px-4 py-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/50 backdrop-blur-sm text-xs font-medium text-[var(--color-text-dim)]">
-                    Live Preview
-                  </div>
-                </div>
-
-                <div
-                  className="transition-all duration-[400ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]"
-                  style={{
-                    transform: `scale(${Math.min(1, 400 / Math.max(previewW, previewH))})`,
+                  key={`${preset.rows}x${preset.cols}`}
+                  onClick={() => {
+                    setSize(preset);
+                    setStep('main');
                   }}
+                  className={`rounded-lg border px-8 py-6 text-2xl font-semibold transition-colors duration-150 ${
+                    isSelected
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 text-[var(--color-text)]'
+                      : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)]/40'
+                  }`}
+                  style={{ boxShadow: SHADOW.brand }}
                 >
-                  {layout === 'grid' ? (
-                    <div
-                      className="rounded-xl relative bg-[#F5F0E8] overflow-hidden"
-                      style={{
-                        width: previewW,
-                        height: previewH,
-                        display: 'grid',
-                        gridTemplateColumns: `repeat(${cols}, ${previewBlockSize}px)`,
-                        gridTemplateRows: `repeat(${rows}, ${previewBlockSize}px)`,
-                        gap: previewSash,
-                        padding: previewBorder,
-                        boxShadow: '0 30px 60px -12px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
-                      {Array.from({ length: rows * cols }).map((_, i) => {
-                        const previewColors = ['#E9C46A', '#F4A261', '#E76F51', '#2A9D8F', '#264653'];
-                        const r = Math.floor(i / cols);
-                        const c = i % cols;
-                        const color = previewColors[(r * 3 + c * 5) % previewColors.length];
-                        return (
-                          <div 
-                            key={i} 
-                            className="rounded-[4px] shadow-sm transform hover:scale-[1.03] transition-transform duration-300"
-                            style={{ backgroundColor: color, border: '1px solid rgba(0,0,0,0.05)' }} 
-                          />
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <OnPointPreview
-                      rows={rows}
-                      cols={cols}
-                      blockSize={previewBlockSize}
-                      hasSashing={hasSashing}
-                      hasBorders={hasBorders}
-                      previewW={previewW}
-                      previewH={previewH}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+                  {preset.rows} × {preset.cols}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -590,8 +506,9 @@ export function PictureMyBlocksApp() {
       >
         <div className="flex items-center gap-4">
           <button
-            onClick={() => setStep('setup')}
+            onClick={() => setStep('size')}
             className="p-2 rounded-full hover:bg-[var(--color-primary)]/10 text-[var(--color-text-dim)] transition-colors duration-150"
+            aria-label="Back to size picker"
           >
             <ArrowLeft size={20} />
           </button>
@@ -893,130 +810,40 @@ export function PictureMyBlocksApp() {
 
 // ─── Sub-components ──────────────────────────────────────────────────────
 
-function OptionToggle({
+/**
+ * Large selectable card used during the layout-picker step. Mirrors the
+ * reference PictureMyBlocks layout choice — a big SVG illustration, a bold
+ * label and a short description.
+ */
+function LayoutCard({
   label,
-  enabled,
-  onToggle,
+  description,
+  selected,
+  onSelect,
+  children,
 }: {
-  label: string;
-  enabled: boolean;
-  onToggle: () => void;
+  readonly label: string;
+  readonly description: string;
+  readonly selected: boolean;
+  readonly onSelect: () => void;
+  readonly children: React.ReactNode;
 }) {
   return (
     <button
-      onClick={onToggle}
-      className={`flex items-center justify-between w-full px-5 py-4 rounded-xl text-base font-medium transition-colors duration-200 border ${
-        enabled
-          ? 'bg-[var(--color-primary)]/5 border-[var(--color-primary)]/30 text-[var(--color-text)]'
-          : 'bg-[var(--color-bg)] text-[var(--color-text-dim)] border-[var(--color-border)] hover:bg-[var(--color-bg)]/80'
+      type="button"
+      onClick={onSelect}
+      aria-pressed={selected}
+      className={`flex flex-col items-center gap-4 rounded-lg border bg-[var(--color-surface)] p-8 text-center transition-colors duration-150 ${
+        selected
+          ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/25'
+          : 'border-[var(--color-border)] hover:border-[var(--color-primary)]/40'
       }`}
+      style={{ boxShadow: SHADOW.brand }}
     >
-      {label}
-      <span
-        className={`inline-block w-11 h-6 rounded-full relative transition-[background-color] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
-          enabled ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 w-5 h-5 rounded-full bg-[var(--color-surface)] transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
-            enabled ? 'translate-x-[22px]' : 'translate-x-[2px]'
-          }`}
-          style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
-        />
-      </span>
+      {children}
+      <h3 className="text-xl font-semibold text-[var(--color-text)]">{label}</h3>
+      <p className="text-sm text-[var(--color-text-dim)]">{description}</p>
     </button>
-  );
-}
-
-function CounterButton({
-  icon,
-  onClick,
-  disabled,
-}: {
-  icon: React.ReactNode;
-  onClick: () => void;
-  disabled: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-text-dim)] hover:bg-[var(--color-bg)] hover:text-[var(--color-primary)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
-    >
-      {icon}
-    </button>
-  );
-}
-
-function OnPointPreview({
-  rows,
-  cols,
-  blockSize,
-  hasSashing,
-  hasBorders,
-  previewW,
-  previewH,
-}: {
-  rows: number;
-  cols: number;
-  blockSize: number;
-  hasSashing: boolean;
-  hasBorders: boolean;
-  previewW: number;
-  previewH: number;
-}) {
-  const sash = hasSashing ? 3 : 0;
-  const border = hasBorders ? 6 : 0;
-  const dStep = (blockSize + sash) * Math.SQRT2;
-  const dBlock = blockSize * Math.SQRT2;
-  const span = ((cols + rows - 2) * dStep) / 2 + dBlock;
-  const totalSize = 2 * border + span;
-
-  const previewColors = ['#E9C46A', '#F4A261', '#E76F51', '#2A9D8F', '#264653'];
-
-  // Calculate padding to ensure the view stays perfectly centered while accommodating the diagonal edges
-  return (
-    <div
-      className="relative rounded-xl overflow-hidden flex items-center justify-center p-8"
-      style={{
-        width: Math.max(previewW, previewH) * 1.5,
-        height: Math.max(previewW, previewH) * 1.5,
-      }}
-    >
-      <div
-        className="relative"
-        style={{
-          width: totalSize,
-          height: totalSize,
-          boxShadow: '0 30px 60px -12px rgba(0,0,0,0.3)',
-          backgroundColor: '#F5F0E8',
-        }}
-      >
-        <div className="absolute inset-0 bg-[var(--color-text-dim)]/5 mix-blend-overlay pointer-events-none"></div>
-        {Array.from({ length: rows }).map((_, r) =>
-          Array.from({ length: cols }).map((_, c) => {
-            const cx = border + ((c - r) * dStep) / 2 + ((rows - 1) * dStep) / 2 + dBlock / 2;
-            const cy = border + ((c + r) * dStep) / 2 + dBlock / 2;
-            const color = previewColors[(r * 3 + c * 5) % previewColors.length];
-            return (
-              <div
-                key={`${r}-${c}`}
-                className="absolute rounded-[4px] shadow-sm transform hover:scale-110 hover:z-10 transition-transform duration-300"
-                style={{
-                  width: blockSize,
-                  height: blockSize,
-                  left: cx - blockSize / 2,
-                  top: cy - blockSize / 2,
-                  transform: 'rotate(45deg)',
-                  backgroundColor: color,
-                  border: '1px solid rgba(0,0,0,0.05)',
-                }}
-              />
-            );
-          })
-        )}
-      </div>
-    </div>
   );
 }
 

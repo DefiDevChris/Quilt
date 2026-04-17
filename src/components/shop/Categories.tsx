@@ -3,12 +3,12 @@
 import { COLORS } from '@/lib/design-system';
 
 const categories = [
-  { id: 1, name: 'Quilt Kits', href: '#kits', image: '/images/shop/cat_quilt_kits_1776324534096.png' },
-  { id: 2, name: 'Wide Backing', href: '#categories', image: '/images/shop/cat_wide_backing_1776324545089.png' },
-  { id: 3, name: 'Fabric', href: '#fabrics', image: '/images/shop/cat_fabric_yardage_1776324560984.png' },
-  { id: 4, name: 'Precuts', href: '#categories', image: '/images/shop/cat_precuts_1776324574408.png' },
-  { id: 5, name: 'Thread & Bobbins', href: '#categories', image: '/images/shop/cat_thread_1776324585864.png' },
-  { id: 6, name: 'Notions', href: '#categories', image: '/images/shop/cat_notions_1776324598587.png' },
+  { id: 1, name: 'Quilt Kits', href: '/shop/catalog?category=kits', image: '/images/shop/fabric-collection.jpg' },
+  { id: 2, name: 'Wide Backing', href: '/shop/catalog?category=by-the-yard', image: '/images/shop/fabric-by-yard.jpg' },
+  { id: 3, name: 'Fabric', href: '/shop/catalog', image: '/images/shop/featured-store.jpg' },
+  { id: 4, name: 'Precuts', href: '/shop/catalog?category=jelly-rolls', image: '/images/shop/charm-packs.jpg' },
+  { id: 5, name: 'Thread & Bobbins', href: '/shop/catalog?category=thread', image: '/images/shop/quilting-thread.jpg' },
+  { id: 6, name: 'Notions', href: '/shop/catalog?category=notions', image: '/images/shop/jelly-rolls.jpg' },
 ];
 
 export default function Categories() {

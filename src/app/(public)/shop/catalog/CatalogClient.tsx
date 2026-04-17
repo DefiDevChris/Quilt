@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import { useCartStore } from '@/stores/cartStore';
 import { Search, ChevronDown, Sparkles, ShoppingBag } from 'lucide-react';
 import { COLORS, COLORS_HOVER, RADIUS, MOTION } from '@/lib/design-system';
@@ -416,6 +418,8 @@ export default function CatalogClient({
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
   const [selectedValue, setSelectedValue] = useState('');
+  const [category, setCategory] = useState('');
+
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState<SortOption>('name');
   const [page, setPage] = useState(1);
@@ -429,6 +433,9 @@ export default function CatalogClient({
     theme: false,
     value: false,
   });
+
+  const searchParams = useSearchParams();
+
 
   const isFirstMount = useRef(true);
 
@@ -445,7 +452,9 @@ export default function CatalogClient({
       if (selectedCollections.length) params.set('collection', selectedCollections.join(','));
       if (selectedColors.length) params.set('colorFamily', selectedColors.join(','));
       if (selectedValue) params.set('value', selectedValue);
+      if (category) params.set('category', category);
       if (inStockOnly) params.set('inStock', 'true');
+
       params.set('sort', sort);
       params.set('page', String(page));
       params.set('limit', '24');
@@ -476,20 +485,31 @@ export default function CatalogClient({
     selectedColors,
     selectedValue,
     inStockOnly,
+    category,
     sort,
     page,
   ]);
+
 
   useEffect(() => {
     if (!shopEnabled) return;
 
     if (isFirstMount.current) {
       isFirstMount.current = false;
-      if (initialFabrics && initialFabrics.length > 0) return;
+      const initialCategory = searchParams.get('category');
+      if (initialCategory) {
+        setCategory(initialCategory);
+        // If we have a category, we want to fetch with it, 
+        // even if initialFabrics was provided (which might be unfiltered)
+        if (initialFabrics && initialFabrics.length > 0 && !initialCategory) return;
+      } else {
+        if (initialFabrics && initialFabrics.length > 0) return;
+      }
     }
 
     fetchFabrics();
-  }, [shopEnabled, fetchFabrics, initialFabrics]);
+  }, [shopEnabled, fetchFabrics, initialFabrics, searchParams]);
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -516,7 +536,9 @@ export default function CatalogClient({
     setSelectedColors([]);
     setSelectedThemes([]);
     setSelectedValue('');
+    setCategory('');
     setInStockOnly(false);
+
     setSort('name');
     setPage(1);
   };
@@ -527,7 +549,9 @@ export default function CatalogClient({
     selectedColors.length +
     selectedThemes.length +
     (selectedValue ? 1 : 0) +
+    (category ? 1 : 0) +
     (inStockOnly ? 1 : 0);
+
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));

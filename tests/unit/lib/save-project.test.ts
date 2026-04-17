@@ -7,8 +7,7 @@ import {
 } from '@/lib/save-project';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useAuthStore } from '@/stores/authStore';
-import { getAuthDerived } from '@/stores/authStore';
+import { useAuthStore, getAuthDerived } from '@/stores/authStore';
 import { saveTempProject } from '@/lib/temp-project-storage';
 
 vi.mock('@/stores/authStore', () => ({

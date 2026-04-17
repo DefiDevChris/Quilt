@@ -8,9 +8,39 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
 import { computeBlockDropScale } from '@/lib/block-drop-scale';
+import { findFenceAreaAtPoint, computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
+import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
 const BLOCK_HIGHLIGHT_COLOR = CANVAS.blockHighlight;
+
+function getComputedLayoutAreas() {
+  const layoutState = useLayoutStore.getState();
+  const projectState = useProjectStore.getState();
+  const { unitSystem } = useCanvasStore.getState();
+  const template = layoutSourceToTemplate({
+    layoutType: layoutState.layoutType,
+    selectedPresetId: layoutState.selectedPresetId,
+    rows: layoutState.rows,
+    cols: layoutState.cols,
+    blockSize: layoutState.blockSize,
+    sashing: layoutState.sashing,
+    borders: layoutState.borders,
+    hasCornerstones: layoutState.hasCornerstones,
+    bindingWidth: layoutState.bindingWidth,
+  });
+
+  if (!template) {
+    return [];
+  }
+
+  return computeFenceAreas(
+    template,
+    projectState.canvasWidth,
+    projectState.canvasHeight,
+    getPixelsPerUnit(unitSystem)
+  );
+}
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -56,35 +86,29 @@ export function useBlockDrop() {
       e.preventDefault();
 
       if (fabricCanvas) {
-        const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
-        const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
+        const canvas = fabricCanvas as FabricCanvas;
+        const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
+        const targetArea = findFenceAreaAtPoint(getComputedLayoutAreas(), pointer.x, pointer.y, [
+          'block-cell',
+        ]);
 
-        if (foundTarget) {
-          const areaObj = foundTarget as Record<string, unknown>;
-          // Highlight when cursor is over a valid block cell area
-          if (areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell') {
-            e.dataTransfer.dropEffect = 'copy';
-            await showCellHighlight(foundTarget);
-            return;
-          }
+        if (targetArea) {
+          e.dataTransfer.dropEffect = 'copy';
+          await showCellHighlight(targetArea);
+          return;
         }
       }
 
-      // Freeform mode: allow drops anywhere on the canvas
-      const { hasAppliedLayout } = useLayoutStore.getState();
-      if (!hasAppliedLayout) {
+      const { hasAppliedLayout, layoutType } = useLayoutStore.getState();
+      if (!hasAppliedLayout || layoutType === 'free-form') {
         e.dataTransfer.dropEffect = 'copy';
         clearHighlight();
         return;
       }
 
-      // Drops outside valid areas are rejected when a layout is applied
       clearHighlight();
       e.dataTransfer.dropEffect = 'none';
 
-      // Visual feedback: briefly flash the canvas wrapper border to signal
-      // the drop target is invalid. Guard against continuous fire (~60/sec)
-      // by clearing the previous timeout before scheduling a new one.
       const wrapper = (e.currentTarget as HTMLElement)?.closest('[data-canvas-wrapper]');
       if (wrapper && !wrapper.classList.contains('invalid-drop-flash')) {
         if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
@@ -133,68 +157,30 @@ export function useBlockDrop() {
         };
 
         const fabric = await import('fabric');
-
-        // Disable non-fence objects temporarily so findTarget hits fence cells
         const allObjects = canvas.getObjects();
-        const userBlocksToRestore: Array<{
-          obj: import('fabric').FabricObject;
-          prev: boolean;
-        }> = [];
-        for (const obj of allObjects) {
-          const r = obj as unknown as Record<string, unknown>;
-          if (!r['_fenceElement']) {
-            userBlocksToRestore.push({ obj, prev: obj.evented ?? true });
-            obj.evented = false;
-          }
-        }
-
         const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
-        let hitTarget: unknown = canvas.findTarget(
-          e.nativeEvent as unknown as import('fabric').TPointerEvent
-        );
+        const layoutAreas = getComputedLayoutAreas();
+        const targetArea = findFenceAreaAtPoint(layoutAreas, pointer.x, pointer.y, ['block-cell']);
+        const { hasAppliedLayout, layoutType } = useLayoutStore.getState();
 
-        for (const { obj, prev } of userBlocksToRestore) {
-          obj.evented = prev;
-        }
-
-        const { hasAppliedLayout } = useLayoutStore.getState();
-
-        // Try to find a fence cell target (fallback to containsPoint scan)
-        if (!hitTarget) {
-          const fallbackTarget = allObjects.find((o) => {
-            const r = o as unknown as Record<string, unknown>;
-            return (
-              r['_fenceElement'] && r['_fenceRole'] === 'block-cell' && o.containsPoint(pointer)
-            );
-          });
-          if (fallbackTarget) {
-            hitTarget = fallbackTarget;
-          }
-        }
-
-        const areaObj = (hitTarget as Record<string, unknown>) ?? {};
-        const isFenceCell = areaObj['_fenceElement'] && areaObj['_fenceRole'] === 'block-cell';
-
-        // If a layout is applied, only allow drops into fence cells
-        if (hasAppliedLayout && !isFenceCell) {
-          // Visual feedback: flash the canvas wrapper to indicate invalid drop
+        if (hasAppliedLayout && layoutType !== 'free-form' && !targetArea) {
           const wrapper = (e.target as HTMLElement)?.closest?.('[data-canvas-wrapper]');
           if (wrapper && !wrapper.classList.contains('invalid-drop-flash')) {
+            if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
             wrapper.classList.add('invalid-drop-flash');
-            setTimeout(() => wrapper.classList.remove('invalid-drop-flash'), 400);
+            flashTimeoutRef.current = setTimeout(() => {
+              wrapper.classList.remove('invalid-drop-flash');
+              flashTimeoutRef.current = null;
+            }, 400);
           }
-          // Notify user via toast event
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('quiltstudio:invalid-drop', {
-              detail: { message: 'Blocks can only be placed in block cells' },
-            }));
+            window.dispatchEvent(
+              new CustomEvent('quiltstudio:invalid-drop', {
+                detail: { message: 'Blocks can only be placed in block cells' },
+              })
+            );
           }
           return;
-        }
-
-        // In freeform mode with no hit target, we still allow placement at pointer
-        if (!hasAppliedLayout && !hitTarget) {
-          // hitTarget stays null — freeform path below handles it
         }
 
         // Build Fabric objects from the block data
@@ -210,15 +196,13 @@ export function useBlockDrop() {
         const currentJson = JSON.stringify(canvas.toJSON());
         const undoSaved = pushUndoState(currentJson);
 
-        if (isFenceCell) {
-          // ── Fence cell placement: snap to cell, locked ──
-          const cellObj = hitTarget as unknown as import('fabric').FabricObject;
-          const cellX = cellObj.left ?? 0;
-          const cellY = cellObj.top ?? 0;
-          const cellW = (cellObj.width ?? 100) * (cellObj.scaleX ?? 1);
-          const cellH = (cellObj.height ?? 100) * (cellObj.scaleY ?? 1);
-          const cellRotation = cellObj.angle ?? 0;
-          const targetCellId = (areaObj['_fenceAreaId'] as string | undefined) ?? null;
+        if (targetArea) {
+          const cellX = targetArea.x;
+          const cellY = targetArea.y;
+          const cellW = targetArea.width;
+          const cellH = targetArea.height;
+          const cellRotation = targetArea.rotation ?? 0;
+          const targetCellId = targetArea.id;
 
           // Remove existing block in this cell (only if undo can protect the action)
           if (targetCellId && undoSaved) {

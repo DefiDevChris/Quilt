@@ -16,6 +16,7 @@ const CATEGORY_COLLECTION_MAP: Record<string, string> = {
   batting: 'batting',
   patterns: 'pattern',
   thread: 'thread',
+  kits: 'kit',
 };
 
 const querySchema = z.object({

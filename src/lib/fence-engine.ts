@@ -10,8 +10,27 @@
 
 import type { LayoutTemplate, LayoutCategory } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
-import { computeLayout, type LayoutConfig, type LayoutResult } from '@/lib/layout-utils';
+import {
+  computeLayout,
+  type LayoutConfig,
+  type LayoutResult,
+  type LayoutType,
+  type BorderConfig,
+  type SashingConfig,
+} from '@/lib/layout-utils';
 import { DEFAULT_LAYOUT } from '@/lib/design-system';
+
+export interface LayoutTemplateSource {
+  layoutType: LayoutType;
+  selectedPresetId?: string | null;
+  rows: number;
+  cols: number;
+  blockSize: number;
+  sashing: SashingConfig;
+  borders: BorderConfig[];
+  hasCornerstones: boolean;
+  bindingWidth: number;
+}
 
 /** Map template category to the internal LayoutType used by computeLayout. */
 const CATEGORY_TO_LAYOUT_TYPE: Record<LayoutCategory, 'grid' | 'sashing' | 'on-point'> = {
@@ -27,6 +46,103 @@ const CATEGORY_TO_LAYOUT_TYPE: Record<LayoutCategory, 'grid' | 'sashing' | 'on-p
  */
 function categoryToLayoutType(category: LayoutCategory): 'grid' | 'sashing' | 'on-point' {
   return CATEGORY_TO_LAYOUT_TYPE[category];
+}
+
+export function layoutSourceToTemplate(source: LayoutTemplateSource): LayoutTemplate | null {
+  if (source.layoutType === 'none' || source.layoutType === 'free-form') return null;
+
+  const categoryMap: Record<LayoutType, LayoutTemplate['category'] | null> = {
+    none: null,
+    'free-form': null,
+    grid: 'straight',
+    sashing: 'sashing',
+    'on-point': 'on-point',
+    strippy: 'strippy',
+    medallion: 'medallion',
+  };
+
+  const category = categoryMap[source.layoutType];
+  if (!category) return null;
+
+  return {
+    id: source.selectedPresetId ?? 'custom',
+    name: 'Custom Layout',
+    category,
+    gridRows: source.rows,
+    gridCols: source.cols,
+    defaultBlockSize: source.blockSize,
+    sashingWidth:
+      category === 'sashing' || category === 'strippy' ? Math.max(0, source.sashing.width) : 0,
+    hasCornerstones: source.hasCornerstones,
+    borders: source.borders.map((border, position) => ({
+      width: Math.max(0, border.width),
+      position,
+    })),
+    bindingWidth: Math.max(0, source.bindingWidth),
+    thumbnailSvg: '',
+  };
+}
+
+function pointInPolygon(points: Array<{ x: number; y: number }>, x: number, y: number): boolean {
+  let inside = false;
+
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const xi = points[i].x;
+    const yi = points[i].y;
+    const xj = points[j].x;
+    const yj = points[j].y;
+
+    const intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-9) + xi;
+    if (intersects) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+}
+
+export function pointInFenceArea(area: FenceArea, x: number, y: number): boolean {
+  if (area.points && area.points.length >= 3) {
+    return pointInPolygon(area.points, x, y);
+  }
+
+  if (area.rotation) {
+    const centerX = area.x + area.width / 2;
+    const centerY = area.y + area.height / 2;
+    const radians = (-area.rotation * Math.PI) / 180;
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+    const dx = x - centerX;
+    const dy = y - centerY;
+    const localX = dx * cos - dy * sin + centerX;
+    const localY = dx * sin + dy * cos + centerY;
+
+    return (
+      localX >= area.x &&
+      localX <= area.x + area.width &&
+      localY >= area.y &&
+      localY <= area.y + area.height
+    );
+  }
+
+  return x >= area.x && x <= area.x + area.width && y >= area.y && y <= area.y + area.height;
+}
+
+export function findFenceAreaAtPoint(
+  areas: FenceArea[],
+  x: number,
+  y: number,
+  roles?: FenceArea['role'][]
+): FenceArea | null {
+  for (let index = areas.length - 1; index >= 0; index -= 1) {
+    const area = areas[index];
+    if (roles && !roles.includes(area.role)) continue;
+    if (pointInFenceArea(area, x, y)) {
+      return area;
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -486,17 +602,18 @@ export function computeFenceAreas(
 
     const quiltWPx = quiltWidthIn * pxPerUnit;
     const quiltHPx = quiltHeightIn * pxPerUnit;
-    const sx = quiltWPx / maxX;
-    const sy = quiltHPx / maxY;
+    const fit = Math.min(quiltWPx / maxX, quiltHPx / maxY);
+    const offsetX = (quiltWPx - maxX * fit) / 2;
+    const offsetY = (quiltHPx - maxY * fit) / 2;
 
     return naturalAreas.map((area) => ({
       ...area,
-      x: area.x * sx,
-      y: area.y * sy,
-      width: area.width * sx,
-      height: area.height * sy,
+      x: area.x * fit + offsetX,
+      y: area.y * fit + offsetY,
+      width: area.width * fit,
+      height: area.height * fit,
       points: area.points
-        ? area.points.map((p) => ({ x: p.x * sx, y: p.y * sy }))
+        ? area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY }))
         : undefined,
     }));
   }
@@ -527,18 +644,18 @@ export function computeFenceAreas(
 
   if (naturalWPx <= 0 || naturalHPx <= 0) return areas;
 
-  const fitX = quiltWPx / naturalWPx;
-  const fitY = quiltHPx / naturalHPx;
+  const fit = Math.min(quiltWPx / naturalWPx, quiltHPx / naturalHPx);
+  const offsetX = (quiltWPx - naturalWPx * fit) / 2;
+  const offsetY = (quiltHPx - naturalHPx * fit) / 2;
 
   return areas.map((area) => ({
     ...area,
-    x: area.x * fitX,
-    y: area.y * fitY,
-    width: area.width * fitX,
-    height: area.height * fitY,
-    // Scale polygon points so setting triangles match the stretched grid
+    x: area.x * fit + offsetX,
+    y: area.y * fit + offsetY,
+    width: area.width * fit,
+    height: area.height * fit,
     points: area.points
-      ? area.points.map((p) => ({ x: p.x * fitX, y: p.y * fitY }))
+      ? area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY }))
       : undefined,
   }));
 }

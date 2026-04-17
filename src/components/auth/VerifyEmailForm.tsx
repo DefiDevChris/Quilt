@@ -77,7 +77,7 @@ export function VerifyEmailForm() {
   }
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-default rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-[2.75rem]">
+    <div className="w-full max-w-[420px] mx-auto bg-surface border border-default rounded-lg p-[2.75rem] relative">
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-16 h-16 mb-4 relative block">
           <Image
@@ -158,28 +158,28 @@ export function VerifyEmailForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary-sm w-full mt-4"
         >
           {isLoading ? 'Verifying...' : 'Verify Email'}
         </button>
       </form>
 
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center">
         <button
           type="button"
           onClick={handleResend}
           disabled={isResending}
-          className="text-sm text-primary hover:bg-default disabled:opacity-50"
+          className="btn-secondary-sm w-full"
         >
-          {isResending ? 'Sending...' : "Didn't receive a code? Resend"}
+          {isResending ? 'Sending...' : "Resend code"}
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-dim">
-        <Link href="/auth/signin" className="text-primary hover:underline font-medium">
+      <div className="mt-10 flex flex-col items-center">
+        <Link href="/auth/signin" className="btn-secondary-sm w-full">
           Back to sign in
         </Link>
-      </p>
+      </div>
     </div>
   );
 }
