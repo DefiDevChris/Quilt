@@ -4,9 +4,11 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { getUnitLabel } from '@/lib/canvas-utils';
 import { parseFraction, toDecimal } from '@/lib/fraction-math';
+import { computeLayoutSize } from '@/lib/layout-size-utils';
 import {
   GRID_CELL_SIZE_MIN,
   GRID_CELL_SIZE_MAX,
@@ -47,10 +49,30 @@ export function QuiltSettingsDropdown({
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
+  const layoutType = useLayoutStore((s) => s.layoutType);
+  const rows = useLayoutStore((s) => s.rows);
+  const cols = useLayoutStore((s) => s.cols);
+  const blockSize = useLayoutStore((s) => s.blockSize);
+  const sashing = useLayoutStore((s) => s.sashing);
+  const borders = useLayoutStore((s) => s.borders);
+  const bindingWidth = useLayoutStore((s) => s.bindingWidth);
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const dialogs = useStudioDialogs();
   const unit = getUnitLabel(unitSystem);
+  const isLayoutSized = hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form';
+  const layoutSize = isLayoutSized
+    ? computeLayoutSize({
+        type: layoutType,
+        rows,
+        cols,
+        blockSize,
+        sashingWidth: sashing.width,
+        borders,
+        bindingWidth,
+      })
+    : null;
 
   // Local state for inputs
   const [widthInput, setWidthInput] = useState(String(canvasWidth));
@@ -217,7 +239,7 @@ export function QuiltSettingsDropdown({
             <path d="M3 10H17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
             <path d="M10 3V17" stroke="currentColor" strokeWidth="1" strokeOpacity="0.5" />
           </svg>
-          Quilt
+          Settings
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path
               d="M3 4.5L6 7.5L9 4.5"
@@ -233,96 +255,112 @@ export function QuiltSettingsDropdown({
       {/* Dropdown panel */}
       {isOpen && (
         <div className="absolute right-0 top-full mt-1 w-80 bg-[var(--color-bg)] border border-[var(--color-border)]/20 rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] py-3 z-50">
-          {/* Quilt Size section */}
           <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
             <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">
-              Quilt Size ({unit})
+              {isLayoutSized ? 'Finished Size' : `Quilt Size (${unit})`}
             </p>
-            <div className="flex gap-3 mb-3">
-              <div className="flex-1">
-                <label
-                  htmlFor="quilt-w"
-                  className="block text-xs text-[var(--color-text-dim)] mb-1"
-                >
-                  Width
-                </label>
-                <input
-                  id="quilt-w"
-                  type="text"
-                  inputMode="decimal"
-                  value={widthInput}
-                  onChange={(e) => {
-                    setWidthInput(e.target.value);
-                    setWidthError('');
-                  }}
-                  onBlur={(e) => commitWidth(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
-                  }}
-                  className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
-                    widthError ? 'border-[var(--color-accent)]' : ''
-                  }`}
-                />
-                {widthError && (
-                  <p className="text-xs text-[var(--color-accent)] mt-1">{widthError}</p>
-                )}
-              </div>
-              <div className="flex-1">
-                <label
-                  htmlFor="quilt-h"
-                  className="block text-xs text-[var(--color-text-dim)] mb-1"
-                >
-                  Height
-                </label>
-                <input
-                  id="quilt-h"
-                  type="text"
-                  inputMode="decimal"
-                  value={heightInput}
-                  onChange={(e) => {
-                    setHeightInput(e.target.value);
-                    setHeightError('');
-                  }}
-                  onBlur={(e) => commitHeight(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
-                  }}
-                  className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
-                    heightError ? 'border-[var(--color-accent)]' : ''
-                  }`}
-                />
-                {heightError && (
-                  <p className="text-xs text-[var(--color-accent)] mt-1">{heightError}</p>
-                )}
-              </div>
-            </div>
 
-            {/* Size presets */}
-            <p className="text-[10px] uppercase text-[var(--color-text-dim)] mb-1.5">Presets</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {QUILT_SIZE_PRESETS.map((p) => {
-                const isActive = canvasWidth === p.width && canvasHeight === p.height;
-                return (
-                  <button
-                    key={p.label}
-                    type="button"
-                    onClick={() => applyPreset(p.width, p.height)}
-                    className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors ${
-                      isActive
-                        ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
-                        : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[var(--color-border)]'
-                    }`}
-                  >
-                    <span>{p.label}</span>
-                    <span
-                      className={`font-mono text-[10px] ${isActive ? 'text-[var(--color-text)]/80' : 'text-[var(--color-text-dim)]'}`}
+            {isLayoutSized && layoutSize ? (
+              <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-bg)] px-3 py-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[var(--color-text-dim)]">Layout-driven size</span>
+                  <span className="font-mono font-semibold text-[var(--color-text)]">
+                    {layoutSize.width}″ × {layoutSize.height}″
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-[var(--color-text-dim)]">
+                  Quilt layouts now keep block cells square. Change rows, columns, block size,
+                  sashing, or borders from the Layouts tab.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex gap-3 mb-3">
+                  <div className="flex-1">
+                    <label
+                      htmlFor="quilt-w"
+                      className="block text-xs text-[var(--color-text-dim)] mb-1"
                     >
-                      {p.width}×{p.height}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                      Width
+                    </label>
+                    <input
+                      id="quilt-w"
+                      type="text"
+                      inputMode="decimal"
+                      value={widthInput}
+                      onChange={(e) => {
+                        setWidthInput(e.target.value);
+                        setWidthError('');
+                      }}
+                      onBlur={(e) => commitWidth(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
+                      }}
+                      className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
+                        widthError ? 'border-[var(--color-accent)]' : ''
+                      }`}
+                    />
+                    {widthError && (
+                      <p className="text-xs text-[var(--color-accent)] mt-1">{widthError}</p>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label
+                      htmlFor="quilt-h"
+                      className="block text-xs text-[var(--color-text-dim)] mb-1"
+                    >
+                      Height
+                    </label>
+                    <input
+                      id="quilt-h"
+                      type="text"
+                      inputMode="decimal"
+                      value={heightInput}
+                      onChange={(e) => {
+                        setHeightInput(e.target.value);
+                        setHeightError('');
+                      }}
+                      onBlur={(e) => commitHeight(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
+                      }}
+                      className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
+                        heightError ? 'border-[var(--color-accent)]' : ''
+                      }`}
+                    />
+                    {heightError && (
+                      <p className="text-xs text-[var(--color-accent)] mt-1">{heightError}</p>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-[10px] uppercase text-[var(--color-text-dim)] mb-1.5">Presets</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {QUILT_SIZE_PRESETS.map((p) => {
+                    const isActive = canvasWidth === p.width && canvasHeight === p.height;
+                    return (
+                      <button
+                        key={p.label}
+                        type="button"
+                        onClick={() => applyPreset(p.width, p.height)}
+                        className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors ${
+                          isActive
+                            ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
+                            : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[var(--color-border)]'
+                        }`}
+                      >
+                        <span>{p.label}</span>
+                        <span
+                          className={`font-mono text-[10px] ${isActive ? 'text-[var(--color-text)]/80' : 'text-[var(--color-text-dim)]'}`}
+                        >
+                          {p.width}×{p.height}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Grid section */}

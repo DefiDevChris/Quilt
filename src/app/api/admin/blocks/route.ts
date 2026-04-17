@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     const [created] = await db
       .insert(blocks)
-      .values({ ...parsed.data, userId: null })
+      .values({ ...parsed.data, userId: null, isDefault: true })
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });

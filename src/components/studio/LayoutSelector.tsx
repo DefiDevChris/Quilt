@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import { LAYOUT_PRESETS, PRESET_SVG } from '@/lib/layout-library';
 import { LAYOUT_TYPE_CARDS, type LayoutTypeCard } from '@/lib/layout-type-cards';
 import { useLayoutStore } from '@/stores/layoutStore';
@@ -9,22 +9,31 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { LayoutType, BorderConfig } from '@/lib/layout-utils';
-import { computeLayoutSize, type LayoutSizeOptions } from '@/lib/layout-size-utils';
-import { COLORS } from '@/lib/design-system';
+import { computeLayoutSize } from '@/lib/layout-size-utils';
 
 interface LayoutSelectorProps {
   readonly onLayoutSelect?: (presetId: string) => void;
+  readonly onStartOver?: () => void;
 }
+
+type CanvasLikeObject = Record<string, unknown> & {
+  left?: number;
+  top?: number;
+  set?: (props: Record<string, unknown>) => void;
+  setCoords?: () => void;
+};
+
+type LayoutCanvas = {
+  getObjects: () => CanvasLikeObject[];
+  remove: (...objs: unknown[]) => void;
+  toJSON: () => Record<string, unknown>;
+  requestRenderAll: () => void;
+};
 
 function removeBlockGroupsFromCanvas(getCanvas: () => unknown): void {
   const canvas = getCanvas();
   if (!canvas) return;
-  const c = canvas as unknown as {
-    getObjects: () => Array<Record<string, unknown>>;
-    remove: (...objs: unknown[]) => void;
-    toJSON: () => Record<string, unknown>;
-    requestRenderAll: () => void;
-  };
+  const c = canvas as unknown as LayoutCanvas;
   const toRemove = c.getObjects().filter((obj) => obj.__isBlockGroup || obj._inFenceCellId);
   if (toRemove.length > 0) {
     const json = JSON.stringify(c.toJSON());
@@ -34,7 +43,55 @@ function removeBlockGroupsFromCanvas(getCanvas: () => unknown): void {
   }
 }
 
-export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
+function isOverlayObject(obj: CanvasLikeObject): boolean {
+  return (
+    obj._fenceElement === true ||
+    obj.name === 'overlay-ref' ||
+    obj.stroke === '#E5E2DD' ||
+    obj.excludeFromExport === true
+  );
+}
+
+function shiftCanvasObjects(canvas: LayoutCanvas, dxPx: number, dyPx: number): void {
+  canvas.getObjects().forEach((obj) => {
+    if (isOverlayObject(obj)) return;
+    const currentLeft = typeof obj.left === 'number' ? obj.left : null;
+    const currentTop = typeof obj.top === 'number' ? obj.top : null;
+    if (currentLeft === null && currentTop === null) return;
+
+    if (obj.set) {
+      obj.set({
+        left: (currentLeft ?? 0) + dxPx,
+        top: (currentTop ?? 0) + dyPx,
+      });
+    } else {
+      if (currentLeft !== null) obj.left = currentLeft + dxPx;
+      if (currentTop !== null) obj.top = currentTop + dyPx;
+    }
+
+    obj.setCoords?.();
+  });
+
+  canvas.requestRenderAll();
+}
+
+function getLayoutCard(layoutType: LayoutType, selectedPresetId: string | null): LayoutTypeCard | null {
+  if (layoutType === 'free-form') {
+    return LAYOUT_TYPE_CARDS.find((card) => card.id === 'free-form') ?? null;
+  }
+
+  if (selectedPresetId) {
+    return (
+      LAYOUT_TYPE_CARDS.find(
+        (card) => selectedPresetId === card.defaultPresetId || selectedPresetId.startsWith(card.id)
+      ) ?? null
+    );
+  }
+
+  return null;
+}
+
+export function LayoutSelector({ onLayoutSelect, onStartOver }: LayoutSelectorProps) {
   const expandedCardId = useLayoutStore((s) => s.expandedCardId);
   const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
   const selectedPresetId = useLayoutStore((s) => s.selectedPresetId);
@@ -60,6 +117,7 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
           ls.setSashing(preset.config.sashing);
           ls.setBorders((preset.config.borders ?? []) as BorderConfig[]);
           ls.setSelectedPreset(preset.id);
+          ls.setPreviewMode(true);
         }
         ls.setExpandedCardId(card.id);
       };
@@ -71,15 +129,12 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
         dialogs.confirmChangeLayout(doExpand);
       }
     },
-    [dialogs]
+    [dialogs, getCanvas]
   );
 
-  const handleClearLayout = useCallback(() => {
-    dialogs.confirmClearLayout(() => {
-      removeBlockGroupsFromCanvas(getCanvas);
-      useLayoutStore.getState().clearLayout();
-    });
-  }, [dialogs, getCanvas]);
+  if (hasAppliedLayout) {
+    return <LockedLayoutPanel onStartOver={onStartOver} />;
+  }
 
   return (
     <div className="p-3 space-y-2">
@@ -98,21 +153,245 @@ export function LayoutSelector({ onLayoutSelect }: LayoutSelectorProps) {
           />
         );
       })}
+    </div>
+  );
+}
 
-      {hasAppliedLayout && (
-        <div className="pt-3 border-t border-[var(--color-border)]/20">
-          <button
-            type="button"
-            onClick={handleClearLayout}
-            className="w-full rounded-full border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5 px-4 py-2.5 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-accent)]/10 transition-colors duration-150"
-          >
-            Clear Layout
-          </button>
-          <p className="text-[10px] text-[var(--color-text-dim)] mt-1 text-center">
-            Removes fence and placed blocks
-          </p>
+function LockedLayoutPanel({ onStartOver }: { readonly onStartOver?: () => void }) {
+  const { getCanvas } = useCanvasContext();
+  const layoutType = useLayoutStore((s) => s.layoutType);
+  const selectedPresetId = useLayoutStore((s) => s.selectedPresetId);
+  const rows = useLayoutStore((s) => s.rows);
+  const cols = useLayoutStore((s) => s.cols);
+  const blockSize = useLayoutStore((s) => s.blockSize);
+  const sashing = useLayoutStore((s) => s.sashing);
+  const borders = useLayoutStore((s) => s.borders);
+  const bindingWidth = useLayoutStore((s) => s.bindingWidth);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const unitSystem = useCanvasStore((s) => s.unitSystem);
+
+  const card = useMemo(() => getLayoutCard(layoutType, selectedPresetId), [layoutType, selectedPresetId]);
+  const size = useMemo(() => {
+    if (layoutType === 'free-form') return null;
+    return computeLayoutSize({
+      type: layoutType,
+      rows,
+      cols,
+      blockSize,
+      sashingWidth: sashing.width,
+      borders,
+      bindingWidth,
+    });
+  }, [layoutType, rows, cols, blockSize, sashing.width, borders, bindingWidth]);
+
+  const handleResizeForBorders = useCallback(
+    async (mutate: () => void) => {
+      const previousBorderTotal = useLayoutStore
+        .getState()
+        .borders.reduce((total, border) => total + border.width, 0);
+      const previousWidth = useProjectStore.getState().canvasWidth;
+      const previousHeight = useProjectStore.getState().canvasHeight;
+
+      mutate();
+
+      const layoutState = useLayoutStore.getState();
+      const nextBorderTotal = layoutState.borders.reduce((total, border) => total + border.width, 0);
+
+      let nextWidth = previousWidth;
+      let nextHeight = previousHeight;
+
+      if (layoutState.layoutType === 'free-form') {
+        const delta = nextBorderTotal - previousBorderTotal;
+        nextWidth = Math.max(1, previousWidth + delta * 2);
+        nextHeight = Math.max(1, previousHeight + delta * 2);
+      } else {
+        const nextSize = computeLayoutSize({
+          type: layoutState.layoutType,
+          rows: layoutState.rows,
+          cols: layoutState.cols,
+          blockSize: layoutState.blockSize,
+          sashingWidth: layoutState.sashing.width,
+          borders: layoutState.borders,
+          bindingWidth: layoutState.bindingWidth,
+        });
+        nextWidth = nextSize.width;
+        nextHeight = nextSize.height;
+      }
+
+      const deltaXUnits = (nextWidth - previousWidth) / 2;
+      const deltaYUnits = (nextHeight - previousHeight) / 2;
+      const canvas = getCanvas();
+
+      if (canvas && (deltaXUnits !== 0 || deltaYUnits !== 0)) {
+        const { getPixelsPerUnit } = await import('@/lib/canvas-utils');
+        const pixelsPerUnit = getPixelsPerUnit(unitSystem);
+        const layoutCanvas = canvas as unknown as LayoutCanvas;
+        useCanvasStore.getState().pushUndoState(JSON.stringify(layoutCanvas.toJSON()));
+        shiftCanvasObjects(layoutCanvas, deltaXUnits * pixelsPerUnit, deltaYUnits * pixelsPerUnit);
+      }
+
+      useProjectStore.getState().setCanvasDimensions(nextWidth, nextHeight);
+      useProjectStore.getState().setDirty(true);
+
+      requestAnimationFrame(() => {
+        useCanvasStore.getState().centerAndFitViewport(getCanvas(), nextWidth, nextHeight);
+      });
+    },
+    [getCanvas, unitSystem]
+  );
+
+  const handleAddBorder = useCallback(async () => {
+    await handleResizeForBorders(() => {
+      useLayoutStore.getState().addBorder();
+    });
+  }, [handleResizeForBorders]);
+
+  const handleRemoveBorder = useCallback(
+    async (index: number) => {
+      await handleResizeForBorders(() => {
+        useLayoutStore.getState().removeBorder(index);
+      });
+    },
+    [handleResizeForBorders]
+  );
+
+  const handleUpdateBorder = useCallback(
+    async (index: number, width: number) => {
+      await handleResizeForBorders(() => {
+        useLayoutStore.getState().updateBorder(index, { width });
+      });
+    },
+    [handleResizeForBorders]
+  );
+
+  return (
+    <div className="p-3 space-y-3">
+      <div className="rounded-lg border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/5 p-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-medium text-[var(--color-text-dim)]">Current layout</p>
+            <h3 className="mt-1 text-[15px] font-semibold text-[var(--color-text)]">
+              {card?.name ?? (layoutType === 'free-form' ? 'Free-form' : 'Quilt layout')}
+            </h3>
+            <p className="mt-1 text-[12px] leading-[18px] text-[var(--color-text-dim)]">
+              {layoutType === 'free-form'
+                ? 'This quilt stays open for free placement and drawing, snapped to the active grid.'
+                : 'Layout choice is locked after setup so your placed blocks and fabrics stay intact.'}
+            </p>
+          </div>
+          {onStartOver && (
+            <button
+              type="button"
+              onClick={onStartOver}
+              className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[12px] font-medium text-[var(--color-text-dim)] transition-colors duration-150 hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-text)]"
+            >
+              Start over
+            </button>
+          )}
         </div>
-      )}
+      </div>
+
+      <div className="rounded-lg border border-[var(--color-border)]/15 bg-[var(--color-bg)] p-3">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--color-border)]/15 bg-[var(--color-bg)] p-1">
+            {card ? (
+              PRESET_SVG[card.defaultPresetId] ? (
+                <div
+                  className="h-full w-full"
+                  dangerouslySetInnerHTML={{ __html: PRESET_SVG[card.defaultPresetId] }}
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-lg">{card.icon}</div>
+              )
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-lg">✂️</div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] text-[var(--color-text-dim)]">Finished size</p>
+            <p className="text-[15px] font-semibold text-[var(--color-text)] font-mono">
+              {canvasWidth}″ × {canvasHeight}″
+            </p>
+          </div>
+        </div>
+
+        {layoutType !== 'free-form' && size && (
+          <div className="mt-3 grid grid-cols-2 gap-2 text-[12px] text-[var(--color-text-dim)]">
+            <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
+              Rows × cols: <span className="font-medium text-[var(--color-text)]">{rows} × {cols}</span>
+            </div>
+            <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
+              Block size: <span className="font-medium text-[var(--color-text)]">{blockSize}″</span>
+            </div>
+            <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
+              Perimeter: <span className="font-medium text-[var(--color-text)]">{size.perimeter}″</span>
+            </div>
+            <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
+              Binding: <span className="font-medium text-[var(--color-text)]">{size.bindingYardage} yd</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-[var(--color-border)]/15 p-3 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h4 className="text-[13px] font-semibold text-[var(--color-text)]">Borders</h4>
+            <p className="text-[11px] leading-[18px] text-[var(--color-text-dim)]">
+              Add borders around the current quilt. Existing blocks and fabrics stay centered.
+            </p>
+          </div>
+          {borders.length < 5 && (
+            <button
+              type="button"
+              onClick={() => void handleAddBorder()}
+              className="rounded-full bg-[var(--color-primary)]/10 px-3 py-1.5 text-[12px] font-medium text-[var(--color-primary)] transition-colors duration-150 hover:bg-[var(--color-primary)]/15"
+            >
+              Add border
+            </button>
+          )}
+        </div>
+
+        {borders.length === 0 ? (
+          <p className="text-[12px] text-[var(--color-text-dim)]">
+            No borders added yet.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {borders.map((border, index) => (
+              <div key={border.id ?? index} className="rounded-lg bg-[var(--color-bg)] px-3 py-3">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="text-[12px] font-medium text-[var(--color-text)]">
+                    Border {index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void handleRemoveBorder(index)}
+                    className="rounded-full border border-[var(--color-accent)]/20 px-3 py-1 text-[11px] font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-[var(--color-accent)]/10"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={8}
+                    step={0.5}
+                    value={border.width}
+                    onChange={(e) => void handleUpdateBorder(index, parseFloat(e.target.value))}
+                    className="flex-1 accent-[var(--color-primary)] h-1"
+                  />
+                  <span className="w-12 text-right text-[11px] font-mono text-[var(--color-text)]">
+                    {border.width}″
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -253,7 +532,6 @@ function LayoutConfigForm({
   const hasCornerstones = useLayoutStore((s) => s.hasCornerstones);
   const bindingWidth = useLayoutStore((s) => s.bindingWidth);
   const layoutType = useLayoutStore((s) => s.layoutType);
-  const previewMode = useLayoutStore((s) => s.previewMode);
   const selectedPresetId = useLayoutStore((s) => s.selectedPresetId);
 
   const setRows = useLayoutStore((s) => s.setRows);
@@ -279,10 +557,6 @@ function LayoutConfigForm({
       }),
     [layoutType, rows, cols, blockSize, sashing.width, borders, bindingWidth]
   );
-
-  const handlePreview = useCallback(() => {
-    useLayoutStore.getState().setPreviewMode(true);
-  }, []);
 
   const handleApply = useCallback(() => {
     const ls = useLayoutStore.getState();
@@ -311,7 +585,7 @@ function LayoutConfigForm({
               min={1}
               max={20}
               step={1}
-              suffix={`\u2192 ${rows * blockSize}\u2033`}
+              suffix={`→ ${rows * blockSize}″`}
               onChange={setRows}
             />
             <SliderRow
@@ -320,7 +594,7 @@ function LayoutConfigForm({
               min={1}
               max={20}
               step={1}
-              suffix={`\u2192 ${cols * blockSize}\u2033`}
+              suffix={`→ ${cols * blockSize}″`}
               onChange={setCols}
             />
             <SliderRow
@@ -329,7 +603,7 @@ function LayoutConfigForm({
               min={2}
               max={24}
               step={0.5}
-              suffix={`${blockSize}\u2033`}
+              suffix={`${blockSize}″`}
               onChange={setBlockSize}
             />
           </div>
@@ -343,7 +617,7 @@ function LayoutConfigForm({
               min={0.25}
               max={6}
               step={0.25}
-              suffix={`${sashing.width}\u2033`}
+              suffix={`${sashing.width}″`}
               onChange={(v) => setSashing({ width: v })}
             />
           </div>
@@ -366,47 +640,61 @@ function LayoutConfigForm({
         )}
 
         {card.hasBorders && (
-          <div className="mt-2 space-y-1.5">
-            {borders.map((border: BorderConfig, i: number) => (
-              <div key={border.id ?? i} className="flex items-center gap-2">
-                <span
-                  id={`border-label-${i + 1}`}
-                  className="text-[10px] text-[var(--color-text-dim)] w-12 flex-shrink-0"
-                >
-                  Border {i + 1}
-                </span>
-                <input
-                  type="range"
-                  min={0.5}
-                  max={8}
-                  step={0.5}
-                  value={border.width}
-                  onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })}
-                  aria-labelledby={`border-label-${i + 1}`}
-                  className="flex-1 accent-[var(--color-primary)] h-1"
-                />
-                <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-8 text-right">
-                  {border.width}″
-                </span>
+          <div className="mt-2 space-y-2 rounded-lg border border-[var(--color-border)]/15 p-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[var(--color-text)]/70">Borders</span>
+              {borders.length < 5 && (
                 <button
                   type="button"
-                  onClick={() => removeBorder(i)}
-                  aria-label={`Remove border ${i + 1}`}
-                  className="text-[10px] text-[var(--color-accent)] hover:text-[var(--color-accent)]/80 w-4"
+                  onClick={addBorder}
+                  aria-label="Add border"
+                  className="rounded-full bg-[var(--color-primary)]/10 px-2.5 py-1 text-[10px] font-medium text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)]/15"
                 >
-                  ✕
+                  Add border
                 </button>
-              </div>
-            ))}
-            {borders.length < 5 && (
-              <button
-                type="button"
-                onClick={addBorder}
-                aria-label="Add border"
-                className="text-[10px] text-[var(--color-primary)] hover:opacity-80"
-              >
-                + Add Border
-              </button>
+              )}
+            </div>
+
+            {borders.length === 0 ? (
+              <p className="text-[11px] text-[var(--color-text-dim)]">
+                No borders added. Use the button above to add one.
+              </p>
+            ) : (
+              borders.map((border: BorderConfig, i: number) => (
+                <div key={border.id ?? i} className="rounded-lg bg-[var(--color-bg)] px-2 py-2">
+                  <div className="mb-1.5 flex items-center justify-between gap-2">
+                    <span
+                      id={`border-label-${i + 1}`}
+                      className="text-[11px] font-medium text-[var(--color-text-dim)]"
+                    >
+                      Border {i + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeBorder(i)}
+                      aria-label={`Remove border ${i + 1}`}
+                      className="rounded-full border border-[var(--color-accent)]/20 px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/8"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={8}
+                      step={0.5}
+                      value={border.width}
+                      onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })}
+                      aria-labelledby={`border-label-${i + 1}`}
+                      className="flex-1 accent-[var(--color-primary)] h-1"
+                    />
+                    <span className="w-10 text-right font-mono text-[10px] text-[var(--color-text-dim)]">
+                      {border.width}″
+                    </span>
+                  </div>
+                </div>
+              ))
             )}
           </div>
         )}
@@ -419,7 +707,7 @@ function LayoutConfigForm({
               min={0}
               max={2}
               step={0.125}
-              suffix={`${bindingWidth}\u2033`}
+              suffix={`${bindingWidth}″`}
               onChange={setBindingWidth}
             />
           </div>
@@ -438,25 +726,13 @@ function LayoutConfigForm({
           </div>
         </div>
 
-        <div className="flex gap-2 mt-3">
-          <button
-            type="button"
-            onClick={handlePreview}
-            disabled={previewMode}
-            className={`flex-1 rounded-full border py-2 text-xs font-medium transition-colors duration-150 ${
-              previewMode
-                ? 'border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
-                : 'border-[var(--color-border)]/30 text-[var(--color-text)] hover:bg-[var(--color-bg)]'
-            }`}
-          >
-            {previewMode ? 'Previewing\u2026' : 'Preview'}
-          </button>
+        <div className="mt-3">
           <button
             type="button"
             onClick={handleApply}
-            className="flex-1 rounded-full bg-[var(--color-primary)] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150"
+            className="w-full rounded-full bg-[var(--color-primary)] py-2 text-xs font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150"
           >
-            Apply
+            Use this layout
           </button>
         </div>
       </div>

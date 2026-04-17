@@ -8,6 +8,7 @@ import { renderGrid } from '@/lib/canvas-grid';
 import { getPixelsPerUnit, fitToScreenZoom, snapToGrid } from '@/lib/canvas-utils';
 import { applyCustomControls, applyHoverEffects } from '@/lib/fabric-controls';
 import { registerFabricCustomProperties } from '@/lib/fabric-custom-props';
+import { computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { CANVAS } from '@/lib/design-system';
 import type { Project } from '@/types/project';
@@ -101,15 +102,34 @@ export function useCanvasInit(
         const vt = canvas.viewportTransform;
         // When viewport is unlocked, always redraw grid (no caching)
         // When locked, cache based on key to avoid unnecessary redraws
+        const layoutState = useLayoutStore.getState();
+        const layoutKey = `${layoutState.layoutType}|${layoutState.selectedPresetId}|${layoutState.rows}|${layoutState.cols}|${layoutState.blockSize}|${layoutState.sashing.width}|${layoutState.borders.map((border) => border.width).join(',')}|${layoutState.hasCornerstones}|${layoutState.bindingWidth}|${layoutState.previewMode}|${layoutState.hasAppliedLayout}`;
         const key = state.isViewportLocked
-          ? `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight},${gridEl.width},${gridEl.height}`
+          ? `${vt[0]},${vt[4]},${vt[5]},${state.gridSettings.size},${state.unitSystem},${proj.canvasWidth},${proj.canvasHeight},${gridEl.width},${gridEl.height},${layoutKey}`
           : '';
         if (key && key === lastGridKey) return;
         lastGridKey = key;
 
-        // Layout geometry is rendered on the Fabric.js canvas by
-        // useFenceRenderer (as selectable Rect objects). The grid layer
-        // only draws the background quilt rectangle + grid lines.
+        const layoutTemplate = layoutSourceToTemplate({
+          layoutType: layoutState.layoutType,
+          selectedPresetId: layoutState.selectedPresetId,
+          rows: layoutState.rows,
+          cols: layoutState.cols,
+          blockSize: layoutState.blockSize,
+          sashing: layoutState.sashing,
+          borders: layoutState.borders,
+          hasCornerstones: layoutState.hasCornerstones,
+          bindingWidth: layoutState.bindingWidth,
+        });
+        const layoutAreas = layoutTemplate
+          ? computeFenceAreas(
+              layoutTemplate,
+              proj.canvasWidth,
+              proj.canvasHeight,
+              getPixelsPerUnit(state.unitSystem)
+            )
+          : [];
+
         renderGrid(
           gridEl,
           canvas as unknown as { getZoom: () => number; viewportTransform: number[] },
@@ -118,6 +138,7 @@ export function useCanvasInit(
             unitSystem: state.unitSystem,
             quiltWidth: proj.canvasWidth,
             quiltHeight: proj.canvasHeight,
+            layoutAreas,
           }
         );
       };

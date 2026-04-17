@@ -2,7 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
+import { useAuthDerived } from '@/stores/authStore';
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
+import { ArrowLeft } from 'lucide-react';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { BlockBuilderFabricPicker } from '@/components/blocks/BlockBuilderFabricPicker';
 import { BlockOverlaySelector } from '@/components/blocks/BlockOverlaySelector';
@@ -14,6 +17,7 @@ import { CANVAS, COLORS } from '@/lib/design-system';
 import { useBlockBuilder } from '@/hooks/useBlockBuilder';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 import { hexToRgb } from '@/lib/color-math';
+import { useToast } from '@/components/ui/ToastProvider';
 
 /**
  * Shared props for drafting tab components.
@@ -40,19 +44,16 @@ export type BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'triangle' | 
 
 const DEFAULT_CELL_SIZE = 1;
 const DEFAULT_CANVAS_SIZE = 600;
+const DEFAULT_BLOCK_SIZE = 12;
 
-interface BlockBuilderWorktableProps {
-  onDone: () => void;
-}
-
-export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
+export function BlockBuilderWorktable() {
   const [blockName, setBlockName] = useState('');
   const [category, setCategory] = useState('Custom');
   const [tags, setTags] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [blockWidthIn, setBlockWidthIn] = useState(12);
-  const [blockHeightIn, setBlockHeightIn] = useState(12);
+  const blockWidthIn = DEFAULT_BLOCK_SIZE;
+  const blockHeightIn = DEFAULT_BLOCK_SIZE;
   const [cellSizeIn, setCellSizeIn] = useState(DEFAULT_CELL_SIZE);
   const [showOverlaySelector, setShowOverlaySelector] = useState(false);
   const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
@@ -63,21 +64,46 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
   const [rightTab, setRightTab] = useState<'blocks' | 'fabrics'>('blocks');
   const [activeMode, setActiveMode] = useState<BlockBuilderMode>('select');
+  const [publishToLibrary, setPublishToLibrary] = useState(false);
+  const { toast } = useToast();
+  const { isAdmin } = useAuthDerived();
+  const projectName = useProjectStore((s) => s.projectName);
 
-  // Auto-generate block name when user blocks are fetched
+  const handleBackToQuilt = useCallback(() => {
+    useCanvasStore.getState().setActiveWorktable('quilt');
+  }, []);
+
+  // Escape key returns to quilt so users can't feel trapped in the builder.
+  // Ignored when focus is inside a form control so it doesn't interrupt typing.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== 'Escape') return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) {
+        return;
+      }
+      handleBackToQuilt();
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [handleBackToQuilt]);
+
+  const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
+  const allBlockCount = blocks.length + userBlocks.length;
   useEffect(() => {
     if (!blockName) {
-      setBlockName(`Custom Block ${userBlocks.length + 1}`);
+      setBlockName(`Block ${allBlockCount + 1}`);
     }
-    // Only run once on mount — eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [blockName, allBlockCount]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasSize = DEFAULT_CANVAS_SIZE;
 
+  const fetchBlocks = useBlockStore((s) => s.fetchBlocks);
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
+  const setSelectedBlockId = useBlockStore((s) => s.setSelectedBlockId);
 
   // Map BlockBuilderMode to ToolType for canvasStore compatibility
   const modeToToolType: Record<BlockBuilderMode, ToolType> = {
@@ -214,7 +240,10 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     []
   );
 
-  const handleClearOverlay = useCallback(() => setActiveOverlay(null), []);
+  const handleClearOverlay = useCallback(() => {
+    setActiveOverlay(null);
+    setOverlayDimensions(null);
+  }, []);
 
   const generateThumbnailSvg = useCallback(async (): Promise<string> => {
     if (!draftCanvasRef.current) return '';
@@ -233,6 +262,39 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     return parts.join('');
   }, []);
 
+  const handleClearCanvas = useCallback(async () => {
+    hookClearSegments();
+    if (!draftCanvasRef.current) return;
+    const fabric = await import('fabric');
+    const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
+    const toRemove = canvas.getObjects().filter((o) => {
+      if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
+      return true;
+    });
+    for (const obj of toRemove) canvas.remove(obj);
+    canvas.renderAll();
+  }, [hookClearSegments]);
+
+  const resetDraft = useCallback(
+    async ({ preserveSelectedBlock = false }: { preserveSelectedBlock?: boolean } = {}) => {
+      await handleClearCanvas();
+      setError('');
+      setBlockName('');
+      setCategory('Custom');
+      setTags('');
+      setCellSizeIn(DEFAULT_CELL_SIZE);
+      setActiveMode('select');
+      setRightTab('blocks');
+      setActiveOverlay(null);
+      setOverlayDimensions(null);
+      setOverlayOpacity(0.3);
+      if (!preserveSelectedBlock) {
+        setSelectedBlockId(null);
+      }
+    },
+    [handleClearCanvas, setSelectedBlockId]
+  );
+
   const handleSave = useCallback(async () => {
     if (!draftCanvasRef.current) return;
 
@@ -245,7 +307,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
       const objs = canvas.getObjects().filter((o) => {
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
-        // Filter out grid lines — they are visual-only, not part of the block
         if ((o as unknown as { _isGridLine?: boolean })._isGridLine) return false;
         return true;
       });
@@ -255,9 +316,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         return;
       }
 
-      // Tag each object with patch metadata before cloning.
-      // Seam lines (Line type) get __pieceRole='seam'; fillable shapes
-      // get __pieceRole='patch' with shade derived from fill luminance.
       let patchIdx = 0;
       for (const o of objs) {
         const meta = o as unknown as Record<string, unknown>;
@@ -271,7 +329,6 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
           const fillStr = (o as unknown as { fill?: unknown }).fill;
           if (typeof fillStr === 'string' && fillStr.startsWith('#')) {
             const rgb = hexToRgb(fillStr);
-            // Relative luminance: 0 = black, 255 = white
             const lum = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
             meta.__shade = lum < 100 ? 'dark' : lum < 200 ? 'light' : 'background';
           } else {
@@ -292,9 +349,9 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
         heightIn: blockHeightIn,
       };
       const svgData = await generateThumbnailSvg();
+      const finalName = blockName.trim() || `Block ${blocks.length + 1}`;
 
-      // Auto-name if empty
-      const finalName = blockName.trim() || `Custom Block ${userBlocks.length + 1}`;
+      const willPublish = isAdmin && publishToLibrary;
 
       const res = await fetch('/api/blocks', {
         method: 'POST',
@@ -308,21 +365,35 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             .split(',')
             .map((t) => t.trim())
             .filter(Boolean),
+          publishToLibrary: willPublish,
         }),
       });
 
+      const data = (await res.json()) as { error?: string; data?: { id?: string } };
+
       if (!res.ok) {
-        const data = await res.json();
         setError(data.error ?? 'Failed to save block');
         setSaving(false);
         return;
       }
 
-      // Reset form with next auto-generated name
-      setBlockName(`Custom Block ${userBlocks.length + 2}`);
-      setTags('');
-      setCategory('Custom');
-      fetchUserBlocks();
+      setError('');
+      if (willPublish) {
+        await fetchBlocks();
+      } else {
+        await fetchUserBlocks();
+      }
+      if (data.data?.id) {
+        setSelectedBlockId(data.data.id);
+      }
+      await resetDraft({ preserveSelectedBlock: Boolean(data.data?.id) });
+      toast({
+        type: 'success',
+        title: willPublish ? 'Published to Library' : 'Saved to My Blocks',
+        description: willPublish
+          ? `${finalName} is now available to everyone.`
+          : `${finalName} has been saved to your blocks.`,
+      });
     } catch {
       setError('Failed to save block');
     } finally {
@@ -330,27 +401,29 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
     }
   }, [
     blockName,
+    blocks.length,
     category,
     tags,
     blockWidthIn,
     blockHeightIn,
-    generateThumbnailSvg,
+    fetchBlocks,
     fetchUserBlocks,
-    userBlocks.length,
+    generateThumbnailSvg,
+    isAdmin,
+    publishToLibrary,
+    resetDraft,
+    setSelectedBlockId,
+    toast,
   ]);
 
-  const handleClearCanvas = useCallback(async () => {
-    hookClearSegments();
-    if (!draftCanvasRef.current) return;
-    const fabric = await import('fabric');
-    const canvas = draftCanvasRef.current as InstanceType<typeof fabric.Canvas>;
-    const toRemove = canvas.getObjects().filter((o) => {
-      if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
-      return true;
+  const handleDeleteBlock = useCallback(async () => {
+    await resetDraft();
+    toast({
+      type: 'success',
+      title: 'Block cleared',
+      description: 'The builder is ready for a new block.',
     });
-    for (const obj of toRemove) canvas.remove(obj);
-    canvas.renderAll();
-  }, [hookClearSegments]);
+  }, [resetDraft, toast]);
 
   const handleBlockDragStart = useCallback((e: React.DragEvent, blockId: string) => {
     e.dataTransfer.setData('application/quiltcorgi+block-id', blockId);
@@ -410,7 +483,33 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
 
   // ── Render ──────────────────────────────────────────────────
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* ── Context header — persistent back button + location pill ── */}
+      <div className="flex items-center gap-3 bg-[var(--color-surface)] border-b border-[var(--color-border)]/20 px-4 py-2 flex-shrink-0">
+        <button
+          type="button"
+          onClick={handleBackToQuilt}
+          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium text-[var(--color-text)]/75 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/60 transition-colors"
+          aria-label="Return to quilt canvas"
+        >
+          <ArrowLeft size={14} strokeWidth={2} />
+          Back to Quilt
+        </button>
+        <span
+          className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-bg)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/70"
+          title={`Building a block for ${projectName || 'Untitled project'}`}
+        >
+          <span className="text-[var(--color-text-dim)]">Designing a block for </span>
+          <span className="font-semibold text-[var(--color-text)]">
+            {projectName || 'Untitled project'}
+          </span>
+        </span>
+        <span className="ml-auto text-[11px] text-[var(--color-text-dim)]">
+          Press <kbd className="rounded bg-[var(--color-bg)] border border-[var(--color-border)]/40 px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd> to return
+        </span>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden">
       {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
       <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
         {/* Grid unit slider */}
@@ -439,12 +538,20 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
       {/* ── Center: Canvas (unified styling) ────────────────── */}
       <div
         ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center bg-[var(--color-bg)]/20 overflow-hidden"
+        className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,196,176,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(250,249,247,0.9))] p-8"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        <div className="border border-[var(--color-border)]/20 bg-[var(--color-surface)] shadow">
-          <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-center">
+            <p className="text-[13px] font-semibold text-[var(--color-text)]">Square block workspace</p>
+            <p className="text-[12px] text-[var(--color-text-dim)]">
+              Draft a block here, then save it to your collection.
+            </p>
+          </div>
+          <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] p-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+            <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
+          </div>
         </div>
       </div>
 
@@ -461,7 +568,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
                 : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
-            My Blocks
+            Library
           </button>
           <button
             type="button"
@@ -488,8 +595,30 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
           )}
         </div>
 
-        {/* Block metadata + Save */}
         <div className="border-t border-[var(--color-border)]/15 px-3 py-3 space-y-2">
+          <div className="rounded-lg border border-[var(--color-border)]/15 bg-[var(--color-bg)] px-3 py-2">
+            <p className="text-[11px] font-semibold text-[var(--color-text)]">
+              {isAdmin && publishToLibrary ? 'Publish to Block Library' : 'Save to My Blocks'}
+            </p>
+            <p className="mt-1 text-[10px] leading-relaxed text-[var(--color-text-dim)]">
+              {isAdmin && publishToLibrary
+                ? 'Block will be published to the shared library and available to everyone.'
+                : 'Block will be saved to your personal collection.'}
+            </p>
+          </div>
+
+          {isAdmin && (
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={publishToLibrary}
+                onChange={(e) => setPublishToLibrary(e.target.checked)}
+                className="accent-[var(--color-primary)] h-3.5 w-3.5"
+              />
+              <span className="text-[11px] text-[var(--color-text-dim)]">Publish to shared library</span>
+            </label>
+          )}
+
           {error && <p className="text-[11px] text-[var(--color-accent)]">{error}</p>}
 
           <div>
@@ -585,14 +714,24 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-          >
-            {saving ? 'Saving…' : 'Save Block'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleDeleteBlock}
+              disabled={saving}
+              className="flex-1 rounded-full border-2 border-[var(--color-accent)]/70 px-4 py-2.5 text-[13px] font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Delete Block
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#d97054] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+            >
+              {saving ? 'Saving…' : isAdmin && publishToLibrary ? 'Publish Block' : 'Save Block'}
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -604,6 +743,7 @@ export function BlockBuilderWorktable({ onDone }: BlockBuilderWorktableProps) {
           currentOverlay={activeOverlay}
         />
       )}
+      </div>
     </div>
   );
 }

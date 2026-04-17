@@ -77,7 +77,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-default rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-[2.75rem]">
+    <div className="w-full max-w-[420px] mx-auto bg-surface border border-default rounded-lg p-[2.75rem] relative">
       <div className="flex flex-col items-center mb-8">
         <Link href="/" className="w-16 h-16 mb-4 relative block">
           <Image
@@ -145,7 +145,7 @@ export function ForgotPasswordForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary-sm w-full mt-4"
           >
             {isLoading ? 'Sending...' : 'Send Reset Code'}
           </button>
@@ -228,18 +228,18 @@ export function ForgotPasswordForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-primary-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary-sm w-full mt-4"
           >
             {isLoading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
       )}
 
-      <p className="mt-6 text-center text-sm text-dim">
-        <Link href="/auth/signin" className="text-primary hover:underline font-medium">
+      <div className="mt-10 flex flex-col items-center">
+        <Link href="/auth/signin" className="btn-secondary-sm w-full">
           Back to sign in
         </Link>
-      </p>
+      </div>
     </div>
   );
 }

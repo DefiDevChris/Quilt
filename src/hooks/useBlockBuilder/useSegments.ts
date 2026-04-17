@@ -9,6 +9,7 @@ export function useSegments(gridCols: number, gridRows: number) {
   const [patchFills, setPatchFills] = useState<Record<string, string>>({});
   const [selectedPatchId, setSelectedPatchId] = useState<string | null>(null);
   const segmentsRef = useRef<readonly DrawSegment[]>(segments);
+  // eslint-disable-next-line react-hooks/refs
   segmentsRef.current = segments;
 
   const segmentsIntersectAtGridPoint = useCallback((a: Segment, b: Segment): GridPoint | null => {

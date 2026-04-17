@@ -109,8 +109,8 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     }
   }, []);
 
-  const handleBlockSaved = useCallback(() => {
-    useBlockStore.getState().fetchUserBlocks();
+  const handleBlockSaved = useCallback((_blockId?: string) => {
+    void useBlockStore.getState().fetchUserBlocks();
   }, []);
 
   const handleFabricUploaded = useCallback(() => {

@@ -6,15 +6,11 @@ type ApiErrorCode =
   | 'PROJECT_LIMIT_REACHED'
   | 'NOT_FOUND'
   | 'CONFLICT'
-  | 'ALREADY_SHARED'
   | 'VALIDATION_ERROR'
   | 'RATE_LIMITED'
-  | 'TRUST_INSUFFICIENT'
   | 'INTERNAL_ERROR'
   | 'USERNAME_CONFLICT'
-  | 'SLUG_CONFLICT'
-  | 'ALREADY_REPORTED'
-  | 'PRIVATE_PROFILE';
+  | 'SLUG_CONFLICT';
 
 export function unauthorizedResponse(message = 'Authentication required') {
   return Response.json(

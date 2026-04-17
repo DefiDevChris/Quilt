@@ -15,3 +15,4 @@ export function isAdmin(role: UserRole | string | null): boolean {
 export function isPro(role: UserRole): boolean {
   return role === 'pro' || role === 'admin';
 }
+

@@ -142,12 +142,116 @@ function ReferenceImageToggle() {
   );
 }
 
+/**
+ * Compact chip showing the current canvas mode and grid summary so the user
+ * always knows whether they are in a constrained grid layout or free-form.
+ */
+function ModeChip({
+  onEditQuiltSetup,
+}: {
+  readonly onEditQuiltSetup?: () => void;
+}) {
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+  const layoutType = useLayoutStore((s) => s.layoutType);
+  const rows = useLayoutStore((s) => s.rows);
+  const cols = useLayoutStore((s) => s.cols);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
+
+  if (!hasAppliedLayout) {
+    return (
+      <span className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text-dim)]">
+        No layout yet
+      </span>
+    );
+  }
+
+  const isFreeForm = layoutType === 'free-form';
+  const MODE_LABELS: Record<string, string> = {
+    'free-form': 'Free-form',
+    medallion: 'Medallion',
+    'on-point': 'On-point',
+    strippy: 'Strippy',
+    sashing: 'Sashing',
+    grid: 'Grid',
+  };
+  const modeLabel = MODE_LABELS[layoutType] ?? 'Grid';
+  const gridLabel = isFreeForm ? '' : `${rows}×${cols}`;
+  const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
+
+  const content = (
+    <>
+      <span className="font-semibold text-[var(--color-text)]">{modeLabel}</span>
+      {gridLabel && <span className="text-[var(--color-text-dim)]"> · {gridLabel}</span>}
+      <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
+    </>
+  );
+
+  const title = `Mode: ${modeLabel} · ${gridLabel ? gridLabel + ' · ' : ''}${sizeLabel}${onEditQuiltSetup ? ' (Click to edit layout)' : ''}`;
+
+  if (onEditQuiltSetup) {
+    return (
+      <button
+        type="button"
+        onClick={onEditQuiltSetup}
+        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75 hover:bg-[var(--color-border)]/20 hover:text-[var(--color-text)] hover:border-[var(--color-primary)]/40 transition-colors"
+        title={title}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <span
+      className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
+      title={title}
+    >
+      {content}
+    </span>
+  );
+}
+
+function WorktableTabs({
+  activeWorktable,
+}: {
+  readonly activeWorktable: 'quilt' | 'block-builder';
+}) {
+  return (
+    <div className="flex items-center rounded-full border border-[var(--color-border)]/30 bg-[var(--color-bg)] p-0.5">
+      {[
+        { id: 'quilt', label: 'Quilt' },
+        { id: 'block-builder', label: 'Block Builder' },
+      ].map((tab) => {
+        const isActive = activeWorktable === tab.id;
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => useCanvasStore.getState().setActiveWorktable(tab.id as 'quilt' | 'block-builder')}
+            className={`rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              isActive
+                ? 'bg-[var(--color-primary)] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+                : 'text-[var(--color-text)]/65 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/60'
+            }`}
+            aria-pressed={isActive}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
   readonly onOpenPdfExport?: () => void;
   readonly onOpenHelp?: () => void;
   readonly onOpenHistory?: () => void;
   readonly onSave?: () => void;
+  /** Re-opens the quilt setup wizard (layout & size) for editing. */
+  readonly onEditQuiltSetup?: () => void;
 }
 
 export function StudioTopBar({
@@ -156,6 +260,7 @@ export function StudioTopBar({
   onOpenHelp,
   onOpenHistory,
   onSave,
+  onEditQuiltSetup,
 }: StudioTopBarProps) {
   const router = useRouter();
   const projectName = useProjectStore((s) => s.projectName);
@@ -168,6 +273,7 @@ export function StudioTopBar({
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
+  const isQuiltMode = activeWorktable === 'quilt';
   const { toast } = useToast();
   const { getCanvas } = useCanvasContext();
 
@@ -245,50 +351,25 @@ export function StudioTopBar({
               Dashboard
             </button>
           </TooltipHint>
-          <div className="flex items-center gap-2">
-            {activeWorktable === 'block-builder' ? (
-              /* Block Builder breadcrumb */
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => useCanvasStore.getState().setActiveWorktable('quilt')}
-                  className="flex items-center gap-1 text-sm text-primary hover:underline transition-colors"
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M9 3L5 7L9 11"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Back to Quilt
-                </button>
-                <span className="text-[var(--color-text)]/30 text-[14px] leading-[20px]">|</span>
-                <span className="font-semibold text-[15px] leading-[20px] text-[var(--color-text)] tracking-[-0.01em]">
-                  Block Builder
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              {isDirty && (
+                <span
+                  className="w-2 h-2 rounded-full bg-primary/80 flex-shrink-0"
+                  title="Unsaved changes"
+                />
+              )}
+              <span className="font-semibold text-[15px] leading-[20px] text-[var(--color-text)] tracking-[-0.01em]">
+                {projectName || 'Quilt Studio'}
+              </span>
+              {lastSavedAt && (
+                <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]/60 ml-1">
+                  Saved {formatTimestamp(lastSavedAt)}
                 </span>
-              </div>
-            ) : (
-              /* Quilt mode: project name + dirty indicator */
-              <div className="flex items-center gap-1.5">
-                {isDirty && (
-                  <span
-                    className="w-2 h-2 rounded-full bg-primary/80 flex-shrink-0"
-                    title="Unsaved changes"
-                  />
-                )}
-                <span className="font-semibold text-[15px] leading-[20px] text-[var(--color-text)] tracking-[-0.01em]">
-                  {projectName || 'Quilt Studio'}
-                </span>
-                {lastSavedAt && (
-                  <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]/60 ml-1">
-                    Saved {formatTimestamp(lastSavedAt)}
-                  </span>
-                )}
-              </div>
-            )}
+              )}
+            </div>
+            <WorktableTabs activeWorktable={activeWorktable} />
+            {activeWorktable === 'quilt' && <ModeChip onEditQuiltSetup={onEditQuiltSetup} />}
           </div>
         </div>
 
@@ -299,107 +380,108 @@ export function StudioTopBar({
         <div className="flex items-center gap-4">
           {!isPro && <ProUpgradeButton variant="studio" />}
 
-          {/* Edit/Preview toggle — only visible with applied layout */}
-          <EditPreviewToggle />
+          {isQuiltMode && (
+            <>
+              <EditPreviewToggle />
 
-          {/* Viewport lock/unlock + recenter */}
-          <div className="flex items-center gap-1">
-            <TooltipHint
-              name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
-              description={
-                isViewportLocked
-                  ? 'Click to unlock and pan/zoom freely'
-                  : 'Click to lock viewport to centered fit'
-              }
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  useCanvasStore
-                    .getState()
-                    .setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)
-                }
-                className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                  isViewportLocked
-                    ? 'hover:bg-[var(--color-border)]'
-                    : 'bg-primary/10 hover:bg-primary/20'
-                }`}
-                aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
-              >
-                {isViewportLocked ? (
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke={CANVAS.seamLine}
-                    strokeWidth="1.4"
-                  >
-                    <rect x="4" y="9" width="12" height="8" rx="2" />
-                    <path
-                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke={CANVAS.seamLine}
-                    strokeWidth="1.4"
-                  >
-                    <rect x="4" y="9" width="12" height="8" rx="2" />
-                    <path
-                      d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                )}
-              </button>
-            </TooltipHint>
-
-            {/* Quick recenter — only visible when unlocked */}
-            {!isViewportLocked && (
-              <TooltipHint
-                name="Recenter Viewport"
-                description="Snap grid back to center of canvas"
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    useCanvasStore
-                      .getState()
-                      .centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)
+              <div className="flex items-center gap-1">
+                <TooltipHint
+                  name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
+                  description={
+                    isViewportLocked
+                      ? 'Click to unlock and pan/zoom freely'
+                      : 'Click to lock viewport to centered fit'
                   }
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-border)] transition-colors"
-                  aria-label="Recenter viewport"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke={CANVAS.seamLine}
-                    strokeWidth="1.4"
+                  <button
+                    type="button"
+                    onClick={() =>
+                      useCanvasStore
+                        .getState()
+                        .setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)
+                    }
+                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                      isViewportLocked
+                        ? 'hover:bg-[var(--color-border)]'
+                        : 'bg-primary/10 hover:bg-primary/20'
+                    }`}
+                    aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
                   >
-                    <circle cx="10" cy="10" r="3" />
-                    <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </TooltipHint>
-            )}
-          </div>
+                    {isViewportLocked ? (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke={CANVAS.seamLine}
+                        strokeWidth="1.4"
+                      >
+                        <rect x="4" y="9" width="12" height="8" rx="2" />
+                        <path
+                          d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke={CANVAS.seamLine}
+                        strokeWidth="1.4"
+                      >
+                        <rect x="4" y="9" width="12" height="8" rx="2" />
+                        <path
+                          d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </TooltipHint>
 
-          <ReferenceImageToggle />
+                {!isViewportLocked && (
+                  <TooltipHint
+                    name="Recenter Viewport"
+                    description="Snap grid back to center of canvas"
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        useCanvasStore
+                          .getState()
+                          .centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)
+                      }
+                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-border)] transition-colors"
+                      aria-label="Recenter viewport"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke={CANVAS.seamLine}
+                        strokeWidth="1.4"
+                      >
+                        <circle cx="10" cy="10" r="3" />
+                        <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </TooltipHint>
+                )}
+              </div>
 
-          <div className="h-6 w-px bg-[var(--color-border)]/30" />
+              <ReferenceImageToggle />
 
-          <QuiltSettingsDropdown
-            onOpenImageExport={onOpenImageExport}
-            onOpenPdfExport={onOpenPdfExport}
-          />
+              <div className="h-6 w-px bg-[var(--color-border)]/30" />
+
+              <QuiltSettingsDropdown
+                onOpenImageExport={onOpenImageExport}
+                onOpenPdfExport={onOpenPdfExport}
+              />
+            </>
+          )}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
 
@@ -33,7 +34,14 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const zoom = useCanvasStore((s) => s.zoom);
   const { getCanvas } = useCanvasContext();
 
-  return [
+  // Drawing tools only make sense in free-form mode or before a layout is
+  // applied. When a grid/medallion/etc. layout is applied, hide them to
+  // prevent users from drawing outside fence cells.
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+  const layoutType = useLayoutStore((s) => s.layoutType);
+  const showDrawingTools = !hasAppliedLayout || layoutType === 'free-form';
+
+  const tools: ToolDef[] = [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
     {
       id: 'select',
@@ -144,6 +152,17 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       icon: <ZoomOut size={20} />,
     },
   ];
+
+  // Filter drawing/shape tools when an applied layout constrains the canvas
+  // to fence cells. The drawing group + rectangle/triangle shapes are only
+  // useful in free-form mode.
+  if (!showDrawingTools) {
+    return tools.filter(
+      (tool) => !['easydraw', 'bend', 'rectangle', 'triangle'].includes(tool.id)
+    );
+  }
+
+  return tools;
 }
 
 export function useBlockTools(

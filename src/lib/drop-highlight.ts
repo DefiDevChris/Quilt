@@ -3,7 +3,7 @@
  * Used by useBlockDrop (blue) and useFabricDrop (green).
  */
 
-const HIGHLIGHT_RECT_PROPS = {
+const HIGHLIGHT_SHAPE_PROPS = {
   selectable: false,
   evented: false,
   hasControls: false,
@@ -27,30 +27,47 @@ export async function showDropHighlight(
     requestRenderAll: () => void;
   };
 
-  const fabricObj = target as unknown as import('fabric').FabricObject;
-  const x = fabricObj.left ?? 0;
-  const y = fabricObj.top ?? 0;
-  const w = (fabricObj.width ?? 100) * (fabricObj.scaleX ?? 1);
-  const h = (fabricObj.height ?? 100) * (fabricObj.scaleY ?? 1);
+  const shapeData = target as {
+    left?: number;
+    top?: number;
+    width?: number;
+    height?: number;
+    scaleX?: number;
+    scaleY?: number;
+    angle?: number;
+    x?: number;
+    y?: number;
+    rotation?: number;
+    points?: Array<{ x: number; y: number }>;
+  };
 
-  const rect = new fabric.Rect({
-    left: x,
-    top: y,
-    width: w,
-    height: h,
-    fill: `${color}14`, // ~8% opacity hex
-    stroke: color,
-    strokeWidth: 2,
-    strokeDashArray: [6, 4],
-    ...HIGHLIGHT_RECT_PROPS,
-  });
+  const shape = shapeData.points && shapeData.points.length >= 3
+    ? new fabric.Polygon(shapeData.points, {
+        fill: `${color}14`,
+        stroke: color,
+        strokeWidth: 2,
+        strokeDashArray: [6, 4],
+        ...HIGHLIGHT_SHAPE_PROPS,
+      })
+    : new fabric.Rect({
+        left: shapeData.left ?? shapeData.x ?? 0,
+        top: shapeData.top ?? shapeData.y ?? 0,
+        width: (shapeData.width ?? 100) * (shapeData.scaleX ?? 1),
+        height: (shapeData.height ?? 100) * (shapeData.scaleY ?? 1),
+        angle: shapeData.angle ?? shapeData.rotation ?? 0,
+        fill: `${color}14`,
+        stroke: color,
+        strokeWidth: 2,
+        strokeDashArray: [6, 4],
+        ...HIGHLIGHT_SHAPE_PROPS,
+      });
 
-  (rect as unknown as Record<string, unknown>)['_dragHighlight'] = true;
-  canvasApi.add(rect as unknown as import('fabric').FabricObject);
-  canvasApi.bringObjectToFront(rect as unknown as import('fabric').FabricObject);
+  (shape as unknown as Record<string, unknown>)['_dragHighlight'] = true;
+  canvasApi.add(shape as unknown as import('fabric').FabricObject);
+  canvasApi.bringObjectToFront(shape as unknown as import('fabric').FabricObject);
   canvasApi.requestRenderAll();
 
-  return rect as unknown as import('fabric').FabricObject;
+  return shape as unknown as import('fabric').FabricObject;
 }
 
 /**

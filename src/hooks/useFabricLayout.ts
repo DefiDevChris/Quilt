@@ -1,17 +1,55 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
+import { computeFenceAreas, findFenceAreaAtPoint, layoutSourceToTemplate } from '@/lib/fence-engine';
+import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { CANVAS } from '@/lib/design-system';
 
 const FABRIC_HIGHLIGHT_COLOR = CANVAS.fabricHighlight;
+const ALLOWED_FABRIC_ROLES = [
+  'sashing',
+  'cornerstone',
+  'border',
+  'binding',
+  'edging',
+  'setting-triangle',
+] as const;
+
+function getComputedLayoutAreas() {
+  const layoutState = useLayoutStore.getState();
+  const projectState = useProjectStore.getState();
+  const { unitSystem } = useCanvasStore.getState();
+  const template = layoutSourceToTemplate({
+    layoutType: layoutState.layoutType,
+    selectedPresetId: layoutState.selectedPresetId,
+    rows: layoutState.rows,
+    cols: layoutState.cols,
+    blockSize: layoutState.blockSize,
+    sashing: layoutState.sashing,
+    borders: layoutState.borders,
+    hasCornerstones: layoutState.hasCornerstones,
+    bindingWidth: layoutState.bindingWidth,
+  });
+
+  if (!template) {
+    return [];
+  }
+
+  return computeFenceAreas(
+    template,
+    projectState.canvasWidth,
+    projectState.canvasHeight,
+    getPixelsPerUnit(unitSystem)
+  );
+}
 
 /**
  * Hook to apply fabric images as Fabric.js pattern fills to canvas objects.
@@ -158,8 +196,6 @@ export function useFabricDrop() {
     [fabricCanvas, clearHighlight]
   );
 
-  const ALLOWED_ROLES = ['sashing', 'cornerstone', 'border', 'binding', 'edging', 'setting-triangle'] as const;
-
   const handleFabricDragOver = useCallback(
     async (e: React.DragEvent) => {
       const hasFabricData = e.dataTransfer.types.includes('application/quiltcorgi-fabric-id');
@@ -167,28 +203,29 @@ export function useFabricDrop() {
       e.preventDefault();
 
       if (fabricCanvas) {
-        const fabric = fabricCanvas as unknown as { findTarget: (e: MouseEvent) => unknown };
-        const foundTarget = fabric.findTarget(e.nativeEvent as unknown as MouseEvent);
-        if (foundTarget) {
-          const areaObj = foundTarget as Record<string, unknown>;
-          // Highlight when cursor is over a valid fence chrome area
-          if (
-            areaObj['_fenceElement'] &&
-            ALLOWED_ROLES.includes(areaObj['_fenceRole'] as (typeof ALLOWED_ROLES)[number])
-          ) {
-            e.dataTransfer.dropEffect = 'copy';
-            await showFabricHighlight(foundTarget);
-            return;
-          }
-          // Highlight when cursor is over a block group (per-piece fabric assignment)
-          if (areaObj.__isBlockGroup) {
-            e.dataTransfer.dropEffect = 'copy';
-            await showFabricHighlight(foundTarget);
-            return;
-          }
+        const canvas = fabricCanvas as InstanceType<typeof import('fabric').Canvas>;
+        const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
+        const targetArea = findFenceAreaAtPoint(
+          getComputedLayoutAreas(),
+          pointer.x,
+          pointer.y,
+          [...ALLOWED_FABRIC_ROLES]
+        );
+
+        if (targetArea) {
+          e.dataTransfer.dropEffect = 'copy';
+          await showFabricHighlight(targetArea);
+          return;
+        }
+
+        const foundTarget = canvas.findTarget(e.nativeEvent);
+        if ((foundTarget as Record<string, unknown> | null)?.__isBlockGroup) {
+          e.dataTransfer.dropEffect = 'copy';
+          await showFabricHighlight(foundTarget);
+          return;
         }
       }
-      // Drops outside valid areas are rejected
+
       e.dataTransfer.dropEffect = 'none';
       clearHighlight();
     },
@@ -205,41 +242,46 @@ export function useFabricDrop() {
 
       const fabric = await import('fabric');
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-
+      const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
+      const targetArea = findFenceAreaAtPoint(
+        getComputedLayoutAreas(),
+        pointer.x,
+        pointer.y,
+        [...ALLOWED_FABRIC_ROLES]
+      );
       const foundTarget = canvas.findTarget(e.nativeEvent);
-      if (!foundTarget) {
-        clearHighlight();
-        return;
-      }
+      const areaObj = (foundTarget as Record<string, unknown>) ?? {};
 
-      const areaObj = foundTarget as Record<string, unknown>;
+      if (targetArea) {
+        const fenceObject = canvas.getObjects().find((obj) => {
+          const meta = obj as unknown as Record<string, unknown>;
+          return meta._fenceElement && meta._fenceAreaId === targetArea.id;
+        });
 
-      // Path 1: Fence chrome area (sashing, border, etc.)
-      if (
-        areaObj['_fenceElement'] &&
-        ALLOWED_ROLES.includes(areaObj['_fenceRole'] as (typeof ALLOWED_ROLES)[number])
-      ) {
-        canvas.setActiveObject(foundTarget as unknown as InstanceType<typeof fabric.FabricObject>);
+        if (!fenceObject) {
+          clearHighlight();
+          return;
+        }
+
+        canvas.setActiveObject(fenceObject as unknown as InstanceType<typeof fabric.FabricObject>);
         await applyFabricToObject(null, imageUrl);
-        // Track which library fabric is on this object (survives serialization)
-        (foundTarget as unknown as Record<string, unknown>).fabricId = fabricId;
+        (fenceObject as unknown as Record<string, unknown>).fabricId = fabricId;
         saveRecentFabric({ id: fabricId, name: fabricName || fabricId, imageUrl });
         useProjectStore.getState().setHasContent(true);
         clearHighlight();
         return;
       }
 
-      // Path 2: Block group — apply fabric to the specific patch under the pointer
       if (areaObj.__isBlockGroup) {
         const group = foundTarget as unknown as InstanceType<typeof fabric.Group>;
-        const pointer = canvas.getScenePoint(e.nativeEvent);
+        const scenePoint = canvas.getScenePoint(e.nativeEvent);
 
         // Find which patch child is under the pointer.
         // Transform scene pointer into the group's local coordinate space
         // using the inverse of the group's full transform matrix.
         const groupMatrix = group.calcTransformMatrix();
         const invMatrix = fabric.util.invertTransform(groupMatrix);
-        const localPoint = new fabric.Point(pointer.x, pointer.y).transform(invMatrix);
+        const localPoint = new fabric.Point(scenePoint.x, scenePoint.y).transform(invMatrix);
 
         const children = group.getObjects();
         let hitPatch: InstanceType<typeof fabric.FabricObject> | null = null;

@@ -29,27 +29,23 @@ Rule of thumb for step size: each step = a coherent unit of work (component, end
 
 Update `{@artifacts_path}/plan.md` if it makes sense to have a plan and task has more than 1 big step.
 
-### [x] Step: Investigation
-- Compared the current Design Studio canvas flow against the working Picture My Blocks interaction model.
-- Confirmed the main failure points are Fabric fence hit-testing for block placement, weak slot visibility, and a layout flow that hides where blocks actually belong.
-- Chosen direction: keep Fabric for rendering/editing quilt content, but use explicit layout slot math as the source of truth for placement and feedback.
+## Implementation Plan
 
-### [x] Step: Simplify layout and slot rendering
-- Rendered visible layout slots directly from computed fence/layout geometry on the grid canvas.
-- Kept fence rendering aligned with the same shared layout template conversion so slot visibility and Fabric placement use one geometry source.
-- Made layout structure readable immediately on canvas instead of relying on hidden Fabric-only fence targets.
+### [x] Step: Simplify the studio shell around explicit Quilt and Block Builder modes
+- Replace the current breadcrumb/worktable affordance with two top-level tabs in the studio header.
+- Keep mode switching inside the existing `activeWorktable` store path so save/load behavior stays compatible.
+- Preserve the current studio layout patterns instead of introducing a new route.
 
-### [x] Step: Replace fragile block drop behavior with slot-based placement
-- Routed block drag-and-drop through computed slot geometry instead of Fabric target discovery.
-- Snap dropped blocks into the exact target block cell for structured layouts, while preserving free-form drops when no structured layout is active.
-- Updated fabric drag/drop highlighting and structural targeting to use the same computed layout areas.
+### [x] Step: Make Quilt layout controls simpler and removable for side borders
+- Tighten the layout selector UX so border rows can be removed directly and layouts without side borders are easy to configure.
+- Keep the Quilt canvas focused on square block layouts and simpler controls inspired by Picture My Blocks.
+- Avoid reintroducing removed panels or extra chrome.
 
-### [x] Step: Tighten the studio UX around essential actions
-- Made layout selection immediately preview on canvas when a layout card is opened.
-- Simplified layout actions by removing the separate preview button and keeping one primary "Use this layout" action.
-- Kept the studio focused on visible layout slots plus the core Layouts, Blocks, and Fabrics workflow.
+### [x] Step: Rework Block Builder into a square drafting workspace tied to My Blocks
+- Use the existing block-builder canvas and save flow, but expose it as a first-class tab with a square work surface.
+- Keep the drafting tools aligned with the studio tool language while removing quilt-only layout options like sashing, borders, and edging.
+- Ensure saving a drafted block refreshes My Blocks cleanly.
 
-### [x] Step: Validate the simplified studio flow
-- `npm run type-check` passed.
-- Targeted ESLint on the changed studio files passed with warnings only; full-project `npm run lint` still reports pre-existing repo-wide errors outside this task.
-- `npm run build` reached prerendering and then failed on an existing `/shop/catalog` database SSL issue (`The server does not support SSL connections`), not on the studio changes.
+### [x] Step: Validate the studio changes and sync task artifacts
+- Run the project checks for the touched area (`build`, `type-check`, `lint`) after verifying `.gitignore` coverage.
+- Mark completed plan steps in this file before finishing the task.

@@ -38,23 +38,17 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       <AuthFormInner mode={mode} />
 
-      <p className="mt-6 text-center text-body-md font-medium text-secondary">
-        {isSignUp ? (
-          <>
-            Already have an account?{' '}
-            <Link href="/auth/signin" className="text-accent hover:underline font-medium">
-              Sign in
-            </Link>
-          </>
-        ) : (
-          <>
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="text-accent hover:underline font-medium">
-              Sign up
-            </Link>
-          </>
-        )}
-      </p>
+      <div className="mt-10 flex flex-col items-center gap-3">
+        <p className="text-sm text-dim font-medium">
+          {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+        </p>
+        <Link
+          href={isSignUp ? '/auth/signin' : '/auth/signup'}
+          className="btn-secondary-sm w-full"
+        >
+          {isSignUp ? 'Sign In' : 'Create Account'}
+        </Link>
+      </div>
     </div>
   );
 }

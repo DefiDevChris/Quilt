@@ -156,9 +156,7 @@ export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(`blocks:${session.user.id}`, API_RATE_LIMITS.blocks);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
-  if (!isPro(session.user.role as UserRole)) {
-    return errorResponse('Custom block creation requires a Pro subscription.', 'PRO_REQUIRED', 403);
-  }
+  const isAdmin = session.user.role === 'admin';
 
   try {
     const body = await request.json();
@@ -167,7 +165,13 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid block data');
     }
 
-    const { name, category, svgData: rawSvgData, fabricJsData, tags, parentBlockIds } = parsed.data;
+    const { name, category, svgData: rawSvgData, fabricJsData, tags, parentBlockIds, publishToLibrary } = parsed.data;
+
+    // Only admins can publish to the shared master library
+    if (publishToLibrary && !isAdmin) {
+      return errorResponse('Only admins can publish blocks to the shared library.', 'FORBIDDEN', 403);
+    }
+
     const svgData = typeof rawSvgData === 'string' ? sanitizeSvg(rawSvgData) : rawSvgData;
 
     // Embed parent block IDs in fabricJsData metadata if present
@@ -185,16 +189,20 @@ export async function POST(request: NextRequest) {
         }
       : fabricJsData;
 
+    // Admin publishing to library: isDefault=true, userId=null
+    // Everyone else: personal block, isDefault=false, userId=session.user.id
+    const publishingToLibrary = isAdmin && publishToLibrary === true;
+
     const [created] = await db
       .insert(blocks)
       .values({
-        userId: session.user.id,
+        userId: publishingToLibrary ? null : session.user.id,
         name,
         category,
         svgData,
         fabricJsData: enrichedFabricData,
         tags,
-        isDefault: false,
+        isDefault: publishingToLibrary,
       })
       .returning();
 

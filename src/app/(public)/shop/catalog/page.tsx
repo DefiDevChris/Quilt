@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+export const dynamic = 'force-dynamic';
 import CatalogClient from './CatalogClient';
 import { getShopSettings } from '@/lib/shop';
 import { db } from '@/lib/db';
@@ -72,7 +73,10 @@ export default async function CatalogPage() {
   ]);
 
   const initialTotalPages = Math.ceil(total / 24);
-  const formattedFabrics = initialFabrics.map(f => ({ ...f, pricePerYard: f.pricePerYard ?? null }));
+  const formattedFabrics = initialFabrics.map((f) => ({
+    ...f,
+    pricePerYard: f.pricePerYard ?? null,
+  }));
 
   return (
     <CatalogClient

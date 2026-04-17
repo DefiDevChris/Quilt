@@ -31,6 +31,3 @@ export async function requireAdminSession(): Promise<
   return { session };
 }
 
-export async function signOut() {
-  await fetch('/api/auth/cognito/signout', { method: 'POST' });
-}

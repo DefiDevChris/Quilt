@@ -117,6 +117,7 @@ export const createBlockSchema = z.object({
   fabricJsData: z.record(z.string(), z.unknown()),
   tags: z.array(z.string()).default([]),
   parentBlockIds: z.array(z.string().uuid()).optional(),
+  publishToLibrary: z.boolean().optional(),
 });
 
 export const blockSearchSchema = z.object({

@@ -1,6 +1,7 @@
 'use client';
 
 import { COLORS } from '@/lib/design-system';
+import Mascot from '@/components/landing/Mascot';
 
 const footerLinks = {
   resources: [
@@ -34,13 +35,14 @@ export default function ShopFooter() {
           <div className="lg:col-span-1">
             <a
               href="/shop"
-              className="text-3xl font-bold block mb-6"
+              className="text-3xl font-bold mb-6 flex items-center gap-2"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.primary,
                 letterSpacing: '-0.02em',
               }}
             >
+              <Mascot size="xs" pose="sitting" />
               QuiltCorgi
             </a>
             <p className="text-sm mb-6" style={{ color: COLORS.textDim }}>
