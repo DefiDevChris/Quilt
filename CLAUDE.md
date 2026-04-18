@@ -101,11 +101,15 @@ Selection-type → toolbar buttons mapping:
 - **easydraw**: Bend · Rotate · Delete
 - **bent**: Edit bend · Make straight · Rotate · Delete
 
+### Block Sizing Invariant
+
+Block Builder and Design Studio share the same inch-based coordinate system. A block saved with widthIn=12 and heightIn=12 in Block Builder appears as exactly 12" × 12" when placed on the quilt canvas (native size, before any layout scaling). Visual zoom levels differ, but the underlying inch units are 1:1. Free-form projects place blocks at native size; Layout/Template projects scale blocks to fill cells.
+
 ### EasyDraw + Bend
 
 Phase 8 simplified drawing tools (free-form mode only, no bezier handles):
 
-**EasyDraw**: Click-click segment drawing. First click sets start point (snapped to grid corner), second click sets end point and creates straight segment. Consecutive segments snap to previous endpoint (visual dot indicator). Escape or right-click cancels mid-draw. Segments tagged `__easyDrawSegment = true`, data stored in `__segmentData`.
+**EasyDraw**: Continuous polygon drawing tool. Click to add vertices (snapped to grid corners). A dynamic preview line updates as you draw. Click the starting point again to close and complete the shape. Escape or right-click cancels the entire unclosed shape. Segments tagged `__easyDrawSegment = true`, data stored in `__segmentData`.
 
 **Bend**: Click-drag on existing segment. Click down at P1 (snapped to grid), drag to P2 (snapped to grid), release creates quadratic arc. Control point calculated as `C = (P2 - (1-t)²·A - t²·B) / (2·t·(1-t))`. Fall back to midpoint control if t≈0 or t≈1. Bent segments tagged `__bentSegment = true`, data retains A, B, t, P2, controlPoint for re-editing. Re-bending replaces the curve. Make-straight converts back to line.
 

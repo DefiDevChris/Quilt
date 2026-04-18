@@ -13,6 +13,7 @@ import { CanvasSelectionToolbar } from '@/components/canvas/CanvasSelectionToolb
 import { LayoutAdjuster } from '@/components/fabrics/LayoutAdjuster';
 import { DuplicateOptionsPopup } from '@/components/studio/DuplicateOptionsPopup';
 import { NewProjectWizard, type StudioQuiltSetup } from '@/components/projects/NewProjectWizard';
+import { ProjectModeModal } from '@/components/studio/ProjectModeModal';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { LayoutsPanel } from '@/components/studio/LayoutsPanel';
 import { TemplatesPanel } from '@/components/studio/TemplatesPanel';
@@ -54,7 +55,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const { getCanvas } = useCanvasContext();
   const fabricCanvas = getCanvas();
   const [projectState, setProjectState] = useState(project);
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
@@ -69,6 +70,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
   const [quiltSetupDismissible, setQuiltSetupDismissible] = useState(false);
+  const [showModeModal, setShowModeModal] = useState(!project.canvasData || Object.keys(project.canvasData).length === 0);
 
   const { handleDragStart: handleBlockDragStart } = useBlockDrop();
   const { handleFabricDragStart } = useFabricDrop();
@@ -89,6 +91,15 @@ export function StudioLayout({ project }: StudioLayoutProps) {
       openTemplates();
     }
   }, [searchParams, projectMode, openLayouts, openTemplates, dismiss]);
+
+  const handleModeSelect = useCallback((mode: 'template' | 'layout' | 'free-form') => {
+    setShowModeModal(false);
+    if (mode === 'layout') {
+      openLayouts();
+    } else if (mode === 'template') {
+      openTemplates();
+    }
+  }, [openLayouts, openTemplates]);
 
   const syncProjectLayoutState = useCallback(
     (setup: StudioQuiltSetup) => {
@@ -309,6 +320,8 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
       <BottomBar />
       <DuplicateOptionsPopup />
+
+      <ProjectModeModal open={showModeModal} onSelect={handleModeSelect} />
 
       <NewProjectWizard
         mode="studio"

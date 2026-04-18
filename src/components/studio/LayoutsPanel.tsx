@@ -6,12 +6,17 @@
  * Each view is dismissible with X.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useLeftPanelStore, type LeftPanelMode } from '@/stores/leftPanelStore';
+import { useLayoutStore } from '@/stores/layoutStore';
+import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 import { LAYOUT_TYPE_CARDS } from '@/lib/layout-type-cards';
-import { LAYOUT_PRESETS } from '@/lib/layout-library';
+import { LAYOUT_PRESETS, getLayoutPreset } from '@/lib/layout-library';
 import { LayoutThumbnail, getPresetThumbnail } from '@/lib/layout-thumbnail';
-import type { LayoutType } from '@/lib/layout-utils';
+import { computeLayoutSize } from '@/lib/layout-size-utils';
+import type { LayoutType, BorderConfig, SashingConfig } from '@/lib/layout-utils';
 
 interface LayoutsPanelProps {
   onDismiss: () => void;
@@ -43,6 +48,8 @@ export function LayoutsPanel({ onDismiss }: LayoutsPanelProps) {
   const selectPreset = useLeftPanelStore((s) => s.selectPreset);
   const startPreview = useLeftPanelStore((s) => s.startPreview);
 
+  const [showConfig, setShowConfig] = useState(false);
+
   const handleFamilyClick = useCallback((family: LayoutType) => {
     drillIntoFamily(family);
     const defaultPreset = getDefaultPreset(family);
@@ -53,12 +60,23 @@ export function LayoutsPanel({ onDismiss }: LayoutsPanelProps) {
 
   const handlePresetClick = useCallback((presetId: string) => {
     selectPreset(presetId);
+    setShowConfig(true);
   }, [selectPreset]);
+
+  const handleBackToPresets = useCallback(() => {
+    setShowConfig(false);
+  }, []);
 
   return (
     <div className="w-[280px] h-full bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col overflow-hidden">
       {layoutBrowserView === 'families' ? (
         <FamiliesView onFamilyClick={handleFamilyClick} onDismiss={onDismiss} />
+      ) : showConfig && selectedPresetId ? (
+        <ConfigView
+          presetId={selectedPresetId}
+          onBack={handleBackToPresets}
+          onDismiss={onDismiss}
+        />
       ) : (
         <PresetsView
           family={selectedFamily}
@@ -185,5 +203,146 @@ function PresetsView({ family, selectedPresetId, onPresetClick, onBack, onDismis
         </div>
       </div>
     </>
+  );
+}
+
+
+interface ConfigViewProps {
+  presetId: string;
+  onBack: () => void;
+  onDismiss: () => void;
+}
+
+function ConfigView({ presetId, onBack, onDismiss }: ConfigViewProps) {
+  const { getCanvas } = useCanvasContext();
+  const preset = getLayoutPreset(presetId);
+  if (!preset) return null;
+
+  const card = LAYOUT_TYPE_CARDS.find((c) => c.id === preset.category);
+  if (!card) return null;
+
+  const rows = useLayoutStore((s) => s.rows);
+  const cols = useLayoutStore((s) => s.cols);
+  const blockSize = useLayoutStore((s) => s.blockSize);
+  const sashing = useLayoutStore((s) => s.sashing);
+  const borders = useLayoutStore((s) => s.borders);
+  const hasCornerstones = useLayoutStore((s) => s.hasCornerstones);
+  const bindingWidth = useLayoutStore((s) => s.bindingWidth);
+
+  const setRows = useLayoutStore((s) => s.setRows);
+  const setCols = useLayoutStore((s) => s.setCols);
+  const setBlockSize = useLayoutStore((s) => s.setBlockSize);
+  const setSashing = useLayoutStore((s) => s.setSashing);
+  const setHasCornerstones = useLayoutStore((s) => s.setHasCornerstones);
+  const setBindingWidth = useLayoutStore((s) => s.setBindingWidth);
+  const addBorder = useLayoutStore((s) => s.addBorder);
+  const updateBorder = useLayoutStore((s) => s.updateBorder);
+  const removeBorder = useLayoutStore((s) => s.removeBorder);
+  const applyLayout = useLayoutStore((s) => s.applyLayout);
+
+  const size = computeLayoutSize({
+    type: preset.config.type as LayoutType,
+    rows,
+    cols,
+    blockSize,
+    sashingWidth: sashing.width,
+    borders,
+    bindingWidth,
+  });
+
+  const handleApply = () => {
+    applyLayout();
+    useProjectStore.getState().setCanvasDimensions(size.width, size.height);
+    requestAnimationFrame(() => {
+      useCanvasStore.getState().centerAndFitViewport(getCanvas(), size.width, size.height);
+    });
+    onDismiss();
+  };
+
+  return (
+    <>
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border)]/50">
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30 transition-colors"
+          aria-label="Back"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <h2 className="text-[14px] font-semibold text-[var(--color-text)] flex-1">{preset.name}</h2>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30 transition-colors"
+          aria-label="Close"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+        {card.hasGridConfig && (
+          <>
+            <SliderRow label="Rows" value={rows} min={1} max={20} step={1} onChange={setRows} />
+            <SliderRow label="Cols" value={cols} min={1} max={20} step={1} onChange={setCols} />
+            <SliderRow label="Block" value={blockSize} min={2} max={24} step={0.5} onChange={setBlockSize} suffix="″" />
+          </>
+        )}
+        {card.hasSashing && (
+          <SliderRow label="Sashing" value={sashing.width} min={0} max={6} step={0.25} onChange={(v) => setSashing({ ...sashing, width: v })} suffix="″" />
+        )}
+        {card.hasCornerstones && (
+          <label className="flex items-center gap-2 p-2 rounded-lg border border-[var(--color-border)]/30">
+            <input type="checkbox" checked={hasCornerstones} onChange={(e) => setHasCornerstones(e.target.checked)} className="rounded accent-primary" />
+            <span className="text-[12px] text-[var(--color-text)]">Cornerstones</span>
+          </label>
+        )}
+        {card.hasBorders && (
+          <div className="space-y-2 p-2 rounded-lg border border-[var(--color-border)]/30">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] font-semibold text-[var(--color-text)]">Borders</span>
+              {borders.length < 5 && (
+                <button type="button" onClick={addBorder} className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary">Add</button>
+              )}
+            </div>
+            {borders.map((border, i) => (
+              <div key={border.id ?? i} className="flex items-center gap-2">
+                <input type="range" min={0.5} max={8} step={0.5} value={border.width} onChange={(e) => updateBorder(i, { width: parseFloat(e.target.value) })} className="flex-1 accent-primary" />
+                <span className="text-[10px] font-mono w-8">{border.width}″</span>
+                <button type="button" onClick={() => removeBorder(i)} className="text-[10px] text-accent">×</button>
+              </div>
+            ))}
+          </div>
+        )}
+        {card.hasBinding && (
+          <SliderRow label="Binding" value={bindingWidth} min={0} max={2} step={0.125} onChange={setBindingWidth} suffix="″" />
+        )}
+        <div className="p-2 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]/30">
+          <div className="text-[11px] text-[var(--color-text-dim)]">Size</div>
+          <div className="text-[13px] font-mono font-semibold text-[var(--color-text)]">{size.width}″ × {size.height}″</div>
+        </div>
+      </div>
+      <div className="p-3 border-t border-[var(--color-border)]/50">
+        <button type="button" onClick={handleApply} className="w-full py-2 rounded-full bg-primary text-white text-[14px] font-semibold hover:opacity-90">
+          Apply Layout
+        </button>
+      </div>
+    </>
+  );
+}
+
+function SliderRow({ label, value, min, max, step, onChange, suffix }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; suffix?: string }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-[var(--color-text-dim)]">{label}</span>
+        <span className="text-[11px] font-mono text-[var(--color-text)]">{value}{suffix}</span>
+      </div>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(parseFloat(e.target.value))} className="w-full accent-primary" />
+    </div>
   );
 }

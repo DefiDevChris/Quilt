@@ -19,7 +19,7 @@ describe('constants', () => {
   it('has valid zoom range', () => {
     expect(ZOOM_MIN).toBeLessThan(ZOOM_MAX);
     expect(ZOOM_MIN).toBeGreaterThan(0);
-    expect(ZOOM_MAX).toBe(0.2);
+    expect(ZOOM_MAX).toBe(8);
   });
 
   it('has correct free tier limits', () => {

@@ -90,7 +90,7 @@ function EditPreviewToggle() {
 function ReferenceImageToggle() {
   const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
   const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
-  const toggleReferencePanel = useCanvasStore((s) => s.toggleReferencePanel);
+  const setShowReferencePanel = useCanvasStore((s) => s.setShowReferencePanel);
 
   if (!referenceImageUrl) return null;
 
@@ -101,7 +101,7 @@ function ReferenceImageToggle() {
     >
       <button
         type="button"
-        onClick={toggleReferencePanel}
+        onClick={() => setShowReferencePanel(!showReferencePanel)}
         className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
           showReferencePanel
             ? 'bg-primary/12 text-primary ring-1 ring-primary/30'

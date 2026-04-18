@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search } from 'lucide-react';
-import { useAuthDerived } from '@/stores/authStore';
+import { Search, Plus } from 'lucide-react';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { BrandedPage } from '@/components/layout/BrandedPage';
-import { QuiltPiece, QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
+import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { COLORS, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
 interface FabricItem {
@@ -28,19 +27,16 @@ interface FabricsResponse {
   };
 }
 
-type Scope = 'system' | 'user';
-
 export default function FabricsPage() {
-  const { isPro } = useAuthDerived();
   const [fabrics, setFabrics] = useState<FabricItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [colorFamily, setColorFamily] = useState('');
-  const [scope, setScope] = useState<Scope>('system');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -54,93 +50,68 @@ export default function FabricsPage() {
     };
   }, [search]);
 
-  useEffect(() => {
+  const fetchFabrics = async () => {
     let cancelled = false;
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        scope: 'user',
+        page: String(page),
+        limit: String(FABRICS_PAGINATION_DEFAULT_LIMIT),
+      });
+      if (debouncedSearch) params.set('search', debouncedSearch);
+      if (colorFamily) params.set('colorFamily', colorFamily);
 
-    async function fetchFabrics() {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams({
-          scope,
-          page: String(page),
-          limit: String(FABRICS_PAGINATION_DEFAULT_LIMIT),
-        });
-        if (debouncedSearch) params.set('search', debouncedSearch);
-        if (colorFamily) params.set('colorFamily', colorFamily);
+      const res = await fetch(`/api/fabrics?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch');
 
-        const res = await fetch(`/api/fabrics?${params}`);
-        if (!res.ok) throw new Error('Failed to fetch');
+      const data: FabricsResponse = await res.json();
+      if (cancelled) return;
 
-        const data: FabricsResponse = await res.json();
-        if (cancelled) return;
-
-        setFabrics(data.data.fabrics);
-        setTotalPages(data.data.totalPages);
-        setTotal(data.data.total);
-      } catch {
-        if (!cancelled) setFabrics([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      setFabrics(data.data.fabrics);
+      setTotalPages(data.data.totalPages);
+      setTotal(data.data.total);
+    } catch {
+      if (!cancelled) setFabrics([]);
+    } finally {
+      if (!cancelled) setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchFabrics();
-    return () => {
-      cancelled = true;
-    };
-  }, [scope, page, debouncedSearch, colorFamily]);
+  }, [page, debouncedSearch, colorFamily]);
 
   return (
-    <BrandedPage showMascots mascotCount={2}>
+    <>
       <PageHeader
-        label="Archives"
-        title="Material Library"
-        description={
-          isPro
-            ? 'Access the curated studio collection of fabrics and textures for your projects.'
-            : 'Access the curated studio collection. Upgrade to Pro to integrate your custom textiles.'
+        label="Collection"
+        title="My Fabrics"
+        description={`${total} ${total === 1 ? 'fabric' : 'fabrics'} in your personal collection`}
+        action={
+          <button
+            onClick={() => setUploadDialogOpen(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm transition-colors"
+            style={{
+              backgroundColor: COLORS.primary,
+              color: COLORS.text,
+              boxShadow: SHADOW.brand,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#d97054';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
+            }}
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            Upload Fabric
+          </button>
         }
       />
 
-      {/* Scope toggle (Pro only) */}
-      {isPro && (
-        <div
-          className="flex gap-2 p-1 rounded-lg w-fit"
-          style={{ backgroundColor: COLORS.border, border: `1px solid ${COLORS.border}` }}
-        >
-          {(['system', 'user'] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => {
-                setScope(s);
-                setPage(1);
-              }}
-              className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors`}
-              style={{
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-                ...(scope === s
-                  ? { backgroundColor: COLORS.text, color: COLORS.bg, boxShadow: SHADOW.brand }
-                  : { color: COLORS.textDim }),
-              }}
-              onMouseEnter={(e) => {
-                if (scope !== s) {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    `${COLORS.border}99`;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (scope !== s) {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
-                }
-              }}
-            >
-              {s === 'system' ? 'Studio Archive' : 'Personal Collection'}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="max-w-5xl">
 
       {/* Search + Color filter */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -156,7 +127,7 @@ export default function FabricsPage() {
           />
           <input
             type="text"
-            placeholder="Filter archive by name or manufacturer..."
+            placeholder="Search your fabrics by name or manufacturer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-14 pr-6 py-4 border rounded-lg font-medium focus:outline-none focus:ring-2 transition-colors"
@@ -202,7 +173,7 @@ export default function FabricsPage() {
             e.currentTarget.style.borderColor = COLORS.border;
           }}
         >
-          <option value="">Spectrum: All</option>
+          <option value="">All Colors</option>
           {COLOR_FAMILIES.map((c) => (
             <option key={c} value={c.toLowerCase()}>
               {c}
@@ -211,15 +182,6 @@ export default function FabricsPage() {
         </select>
       </div>
 
-      {/* Results count */}
-      <div
-        className="flex items-center justify-between border-b pb-4"
-        style={{ borderColor: COLORS.border }}
-      >
-        <p className="text-xs" style={{ color: COLORS.textDim }}>
-          Showing {loading ? '...' : total} Entries
-        </p>
-      </div>
 
       {/* Grid */}
       {loading ? (
@@ -238,13 +200,32 @@ export default function FabricsPage() {
             <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
           </div>
           <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
-            No fabrics found
+            No fabrics yet
           </h3>
-          <p className="text-body-md text-[var(--color-text-dim)] max-w-sm mx-auto">
+          <p className="text-body-md text-[var(--color-text-dim)] max-w-sm mx-auto mb-6">
             {debouncedSearch || colorFamily
-              ? 'No materials match your current filters. Try adjusting your search.'
-              : 'Your personal material collection is currently empty.'}
+              ? 'No fabrics match your filters.'
+              : 'Upload fabric photos to build your personal collection.'}
           </p>
+          <button
+            onClick={() => setUploadDialogOpen(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium text-sm transition-colors"
+            style={{
+              backgroundColor: COLORS.primary,
+              color: COLORS.text,
+              boxShadow: SHADOW.brand,
+              transitionDuration: `${MOTION.transitionDuration}ms`,
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#d97054';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
+            }}
+          >
+            <Plus size={18} strokeWidth={2.5} />
+            Upload Your First Fabric
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -377,6 +358,13 @@ export default function FabricsPage() {
           </button>
         </div>
       )}
-    </BrandedPage>
+      </div>
+
+      <FabricUploadDialog
+        isOpen={uploadDialogOpen}
+        onClose={() => setUploadDialogOpen(false)}
+        onUploaded={fetchFabrics}
+      />
+    </>
   );
 }

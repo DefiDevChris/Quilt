@@ -4,6 +4,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useShadeAssignment } from '@/hooks/useShadeAssignment';
+import { performUndo, performRedo } from '@/lib/canvas-history';
 import {
   Undo2,
   Redo2,
@@ -28,7 +29,6 @@ export function BottomBar() {
   const undoStack = useCanvasStore((s) => s.undoStack ?? []);
   const redoStack = useCanvasStore((s) => s.redoStack ?? []);
   const pushUndoState = useCanvasStore((s) => s.pushUndoState ?? (() => {}));
-  const redo = useCanvasStore((s) => s.redo ?? (() => {}));
   const gridSettings = useCanvasStore((s) => s.gridSettings ?? { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' });
   const setGridSettings = useCanvasStore((s) => s.setGridSettings ?? (() => {}));
   const shadeViewActive = useCanvasStore((s) => s.shadeViewActive ?? false);
@@ -57,11 +57,14 @@ export function BottomBar() {
   const handleUndo = () => {
     const canvas = useCanvasStore.getState().fabricCanvas;
     if (canvas) {
-      const json = (canvas as { toJSON: () => string }).toJSON();
-      if (json) {
-        pushUndoState(json);
-        redo();
-      }
+      performUndo(canvas as never);
+    }
+  };
+
+  const handleRedo = () => {
+    const canvas = useCanvasStore.getState().fabricCanvas;
+    if (canvas) {
+      performRedo(canvas as never);
     }
   };
 
@@ -111,7 +114,7 @@ export function BottomBar() {
     >
       {/* Left cluster */}
       <div className="flex items-center gap-1">
-        <TooltipHint content="Undo" side="top">
+        <TooltipHint name="Undo" description="Undo last action">
           <button
             type="button"
             onClick={handleUndo}
@@ -128,10 +131,10 @@ export function BottomBar() {
           </button>
         </TooltipHint>
 
-        <TooltipHint content="Redo" side="top">
+        <TooltipHint name="Redo" description="Redo last action">
           <button
             type="button"
-            onClick={() => redo()}
+            onClick={handleRedo}
             disabled={!canRedo}
             className={cn(
               'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
@@ -147,7 +150,7 @@ export function BottomBar() {
 
         <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
 
-        <TooltipHint content="Zoom out" side="top">
+        <TooltipHint name="Zoom out" description="Decrease zoom level">
           <button
             type="button"
             onClick={handleZoomOut}
@@ -162,7 +165,7 @@ export function BottomBar() {
           {Math.round(zoom * 100)}%
         </div>
 
-        <TooltipHint content="Zoom in" side="top">
+        <TooltipHint name="Zoom in" description="Increase zoom level">
           <button
             type="button"
             onClick={handleZoomIn}
@@ -191,7 +194,7 @@ export function BottomBar() {
 
         <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
 
-        <TooltipHint content={gridSettings?.enabled ? 'Hide grid' : 'Show grid'} side="top">
+        <TooltipHint name={gridSettings?.enabled ? 'Hide grid' : 'Show grid'} description="Toggle grid visibility">
           <button
             type="button"
             onClick={toggleGrid}
@@ -242,7 +245,7 @@ export function BottomBar() {
         <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
 
         {isLayoutOrTemplate && (
-          <TooltipHint content={shadeViewActive ? 'Hide shades' : 'Show shades'} side="top">
+          <TooltipHint name={shadeViewActive ? 'Hide shades' : 'Show shades'} description="Toggle shade view">
             <button
               type="button"
               onClick={toggleShade}
@@ -260,7 +263,7 @@ export function BottomBar() {
           </TooltipHint>
         )}
 
-        <TooltipHint content={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'} side="top">
+        <TooltipHint name={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'} description="Toggle viewport lock">
           <button
             type="button"
             onClick={toggleViewportLock}

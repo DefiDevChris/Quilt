@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
+import { useCanvasContext } from '@/contexts/CanvasContext';
 
 // Mock the required dependencies
 vi.mock('@/stores/canvasStore', () => ({
@@ -14,16 +15,16 @@ vi.mock('@/stores/canvasStore', () => ({
   })),
 }));
 
-vi.mock('@/stores/projectStore', () => ({
-  useProjectStore: vi.fn(() => ({
-    getState: vi.fn(() => ({
-      mode: 'free-form',
-      canvasWidth: 48,
-      canvasHeight: 48,
-    })),
-    setHasContent: vi.fn(),
-  })),
-}));
+vi.mock('@/stores/projectStore', () => {
+  const useProjectStoreMock = vi.fn();
+  (useProjectStoreMock as any).getState = vi.fn(() => ({
+    mode: 'free-form',
+    canvasWidth: 48,
+    canvasHeight: 48,
+  }));
+  (useProjectStoreMock as any).setHasContent = vi.fn();
+  return { useProjectStore: useProjectStoreMock };
+});
 
 vi.mock('@/stores/layoutStore', () => ({
   useLayoutStore: vi.fn(() => ({
@@ -76,6 +77,7 @@ describe('useBlockDrop', () => {
       const mockContext = {
         getCanvas: vi.fn(() => mockCanvas),
       };
+      vi.mocked(useCanvasContext).mockReturnValue(mockContext as any);
 
       // Mock fetch for block data
       global.fetch = vi.fn(() =>

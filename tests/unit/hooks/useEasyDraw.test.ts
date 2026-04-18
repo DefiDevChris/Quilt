@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useEasyDraw } from '@/hooks/useEasyDraw';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -93,16 +93,22 @@ describe('useEasyDraw', () => {
     expect(mockCanvas.on).not.toHaveBeenCalled();
   });
 
-  it('should set up canvas event handlers when easydraw is active', () => {
+  it('should set up canvas event handlers when easydraw is active', async () => {
     renderHook(() => useEasyDraw());
 
-    expect(mockCanvas.selection).toBe(false);
-    expect(mockCanvas.on).toHaveBeenCalledWith('mouse:down', expect.any(Function));
-    expect(mockCanvas.on).toHaveBeenCalledWith('mouse:move', expect.any(Function));
+    await waitFor(() => {
+      expect(mockCanvas.selection).toBe(false);
+      expect(mockCanvas.on).toHaveBeenCalledWith('mouse:down', expect.any(Function));
+      expect(mockCanvas.on).toHaveBeenCalledWith('mouse:move', expect.any(Function));
+    });
   });
 
-  it('should cleanup event handlers on unmount', () => {
+  it('should cleanup event handlers on unmount', async () => {
     const { unmount } = renderHook(() => useEasyDraw());
+
+    await waitFor(() => {
+      expect(mockCanvas.selection).toBe(false);
+    });
 
     unmount();
 

@@ -1,30 +1,50 @@
+'use client';
+
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { verifySessionToken } from '@/lib/cognito-session';
+import { useEffect } from 'react';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
-import { OPACITY } from '@/lib/design-system';
+import { StudioSidebar } from '@/components/layout/StudioSidebar';
+import { BrandedPage } from '@/components/layout/BrandedPage';
+import { useAuthStore } from '@/stores/authStore';
 
-export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  if (process.env.DEV_AUTH_BYPASS !== 'true') {
-    const cookieStore = await cookies();
-    const idToken = cookieStore.get('qc_id_token')?.value;
-    const user = idToken ? await verifySessionToken(idToken) : null;
+export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((s) => s.user);
+  const isLoading = useAuthStore((s) => s.isLoading);
 
-    if (!user) {
+  useEffect(() => {
+    if (!isLoading && !user) {
       redirect('/auth/signin');
     }
+  }, [isLoading, user]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        <ResponsiveShell>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="animate-pulse text-[var(--color-text-dim)]">Loading...</div>
+          </div>
+        </ResponsiveShell>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
-    <>
-      {/* Background at 20% opacity */}
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/background.png')", opacity: OPACITY.overlay }}
-      />
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <ResponsiveShell>
-        <div className="max-w-5xl mx-auto md:pt-10 md:pb-12 relative z-10 w-full">{children}</div>
+        <BrandedPage showMascots mascotCount={1}>
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex gap-12">
+              <StudioSidebar />
+              <main className="flex-1 min-w-0">{children}</main>
+            </div>
+          </div>
+        </BrandedPage>
       </ResponsiveShell>
-    </>
+    </div>
   );
 }

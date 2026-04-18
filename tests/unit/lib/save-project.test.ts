@@ -291,7 +291,7 @@ describe('save-project', () => {
         expect.objectContaining({
           canvasData: expect.objectContaining({ version: '1.0', objects: [] }),
           unitSystem: 'imperial',
-          gridSettings: { enabled: true, size: 1, snapToGrid: true },
+          gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
         })
       );
       expect(useProjectStore.getState().saveStatus).toBe('saved');
