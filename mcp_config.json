@@ -1,0 +1,53 @@
+{
+  "mcpServers": {
+    "chrome-devtools-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "disabled": true
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "disabled": true
+    },
+    "shopify-dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ],
+      "disabled": true
+    },
+    "mem-palace": {
+      "command": "python3.12",
+      "args": [
+        "-m",
+        "mempalace.mcp_server"
+      ],
+      "env": {
+        "MEMPAL_DIR": "/home/chrishoran/Desktop/Quilt"
+      }
+    },
+    "browseros": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://127.0.0.1:9239/mcp"
+      ]
+    }
+  }
+}

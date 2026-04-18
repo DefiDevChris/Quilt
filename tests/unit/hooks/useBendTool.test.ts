@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useBendTool, makeSegmentStraight } from '@/hooks/useBendTool';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -85,17 +85,23 @@ describe('useBendTool', () => {
     expect(mockCanvas.on).not.toHaveBeenCalled();
   });
 
-  it('should set up canvas event handlers when bend is active in free-form mode', () => {
+  it('should set up canvas event handlers when bend is active in free-form mode', async () => {
     renderHook(() => useBendTool());
 
-    expect(mockCanvas.selection).toBe(false);
-    expect(mockCanvas.on).toHaveBeenCalledWith('mouse:down', expect.any(Function));
-    expect(mockCanvas.on).toHaveBeenCalledWith('mouse:move', expect.any(Function));
-    expect(mockCanvas.on).toHaveBeenCalledWith('mouse:up', expect.any(Function));
+    await waitFor(() => {
+      expect(mockCanvas.selection).toBe(false);
+      expect(mockCanvas.on).toHaveBeenCalledWith('mouse:down', expect.any(Function));
+      expect(mockCanvas.on).toHaveBeenCalledWith('mouse:move', expect.any(Function));
+      expect(mockCanvas.on).toHaveBeenCalledWith('mouse:up', expect.any(Function));
+    });
   });
 
-  it('should cleanup event handlers on unmount', () => {
+  it('should cleanup event handlers on unmount', async () => {
     const { unmount } = renderHook(() => useBendTool());
+
+    await waitFor(() => {
+      expect(mockCanvas.selection).toBe(false);
+    });
 
     unmount();
 

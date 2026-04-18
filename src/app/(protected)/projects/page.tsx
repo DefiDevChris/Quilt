@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react';
 import { Grid, List, Calendar, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuthStore } from '@/stores/authStore';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { BrandedPage } from '@/components/layout/BrandedPage';
 import Mascot from '@/components/landing/Mascot';
 import { COLORS, COLORS_HOVER, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
@@ -20,15 +18,12 @@ interface ProjectListItem {
 }
 
 export default function AllProjectsPage() {
-  const user = useAuthStore((s) => s.user);
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProjects() {
-      if (!user) return;
-
       try {
         const res = await fetch('/api/projects?limit=50&sort=updatedAt&order=desc');
         if (!res.ok) throw new Error('Failed to fetch');
@@ -42,7 +37,7 @@ export default function AllProjectsPage() {
     }
 
     fetchProjects();
-  }, [user]);
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -71,7 +66,7 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <BrandedPage showMascots mascotCount={1}>
+    <>
       <PageHeader
         label="Archive"
         title="Project Library"
@@ -163,6 +158,7 @@ export default function AllProjectsPage() {
         }
       />
 
+      <div className="max-w-5xl">
       {projects.length === 0 ? (
         <div className="flex flex-col items-center py-32 text-center">
           <Mascot pose="sitting" size="xl" className="mb-6 opacity-30" />
@@ -280,6 +276,7 @@ export default function AllProjectsPage() {
           ))}
         </div>
       )}
-    </BrandedPage>
+      </div>
+    </>
   );
 }

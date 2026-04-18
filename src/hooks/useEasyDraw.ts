@@ -25,9 +25,12 @@ import { CANVAS, COLORS } from '@/lib/design-system';
  */
 
 interface DrawState {
+  initialPoint: Point | null;
   startPoint: Point | null;
+  activeSegments: unknown[];
   previewLine: unknown | null;
   snapIndicator: unknown | null;
+  startIndicator: unknown | null;
 }
 
 export function useEasyDraw() {
@@ -84,9 +87,12 @@ export function useEasyDraw() {
       canvas.defaultCursor = cursorForTool('easydraw');
 
       const drawState: DrawState = {
+        initialPoint: null,
         startPoint: null,
+        activeSegments: [],
         previewLine: null,
         snapIndicator: null,
+        startIndicator: null,
       };
 
       function getGridSizeIn(): number {
@@ -151,7 +157,42 @@ export function useEasyDraw() {
         }
       }
 
-      function commitSegment(start: Point, end: Point) {
+      function cancelDrawing() {
+        clearPreview();
+        if (drawState.startIndicator) {
+          canvas.remove(drawState.startIndicator as InstanceType<typeof fabric.FabricObject>);
+          drawState.startIndicator = null;
+        }
+        drawState.activeSegments.forEach((seg) => {
+          canvas.remove(seg as InstanceType<typeof fabric.FabricObject>);
+        });
+        drawState.activeSegments = [];
+        drawState.startPoint = null;
+        drawState.initialPoint = null;
+        canvas.defaultCursor = cursorForTool('easydraw');
+        canvas.renderAll();
+      }
+
+      function finishShape() {
+        clearPreview();
+        if (drawState.startIndicator) {
+          canvas.remove(drawState.startIndicator as InstanceType<typeof fabric.FabricObject>);
+          drawState.startIndicator = null;
+        }
+
+        // Push to undo stack ONCE for the whole shape
+        const json = JSON.stringify(canvas.toJSON());
+        useCanvasStore.getState().pushUndoState(json);
+        useProjectStore.getState().setDirty(true);
+
+        drawState.activeSegments = [];
+        drawState.startPoint = null;
+        drawState.initialPoint = null;
+        canvas.defaultCursor = cursorForTool('easydraw');
+        canvas.renderAll();
+      }
+
+      function commitSegment(start: Point, end: Point, pushUndo: boolean = true) {
         const { strokeColor, strokeWidth, zoom } = stateRef.current;
         const segment = createSegment(start, end);
         const pathData = segmentToSvgPath(segment);
@@ -171,13 +212,14 @@ export function useEasyDraw() {
         (path as unknown as { __segmentData?: typeof segment }).__segmentData = segment;
 
         canvas.add(path);
-        canvas.setActiveObject(path);
-        canvas.renderAll();
-
-        // Push to undo stack
-        const json = JSON.stringify(canvas.toJSON());
-        useCanvasStore.getState().pushUndoState(json);
-        useProjectStore.getState().setDirty(true);
+        
+        if (pushUndo) {
+          canvas.setActiveObject(path);
+          // Push to undo stack
+          const json = JSON.stringify(canvas.toJSON());
+          useCanvasStore.getState().pushUndoState(json);
+          useProjectStore.getState().setDirty(true);
+        }
 
         return path;
       }
@@ -185,9 +227,7 @@ export function useEasyDraw() {
       function onMouseDown(e: { e: MouseEvent; target?: unknown }) {
         // Right-click cancels
         if (e.e.button === 2) {
-          clearPreview();
-          drawState.startPoint = null;
-          canvas.defaultCursor = cursorForTool('easydraw');
+          cancelDrawing();
           return;
         }
 
@@ -197,30 +237,42 @@ export function useEasyDraw() {
         if (!drawState.startPoint) {
           // First click - set start point
           drawState.startPoint = snappedPoint;
+          drawState.initialPoint = snappedPoint;
 
-          // Show snap indicator
+          // Show snap indicator (start indicator is special)
           const indicator = createSnapIndicator(snappedPoint);
-          drawState.snapIndicator = indicator;
+          indicator.set({ fill: COLORS.secondary, radius: 6 / stateRef.current.zoom });
+          drawState.startIndicator = indicator;
           canvas.add(indicator as unknown as InstanceType<typeof fabric.FabricObject>);
           canvas.renderAll();
         } else {
-          // Second click - complete segment
-          const endPoint = snappedPoint;
+          // Check if clicked point is the initial point (closing shape)
+          const isClosing = drawState.initialPoint && 
+             Math.abs(snappedPoint.x - drawState.initialPoint.x) < 0.1 && 
+             Math.abs(snappedPoint.y - drawState.initialPoint.y) < 0.1;
+
+          const endPoint = isClosing ? drawState.initialPoint! : snappedPoint;
+
+          // Ignore exactly same point click
+          if (endPoint.x === drawState.startPoint.x && endPoint.y === drawState.startPoint.y) {
+            return;
+          }
 
           clearPreview();
-          commitSegment(drawState.startPoint, endPoint);
+          
+          // Commit segment but don't push undo yet
+          const path = commitSegment(drawState.startPoint, endPoint, false);
+          drawState.activeSegments.push(path);
 
-          // For consecutive drawing, optionally start new segment from this point
-          if (stateRef.current.snapToPrevious) {
+          if (isClosing) {
+            finishShape();
+          } else {
             drawState.startPoint = endPoint;
             const indicator = createSnapIndicator(endPoint);
             drawState.snapIndicator = indicator;
             canvas.add(indicator as unknown as InstanceType<typeof fabric.FabricObject>);
-          } else {
-            drawState.startPoint = null;
+            canvas.renderAll();
           }
-
-          canvas.renderAll();
         }
       }
 
@@ -236,11 +288,17 @@ export function useEasyDraw() {
         drawState.previewLine = preview;
         canvas.add(preview as unknown as InstanceType<typeof fabric.FabricObject>);
 
-        // Restore snap indicator
+        // Restore snap indicator if we are not snapping exactly to start
         if (drawState.startPoint) {
-          const indicator = createSnapIndicator(drawState.startPoint);
-          drawState.snapIndicator = indicator;
-          canvas.add(indicator as unknown as InstanceType<typeof fabric.FabricObject>);
+          const isClosing = drawState.initialPoint && 
+             Math.abs(snappedPoint.x - drawState.initialPoint.x) < 0.1 && 
+             Math.abs(snappedPoint.y - drawState.initialPoint.y) < 0.1;
+             
+          if (!isClosing) {
+            const indicator = createSnapIndicator(drawState.startPoint);
+            drawState.snapIndicator = indicator;
+            canvas.add(indicator as unknown as InstanceType<typeof fabric.FabricObject>);
+          }
         }
 
         canvas.renderAll();
@@ -248,20 +306,14 @@ export function useEasyDraw() {
 
       function onKeyDown(e: KeyboardEvent) {
         if (e.key === 'Escape') {
-          clearPreview();
-          drawState.startPoint = null;
-          canvas.defaultCursor = cursorForTool('easydraw');
-          canvas.renderAll();
+          cancelDrawing();
         }
       }
 
       function onContextMenu(e: MouseEvent) {
         // Prevent context menu and treat as cancel
         e.preventDefault();
-        clearPreview();
-        drawState.startPoint = null;
-        canvas.defaultCursor = cursorForTool('easydraw');
-        canvas.renderAll();
+        cancelDrawing();
       }
 
       // Attach events

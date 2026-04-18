@@ -52,7 +52,7 @@ vi.mock('@/hooks/useSelectionActions', () => ({
 
 // Import after mocks
 import { CanvasSelectionToolbar } from '@/components/canvas/CanvasSelectionToolbar';
-import { getSelectionType } from '@/lib/selection-utils';
+import { getSelectionType, getSelectionBounds } from '@/lib/selection-utils';
 
 describe('CanvasSelectionToolbar', () => {
   beforeEach(() => {
@@ -62,6 +62,7 @@ describe('CanvasSelectionToolbar', () => {
     mockStore.swapMode = false;
     mockStore.fabricPickerTarget = null;
     mockGetCanvas.mockReturnValue(null);
+    vi.mocked(getSelectionBounds).mockReturnValue({ left: 0, top: 0, width: 100, height: 100 } as any);
   });
 
   it('renders nothing when there is no selection', () => {
@@ -78,6 +79,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -99,6 +102,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ _fenceRole: 'border' }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('border');
@@ -120,6 +125,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ _fenceRole: 'sashing' }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('sashing');
@@ -140,6 +147,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __pieceRole: 'patch' }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('patch');
@@ -158,6 +167,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -175,6 +186,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -192,6 +205,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -209,6 +224,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -226,6 +243,8 @@ describe('CanvasSelectionToolbar', () => {
       getActiveObjects: vi.fn(() => [{ __isBlockGroup: true }]),
       wrapperEl: { clientWidth: 800, clientHeight: 600 },
       viewportTransform: [1, 0, 0, 1, 0, 0],
+      on: vi.fn(),
+      off: vi.fn(),
     };
     mockGetCanvas.mockReturnValue(mockCanvas);
     vi.mocked(getSelectionType).mockReturnValue('block');
@@ -238,3 +257,4 @@ describe('CanvasSelectionToolbar', () => {
     expect(swapButton.disabled).toBe(true);
   });
 });
+

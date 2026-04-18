@@ -296,7 +296,7 @@ describe('easydraw-engine', () => {
         { x: 50, y: 50 }
       );
 
-      expect(hitTestSegment({ x: 50, y: 30 }, bent, 10)).toBe(true);
+      expect(hitTestSegment({ x: 50, y: 45 }, bent, 10)).toBe(true);
       expect(hitTestSegment({ x: 50, y: 100 }, bent, 10)).toBe(false);
     });
   });

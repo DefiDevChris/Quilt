@@ -1,412 +1,162 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
-import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
-import { formatRelativeTime } from '@/lib/format-time';
-import { useAuthStore, useAuthDerived } from '@/stores/authStore';
-import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
-import { BrandedPage } from '@/components/layout/BrandedPage';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION } from '@/lib/design-system';
-import { QuiltPlaceholder } from '@/components/ui/QuiltPlaceholder';
-import { useMobileUploadStore } from '@/stores/mobileUploadStore';
+import { useShopEnabled } from '@/hooks/useShopEnabled';
+import { ChevronRight } from 'lucide-react';
 
 const MobileUploadsPanel = dynamic(
   () => import('@/components/uploads/MobileUploadsPanel').then((m) => m.MobileUploadsPanel),
   { ssr: false }
 );
 
-type DashboardTab = 'my-quilts' | 'mobile-uploads';
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-interface ProjectListItem {
-  id: string;
-  name: string;
-  description: string | null;
-  thumbnailUrl: string | null;
-  unitSystem: string;
-  lastSavedAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 function DashboardPageContent() {
-  const user = useAuthStore((s) => s.user);
-  const { isPro } = useAuthDerived();
-  const isLoadingAuth = useAuthStore((s) => s.isLoading);
-  const [projects, setProjects] = useState<ProjectListItem[]>([]);
-  const [projectCount, setProjectCount] = useState<number | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
+  const [showMobileUploads, setShowMobileUploads] = useState(false);
+  const shopEnabled = useShopEnabled();
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const res = await fetch('/api/projects?sort=updatedAt&order=desc&limit=50');
-      if (!res.ok) return;
-      const data = await res.json();
-      setProjects(data.data.projects);
-      setProjectCount(data.data.projects.length);
-    } catch {
-      // silent
-    }
-  }, []);
-
-  const uploads = useMobileUploadStore((s) => s.uploads);
-  const pendingUploads = useMemo(() => uploads.filter((u) => u.status === 'pending'), [uploads]);
-  const fetchMobileUploads = useMobileUploadStore((s) => s.fetchUploads);
-
-  useEffect(() => {
-    if (!isLoadingAuth && user) {
-      setTimeout(() => {
-        fetchProjects();
-        fetchMobileUploads('pending');
-      }, 0);
-    }
-  }, [isLoadingAuth, user, fetchProjects, fetchMobileUploads]);
-
-  const displayName = user?.name?.split(' ')[0] ?? 'there';
-  const greeting = getGreeting();
-
-  /* ── Mobile Uploads view ─────────────────────────────────────────── */
-  if (activeTab === 'mobile-uploads') {
-    return (
-      <BrandedPage decorationOpacity={6}>
-        <div className="md:-mt-6 md:-mx-6 md:h-[calc(100vh-56px)] md:overflow-hidden flex flex-col">
-          <div
-            className="flex items-center gap-3 px-6 py-4 flex-shrink-0 border-b bg-[var(--color-bg)]"
-            style={{ borderColor: COLORS.border }}
-          >
-            <button
-              type="button"
-              onClick={() => setActiveTab('my-quilts')}
-              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 border transition-colors rounded-lg hover:bg-default"
-              style={{
-                backgroundColor: COLORS.surface,
-                borderColor: COLORS.border,
-                color: COLORS.text,
-                boxShadow: SHADOW.brand,
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-            >
-              <ArrowLeft size={14} strokeWidth={3} />
-              Back to Dashboard
-            </button>
-          </div>
-          <div className="flex-1 overflow-auto px-6 py-8">
-            <MobileUploadsPanel />
-          </div>
-        </div>
-      </BrandedPage>
-    );
-  }
-
-  /* ── Main Workspace layout ───────────────────────────────────────── */
   return (
-    <BrandedPage decorationOpacity={6}>
-      <div className="max-w-7xl mx-auto py-12 px-6 w-full">
-        {/* Header */}
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1
-              className="text-[40px] leading-[52px] font-semibold mb-2"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
-            >
-              Dashboard
-            </h1>
-            <p className="text-base" style={{ color: COLORS.textDim }}>
-              {greeting}, {displayName}
-            </p>
-          </div>
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.7fr] lg:grid-rows-2 gap-8 min-h-0 relative pb-8">
 
-          {!isPro && !isLoadingAuth && user && <ProUpgradeButton variant="dashboard" />}
+      {/* 1. DESIGN - Quarter */}
+      <Link
+        href="/studio"
+        className="bg-[var(--color-primary)] text-white border border-[var(--color-primary)] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 cursor-pointer h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-white/20 pointer-events-none">
+          <Image src="/icons/quilt-quilt.png" alt="Quilt" fill className="object-contain" />
         </div>
 
-        {/* Quick Actions Grid */}
-        <div className="mb-12">
-          <h2 className="text-sm font-semibold mb-6" style={{ color: COLORS.text }}>
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button
-              type="button"
-              onClick={() => setDialogOpen(true)}
-              className="group relative overflow-hidden p-8 text-left transition-colors rounded-lg hover:bg-primary-dark"
-              style={{
-                backgroundColor: COLORS.primary,
-                color: COLORS.text,
-                boxShadow: SHADOW.brand,
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <Image
-                  src="/icons/quilt-13-dashed-squares-Photoroom.png"
-                  alt=""
-                  width={48}
-                  height={48}
-                  className="w-12 h-12"
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="font-semibold text-xl">New Design</p>
-                <p style={{ color: `${COLORS.text}cc` }} className="text-sm">
-                  Start a fresh project from scratch or a template
-                </p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => projects[0] && (window.location.href = `/studio/${projects[0].id}`)}
-              disabled={projects.length === 0}
-              className={`group relative overflow-hidden p-8 text-left border transition-colors rounded-lg hover:border-primary-30 ${projects.length > 0 ? '' : 'opacity-60 cursor-not-allowed'}`}
-              style={{
-                backgroundColor: COLORS.surface,
-                borderColor: COLORS.border,
-                boxShadow: projects.length > 0 ? SHADOW.brand : 'none',
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <Image
-                  src="/icons/quilt-worktable.png"
-                  alt=""
-                  width={48}
-                  height={48}
-                  className="w-12 h-12"
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="font-semibold text-xl" style={{ color: COLORS.text }}>
-                  Continue Latest
-                </p>
-                <p className="text-sm truncate" style={{ color: COLORS.textDim }}>
-                  {projects[0] ? projects[0].name : 'No projects yet'}
-                </p>
-              </div>
-            </button>
+        <div className="relative z-10 text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-white/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/50">Creator</span>
           </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none">Design a Quilt</h3>
+          <p className="font-sans text-white/70 text-sm max-w-[240px] leading-relaxed">Start with a blank canvas and draft your heirloom pattern.</p>
         </div>
 
-        {/* Navigation Grid */}
-        <div className="mb-12">
-          <h2 className="text-sm font-semibold mb-6" style={{ color: COLORS.text }}>
-            Navigate
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              {
-                label: 'Projects',
-                href: '/projects',
-                icon: '/icons/quilt-projects.png',
-                count: projectCount,
-                description: 'Manage your designs',
-              },
-              {
-                label: 'Fabric Library',
-                href: '/fabrics',
-                icon: '/icons/quilt-01-spool-Photoroom.png',
-                description: 'Browse fabrics',
-              },
-              {
-                label: 'Mobile Uploads',
-                type: 'button',
-                onClick: () => setActiveTab('mobile-uploads'),
-                icon: '/icons/quilt-mobile-uploads.png',
-                count: pendingUploads.length,
-                description: 'Process uploads',
-              },
-              {
-                label: 'Settings',
-                href: '/settings',
-                icon: '/icons/quilt-settings.png',
-                description: 'Account preferences',
-              },
-            ].map((item, i) => {
-              const Content = (
-                <>
-                  <div
-                    className="w-12 h-12 border rounded-lg flex items-center justify-center mb-3 transition-colors overflow-hidden"
-                    style={{
-                      backgroundColor: COLORS.bg,
-                      borderColor: COLORS.border,
-                      transitionDuration: `${MOTION.transitionDuration}ms`,
-                      transitionTimingFunction: MOTION.transitionEasing,
-                    }}
-                  >
-                    <Image src={item.icon} alt="" width={20} height={20} className="w-5 h-5" />
-                  </div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm mb-0.5" style={{ color: COLORS.text }}>
-                        {item.label}
-                      </p>
-                      <p className="text-xs line-clamp-2" style={{ color: COLORS.textDim }}>
-                        {item.description}
-                      </p>
-                    </div>
-                    {item.count !== undefined && item.count !== null && (
-                      <span
-                        className="px-2 py-0.5 text-xs font-medium rounded-lg shrink-0"
-                        style={{
-                          backgroundColor:
-                            item.label === 'Mobile Uploads' && (item.count as number) > 0
-                              ? COLORS.primary
-                              : COLORS.bg,
-                          color:
-                            item.label === 'Mobile Uploads' && (item.count as number) > 0
-                              ? COLORS.text
-                              : COLORS.textDim,
-                        }}
-                      >
-                        {item.count}
-                      </span>
-                    )}
-                  </div>
-                </>
-              );
-
-              if (item.type === 'button') {
-                return (
-                  <button
-                    key={i}
-                    onClick={item.onClick}
-                    className="group flex flex-col p-5 border transition-colors rounded-lg text-left hover:border-primary-30"
-                    style={{
-                      backgroundColor: COLORS.surface,
-                      borderColor: COLORS.border,
-                      boxShadow: SHADOW.brand,
-                      transitionDuration: `${MOTION.transitionDuration}ms`,
-                      transitionTimingFunction: MOTION.transitionEasing,
-                    }}
-                  >
-                    {Content}
-                  </button>
-                );
-              }
-
-              return (
-                <Link
-                  key={i}
-                  href={item.href || '#'}
-                  className="group flex flex-col p-5 border transition-colors rounded-lg hover:border-primary-30"
-                  style={{
-                    backgroundColor: COLORS.surface,
-                    borderColor: COLORS.border,
-                    boxShadow: SHADOW.brand,
-                    transitionDuration: `${MOTION.transitionDuration}ms`,
-                    transitionTimingFunction: MOTION.transitionEasing,
-                  }}
-                >
-                  {Content}
-                </Link>
-              );
-            })}
+        <div className="relative z-10 text-left">
+          <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-white cursor-pointer transition-quilt">
+            <span>Begin Draft</span>
+            <ChevronRight size={14} />
           </div>
         </div>
+      </Link>
 
-        {/* Recent Projects */}
-        {projects.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-sm font-semibold" style={{ color: COLORS.text }}>
-                Recent Projects
-              </h2>
-              <Link
-                href="/projects"
-                className="text-sm font-medium transition-colors flex items-center gap-1 hover:opacity-80"
-                style={{
-                  color: COLORS.primary,
-                  transitionDuration: `${MOTION.transitionDuration}ms`,
-                  transitionTimingFunction: MOTION.transitionEasing,
-                }}
-              >
-                View All
-                <ChevronRight size={16} strokeWidth={2} />
-              </Link>
+      {/* 2. TEMPLATES - Balanced Quarter */}
+      <Link
+        href="/design-studio"
+        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+          <Image src="/icons/template.png" alt="Templates" fill className="object-contain" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Blueprints</span>
+          </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Templates</h3>
+          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Hand-picked blueprints to spark your next masterpiece.</p>
+          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+            <span>Browse Work</span>
+            <ChevronRight size={14} />
+          </div>
+        </div>
+      </Link>
+
+      {/* 3. SHOP - Right Side, Double Height */}
+      {shopEnabled && (
+        <Link
+          href="/shop"
+          className="lg:row-span-2 bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5"
+        >
+          <div className="absolute bottom-4 right-4 w-32 h-32 text-[var(--color-primary)]/20 pointer-events-none">
+            <Image src="/icons/quilt-01-spool-Photoroom.png" alt="Shop" fill className="object-contain" />
+          </div>
+
+          <div className="relative z-10 text-left">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Marketplace</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {projects.slice(0, 6).map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/studio/${project.id}`}
-                  className="group flex flex-col border transition-colors rounded-lg overflow-hidden hover:border-primary-30"
-                  style={{
-                    backgroundColor: COLORS.surface,
-                    borderColor: COLORS.border,
-                    boxShadow: SHADOW.brand,
-                    transitionDuration: `${MOTION.transitionDuration}ms`,
-                    transitionTimingFunction: MOTION.transitionEasing,
-                  }}
-                >
-                  <div
-                    className="w-full h-40 bg-[var(--color-bg)] border-b overflow-hidden"
-                    style={{ borderColor: COLORS.border }}
-                  >
-                    {project.thumbnailUrl ? (
-                      <Image
-                        src={project.thumbnailUrl}
-                        alt={project.name}
-                        width={400}
-                        height={160}
-                        className="w-full h-full object-cover"
-                        unoptimized
-                      />
-                    ) : (
-                      <QuiltPlaceholder className="w-full h-full opacity-50" />
-                    )}
-                  </div>
-                  <div className="p-4 space-y-2">
-                    <p
-                      className="font-semibold transition-colors truncate group-hover:text-primary"
-                      style={{
-                        color: COLORS.text,
-                        transitionDuration: `${MOTION.transitionDuration}ms`,
-                        transitionTimingFunction: MOTION.transitionEasing,
-                      }}
-                    >
-                      {project.name}
-                    </p>
-                    <div
-                      className="flex items-center justify-between text-xs"
-                      style={{ color: COLORS.textDim }}
-                    >
-                      <span>{formatRelativeTime(project.updatedAt)}</span>
-                      <span
-                        className="px-2 py-0.5 rounded-lg"
-                        style={{ backgroundColor: COLORS.bg }}
-                      >
-                        {project.unitSystem}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Shop</h3>
+            <p className="font-sans text-black/50 text-sm max-w-[240px]">Curated fabrics, exclusive patterns, and premium studio supplies from artisans around the world.</p>
+          </div>
+
+          <div className="relative z-10 text-left">
+            <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+              <span>Explore Vault</span>
+              <ChevronRight size={14} />
             </div>
           </div>
-        )}
+        </Link>
+      )}
 
-        <NewProjectWizard
-          open={dialogOpen}
-          onClose={() => {
-            setDialogOpen(false);
-            fetchProjects();
-          }}
-        />
-      </div>
-    </BrandedPage>
+      {/* 4. BLOG - Quarter */}
+      <Link
+        href="/blog"
+        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+          <Image src="/icons/quilt-book.png" alt="Blog" fill className="object-contain" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Editorial</span>
+          </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Blog</h3>
+          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
+          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+            <span>Read Journal</span>
+            <ChevronRight size={14} />
+          </div>
+        </div>
+      </Link>
+
+      {/* 5. PICTURE BLOCKS - Quarter */}
+      <Link
+        href="/picture-my-blocks"
+        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+          <Image src="/icons/quilt-mobile-uploads.png" alt="Uploads" fill className="object-contain" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Visualizer</span>
+          </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Picture My Blocks</h3>
+          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Upload photos for automatic color matching and block visualization.</p>
+          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+            <span>Match Swatches</span>
+            <ChevronRight size={14} />
+          </div>
+        </div>
+      </Link>
+
+      {/* Mobile uploads section */}
+      {showMobileUploads && (
+        <div className="col-span-full mt-12">
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-black/[0.06]">
+            <h3 className="text-base font-sans font-bold text-black">
+              Mobile uploads
+            </h3>
+            <button
+              onClick={() => setShowMobileUploads(false)}
+              className="ml-auto text-sm text-black/40 hover:text-black transition-quilt"
+            >
+              Hide
+            </button>
+          </div>
+          <MobileUploadsPanel />
+        </div>
+      )}
+    </div>
   );
 }
 
