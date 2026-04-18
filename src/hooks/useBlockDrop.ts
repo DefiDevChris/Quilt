@@ -5,10 +5,15 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { snapToCell, snapToGridCorner } from '@/lib/snap-utils';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
 import { computeBlockDropScale } from '@/lib/block-drop-scale';
-import { findFenceAreaAtPoint, computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
+import {
+  findFenceAreaAtPoint,
+  computeFenceAreas,
+  layoutSourceToTemplate,
+} from '@/lib/fence-engine';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
@@ -88,22 +93,24 @@ export function useBlockDrop() {
       if (fabricCanvas) {
         const canvas = fabricCanvas as FabricCanvas;
         const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
-        const targetArea = findFenceAreaAtPoint(getComputedLayoutAreas(), pointer.x, pointer.y, [
-          'block-cell',
-        ]);
+        const { mode } = useProjectStore.getState();
 
-        if (targetArea) {
+        if (mode === 'layout' || mode === 'template') {
+          const targetArea = findFenceAreaAtPoint(getComputedLayoutAreas(), pointer.x, pointer.y, [
+            'block-cell',
+          ]);
+
+          if (targetArea) {
+            e.dataTransfer.dropEffect = 'copy';
+            await showCellHighlight(targetArea);
+            return;
+          }
+        } else if (mode === 'free-form') {
+          // Free-form mode allows drops anywhere, with grid snapping
           e.dataTransfer.dropEffect = 'copy';
-          await showCellHighlight(targetArea);
+          clearHighlight();
           return;
         }
-      }
-
-      const { hasAppliedLayout, layoutType } = useLayoutStore.getState();
-      if (!hasAppliedLayout || layoutType === 'free-form') {
-        e.dataTransfer.dropEffect = 'copy';
-        clearHighlight();
-        return;
       }
 
       clearHighlight();
@@ -161,9 +168,9 @@ export function useBlockDrop() {
         const pointer = canvas.getScenePoint(e.nativeEvent as unknown as MouseEvent);
         const layoutAreas = getComputedLayoutAreas();
         const targetArea = findFenceAreaAtPoint(layoutAreas, pointer.x, pointer.y, ['block-cell']);
-        const { hasAppliedLayout, layoutType } = useLayoutStore.getState();
+        const { mode } = useProjectStore.getState();
 
-        if (hasAppliedLayout && layoutType !== 'free-form' && !targetArea) {
+        if ((mode === 'layout' || mode === 'template') && !targetArea) {
           const wrapper = (e.target as HTMLElement)?.closest?.('[data-canvas-wrapper]');
           if (wrapper && !wrapper.classList.contains('invalid-drop-flash')) {
             if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
@@ -195,61 +202,65 @@ export function useBlockDrop() {
 
         const currentJson = JSON.stringify(canvas.toJSON());
         const undoSaved = pushUndoState(currentJson);
+        const { gridSettings, zoom } = useCanvasStore.getState();
 
-        if (targetArea) {
-          const cellX = targetArea.x;
-          const cellY = targetArea.y;
-          const cellW = targetArea.width;
-          const cellH = targetArea.height;
-          const cellRotation = targetArea.rotation ?? 0;
-          const targetCellId = targetArea.id;
+        if (mode === 'layout' || mode === 'template') {
+          // Layout/Template mode: snap to cell
+          if (targetArea) {
+            const cellX = targetArea.x;
+            const cellY = targetArea.y;
+            const cellW = targetArea.width;
+            const cellH = targetArea.height;
+            const cellRotation = targetArea.rotation ?? 0;
+            const targetCellId = targetArea.id;
 
-          // Remove existing block in this cell (only if undo can protect the action)
-          if (targetCellId && undoSaved) {
-            for (const obj of allObjects) {
-              const r = obj as unknown as Record<string, unknown>;
-              if (r['_inFenceCellId'] === targetCellId) {
-                canvas.remove(obj);
-                break;
+            // Remove existing block in this cell (only if undo can protect the action)
+            if (targetCellId && undoSaved) {
+              for (const obj of allObjects) {
+                const r = obj as unknown as Record<string, unknown>;
+                if (r['_inFenceCellId'] === targetCellId) {
+                  canvas.remove(obj);
+                  break;
+                }
               }
             }
+
+            const group = new fabric.Group(objects, {
+              originX: 'center',
+              originY: 'center',
+              subTargetCheck: true,
+              lockMovementX: true,
+              lockMovementY: true,
+              lockRotation: true,
+              lockScalingX: true,
+              lockScalingY: true,
+            });
+
+            const groupMeta = group as unknown as Record<string, unknown>;
+            groupMeta.__isBlockGroup = true;
+            groupMeta.__blockId = blockId;
+
+            const tightW = group.width ?? 100;
+            const tightH = group.height ?? 100;
+            // Uniform scale: maintain aspect ratio per project conventions
+            // (scaleX === scaleY, see CLAUDE.md Fabric.js section)
+            const uniformScale = computeBlockDropScale(cellW, cellH, tightW, tightH);
+            group.set({
+              left: cellX + cellW / 2,
+              top: cellY + cellH / 2,
+              scaleX: uniformScale,
+              scaleY: uniformScale,
+              angle: cellRotation,
+            });
+
+            if (targetCellId) {
+              groupMeta._inFenceCellId = targetCellId;
+            }
+
+            canvas.add(group);
+            canvas.setActiveObject(group);
           }
-
-          const group = new fabric.Group(objects, {
-            originX: 'center',
-            originY: 'center',
-            subTargetCheck: true,
-            lockMovementX: true,
-            lockMovementY: true,
-            lockRotation: true,
-            lockScalingX: true,
-            lockScalingY: true,
-          });
-
-          const groupMeta = group as unknown as Record<string, unknown>;
-          groupMeta.__isBlockGroup = true;
-          groupMeta.__blockId = blockId;
-
-          const tightW = group.width ?? 100;
-          const tightH = group.height ?? 100;
-          // Uniform scale: maintain aspect ratio per project conventions
-          // (scaleX === scaleY, see CLAUDE.md Fabric.js section)
-          const uniformScale = computeBlockDropScale(cellW, cellH, tightW, tightH);
-          group.set({
-            left: cellX + cellW / 2,
-            top: cellY + cellH / 2,
-            scaleX: uniformScale,
-            scaleY: uniformScale,
-            angle: cellRotation,
-          });
-
-          if (targetCellId) {
-            groupMeta._inFenceCellId = targetCellId;
-          }
-
-          canvas.add(group);
-          canvas.setActiveObject(group);
-        } else {
+        } else if (mode === 'free-form') {
           // ── Freeform placement: drop at pointer with grid snap, movable ──
           const group = new fabric.Group(objects, {
             originX: 'center',
@@ -261,13 +272,19 @@ export function useBlockDrop() {
           groupMeta.__isBlockGroup = true;
           groupMeta.__blockId = blockId;
 
-          // Snap to grid for clean placement
-          const { gridSettings, unitSystem: us } = useCanvasStore.getState();
+          // Use configurable grid granularity for snapping
+          const gridSizeIn =
+            gridSettings.size *
+            (gridSettings.granularity === 'half'
+              ? 0.5
+              : gridSettings.granularity === 'quarter'
+                ? 0.25
+                : 1);
           const { canvasWidth, canvasHeight } = useProjectStore.getState();
           const { blockSize } = useLayoutStore.getState();
-          const { getPixelsPerUnit, snapToGrid: snapFn } = await import('@/lib/canvas-utils');
+          const { getPixelsPerUnit } = await import('@/lib/canvas-utils');
           const { computeBlockDropScale: calcScale } = await import('@/lib/block-drop-scale');
-          const ppu = getPixelsPerUnit(us);
+          const ppu = getPixelsPerUnit('imperial'); // Use imperial for consistency
 
           // Scale block to the configured block cell size so it appears correctly
           // sized relative to the quilt grid — same logic as fence cell placement
@@ -284,10 +301,11 @@ export function useBlockDrop() {
           const halfH = (rawH * uniformScale) / 2;
 
           if (gridSettings.snapToGrid) {
-            const gridSizePx = gridSettings.size * ppu;
-            // Snap the top-left corner, then offset back to center origin
-            dropX = snapFn(dropX - halfW, gridSizePx) + halfW;
-            dropY = snapFn(dropY - halfH, gridSizePx) + halfH;
+            // Snap the center point to grid corner
+            const centerPoint = { x: dropX, y: dropY };
+            const snappedCenter = snapToGridCorner(centerPoint, gridSizeIn, zoom);
+            dropX = snappedCenter.x;
+            dropY = snappedCenter.y;
           }
 
           // Constrain within quilt bounds

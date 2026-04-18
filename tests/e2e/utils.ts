@@ -196,6 +196,47 @@ export async function mockProject(page: Page, projectId: string = 'test-project-
   });
 }
 
+export async function mockEmptyProject(page: Page, projectId: string = 'empty-project-1') {
+  await page.route(`**/api/projects/${projectId}`, async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: projectId,
+          name: 'Empty Project',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          canvasData: {},
+          canvasWidth: 0,
+          canvasHeight: 0,
+          unitSystem: 'imperial',
+          gridSettings: { enabled: true, size: 1, snapToGrid: true },
+          worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
+        }),
+      });
+    } else {
+      await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+    }
+  });
+
+  await page.route(`**/api/projects/${projectId}/save`, async (route) => {
+    await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+  });
+
+  await page.route(`**/api/projects/${projectId}/history`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([
+        { id: 'h1', action: 'Project created', timestamp: new Date().toISOString() },
+        { id: 'h2', action: 'Added block', timestamp: new Date().toISOString() },
+        { id: 'h3', action: 'Moved block', timestamp: new Date().toISOString() },
+      ]),
+    });
+  });
+}
+
 export async function getElementText(page: Page, selector: string): Promise<string | null> {
   const element = page.locator(selector);
   if ((await element.count()) === 0) return null;

@@ -10,7 +10,8 @@ type ApiErrorCode =
   | 'RATE_LIMITED'
   | 'INTERNAL_ERROR'
   | 'USERNAME_CONFLICT'
-  | 'SLUG_CONFLICT';
+  | 'SLUG_CONFLICT'
+  | 'MODE_LOCKED';
 
 export function unauthorizedResponse(message = 'Authentication required') {
   return Response.json(

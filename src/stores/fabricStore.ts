@@ -4,6 +4,7 @@ import type { FabricListItem } from '@/types/fabric';
 interface FabricStoreState {
   fabrics: FabricListItem[];
   userFabrics: FabricListItem[];
+  uploadedFabrics: FabricListItem[];
   search: string;
   manufacturer: string;
   colorFamily: string;
@@ -14,6 +15,7 @@ interface FabricStoreState {
   total: number;
   isLoading: boolean;
   isLoadingUserFabrics: boolean;
+  isLoadingUploads: boolean;
   error: string | null;
   isPanelOpen: boolean;
   whereUsedFabricId: string | null;
@@ -29,6 +31,7 @@ interface FabricStoreState {
   togglePanel: () => void;
   fetchFabrics: () => Promise<void>;
   fetchUserFabrics: () => Promise<void>;
+  fetchUploadedFabrics: () => Promise<void>;
   deleteUserFabric: (fabricId: string) => Promise<boolean>;
   setWhereUsedFabric: (fabricId: string | null, fabricUrl: string | null) => void;
   reset: () => void;
@@ -40,6 +43,7 @@ let userFabricAbortController: AbortController | null = null;
 const INITIAL_STATE = {
   fabrics: [] as FabricListItem[],
   userFabrics: [] as FabricListItem[],
+  uploadedFabrics: [] as FabricListItem[],
   search: '',
   manufacturer: '',
   colorFamily: '',
@@ -50,6 +54,7 @@ const INITIAL_STATE = {
   total: 0,
   isLoading: false,
   isLoadingUserFabrics: false,
+  isLoadingUploads: false,
   error: null as string | null,
   isPanelOpen: false,
   whereUsedFabricId: null as string | null,
@@ -168,6 +173,27 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
       set({ error: 'Failed to load your fabrics', isLoadingUserFabrics: false });
+    }
+  },
+
+  fetchUploadedFabrics: async () => {
+    set({ isLoadingUploads: true });
+    try {
+      const params = new URLSearchParams();
+      params.set('source', 'upload');
+      params.set('limit', '100');
+
+      const res = await fetch(`/api/fabrics?${params.toString()}`);
+      const json = await res.json();
+
+      if (!res.ok) {
+        set({ error: json.error ?? 'Failed to load uploads', isLoadingUploads: false });
+        return;
+      }
+
+      set({ uploadedFabrics: json.data.fabrics, isLoadingUploads: false });
+    } catch {
+      set({ error: 'Failed to load uploads', isLoadingUploads: false });
     }
   },
 

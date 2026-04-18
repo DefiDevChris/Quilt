@@ -85,6 +85,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
+    // Reject attempts to change project mode
+    if ('mode' in parsed.data) {
+      return errorResponse('Project mode cannot be changed after creation', 'MODE_LOCKED', 400);
+    }
+
     // Optimistic concurrency control: check version if provided
     if (parsed.data.version !== undefined) {
       if (project.version !== parsed.data.version) {

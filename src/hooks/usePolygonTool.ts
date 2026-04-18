@@ -6,6 +6,8 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { snapToGridCorner } from '@/lib/snap-utils';
+import type { CanvasGridSettings } from '@/types/grid';
 import { CANVAS } from '@/lib/design-system';
 
 export function usePolygonTool() {
@@ -17,14 +19,14 @@ export function usePolygonTool() {
     fillColor: string;
     strokeColor: string;
     strokeWidth: number;
-    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    gridSettings: CanvasGridSettings;
     unitSystem: 'imperial' | 'metric';
     isSpacePressed: boolean;
   }>({
     fillColor: CANVAS.pencilPreview,
     strokeColor: CANVAS.seamLine,
     strokeWidth: 1,
-    gridSettings: { enabled: true, size: 1, snapToGrid: true },
+    gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
     unitSystem: 'imperial' as 'imperial' | 'metric',
     isSpacePressed: false,
   });
@@ -66,10 +68,25 @@ export function usePolygonTool() {
 
       function snapPoint(x: number, y: number): { x: number; y: number } {
         const s = stateRef.current;
-        return {
-          x: maybeSnap(x, s.gridSettings, s.unitSystem),
-          y: maybeSnap(y, s.gridSettings, s.unitSystem),
-        };
+        const { mode } = useProjectStore.getState();
+
+        if (mode === 'free-form') {
+          // Free-form: snap to grid corners at current granularity
+          const gridSizeIn =
+            s.gridSettings.size *
+            (s.gridSettings.granularity === 'half'
+              ? 0.5
+              : s.gridSettings.granularity === 'quarter'
+                ? 0.25
+                : 1);
+          return snapToGridCorner({ x, y }, gridSizeIn, useCanvasStore.getState().zoom);
+        } else {
+          // Layout/Template: use existing snap logic
+          return {
+            x: maybeSnap(x, s.gridSettings, s.unitSystem),
+            y: maybeSnap(y, s.gridSettings, s.unitSystem),
+          };
+        }
       }
 
       function addPreviewDot(x: number, y: number) {
@@ -163,15 +180,20 @@ export function usePolygonTool() {
 
         const pointer = canvas.getScenePoint(e.e);
 
-        // Fence constraint: when a layout is applied, only allow polygon
-        // vertices inside block-cell fence areas
-        const { hasAppliedLayout } = useLayoutStore.getState();
-        if (hasAppliedLayout) {
-          const fenceAreas = canvas.getObjects().filter((obj) =>
-            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
-          );
+        // Fence constraint: Layout/Template modes only allow polygon vertices inside block-cell areas
+        const { mode } = useProjectStore.getState();
+        if (mode === 'layout' || mode === 'template') {
+          const fenceAreas = canvas
+            .getObjects()
+            .filter(
+              (obj) =>
+                (obj as unknown as Record<string, unknown>)['_fenceElement'] &&
+                (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
+            );
           const isInsideCell = fenceAreas.some((obj) =>
-            (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
+            (
+              obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }
+            ).containsPoint(pointer)
           );
           if (!isInsideCell) return;
         }

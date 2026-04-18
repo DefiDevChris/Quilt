@@ -2,17 +2,15 @@
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import { useAuthDerived } from '@/stores/authStore';
-import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
-import { LAYOUT, COLORS } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 
-import { SimplePhotoBlockUpload } from '@/components/blocks/SimplePhotoBlockUpload';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 
 import { PdfExportDialog } from '@/components/export/PdfExportDialog';
@@ -36,7 +34,6 @@ interface StudioDialogsApi {
   openHistory: () => void;
   openGridDimensions: () => void;
   openResize: () => void;
-  openPhotoBlockUpload: () => void;
   openFabricUpload: () => void;
 
   /** Show confirmation before changing to a different layout type (destructive). */
@@ -67,7 +64,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   const { getCanvas } = useCanvasContext();
 
   // Dialog open/close state
-  const [isPhotoBlockUploadOpen, setIsPhotoBlockUploadOpen] = useState(false);
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
 
   const [isPdfExportOpen, setIsPdfExportOpen] = useState(false);
@@ -109,10 +105,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     }
   }, []);
 
-  const handleBlockSaved = useCallback((_blockId?: string) => {
-    void useBlockStore.getState().fetchUserBlocks();
-  }, []);
-
   const handleFabricUploaded = useCallback(() => {
     useFabricStore.getState().fetchUserFabrics();
   }, []);
@@ -126,11 +118,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   const openPdfExport = useCallback(() => {
     if (!isPro) return promptUpgrade('PDF Export');
     setIsPdfExportOpen(true);
-  }, [isPro, promptUpgrade]);
-
-  const openPhotoBlockUpload = useCallback(() => {
-    if (!isPro) return promptUpgrade('Photo Block Upload');
-    setIsPhotoBlockUploadOpen(true);
   }, [isPro, promptUpgrade]);
 
   const openFabricUpload = useCallback(() => {
@@ -159,7 +146,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     openHistory: () => setIsHistoryOpen(true),
     openGridDimensions,
     openResize: () => setIsResizeOpen(true),
-    openPhotoBlockUpload,
     openFabricUpload,
     confirmChangeLayout,
     confirmClearLayout,
@@ -169,31 +155,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   return (
     <StudioDialogsContext.Provider value={api}>
       {children}
-
-      {/* ── Photo block upload (pro only) ─────────────────────── */}
-      {isPro && isPhotoBlockUploadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40">
-          <div
-            className={`w-[${LAYOUT.dialogLg}] rounded-lg bg-[var(--color-bg)] p-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]`}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-[var(--color-text)]">Upload Block Photo</h2>
-              <button
-                type="button"
-                onClick={() => setIsPhotoBlockUploadOpen(false)}
-                className="text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
-              >
-                {'\u2715'}
-              </button>
-            </div>
-            <SimplePhotoBlockUpload
-              isOpen={isPhotoBlockUploadOpen}
-              onClose={() => setIsPhotoBlockUploadOpen(false)}
-              onSaved={handleBlockSaved}
-            />
-          </div>
-        </div>
-      )}
 
       {/* ── Pro-only dialogs ──────────────────────────────────── */}
       {isPro && (

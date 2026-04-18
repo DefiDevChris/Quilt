@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
         .values({
           userId: session.user.id,
           name: `${source.name} (copy)`,
+          mode: source.mode,
           canvasData: source.canvasData,
           canvasWidth: source.canvasWidth,
           canvasHeight: source.canvasHeight,
@@ -152,6 +153,7 @@ export async function POST(request: NextRequest) {
 
     const {
       name,
+      mode,
       unitSystem,
       canvasWidth: bodyWidth,
       canvasHeight: bodyHeight,
@@ -167,6 +169,7 @@ export async function POST(request: NextRequest) {
       .values({
         userId: session.user.id,
         name,
+        mode,
         unitSystem,
         canvasWidth,
         canvasHeight,

@@ -135,6 +135,7 @@ export function useCanvasInit(
           canvas as unknown as { getZoom: () => number; viewportTransform: number[] },
           {
             gridSettings: state.gridSettings,
+            mode: proj.mode,
             unitSystem: state.unitSystem,
             quiltWidth: proj.canvasWidth,
             quiltHeight: proj.canvasHeight,

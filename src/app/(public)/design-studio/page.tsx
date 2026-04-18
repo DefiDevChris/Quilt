@@ -62,7 +62,7 @@ export default function DesignStudioLandingPage() {
             >
               Guides
             </Link>
-            <div className="h-4 w-[1px] bg-slate-200 mx-2" />
+            <div className="mx-2 h-4 w-px bg-[var(--color-border)]" />
             <Link
               href="/auth/signin"
               className="text-sm font-semibold hover:text-[var(--color-primary)] transition-colors"
@@ -70,11 +70,7 @@ export default function DesignStudioLandingPage() {
             >
               Sign In
             </Link>
-            <Link
-              href="/auth/signup"
-              className="px-5 py-2 rounded-full text-sm font-bold transition-all hover:opacity-90 active:scale-95"
-              style={{ background: COLORS.primary, color: '#fff' }}
-            >
+            <Link href="/auth/signup" className="btn-primary-sm">
               Start Designing
             </Link>
           </nav>
@@ -87,7 +83,7 @@ export default function DesignStudioLandingPage() {
           {/* Left Side: Content */}
           <div className="flex-1 text-center lg:text-left">
             <span
-              className="inline-block px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
+              className="mb-8 inline-flex rounded-full px-4 py-1.5 text-xs font-semibold"
               style={{ background: `${COLORS.primary}15`, color: COLORS.primary }}
             >
               Cloud-Based Design Tool
@@ -111,19 +107,15 @@ export default function DesignStudioLandingPage() {
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Link
                 href="/auth/signup"
-                className="w-full sm:w-auto px-10 py-4 rounded-full text-lg font-bold transition-all hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                style={{
-                  background: COLORS.primary,
-                  color: '#fff',
-                  boxShadow: `0 8px 30px ${COLORS.primary}44`,
-                }}
+                className="btn-primary w-full text-lg sm:w-auto"
+                style={{ paddingInline: '2.5rem', paddingBlock: '1rem' }}
               >
                 Start Designing Free
               </Link>
               <Link
                 href="/help"
-                className="w-full sm:w-auto px-10 py-4 rounded-full text-lg font-bold border-2 transition-all hover:bg-slate-50"
-                style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                className="btn-secondary w-full text-lg sm:w-auto"
+                style={{ paddingInline: '2.5rem', paddingBlock: '1rem' }}
               >
                 Watch Demo
               </Link>
@@ -147,11 +139,11 @@ export default function DesignStudioLandingPage() {
           {/* Right Side: Real Screenshot */}
           <div className="flex-1 relative">
             <div
-              className="relative z-10 rounded-2xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-8 border-slate-900"
+              className="relative z-10 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               style={{ aspectRatio: '16/10' }}
             >
               <Image
-                src="/studio-screenshot.png"
+                src="/images/quilts/studio_quilt_ten_1775440971119.png"
                 alt="QuiltCorgi Design Studio Interface"
                 fill
                 unoptimized
@@ -189,9 +181,9 @@ export default function DesignStudioLandingPage() {
           <div className="grid md:grid-cols-3 gap-12">
             {/* Feature 1 */}
             <div className="group">
-              <div className="relative mb-8 rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
                 <Image
-                  src="/studio-blocks.png"
+                  src="/images/quilts/studio_quilt_two_1775440552376.png"
                   alt="Block Library"
                   width={400}
                   height={260}
@@ -201,7 +193,7 @@ export default function DesignStudioLandingPage() {
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <div
-                  className="p-2.5 rounded-xl"
+                  className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
                   <Layers size={22} strokeWidth={2.5} />
@@ -218,9 +210,9 @@ export default function DesignStudioLandingPage() {
 
             {/* Feature 2 */}
             <div className="group">
-              <div className="relative mb-8 rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
                 <Image
-                  src="/studio-hero.png"
+                  src="/images/quilts/studio_quilt_four_1775440582256.png"
                   alt="Fabric Previews"
                   width={400}
                   height={260}
@@ -230,7 +222,7 @@ export default function DesignStudioLandingPage() {
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <div
-                  className="p-2.5 rounded-xl"
+                  className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
                   <Palette size={22} strokeWidth={2.5} />
@@ -247,9 +239,9 @@ export default function DesignStudioLandingPage() {
 
             {/* Feature 3 */}
             <div className="group">
-              <div className="relative mb-8 rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
                 <Image
-                  src="/studio-pdf.png"
+                  src="/images/quilts/studio_quilt_eight_1775440844687.png"
                   alt="Pattern Export"
                   width={400}
                   height={260}
@@ -259,7 +251,7 @@ export default function DesignStudioLandingPage() {
               </div>
               <div className="flex items-center gap-3 mb-4">
                 <div
-                  className="p-2.5 rounded-xl"
+                  className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
                   <Printer size={22} strokeWidth={2.5} />
@@ -280,8 +272,8 @@ export default function DesignStudioLandingPage() {
       {/* ─── FINAL CTA ───────────────────────────────────────── */}
       <section className="py-32 px-6">
         <div
-          className="max-w-5xl mx-auto rounded-[3rem] p-16 lg:p-24 text-center relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1f1a 100%)' }}
+          className="relative mx-auto max-w-5xl overflow-hidden rounded-lg border border-[var(--color-border)] p-16 text-center lg:p-24"
+          style={{ background: `linear-gradient(135deg, ${COLORS.surface} 0%, ${COLORS.secondary} 100%)` }}
         >
           <div className="relative z-10 flex flex-col items-center">
             <Image
@@ -290,34 +282,31 @@ export default function DesignStudioLandingPage() {
               width={64}
               height={64}
               unoptimized
-              className="mb-8 invert"
+              className="mb-8"
             />
             <h2
-              className="text-4xl lg:text-6xl font-bold text-white mb-8"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="mb-8 text-4xl font-bold lg:text-6xl"
+              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
             >
               Start Your Next Masterpiece.
             </h2>
             <div className="flex flex-col sm:flex-row gap-6">
               <Link
                 href="/auth/signup"
-                className="px-12 py-5 rounded-full text-xl font-bold transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: COLORS.primary,
-                  color: '#fff',
-                  boxShadow: `0 8px 30px ${COLORS.primary}44`,
-                }}
+                className="btn-primary text-xl"
+                style={{ paddingInline: '3rem', paddingBlock: '1.25rem' }}
               >
                 Create Free Account
               </Link>
               <Link
                 href="/auth/signin"
-                className="px-12 py-5 rounded-full text-xl font-bold border-2 border-white/20 text-white transition-all hover:bg-white/5"
+                className="btn-secondary text-xl"
+                style={{ paddingInline: '3rem', paddingBlock: '1.25rem' }}
               >
                 Sign In
               </Link>
             </div>
-            <p className="mt-10 text-white/50 text-sm">
+            <p className="mt-10 text-sm" style={{ color: COLORS.textDim }}>
               Free forever for basic designing. Upgrade only when you need pattern export.
             </p>
           </div>

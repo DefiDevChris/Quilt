@@ -2,19 +2,18 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useFabricStore } from '@/stores/fabricStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthDerived } from '@/stores/authStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { FabricCard } from '@/components/fabrics/FabricCard';
 import { FabricPreviewModal } from '@/components/fabrics/FabricPreviewModal';
 import { SkeletonGrid } from '@/components/ui/skeleton';
-import { ShoppingBag } from 'lucide-react';
+import { getRecentFabrics } from '@/lib/recent-fabrics';
 import { COLORS } from '@/lib/design-system';
 import type { FabricListItem } from '@/types/fabric';
 
-type TabType = 'library' | 'myfabrics' | 'presets' | 'shop';
+type TabType = 'library' | 'myfabrics' | 'uploads';
+type FabricPickerTargetType = 'selection' | 'background';
 
-/** Neutral solid fabrics that work well for sashing, borders, and binding. */
 const QUICK_APPLY_FABRICS: Array<{ id: string; name: string; hex: string }> = [
   { id: 'qa-white', name: 'White', hex: COLORS.surface },
   { id: 'qa-cream', name: 'Cream', hex: '#F5F0E8' },
@@ -30,11 +29,12 @@ interface FabricLibraryProps {
 }
 
 export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibraryProps) {
-  const isPanelOpen = useFabricStore((s) => s.isPanelOpen);
   const fabricItems = useFabricStore((s) => s.fabrics);
   const userFabrics = useFabricStore((s) => s.userFabrics);
+  const uploadedFabrics = useFabricStore((s) => s.uploadedFabrics);
   const isLoading = useFabricStore((s) => s.isLoading);
   const isLoadingUserFabrics = useFabricStore((s) => s.isLoadingUserFabrics);
+  const isLoadingUploads = useFabricStore((s) => s.isLoadingUploads);
   const error = useFabricStore((s) => s.error);
   const page = useFabricStore((s) => s.page);
   const totalPages = useFabricStore((s) => s.totalPages);
@@ -42,25 +42,24 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const setPage = useFabricStore((s) => s.setPage);
   const fetchFabrics = useFabricStore((s) => s.fetchFabrics);
   const fetchUserFabrics = useFabricStore((s) => s.fetchUserFabrics);
+  const fetchUploadedFabrics = useFabricStore((s) => s.fetchUploadedFabrics);
   const deleteUserFabric = useFabricStore((s) => s.deleteUserFabric);
   const { isPro } = useAuthDerived();
-  const fabricPresets = useProjectStore((s) => s.fabricPresets);
-  const removeFabricPreset = useProjectStore((s) => s.removeFabricPreset);
-  const shopEnabled = useShopEnabled();
+
+  const fabricPickerTarget = useCanvasStore((s) => s.fabricPickerTarget);
+  const setFabricPickerTarget = useCanvasStore((s) => s.setFabricPickerTarget);
 
   const [activeTab, setActiveTab] = useState<TabType>('library');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [shopFabrics, setShopFabrics] = useState<FabricListItem[]>([]);
-  const [shopLoading, setShopLoading] = useState(false);
   const [previewFabric, setPreviewFabric] = useState<FabricListItem | null>(null);
 
-  // Fetch fabrics on mount if not already loaded
+  const recentFabrics = getRecentFabrics();
+
   useEffect(() => {
     if (fabricItems.length === 0 && !isLoading) {
       fetchFabrics();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fabricItems.length, isLoading, fetchFabrics]);
 
   useEffect(() => {
     if (activeTab === 'myfabrics' && isPro) {
@@ -68,54 +67,11 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
     }
   }, [activeTab, isPro, fetchUserFabrics]);
 
-  // Fetch shop fabrics when shop tab is active
   useEffect(() => {
-    if (activeTab !== 'shop' || !shopEnabled) return;
-
-    let cancelled = false;
-    const fetchShopFabrics = async () => {
-      try {
-        const res = await fetch('/api/shop/fabrics?limit=50&inStock=true');
-        if (!res.ok || cancelled) return;
-        const json = await res.json();
-        if (cancelled) return;
-        if (json?.data?.fabrics) {
-          setShopFabrics(
-            json.data.fabrics.map(
-              (f: Record<string, unknown>): FabricListItem => ({
-                id: f.id as string,
-                name: f.name as string,
-                imageUrl: f.imageUrl as string,
-                thumbnailUrl: (f.thumbnailUrl as string) ?? null,
-                manufacturer: (f.manufacturer as string) ?? null,
-                sku: null,
-                collection: (f.collection as string) ?? null,
-                colorFamily: (f.colorFamily as string) ?? null,
-                value: (f.value as string) ?? null,
-                hex: (f.hex as string) ?? null,
-                isDefault: true,
-                isPurchasable: true,
-                shopifyProductId: null,
-                shopifyVariantId: (f.shopifyVariantId as string) ?? null,
-                pricePerYard: f.pricePerYard !== null ? Number(f.pricePerYard) : null,
-                inStock: (f.inStock as boolean) ?? false,
-              })
-            )
-          );
-        }
-      } catch {
-        // ignore
-      } finally {
-        if (!cancelled) setShopLoading(false);
-      }
-    };
-
-    setShopLoading(true);
-    fetchShopFabrics();
-    return () => {
-      cancelled = true;
-    };
-  }, [isPanelOpen, activeTab, shopEnabled]);
+    if (activeTab === 'uploads' && isPro) {
+      fetchUploadedFabrics();
+    }
+  }, [activeTab, isPro, fetchUploadedFabrics]);
 
   const handleDragStart = useCallback(
     (e: React.DragEvent, fabric: FabricListItem) => {
@@ -128,19 +84,36 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
     [onFabricDragStart]
   );
 
+  const handleClearPickerTarget = useCallback(() => {
+    setFabricPickerTarget(null);
+  }, [setFabricPickerTarget]);
+
   const tabs: { key: TabType; label: string }[] = [
     { key: 'library', label: 'Library' },
-    { key: 'presets', label: 'Presets' },
     { key: 'myfabrics', label: 'My Fabrics' },
+    { key: 'uploads', label: 'Uploads' },
   ];
-  if (shopEnabled) {
-    tabs.push({ key: 'shop', label: 'QuiltCorgi' });
-  }
+
+  const targetLabel = fabricPickerTarget === 'selection' ? 'Block' : 'Background';
 
   return (
     <>
       <div className="flex flex-col w-full flex-1 min-h-0 bg-[var(--color-bg)]">
-        {/* Tabs */}
+        {fabricPickerTarget && (
+          <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)]/40 bg-[var(--color-primary)]/10">
+            <span className="text-xs font-medium text-[var(--color-primary)]">
+              Coloring: {targetLabel}
+            </span>
+            <button
+              type="button"
+              onClick={handleClearPickerTarget}
+              className="text-xs text-[var(--color-primary)] hover:underline"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+
         <div className="flex border-b border-[var(--color-border)]">
           {tabs.map((tab) => (
             <button
@@ -162,10 +135,37 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
           <>
             <div className="px-3 py-1 text-xs text-[var(--color-text-dim)]">{total} fabrics</div>
 
-            {/* Quick Apply — neutral solids for sashing/borders */}
+            {recentFabrics.length > 0 && (
+              <div className="border-b border-[var(--color-border)]/20 px-3 py-2">
+                <span className="text-[12px] leading-[18px] font-medium text-[var(--color-text-dim)]">
+                  Recently Used
+                </span>
+                <div className="grid grid-cols-6 gap-1.5 mt-1.5">
+                  {recentFabrics.slice(0, 6).map((fabric) => (
+                    <button
+                      key={fabric.id}
+                      type="button"
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, fabric as unknown as FabricListItem)}
+                      className="group flex flex-col items-center gap-0.5"
+                      title={fabric.name}
+                    >
+                      <div
+                        className="w-8 h-8 rounded-full border border-[var(--color-border)]/20 group-hover:border-primary/50 transition-colors bg-cover bg-center"
+                        style={{ backgroundImage: `url(${fabric.imageUrl})` }}
+                      />
+                      <span className="text-[8px] text-[var(--color-text-dim)] truncate w-full text-center">
+                        {fabric.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="px-3 py-2 border-b border-[var(--color-border)]/20">
               <span className="text-[14px] leading-[20px] font-semibold text-[var(--color-text-dim)]">
-                Quick Apply -- Great for Sashing &amp; Borders
+                Quick Apply
               </span>
               <div className="grid grid-cols-6 gap-1.5 mt-1.5">
                 {QUICK_APPLY_FABRICS.map((f) => (
@@ -174,7 +174,6 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                     type="button"
                     draggable
                     onDragStart={(e) => {
-                      // Use the fabric's hex as a pseudo-id for quick apply
                       e.dataTransfer.setData('application/quiltcorgi-fabric-hex', f.hex);
                       e.dataTransfer.setData('application/quiltcorgi-fabric-name', f.name);
                       e.dataTransfer.effectAllowed = 'copy';
@@ -250,84 +249,20 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
               </div>
             )}
           </>
-        ) : activeTab === 'presets' ? (
-          <>
-            <div className="px-3 py-2 text-xs text-[var(--color-text-dim)]">
-              {fabricPresets.length} preset{fabricPresets.length !== 1 ? 's' : ''}
-            </div>
-            <div className="flex-1 overflow-y-auto px-3 py-1">
-              {fabricPresets.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">No presets yet</p>
-                  <p className="text-xs text-[var(--color-text-dim)] mt-1">
-                    Right-click any fabric to add
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {fabricPresets.map((preset) => (
-                    <FabricCard
-                      key={preset.id}
-                      fabric={preset as FabricListItem}
-                      onDragStart={handleDragStart}
-                      onRemove={() => removeFabricPreset(preset.id)}
-                      onClick={() => setPreviewFabric(preset as FabricListItem)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        ) : activeTab === 'shop' ? (
-          <>
-            <div className="px-3 py-2 flex items-center gap-1.5">
-              <ShoppingBag size={12} className="text-primary" />
-              <span className="text-xs text-[var(--color-text-dim)]">
-                {shopFabrics.length} purchasable fabric
-                {shopFabrics.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto px-3 py-1">
-              {shopLoading ? (
-                <SkeletonGrid count={9} columns={3} />
-              ) : shopFabrics.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)] mb-1">
-                    No shop fabrics available
-                  </p>
-                  <p className="text-xs text-[var(--color-text-dim)]">
-                    Check back after the shop is stocked.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {shopFabrics.map((fabric) => (
-                    <div key={fabric.id} className="relative">
-                      <FabricCard
-                        fabric={fabric}
-                        onDragStart={handleDragStart}
-                        onClick={() => setPreviewFabric(fabric)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
+        ) : activeTab === 'myfabrics' ? (
           <>
             <div className="flex-1 overflow-y-auto px-3 py-2">
               {!isPro ? (
                 <div className="py-8 text-center">
                   <p className="text-sm text-[var(--color-text-dim)]">
-                    Upgrade to Pro to upload custom fabrics
+                    Upgrade to Pro to save custom fabrics
                   </p>
                 </div>
               ) : isLoadingUserFabrics ? (
                 <SkeletonGrid count={6} columns={3} />
               ) : userFabrics.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">No fabrics uploaded yet</p>
+                  <p className="text-sm text-[var(--color-text-dim)]">No fabrics saved yet</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -367,22 +302,52 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
                 </div>
               )}
             </div>
+          </>
+        ) : (
+          <>
             {isPro && onOpenUpload && (
-              <div className="border-t border-[var(--color-border)] px-3 py-2">
+              <div className="px-3 py-2 border-b border-[var(--color-border)]/20">
                 <button
                   type="button"
                   onClick={onOpenUpload}
                   className="w-full rounded-full bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
                 >
-                  + Import Fabric
+                  + Upload fabric
                 </button>
               </div>
             )}
+
+            <div className="flex-1 overflow-y-auto px-3 py-2">
+              {!isPro ? (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-[var(--color-text-dim)]">
+                    Upgrade to Pro to upload fabrics
+                  </p>
+                </div>
+              ) : isLoadingUploads ? (
+                <SkeletonGrid count={6} columns={3} />
+              ) : uploadedFabrics.length === 0 ? (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-[var(--color-text-dim)]">No uploads yet</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {uploadedFabrics.map((fabric) => (
+                    <div key={fabric.id} className="group relative">
+                      <FabricCard
+                        fabric={fabric}
+                        onDragStart={handleDragStart}
+                        onClick={() => setPreviewFabric(fabric)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
 
-      {/* Fabric Preview Modal */}
       {previewFabric && (
         <FabricPreviewModal fabric={previewFabric} onClose={() => setPreviewFabric(null)} />
       )}

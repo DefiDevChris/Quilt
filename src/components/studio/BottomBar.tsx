@@ -2,83 +2,280 @@
 
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useBlockBuilderStore } from '@/stores/blockBuilderStore';
-import { formatMeasurement } from '@/lib/canvas-utils';
+import { useProjectStore } from '@/stores/projectStore';
 import { useShadeAssignment } from '@/hooks/useShadeAssignment';
-import { COLORS } from '@/lib/design-system';
+import {
+  Undo2,
+  Redo2,
+  ZoomIn,
+  ZoomOut,
+  Grid3X3,
+  Layers,
+  Lock,
+  Unlock,
+} from 'lucide-react';
+import { TooltipHint } from '@/components/ui/TooltipHint';
+
+type GridGranularity = 'inch' | 'half' | 'quarter';
+
+function cn(...classes: (string | boolean | undefined)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
 
 export function BottomBar() {
-  const cursorPosition = useCanvasStore((s) => s.cursorPosition);
-  const unitSystem = useCanvasStore((s) => s.unitSystem);
-  const gridSettings = useCanvasStore((s) => s.gridSettings);
-  const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
-  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-  const shadeViewActive = useCanvasStore((s) => s.shadeViewActive);
-  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
-  const layoutType = useLayoutStore((s) => s.layoutType);
-  const segmentCount = useBlockBuilderStore((s) => s.segmentCount);
-  const patchCount = useBlockBuilderStore((s) => s.patchCount);
+  const zoom = useCanvasStore((s) => s.zoom ?? 1);
+  const setZoom = useCanvasStore((s) => s.setZoom ?? (() => {}));
+  const undoStack = useCanvasStore((s) => s.undoStack ?? []);
+  const redoStack = useCanvasStore((s) => s.redoStack ?? []);
+  const pushUndoState = useCanvasStore((s) => s.pushUndoState ?? (() => {}));
+  const redo = useCanvasStore((s) => s.redo ?? (() => {}));
+  const gridSettings = useCanvasStore((s) => s.gridSettings ?? { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' });
+  const setGridSettings = useCanvasStore((s) => s.setGridSettings ?? (() => {}));
+  const shadeViewActive = useCanvasStore((s) => s.shadeViewActive ?? false);
+  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked ?? false);
+  const setViewportLocked = useCanvasStore((s) => s.setViewportLocked ?? (() => {}));
+  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout ?? false);
+  const layoutType = useLayoutStore((s) => s.layoutType ?? 'none');
   const { activateShadeView, deactivateShadeView } = useShadeAssignment();
 
+  const projectMode = useProjectStore((s) => s.mode ?? 'free-form');
+  const canvasWidth = useProjectStore((s) => s.canvasWidth ?? 60);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight ?? 60);
+  const rows = useLayoutStore((s) => s.rows ?? 4);
+  const cols = useLayoutStore((s) => s.cols ?? 4);
+  const blockSize = useLayoutStore((s) => s.blockSize ?? 12);
+
+  const isFreeForm = projectMode === 'free-form';
+  const isLayoutOrTemplate = projectMode === 'layout' || projectMode === 'template';
+
+  const canUndo = (undoStack?.length ?? 0) > 0;
+  const canRedo = (redoStack?.length ?? 0) > 0;
+
+  const granularity = gridSettings?.granularity ?? 'inch';
+  const granularityLabel = granularity === 'inch' ? '1"' : granularity === 'half' ? '½"' : '¼"';
+
+  const handleUndo = () => {
+    const canvas = useCanvasStore.getState().fabricCanvas;
+    if (canvas) {
+      const json = (canvas as { toJSON: () => string }).toJSON();
+      if (json) {
+        pushUndoState(json);
+        redo();
+      }
+    }
+  };
+
+  const handleZoomIn = () => setZoom(Math.min(zoom * 1.25, 4));
+  const handleZoomOut = () => setZoom(Math.max(zoom / 1.25, 0.1));
+  const handleFit = () => {
+    const canvas = useCanvasStore.getState().fabricCanvas;
+    if (canvas) {
+      const store = useCanvasStore.getState();
+      store.centerAndFitViewport(canvas as never, canvasWidth, canvasHeight);
+    }
+  };
+  const handle100 = () => setZoom(1);
+
+  const toggleGrid = () => setGridSettings({ enabled: !gridSettings?.enabled });
+  const toggleShade = () => {
+    if (shadeViewActive) {
+      deactivateShadeView();
+    } else {
+      activateShadeView();
+    }
+  };
+  const toggleViewportLock = () => setViewportLocked(!isViewportLocked);
+
+  const setGranularity = (g: GridGranularity) => {
+    setGridSettings({ granularity: g });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      if (shadeViewActive) deactivateShadeView();
+    }
+  };
+
+  const gridLabel = isFreeForm
+    ? `Snap: ${granularityLabel} grid`
+    : 'Snap: cells';
+
+  const sizeLabel = isFreeForm
+    ? `${canvasWidth} × ${canvasHeight} in · free-form`
+    : `${canvasWidth} × ${canvasHeight} in · ${rows}×${cols} grid · ${blockSize}" blocks`;
+
   return (
-    <div className="h-7 bg-default flex items-center justify-between px-4 font-mono text-body-sm text-dim">
-      {/* Left side - cursor position */}
-      <div className="flex items-center gap-[2.75rem]">
-        <span>
-          Mouse H: {formatMeasurement(cursorPosition.x, unitSystem)} V:{' '}
-          {formatMeasurement(cursorPosition.y, unitSystem)}
-        </span>
-        {activeWorktable === 'quilt' && (
+    <div
+      className="h-10 bg-[var(--color-bg)] border-t border-[var(--color-border)] flex items-center justify-between px-3"
+      onKeyDown={handleKeyDown}
+    >
+      {/* Left cluster */}
+      <div className="flex items-center gap-1">
+        <TooltipHint content="Undo" side="top">
           <button
             type="button"
-            onClick={() => {
-              if (shadeViewActive) {
-                deactivateShadeView();
-              } else {
-                activateShadeView();
-              }
-            }}
-            className={`px-2 py-0.5 rounded-full text-[14px] leading-[20px] font-medium transition-colors ${
-              shadeViewActive
-                ? 'bg-primary/20 text-primary'
-                : 'text-dim hover:text-default hover:bg-default'
-            }`}
-            title="Toggle shade visualization"
+            onClick={handleUndo}
+            disabled={!canUndo}
+            className={cn(
+              'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
+              canUndo
+                ? 'text-[var(--color-text)] hover:bg-[var(--color-border)] cursor-pointer'
+                : 'text-[var(--color-text)]/30 cursor-not-allowed'
+            )}
+            aria-label="Undo"
           >
-            Shades {shadeViewActive ? 'ON' : 'OFF'}
+            <Undo2 size={16} />
           </button>
+        </TooltipHint>
+
+        <TooltipHint content="Redo" side="top">
+          <button
+            type="button"
+            onClick={() => redo()}
+            disabled={!canRedo}
+            className={cn(
+              'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
+              canRedo
+                ? 'text-[var(--color-text)] hover:bg-[var(--color-border)] cursor-pointer'
+                : 'text-[var(--color-text)]/30 cursor-not-allowed'
+            )}
+            aria-label="Redo"
+          >
+            <Redo2 size={16} />
+          </button>
+        </TooltipHint>
+
+        <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
+
+        <TooltipHint content="Zoom out" side="top">
+          <button
+            type="button"
+            onClick={handleZoomOut}
+            className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+            aria-label="Zoom out"
+          >
+            <ZoomOut size={16} />
+          </button>
+        </TooltipHint>
+
+        <div className="w-12 h-6 flex items-center justify-center text-[12px] text-[var(--color-text)]">
+          {Math.round(zoom * 100)}%
+        </div>
+
+        <TooltipHint content="Zoom in" side="top">
+          <button
+            type="button"
+            onClick={handleZoomIn}
+            className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+            aria-label="Zoom in"
+          >
+            <ZoomIn size={16} />
+          </button>
+        </TooltipHint>
+
+        <button
+          type="button"
+          onClick={handleFit}
+          className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
+        >
+          Fit
+        </button>
+
+        <button
+          type="button"
+          onClick={handle100}
+          className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
+        >
+          100%
+        </button>
+
+        <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
+
+        <TooltipHint content={gridSettings?.enabled ? 'Hide grid' : 'Show grid'} side="top">
+          <button
+            type="button"
+            onClick={toggleGrid}
+            className={cn(
+              'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
+              gridSettings?.enabled
+                ? 'text-primary bg-primary/10'
+                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+            )}
+            aria-label="Toggle grid"
+            aria-pressed={gridSettings?.enabled}
+          >
+            <Grid3X3 size={16} />
+          </button>
+        </TooltipHint>
+
+        {isFreeForm && (
+          <div className="flex items-center gap-0.5 ml-1">
+            {(['inch', 'half', 'quarter'] as GridGranularity[]).map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setGranularity(g)}
+                className={cn(
+                  'px-1.5 h-6 flex items-center justify-center text-[11px] rounded-full transition-colors',
+                  granularity === g
+                    ? 'bg-primary text-[var(--color-text)] font-medium'
+                    : 'text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
+                )}
+              >
+                {g === 'inch' ? '1"' : g === 'half' ? '½"' : '¼"'}
+              </button>
+            ))}
+          </div>
         )}
-        {selectedObjectIds.length > 1 && (
-          <span className="text-primary font-medium">
-            {selectedObjectIds.length} objects selected
-          </span>
-        )}
+
+        <div className="text-[11px] text-[var(--color-text-dim)] ml-2 tabular-nums">
+          {gridLabel}
+        </div>
       </div>
 
-      {/* Right side - context-aware status */}
-      <div className="flex items-center gap-[2.75rem]">
-        {activeWorktable === 'block-builder' ? (
-          /* Block Builder stats */
-          <span className="text-primary/70">
-            Grid: {gridSettings.snapToGrid ? `${gridSettings.size}"` : 'OFF'} | Snap:{' '}
-            {gridSettings.snapToGrid ? 'ON' : 'OFF'} | {segmentCount} segments, {patchCount} patches
-          </span>
-        ) : (
-          /* Quilt mode stats */
-          <>
-            {hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form' && (
-              <span className="text-default/50">
-                Layout: {layoutType.charAt(0).toUpperCase() + layoutType.slice(1)}
-              </span>
-            )}
-            <span className={gridSettings.snapToGrid ? 'text-[#22c55e]' : 'text-dim'}>
-              Snap to Grid: {gridSettings.snapToGrid ? 'ON' : 'OFF'}
-            </span>
-            <span className={gridSettings.snapToNodes ? 'text-[#22c55e]' : 'text-dim'}>
-              Snap to Nodes: {gridSettings.snapToNodes ? 'ON' : 'OFF'}
-            </span>
-          </>
+      {/* Right cluster */}
+      <div className="flex items-center gap-1">
+        <div className="text-[11px] text-[var(--color-text-dim)] mr-2 tabular-nums">
+          {sizeLabel}
+        </div>
+
+        <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
+
+        {isLayoutOrTemplate && (
+          <TooltipHint content={shadeViewActive ? 'Hide shades' : 'Show shades'} side="top">
+            <button
+              type="button"
+              onClick={toggleShade}
+              className={cn(
+                'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
+                shadeViewActive
+                  ? 'text-primary bg-primary/10'
+                  : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+              )}
+              aria-label="Toggle shades"
+              aria-pressed={shadeViewActive}
+            >
+              <Layers size={16} />
+            </button>
+          </TooltipHint>
         )}
+
+        <TooltipHint content={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'} side="top">
+          <button
+            type="button"
+            onClick={toggleViewportLock}
+            className={cn(
+              'w-7 h-7 flex items-center justify-center rounded-full transition-colors',
+              isViewportLocked
+                ? 'text-primary bg-primary/10'
+                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+            )}
+            aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
+            aria-pressed={isViewportLocked}
+          >
+            {isViewportLocked ? <Lock size={16} /> : <Unlock size={16} />}
+          </button>
+        </TooltipHint>
       </div>
     </div>
   );

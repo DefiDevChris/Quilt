@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import { formatRelativeTime } from '@/lib/format-time';
 import { useAuthStore, useAuthDerived } from '@/stores/authStore';
@@ -49,11 +48,6 @@ function DashboardPageContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('my-quilts');
 
-  const searchParams = useSearchParams();
-  const _action = searchParams?.get('action') ?? '';
-  const _preloadUrl = searchParams?.get('preloadUrl') ?? '';
-  const _uploadId = searchParams?.get('uploadId') ?? '';
-
   const fetchProjects = useCallback(async () => {
     try {
       const res = await fetch('/api/projects?sort=updatedAt&order=desc&limit=50');
@@ -94,7 +88,7 @@ function DashboardPageContent() {
             <button
               type="button"
               onClick={() => setActiveTab('my-quilts')}
-              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 border transition-colors rounded-lg"
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 border transition-colors rounded-lg hover:bg-default"
               style={{
                 backgroundColor: COLORS.surface,
                 borderColor: COLORS.border,
@@ -102,12 +96,6 @@ function DashboardPageContent() {
                 boxShadow: SHADOW.brand,
                 transitionDuration: `${MOTION.transitionDuration}ms`,
                 transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.bg;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.surface;
               }}
             >
               <ArrowLeft size={14} strokeWidth={3} />
@@ -152,19 +140,13 @@ function DashboardPageContent() {
             <button
               type="button"
               onClick={() => setDialogOpen(true)}
-              className="group relative overflow-hidden p-8 text-left transition-colors rounded-lg"
+              className="group relative overflow-hidden p-8 text-left transition-colors rounded-lg hover:bg-primary-dark"
               style={{
                 backgroundColor: COLORS.primary,
                 color: COLORS.text,
                 boxShadow: SHADOW.brand,
                 transitionDuration: `${MOTION.transitionDuration}ms`,
                 transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS_HOVER.primary;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
               }}
             >
               <div className="flex items-start justify-between mb-4">
@@ -188,21 +170,13 @@ function DashboardPageContent() {
               type="button"
               onClick={() => projects[0] && (window.location.href = `/studio/${projects[0].id}`)}
               disabled={projects.length === 0}
-              className={`group relative overflow-hidden p-8 text-left border transition-colors rounded-lg ${projects.length > 0 ? 'hover:border-[var(--color-primary)]/30' : 'opacity-60 cursor-not-allowed'}`}
+              className={`group relative overflow-hidden p-8 text-left border transition-colors rounded-lg hover:border-primary-30 ${projects.length > 0 ? '' : 'opacity-60 cursor-not-allowed'}`}
               style={{
                 backgroundColor: COLORS.surface,
                 borderColor: COLORS.border,
                 boxShadow: projects.length > 0 ? SHADOW.brand : 'none',
                 transitionDuration: `${MOTION.transitionDuration}ms`,
                 transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                if (projects.length > 0) {
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = `${COLORS.primary}4d`;
-                }
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = COLORS.border;
               }}
             >
               <div className="flex items-start justify-between mb-4">
@@ -309,20 +283,13 @@ function DashboardPageContent() {
                   <button
                     key={i}
                     onClick={item.onClick}
-                    className="group flex flex-col p-5 border transition-colors rounded-lg text-left"
+                    className="group flex flex-col p-5 border transition-colors rounded-lg text-left hover:border-primary-30"
                     style={{
                       backgroundColor: COLORS.surface,
                       borderColor: COLORS.border,
                       boxShadow: SHADOW.brand,
                       transitionDuration: `${MOTION.transitionDuration}ms`,
                       transitionTimingFunction: MOTION.transitionEasing,
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.borderColor =
-                        `${COLORS.primary}4d`;
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = COLORS.border;
                     }}
                   >
                     {Content}
@@ -334,20 +301,13 @@ function DashboardPageContent() {
                 <Link
                   key={i}
                   href={item.href || '#'}
-                  className="group flex flex-col p-5 border transition-colors rounded-lg"
+                  className="group flex flex-col p-5 border transition-colors rounded-lg hover:border-primary-30"
                   style={{
                     backgroundColor: COLORS.surface,
                     borderColor: COLORS.border,
                     boxShadow: SHADOW.brand,
                     transitionDuration: `${MOTION.transitionDuration}ms`,
                     transitionTimingFunction: MOTION.transitionEasing,
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
-                      `${COLORS.primary}4d`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = COLORS.border;
                   }}
                 >
                   {Content}
@@ -366,17 +326,11 @@ function DashboardPageContent() {
               </h2>
               <Link
                 href="/projects"
-                className="text-sm font-medium transition-colors flex items-center gap-1"
+                className="text-sm font-medium transition-colors flex items-center gap-1 hover:opacity-80"
                 style={{
                   color: COLORS.primary,
                   transitionDuration: `${MOTION.transitionDuration}ms`,
                   transitionTimingFunction: MOTION.transitionEasing,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.opacity = '0.8';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.opacity = '1';
                 }}
               >
                 View All
@@ -388,20 +342,13 @@ function DashboardPageContent() {
                 <Link
                   key={project.id}
                   href={`/studio/${project.id}`}
-                  className="group flex flex-col border transition-colors rounded-lg overflow-hidden"
+                  className="group flex flex-col border transition-colors rounded-lg overflow-hidden hover:border-primary-30"
                   style={{
                     backgroundColor: COLORS.surface,
                     borderColor: COLORS.border,
                     boxShadow: SHADOW.brand,
                     transitionDuration: `${MOTION.transitionDuration}ms`,
                     transitionTimingFunction: MOTION.transitionEasing,
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
-                      `${COLORS.primary}4d`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = COLORS.border;
                   }}
                 >
                   <div
@@ -423,17 +370,11 @@ function DashboardPageContent() {
                   </div>
                   <div className="p-4 space-y-2">
                     <p
-                      className="font-semibold transition-colors truncate"
+                      className="font-semibold transition-colors truncate group-hover:text-primary"
                       style={{
                         color: COLORS.text,
                         transitionDuration: `${MOTION.transitionDuration}ms`,
                         transitionTimingFunction: MOTION.transitionEasing,
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLParagraphElement).style.color = COLORS.primary;
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLParagraphElement).style.color = COLORS.text;
                       }}
                     >
                       {project.name}

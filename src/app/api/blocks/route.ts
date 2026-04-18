@@ -85,6 +85,8 @@ export async function GET(request: NextRequest) {
           svgData: blocks.svgData,
           isDefault: blocks.isDefault,
           fabricJsData: blocks.fabricJsData,
+          widthIn: blocks.widthIn,
+          heightIn: blocks.heightIn,
         })
         .from(blocks)
         .where(whereClause)
@@ -129,6 +131,8 @@ export async function GET(request: NextRequest) {
         isLocked:
           !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
         blockType,
+        widthIn: Number(block.widthIn) || 12,
+        heightIn: Number(block.heightIn) || 12,
       };
     });
 
@@ -165,7 +169,7 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid block data');
     }
 
-    const { name, category, svgData: rawSvgData, fabricJsData, tags, parentBlockIds, publishToLibrary } = parsed.data;
+    const { name, category, svgData: rawSvgData, fabricJsData, tags, parentBlockIds, publishToLibrary, widthIn, heightIn } = parsed.data;
 
     // Only admins can publish to the shared master library
     if (publishToLibrary && !isAdmin) {
@@ -203,6 +207,8 @@ export async function POST(request: NextRequest) {
         fabricJsData: enrichedFabricData,
         tags,
         isDefault: publishingToLibrary,
+        widthIn: String(widthIn),
+        heightIn: String(heightIn),
       })
       .returning();
 

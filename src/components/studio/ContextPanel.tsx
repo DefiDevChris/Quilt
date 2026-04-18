@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { ShadeBreakdownPanel } from '@/components/studio/ShadeBreakdownPanel';
 import { useShadeAssignment } from '@/hooks/useShadeAssignment';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { getRecentFabrics } from '@/lib/recent-fabrics';
 import type { Shade } from '@/types/shade';
 
@@ -14,30 +15,26 @@ interface ContextPanelProps {
   readonly onBlockDragStart: (e: React.DragEvent, blockId: string) => void;
   readonly onFabricDragStart: (e: React.DragEvent, fabricId: string) => void;
   readonly onOpenDrafting?: () => void;
-  readonly onOpenPhotoUpload?: () => void;
   readonly onOpenUpload?: () => void;
-  /** Unused — kept for API compatibility with StudioLayout. Layout editing is
-   * now handled by the full-screen setup wizard, triggered from the top bar. */
-  readonly onStartOverLayout?: () => void;
 }
 
-/**
- * Studio right pane — simple two-tab picker.
- *
- * Layout & size configuration lives in the full-screen setup wizard (not
- * here). The right pane only surfaces content the user drags onto the
- * canvas: Blocks and Fabrics. Matches the reference PictureMyBlocks model.
- */
 export function ContextPanel({
   onBlockDragStart,
   onFabricDragStart,
   onOpenDrafting,
-  onOpenPhotoUpload,
   onOpenUpload,
 }: ContextPanelProps) {
   const [activeTab, setActiveTab] = useState<PanelTab>('blocks');
   const [isApplying, setIsApplying] = useState(false);
   const { getBreakdown, bulkApply, hasShadeData, isBlockGroupSelected } = useShadeAssignment();
+
+  const fabricPickerTarget = useCanvasStore((s) => s.fabricPickerTarget);
+
+  useEffect(() => {
+    if (fabricPickerTarget) {
+      setActiveTab('fabrics');
+    }
+  }, [fabricPickerTarget]);
 
   const showShadePanel = isBlockGroupSelected && hasShadeData;
   const breakdown = showShadePanel ? getBreakdown('selected') : null;
@@ -89,11 +86,7 @@ export function ContextPanel({
 
       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
         {activeTab === 'blocks' ? (
-          <BlockLibrary
-            onBlockDragStart={onBlockDragStart}
-            onOpenDrafting={onOpenDrafting}
-            onOpenPhotoUpload={onOpenPhotoUpload}
-          />
+          <BlockLibrary onBlockDragStart={onBlockDragStart} onOpenDrafting={onOpenDrafting} />
         ) : (
           <FabricLibrary onFabricDragStart={onFabricDragStart} onOpenUpload={onOpenUpload} />
         )}

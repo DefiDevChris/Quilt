@@ -87,14 +87,16 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
   }
 
   const inputClassName = compact
-    ? 'w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2 text-sm text-default placeholder:text-dim outline-none transition-colors duration-150'
-    : 'w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-base text-default placeholder:text-dim outline-none transition-colors duration-150';
+    ? 'w-full rounded-lg border border-default bg-surface px-3 py-2 text-sm text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15'
+    : 'w-full rounded-lg border border-default bg-surface px-4 py-2.5 text-base text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
         <div
-          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          role="alert"
+          aria-live="polite"
+          className="mb-4 rounded-lg border px-4 py-3 text-sm"
           style={{
             backgroundColor: withAlpha(COLORS.error, 0.05),
             borderColor: withAlpha(COLORS.error, 0.2),
@@ -115,6 +117,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           </label>
           <input
             id={compact ? 'modal-name' : 'name'}
+            name="name"
             type="text"
             required
             value={name}
@@ -135,6 +138,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         </label>
         <input
           id={compact ? 'modal-email' : 'email'}
+          name="email"
           type="email"
           required
           value={email}
@@ -142,6 +146,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           className={inputClassName}
           placeholder="you@example.com"
           autoComplete="email"
+          spellCheck={false}
         />
       </div>
 
@@ -162,6 +167,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div className="relative">
           <input
             id={compact ? 'modal-password' : 'password'}
+            name="password"
             type={showPassword ? 'text' : 'password'}
             required
             minLength={8}
@@ -174,7 +180,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-dim hover:text-default transition-colors duration-150"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-dim transition-colors duration-150 hover:text-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/20"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? (
@@ -217,8 +223,8 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       >
         {isLoading
           ? isSignUp
-            ? 'Creating account...'
-            : 'Signing in...'
+            ? 'Creating account…'
+            : 'Signing in…'
           : isSignUp
             ? 'Create Account'
             : 'Sign In'}

@@ -62,6 +62,7 @@ const STANDARD_BLOCK_SIZE_VALUES = [6, 8, 10, 12, 14, 16] as const;
 
 export const createProjectSchema = z.object({
   name: z.string().min(1).max(255).default('Untitled Quilt'),
+  mode: z.enum(['free-form', 'layout', 'template']).default('layout'),
   unitSystem: z.enum(['imperial', 'metric']).default('imperial'),
   canvasWidth: z.number().min(1).max(200).default(48),
   canvasHeight: z.number().min(1).max(200).default(48),
@@ -118,6 +119,8 @@ export const createBlockSchema = z.object({
   tags: z.array(z.string()).default([]),
   parentBlockIds: z.array(z.string().uuid()).optional(),
   publishToLibrary: z.boolean().optional(),
+  widthIn: z.coerce.number().positive().max(999).default(12),
+  heightIn: z.coerce.number().positive().max(999).default(12),
 });
 
 export const blockSearchSchema = z.object({

@@ -46,3 +46,6 @@ export const mobileUploadTypeEnum = pgEnum('mobile_upload_type', [
   'block',
   'quilt',
 ]);
+
+export const projectModeEnum = pgEnum('project_mode', ['free-form', 'layout', 'template']);
+export const gridGranularityEnum = pgEnum('grid_granularity', ['inch', 'half', 'quarter']);

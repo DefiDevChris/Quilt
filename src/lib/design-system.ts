@@ -172,41 +172,45 @@ export const SPACING = {
   dialog: 'p-8',
 } as const;
 
+// Fonts are defined in globals.css via CSS variables - CSS is the source of truth
+const FONT_HEADING = 'Noto Serif';
+const FONT_BODY = 'Montserrat';
+
 export const TYPOGRAPHY = {
   h1: {
     fontSize: ts.h1.size,
     lineHeight: ts.h1.line_height,
-    fontFamily: brandConfig.typography.heading_font,
+    fontFamily: FONT_HEADING,
     tailwind: ts.h1.tailwind,
   },
   h2: {
     fontSize: ts.h2.size,
     lineHeight: ts.h2.line_height,
-    fontFamily: brandConfig.typography.heading_font,
+    fontFamily: FONT_HEADING,
     tailwind: ts.h2.tailwind,
   },
   h3: {
     fontSize: ts.h3.size,
     lineHeight: ts.h3.line_height,
-    fontFamily: brandConfig.typography.heading_font,
+    fontFamily: FONT_HEADING,
     tailwind: ts.h3.tailwind,
   },
   body: {
     fontSize: ts.body.size,
     lineHeight: ts.body.line_height,
-    fontFamily: brandConfig.typography.body_font,
+    fontFamily: FONT_BODY,
     tailwind: ts.body.tailwind,
   },
   small: {
     fontSize: ts.small.size,
     lineHeight: ts.small.line_height,
-    fontFamily: brandConfig.typography.body_font,
+    fontFamily: FONT_BODY,
     tailwind: ts.small.tailwind,
   },
   label: {
     fontSize: ts.label.size,
     lineHeight: ts.label.line_height,
-    fontFamily: brandConfig.typography.body_font,
+    fontFamily: FONT_BODY,
     tailwind: ts.label.tailwind,
   },
 } as const;
