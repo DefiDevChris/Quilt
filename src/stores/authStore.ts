@@ -30,16 +30,20 @@ export const useAuthStore = create<AuthState>((set) => ({
   reset: () => set({ ...INITIAL_STATE }),
 }));
 
+function calculateDerivedRoles(user: AuthUser | null): { isPro: boolean; isAdmin: boolean } {
+  return {
+    isPro: user?.role === 'pro' || user?.role === 'admin',
+    isAdmin: user?.role === 'admin',
+  };
+}
+
 /** Derived state helpers — computed from user, not stored redundantly. */
 export function useAuthDerived(): {
   isPro: boolean;
   isAdmin: boolean;
 } {
   const user = useAuthStore((s) => s.user);
-  return {
-    isPro: user?.role === 'pro' || user?.role === 'admin',
-    isAdmin: user?.role === 'admin',
-  };
+  return calculateDerivedRoles(user);
 }
 
 /** Get derived auth state outside of React components (for hooks/utils). */
@@ -48,8 +52,5 @@ export function getAuthDerived(): {
   isAdmin: boolean;
 } {
   const user = useAuthStore.getState().user;
-  return {
-    isPro: user?.role === 'pro' || user?.role === 'admin',
-    isAdmin: user?.role === 'admin',
-  };
+  return calculateDerivedRoles(user);
 }
