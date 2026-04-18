@@ -6,6 +6,7 @@ import {
   jsonb,
   boolean,
   timestamp,
+  numeric,
   index,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
@@ -26,6 +27,9 @@ export const blocks = pgTable(
     tags: text('tags').array().notNull().default([]),
     isDefault: boolean('isDefault').notNull().default(false),
     thumbnailUrl: text('thumbnailUrl'),
+    // Block dimensions in inches — enforces 1:1 sizing between Block Builder and design studio.
+    widthIn: numeric('widthIn', { precision: 5, scale: 2 }).notNull().default('12'),
+    heightIn: numeric('heightIn', { precision: 5, scale: 2 }).notNull().default('12'),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()

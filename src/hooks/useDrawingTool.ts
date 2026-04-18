@@ -6,6 +6,8 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { snapToGridCorner } from '@/lib/snap-utils';
+import type { CanvasGridSettings } from '@/types/grid';
 import { isPointInFenceAreaPure } from '@/hooks/useFenceConstraints';
 import { CANVAS } from '@/lib/design-system';
 
@@ -17,14 +19,14 @@ export function useDrawingTool() {
     fillColor: string;
     strokeColor: string;
     strokeWidth: number;
-    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    gridSettings: CanvasGridSettings;
     unitSystem: 'imperial' | 'metric';
     isSpacePressed: boolean;
   }>({
     fillColor: CANVAS.pencilPreview,
     strokeColor: CANVAS.seamLine,
     strokeWidth: 1,
-    gridSettings: { enabled: true, size: 1, snapToGrid: true },
+    gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
     unitSystem: 'imperial' as 'imperial' | 'metric',
     isSpacePressed: false,
   });
@@ -64,7 +66,11 @@ export function useDrawingTool() {
         canvas.defaultCursor = 'default';
         canvas.getObjects().forEach((obj) => {
           const objMeta = obj as unknown as Record<string, unknown>;
-          if ((objMeta['data'] as Record<string, unknown> | undefined)?.['isGuide'] || (objMeta['data'] as Record<string, unknown> | undefined)?.['isHelper']) return;
+          if (
+            (objMeta['data'] as Record<string, unknown> | undefined)?.['isGuide'] ||
+            (objMeta['data'] as Record<string, unknown> | undefined)?.['isHelper']
+          )
+            return;
           if (objMeta['_layoutElement']) return;
           if (objMeta['_fenceElement']) return;
           if (objMeta['_inFenceCellId']) {
@@ -106,22 +112,45 @@ export function useDrawingTool() {
 
         const pointer = canvas.getScenePoint(e.e);
 
-        // Fence constraint: when a layout is applied, only allow drawing
-        // inside block-cell fence areas
-        const { hasAppliedLayout } = useLayoutStore.getState();
-        if (hasAppliedLayout) {
-          const fenceAreas = canvas.getObjects().filter((obj) =>
-            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
-          );
+        const { mode } = useProjectStore.getState();
+        const s = stateRef.current;
+
+        // Fence constraint: Layout/Template modes only allow drawing inside block-cell areas
+        if (mode === 'layout' || mode === 'template') {
+          const fenceAreas = canvas
+            .getObjects()
+            .filter(
+              (obj) =>
+                (obj as unknown as Record<string, unknown>)['_fenceElement'] &&
+                (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
+            );
           const isInsideCell = fenceAreas.some((obj) =>
-            (obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }).containsPoint(pointer)
+            (
+              obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }
+            ).containsPoint(pointer)
           );
           if (!isInsideCell) return;
         }
 
-        const s = stateRef.current;
-        const sx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
-        const sy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
+        // Snap to appropriate target based on mode
+        let sx: number, sy: number;
+        if (mode === 'free-form') {
+          // Free-form: snap to grid corners at current granularity
+          const gridSizeIn =
+            s.gridSettings.size *
+            (s.gridSettings.granularity === 'half'
+              ? 0.5
+              : s.gridSettings.granularity === 'quarter'
+                ? 0.25
+                : 1);
+          const snapped = snapToGridCorner(pointer, gridSizeIn, useCanvasStore.getState().zoom);
+          sx = snapped.x;
+          sy = snapped.y;
+        } else {
+          // Layout/Template: use existing snap logic (to grid lines/points)
+          sx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
+          sy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
+        }
 
         isDrawing = true;
         startX = sx;
@@ -178,8 +207,27 @@ export function useDrawingTool() {
 
         const pointer = canvas.getScenePoint(e.e);
         const s = stateRef.current;
-        const cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
-        const cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
+        const { mode } = useProjectStore.getState();
+
+        // Snap to appropriate target based on mode
+        let cx: number, cy: number;
+        if (mode === 'free-form') {
+          // Free-form: snap to grid corners at current granularity
+          const gridSizeIn =
+            s.gridSettings.size *
+            (s.gridSettings.granularity === 'half'
+              ? 0.5
+              : s.gridSettings.granularity === 'quarter'
+                ? 0.25
+                : 1);
+          const snapped = snapToGridCorner(pointer, gridSizeIn, useCanvasStore.getState().zoom);
+          cx = snapped.x;
+          cy = snapped.y;
+        } else {
+          // Layout/Template: use existing snap logic
+          cx = maybeSnap(pointer.x, s.gridSettings, s.unitSystem);
+          cy = maybeSnap(pointer.y, s.gridSettings, s.unitSystem);
+        }
 
         if (activeTool === 'rectangle') {
           const width = cx - startX;
@@ -248,9 +296,9 @@ export function useDrawingTool() {
 
             const triangle = new fabric.Polygon(
               [
-                { x: 0, y: finalH },       // bottom-left
-                { x: finalW, y: finalH },   // bottom-right
-                { x: 0, y: 0 },             // top-left (apex)
+                { x: 0, y: finalH }, // bottom-left
+                { x: finalW, y: finalH }, // bottom-right
+                { x: 0, y: 0 }, // top-left (apex)
               ],
               {
                 left: finalLeft,

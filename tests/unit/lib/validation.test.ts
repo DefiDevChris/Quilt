@@ -11,6 +11,7 @@ describe('createProjectSchema', () => {
     const result = createProjectSchema.parse({});
     expect(result).toEqual({
       name: 'Untitled Quilt',
+      mode: 'layout',
       unitSystem: 'imperial',
       canvasWidth: 48,
       canvasHeight: 48,

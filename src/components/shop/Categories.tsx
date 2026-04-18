@@ -46,7 +46,7 @@ export default function Categories() {
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover"
                   style={{ objectPosition: 'right center' }}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
@@ -62,7 +62,7 @@ export default function Categories() {
                 />
               </div>
               <h3
-                className="font-bold uppercase tracking-wider text-xs group-hover:text-primary transition-colors duration-150"
+                className="text-xs font-semibold transition-colors duration-150 group-hover:text-primary"
                 style={{ color: COLORS.text }}
               >
                 {category.name}

@@ -146,17 +146,50 @@ function ReferenceImageToggle() {
  * Compact chip showing the current canvas mode and grid summary so the user
  * always knows whether they are in a constrained grid layout or free-form.
  */
-function ModeChip({
-  onEditQuiltSetup,
-}: {
-  readonly onEditQuiltSetup?: () => void;
-}) {
+function ModeChip({ onEditQuiltSetup }: { readonly onEditQuiltSetup?: () => void }) {
   const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
   const layoutType = useLayoutStore((s) => s.layoutType);
   const rows = useLayoutStore((s) => s.rows);
   const cols = useLayoutStore((s) => s.cols);
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const projectMode = useProjectStore((s) => s.mode);
+
+  if (projectMode === 'free-form') {
+    const modeLabel = 'Free-form';
+    const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
+
+    const content = (
+      <>
+        <span className="font-semibold text-[var(--color-text)]">{modeLabel}</span>
+        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
+      </>
+    );
+
+    const title = `Mode: ${modeLabel} · ${sizeLabel}${onEditQuiltSetup ? ' (Click to edit canvas settings)' : ''}`;
+
+    if (onEditQuiltSetup) {
+      return (
+        <button
+          type="button"
+          onClick={onEditQuiltSetup}
+          className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75 hover:bg-[var(--color-border)]/20 hover:text-[var(--color-text)] hover:border-[var(--color-primary)]/40 transition-colors"
+          title={title}
+        >
+          {content}
+        </button>
+      );
+    }
+
+    return (
+      <span
+        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
+        title={title}
+      >
+        {content}
+      </span>
+    );
+  }
 
   if (!hasAppliedLayout) {
     return (
@@ -209,38 +242,6 @@ function ModeChip({
     >
       {content}
     </span>
-  );
-}
-
-function WorktableTabs({
-  activeWorktable,
-}: {
-  readonly activeWorktable: 'quilt' | 'block-builder';
-}) {
-  return (
-    <div className="flex items-center rounded-full border border-[var(--color-border)]/30 bg-[var(--color-bg)] p-0.5">
-      {[
-        { id: 'quilt', label: 'Quilt' },
-        { id: 'block-builder', label: 'Block Builder' },
-      ].map((tab) => {
-        const isActive = activeWorktable === tab.id;
-        return (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => useCanvasStore.getState().setActiveWorktable(tab.id as 'quilt' | 'block-builder')}
-            className={`rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
-              isActive
-                ? 'bg-[var(--color-primary)] text-[var(--color-text)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-                : 'text-[var(--color-text)]/65 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/60'
-            }`}
-            aria-pressed={isActive}
-          >
-            {tab.label}
-          </button>
-        );
-      })}
-    </div>
   );
 }
 
@@ -368,7 +369,6 @@ export function StudioTopBar({
                 </span>
               )}
             </div>
-            <WorktableTabs activeWorktable={activeWorktable} />
             {activeWorktable === 'quilt' && <ModeChip onEditQuiltSetup={onEditQuiltSetup} />}
           </div>
         </div>
@@ -398,7 +398,12 @@ export function StudioTopBar({
                     onClick={() =>
                       useCanvasStore
                         .getState()
-                        .setViewportLocked(!isViewportLocked, getCanvas(), canvasWidth, canvasHeight)
+                        .setViewportLocked(
+                          !isViewportLocked,
+                          getCanvas(),
+                          canvasWidth,
+                          canvasHeight
+                        )
                     }
                     className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
                       isViewportLocked

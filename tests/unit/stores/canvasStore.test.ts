@@ -39,6 +39,24 @@ describe('canvasStore', () => {
       expect(gs.size).toBe(1);
       expect(gs.snapToGrid).toBe(true);
     });
+
+    it('setGridGranularity updates granularity without mutating existing objects', () => {
+      // Don't use the reset state, test on current state
+      const initialGranularity = useCanvasStore.getState().gridSettings.granularity;
+
+      // Set new granularity
+      useCanvasStore.getState().setGridGranularity('half');
+      expect(useCanvasStore.getState().gridSettings.granularity).toBe('half');
+      expect(useCanvasStore.getState().gridSettings.size).toBe(1); // Size unchanged
+      expect(useCanvasStore.getState().gridSettings.snapToGrid).toBe(true); // Other settings unchanged
+
+      // Set another granularity
+      useCanvasStore.getState().setGridGranularity('quarter');
+      expect(useCanvasStore.getState().gridSettings.granularity).toBe('quarter');
+
+      // Reset to initial
+      useCanvasStore.getState().setGridGranularity(initialGranularity);
+    });
   });
 
   describe('activeTool', () => {

@@ -22,6 +22,7 @@ export interface Project {
   userId: string;
   name: string;
   description: string | null;
+  mode: 'free-form' | 'layout' | 'template';
   canvasData: Record<string, unknown> & {
     initialSetup?: InitialSetupConfig;
   };

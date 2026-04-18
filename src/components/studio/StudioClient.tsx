@@ -11,9 +11,11 @@ import { CanvasProvider } from '@/contexts/CanvasContext';
 import { useAuthDerived } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
+import { getDefaultLayoutConfig } from '@/lib/default-layout';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
-import { applyInitialSetup, markSetupModalDismissed } from '@/lib/wizard-hydration';
+import { applyInitialSetup } from '@/lib/wizard-hydration';
 
 interface StudioClientProps {
   readonly projectId: string;
@@ -70,17 +72,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
         // If the project was created via the New Project wizard, hydrate the
         // layoutStore from canvasData.initialSetup so the canvas paints with
-        // the chosen layout/template on first frame, then suppress the legacy
-        // first-visit setup modal.
+        // the chosen layout/template on first frame.
         const layoutSetters = useLayoutStore.getState();
-        const hydration = applyInitialSetup(projectData, layoutSetters, {
+        applyInitialSetup(projectData, layoutSetters, {
           setCanvasDimensions: (w, h) => {
             useProjectStore.getState().setCanvasDimensions(w, h);
           },
         });
-        if (hydration.hydrated) {
-          markSetupModalDismissed(projectData.id);
-        }
 
         const activeCanvasData =
           projectData.worktables?.find((worktable) => worktable.id === 'main')?.canvasData ??
@@ -90,7 +88,9 @@ export function StudioClient({ projectId }: StudioClientProps) {
           | Record<string, unknown>
           | undefined;
 
-        if (layoutState?.layoutType && layoutState.layoutType !== 'none') {
+        const hasLayoutApplied = layoutState?.layoutType && layoutState.layoutType !== 'none';
+
+        if (hasLayoutApplied) {
           layoutSetters.reset();
           layoutSetters.setLayoutType(layoutState.layoutType as Parameters<typeof layoutSetters.setLayoutType>[0]);
           layoutSetters.setSelectedPreset((layoutState.selectedPresetId as string | null) ?? null);
@@ -111,8 +111,37 @@ export function StudioClient({ projectId }: StudioClientProps) {
           }
           if (layoutState.hasAppliedLayout) {
             layoutSetters.applyLayout();
-            markSetupModalDismissed(projectData.id);
           }
+        }
+
+        // Check if project has canvas content (any objects beyond layout state)
+        const hasCanvasContent =
+          activeCanvasData &&
+          Object.keys(activeCanvasData).some((key) => key !== '__layoutState');
+
+        // If no layout and no content, apply default 4x4 grid
+        if (!hasLayoutApplied && !hasCanvasContent) {
+          const defaultConfig = getDefaultLayoutConfig();
+          layoutSetters.reset();
+          layoutSetters.setLayoutType(defaultConfig.layoutType);
+          layoutSetters.setRows(defaultConfig.rows);
+          layoutSetters.setCols(defaultConfig.cols);
+          layoutSetters.setBlockSize(defaultConfig.blockSize);
+          layoutSetters.setSashing(defaultConfig.sashing);
+          layoutSetters.setBorders(defaultConfig.borders);
+          layoutSetters.setHasCornerstones(defaultConfig.hasCornerstones);
+          layoutSetters.setBindingWidth(defaultConfig.bindingWidth);
+          layoutSetters.applyLayout();
+
+          useProjectStore.getState().setCanvasDimensions(defaultConfig.canvasWidth, defaultConfig.canvasHeight);
+
+          // Center and fit viewport after layout is applied
+          requestAnimationFrame(() => {
+            const canvas = useCanvasStore.getState().fabricCanvas;
+            if (canvas) {
+              useCanvasStore.getState().centerAndFitViewport(canvas, defaultConfig.canvasWidth, defaultConfig.canvasHeight);
+            }
+          });
         }
 
         setProject(projectData);

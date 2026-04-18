@@ -88,7 +88,12 @@ export function VerifyEmailForm() {
             className="object-contain"
           />
         </Link>
-        <h1 className="text-headline-md font-bold text-default">Verify your email</h1>
+        <h1
+          className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          Verify your email
+        </h1>
         <p className="mt-2 text-sm text-dim text-center">
           We sent a verification code to your email. Enter it below to verify your account.
         </p>
@@ -96,7 +101,9 @@ export function VerifyEmailForm() {
 
       {error && (
         <div
-          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          role="alert"
+          aria-live="polite"
+          className="mb-4 rounded-lg border px-4 py-3 text-sm"
           style={{
             backgroundColor: withAlpha(COLORS.error, 0.05),
             borderColor: withAlpha(COLORS.error, 0.2),
@@ -109,7 +116,8 @@ export function VerifyEmailForm() {
 
       {success && (
         <div
-          className="mb-4 rounded-lg px-4 py-3 text-sm"
+          aria-live="polite"
+          className="mb-4 rounded-lg border px-4 py-3 text-sm"
           style={{
             backgroundColor: withAlpha(COLORS.success, 0.05),
             borderColor: withAlpha(COLORS.success, 0.2),
@@ -127,13 +135,15 @@ export function VerifyEmailForm() {
           </label>
           <input
             id="verify-email"
+            name="email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-base text-default placeholder:text-dim outline-none transition-colors duration-150"
+            className="w-full rounded-lg border border-default bg-surface px-4 py-2.5 text-base text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15"
             placeholder="you@example.com"
             autoComplete="email"
+            spellCheck={false}
           />
         </div>
 
@@ -143,6 +153,7 @@ export function VerifyEmailForm() {
           </label>
           <input
             id="code"
+            name="code"
             type="text"
             required
             inputMode="numeric"
@@ -150,8 +161,9 @@ export function VerifyEmailForm() {
             maxLength={6}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-            className="w-full bg-default border-b border-default focus:border-primary rounded-lg px-3 py-2.5 text-base text-default placeholder:text-dim outline-none transition-colors duration-150 tracking-[0.3em] text-center text-lg"
+            className="w-full rounded-lg border border-default bg-surface px-4 py-2.5 text-center text-lg text-default placeholder:text-dim tabular-nums transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15"
             placeholder="000000"
+            spellCheck={false}
           />
         </div>
 
@@ -160,7 +172,7 @@ export function VerifyEmailForm() {
           disabled={isLoading}
           className="btn-primary-sm w-full mt-4"
         >
-          {isLoading ? 'Verifying...' : 'Verify Email'}
+          {isLoading ? 'Verifying…' : 'Verify Email'}
         </button>
       </form>
 
@@ -171,7 +183,7 @@ export function VerifyEmailForm() {
           disabled={isResending}
           className="btn-secondary-sm w-full"
         >
-          {isResending ? 'Sending...' : "Resend code"}
+          {isResending ? 'Sending…' : 'Resend Code'}
         </button>
       </div>
 

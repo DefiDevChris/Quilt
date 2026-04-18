@@ -6,6 +6,8 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { snapToGridCorner } from '@/lib/snap-utils';
+import type { CanvasGridSettings } from '@/types/grid';
 import { CANVAS } from '@/lib/design-system';
 
 /**
@@ -27,13 +29,13 @@ export function useEasyDrawTool() {
     fillColor: string;
     strokeColor: string;
     strokeWidth: number;
-    gridSettings: { enabled: boolean; size: number; snapToGrid: boolean };
+    gridSettings: CanvasGridSettings;
     unitSystem: 'imperial' | 'metric';
   }>({
     fillColor: CANVAS.pencilPreview,
     strokeColor: CANVAS.seamLine,
     strokeWidth: 2,
-    gridSettings: { enabled: true, size: 1, snapToGrid: true },
+    gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
     unitSystem: 'imperial' as 'imperial' | 'metric',
   });
 
@@ -81,16 +83,26 @@ export function useEasyDrawTool() {
       function onPathCreated(e: { path?: import('fabric').Path }) {
         if (!e.path) return;
 
-        // Fence constraint: when a layout is applied, reject paths whose
-        // bounding box doesn't overlap any block-cell fence area
-        const { hasAppliedLayout } = useLayoutStore.getState();
-        if (hasAppliedLayout) {
+        // Fence constraint: Layout/Template modes reject paths outside block-cell areas
+        const { mode } = useProjectStore.getState();
+        if (mode === 'layout' || mode === 'template') {
           const pathBounds = e.path.getBoundingRect();
-          const fenceAreas = canvas.getObjects().filter((obj) =>
-            (obj as unknown as Record<string, unknown>)['_fenceElement'] && (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
-          );
+          const fenceAreas = canvas
+            .getObjects()
+            .filter(
+              (obj) =>
+                (obj as unknown as Record<string, unknown>)['_fenceElement'] &&
+                (obj as unknown as Record<string, unknown>)['_fenceRole'] === 'block-cell'
+            );
           const overlapsCell = fenceAreas.some((fenceObj) => {
-            const fo = fenceObj as unknown as { left: number; top: number; width: number; height: number; scaleX: number; scaleY: number };
+            const fo = fenceObj as unknown as {
+              left: number;
+              top: number;
+              width: number;
+              height: number;
+              scaleX: number;
+              scaleY: number;
+            };
             const fx = fo.left ?? 0;
             const fy = fo.top ?? 0;
             const fw = (fo.width ?? 0) * (fo.scaleX ?? 1);
@@ -113,11 +125,35 @@ export function useEasyDrawTool() {
         const { gridSettings, unitSystem } = stateRef.current;
         if (gridSettings.snapToGrid && e.path.path) {
           const pathData = e.path.path as Array<Array<string | number>>;
+          const zoom = useCanvasStore.getState().zoom;
+
           for (const cmd of pathData) {
             // SVG path commands: M/L have x,y at indices 1,2; Q has cx,cy,x,y at 1,2,3,4; C has 1-6
-            for (let i = 1; i < cmd.length; i++) {
-              if (typeof cmd[i] === 'number') {
-                cmd[i] = maybeSnap(cmd[i] as number, gridSettings, unitSystem);
+            for (let i = 1; i < cmd.length; i += 2) {
+              if (typeof cmd[i] === 'number' && typeof cmd[i + 1] === 'number') {
+                const point = { x: cmd[i] as number, y: cmd[i + 1] as number };
+
+                let snappedPoint: { x: number; y: number };
+                if (mode === 'free-form') {
+                  // Free-form: snap to grid corners at current granularity
+                  const gridSizeIn =
+                    gridSettings.size *
+                    (gridSettings.granularity === 'half'
+                      ? 0.5
+                      : gridSettings.granularity === 'quarter'
+                        ? 0.25
+                        : 1);
+                  snappedPoint = snapToGridCorner(point, gridSizeIn, zoom);
+                } else {
+                  // Layout/Template: use existing snap logic
+                  snappedPoint = {
+                    x: maybeSnap(point.x, gridSettings, unitSystem),
+                    y: maybeSnap(point.y, gridSettings, unitSystem),
+                  };
+                }
+
+                cmd[i] = snappedPoint.x;
+                cmd[i + 1] = snappedPoint.y;
               }
             }
           }

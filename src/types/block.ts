@@ -26,4 +26,6 @@ export interface BlockListItem {
   isDefault: boolean;
   isLocked: boolean;
   blockType: BlockType;
+  widthIn: number;
+  heightIn: number;
 }

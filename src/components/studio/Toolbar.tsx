@@ -1,6 +1,7 @@
 'use client';
 
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
+import { useProjectStore } from '@/stores/projectStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
@@ -20,6 +21,7 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const projectMode = useProjectStore((s) => s.mode);
 
   const callbacks: ToolbarCallbacks = {
     onOpenImageExport,
@@ -29,7 +31,9 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
 
   const tools = useQuiltTools(callbacks);
 
-  if (activeWorktable === 'block-builder') return null;
+  const shouldRender = activeWorktable === 'quilt' && projectMode === 'free-form';
+
+  if (!shouldRender) return null;
 
   // Group tools by group name
   const groups: { name: string; items: ToolDef[] }[] = [];

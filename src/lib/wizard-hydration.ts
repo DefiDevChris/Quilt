@@ -129,16 +129,3 @@ export function applyInitialSetup(
   return { hydrated: false, canvasWidth: project.canvasWidth, canvasHeight: project.canvasHeight };
 }
 
-/**
- * Mark the in-studio first-visit setup modal as already shown for this
- * project. Call this whenever the wizard hydration runs so the legacy
- * modal doesn't fire on top of an already-configured canvas.
- */
-export function markSetupModalDismissed(projectId: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    window.sessionStorage.setItem(`qc-quilt-setup-shown-${projectId}`, '1');
-  } catch {
-    /* sessionStorage may be blocked; the modal will simply re-fire once */
-  }
-}

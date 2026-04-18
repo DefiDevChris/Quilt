@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { UnitSystem } from '@/types/canvas';
-import type { CanvasGridSettings } from '@/types/grid';
+import type { CanvasGridSettings, GridGranularity } from '@/types/grid';
 import {
   ZOOM_DEFAULT,
   ZOOM_MIN,
@@ -92,9 +92,19 @@ interface CanvasStoreState {
   /** The Fabric.js canvas instance, or null. */
   fabricCanvas: unknown | null;
 
+  /** Target for fabric picker: 'selection' when coloring selected object, 'background' for quilt background, null when closed. */
+  fabricPickerTarget: 'selection' | 'background' | null;
+
+  /** When true, the user is in swap mode (tap another block to swap positions). */
+  swapMode: boolean;
+
+  /** The source block for swap mode (the one that initiated the swap). */
+  swapSourceId: string | null;
+
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
+  setGridGranularity: (granularity: GridGranularity) => void;
   setSelectedObjectIds: (ids: string[]) => void;
   setActiveTool: (tool: ToolType) => void;
   setActiveWorktable: (worktable: WorktableType) => void;
@@ -139,7 +149,9 @@ interface CanvasStoreState {
   setShadeViewActive: (active: boolean) => void;
   toggleShadeView: () => void;
   setFabricCanvas: (canvas: unknown | null) => void;
-  toggleReferencePanel: () => void;
+  setFabricPickerTarget: (target: 'selection' | 'background' | null) => void;
+  setSwapMode: (active: boolean, sourceId?: string | null) => void;
+  clearSwapMode: () => void;
   reset: () => void;
 }
 
@@ -150,6 +162,7 @@ const INITIAL_STATE = {
     enabled: GRID_DEFAULT_ENABLED,
     size: GRID_DEFAULT_SIZE,
     snapToGrid: GRID_DEFAULT_SNAP,
+    granularity: 'inch' as GridGranularity,
   },
   selectedObjectIds: [] as string[],
   activeTool: 'select' as ToolType,
@@ -180,6 +193,9 @@ const INITIAL_STATE = {
   selectedPatch: null as unknown | null,
   shadeViewActive: false,
   fabricCanvas: null,
+  fabricPickerTarget: null,
+  swapMode: false,
+  swapSourceId: null,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -192,6 +208,11 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setGridSettings: (updates) =>
     set((state) => ({
       gridSettings: { ...state.gridSettings, ...updates },
+    })),
+
+  setGridGranularity: (granularity) =>
+    set((state) => ({
+      gridSettings: { ...state.gridSettings, granularity },
     })),
 
   setSelectedObjectIds: (ids) => set({ selectedObjectIds: ids }),
@@ -395,6 +416,9 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setShadeViewActive: (active) => set({ shadeViewActive: active }),
   toggleShadeView: () => set((s) => ({ shadeViewActive: !s.shadeViewActive })),
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
+  setFabricPickerTarget: (target) => set({ fabricPickerTarget: target }),
+  setSwapMode: (active, sourceId = null) => set({ swapMode: active, swapSourceId: sourceId }),
+  clearSwapMode: () => set({ swapMode: false, swapSourceId: null }),
   setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
   toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),

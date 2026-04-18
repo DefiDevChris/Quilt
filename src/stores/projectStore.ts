@@ -15,6 +15,7 @@ export type { Worktable } from '@/types/project';
 interface ProjectStoreState {
   projectId: string | null;
   projectName: string;
+  mode: 'free-form' | 'layout' | 'template';
   saveStatus: SaveStatus;
   canvasWidth: number;
   canvasHeight: number;
@@ -29,6 +30,7 @@ interface ProjectStoreState {
   setProject: (data: {
     id: string;
     name: string;
+    mode?: 'free-form' | 'layout' | 'template';
     width: number;
     height: number;
     worktables?: Worktable[];
@@ -58,6 +60,7 @@ interface ProjectStoreState {
 export const useProjectStore = create<ProjectStoreState>((set) => ({
   projectId: null,
   projectName: 'Untitled Quilt',
+  mode: 'layout',
   saveStatus: 'saved',
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
@@ -69,10 +72,11 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   activeWorktableId: 'main',
   version: 1,
 
-  setProject: ({ id, name, width, height, worktables, version }) =>
+  setProject: ({ id, name, mode, width, height, worktables, version }) =>
     set({
       projectId: id,
       projectName: name,
+      mode: mode ?? 'layout',
       canvasWidth: width,
       canvasHeight: height,
       worktables: worktables ?? [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
@@ -159,6 +163,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
     set({
       projectId: null,
       projectName: 'Untitled Quilt',
+      mode: 'layout',
       saveStatus: 'saved',
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,

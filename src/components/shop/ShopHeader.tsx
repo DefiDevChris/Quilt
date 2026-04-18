@@ -38,26 +38,28 @@ export default function ShopHeader() {
         <div className="flex justify-between items-center gap-8">
           {/* Logo */}
           <div className="flex items-center shrink-0">
-            <a
+            <Link
               href="/shop"
-              className="text-4xl font-bold flex items-center gap-2"
+              className="flex items-center gap-2 text-4xl font-bold"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: COLORS.primary,
-                letterSpacing: '-0.02em',
               }}
             >
               <Mascot size="xs" pose="sitting" />
               QuiltCorgi
-            </a>
+            </Link>
           </div>
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-2xl relative">
             <input
               type="text"
-              placeholder="Search for fabric, patterns, kits, and more..."
-              className="w-full pl-5 pr-12 py-3 border-2 rounded-full text-sm transition-colors"
+              name="shopSearch"
+              placeholder="Search for fabric, patterns, kits, and more…"
+              aria-label="Search the shop"
+              autoComplete="off"
+              className="w-full rounded-lg border px-4 py-3 pr-12 text-sm transition-[border-color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/20"
               style={{
                 borderColor: `${COLORS.text}1a`,
                 color: COLORS.text,
@@ -100,12 +102,11 @@ export default function ShopHeader() {
               }}
             >
               <Palette className="w-6 h-6" strokeWidth={1.5} />
-              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
-                Studio
-              </span>
+              <span className="hidden text-[11px] font-semibold sm:block">Studio</span>
             </Link>
-            <button
-              className="transition-colors flex flex-col items-center gap-1"
+            <Link
+              href="/auth/signin"
+              className="flex flex-col items-center gap-1 transition-colors"
               style={{ color: COLORS.text }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = COLORS.primary;
@@ -113,13 +114,11 @@ export default function ShopHeader() {
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = COLORS.text;
               }}
-              aria-label="Account"
+              aria-label="Sign in"
             >
               <User className="w-6 h-6" />
-              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
-                Sign In
-              </span>
-            </button>
+              <span className="hidden text-[11px] font-semibold sm:block">Sign In</span>
+            </Link>
             <button
               onClick={toggleDrawer}
               className="transition-colors flex flex-col items-center gap-1 relative"
@@ -147,9 +146,7 @@ export default function ShopHeader() {
                   </span>
                 )}
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider hidden sm:block">
-                Cart
-              </span>
+              <span className="hidden text-[11px] font-semibold sm:block">Cart</span>
             </button>
             <button
               className="md:hidden transition-colors"
@@ -178,7 +175,7 @@ export default function ShopHeader() {
                 {...('external' in link && link.external
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
-                className="whitespace-nowrap text-sm font-bold uppercase tracking-wider transition-colors"
+                className="whitespace-nowrap text-sm font-semibold transition-colors"
                 style={{ color: COLORS.text }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = COLORS.primary;
@@ -208,7 +205,7 @@ export default function ShopHeader() {
               href="/design-studio"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-base font-bold uppercase tracking-wider transition-colors"
+              className="inline-flex items-center gap-2 text-base font-semibold transition-colors"
               style={{ color: COLORS.primary }}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -222,7 +219,7 @@ export default function ShopHeader() {
                 {...('external' in link && link.external
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
-                className="text-base font-bold uppercase tracking-wider transition-colors"
+                className="text-base font-semibold transition-colors"
                 style={{ color: COLORS.text }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = COLORS.primary;

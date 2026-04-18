@@ -2,19 +2,25 @@
 
 import { useCallback, useRef, useEffect } from 'react';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { useProjectStore } from '@/stores/projectStore';
 import type { FenceArea } from '@/types/fence';
 
 /**
  * Point-in-polygon test using ray casting algorithm.
  * Returns true if the point (px, py) is inside the polygon defined by `points`.
  */
-export function pointInPolygon(px: number, py: number, points: Array<{ x: number; y: number }>): boolean {
+export function pointInPolygon(
+  px: number,
+  py: number,
+  points: Array<{ x: number; y: number }>
+): boolean {
   let inside = false;
   for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-    const xi = points[i].x, yi = points[i].y;
-    const xj = points[j].x, yj = points[j].y;
-    const intersect = ((yi > py) !== (yj > py)) &&
-      (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+    const xi = points[i].x,
+      yi = points[i].y;
+    const xj = points[j].x,
+      yj = points[j].y;
+    const intersect = yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi;
     if (intersect) inside = !inside;
   }
   return inside;
@@ -23,9 +29,12 @@ export function pointInPolygon(px: number, py: number, points: Array<{ x: number
 /**
  * Check if a point (px, py) is inside a rectangular fence area.
  */
-export function pointInRect(px: number, py: number, area: { x: number; y: number; width: number; height: number }): boolean {
-  return px >= area.x && px <= area.x + area.width &&
-         py >= area.y && py <= area.y + area.height;
+export function pointInRect(
+  px: number,
+  py: number,
+  area: { x: number; y: number; width: number; height: number }
+): boolean {
+  return px >= area.x && px <= area.x + area.width && py >= area.y && py <= area.y + area.height;
 }
 
 /**
@@ -105,7 +114,7 @@ export function getContainingFenceAreaPure(
  *   (typically from useFenceRenderer's return value)
  */
 export function useFenceConstraints(getFenceAreas?: () => FenceArea[]) {
-  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+  const { mode } = useProjectStore.getState();
   const areasRef = useRef<FenceArea[]>([]);
 
   // Keep areasRef in sync with the fence areas source
@@ -117,24 +126,24 @@ export function useFenceConstraints(getFenceAreas?: () => FenceArea[]) {
 
   /**
    * Check if a canvas scene point falls within any fence area of the given role.
-   * When no layout is applied, always returns true (unrestricted).
+   * In free-form mode, always returns true (unrestricted).
    */
   const isPointInFenceArea = useCallback(
     (x: number, y: number, role?: FenceArea['role']): boolean => {
-      if (!hasAppliedLayout) return true;
+      if (mode === 'free-form') return true;
       const areas = getFenceAreas ? getFenceAreas() : areasRef.current;
       return isPointInFenceAreaPure(x, y, areas, role);
     },
-    [hasAppliedLayout, getFenceAreas]
+    [mode, getFenceAreas]
   );
 
   /**
    * Get the fence area that contains the given point.
-   * When no layout is applied, returns a synthetic full-canvas area.
+   * In free-form mode, returns a synthetic full-canvas area.
    */
   const getContainingFenceArea = useCallback(
     (x: number, y: number): FenceArea | null => {
-      if (!hasAppliedLayout) {
+      if (mode === 'free-form') {
         // Return a synthetic area representing the entire canvas
         return {
           id: 'freeform',
@@ -148,7 +157,7 @@ export function useFenceConstraints(getFenceAreas?: () => FenceArea[]) {
       const areas = getFenceAreas ? getFenceAreas() : areasRef.current;
       return getContainingFenceAreaPure(x, y, areas);
     },
-    [hasAppliedLayout, getFenceAreas]
+    [mode, getFenceAreas]
   );
 
   /**
@@ -157,15 +166,15 @@ export function useFenceConstraints(getFenceAreas?: () => FenceArea[]) {
    */
   const doesBboxOverlapFence = useCallback(
     (bx: number, by: number, bw: number, bh: number): boolean => {
-      if (!hasAppliedLayout) return true;
+      if (mode === 'free-form') return true;
       const areas = getFenceAreas ? getFenceAreas() : areasRef.current;
       return bboxOverlapsFenceArea(bx, by, bw, bh, areas);
     },
-    [hasAppliedLayout, getFenceAreas]
+    [mode, getFenceAreas]
   );
 
   return {
-    hasAppliedLayout,
+    mode,
     isPointInFenceArea,
     getContainingFenceArea,
     doesBboxOverlapFence,

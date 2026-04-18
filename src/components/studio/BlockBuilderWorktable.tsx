@@ -366,6 +366,8 @@ export function BlockBuilderWorktable() {
             .map((t) => t.trim())
             .filter(Boolean),
           publishToLibrary: willPublish,
+          widthIn: blockWidthIn,
+          heightIn: blockHeightIn,
         }),
       });
 
@@ -484,15 +486,15 @@ export function BlockBuilderWorktable() {
   // ── Render ──────────────────────────────────────────────────
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* ── Context header — persistent back button + location pill ── */}
+      {/* ── Context header — prominent back button + location pill ── */}
       <div className="flex items-center gap-3 bg-[var(--color-surface)] border-b border-[var(--color-border)]/20 px-4 py-2 flex-shrink-0">
         <button
           type="button"
           onClick={handleBackToQuilt}
-          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium text-[var(--color-text)]/75 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/60 transition-colors"
+          className="flex items-center gap-1.5 rounded-full h-10 px-4 text-[14px] font-semibold bg-[var(--color-primary)] text-[var(--color-text)] hover:bg-[#d97054] transition-colors shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           aria-label="Return to quilt canvas"
         >
-          <ArrowLeft size={14} strokeWidth={2} />
+          <ArrowLeft size={16} strokeWidth={2.5} />
           Back to Quilt
         </button>
         <span
@@ -505,244 +507,248 @@ export function BlockBuilderWorktable() {
           </span>
         </span>
         <span className="ml-auto text-[11px] text-[var(--color-text-dim)]">
-          Press <kbd className="rounded bg-[var(--color-bg)] border border-[var(--color-border)]/40 px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd> to return
+          Press{' '}
+          <kbd className="rounded bg-[var(--color-bg)] border border-[var(--color-border)]/40 px-1.5 py-0.5 font-mono text-[10px]">
+            Esc
+          </kbd>{' '}
+          to return
         </span>
       </div>
 
       <div className="flex-1 flex overflow-hidden">
-      {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
-      <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
-        {/* Grid unit slider */}
-        <div className="px-2 pt-3 pb-2 border-b border-[var(--color-border)]/15">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-medium text-[var(--color-text-dim)]">Grid</span>
-            <span className="text-[9px] font-mono text-[var(--color-text-dim)] bg-[var(--color-bg)] py-0.5 px-1 rounded">
-              {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
-            </span>
-          </div>
-          <input
-            type="range"
-            min={1}
-            max={8}
-            step={1}
-            value={sliderValue}
-            onChange={handleSliderChange}
-            className="w-full accent-[var(--color-primary)] h-1"
-          />
-        </div>
-
-        {/* Unified toolbar */}
-        <BlockBuilderToolbarUnified callbacks={toolbarCallbacks} segmentCount={segments.length} />
-      </aside>
-
-      {/* ── Center: Canvas (unified styling) ────────────────── */}
-      <div
-        ref={canvasContainerRef}
-        className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,196,176,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(250,249,247,0.9))] p-8"
-        onDrop={handleCanvasDrop}
-        onDragOver={handleCanvasDragOver}
-      >
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-center">
-            <p className="text-[13px] font-semibold text-[var(--color-text)]">Square block workspace</p>
-            <p className="text-[12px] text-[var(--color-text-dim)]">
-              Draft a block here, then save it to your collection.
-            </p>
-          </div>
-          <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] p-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
-            <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
-          </div>
-        </div>
-      </div>
-
-      {/* ── Right: Panel (320px, unified) ──────────────────── */}
-      <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
-        {/* Tab toggle */}
-        <div className="flex border-b border-[var(--color-border)]/15">
-          <button
-            type="button"
-            onClick={() => setRightTab('blocks')}
-            className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
-              rightTab === 'blocks'
-                ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-            }`}
-          >
-            Library
-          </button>
-          <button
-            type="button"
-            onClick={() => setRightTab('fabrics')}
-            className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
-              rightTab === 'fabrics'
-                ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-            }`}
-          >
-            Fabrics
-          </button>
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          {rightTab === 'blocks' ? (
-            <BlockLibrary
-              onBlockDragStart={handleBlockDragStart}
-              onOpenDrafting={undefined}
-              onOpenPhotoUpload={undefined}
-            />
-          ) : (
-            <BlockBuilderFabricPicker onFabricDragStart={handleFabricDragStart} />
-          )}
-        </div>
-
-        <div className="border-t border-[var(--color-border)]/15 px-3 py-3 space-y-2">
-          <div className="rounded-lg border border-[var(--color-border)]/15 bg-[var(--color-bg)] px-3 py-2">
-            <p className="text-[11px] font-semibold text-[var(--color-text)]">
-              {isAdmin && publishToLibrary ? 'Publish to Block Library' : 'Save to My Blocks'}
-            </p>
-            <p className="mt-1 text-[10px] leading-relaxed text-[var(--color-text-dim)]">
-              {isAdmin && publishToLibrary
-                ? 'Block will be published to the shared library and available to everyone.'
-                : 'Block will be saved to your personal collection.'}
-            </p>
-          </div>
-
-          {isAdmin && (
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={publishToLibrary}
-                onChange={(e) => setPublishToLibrary(e.target.checked)}
-                className="accent-[var(--color-primary)] h-3.5 w-3.5"
-              />
-              <span className="text-[11px] text-[var(--color-text-dim)]">Publish to shared library</span>
-            </label>
-          )}
-
-          {error && <p className="text-[11px] text-[var(--color-accent)]">{error}</p>}
-
-          <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
-              Block Name
-            </label>
+        {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
+        <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
+          {/* Grid unit slider */}
+          <div className="px-2 pt-3 pb-2 border-b border-[var(--color-border)]/15">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-medium text-[var(--color-text-dim)]">Grid</span>
+              <span className="text-[9px] font-mono text-[var(--color-text-dim)] bg-[var(--color-bg)] py-0.5 px-1 rounded">
+                {cellSizeIn < 1 ? `${cellSizeIn * 16}"` : `${cellSizeIn}"`}
+              </span>
+            </div>
             <input
-              type="text"
-              value={blockName}
-              onChange={(e) => {
-                setBlockName(e.target.value);
-                setError('');
-              }}
-              placeholder="Custom Block 1"
-              maxLength={255}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
+              type="range"
+              min={1}
+              max={8}
+              step={1}
+              value={sliderValue}
+              onChange={handleSliderChange}
+              className="w-full accent-[var(--color-primary)] h-1"
             />
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-[var(--color-text-dim)]">
-            <span>Dimensions:</span>
-            <span className="font-mono text-[var(--color-text)]/70">
-              {blockWidthIn}″ × {blockHeightIn}″
-            </span>
-            <span className="text-[var(--color-text-dim)]/60">(from grid unit)</span>
-          </div>
+          {/* Unified toolbar */}
+          <BlockBuilderToolbarUnified callbacks={toolbarCallbacks} segmentCount={segments.length} />
+        </aside>
 
-          <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
-              Category
-            </label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Custom"
-              maxLength={100}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
-            />
+        {/* ── Center: Canvas (unified styling) ────────────────── */}
+        <div
+          ref={canvasContainerRef}
+          className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,196,176,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(250,249,247,0.9))] p-8"
+          onDrop={handleCanvasDrop}
+          onDragOver={handleCanvasDragOver}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div className="text-center">
+              <p className="text-[13px] font-semibold text-[var(--color-text)]">
+                Square block workspace
+              </p>
+              <p className="text-[12px] text-[var(--color-text-dim)]">
+                Draft a block here, then save it to your collection.
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] p-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+              <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
+            </div>
           </div>
+        </div>
 
-          <div>
-            <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
-              Tags <span className="text-[var(--color-text-dim)]/50">(optional)</span>
-            </label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="modern, stars"
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
-            />
-          </div>
-
-          {/* Overlay controls */}
-          <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-border)]/15">
+        {/* ── Right: Panel (320px, unified) ──────────────────── */}
+        <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
+          {/* Tab toggle */}
+          <div className="flex border-b border-[var(--color-border)]/15">
             <button
               type="button"
-              onClick={() => setShowOverlaySelector(true)}
-              className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
+              onClick={() => setRightTab('blocks')}
+              className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
+                rightTab === 'blocks'
+                  ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+              }`}
             >
-              {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
+              Library
             </button>
-            {activeOverlay && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleClearOverlay}
-                  className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-accent)] hover:text-[var(--color-accent)]/80"
-                >
-                  Clear
-                </button>
-                {overlayDimensions && (
-                  <span className="text-[10px] text-[var(--color-text-dim)] font-mono">
-                    {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
-                  </span>
-                )}
-              </>
+            <button
+              type="button"
+              onClick={() => setRightTab('fabrics')}
+              className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
+                rightTab === 'fabrics'
+                  ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+              }`}
+            >
+              Fabrics
+            </button>
+          </div>
+
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {rightTab === 'blocks' ? (
+              <BlockLibrary onBlockDragStart={handleBlockDragStart} />
+            ) : (
+              <BlockBuilderFabricPicker onFabricDragStart={handleFabricDragStart} />
             )}
-            {activeOverlay && (
-              <div className="flex items-center gap-1 ml-auto">
-                <span className="text-[10px] text-[var(--color-text-dim)]">Opacity</span>
+          </div>
+
+          <div className="border-t border-[var(--color-border)]/15 px-3 py-3 space-y-2">
+            <div className="rounded-lg border border-[var(--color-border)]/15 bg-[var(--color-bg)] px-3 py-2">
+              <p className="text-[11px] font-semibold text-[var(--color-text)]">
+                {isAdmin && publishToLibrary ? 'Publish to Block Library' : 'Save to My Blocks'}
+              </p>
+              <p className="mt-1 text-[10px] leading-relaxed text-[var(--color-text-dim)]">
+                {isAdmin && publishToLibrary
+                  ? 'Block will be published to the shared library and available to everyone.'
+                  : 'Block will be saved to your personal collection.'}
+              </p>
+            </div>
+
+            {isAdmin && (
+              <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
-                  type="range"
-                  min="0.1"
-                  max="0.8"
-                  step="0.05"
-                  value={overlayOpacity}
-                  onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
-                  className="w-12"
+                  type="checkbox"
+                  checked={publishToLibrary}
+                  onChange={(e) => setPublishToLibrary(e.target.checked)}
+                  className="accent-[var(--color-primary)] h-3.5 w-3.5"
                 />
-              </div>
+                <span className="text-[11px] text-[var(--color-text-dim)]">
+                  Publish to shared library
+                </span>
+              </label>
             )}
-          </div>
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleDeleteBlock}
-              disabled={saving}
-              className="flex-1 rounded-full border-2 border-[var(--color-accent)]/70 px-4 py-2.5 text-[13px] font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Delete Block
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#d97054] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-            >
-              {saving ? 'Saving…' : isAdmin && publishToLibrary ? 'Publish Block' : 'Save Block'}
-            </button>
-          </div>
-        </div>
-      </aside>
+            {error && <p className="text-[11px] text-[var(--color-accent)]">{error}</p>}
 
-      {/* Overlay selector modal */}
-      {showOverlaySelector && (
-        <BlockOverlaySelector
-          onSelect={handleOverlaySelect}
-          onClose={() => setShowOverlaySelector(false)}
-          currentOverlay={activeOverlay}
-        />
-      )}
+            <div>
+              <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
+                Block Name
+              </label>
+              <input
+                type="text"
+                value={blockName}
+                onChange={(e) => {
+                  setBlockName(e.target.value);
+                  setError('');
+                }}
+                placeholder="Custom Block 1"
+                maxLength={255}
+                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 text-[10px] text-[var(--color-text-dim)]">
+              <span>Dimensions:</span>
+              <span className="font-mono text-[var(--color-text)]/70">
+                {blockWidthIn}″ × {blockHeightIn}″
+              </span>
+              <span className="text-[var(--color-text-dim)]/60">(from grid unit)</span>
+            </div>
+
+            <div>
+              <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
+                Category
+              </label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Custom"
+                maxLength={100}
+                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-0.5 block text-[10px] font-medium text-[var(--color-text-dim)]">
+                Tags <span className="text-[var(--color-text-dim)]/50">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="modern, stars"
+                className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1 text-xs focus:border-[var(--color-primary)] focus:outline-none"
+              />
+            </div>
+
+            {/* Overlay controls */}
+            <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-border)]/15">
+              <button
+                type="button"
+                onClick={() => setShowOverlaySelector(true)}
+                className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
+              >
+                {activeOverlay ? 'Change Overlay' : 'Add Overlay'}
+              </button>
+              {activeOverlay && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleClearOverlay}
+                    className="rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-accent)] hover:text-[var(--color-accent)]/80"
+                  >
+                    Clear
+                  </button>
+                  {overlayDimensions && (
+                    <span className="text-[10px] text-[var(--color-text-dim)] font-mono">
+                      {overlayDimensions.width}&quot; × {overlayDimensions.height}&quot;
+                    </span>
+                  )}
+                </>
+              )}
+              {activeOverlay && (
+                <div className="flex items-center gap-1 ml-auto">
+                  <span className="text-[10px] text-[var(--color-text-dim)]">Opacity</span>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="0.8"
+                    step="0.05"
+                    value={overlayOpacity}
+                    onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
+                    className="w-12"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleDeleteBlock}
+                disabled={saving}
+                className="flex-1 rounded-full border-2 border-[var(--color-accent)]/70 px-4 py-2.5 text-[13px] font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Delete Block
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#d97054] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              >
+                {saving ? 'Saving…' : isAdmin && publishToLibrary ? 'Publish Block' : 'Save Block'}
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        {/* Overlay selector modal */}
+        {showOverlaySelector && (
+          <BlockOverlaySelector
+            onSelect={handleOverlaySelect}
+            onClose={() => setShowOverlaySelector(false)}
+            currentOverlay={activeOverlay}
+          />
+        )}
       </div>
     </div>
   );

@@ -48,6 +48,8 @@ src/
 
 **Route protection**: `/studio/*` redirects guests. `/admin/*` requires admin. Pro gating: `useAuthStore.isPro` client-side, `session.user.role` + 403 `PRO_REQUIRED` server-side.
 
+**Project modes**: Projects are locked to one of three modes at creation: 'free-form', 'layout', 'template'. Cannot be changed afterward.
+
 ## Conventions
 
 ### Fabric.js
@@ -86,6 +88,36 @@ Zustand in `src/stores/`. Selectors: `(s) => s.field`. New fields need `setField
 
 API routes: check `session.user.role` for auth. 403 `PRO_REQUIRED` for pro endpoints. Next.js 16 async params: `{ params }: { params: Promise<{ id: string }> }` — must `await params`.
 
+### Interaction patterns
+
+Canvas edits use a floating selection toolbar (`CanvasSelectionToolbar`) as the primary affordance. Right-click `ContextMenu` is a shortcut only. Both share handlers via `src/hooks/useSelectionActions.ts`.
+
+Selection-type → toolbar buttons mapping:
+
+- **block**: Rotate · Swap · Fabric · Recolor patch · Delete
+- **border**: Fabric · Width -/+ · Insert · Remove
+- **sashing**: Fabric · Width -/+ · Color
+- **patch**: Fabric · Color
+- **easydraw**: Bend · Rotate · Delete
+- **bent**: Edit bend · Make straight · Rotate · Delete
+
+### EasyDraw + Bend
+
+Phase 8 simplified drawing tools (free-form mode only, no bezier handles):
+
+**EasyDraw**: Click-click segment drawing. First click sets start point (snapped to grid corner), second click sets end point and creates straight segment. Consecutive segments snap to previous endpoint (visual dot indicator). Escape or right-click cancels mid-draw. Segments tagged `__easyDrawSegment = true`, data stored in `__segmentData`.
+
+**Bend**: Click-drag on existing segment. Click down at P1 (snapped to grid), drag to P2 (snapped to grid), release creates quadratic arc. Control point calculated as `C = (P2 - (1-t)²·A - t²·B) / (2·t·(1-t))`. Fall back to midpoint control if t≈0 or t≈1. Bent segments tagged `__bentSegment = true`, data retains A, B, t, P2, controlPoint for re-editing. Re-bending replaces the curve. Make-straight converts back to line.
+
+### Snapping & Grid
+
+Two-mode snapping behavior:
+
+- **Layout/Template mode**: Blocks/fabrics snap to cell centers. Drawing tools constrained to cells.
+- **Free-form mode**: Blocks/fabrics snap to grid corners. Drawing tools snap to grid corners. Configurable grid granularity: 1"/½"/¼".
+
+Grid granularity stored in `projects.gridGranularity` (enum: 'inch'|'half'|'quarter'). On granularity change: recompute grid overlay, existing geometry unchanged.
+
 ### Other
 
 - **S3 uploads**: `/api/upload/presigned-url` — purposes: `fabric|thumbnail|export|block` (Pro), `mobile-upload` (all auth)
@@ -93,7 +125,7 @@ API routes: check `session.user.role` for auth. 403 `PRO_REQUIRED` for pro endpo
 
 ## Removed (DO NOT REINTRODUCE)
 
-Query `mempalace_search("removed features do not reintroduce", wing="quilt")` for the full list. Key items: FloatingToolbar, LayoutRolePanel, SelectionPanel, PrintlistPanel, ProGate, all `panels/` directory, useLayoutEngine, useLayoutRenderer, layout-renderer, cn, logger, Minimap, Smart Guides, Serendipity Tool, Text Tool, Applique Tab, **user avatars** (`userProfiles.avatarUrl`, corgi mascot picker, `/api/profile/avatar`, `/api/upload/avatar-presign`), **onboarding flow** (profile auto-created on first signin with `displayName = email prefix`), **public project sharing** (`/share/[id]`, `projects.isPublic`, `/api/projects/[id]/public`, `ProjectViewer`), `src/lib/fraction-utils.ts` (merged into `fraction-math.ts`).
+Query `mempalace_search("removed features do not reintroduce", wing="quilt")` for the full list. Key items: FloatingToolbar, LayoutRolePanel, SelectionPanel, PrintlistPanel, ProGate, all `panels/` directory, useLayoutEngine, useLayoutRenderer, layout-renderer, cn, logger, Minimap, Smart Guides, Serendipity Tool, Text Tool, Applique Tab, **user avatars** (`userProfiles.avatarUrl`, corgi mascot picker, `/api/profile/avatar`, `/api/upload/avatar-presign`), **onboarding flow** (profile auto-created on first signin with `displayName = email prefix`), **public project sharing** (`/share/[id]`, `projects.isPublic`, `/api/projects/[id]/public`, `ProjectViewer`), `src/lib/fraction-utils.ts` (merged into `fraction-math.ts`), **canvas setup gating modal on empty-project first visit** — canvas always loads with default 4x4 grid; setup wizard opens only from dashboard New Project or top-bar Edit Layout, **block photo upload from Design Studio** — this feature is now exclusive to Picture-My-Blocks. Studio Blocks tab only offers drafting via '+ Draft new block'. **Top-bar Quilt | Block Builder worktable tabs** — Drafting reached ONLY via Blocks tab '+ Draft new block'; Block Builder is a full-screen take-over.
 
 ## PM2
 

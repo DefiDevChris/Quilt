@@ -10,7 +10,7 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
-import { unitSystemEnum } from './enums';
+import { unitSystemEnum, projectModeEnum, gridGranularityEnum } from './enums';
 
 export const projects = pgTable(
   'projects',
@@ -21,6 +21,7 @@ export const projects = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     name: varchar('name', { length: 255 }).notNull().default('Untitled Quilt'),
     description: text('description'),
+    mode: projectModeEnum('mode').notNull().default('layout'),
     canvasData: jsonb('canvasData').notNull().default({}),
     canvasDataS3Key: text('canvasDataS3Key'),
     worktables: jsonb('worktables')
@@ -34,6 +35,7 @@ export const projects = pgTable(
     fabricPresets: jsonb('fabricPresets').notNull().default([]),
     canvasWidth: doublePrecision('canvasWidth').notNull().default(48.0),
     canvasHeight: doublePrecision('canvasHeight').notNull().default(48.0),
+    gridGranularity: gridGranularityEnum('gridGranularity').default('inch'),
     thumbnailUrl: text('thumbnailUrl'),
     version: integer('version').notNull().default(1),
     lastSavedAt: timestamp('lastSavedAt', { mode: 'date', withTimezone: true })

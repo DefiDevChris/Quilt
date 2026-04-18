@@ -31,7 +31,10 @@ export function AuthForm({ mode }: AuthFormProps) {
         >
           QuiltCorgi
         </span>
-        <h1 className="text-headline-sm font-semibold text-secondary">
+        <h1
+          className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
           {isSignUp ? 'Create your account' : 'Welcome back'}
         </h1>
       </div>

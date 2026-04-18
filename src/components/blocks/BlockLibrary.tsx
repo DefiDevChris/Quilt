@@ -3,23 +3,21 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useBlockStore } from '@/stores/blockStore';
 import { useAuthDerived } from '@/stores/authStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';
-import { recordBlockUsed, getRecentlyUsedBlocks } from '@/lib/recently-used-blocks';
+import { addRecentBlock, getRecentBlocks } from '@/lib/recent-blocks';
 import type { BlockListItem } from '@/types/block';
+
+type BlockTab = 'my-blocks' | 'library';
 
 interface BlockLibraryProps {
   onBlockDragStart: (e: React.DragEvent, blockId: string) => void;
   onOpenDrafting?: () => void;
-  onOpenPhotoUpload?: () => void;
 }
 
-export function BlockLibrary({
-  onBlockDragStart,
-  onOpenDrafting,
-  onOpenPhotoUpload,
-}: BlockLibraryProps) {
+export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryProps) {
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
   const isLoading = useBlockStore((s) => s.isLoading);
@@ -38,7 +36,9 @@ export function BlockLibrary({
 
   const [activeTab, setActiveTab] = useState<'library' | 'mine'>('library');
   const [previewBlock, setPreviewBlock] = useState<BlockListItem | null>(null);
-  const [recentlyUsed, setRecentlyUsed] = useState<string[]>(getRecentlyUsedBlocks());
+  const [recentlyUsed, setRecentlyUsed] = useState<string[]>(() =>
+    getRecentBlocks().map((b) => b.id)
+  );
 
   useEffect(() => {
     if (blocks.length === 0) {
@@ -57,8 +57,8 @@ export function BlockLibrary({
       e.dataTransfer.setData('application/quiltcorgi-block-id', block.id);
       e.dataTransfer.effectAllowed = 'copy';
       onBlockDragStart(e, block.id);
-      recordBlockUsed(block.id);
-      setRecentlyUsed(getRecentlyUsedBlocks());
+      addRecentBlock(block.id);
+      setRecentlyUsed(getRecentBlocks().map((b) => b.id));
     },
     [onBlockDragStart]
   );
@@ -155,7 +155,9 @@ export function BlockLibrary({
                 </div>
               ) : blocks.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-dim">No blocks in the library yet.</p>
+                  <p className="text-[14px] leading-[20px] text-dim">
+                    No blocks in the library yet.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
@@ -197,31 +199,15 @@ export function BlockLibrary({
               </div>
             )}
 
-            {isAdmin && (onOpenDrafting || onOpenPhotoUpload) && (
+            {onOpenDrafting && (
               <div className="border-t border-default px-3 py-2">
-                <p className="mb-2 text-[12px] leading-[18px] text-dim">
-                  Admin: publish blocks to the shared library.
-                </p>
-                <div className="flex gap-2">
-                  {onOpenDrafting && (
-                    <button
-                      type="button"
-                      onClick={onOpenDrafting}
-                      className="flex-1 rounded-full bg-primary px-4 py-2 text-[14px] leading-[20px] text-default shadow-brand transition-colors duration-150 hover:bg-primary-dark"
-                    >
-                      Block Builder
-                    </button>
-                  )}
-                  {onOpenPhotoUpload && (
-                    <button
-                      type="button"
-                      onClick={onOpenPhotoUpload}
-                      className="flex-1 rounded-full border border-default bg-surface px-4 py-2 text-[14px] leading-[20px] text-default transition-colors duration-150 hover:bg-primary/10"
-                    >
-                      Add Photo Block
-                    </button>
-                  )}
-                </div>
+                <button
+                  type="button"
+                  onClick={onOpenDrafting}
+                  className="w-full rounded-full bg-primary px-4 py-2 text-[14px] leading-[20px] text-default shadow-brand transition-colors duration-150 hover:bg-primary-dark"
+                >
+                  + Draft new block
+                </button>
               </div>
             )}
           </>

@@ -5,7 +5,8 @@ import type { UnitSystem } from '@/types/canvas';
 import type { FenceArea } from '@/types/fence';
 
 interface GridRenderOptions {
-  gridSettings: { enabled: boolean; size: number };
+  gridSettings: { enabled: boolean; size: number; granularity?: string };
+  mode: 'free-form' | 'layout' | 'template';
   unitSystem: UnitSystem;
   quiltWidth: number;
   quiltHeight: number;
@@ -141,7 +142,7 @@ export function renderGrid(
 
   const w = gridEl.width;
   const h = gridEl.height;
-  const { gridSettings, unitSystem, quiltWidth, quiltHeight, layoutAreas = [] } = options;
+  const { gridSettings, mode, unitSystem, quiltWidth, quiltHeight, layoutAreas = [] } = options;
 
   // Use the unified geometry so grid and Fabric.js canvases stay aligned
   const zoom = fabricCanvas.getZoom();
@@ -166,7 +167,16 @@ export function renderGrid(
   ctx.strokeRect(0, 0, quiltWidthPx, quiltHeightPx);
 
   if (gridSettings.size > 0) {
-    const gridSizePx = gridSettings.size * pxPerUnit;
+    // Calculate effective grid size based on mode
+    let effectiveGridSize = gridSettings.size;
+    if (mode === 'free-form') {
+      // Apply granularity in free-form mode
+      const granularity = gridSettings.granularity || 'inch';
+      effectiveGridSize *= granularity === 'half' ? 0.5 : granularity === 'quarter' ? 0.25 : 1;
+    }
+    // For layout/template modes, use the base size (block grid)
+
+    const gridSizePx = effectiveGridSize * pxPerUnit;
     ctx.strokeStyle = CANVAS.gridLineDimmed;
     ctx.lineWidth = 1 / zoom;
 

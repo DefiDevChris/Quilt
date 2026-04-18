@@ -344,8 +344,8 @@ export function PictureMyBlocksApp() {
             </p>
             <button
               onClick={() => setStep('layout')}
-              className="bg-[var(--color-primary)] text-[var(--color-surface)] px-8 py-4 rounded-full text-xl font-semibold hover:bg-[#d97054] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-              style={{ boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+              className="btn-primary text-xl"
+              style={{ paddingInline: '2rem', paddingBlock: '1rem' }}
             >
               Start Designing
             </button>
@@ -357,7 +357,7 @@ export function PictureMyBlocksApp() {
                 alt="QuiltCorgi arranging blocks"
                 width={600}
                 height={600}
-                className="w-full h-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500 ease-out"
+                className="h-auto w-full drop-shadow-2xl"
                 unoptimized
               />
             </div>
