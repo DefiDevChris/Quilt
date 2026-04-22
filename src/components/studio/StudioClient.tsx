@@ -14,6 +14,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { getDefaultLayoutConfig } from '@/lib/default-layout';
 import { useTempProjectMigration } from '@/hooks/useTempProjectMigration';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { cleanupExpiredProjects } from '@/lib/temp-project-storage';
 import { applyInitialSetup } from '@/lib/wizard-hydration';
 
@@ -39,6 +40,11 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   // Migrate temp project to server when user upgrades to Pro
   useTempProjectMigration();
+
+  // Warn the user before navigating away / closing the tab if there is unsaved work.
+  // Critical for free users, who only have localStorage as a save buffer and cannot
+  // recover if they close the tab before subscribing or finishing.
+  useBeforeUnload();
 
   useEffect(() => {
     let cancelled = false;
