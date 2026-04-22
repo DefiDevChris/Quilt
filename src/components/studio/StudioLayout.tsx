@@ -17,6 +17,7 @@ import { ProjectModeModal } from '@/components/studio/ProjectModeModal';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { LayoutsPanel } from '@/components/studio/LayoutsPanel';
 import { TemplatesPanel } from '@/components/studio/TemplatesPanel';
+import { QuiltSizePanel } from '@/components/studio/QuiltSizePanel';
 import { PreviewBanner } from '@/components/canvas/PreviewBanner';
 import { DrawingHud } from '@/components/studio/DrawingHud';
 
@@ -68,15 +69,16 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   const panelMode = useLeftPanelStore((s) => s.panelMode);
   const openLayouts = useLeftPanelStore((s) => s.openLayouts);
   const openTemplates = useLeftPanelStore((s) => s.openTemplates);
+  const openQuiltSetup = useLeftPanelStore((s) => s.openQuiltSetup);
   const dismiss = useLeftPanelStore((s) => s.dismiss);
 
+  // The full-screen setup modal is now a first-run experience only. Once the
+  // user is in the studio, size edits happen via QuiltSizePanel in the left
+  // rail. This flag is still used for brand-new projects that land on the
+  // studio without a layout applied yet.
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
   const [quiltSetupDismissible, setQuiltSetupDismissible] = useState(false);
   const [showModeModal, setShowModeModal] = useState(() => {
-    // Only show mode selector when the project is genuinely untouched:
-    //   - canvasData is empty (no layout state and no objects), AND
-    //   - user hasn't previously dismissed/picked the mode selector for this project.
-    // This prevents the modal from re-appearing forever on empty-but-visited projects.
     const hasCanvasContent =
       project.canvasData && Object.keys(project.canvasData).length > 0;
     if (hasCanvasContent) return false;
@@ -253,17 +255,14 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   }, [getCanvas]);
 
   return (
-    <div className="h-screen flex flex-col bg-[var(--color-bg)] select-none">
+    <div className="h-full flex flex-col bg-[var(--color-bg)] select-none">
       <StudioTopBar
         onOpenImageExport={dialogs.openImageExport}
         onOpenPdfExport={dialogs.openPdfExport}
         onOpenHelp={dialogs.openHelp}
         onOpenHistory={dialogs.openHistory}
         onSave={handleSave}
-        onEditQuiltSetup={() => {
-          setQuiltSetupDismissible(true);
-          setShowQuiltSetup(true);
-        }}
+        onEditQuiltSetup={openQuiltSetup}
       />
 
       <div className="flex-1 flex overflow-hidden">
@@ -277,14 +276,17 @@ export function StudioLayout({ project }: StudioLayoutProps) {
             {panelMode === 'templates' && projectMode === 'template' && (
               <TemplatesPanel onDismiss={dismiss} />
             )}
+            {panelMode === 'quilt-setup' && <QuiltSizePanel onDismiss={dismiss} />}
 
-            {activeWorktable === 'quilt' && projectMode === 'free-form' && (
-              <Toolbar
-                onOpenImageExport={dialogs.openImageExport}
-                onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
-                onNewBlock={handleNewBlock}
-              />
-            )}
+            {activeWorktable === 'quilt' &&
+              projectMode === 'free-form' &&
+              panelMode !== 'quilt-setup' && (
+                <Toolbar
+                  onOpenImageExport={dialogs.openImageExport}
+                  onSaveBlock={() => useCanvasStore.getState().setActiveWorktable('block-builder')}
+                  onNewBlock={handleNewBlock}
+                />
+              )}
 
             <div className="flex-1 flex flex-col overflow-hidden relative">
               <PreviewBanner />
