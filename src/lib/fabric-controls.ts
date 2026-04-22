@@ -26,9 +26,9 @@ function toRgba(hex: string, alpha: number): string {
 }
 
 const CONTROL_COLOR = '#FFFFFF';
-const CONTROL_BORDER = '#f9a06b'; // primary warm orange
-const CONTROL_BORDER_HOVER = '#f9a06b'; // coral accent
-const SELECTION_BORDER = '#f9a06b';
+const CONTROL_BORDER = '#7CB9E8'; // primary sky blue
+const CONTROL_BORDER_HOVER = '#7CB9E8'; // primary sky blue hover
+const SELECTION_BORDER = '#7CB9E8';
 const SELECTION_BORDER_DASH: number[] = []; // solid line
 
 const CORNER_SIZE = 10;
@@ -38,7 +38,7 @@ const CORNER_PADDING = 6;
 
 const ROTATION_OFFSET_Y = -30;
 const ROTATION_HANDLE_RADIUS = 6;
-const ROTATION_LINE_COLOR = '#f9a06b';
+const ROTATION_LINE_COLOR = '#7CB9E8';
 const ROTATION_LINE_WIDTH = 1;
 
 const MIDPOINT_WIDTH = 8;

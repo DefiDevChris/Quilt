@@ -202,7 +202,7 @@ export const PRESET_SVG: Record<string, string> = {
   </svg>`,
 
   'medallion-1x1': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
-    <rect x="5" y="5" width="110" height="110" rx="3" fill="#FED7AA" opacity="0.3" stroke="#F97316" stroke-width="0.8"/>
+    <rect x="5" y="5" width="110" height="110" rx="3" fill="#C5DFF3" opacity="0.3" stroke="#7CB9E8" stroke-width="0.8"/>
     <rect x="18" y="18" width="84" height="84" rx="2" fill="#FBCFE8" opacity="0.3" stroke="#EC4899" stroke-width="0.8"/>
     <rect x="35" y="35" width="50" height="50" rx="2" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.2"/>
     <text x="60" y="63" text-anchor="middle" font-size="8" fill="#3B82F6" opacity="0.7">Center</text>
