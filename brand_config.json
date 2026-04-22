@@ -1,405 +1,116 @@
 {
-  "meta": {
-    "brand_name": "QuiltCorgi",
-    "domain": "quiltcorgi.com",
-    "last_updated": "2026-04-22",
-    "tech_stack": "Next.js 16 App Router, TypeScript, Tailwind CSS v4, Fabric.js, Zustand, Drizzle ORM, PostgreSQL",
-    "ssot_file": "CLAUDE.md (repository root) governs technical implementation. This file governs brand, visuals, and voice."
-  },
-
   "brand_identity": {
-    "logo": {
-      "primary_asset": "logo.png",
-      "path": "/logo.png",
-      "description": "Official QuiltCorgi logo. Primary lockup on light backgrounds (--bg or --surface). Use Next.js <Image> with priority on header/hero, alt='QuiltCorgi'. Clear space: minimum 1.5x logo height on all sides. Never distort, filter, or recolor.",
-      "variants": [
-        "primary (logo.png)",
-        "favicon (favicon.png)",
-        "og-image (og-image.png)",
-        "PWA icon (icon-192.png)"
-      ]
-    },
-    "mascot": {
-      "name": "Corgi",
-      "description": "Quiet companion, never demanding attention. One corgi per screen maximum. Positioned in corners or negative space, never center-stage, never blocks content.",
-      "assets_path": "/mascots&avatars/",
-      "available_poses": "corgi1.png through corgi29.png",
-      "pose_purposes": {
-        "sitting": "Empty states, welcome moments, calm presence",
-        "wagging": "Success confirmations (subtle, not celebratory)",
-        "walking_exploring": "Loading states, transitions between views",
-        "small_icon": "Brand mark in header, favicons"
-      },
-      "usage_rules": [
-        "One corgi per screen maximum (community gallery: quilter avatars take priority)",
-        "Never animated beyond simple pose changes",
-        "Never blocks content or interface elements",
-        "Positioned in corners or negative space, never center-stage",
-        "Marked decorative or given descriptive alt text",
-        "Primary use: user avatars (selected during onboarding, auto-assigned if skipped)",
-        "The corgi is a companion, not the product"
-      ]
-    },
-    "tagline": "Design. Quilt. Export pro patterns.",
-    "voice": {
-      "tone": "Warm, conversational, like your quilting friend who is always excited to see what you are working on. Friendly yet precise. Celebrate the craft and the community equally.",
-      "tone_by_moment": {
-        "design_workspace": "Your blocks are coming together nicely.",
-        "community_features": "See what others are making with this pattern.",
-        "sharing": "Ready to show your work? The community would love to see it.",
-        "discovery": "Found a design you love? Save it for inspiration."
-      },
-      "words_that_fit": [
-        "stitch",
-        "piece",
-        "block",
-        "share",
-        "inspire",
-        "connect",
-        "create",
-        "community",
-        "quilter",
-        "design",
-        "pattern",
-        "fabric",
-        "layout",
-        "gallery",
-        "explore",
-        "discover",
-        "save",
-        "follow",
-        "project",
-        "work-in-progress"
-      ],
-      "words_that_dont": [
-        "post",
-        "like",
-        "follow (unless following a pattern)",
-        "feed",
-        "social",
-        "network",
-        "platform",
-        "users",
-        "content",
-        "engagement",
-        "viral",
-        "trending",
-        "badge",
-        "gamify",
-        "leverage",
-        "synergize"
-      ],
-      "rules": [
-        "Always say 'quilter' not 'user' in UI-facing text",
-        "No exclamation points unless truly earned",
-        "No urgency, no FOMO",
-        "No corporate jargon",
-        "No AI slop or generic template language"
-      ]
-    }
+    "name": "Quilt",
+    "tagline": "Design quilts, preserve stories",
+    "primary_color": "#4A90D5",
+    "secondary_color": "#8B5E3C",
+    "font_family": "Geist Sans",
+    "description": "A warm, artisan-inspired digital tool for quilters"
   },
-
-  "color_palette": {
-    "primary": "#7CB9E8",
-    "secondary": "#C5DFF3",
-    "accent": "#FFE08A",
-    "accent_blush": "#F6C6C8",
-    "bg": "#F7F9FC",
-    "surface": "#ffffff",
-    "text": "#1a1a1a",
-    "text_dim": "#4a4a4a",
-    "border": "#d4d4d4",
-    "usage_rules": [
-      "Light mode only. No dark mode.",
-      "Easter-spring palette: sky-blue primary with almost-white bg and cool-soft neutrals.",
-      "Primary (#7CB9E8) for buttons, key actions, corgi accents, active nav.",
-      "Secondary (#C5DFF3) for subtle supports, dividers, inactive states.",
-      "Accent buttercup (#FFE08A) for rare highlights: featured content, celebratory moments.",
-      "Accent blush (#F6C6C8) for even more sparing community/warmth highlights.",
-      "No animated color shifts.",
-      "No arbitrary colors outside this palette.",
-      "No gray-*, slate-*, or brown-toned neutrals."
-    ]
-  },
-
-  "canvas_colors": {
-    "grid_line": "#E5E2DD",
-    "seam_line": "#4a3f35",
-    "pencil_preview": "#7CB9E8",
-    "patch_hover": "#7CB9E8",
-    "block_highlight": "#7CB9E8",
-    "fabric_highlight": "#7CB9E8",
-    "stroke_default": "#333",
-    "mock_quilt_stitch": "#E8DCCB"
-  },
-
-  "fence_colors": {
-    "normal": {
-      "fills": {
-        "block-cell": "rgba(255, 255, 255, 0.6)",
-        "sashing": "#e8dbcf",
-        "cornerstone": "#e5d5c5",
-        "border": "#d5c8b8",
-        "binding": "#8a7c6f",
-        "edging": "#6b5d50",
-        "setting-triangle": "#f0e6dc"
-      },
-      "strokes": {
-        "block-cell": "#b8a698",
-        "sashing": "#b8a698",
-        "cornerstone": "#a89888",
-        "border": "#b8a698",
-        "binding": "#6b5d50",
-        "edging": "#4a3f35",
-        "setting-triangle": "#c8b8a8"
-      }
-    },
-    "preview": {
-      "fills": {
-        "block-cell": "rgba(124, 185, 232, 0.15)",
-        "sashing": "rgba(138, 124, 111, 0.15)",
-        "cornerstone": "rgba(138, 124, 111, 0.12)",
-        "border": "rgba(124, 185, 232, 0.15)",
-        "binding": "rgba(124, 185, 232, 0.10)",
-        "edging": "rgba(0, 0, 0, 0.08)",
-        "setting-triangle": "rgba(240, 230, 220, 0.15)"
-      },
-      "strokes": {
-        "block-cell": "rgba(124, 185, 232, 0.4)",
-        "sashing": "rgba(138, 124, 111, 0.4)",
-        "cornerstone": "rgba(138, 124, 111, 0.35)",
-        "border": "rgba(124, 185, 232, 0.4)",
-        "binding": "rgba(124, 185, 232, 0.3)",
-        "edging": "rgba(0, 0, 0, 0.2)",
-        "setting-triangle": "rgba(200, 184, 168, 0.35)"
-      }
-    }
-  },
-
-  "shade_colors": {
-    "dark": "#505050",
-    "light": "#E0E0E0",
-    "background": "#F5F5F5",
-    "unknown": "#CCCCCC"
-  },
-
-  "pattern_preview_colors": {
-    "fill": "#E5E2DD",
-    "stroke": "#c0b8ae",
-    "accent": "#8B7355"
-  },
-
-  "default_canvas": {
-    "fill": "#C5DFF3",
-    "stroke": "#4a3f35"
-  },
-
-  "default_layout": {
-    "sashing": "#e5d5c5",
-    "border": "#4a3f35"
-  },
-
-  "grid_colors": {
-    "bg": "#f5ede5",
-    "label": "#6b5d50",
-    "border": "#b8a698"
-  },
-
-  "functional_colors": {
-    "error": "#ed4956",
-    "success": "#16a34a",
-    "fabric_fallback": "#d4ccc4",
-    "fabric_grid_mock_bg": "#FFF5E6",
-    "mock_surface_bg": "#e6d5c3"
-  },
-
   "computed_colors": {
-    "primary_hover": "#5AA0D5"
+    "primary_hover": "#5AA0D5",
+    "primary_light": "#EBF4FF",
+    "primary_dark": "#3A7BC8",
+    "surface": "#FAFAF8",
+    "surface_alt": "#F4F3F0",
+    "text": "#1A1A1A",
+    "text_muted": "#6B6B6B",
+    "border": "#E8E6E1",
+    "border_strong": "#C8C5BE"
   },
-
-  "alpha_colors": {
-    "canvas": {
-      "fence_label_bg": { "hex": "#4a3f35", "alpha": 0.25 },
-      "fence_label_bg_light": { "hex": "#4a3f35", "alpha": 0.12 },
-      "selection_highlight": { "hex": "#7CB9E8", "alpha": 0.1 },
-      "grid_line_dimmed": { "hex": "#BEB9B2", "alpha": 0.85 },
-      "calibration_backdrop": { "hex": "#2d2a26", "alpha": 0.55 },
-      "dot_indicator_inactive": { "hex": "#2d2a26", "alpha": 0.25 },
-      "mock_grid_bg": { "hex": "#ffffff", "alpha": 0.2 }
+  "design_system": {
+    "typography": {
+      "font_family": "Geist Sans, system-ui, sans-serif",
+      "scale": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem"
+      }
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "scale": [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24]
+    },
+    "borders": {
+      "radius": {
+        "sm": "rounded-sm",
+        "base": "rounded",
+        "md": "rounded-md",
+        "lg": "rounded-lg",
+        "full": "rounded-full"
+      }
     },
     "shadows": {
-      "brand": { "hex": "#1a1a1a", "alpha": 0.08 },
-      "elevated_outer": { "hex": "#1a1a1a", "alpha": 0.1 },
-      "elevated_outer_deep": { "hex": "#1a1a1a", "alpha": 0.14 },
-      "inset_inner": { "hex": "#1a1a1a", "alpha": 0.06 },
-      "inset_inner_subtle": { "hex": "#1a1a1a", "alpha": 0.04 }
-    }
-  },
-
-  "typography": {
-    "_comment": "Fonts are loaded via CSS in globals.css and layout.tsx - CSS is the source of truth",
-    "heading_font": "Noto Serif",
-    "body_font": "Montserrat",
-    "scale": {
-      "h1": { "size": "40px", "line_height": "52px", "tailwind": "text-[40px] leading-[52px]" },
-      "h2": { "size": "32px", "line_height": "40px", "tailwind": "text-[32px] leading-[40px]" },
-      "h3": { "size": "24px", "line_height": "32px", "tailwind": "text-[24px] leading-[32px]" },
-      "body": { "size": "18px", "line_height": "28px", "tailwind": "text-[18px] leading-[28px]" },
-      "small": { "size": "16px", "line_height": "24px", "tailwind": "text-[16px] leading-[24px]" },
-      "label": { "size": "14px", "line_height": "20px", "tailwind": "text-[14px] leading-[20px]" }
+      "elevated": "0 4px 16px rgba(26,26,26,0.08), 0 1px 4px rgba(26,26,26,0.04)",
+      "subtle": "0 1px 3px rgba(26,26,26,0.06)",
+      "none": "none"
     },
-    "rules": [
-      "Noto Serif for all headings and display text",
-      "Montserrat for all body copy, labels, and UI text",
-      "No heavy uppercase tracking unless explicitly specified for a label",
-      "Desktop-first sizing"
-    ]
-  },
-
-  "design_system": {
-    "framework": "Tailwind CSS v4",
-    "radius": "Buttons/CTAs/tabs/filters/pills: rounded-full (pill shape) everywhere. Cards/containers/inputs/dialogs: rounded-lg (8px). No rounded-none, no rounded-2xl. rounded-full on avatar containers remains standard.",
-    "shadow": "0 1px 2px rgba(26, 26, 26, 0.08) — single subtle shadow only.",
-    "motion": {
-      "transitions": "150ms ease-out on color and opacity ONLY",
-      "hover": "Color or background change ONLY. No scale, translate, lift, shift, or transform.",
-      "focus": "2px solid --primary outline. No glow.",
-      "loading": "Subtle opacity pulse. No spinners, no animated corgi.",
-      "entry_exit": "Allowed. Framer Motion animations are permitted for page transitions, drawer slides, and component entrances/exits."
+    "transitions": {
+      "default": "transition-colors duration-150",
+      "note": "Color-only transitions per brand spec. No scale, translate, or shadow-pop effects."
     },
     "buttons": {
-      "primary": "bg-[#7CB9E8] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#5AA0D5] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]",
-      "secondary": "bg-transparent border-2 border-[#7CB9E8] text-[#7CB9E8] rounded-full hover:bg-[#7CB9E8]/10 transition-colors duration-150",
-      "rules": [
-        "Pill shape (rounded-full) for CTA buttons, tabs, filters, small interactive elements",
-        "No gradients",
-        "No press animations",
-        "Hover is background shift only"
-      ]
+      "primary": {
+        "base": "btn-primary",
+        "hover": "hover:bg-[var(--color-primary-hover)]",
+        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-primary)] text-white transition-colors duration-150"
+      },
+      "secondary": {
+        "base": "btn-secondary",
+        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-surface-alt)] text-[var(--color-text)] border border-[var(--color-border)] transition-colors duration-150"
+      },
+      "ghost": {
+        "base": "btn-ghost",
+        "classes": "inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm text-[var(--color-text-muted)] transition-colors duration-150"
+      }
     },
     "cards": {
-      "base": "bg-white border border-[#d4d4d4] rounded-xl shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
-      "rules": [
-        "Quilt image fills card, no decorative overlays",
-        "No hover effects that obscure content",
-        "Click to view details"
-      ]
+      "base": "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_4px_16px_rgba(26,26,26,0.08),_0_1px_4px_rgba(26,26,26,0.04)]",
+      "hover": "transition-colors duration-150 hover:border-[var(--color-border-strong)]",
+      "selected": "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
     },
-    "inputs": {
-      "base": "border border-[#d4d4d4] rounded-full focus:outline-2 focus:outline-[#7CB9E8]",
-      "placeholder": "text-[#4a4a4a]"
+    "modals": {
+      "panel": "rounded-lg bg-[var(--color-surface)] p-8 shadow-elevated",
+      "backdrop": "fixed inset-0 bg-black/40 z-40",
+      "note": "No role attribute on backdrop (ARIA 1.2 deprecates role=presentation on decorative divs)."
     },
-    "nav_link": "text-[#1a1a1a] hover:text-[#7CB9E8] transition-colors",
-    "layout": {
-      "container_max": "1440px",
-      "sidebar_width": "280px",
-      "header_height": "64px",
-      "gutter": "24px",
-      "base_spacing": "8px",
-      "grid": "12-column",
-      "desktop_first": true,
-      "rules": [
-        "Sidebar is fixed-width, collapsible, never overlays content",
-        "Navigation is visible, persistent, plain-text",
-        "No hamburger menus on desktop (studio hamburger is an exception for file/edit/view actions)"
-      ]
-    },
-    "banned_patterns": [
-      "Animated color shifts",
-      "Hover effects that move, scale, lift, or shift elements (no hover:scale-*, hover:-translate-*, hover:translate-*)",
-      "Soft drop shadows beyond the single defined shadow",
-      "rounded-2xl, rounded-xl",
-      "text-gray-*, text-slate-*, bg-gray-*, bg-slate-*, border-gray-*, border-slate-*",
-      "Brown-toned neutral scales (#2c2420, #4a3f35, #6b5d50, #8a7c6f, #e8dbcf as neutral ramps)",
-      "Vanity metrics (visible like counts, follower counts, engagement scores)",
-      "Badges, ribbons, achievements, points, levels",
-      "Trending or viral sections",
-      "Algorithmic feeds (chronological only)",
-      "Push notifications for engagement",
-      "AI-generated filler text or generic template language",
-      "Generic stock photography or AI-generated art",
-      "Exclamation points unless truly earned",
-      "FOMO or urgency language",
-      "font-black uppercase tracking-[0.2em] editorial patterns (use Montserrat at normal weight instead)"
-    ]
-  },
-
-  "public_assets": {
-    "logo": "/logo.png",
-    "favicon": "/favicon.png",
-    "og_image": "/og-image.png",
-    "pwa_icon": "/icon-192.png",
-    "backgrounds": ["/background.png"],
-    "cursors": "/cursors/bend.cur",
-    "mascots": "/mascots&avatars/corgi1.png through corgi29.png (29 total)",
-    "icons": {
-      "path": "/icons/"
-    },
-    "images": {
-      "blog": "/images/blog/",
-      "quilts": "/images/quilts/"
-    },
-    "block_svgs": "/quilt_blocks/ (50 SVG files)",
-    "layout_svgs": "/quilt_layouts/"
-  },
-
-  "microcopy": {
-    "design_workspace": {
-      "save_button": "Save design",
-      "export_button": "Export pattern",
-      "project_name_placeholder": "Give your quilt a name...",
-      "rotate_tooltip": "Turn the piece. See what clicks.",
-      "empty_canvas": "Start with a block, or import a pattern to explore."
-    },
-    "community": {
-      "share_button": "Share with community",
-      "gallery_header": "Recent designs from quilters",
-      "follow_button": "Follow this quilter",
-      "comment_placeholder": "Add a note of encouragement...",
-      "save_button": "Save to your inspiration board",
-      "empty_gallery": "No one has shared this type of design yet. Be the first?"
-    },
-    "discovery": {
-      "block_library": "Explore blocks",
-      "pattern_search": "Find a pattern to start with",
-      "collections": "Designs tagged with 'modern'",
-      "inspiration": "Saved for later"
+    "forms": {
+      "input": "input",
+      "label": "block text-xs font-medium text-[var(--color-text-muted)] mb-1"
     }
   },
-
+  "banned_patterns": {
+    "tailwind_classes": [
+      "rounded-xl",
+      "rounded-2xl",
+      "rounded-3xl",
+      "bg-white",
+      "text-white (except on primary buttons)",
+      "shadow-elevation-*",
+      "hover:scale-*",
+      "hover:shadow-lg",
+      "hover:-translate-*",
+      "active:translate-*",
+      "transition-all"
+    ],
+    "css_patterns": [
+      "hardcoded hex colors in className (use CSS variables)",
+      "inline style color overrides"
+    ],
+    "note": "rounded-xl was formerly in cards.base — corrected to rounded-lg in this config version."
+  },
   "accessibility": {
-    "color_contrast": "WCAG AA minimum (4.5:1)",
-    "focus_states": "2px solid --primary outline on all interactive elements",
-    "keyboard_nav": "Logical tab order, no traps",
-    "screen_reader": "Labels match visible text",
-    "images": "Descriptive alt text required. Mascot images: decorative or descriptive as appropriate.",
-    "community_images": "Quilter-provided alt text encouraged"
+    "focus_ring": "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
+    "min_touch_target": "44px",
+    "color_contrast": "WCAG AA minimum"
   },
-
-  "privacy": {
-    "designs_private_by_default": true,
-    "share_only_when_chosen": true,
-    "data_download": true,
-    "account_deletion": true,
-    "no_cross_web_tracking": true,
-    "no_data_selling": true
-  },
-
-  "what_we_dont_do": [
-    "Badges, ribbons, achievements, points, levels",
-    "Like buttons with visible counts",
-    "Follower counts or vanity metrics",
-    "Hover animations that shift layout or move elements",
-    "Push notifications for engagement",
-    "Trending or viral design sections",
-    "Template-y page structures",
-    "Generic stock photography or AI-generated art",
-    "AI-generated filler text",
-    "Mobile-first compromises on desktop",
-    "Auto-playing tutorials or forced onboarding",
-    "Algorithmic feeds (chronological only)",
-    "Advertising or promoted designs",
-    "Dark mode",
-    "Gradients"
-  ]
+  "component_examples": {
+    "card": "<div class=\"card\">…</div>",
+    "button_primary": "<button class=\"btn-primary\">…</button>",
+    "button_secondary": "<button class=\"btn-secondary\">…</button>"
+  }
 }

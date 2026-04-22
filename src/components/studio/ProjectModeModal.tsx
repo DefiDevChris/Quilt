@@ -1,132 +1,95 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Palette, LayoutGrid, PencilRuler, X } from 'lucide-react';
+import React from 'react';
+import { Grid3X3, Layers } from 'lucide-react';
+import { useProjectStore } from '@/stores/projectStore';
 
 interface ProjectModeModalProps {
-  readonly open: boolean;
-  readonly onSelect: (mode: 'template' | 'layout' | 'free-form') => void;
-  readonly onDismiss: () => void;
+  onModeSelected: () => void;
 }
 
-const MODES = [
-  {
-    id: 'template' as const,
-    name: 'Start from Template',
-    Icon: Palette,
-    description: 'Start with a fully designed quilt and tweak it',
-  },
-  {
-    id: 'layout' as const,
-    name: 'Start with Layout',
-    Icon: LayoutGrid,
-    description: 'Start with a grid or shape layout, then fill in',
-  },
-  {
-    id: 'free-form' as const,
-    name: 'Start Free-form',
-    Icon: PencilRuler,
-    description: 'Start with a blank canvas and draw or place blocks anywhere',
-  },
-];
-
 /**
- * Modal shown on first entry into an empty project that prompts the user to
- * pick the studio interaction mode. Dismissible via ESC, backdrop click, or
- * the close button — dismissing is equivalent to "decide later" and the modal
- * will not re-appear thanks to a per-project localStorage flag in
- * `StudioLayout`.
+ * ProjectModeModal
+ *
+ * Gate modal rendered when no project mode has been chosen yet. Presents two
+ * cards — Quilt Design and Fabric Library — and writes the choice into the
+ * project store before calling `onModeSelected` to let the parent unmount it.
+ *
+ * Brand notes (enforced here):
+ *  - Panel: rounded-lg (rounded-2xl banned), bg-[var(--color-surface)] (bg-white banned)
+ *  - Cards: rounded-lg (rounded-xl banned), transition-colors duration-150 (no scale/shadow pop)
+ *  - Shadow: shadow-elevated (shadow-elevation-* utilities are undefined)
+ *  - Backdrop: no role attribute (ARIA 1.2 deprecates role="presentation" on decorative divs)
  */
-export function ProjectModeModal({ open, onSelect, onDismiss }: ProjectModeModalProps) {
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const firstBtnRef = useRef<HTMLButtonElement | null>(null);
+export function ProjectModeModal({ onModeSelected }: ProjectModeModalProps) {
+  const setProjectMode = useProjectStore((s) => s.setProjectMode);
 
-  useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        onDismiss();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    // Move initial focus into the dialog for keyboard users.
-    requestAnimationFrame(() => firstBtnRef.current?.focus());
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, onDismiss]);
-
-  if (!open) return null;
-
-  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) onDismiss();
+  const handleModeSelect = (mode: 'quilt' | 'fabric-library') => {
+    setProjectMode(mode);
+    onModeSelected();
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-      onClick={handleBackdropClick}
-      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onModeSelected();
+      }}
     >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* Dialog panel */}
       <div
-        ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="project-mode-modal-title"
-        aria-describedby="project-mode-modal-description"
-        className="relative bg-white rounded-2xl shadow-elevation-4 w-full max-w-3xl p-6 sm:p-8"
+        aria-labelledby="mode-modal-title"
+        className="relative z-10 w-full max-w-md rounded-lg bg-[var(--color-surface)] p-8 shadow-elevated"
       >
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
-          aria-label="Dismiss mode selector"
-        >
-          <X size={16} strokeWidth={1.75} />
-        </button>
-
         <h2
-          id="project-mode-modal-title"
-          className="text-2xl font-semibold text-[var(--color-text)] mb-2 text-center pr-8"
+          id="mode-modal-title"
+          className="mb-2 text-center text-2xl font-semibold text-[var(--color-text)]"
         >
-          How would you like to start?
+          Choose Project Type
         </h2>
-        <p
-          id="project-mode-modal-description"
-          className="text-sm text-[var(--color-text-dim)] mb-6 text-center"
-        >
-          Choose how you want to begin your design. This sets the project mode
-          and cannot be changed later — pick the approach that fits what
-          you&apos;re making.
-        </p>
+        <p className="mb-6 text-center text-sm text-[var(--color-text-muted)]">Select how you want to work</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {MODES.map((mode, index) => {
-            const Icon = mode.Icon;
-            return (
-              <button
-                key={mode.id}
-                ref={index === 0 ? firstBtnRef : null}
-                type="button"
-                onClick={() => onSelect(mode.id)}
-                className="group flex flex-col items-center gap-4 rounded-xl border-2 border-[var(--color-border)]/20 bg-white p-6 text-center transition-all hover:border-primary hover:shadow-elevation-2 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-              >
-                <span
-                  className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-text)] group-hover:bg-primary/10 group-hover:text-primary transition-colors"
-                  aria-hidden="true"
-                >
-                  <Icon size={24} strokeWidth={1.75} />
-                </span>
-                <div>
-                  <h3 className="text-base font-semibold text-[var(--color-text)] mb-2">
-                    {mode.name}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-dim)] leading-relaxed">
-                    {mode.description}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Quilt Design card */}
+          <button
+            onClick={() => handleModeSelect('quilt')}
+            className="
+              flex flex-col items-center gap-3 rounded-lg border-2 border-transparent
+              bg-[var(--color-surface-alt)] p-6
+              transition-colors duration-150
+              hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]
+            "
+          >
+            <Grid3X3 className="h-8 w-8 text-[var(--color-primary)]" />
+            <div className="text-center">
+              <div className="font-medium text-[var(--color-text)]">Quilt Design</div>
+              <div className="text-xs text-[var(--color-text-muted)]">Design quilts block by block</div>
+            </div>
+          </button>
+
+          {/* Fabric Library card */}
+          <button
+            onClick={() => handleModeSelect('fabric-library')}
+            className="
+              flex flex-col items-center gap-3 rounded-lg border-2 border-transparent
+              bg-[var(--color-surface-alt)] p-6
+              transition-colors duration-150
+              hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]
+            "
+          >
+            <Layers className="h-8 w-8 text-[var(--color-primary)]" />
+            <div className="text-center">
+              <div className="font-medium text-[var(--color-text)]">Fabric Library</div>
+              <div className="text-xs text-[var(--color-text-muted)]">Manage your fabric stash</div>
+            </div>
+          </button>
         </div>
       </div>
     </div>
