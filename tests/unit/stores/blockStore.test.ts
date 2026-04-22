@@ -72,6 +72,8 @@ describe('blockStore', () => {
           isDefault: false,
           isLocked: false,
           blockType: 'custom' as const,
+          widthIn: 12,
+          heightIn: 12,
         },
         {
           id: 'block-2',
@@ -85,6 +87,8 @@ describe('blockStore', () => {
           isDefault: false,
           isLocked: false,
           blockType: 'custom' as const,
+          widthIn: 12,
+          heightIn: 12,
         },
       ],
     });
@@ -179,6 +183,8 @@ describe('blockStore', () => {
           isDefault: false,
           isLocked: false,
           blockType: 'svg' as const,
+          widthIn: 12,
+          heightIn: 12,
         },
       ],
       userBlocks: [
@@ -194,6 +200,8 @@ describe('blockStore', () => {
           isDefault: false,
           isLocked: false,
           blockType: 'custom' as const,
+          widthIn: 12,
+          heightIn: 12,
         },
       ],
       search: 'test',

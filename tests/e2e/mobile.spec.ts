@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { mockAuth } from './utils';
 
 test.describe('Mobile Navigation', () => {
   test('mobile bottom nav is visible on mobile', async ({ page, isMobile }) => {

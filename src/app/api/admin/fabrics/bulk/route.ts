@@ -20,7 +20,6 @@ const bulkToggleSchema = z.object({
 export async function POST(request: NextRequest) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const body = await request.json();

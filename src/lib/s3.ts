@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3_UPLOAD_EXPIRY_SECONDS, MAX_FILE_SIZE_BYTES } from '@/lib/constants';
+import { S3_UPLOAD_EXPIRY_SECONDS } from '@/lib/constants';
 import { sanitizeFilename } from '@/lib/string-utils';
 
 const awsVarsPresent =
@@ -64,11 +64,14 @@ export async function generatePresignedUrl({
   const timestamp = Date.now();
   const fileKey = `${purpose}s/${userId}/${timestamp}-${sanitizeFilename(filename, { stripExtension: true, keepUnderscores: true, collapseHyphens: true, trimHyphens: true, maxLength: 64 })}.${ext}`;
 
+  // Note: ContentLength is intentionally NOT set here. Setting it pins the
+  // presigned PUT to exactly that byte count — S3 rejects any upload with a
+  // different Content-Length. Size is validated client-side before upload and
+  // can be re-validated server-side after a success callback if needed.
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: fileKey,
     ContentType: contentType,
-    ContentLength: MAX_FILE_SIZE_BYTES,
   });
 
   const uploadUrl = await getSignedUrl(s3Client, command, {

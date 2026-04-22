@@ -10,7 +10,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   const url = request.nextUrl;
   const parsed = adminPaginationSchema.safeParse({
@@ -48,7 +47,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const body = await request.json();

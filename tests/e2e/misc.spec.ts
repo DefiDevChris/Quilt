@@ -25,7 +25,7 @@ test.describe('User Management', () => {
       try {
         await page.goto('/dashboard');
         // Just check page loads
-        expect(await page.content().length).toBeGreaterThan(100);
+        expect((await page.content()).length).toBeGreaterThan(100);
       } catch {
         // If page doesn't load, that's OK for this test
         expect(true).toBe(true);

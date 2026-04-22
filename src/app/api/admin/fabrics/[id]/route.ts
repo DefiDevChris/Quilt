@@ -4,7 +4,6 @@ import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
 import {
   requireAdminSession,
-  unauthorizedResponse,
   errorResponse,
   notFoundResponse,
   validationErrorResponse,
@@ -25,7 +24,6 @@ const patchFabricSchema = z.object({
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const { id } = await params;
@@ -78,7 +76,6 @@ export async function DELETE(
 ) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const { id } = await params;

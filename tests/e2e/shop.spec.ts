@@ -28,7 +28,7 @@ test.describe('Shop Page', () => {
     const charmPackBtn = page.getByRole('button', { name: /charm packs/i }).first();
     await charmPackBtn.click();
     // Active category should be visually highlighted (check for border color change)
-    await expect(charmPackBtn).toHaveCSS('border-color', expect.any(String));
+    await expect(charmPackBtn).toHaveCSS('border-color', /.+/);
   });
 
   test('search input is accessible', async ({ page }) => {

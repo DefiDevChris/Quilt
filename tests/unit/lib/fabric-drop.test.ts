@@ -40,7 +40,10 @@ describe('Fabric Drop Logic', () => {
     });
 
     it('should reject drops with missing imageUrl', () => {
-      const invalidPayload = { fabricId: '1', fabricName: 'name' };
+      const invalidPayload: { fabricId: string; fabricName: string; imageUrl?: string } = {
+        fabricId: '1',
+        fabricName: 'name',
+      };
       const isValid = invalidPayload.fabricId && invalidPayload.imageUrl && invalidPayload.fabricName;
       expect(isValid).toBeFalsy();
     });

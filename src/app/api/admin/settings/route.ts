@@ -10,7 +10,6 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const rows = await db.select().from(siteSettings);
