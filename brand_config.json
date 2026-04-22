@@ -2,7 +2,7 @@
   "meta": {
     "brand_name": "QuiltCorgi",
     "domain": "quiltcorgi.com",
-    "last_updated": "2026-04-10",
+    "last_updated": "2026-04-22",
     "tech_stack": "Next.js 16 App Router, TypeScript, Tailwind CSS v4, Fabric.js, Zustand, Drizzle ORM, PostgreSQL",
     "ssot_file": "CLAUDE.md (repository root) governs technical implementation. This file governs brand, visuals, and voice."
   },
