@@ -1,328 +1,169 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 @import 'tailwindcss';
 
+/* ─── Brand tokens ─────────────────────────────────────────────────────────── */
 @theme {
-  /* Brand colors — Easter-spring palette */
-  --color-primary: #7CB9E8;
-  --color-secondary: #C5DFF3;
-  --color-accent: #FFE08A;
-  --color-accent-blush: #F6C6C8;
-  --color-bg: #F7F9FC;
-  --color-surface: #ffffff;
-  --color-text: #1a1a1a;
-  --color-text-dim: #4a4a4a;
-  --color-border: #d4d4d4;
+  /* Surface & background */
+  --color-surface:          #FAFAF8;
+  --color-surface-alt:      #F4F3F0;
+  --color-background:       #F4F3F0;
 
-  /* Functional */
-  --color-error: #ed4956;
+  /* Text */
+  --color-text:             #1A1A1A;
+  --color-text-muted:       #6B6B6B;
+  --color-text-on-primary:  #FFFFFF;
 
-  /* Fonts
-   * Source of truth for font families. Keep these in sync with
-   * FONT_HEADING / FONT_BODY in src/lib/design-system.ts. Previously
-   * --font-heading was set to Montserrat here while design-system.ts
-   * declared 'Noto Serif' — dashboard and editorial headings use the
-   * Tailwind `font-serif` utility (which maps to --font-serif below),
-   * making Noto Serif the de facto heading family, so we align
-   * --font-heading to match.
-   */
-  --font-sans: 'Montserrat', system-ui, sans-serif;
-  --font-heading: 'Noto Serif', Georgia, serif;
-  --font-display: 'Montserrat', system-ui, sans-serif;
-  --font-serif: 'Noto Serif', Georgia, serif;
+  /* Borders */
+  --color-border:           #E8E6E1;
+  --color-border-strong:    #C8C5BE;
 
-  /* Shadows */
-  --shadow-quilt: 0 1px 2px rgba(26, 26, 26, 0.08);
+  /* Primary (quilt blue) */
+  --color-primary:          #4A90D5;
+  --color-primary-hover:    #5AA0D5;
+  --color-primary-light:    #EBF4FF;
+  --color-primary-dark:     #3A7BC8;
 
-  /* Z-Index layers — see Z_INDEX in design-system.ts */
-  --z-overlay: 9999;
-  --z-top-bar: 10;
-  --z-feed-tabs: 9;
-  --z-user-dropdown: 50;
+  /* Accent */
+  --color-accent:           #8B5E3C;
+  --color-accent-light:     #F5EDE4;
+
+  /* Semantic */
+  --color-success:          #4CAF50;
+  --color-warning:          #FFC107;
+  --color-error:            #EF5350;
+
+  /* Brand shadows */
+  --shadow-elevated: 0 4px 16px rgba(26,26,26,0.08), 0 1px 4px rgba(26,26,26,0.04);
 }
 
-/* ===== Design System Utility Classes ===== */
-
-/* Color utilities — use CSS variables instead of hardcoded hex */
-.text-primary {
-  color: var(--color-primary);
-}
-.text-secondary {
-  color: var(--color-secondary);
-}
-.text-accent {
-  color: var(--color-accent);
-}
-.text-accent-blush {
-  color: var(--color-accent-blush);
-}
-.text-surface {
-  color: var(--color-surface);
-}
-.text-default {
-  color: var(--color-text);
-}
-.text-dim {
-  color: var(--color-text-dim);
-}
-.text-error {
-  color: var(--color-error);
-}
-
-.bg-primary {
-  background-color: var(--color-primary);
-}
-.bg-secondary {
-  background-color: var(--color-secondary);
-}
-.bg-accent {
-  background-color: var(--color-accent);
-}
-.bg-accent-blush {
-  background-color: var(--color-accent-blush);
-}
-.bg-surface {
-  background-color: var(--color-surface);
-}
-.bg-default {
-  background-color: var(--color-bg);
-}
-
-.border-primary {
-  border-color: var(--color-primary);
-}
-.border-default {
-  border-color: var(--color-border);
-}
-
-/* Hover variants — color-only transitions per brand rules */
-.hover\:bg-primary-dark:hover {
-  background-color: #5AA0D5;
-}
-.hover\:text-primary:hover {
-  color: var(--color-primary);
-}
-.hover\:text-primary-dark:hover {
-  color: #5AA0D5;
-}
-.hover\:bg-surface-dark:hover {
-  background-color: #EEF3FA;
-}
-
-.hover\:bg-primary-dark:hover {
-  background-color: #5AA0D5;
-}
-
-/* Border hover with primary color at 30% opacity (used in dashboard cards) */
-.hover\:border-primary-30:hover {
-  border-color: rgba(124, 185, 232, 0.3);
-}
-
-/* Shadow utility — matches SHADOW.brand from design-system */
-.shadow-brand {
-  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.08);
-}
-.shadow-elevated {
-  box-shadow:
-    0 4px 8px rgba(26, 26, 26, 0.1),
-    0 12px 32px rgba(26, 26, 26, 0.14);
-}
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-}
-
-/* ===== Utility Styles ===== */
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
-  to {
-    opacity: 1;
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-geist-sans, system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Remove default list styles */
+  ul, ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Focus rings */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out forwards;
-}
+/* ─── Component utilities ──────────────────────────────────────────────────── */
+@layer components {
 
-/* Invalid drop feedback — brief red border flash when a block is dropped
-   outside a valid fence cell while a layout is applied. */
-@keyframes invalidDropFlash {
-  0% { box-shadow: inset 0 0 0 3px rgba(237, 73, 86, 0.6); }
-  100% { box-shadow: inset 0 0 0 0 rgba(237, 73, 86, 0); }
-}
+  /* ── Buttons ────────────────────────────────────────────────────────────── */
 
-.invalid-drop-flash {
-  animation: invalidDropFlash 0.4s ease-out;
-}
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2
+           rounded-lg font-medium text-sm
+           bg-[var(--color-primary)] text-white
+           transition-colors duration-150;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  .btn-primary-sm {
+    @apply inline-flex items-center justify-center px-3 py-1.5
+           rounded-lg font-medium text-xs
+           bg-[var(--color-primary)] text-white
+           transition-colors duration-150;
+  }
+  .btn-primary-sm:hover {
+    background-color: var(--color-primary-hover);
+  }
 
-/* Button Components */
-.btn-primary {
-  appearance: none;
-  background-color: var(--color-primary);
-  border: none;
-  color: var(--color-text);
-  padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition:
-    background-color 0.15s ease-out,
-    box-shadow 0.15s ease-out;
-  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.08);
-  cursor: pointer;
-}
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2
+           rounded-lg font-medium text-sm
+           bg-[var(--color-surface-alt)] text-[var(--color-text)]
+           border border-[var(--color-border)]
+           transition-colors duration-150
+           hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface)];
+  }
 
-.btn-primary:hover {
-  background-color: #5AA0D5;
-}
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-3 py-1.5
+           rounded-lg text-sm text-[var(--color-text-muted)]
+           transition-colors duration-150
+           hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-text)];
+  }
 
-.btn-primary:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px rgba(124, 185, 232, 0.2),
-    0 1px 2px rgba(26, 26, 26, 0.08);
-}
+  /* ── Hover utilities via primary-hover token ────────────────────────────── */
 
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .hover\:bg-primary-dark:hover {
+    background-color: var(--color-primary-hover);
+  }
 
-.btn-primary-sm {
-  appearance: none;
-  background-color: var(--color-primary);
-  border: none;
-  color: var(--color-text);
-  padding: 0.375rem 1rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition:
-    background-color 0.15s ease-out,
-    box-shadow 0.15s ease-out;
-  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.08);
-  cursor: pointer;
-}
+  .hover\:text-primary-dark:hover {
+    color: var(--color-primary-hover);
+  }
 
-.btn-primary-sm:hover {
-  background-color: #5AA0D5;
-}
+  /* ── Form controls ──────────────────────────────────────────────────────── */
 
-.btn-primary-sm:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px rgba(124, 185, 232, 0.2),
-    0 1px 2px rgba(26, 26, 26, 0.08);
-}
+  .input {
+    @apply block w-full rounded-lg border border-[var(--color-border)]
+           bg-[var(--color-surface)] px-3 py-2
+           text-sm text-[var(--color-text)]
+           placeholder:text-[var(--color-text-muted)]
+           transition-colors duration-150
+           focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)];
+  }
 
-.btn-primary-sm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .select {
+    @apply block w-full rounded-lg border border-[var(--color-border)]
+           bg-[var(--color-surface)] px-3 py-2
+           text-sm text-[var(--color-text)]
+           transition-colors duration-150
+           focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)];
+  }
 
-.btn-secondary {
-  appearance: none;
-  background-color: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-  padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition:
-    background-color 0.15s ease-out,
-    box-shadow 0.15s ease-out,
-    border-color 0.15s ease-out;
-  cursor: pointer;
-}
+  .toggle {
+    @apply sr-only;
+  }
 
-.btn-secondary:hover {
-  background-color: rgba(124, 185, 232, 0.1);
-}
+  /* ── Cards ──────────────────────────────────────────────────────────────── */
 
-.btn-secondary:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(124, 185, 232, 0.2);
-}
+  .card {
+    @apply rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-elevated;
+  }
 
-.btn-secondary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .card-hover {
+    @apply card transition-colors duration-150 hover:border-[var(--color-border-strong)];
+  }
 
-.btn-secondary-sm {
-  appearance: none;
-  background-color: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-  padding: 0.375rem 1rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition:
-    background-color 0.15s ease-out,
-    box-shadow 0.15s ease-out,
-    border-color 0.15s ease-out;
-  cursor: pointer;
-}
+  /* ── Panels ─────────────────────────────────────────────────────────────── */
 
-.btn-secondary-sm:hover {
-  background-color: rgba(124, 185, 232, 0.1);
-}
+  .panel {
+    @apply bg-[var(--color-surface)] border-r border-[var(--color-border)];
+  }
 
-.btn-secondary-sm:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(124, 185, 232, 0.2);
-}
+  /* ── Studio-specific layout atoms ──────────────────────────────────────── */
 
-.btn-secondary-sm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .studio-layout {
+    @apply relative h-screen overflow-hidden;
+  }
 
-/* Editorial transition utility */
-.transition-quilt {
-  transition: color 150ms ease-in-out, background-color 150ms ease-in-out, border-color 150ms ease-in-out, opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  .studio-toolbar {
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .studio-canvas-area {
+    @apply flex-1 overflow-hidden relative;
+  }
 }
