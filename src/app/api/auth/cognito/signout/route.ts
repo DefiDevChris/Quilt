@@ -10,7 +10,7 @@ export async function POST() {
   // Revoke tokens server-side so stolen tokens can't be reused
   try {
     await cognitoGlobalSignOut(session.accessToken);
-  } catch {
+  } catch (err) { console.error('[auth/cognito/signout]', err);
     // Best-effort — if Cognito call fails, still clear cookies
   }
 

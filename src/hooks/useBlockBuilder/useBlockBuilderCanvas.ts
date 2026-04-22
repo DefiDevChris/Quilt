@@ -19,9 +19,21 @@ const SEAM_LINE_WIDTH = 2;
 const PENCIL_PREVIEW_COLOR = CANVAS.pencilPreview;
 
 type AnyToolHook = {
-  onMouseDown?: (pointer: { x: number; y: number }, c: MinimalCanvas) => void | Promise<void>;
-  onMouseMove?: (pointer: { x: number; y: number }, c: MinimalCanvas) => void | Promise<void>;
-  onMouseUp?: (pointer: { x: number; y: number }, c: MinimalCanvas) => void | Promise<void>;
+  onMouseDown?: (
+    pointer: { x: number; y: number },
+    c: MinimalCanvas,
+    ev?: MouseEvent
+  ) => void | Promise<void>;
+  onMouseMove?: (
+    pointer: { x: number; y: number },
+    c: MinimalCanvas,
+    ev?: MouseEvent
+  ) => void | Promise<void>;
+  onMouseUp?: (
+    pointer: { x: number; y: number },
+    c: MinimalCanvas,
+    ev?: MouseEvent
+  ) => void | Promise<void>;
   onDoubleClick?: (c: MinimalCanvas) => void;
   onEscape?: (c: MinimalCanvas) => void;
 } | null;
@@ -185,15 +197,15 @@ export function useBlockBuilderCanvas({
 
       function onMouseDown(e: { e: MouseEvent }) {
         const pointer = c.getScenePoint(e.e);
-        activeTool?.onMouseDown?.(pointer, mc);
+        activeTool?.onMouseDown?.(pointer, mc, e.e);
       }
       function onMouseMove(e: { e: MouseEvent }) {
         const pointer = c.getScenePoint(e.e);
-        activeTool?.onMouseMove?.(pointer, mc);
+        activeTool?.onMouseMove?.(pointer, mc, e.e);
       }
       function onMouseUp(e: { e: MouseEvent }) {
         const pointer = c.getScenePoint(e.e);
-        activeTool?.onMouseUp?.(pointer, mc);
+        activeTool?.onMouseUp?.(pointer, mc, e.e);
       }
       function onDoubleClick() {
         activeTool?.onDoubleClick?.(mc);

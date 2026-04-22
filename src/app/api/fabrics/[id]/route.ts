@@ -36,7 +36,7 @@ export async function DELETE(
       .where(and(eq(userFabrics.id, id), eq(userFabrics.userId, session.user.id)));
 
     return new Response(null, { status: 204 });
-  } catch {
+  } catch (err) { console.error('[fabrics/[id]]', err);
     return errorResponse('Failed to delete fabric', 'INTERNAL_ERROR', 500);
   }
 }

@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
     await cognitoResendVerification(parsed.data.email);
 
     return Response.json({ success: true });
-  } catch {
+  } catch (err) { console.error('[auth/cognito/verify]', err);
     return errorResponse('Failed to resend code', 'INTERNAL_ERROR', 500);
   }
 }

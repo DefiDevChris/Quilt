@@ -6,8 +6,6 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
-import { CANVAS } from '@/lib/design-system';
 
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
@@ -267,16 +265,13 @@ export function StudioTopBar({
   const projectName = useProjectStore((s) => s.projectName);
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const [tick, setTick] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const isViewportLocked = useCanvasStore((s) => s.isViewportLocked);
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const isQuiltMode = activeWorktable === 'quilt';
   const { toast } = useToast();
-  const { getCanvas } = useCanvasContext();
 
   const handleBackToDashboard = () => {
     if (isDirty && onSave) {
@@ -284,6 +279,11 @@ export function StudioTopBar({
     }
     router.push('/dashboard');
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     function handleSaveSuccess() {
@@ -301,11 +301,27 @@ export function StudioTopBar({
         description: detail?.message ?? 'Cannot drop here',
       });
     }
+    // Throttle fence-rejection toasts so rapid repeated rejections (e.g. dragging
+    // across the canvas in layout mode) don't flood the UI with duplicates.
+    let lastFenceToastAt = 0;
+    function handleFenceRejection(e: Event) {
+      const now = Date.now();
+      if (now - lastFenceToastAt < 1500) return;
+      lastFenceToastAt = now;
+      const detail = (e as CustomEvent).detail as { message?: string } | undefined;
+      toast({
+        type: 'warning',
+        title: 'Outside block cell',
+        description: detail?.message ?? 'Drawing is restricted to block cells in this mode.',
+      });
+    }
     window.addEventListener('quiltstudio:save-success', handleSaveSuccess);
     window.addEventListener('quiltstudio:invalid-drop', handleInvalidDrop);
+    window.addEventListener('quiltstudio:fence-rejection', handleFenceRejection);
     return () => {
       window.removeEventListener('quiltstudio:save-success', handleSaveSuccess);
       window.removeEventListener('quiltstudio:invalid-drop', handleInvalidDrop);
+      window.removeEventListener('quiltstudio:fence-rejection', handleFenceRejection);
     };
   }, [toast]);
 
@@ -364,7 +380,10 @@ export function StudioTopBar({
                 {projectName || 'Quilt Studio'}
               </span>
               {lastSavedAt && (
-                <span className="text-[14px] leading-[20px] text-[var(--color-text-dim)]/60 ml-1">
+                <span
+                  className="text-[14px] leading-[20px] text-[var(--color-text-dim)]/60 ml-1"
+                  title={lastSavedAt.toLocaleString()}
+                >
                   Saved {formatTimestamp(lastSavedAt)}
                 </span>
               )}
@@ -383,99 +402,6 @@ export function StudioTopBar({
           {isQuiltMode && (
             <>
               <EditPreviewToggle />
-
-              <div className="flex items-center gap-1">
-                <TooltipHint
-                  name={isViewportLocked ? 'Viewport Locked' : 'Viewport Unlocked'}
-                  description={
-                    isViewportLocked
-                      ? 'Click to unlock and pan/zoom freely'
-                      : 'Click to lock viewport to centered fit'
-                  }
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      useCanvasStore
-                        .getState()
-                        .setViewportLocked(
-                          !isViewportLocked,
-                          getCanvas(),
-                          canvasWidth,
-                          canvasHeight
-                        )
-                    }
-                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                      isViewportLocked
-                        ? 'hover:bg-[var(--color-border)]'
-                        : 'bg-primary/10 hover:bg-primary/20'
-                    }`}
-                    aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
-                  >
-                    {isViewportLocked ? (
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke={CANVAS.seamLine}
-                        strokeWidth="1.4"
-                      >
-                        <rect x="4" y="9" width="12" height="8" rx="2" />
-                        <path
-                          d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V9"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke={CANVAS.seamLine}
-                        strokeWidth="1.4"
-                      >
-                        <rect x="4" y="9" width="12" height="8" rx="2" />
-                        <path
-                          d="M7 9V6C7 4.34 8.34 3 10 3C11.66 3 13 4.34 13 6V7"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </TooltipHint>
-
-                {!isViewportLocked && (
-                  <TooltipHint
-                    name="Recenter Viewport"
-                    description="Snap grid back to center of canvas"
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        useCanvasStore
-                          .getState()
-                          .centerAndFitViewport(getCanvas(), canvasWidth, canvasHeight)
-                      }
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-border)] transition-colors"
-                      aria-label="Recenter viewport"
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke={CANVAS.seamLine}
-                        strokeWidth="1.4"
-                      >
-                        <circle cx="10" cy="10" r="3" />
-                        <path d="M10 3V7M10 13V17M3 10H7M13 10H17" strokeLinecap="round" />
-                      </svg>
-                    </button>
-                  </TooltipHint>
-                )}
-              </div>
 
               <ReferenceImageToggle />
 

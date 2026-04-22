@@ -30,7 +30,7 @@ export async function GET() {
       success: true,
       data: profile ?? null,
     });
-  } catch {
+  } catch (err) { console.error('[profile]', err);
     return errorResponse('Failed to fetch profile', 'INTERNAL_ERROR', 500);
   }
 }
@@ -82,7 +82,7 @@ export async function PUT(request: Request) {
       },
       { status: 201 }
     );
-  } catch {
+  } catch (err) { console.error('[profile]', err);
     return errorResponse('Failed to update profile', 'INTERNAL_ERROR', 500);
   }
 }

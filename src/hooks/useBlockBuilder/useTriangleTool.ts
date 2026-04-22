@@ -59,8 +59,8 @@ export function useTriangleTool(snap: SnapHelpers, segs: SegmentHelpers) {
       const path = new fabric.Path(`M ${a.x} ${a.y} L ${b.x} ${b.y} L ${cPt.x} ${cPt.y} Z`, {
         fill: CANVAS.selectionHighlight,
         stroke: PENCIL_PREVIEW_COLOR,
-        strokeWidth: 1.5,
-        strokeDashArray: [6, 4],
+        strokeWidth: 4,
+        strokeDashArray: [8, 6],
         selectable: false,
         evented: false,
       });

@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       },
     });
-  } catch {
+  } catch (err) { console.error('[admin/layouts]', err);
     return errorResponse('Failed to fetch layouts', 'INTERNAL_ERROR', 500);
   }
 }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
-  } catch {
+  } catch (err) { console.error('[admin/layouts]', err);
     return errorResponse('Failed to create layout', 'INTERNAL_ERROR', 500);
   }
 }

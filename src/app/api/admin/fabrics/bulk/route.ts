@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: { updatedCount: updated.length, manufacturer, isPurchasable },
     });
-  } catch {
+  } catch (err) { console.error('[admin/fabrics/bulk]', err);
     return errorResponse('Failed to bulk update fabrics', 'INTERNAL_ERROR', 500);
   }
 }

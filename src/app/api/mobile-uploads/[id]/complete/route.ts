@@ -74,7 +74,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         updatedAt: updated.updatedAt.toISOString(),
       },
     });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads/[id]/complete]', err);
     return errorResponse('Failed to complete upload', 'INTERNAL_ERROR', 500);
   }
 }

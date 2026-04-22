@@ -37,6 +37,7 @@ interface ProjectStoreState {
     version?: number;
   }) => void;
   setProjectName: (name: string) => void;
+  setMode: (mode: 'free-form' | 'layout' | 'template') => void;
   setSaveStatus: (status: SaveStatus) => void;
   setDirty: (dirty: boolean) => void;
   setHasContent: (has: boolean) => void;
@@ -87,6 +88,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
     }),
 
   setProjectName: (projectName) => set({ projectName }),
+  setMode: (mode) => set({ mode, isDirty: true }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setHasContent: (hasContent) => set({ hasContent }),

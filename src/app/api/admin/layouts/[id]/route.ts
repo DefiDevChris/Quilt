@@ -40,7 +40,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       .returning();
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) { console.error('[admin/layouts/[id]]', err);
     return errorResponse('Failed to update layout', 'INTERNAL_ERROR', 500);
   }
 }
@@ -75,7 +75,7 @@ export async function DELETE(
     }
 
     return Response.json({ success: true, data: { deleted: true } });
-  } catch {
+  } catch (err) { console.error('[admin/layouts/[id]]', err);
     return errorResponse('Failed to delete layout', 'INTERNAL_ERROR', 500);
   }
 }

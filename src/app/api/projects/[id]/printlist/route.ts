@@ -47,7 +47,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     return Response.json({ success: true, data: printlist });
-  } catch {
+  } catch (err) { console.error('[projects/[id]/printlist]', err);
     return errorResponse('Failed to load printlist', 'INTERNAL_ERROR', 500);
   }
 }
@@ -119,7 +119,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .returning();
 
     return Response.json({ success: true, data: created });
-  } catch {
+  } catch (err) { console.error('[projects/[id]/printlist]', err);
     return errorResponse('Failed to save printlist', 'INTERNAL_ERROR', 500);
   }
 }

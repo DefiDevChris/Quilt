@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     // Always return success to prevent email enumeration
     return Response.json({ success: true });
-  } catch {
+  } catch (err) { console.error('[auth/cognito/forgot-password]', err);
     // Still return success to prevent email enumeration
     return Response.json({ success: true });
   }

@@ -7,6 +7,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
+import { showDrawingHud, hideDrawingHud, formatLength } from '@/lib/drawing-hud';
 import type { CanvasGridSettings } from '@/types/grid';
 import { CANVAS } from '@/lib/design-system';
 
@@ -65,6 +66,28 @@ export function usePolygonTool() {
       let previewLines: InstanceType<typeof fabric.Line>[] = [];
       let previewDots: InstanceType<typeof fabric.Circle>[] = [];
       let isDrawing = false;
+      let lastPointer: { x: number; y: number } | null = null;
+
+      function zoom(): number {
+        return Math.max(0.0001, useCanvasStore.getState().zoom);
+      }
+
+      function closeThreshold(): number {
+        return 15 / zoom();
+      }
+
+      // Constrain a point to 45° increments relative to an origin.
+      function constrain45(origin: { x: number; y: number }, pt: { x: number; y: number }) {
+        const dx = pt.x - origin.x;
+        const dy = pt.y - origin.y;
+        const angle = Math.atan2(dy, dx);
+        const snappedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+        const len = Math.hypot(dx, dy);
+        return {
+          x: origin.x + len * Math.cos(snappedAngle),
+          y: origin.y + len * Math.sin(snappedAngle),
+        };
+      }
 
       function snapPoint(x: number, y: number): { x: number; y: number } {
         const s = stateRef.current;
@@ -89,18 +112,38 @@ export function usePolygonTool() {
         }
       }
 
-      function addPreviewDot(x: number, y: number) {
+      function addPreviewDot(x: number, y: number, emphasize = false) {
         if (!fabric || !canvas) return;
+        const z = zoom();
+        const r = (emphasize ? 8 : 5) / z;
         const dot = new fabric.Circle({
-          left: x - 4,
-          top: y - 4,
-          radius: 4,
-          fill: CANVAS.seamLine,
+          left: x - r,
+          top: y - r,
+          radius: r,
+          fill: emphasize ? CANVAS.pencilPreview : CANVAS.seamLine,
+          stroke: emphasize ? CANVAS.seamLine : undefined,
+          strokeWidth: emphasize ? 2 / z : 0,
           selectable: false,
           evented: false,
         });
         canvas.add(dot);
         previewDots.push(dot);
+      }
+
+      // Re-render the first vertex dot to reflect close-affordance state.
+      function updateFirstDotAffordance(near: boolean) {
+        if (!canvas || previewDots.length === 0 || points.length < 3) return;
+        const firstDot = previewDots[0];
+        const z = zoom();
+        const r = (near ? 8 : 5) / z;
+        firstDot.set({
+          radius: r,
+          left: points[0].x - r,
+          top: points[0].y - r,
+          fill: near ? CANVAS.pencilPreview : CANVAS.seamLine,
+          stroke: near ? CANVAS.seamLine : '',
+          strokeWidth: near ? 2 / z : 0,
+        });
       }
 
       function addPreviewLine(
@@ -111,10 +154,12 @@ export function usePolygonTool() {
         dashArray?: number[]
       ) {
         if (!fabric || !canvas) return;
+        const z = zoom();
+        const scaledDash = dashArray ? dashArray.map((d) => d / z) : undefined;
         const line = new fabric.Line([x1, y1, x2, y2], {
-          stroke: CANVAS.seamLine,
-          strokeWidth: 2,
-          strokeDashArray: dashArray,
+          stroke: CANVAS.pencilPreview,
+          strokeWidth: 4 / z,
+          strokeDashArray: scaledDash,
           selectable: false,
           evented: false,
         });
@@ -139,6 +184,7 @@ export function usePolygonTool() {
           clearPreview();
           points = [];
           isDrawing = false;
+          hideDrawingHud();
           canvas?.renderAll();
           return;
         }
@@ -164,6 +210,7 @@ export function usePolygonTool() {
 
         points = [];
         isDrawing = false;
+        hideDrawingHud();
         canvas.renderAll();
       }
 
@@ -171,6 +218,7 @@ export function usePolygonTool() {
         clearPreview();
         points = [];
         isDrawing = false;
+        hideDrawingHud();
         canvas.renderAll();
       }
 
@@ -178,10 +226,25 @@ export function usePolygonTool() {
         if (stateRef.current.isSpacePressed) return;
         if (!fabric || !canvas) return;
 
-        const pointer = canvas.getScenePoint(e.e);
+        const pointerRaw = canvas.getScenePoint(e.e);
+        const pointer =
+          e.e.shiftKey && points.length > 0
+            ? constrain45(points[points.length - 1], pointerRaw)
+            : pointerRaw;
 
         // Fence constraint: Layout/Template modes only allow polygon vertices inside block-cell areas
         const { mode } = useProjectStore.getState();
+        const emitFenceRejection = () => {
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('quiltstudio:fence-rejection', {
+                detail: {
+                  message: 'Polygon vertices must be placed inside a block cell in this mode.',
+                },
+              })
+            );
+          }
+        };
         if (mode === 'layout' || mode === 'template') {
           const fenceAreas = canvas
             .getObjects()
@@ -195,7 +258,10 @@ export function usePolygonTool() {
               obj as unknown as { containsPoint: (pt: { x: number; y: number }) => boolean }
             ).containsPoint(pointer)
           );
-          if (!isInsideCell) return;
+          if (!isInsideCell) {
+            emitFenceRejection();
+            return;
+          }
         }
 
         const snapped = snapPoint(pointer.x, pointer.y);
@@ -212,7 +278,7 @@ export function usePolygonTool() {
             (snapped.x - firstPoint.x) ** 2 + (snapped.y - firstPoint.y) ** 2
           );
 
-          if (distToStart < 15 && points.length >= 3) {
+          if (distToStart < closeThreshold() && points.length >= 3) {
             // Close the polygon
             completePolygon();
             return;
@@ -242,8 +308,28 @@ export function usePolygonTool() {
       function onMouseMove(e: { e: MouseEvent }) {
         if (!fabric || !canvas || !isDrawing || points.length === 0) return;
 
-        const pointer = canvas.getScenePoint(e.e);
+        const pointerRaw = canvas.getScenePoint(e.e);
+        lastPointer = pointerRaw;
+        const pointer = e.e.shiftKey
+          ? constrain45(points[points.length - 1], pointerRaw)
+          : pointerRaw;
         const snapped = snapPoint(pointer.x, pointer.y);
+
+        // Visual affordance for closing the polygon.
+        if (points.length >= 3) {
+          const first = points[0];
+          const dist = Math.hypot(snapped.x - first.x, snapped.y - first.y);
+          updateFirstDotAffordance(dist < closeThreshold());
+        }
+
+        // Dimension HUD: show the length of the rubber-band segment.
+        const anchor = points[points.length - 1];
+        const segLenPx = Math.hypot(snapped.x - anchor.x, snapped.y - anchor.y);
+        showDrawingHud(
+          e.e.clientX,
+          e.e.clientY,
+          formatLength(segLenPx, stateRef.current.unitSystem)
+        );
 
         if (points.length === 1) {
           // Only one point placed, show line from it to cursor
@@ -274,23 +360,71 @@ export function usePolygonTool() {
         canvas.renderAll();
       }
 
-      function onKeyDown(e: KeyboardEvent) {
-        if (e.key === 'Escape' && isDrawing) {
+      function undoLastVertex() {
+        if (!canvas || !isDrawing || points.length === 0) return;
+        if (points.length === 1) {
           cancelPolygon();
+          return;
+        }
+        points.pop();
+        // Remove the dot for the popped vertex and the last two lines
+        // (segment + rubber band), then re-add the rubber band from the
+        // new last point to the first point (via current pointer if known).
+        const poppedDot = previewDots.pop();
+        if (poppedDot) canvas.remove(poppedDot);
+        while (previewLines.length > 0) {
+          const line = previewLines.pop()!;
+          canvas.remove(line);
+        }
+        // Re-add existing segment lines between remaining points.
+        for (let i = 1; i < points.length; i++) {
+          addPreviewLine(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
+        }
+        // Rubber band from last placed point to current pointer (or first point).
+        const last = points[points.length - 1];
+        const target = lastPointer ?? points[0];
+        addPreviewLine(last.x, last.y, target.x, target.y);
+        if (points.length >= 2) {
+          addPreviewLine(target.x, target.y, points[0].x, points[0].y, [5, 5]);
+        }
+        canvas.renderAll();
+      }
+
+      function onKeyDown(e: KeyboardEvent) {
+        if (!isDrawing) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          cancelPolygon();
+        } else if (e.key === 'Enter' && points.length >= 3) {
+          e.preventDefault();
+          completePolygon();
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+          e.preventDefault();
+          undoLastVertex();
+        }
+      }
+
+      function onDblClick() {
+        if (isDrawing && points.length >= 3) {
+          completePolygon();
         }
       }
 
       canvas.on('mouse:down', onMouseDown as never);
       canvas.on('mouse:move', onMouseMove as never);
+      canvas.on('mouse:dblclick', onDblClick as never);
 
       const canvasEl = canvas.getElement();
       canvasEl.setAttribute('tabindex', '0');
       canvasEl.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keydown', onKeyDown);
 
       cleanup = () => {
         canvas.off('mouse:down', onMouseDown as never);
         canvas.off('mouse:move', onMouseMove as never);
+        canvas.off('mouse:dblclick', onDblClick as never);
         canvasEl.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keydown', onKeyDown);
         clearPreview();
       };
     })();

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     return Response.json({ success: true, data: post });
-  } catch {
+  } catch (err) { console.error('[admin/blog/[id]]', err);
     return errorResponse('Failed to fetch blog post', 'INTERNAL_ERROR', 500);
   }
 }
@@ -93,7 +93,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .returning();
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) { console.error('[admin/blog/[id]]', err);
     return errorResponse('Failed to update blog post', 'INTERNAL_ERROR', 500);
   }
 }
@@ -117,7 +117,7 @@ export async function DELETE(
     }
 
     return Response.json({ success: true, data: { id: deleted.id } });
-  } catch {
+  } catch (err) { console.error('[admin/blog/[id]]', err);
     return errorResponse('Failed to delete blog post', 'INTERNAL_ERROR', 500);
   }
 }

@@ -38,7 +38,7 @@ export async function GET() {
     }
 
     return Response.json({ success: true, data: sub });
-  } catch {
+  } catch (err) { console.error('[stripe/subscription]', err);
     return Response.json(
       { success: false, error: 'Failed to fetch subscription', code: 'INTERNAL_ERROR' },
       { status: 500 }

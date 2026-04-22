@@ -233,6 +233,8 @@ export function useCanvasKeyboard() {
             h: 'pan',
             o: 'circle',
             p: 'polygon',
+            e: 'easydraw',
+            n: 'bend',
           };
           const tool = TOOL_SHORTCUTS[e.key.toLowerCase()];
           if (tool) {

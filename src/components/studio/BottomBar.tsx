@@ -87,7 +87,10 @@ export function BottomBar() {
       activateShadeView();
     }
   };
-  const toggleViewportLock = () => setViewportLocked(!isViewportLocked);
+  const toggleViewportLock = () => {
+    const canvas = useCanvasStore.getState().fabricCanvas;
+    setViewportLocked(!isViewportLocked, canvas, canvasWidth, canvasHeight);
+  };
 
   const setGranularity = (g: GridGranularity) => {
     setGridSettings({ granularity: g });
@@ -176,21 +179,27 @@ export function BottomBar() {
           </button>
         </TooltipHint>
 
-        <button
-          type="button"
-          onClick={handleFit}
-          className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
-        >
-          Fit
-        </button>
+        <TooltipHint name="Fit to screen" description="Center and fit the canvas in the viewport">
+          <button
+            type="button"
+            onClick={handleFit}
+            aria-label="Fit canvas to screen"
+            className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
+          >
+            Fit
+          </button>
+        </TooltipHint>
 
-        <button
-          type="button"
-          onClick={handle100}
-          className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
-        >
-          100%
-        </button>
+        <TooltipHint name="Actual size" description="Reset zoom to 100%">
+          <button
+            type="button"
+            onClick={handle100}
+            aria-label="Reset zoom to 100%"
+            className="px-2 h-7 flex items-center justify-center text-[12px] text-[var(--color-text)] hover:bg-[var(--color-border)] rounded-full transition-colors"
+          >
+            100%
+          </button>
+        </TooltipHint>
 
         <div className="w-px h-5 bg-[var(--color-border)] mx-1" />
 
@@ -212,22 +221,35 @@ export function BottomBar() {
         </TooltipHint>
 
         {isFreeForm && (
-          <div className="flex items-center gap-0.5 ml-1">
-            {(['inch', 'half', 'quarter'] as GridGranularity[]).map((g) => (
-              <button
-                key={g}
-                type="button"
-                onClick={() => setGranularity(g)}
-                className={cn(
-                  'px-1.5 h-6 flex items-center justify-center text-[11px] rounded-full transition-colors',
-                  granularity === g
-                    ? 'bg-primary text-[var(--color-text)] font-medium'
-                    : 'text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
-                )}
-              >
-                {g === 'inch' ? '1"' : g === 'half' ? '½"' : '¼"'}
-              </button>
-            ))}
+          <div
+            className="flex items-center gap-0.5 ml-1"
+            role="group"
+            aria-label="Grid snap granularity"
+          >
+            {(['inch', 'half', 'quarter'] as GridGranularity[]).map((g) => {
+              const label = g === 'inch' ? '1"' : g === 'half' ? '½"' : '¼"';
+              const srLabel =
+                g === 'inch' ? '1 inch grid' : g === 'half' ? 'Half inch grid' : 'Quarter inch grid';
+              const active = granularity === g;
+              return (
+                <TooltipHint key={g} name={srLabel} description="Set grid snap granularity">
+                  <button
+                    type="button"
+                    onClick={() => setGranularity(g)}
+                    aria-label={srLabel}
+                    aria-pressed={active}
+                    className={cn(
+                      'px-1.5 h-6 flex items-center justify-center text-[11px] rounded-full transition-colors',
+                      active
+                        ? 'bg-primary text-[var(--color-text)] font-medium'
+                        : 'text-[var(--color-text-dim)] hover:bg-[var(--color-border)]'
+                    )}
+                  >
+                    <span aria-hidden="true">{label}</span>
+                  </button>
+                </TooltipHint>
+              );
+            })}
           </div>
         )}
 

@@ -5,7 +5,6 @@ import { useAuthDerived } from '@/stores/authStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { startStripeCheckout } from '@/lib/stripe-checkout';
 import { PRO_PRICE_MONTHLY } from '@/lib/constants';
 import { COLORS } from '@/lib/design-system';
@@ -32,7 +31,6 @@ interface StudioDialogsApi {
   openPdfExport: () => void;
   openHelp: () => void;
   openHistory: () => void;
-  openGridDimensions: () => void;
   openResize: () => void;
   openFabricUpload: () => void;
 
@@ -61,7 +59,6 @@ interface StudioDialogsProviderProps {
 
 export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) {
   const { isPro } = useAuthDerived();
-  const { getCanvas } = useCanvasContext();
 
   // Dialog open/close state
   const [isFabricUploadOpen, setIsFabricUploadOpen] = useState(false);
@@ -83,18 +80,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
   const promptUpgrade = useCallback((feature: string) => {
     setProUpgradeFeature(feature);
   }, []);
-
-  // Open quilt-dimensions clears selection so the default panel shows dimensions controls.
-  const openGridDimensions = useCallback(() => {
-    useCanvasStore.getState().setSelectedObjectIds([]);
-    const canvas = getCanvas();
-    if (canvas) {
-      (
-        canvas as unknown as { discardActiveObject: () => unknown; requestRenderAll: () => void }
-      ).discardActiveObject();
-      (canvas as unknown as { requestRenderAll: () => void }).requestRenderAll();
-    }
-  }, [getCanvas]);
 
   const handleUpgrade = useCallback(async () => {
     setIsUpgrading(true);
@@ -144,7 +129,6 @@ export function StudioDialogsProvider({ children }: StudioDialogsProviderProps) 
     openPdfExport,
     openHelp: () => setIsHelpOpen(true),
     openHistory: () => setIsHistoryOpen(true),
-    openGridDimensions,
     openResize: () => setIsResizeOpen(true),
     openFabricUpload,
     confirmChangeLayout,

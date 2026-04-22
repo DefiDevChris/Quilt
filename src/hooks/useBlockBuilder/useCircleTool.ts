@@ -49,8 +49,8 @@ export function useCircleTool(snap: SnapHelpers, segs: SegmentHelpers) {
         radius: radius * snap.gridSize,
         fill: 'transparent',
         stroke: PENCIL_PREVIEW_COLOR,
-        strokeWidth: 1.5,
-        strokeDashArray: [6, 4],
+        strokeWidth: 4,
+        strokeDashArray: [8, 6],
         selectable: false,
         evented: false,
       });
