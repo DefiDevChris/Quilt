@@ -248,7 +248,13 @@ interface StudioTopBarProps {
   readonly onOpenPdfExport?: () => void;
   readonly onOpenHelp?: () => void;
   readonly onOpenHistory?: () => void;
-  readonly onSave?: () => void;
+  /**
+   * Save handler. May be synchronous or return a Promise. The top bar awaits
+   * the returned value before navigating away (e.g. on Back to Dashboard) so
+   * that users do not lose work if the save fails or takes longer than the
+   * navigation.
+   */
+  readonly onSave?: () => void | Promise<void>;
   /** Re-opens the quilt setup wizard (layout & size) for editing. */
   readonly onEditQuiltSetup?: () => void;
 }
@@ -273,9 +279,38 @@ export function StudioTopBar({
   const isQuiltMode = activeWorktable === 'quilt';
   const { toast } = useToast();
 
-  const handleBackToDashboard = () => {
+  const handleBackToDashboard = async () => {
+    // If the document is dirty, wait for the save to complete before leaving.
+    // Previously onSave() was fire-and-forget, then router.push() navigated
+    // immediately — if the save was still in flight (or failed) the user lost
+    // their unsaved work with no warning.
     if (isDirty && onSave) {
-      onSave();
+      try {
+        await onSave();
+      } catch (err) {
+        console.error('[StudioTopBar] Save before navigation threw:', err);
+        toast({
+          type: 'error',
+          title: "Couldn't save",
+          description:
+            'Your project has unsaved changes that failed to save. Please try again before leaving.',
+        });
+        return; // Cancel navigation — keep user on the page so they don't lose work.
+      }
+
+      // Post-save status check: the saveProject pipeline sets saveStatus
+      // ('error' on permanent failures like quota exceeded, PRO_REQUIRED, or
+      // 409 conflict). Don't navigate away from an unsaved project.
+      const status = useProjectStore.getState().saveStatus;
+      if (status === 'error') {
+        toast({
+          type: 'error',
+          title: "Couldn't save",
+          description:
+            'Your project has unsaved changes. Please resolve the save error before leaving.',
+        });
+        return; // Cancel navigation.
+      }
     }
     router.push('/dashboard');
   };

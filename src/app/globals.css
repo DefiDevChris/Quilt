@@ -16,9 +16,17 @@
   /* Functional */
   --color-error: #ed4956;
 
-  /* Fonts */
+  /* Fonts
+   * Source of truth for font families. Keep these in sync with
+   * FONT_HEADING / FONT_BODY in src/lib/design-system.ts. Previously
+   * --font-heading was set to Montserrat here while design-system.ts
+   * declared 'Noto Serif' — dashboard and editorial headings use the
+   * Tailwind `font-serif` utility (which maps to --font-serif below),
+   * making Noto Serif the de facto heading family, so we align
+   * --font-heading to match.
+   */
   --font-sans: 'Montserrat', system-ui, sans-serif;
-  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --font-heading: 'Noto Serif', Georgia, serif;
   --font-display: 'Montserrat', system-ui, sans-serif;
   --font-serif: 'Noto Serif', Georgia, serif;
 

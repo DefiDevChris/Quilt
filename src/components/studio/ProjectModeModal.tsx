@@ -94,7 +94,9 @@ export function ProjectModeModal({ open, onSelect, onDismiss }: ProjectModeModal
           id="project-mode-modal-description"
           className="text-sm text-[var(--color-text-dim)] mb-6 text-center"
         >
-          Choose how you want to begin your design. You can change this any time.
+          Choose how you want to begin your design. This sets the project mode
+          and cannot be changed later — pick the approach that fits what
+          you&apos;re making.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
