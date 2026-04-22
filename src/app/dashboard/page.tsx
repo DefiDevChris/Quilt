@@ -47,7 +47,7 @@ function DashboardPageContent() {
 
       {/* 2. TEMPLATES - Balanced Quarter */}
       <Link
-        href="/design-studio"
+        href="/templates"
         className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
       >
         <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
