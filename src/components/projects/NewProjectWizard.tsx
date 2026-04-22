@@ -15,19 +15,19 @@ const PROJECT_MODE_CARDS = [
   {
     id: 'free-form',
     name: 'Free-form',
-    icon: '📏', // ruler icon
+    icon: '📏',
     description: 'Start with blank canvas and draw or place blocks anywhere.',
   },
   {
     id: 'layout',
     name: 'Layout',
-    icon: '📐', // grid icon
+    icon: '📐',
     description: 'Start with a grid or shape layout, then fill in.',
   },
   {
     id: 'template',
     name: 'Template',
-    icon: '🎨', // palette icon
+    icon: '🎨',
     description: 'Start with a fully designed quilt and tweak it.',
   },
 ] as const;
@@ -179,8 +179,6 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
     setStudioBorders(cloneBorders(nextPreset.config.borders));
     setStudioHasCornerstones(nextCard?.hasCornerstones ?? false);
     setStudioBindingWidth(nextCard?.hasBinding ? 0.25 : 0);
-    // Auto-advance to the size/config step so picking a layout feels like the
-    // reference PictureMyBlocks flow — one decision per screen, no extra clicks.
     setStep(2);
   }, []);
 
@@ -636,7 +634,6 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
 
   if (!open) return null;
 
-  // ── Unified full-screen linear flow ──────────────────────────────
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col bg-[var(--color-bg)]"
@@ -713,7 +710,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
 
         {error && (
           <div className="max-w-4xl mx-auto w-full px-6 mt-2 mb-4">
-            <div className="bg-[#ffc7c7]/30 border border-[#ffc7c7] px-4 py-2 text-sm text-[var(--color-text)] rounded-lg">
+            <div className="bg-[#FFE08A]/30 border border-[#FFE08A] px-4 py-2 text-sm text-[var(--color-text)] rounded-lg">
               {error}
             </div>
           </div>
@@ -765,7 +762,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                           className={
                             isActive
                               ? 'flex flex-col items-center justify-center p-3 bg-primary text-[var(--color-text)] shadow-brand rounded-full'
-                              : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20 transition-colors duration-150 rounded-full'
+                              : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#C5DFF3]/20 transition-colors duration-150 rounded-full'
                           }
                         >
                           <span className="text-[16px] leading-[24px] font-medium mb-1">
@@ -791,7 +788,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                     className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
                       isCustom
                         ? 'bg-primary text-[var(--color-text)] shadow-brand'
-                        : 'bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20'
+                        : 'bg-default text-[var(--color-text)] hover:bg-[#C5DFF3]/20'
                     }`}
                   >
                     <span className="text-[16px] leading-[24px] font-medium">Custom Size</span>
@@ -945,7 +942,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                           className={
                             isActive
                               ? 'flex flex-col items-center justify-center p-3 bg-primary text-[var(--color-text)] shadow-brand rounded-full'
-                              : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20 transition-colors duration-150 rounded-full'
+                              : 'flex flex-col items-center justify-center p-3 bg-default text-[var(--color-text)] hover:bg-[#C5DFF3]/20 transition-colors duration-150 rounded-full'
                           }
                         >
                           <span className="text-[16px] leading-[24px] font-medium mb-1">
@@ -971,7 +968,7 @@ export function NewProjectWizard(props: NewProjectWizardInternalProps) {
                     className={`flex items-center justify-center px-3 py-2.5 transition-colors duration-150 rounded-full ${
                       isCustom
                         ? 'bg-primary text-[var(--color-text)] shadow-brand'
-                        : 'bg-default text-[var(--color-text)] hover:bg-[#f5c4b0]/20'
+                        : 'bg-default text-[var(--color-text)] hover:bg-[#C5DFF3]/20'
                     }`}
                   >
                     <span className="text-[16px] leading-[24px] font-medium">Custom Size</span>
