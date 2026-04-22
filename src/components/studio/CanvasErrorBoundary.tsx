@@ -54,6 +54,29 @@ export class CanvasErrorBoundary extends Component<
   }
 
   private handleReload = (): void => {
+    // Simply clearing hasError isn't enough: the Fabric.js canvas instance lives
+    // in Zustand, outside React's tree, so unmounting/remounting the canvas
+    // component leaves the same (likely still-broken) Fabric instance in place
+    // and the error usually reappears immediately. Dispose the Fabric instance
+    // and null the store reference so the next render initializes a fresh one.
+    try {
+      if (typeof window !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { useCanvasStore } = require('@/stores/canvasStore');
+        const existingCanvas = useCanvasStore.getState().fabricCanvas as
+          | { dispose?: () => void }
+          | null;
+        if (existingCanvas && typeof existingCanvas.dispose === 'function') {
+          existingCanvas.dispose();
+        }
+        useCanvasStore.setState({ fabricCanvas: null });
+      }
+    } catch (err) {
+      // If disposal fails (e.g., already-disposed canvas), still attempt the
+      // UI recovery so the user is not permanently stuck on the error screen.
+      console.warn('[CanvasErrorBoundary] Failed to dispose Fabric canvas on reload:', err);
+    }
+
     this.setState({ hasError: false, errorMessage: '' });
   };
 
