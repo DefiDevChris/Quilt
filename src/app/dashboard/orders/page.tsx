@@ -27,7 +27,7 @@ export default function OrdersPage() {
         action={
           <Link
             href="/dashboard"
-            className="text-[#f08060] hover:text-[#d97054] transition-colors duration-150 ease-out font-['Inter'] text-sm"
+            className="text-[#7CB9E8] hover:text-[#5AA0D5] transition-colors duration-150 ease-out font-['Montserrat'] text-sm"
           >
             Back to Dashboard
           </Link>
@@ -40,10 +40,10 @@ export default function OrdersPage() {
           <button
             key={option.value}
             onClick={() => setStatusFilter(option.value)}
-            className={`px-4 py-2 rounded-full font-['Inter'] text-sm whitespace-nowrap transition-colors duration-150 ease-out ${
+            className={`px-4 py-2 rounded-full font-['Montserrat'] text-sm whitespace-nowrap transition-colors duration-150 ease-out ${
               statusFilter === option.value
-                ? 'bg-[#f08060] text-[#1a1a1a]'
-                : 'bg-[#ffffff] text-[#4a4a4a] border border-[#d4d4d4] hover:bg-[#faf9f7]'
+                ? 'bg-[#7CB9E8] text-[#1a1a1a]'
+                : 'bg-[#ffffff] text-[#4a4a4a] border border-[#d4d4d4] hover:bg-[#F7F9FC]'
             }`}
           >
             {option.label}
