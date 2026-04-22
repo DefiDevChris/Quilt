@@ -13,7 +13,6 @@ import { ShoppingBag, Plus, Clock, Scissors, Camera, Settings } from 'lucide-rea
 import { logout } from '@/lib/logout';
 import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 
-// Custom SVG Illustrations matching reference design
 const StarQuiltBlock = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10 10H90V90H10V10Z" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
@@ -46,7 +45,27 @@ function SidebarNavItem({ icon: Icon, label, href, active = false }: SidebarNavI
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+/**
+ * AppShell variants:
+ *
+ * - "default" (dashboards, fabric pages, etc.): renders the editorial
+ *   top-bar + a vertical rail of primary nav, with children rendered inside
+ *   a padded, max-width-constrained `<main>`.
+ *
+ * - "studio": same top-bar (for consistent branding and user menu) but the
+ *   vertical rail is hidden and children are rendered full-bleed so the
+ *   studio canvas can own the viewport. This is how the design studio
+ *   adopts the new global chrome without losing its full-width workspace.
+ */
+export type AppShellVariant = 'default' | 'studio';
+
+export function AppShell({
+  children,
+  variant = 'default',
+}: {
+  children: React.ReactNode;
+  variant?: AppShellVariant;
+}) {
   const user = useAuthStore((s) => s.user);
   const shopEnabled = useShopEnabled();
   const cartItems = useCartStore((s) => s.items);
@@ -59,6 +78,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isAuthenticated = !!user;
+  const isStudio = variant === 'studio';
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -87,7 +107,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-screen bg-[var(--color-bg)] text-black selection:bg-[var(--color-accent)] font-sans flex flex-col overflow-hidden antialiased relative">
-      {/* Modern Top-Bar */}
       <header className="h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04] z-50">
         <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer group">
           <div className="w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-lg text-[var(--color-primary)] transition-quilt">
@@ -105,7 +124,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Link>
 
         <div className="flex items-center gap-10" ref={dropdownRef}>
-          {/* Top Nav Links */}
           <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-black/30">
             <Link
               href="/blog"
@@ -127,7 +145,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
 
-          {/* User Section */}
           {isAuthenticated ? (
             <>
               {shopEnabled && cartItems.length > 0 && (
@@ -222,40 +239,50 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <div className="flex-1 flex min-h-0">
-        {/* Editorial Vertical Rail */}
-        <aside className="w-64 border-r border-black/[0.06] bg-white hidden md:flex flex-col shrink-0">
-          <div className="p-8 flex flex-col h-full">
-            <div className="mb-14">
-              <button
-                onClick={() => setDialogOpen(true)}
-                className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-[var(--shadow-quilt)] transition-quilt flex items-center justify-center gap-3 bg-[var(--color-primary)] text-black hover:opacity-95"
-              >
-                <Plus size={14} />
-                <span>New Project</span>
-              </button>
-            </div>
+        {!isStudio && (
+          <aside className="w-64 border-r border-black/[0.06] bg-white hidden md:flex flex-col shrink-0">
+            <div className="p-8 flex flex-col h-full">
+              <div className="mb-14">
+                <button
+                  onClick={() => setDialogOpen(true)}
+                  className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-[var(--shadow-quilt)] transition-quilt flex items-center justify-center gap-3 bg-[var(--color-primary)] text-black hover:opacity-95"
+                >
+                  <Plus size={14} />
+                  <span>New Project</span>
+                </button>
+              </div>
 
-            <nav className="flex-1 space-y-2">
-              <p className="font-sans text-[9px] uppercase tracking-[0.5em] font-bold text-black/20 mb-6 px-6">Workbench</p>
-              <SidebarNavItem icon={Clock} label="Recent" href="/dashboard" active={isActive('/dashboard')} />
-              <SidebarNavItem icon={Scissors} label="Fabrics" href="/fabrics" active={isActive('/fabrics')} />
-              <SidebarNavItem icon={Camera} label="Uploads" href="/picture-my-blocks" active={isActive('/picture-my-blocks')} />
-              <SidebarNavItem icon={Settings} label="Settings" href="/settings" active={isActive('/settings')} />
-            </nav>
+              <nav className="flex-1 space-y-2">
+                <p className="font-sans text-[9px] uppercase tracking-[0.5em] font-bold text-black/20 mb-6 px-6">Workbench</p>
+                <SidebarNavItem icon={Clock} label="Recent" href="/dashboard" active={isActive('/dashboard')} />
+                <SidebarNavItem icon={Scissors} label="Fabrics" href="/fabrics" active={isActive('/fabrics')} />
+                <SidebarNavItem icon={Camera} label="Uploads" href="/picture-my-blocks" active={isActive('/picture-my-blocks')} />
+                <SidebarNavItem icon={Settings} label="Settings" href="/settings" active={isActive('/settings')} />
+              </nav>
 
-            <div className="mt-auto pt-10 border-t border-black/[0.04]">
-              <div className="text-center text-[var(--color-primary)]/40">
-                <StarQuiltBlock className="w-5 h-5 mx-auto mb-2" />
+              <div className="mt-auto pt-10 border-t border-black/[0.04]">
+                <div className="text-center text-[var(--color-primary)]/40">
+                  <StarQuiltBlock className="w-5 h-5 mx-auto mb-2" />
+                </div>
               </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+        )}
 
-        {/* Studio Workspace Area */}
-        <main className="flex-1 p-8 lg:p-12 flex flex-col h-full overflow-y-auto relative bg-[var(--color-bg)]">
-          <div className="flex-1 relative z-10 min-h-0 max-w-6xl mx-auto w-full">
-            {children}
-          </div>
+        <main
+          className={
+            isStudio
+              ? 'flex-1 flex flex-col h-full overflow-hidden relative bg-[var(--color-bg)]'
+              : 'flex-1 p-8 lg:p-12 flex flex-col h-full overflow-y-auto relative bg-[var(--color-bg)]'
+          }
+        >
+          {isStudio ? (
+            <div className="flex-1 relative z-10 min-h-0 w-full">{children}</div>
+          ) : (
+            <div className="flex-1 relative z-10 min-h-0 max-w-6xl mx-auto w-full">
+              {children}
+            </div>
+          )}
         </main>
       </div>
 
@@ -267,4 +294,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-

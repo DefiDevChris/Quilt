@@ -76,13 +76,18 @@ export function useBlockBuilderCanvas({
     let isMounted = true;
     let cleanup: (() => void) | null = null;
 
+    // In select mode the patches need to respond to clicks so the user can
+    // highlight / manipulate them. In drawing modes they must stay inert so
+    // the pencil / shape tools receive raw canvas events instead of fabric
+    // forwarding them as object-level events.
+    const isSelectMode = activeMode === 'select';
+
     (async () => {
       const fabric = await import('fabric');
       if (!isMounted) return;
       const c = canvas as InstanceType<typeof fabric.Canvas>;
       const mc = c as unknown as MinimalCanvas;
 
-      // Clear non-grid, non-overlay objects
       const toRemove = c.getObjects().filter((o) => {
         if ((o as unknown as { name?: string }).name === 'overlay-ref') return false;
         if ((o as unknown as { _isGridLine?: boolean })._isGridLine) return false;
@@ -90,7 +95,6 @@ export function useBlockBuilderCanvas({
       });
       for (const obj of toRemove) c.remove(obj);
 
-      // Draw grid
       for (let row = 0; row <= gridRows; row++) {
         const y = row * snap.gridSize;
         const line = new fabric.Line([0, y, canvasSize, y], {
@@ -114,7 +118,6 @@ export function useBlockBuilderCanvas({
         c.add(line);
       }
 
-      // Draw patch fills
       for (const patch of patches) {
         const pixelVerts = patch.vertices.map((v) => ({
           x: v.x * snap.gridSize,
@@ -128,12 +131,12 @@ export function useBlockBuilderCanvas({
           stroke: 'transparent',
           strokeWidth: 0,
           selectable: false,
-          evented: false,
+          evented: isSelectMode,
+          hoverCursor: isSelectMode ? 'pointer' : 'crosshair',
         });
         c.add(polygon);
       }
 
-      // Draw selected patch highlight
       if (selectedPatchId) {
         const selectedPatch = patches.find((p) => p.id === selectedPatchId);
         if (selectedPatch) {
@@ -154,7 +157,6 @@ export function useBlockBuilderCanvas({
         }
       }
 
-      // Draw seam lines and arcs
       for (const seg of segments) {
         if ('center' in seg) {
           const arc = seg as ArcSegment;
@@ -190,8 +192,15 @@ export function useBlockBuilderCanvas({
       }
 
       c.renderAll();
+      // Fabric's built-in drag-to-select box is disabled — selection here is
+      // managed by our own useSelectTool to keep the interaction deterministic.
       c.selection = false;
-      c.defaultCursor = activeMode === 'bend' ? 'pointer' : 'crosshair';
+      c.defaultCursor =
+        activeMode === 'bend'
+          ? 'pointer'
+          : activeMode === 'select'
+            ? 'default'
+            : 'crosshair';
 
       const activeTool = tools[activeMode];
 

@@ -73,8 +73,6 @@ export function BlockBuilderWorktable() {
     useCanvasStore.getState().setActiveWorktable('quilt');
   }, []);
 
-  // Escape key returns to quilt so users can't feel trapped in the builder.
-  // Ignored when focus is inside a form control so it doesn't interrupt typing.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return;
@@ -105,7 +103,6 @@ export function BlockBuilderWorktable() {
   const fetchUserBlocks = useBlockStore((s) => s.fetchUserBlocks);
   const setSelectedBlockId = useBlockStore((s) => s.setSelectedBlockId);
 
-  // Map BlockBuilderMode to ToolType for canvasStore compatibility
   const modeToToolType: Record<BlockBuilderMode, ToolType> = {
     select: 'select',
     pencil: 'easydraw',
@@ -115,17 +112,18 @@ export function BlockBuilderWorktable() {
     bend: 'bend',
   };
 
-  // Sync activeMode to canvasStore so ToolIcon isActive works
   useEffect(() => {
     useCanvasStore.getState().setActiveTool(modeToToolType[activeMode]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMode]);
 
-  // Compute grid dimensions
   const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
   const gridRows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
 
-  // Block builder hook — manages all canvas state
+  // Block builder hook — manages all canvas state.
+  // onShapeClosed: when the pencil detects a close-to-start (>=2 segments),
+  // it calls back so we can flip the mode to 'select' — users immediately get
+  // the cursor ready to manipulate the shape they just finished drawing.
   const {
     segments,
     patches,
@@ -139,9 +137,9 @@ export function BlockBuilderWorktable() {
     gridRows,
     canvasSize,
     activeMode,
+    onShapeClosed: () => setActiveMode('select'),
   });
 
-  // Initialize / dispose Fabric.js canvas
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -175,7 +173,6 @@ export function BlockBuilderWorktable() {
     };
   }, [canvasSize]);
 
-  // Load overlay SVG onto canvas when activeOverlay changes
   useEffect(() => {
     if (!draftCanvasRef.current) return;
 
@@ -437,7 +434,10 @@ export function BlockBuilderWorktable() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  // Handle fabric drop on canvas — fill the patch under the drop point
+  // NOTE: findPatchAtPoint expects GRID coordinates (patch vertices are in
+  // grid space). This existing implementation passes pixels and therefore
+  // misses at non-unit grid sizes; left unchanged per scope — tracked
+  // separately from this bundle.
   const handleCanvasDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -464,7 +464,6 @@ export function BlockBuilderWorktable() {
     e.dataTransfer.dropEffect = 'copy';
   }, []);
 
-  // ── Toolbar callbacks ───────────────────────────────────────
   const toolbarCallbacks: BlockBuilderCallbacks = {
     onModeChange: setActiveMode,
     onUndo: hookUndoSegment,
@@ -476,17 +475,14 @@ export function BlockBuilderWorktable() {
     canRedo: false,
   };
 
-  // ── Grid unit slider helpers ────────────────────────────────
   const sliderValue = Math.round(cellSizeIn / 0.25);
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseFloat(e.target.value) * 0.25;
     setCellSizeIn(val);
   };
 
-  // ── Render ──────────────────────────────────────────────────
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* ── Context header — prominent back button + location pill ── */}
       <div className="flex items-center gap-3 bg-[var(--color-surface)] border-b border-[var(--color-border)]/20 px-4 py-2 flex-shrink-0">
         <button
           type="button"
@@ -516,9 +512,7 @@ export function BlockBuilderWorktable() {
       </div>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* ── Left: Toolbar (88px, unified) ──────────────────── */}
         <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
-          {/* Grid unit slider */}
           <div className="px-2 pt-3 pb-2 border-b border-[var(--color-border)]/15">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] font-medium text-[var(--color-text-dim)]">Grid</span>
@@ -537,11 +531,9 @@ export function BlockBuilderWorktable() {
             />
           </div>
 
-          {/* Unified toolbar */}
           <BlockBuilderToolbarUnified callbacks={toolbarCallbacks} segmentCount={segments.length} />
         </aside>
 
-        {/* ── Center: Canvas (unified styling) ────────────────── */}
         <div
           ref={canvasContainerRef}
           className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,196,176,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(250,249,247,0.9))] p-8"
@@ -563,9 +555,7 @@ export function BlockBuilderWorktable() {
           </div>
         </div>
 
-        {/* ── Right: Panel (320px, unified) ──────────────────── */}
         <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
-          {/* Tab toggle */}
           <div className="flex border-b border-[var(--color-border)]/15">
             <button
               type="button"
@@ -679,7 +669,6 @@ export function BlockBuilderWorktable() {
               />
             </div>
 
-            {/* Overlay controls */}
             <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-border)]/15">
               <button
                 type="button"
@@ -741,7 +730,6 @@ export function BlockBuilderWorktable() {
           </div>
         </aside>
 
-        {/* Overlay selector modal */}
         {showOverlaySelector && (
           <BlockOverlaySelector
             onSelect={handleOverlaySelect}
