@@ -120,10 +120,6 @@ export function BlockBuilderWorktable() {
   const gridCols = Math.max(1, Math.round(blockWidthIn / cellSizeIn));
   const gridRows = Math.max(1, Math.round(blockHeightIn / cellSizeIn));
 
-  // Block builder hook — manages all canvas state.
-  // onShapeClosed: when the pencil detects a close-to-start (>=2 segments),
-  // it calls back so we can flip the mode to 'select' — users immediately get
-  // the cursor ready to manipulate the shape they just finished drawing.
   const {
     segments,
     patches,
@@ -253,7 +249,7 @@ export function BlockBuilderWorktable() {
     });
     if (objs.length === 0) return '';
 
-    const parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'];
+    const parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' ];
     for (const obj of objs) parts.push(obj.toSVG());
     parts.push('</svg>');
     return parts.join('');
@@ -434,10 +430,6 @@ export function BlockBuilderWorktable() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  // NOTE: findPatchAtPoint expects GRID coordinates (patch vertices are in
-  // grid space). This existing implementation passes pixels and therefore
-  // misses at non-unit grid sizes; left unchanged per scope — tracked
-  // separately from this bundle.
   const handleCanvasDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -468,7 +460,7 @@ export function BlockBuilderWorktable() {
     onModeChange: setActiveMode,
     onUndo: hookUndoSegment,
     onRedo: () => {
-      /* redo not implemented in useBlockBuilder */
+      /* redo not implemented */
     },
     onClear: handleClearCanvas,
     canUndo: segments.length > 0,
@@ -483,11 +475,12 @@ export function BlockBuilderWorktable() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Context header */}
       <div className="flex items-center gap-3 bg-[var(--color-surface)] border-b border-[var(--color-border)]/20 px-4 py-2 flex-shrink-0">
         <button
           type="button"
           onClick={handleBackToQuilt}
-          className="flex items-center gap-1.5 rounded-full h-10 px-4 text-[14px] font-semibold bg-[var(--color-primary)] text-[var(--color-text)] hover:bg-[#d97054] transition-colors shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+          className="flex items-center gap-1.5 rounded-full h-10 px-4 text-[14px] font-semibold bg-[var(--color-primary)] text-[var(--color-text)] hover:bg-[#5AA0D5] transition-colors shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
           aria-label="Return to quilt canvas"
         >
           <ArrowLeft size={16} strokeWidth={2.5} />
@@ -512,6 +505,7 @@ export function BlockBuilderWorktable() {
       </div>
 
       <div className="flex-1 flex overflow-hidden">
+        {/* Left: Toolbar */}
         <aside className="w-[88px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 overflow-y-auto">
           <div className="px-2 pt-3 pb-2 border-b border-[var(--color-border)]/15">
             <div className="flex items-center justify-between mb-1">
@@ -530,13 +524,13 @@ export function BlockBuilderWorktable() {
               className="w-full accent-[var(--color-primary)] h-1"
             />
           </div>
-
           <BlockBuilderToolbarUnified callbacks={toolbarCallbacks} segmentCount={segments.length} />
         </aside>
 
+        {/* Center: Canvas */}
         <div
           ref={canvasContainerRef}
-          className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,196,176,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(250,249,247,0.9))] p-8"
+          className="flex-1 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(197,223,243,0.22),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.55),rgba(247,249,252,0.9))] p-8"
           onDrop={handleCanvasDrop}
           onDragOver={handleCanvasDragOver}
         >
@@ -555,12 +549,13 @@ export function BlockBuilderWorktable() {
           </div>
         </div>
 
+        {/* Right: Panel */}
         <aside className="w-[320px] h-full flex-shrink-0 flex flex-col bg-[var(--color-bg)] border-l border-[var(--color-border)]/15 overflow-hidden">
           <div className="flex border-b border-[var(--color-border)]/15">
             <button
               type="button"
               onClick={() => setRightTab('blocks')}
-              className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
+              className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${
                 rightTab === 'blocks'
                   ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
                   : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
@@ -571,7 +566,7 @@ export function BlockBuilderWorktable() {
             <button
               type="button"
               onClick={() => setRightTab('fabrics')}
-              className={`flex-1 py-2.5 text-xs font-semibold  transition-colors ${
+              className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${
                 rightTab === 'fabrics'
                   ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]'
                   : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
@@ -722,7 +717,7 @@ export function BlockBuilderWorktable() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#d97054] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#5AA0D5] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
               >
                 {saving ? 'Saving…' : isAdmin && publishToLibrary ? 'Publish Block' : 'Save Block'}
               </button>

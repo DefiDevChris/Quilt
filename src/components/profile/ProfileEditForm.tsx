@@ -187,7 +187,7 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#f08060] transition-colors duration-150 placeholder:text-dim"
+        className="w-full px-5 py-3 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#7CB9E8] transition-colors duration-150 placeholder:text-dim"
       />
       {error && <p className="text-primary text-[14px] leading-[20px] mt-1">{error}</p>}
     </div>

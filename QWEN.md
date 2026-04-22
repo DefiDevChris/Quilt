@@ -70,15 +70,15 @@ No `any` — use `unknown` with proper casts. Type assertions at boundaries only
 
 Tailwind CSS v4. Full spec in `brand_config.json`.
 
-**Colors:** `--primary: #f08060` | `--secondary: #f5c4b0` | `--accent: #ffc7c7` | `--bg: #faf9f7` | `--surface: #ffffff` | `--text: #1a1a1a` | `--text-dim: #4a4a4a` | `--border: #d4d4d4`. Light mode only.
+**Colors:** `--primary: #7CB9E8` | `--secondary: #C5DFF3` | `--accent: #FFE08A` | `--accent-blush: #F6C6C8` | `--bg: #F7F9FC` | `--surface: #ffffff` | `--text: #1a1a1a` | `--text-dim: #4a4a4a` | `--border: #d4d4d4`. Light mode only.
 
-**Typography:** Headings: **Spline Sans** (400-700). Body: **Inter** (300-700).
+**Typography:** Headings: **Noto Serif** (400-700). Body: **Montserrat** (300-700).
 
 **Shape:** Buttons/CTAs/tabs/pills: `rounded-full`. Cards/containers/inputs/dialogs: `rounded-lg` (8px). Shadow: `0 1px 2px rgba(26,26,26,0.08)`.
 
 **Motion:** Hover changes color/background ONLY. 150ms ease-out. No scale/translate/lift on hover. Framer Motion for entry/exit animations only. No spinners (use opacity pulse).
 
-**Buttons:** Primary: `bg-[#f08060] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#d97054]`. Secondary: `border-2 border-[#f08060] text-[#f08060] rounded-full hover:bg-[#f08060]/10`.
+**Buttons:** Primary: `bg-[#7CB9E8] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#5AA0D5]`. Secondary: `border-2 border-[#7CB9E8] text-[#7CB9E8] rounded-full hover:bg-[#7CB9E8]/10`.
 
 **Banned:** `text-gray-*`/`text-slate-*`/`bg-gray-*`/`bg-slate-*`, brown neutrals, `rounded-2xl`/`rounded-xl`, `font-black uppercase tracking-[0.2em]`, AI slop.
 
