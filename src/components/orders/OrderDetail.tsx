@@ -17,14 +17,14 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-[#4a4a4a] font-['Inter'] animate-pulse">Loading order details...</div>
+        <div className="text-[#4a4a4a] font-['Montserrat'] animate-pulse">Loading order details...</div>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="bg-[#fee2e2] rounded-lg p-4 text-[#ef4444] font-['Inter']">
+      <div className="bg-[#fee2e2] rounded-lg p-4 text-[#ef4444] font-['Montserrat']">
         Failed to load order details: {error || 'Order not found'}
       </div>
     );
@@ -58,14 +58,14 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           <div>
             <Link
               href="/dashboard/orders"
-              className="text-sm text-[#f08060] font-['Inter'] hover:text-[#d97054] transition-colors duration-150 ease-out mb-2 inline-block"
+              className="text-sm text-[#7CB9E8] font-['Montserrat'] hover:text-[#5AA0D5] transition-colors duration-150 ease-out mb-2 inline-block"
             >
               Back to Orders
             </Link>
-            <h1 className="text-2xl font-['Spline_Sans'] font-semibold text-[#1a1a1a]">
+            <h1 className="text-2xl font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
               Order #{order.shopifyOrderId.slice(-6)}
             </h1>
-            <p className="text-sm text-[#4a4a4a] font-['Inter'] mt-1">
+            <p className="text-sm text-[#4a4a4a] font-['Montserrat'] mt-1">
               Placed on {formatOrderDate(order.createdAt)}
             </p>
           </div>
@@ -74,8 +74,8 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#d4d4d4]">
           <div>
-            <p className="text-sm text-[#4a4a4a] font-['Inter']">Total</p>
-            <p className="text-3xl font-['Spline_Sans'] font-semibold text-[#1a1a1a]">
+            <p className="text-sm text-[#4a4a4a] font-['Montserrat']">Total</p>
+            <p className="text-3xl font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
               {formatCents(order.totalCents, order.currency)}
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
       {/* Line Items */}
       <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-        <h2 className="text-lg font-['Spline_Sans'] font-semibold text-[#1a1a1a] mb-4">
+        <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
           Fabrics Ordered
         </h2>
         <div className="space-y-4">
@@ -95,7 +95,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
               className="flex items-center gap-4 pb-4 border-b border-[#d4d4d4] last:border-0"
             >
               {/* Fabric image */}
-              <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#faf9f7] flex-shrink-0">
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#F7F9FC] flex-shrink-0">
                 {item.imageUrl ? (
                   <img
                     src={item.imageUrl}
@@ -110,15 +110,15 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
               {/* Item details */}
               <div className="flex-1">
-                <p className="font-['Inter'] font-medium text-[#1a1a1a]">{item.fabricName}</p>
-                <p className="text-sm text-[#4a4a4a] font-['Inter']">
+                <p className="font-['Montserrat'] font-medium text-[#1a1a1a]">{item.fabricName}</p>
+                <p className="text-sm text-[#4a4a4a] font-['Montserrat']">
                   {item.quantityInYards} yards @ {formatCents(item.pricePerYard, order.currency)}
                   /yard
                 </p>
               </div>
 
               {/* Item total */}
-              <p className="font-['Spline_Sans'] font-semibold text-[#1a1a1a]">
+              <p className="font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
                 {formatCents(item.quantityInYards * item.pricePerYard, order.currency)}
               </p>
             </div>
@@ -131,10 +131,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
         {/* Shipping Address */}
         {shippingAddress && (
           <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-            <h2 className="text-lg font-['Spline_Sans'] font-semibold text-[#1a1a1a] mb-4">
+            <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
               Shipping Address
             </h2>
-            <pre className="text-sm text-[#4a4a4a] font-['Inter'] whitespace-pre-wrap">
+            <pre className="text-sm text-[#4a4a4a] font-['Montserrat'] whitespace-pre-wrap">
               {formatAddress(shippingAddress)}
             </pre>
           </div>
@@ -142,7 +142,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
         {/* Order Timeline */}
         <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-          <h2 className="text-lg font-['Spline_Sans'] font-semibold text-[#1a1a1a] mb-4">
+          <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
             Order Timeline
           </h2>
           <OrderTimeline statusHistory={order.statusHistory || []} />
@@ -151,10 +151,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
       {/* Order Summary */}
       <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-        <h2 className="text-lg font-['Spline_Sans'] font-semibold text-[#1a1a1a] mb-4">
+        <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
           Order Summary
         </h2>
-        <div className="space-y-2 text-sm font-['Inter']">
+        <div className="space-y-2 text-sm font-['Montserrat']">
           <div className="flex justify-between">
             <span className="text-[#4a4a4a]">Subtotal</span>
             <span className="text-[#1a1a1a]">
