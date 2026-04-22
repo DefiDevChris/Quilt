@@ -112,7 +112,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
         <div
           className="w-[46px] h-[46px] rounded-full flex items-center justify-center"
           style={{
-            background: 'linear-gradient(145deg, #7CB9E8, #C5DFF3)',
+            backgroundColor: 'var(--color-primary)',
             boxShadow: SHADOW.brand,
           }}
         >
