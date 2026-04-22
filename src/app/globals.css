@@ -2,11 +2,12 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Brand colors */
-  --color-primary: #f08060;
-  --color-secondary: #f5c4b0;
-  --color-accent: #ffc7c7;
-  --color-bg: #faf9f7;
+  /* Brand colors — Easter-spring palette */
+  --color-primary: #7CB9E8;
+  --color-secondary: #C5DFF3;
+  --color-accent: #FFE08A;
+  --color-accent-blush: #F6C6C8;
+  --color-bg: #F7F9FC;
   --color-surface: #ffffff;
   --color-text: #1a1a1a;
   --color-text-dim: #4a4a4a;
@@ -43,6 +44,9 @@
 .text-accent {
   color: var(--color-accent);
 }
+.text-accent-blush {
+  color: var(--color-accent-blush);
+}
 .text-surface {
   color: var(--color-surface);
 }
@@ -65,6 +69,9 @@
 .bg-accent {
   background-color: var(--color-accent);
 }
+.bg-accent-blush {
+  background-color: var(--color-accent-blush);
+}
 .bg-surface {
   background-color: var(--color-surface);
 }
@@ -81,25 +88,25 @@
 
 /* Hover variants — color-only transitions per brand rules */
 .hover\:bg-primary-dark:hover {
-  background-color: #d97054;
+  background-color: #5AA0D5;
 }
 .hover\:text-primary:hover {
   color: var(--color-primary);
 }
 .hover\:text-primary-dark:hover {
-  color: #d97054;
+  color: #5AA0D5;
 }
 .hover\:bg-surface-dark:hover {
-  background-color: #f5f0eb;
+  background-color: #EEF3FA;
 }
 
 .hover\:bg-primary-dark:hover {
-  background-color: #d97054;
+  background-color: #5AA0D5;
 }
 
 /* Border hover with primary color at 30% opacity (used in dashboard cards) */
 .hover\:border-primary-30:hover {
-  border-color: rgba(240, 128, 96, 0.3);
+  border-color: rgba(124, 185, 232, 0.3);
 }
 
 /* Shadow utility — matches SHADOW.brand from design-system */
@@ -189,13 +196,13 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #d97054;
+  background-color: #5AA0D5;
 }
 
 .btn-primary:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px rgba(240, 128, 96, 0.2),
+    0 0 0 2px rgba(124, 185, 232, 0.2),
     0 1px 2px rgba(26, 26, 26, 0.08);
 }
 
@@ -225,13 +232,13 @@ body {
 }
 
 .btn-primary-sm:hover {
-  background-color: #d97054;
+  background-color: #5AA0D5;
 }
 
 .btn-primary-sm:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px rgba(240, 128, 96, 0.2),
+    0 0 0 2px rgba(124, 185, 232, 0.2),
     0 1px 2px rgba(26, 26, 26, 0.08);
 }
 
@@ -260,12 +267,12 @@ body {
 }
 
 .btn-secondary:hover {
-  background-color: rgba(240, 128, 96, 0.1);
+  background-color: rgba(124, 185, 232, 0.1);
 }
 
 .btn-secondary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(240, 128, 96, 0.2);
+  box-shadow: 0 0 0 2px rgba(124, 185, 232, 0.2);
 }
 
 .btn-secondary:disabled {
@@ -294,12 +301,12 @@ body {
 }
 
 .btn-secondary-sm:hover {
-  background-color: rgba(240, 128, 96, 0.1);
+  background-color: rgba(124, 185, 232, 0.1);
 }
 
 .btn-secondary-sm:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(240, 128, 96, 0.2);
+  box-shadow: 0 0 0 2px rgba(124, 185, 232, 0.2);
 }
 
 .btn-secondary-sm:disabled {

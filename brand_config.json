@@ -2,7 +2,7 @@
   "meta": {
     "brand_name": "QuiltCorgi",
     "domain": "quiltcorgi.com",
-    "last_updated": "2026-04-10",
+    "last_updated": "2026-04-22",
     "tech_stack": "Next.js 16 App Router, TypeScript, Tailwind CSS v4, Fabric.js, Zustand, Drizzle ORM, PostgreSQL",
     "ssot_file": "CLAUDE.md (repository root) governs technical implementation. This file governs brand, visuals, and voice."
   },
@@ -100,20 +100,22 @@
   },
 
   "color_palette": {
-    "primary": "#f08060",
-    "secondary": "#f5c4b0",
-    "accent": "#ffc7c7",
-    "bg": "#faf9f7",
+    "primary": "#7CB9E8",
+    "secondary": "#C5DFF3",
+    "accent": "#FFE08A",
+    "accent_blush": "#F6C6C8",
+    "bg": "#F7F9FC",
     "surface": "#ffffff",
     "text": "#1a1a1a",
     "text_dim": "#4a4a4a",
     "border": "#d4d4d4",
     "usage_rules": [
       "Light mode only. No dark mode.",
-      "Warm, fabric-friendly tones that let quilts shine.",
-      "Primary (#f08060) for buttons, key actions, corgi accents.",
-      "Secondary (#f5c4b0) for subtle supports, dividers, inactive states.",
-      "Accent (#ffc7c7) sparing highlights only.",
+      "Easter-spring palette: sky-blue primary with almost-white bg and cool-soft neutrals.",
+      "Primary (#7CB9E8) for buttons, key actions, corgi accents, active nav.",
+      "Secondary (#C5DFF3) for subtle supports, dividers, inactive states.",
+      "Accent buttercup (#FFE08A) for rare highlights: featured content, celebratory moments.",
+      "Accent blush (#F6C6C8) for even more sparing community/warmth highlights.",
       "No animated color shifts.",
       "No arbitrary colors outside this palette.",
       "No gray-*, slate-*, or brown-toned neutrals."
@@ -123,10 +125,10 @@
   "canvas_colors": {
     "grid_line": "#E5E2DD",
     "seam_line": "#4a3f35",
-    "pencil_preview": "#f9a06b",
-    "patch_hover": "#f9a06b",
-    "block_highlight": "#f9a06b",
-    "fabric_highlight": "#f9a06b",
+    "pencil_preview": "#7CB9E8",
+    "patch_hover": "#7CB9E8",
+    "block_highlight": "#7CB9E8",
+    "fabric_highlight": "#7CB9E8",
     "stroke_default": "#333",
     "mock_quilt_stitch": "#E8DCCB"
   },
@@ -154,20 +156,20 @@
     },
     "preview": {
       "fills": {
-        "block-cell": "rgba(249, 160, 107, 0.15)",
+        "block-cell": "rgba(124, 185, 232, 0.15)",
         "sashing": "rgba(138, 124, 111, 0.15)",
         "cornerstone": "rgba(138, 124, 111, 0.12)",
-        "border": "rgba(249, 160, 107, 0.15)",
-        "binding": "rgba(249, 160, 107, 0.10)",
+        "border": "rgba(124, 185, 232, 0.15)",
+        "binding": "rgba(124, 185, 232, 0.10)",
         "edging": "rgba(0, 0, 0, 0.08)",
         "setting-triangle": "rgba(240, 230, 220, 0.15)"
       },
       "strokes": {
-        "block-cell": "rgba(249, 160, 107, 0.4)",
+        "block-cell": "rgba(124, 185, 232, 0.4)",
         "sashing": "rgba(138, 124, 111, 0.4)",
         "cornerstone": "rgba(138, 124, 111, 0.35)",
-        "border": "rgba(249, 160, 107, 0.4)",
-        "binding": "rgba(249, 160, 107, 0.3)",
+        "border": "rgba(124, 185, 232, 0.4)",
+        "binding": "rgba(124, 185, 232, 0.3)",
         "edging": "rgba(0, 0, 0, 0.2)",
         "setting-triangle": "rgba(200, 184, 168, 0.35)"
       }
@@ -188,7 +190,7 @@
   },
 
   "default_canvas": {
-    "fill": "#f5c4b0",
+    "fill": "#C5DFF3",
     "stroke": "#4a3f35"
   },
 
@@ -212,14 +214,14 @@
   },
 
   "computed_colors": {
-    "primary_hover": "#d97054"
+    "primary_hover": "#5AA0D5"
   },
 
   "alpha_colors": {
     "canvas": {
       "fence_label_bg": { "hex": "#4a3f35", "alpha": 0.25 },
       "fence_label_bg_light": { "hex": "#4a3f35", "alpha": 0.12 },
-      "selection_highlight": { "hex": "#f97316", "alpha": 0.1 },
+      "selection_highlight": { "hex": "#7CB9E8", "alpha": 0.1 },
       "grid_line_dimmed": { "hex": "#BEB9B2", "alpha": 0.85 },
       "calibration_backdrop": { "hex": "#2d2a26", "alpha": 0.55 },
       "dot_indicator_inactive": { "hex": "#2d2a26", "alpha": 0.25 },
@@ -266,8 +268,8 @@
       "entry_exit": "Allowed. Framer Motion animations are permitted for page transitions, drawer slides, and component entrances/exits."
     },
     "buttons": {
-      "primary": "bg-[#f08060] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#d97054] transition-colors duration-150 shadow-[0_1px_2px_rgba(45,42,38,0.08)]",
-      "secondary": "bg-transparent border-2 border-[#f08060] text-[#f08060] rounded-full hover:bg-[#f08060]/10 transition-colors duration-150",
+      "primary": "bg-[#7CB9E8] text-[#1a1a1a] px-6 py-2 rounded-full hover:bg-[#5AA0D5] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]",
+      "secondary": "bg-transparent border-2 border-[#7CB9E8] text-[#7CB9E8] rounded-full hover:bg-[#7CB9E8]/10 transition-colors duration-150",
       "rules": [
         "Pill shape (rounded-full) for CTA buttons, tabs, filters, small interactive elements",
         "No gradients",
@@ -284,10 +286,10 @@
       ]
     },
     "inputs": {
-      "base": "border border-[#d4d4d4] rounded-full focus:outline-2 focus:outline-[#f08060]",
+      "base": "border border-[#d4d4d4] rounded-full focus:outline-2 focus:outline-[#7CB9E8]",
       "placeholder": "text-[#4a4a4a]"
     },
-    "nav_link": "text-[#1a1a1a] hover:text-[#f08060] transition-colors",
+    "nav_link": "text-[#1a1a1a] hover:text-[#7CB9E8] transition-colors",
     "layout": {
       "container_max": "1440px",
       "sidebar_width": "280px",
