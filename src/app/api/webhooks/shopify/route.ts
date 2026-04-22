@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     let payload: unknown;
     try {
       payload = JSON.parse(rawBody);
-    } catch {
+    } catch (err) { console.error('[webhooks/shopify]', err);
       console.error('[Webhook] Invalid JSON payload');
       return Response.json({ error: 'Invalid JSON' }, { status: 400 });
     }

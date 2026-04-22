@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
+  } catch (err) { console.error('[fabrics]', err);
     return errorResponse('Failed to fetch fabrics', 'INTERNAL_ERROR', 500);
   }
 }
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch {
+  } catch (err) { console.error('[fabrics]', err);
     return errorResponse('Failed to create fabric', 'INTERNAL_ERROR', 500);
   }
 }

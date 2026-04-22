@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         updatedAt: row.updatedAt.toISOString(),
       },
     });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads/[id]]', err);
     return errorResponse('Failed to fetch upload', 'INTERNAL_ERROR', 500);
   }
 }
@@ -90,7 +90,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         updatedAt: updated.updatedAt.toISOString(),
       },
     });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads/[id]]', err);
     return errorResponse('Failed to update upload', 'INTERNAL_ERROR', 500);
   }
 }
@@ -113,7 +113,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!deleted) return notFoundResponse('Upload not found.');
 
     return Response.json({ success: true });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads/[id]]', err);
     return errorResponse('Failed to delete upload', 'INTERNAL_ERROR', 500);
   }
 }

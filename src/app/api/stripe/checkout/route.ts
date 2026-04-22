@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     let body: { interval?: string };
     try {
       body = await request.json();
-    } catch {
+    } catch (err) { console.error('[stripe/checkout]', err);
       return errorResponse('Invalid request body', 'VALIDATION_ERROR', 422);
     }
 
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       success: true,
       data: { checkoutUrl: checkoutSession.url },
     });
-  } catch {
+  } catch (err) { console.error('[stripe/checkout]', err);
     return errorResponse('Failed to create checkout session', 'INTERNAL_ERROR', 500);
   }
 }

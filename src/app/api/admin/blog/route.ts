@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
+  } catch (err) { console.error('[admin/blog]', err);
     return errorResponse('Failed to fetch blog posts', 'INTERNAL_ERROR', 500);
   }
 }
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     }
 
     return errorResponse('Failed to create blog post: slug conflict', 'SLUG_CONFLICT', 409);
-  } catch {
+  } catch (err) { console.error('[admin/blog]', err);
     return errorResponse('Failed to create blog post', 'INTERNAL_ERROR', 500);
   }
 }

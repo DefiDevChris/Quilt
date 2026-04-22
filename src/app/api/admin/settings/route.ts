@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     return Response.json({ success: true, data: settings });
-  } catch {
+  } catch (err) { console.error('[admin/settings]', err);
     return errorResponse('Failed to fetch settings', 'INTERNAL_ERROR', 500);
   }
 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       });
 
     return Response.json({ success: true, data: { key, value } });
-  } catch {
+  } catch (err) { console.error('[admin/settings]', err);
     return errorResponse('Failed to update setting', 'INTERNAL_ERROR', 500);
   }
 }

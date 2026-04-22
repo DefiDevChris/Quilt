@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
+  } catch (err) { console.error('[shop/fabrics]', err);
     return Response.json(
       { success: false, error: 'Failed to fetch shop fabrics' },
       { status: 500 }

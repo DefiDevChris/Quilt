@@ -66,7 +66,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) { console.error('[admin/fabrics/[id]]', err);
     return errorResponse('Failed to update fabric', 'INTERNAL_ERROR', 500);
   }
 }
@@ -106,7 +106,7 @@ export async function DELETE(
       success: true,
       data: { deleted: true },
     });
-  } catch {
+  } catch (err) { console.error('[admin/fabrics/[id]]', err);
     return errorResponse('Failed to delete fabric', 'INTERNAL_ERROR', 500);
   }
 }

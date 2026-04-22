@@ -68,7 +68,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     };
 
     return Response.json({ success: true, data });
-  } catch {
+  } catch (err) { console.error('[blog/[slug]]', err);
     return errorResponse('Failed to fetch blog post', 'INTERNAL_ERROR', 500);
   }
 }
@@ -130,7 +130,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .returning();
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) { console.error('[blog/[slug]]', err);
     return errorResponse('Failed to update blog post', 'INTERNAL_ERROR', 500);
   }
 }

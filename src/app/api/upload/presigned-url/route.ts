@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         publicUrl: result.publicUrl,
       },
     });
-  } catch {
+  } catch (err) { console.error('[upload/presigned-url]', err);
     return errorResponse('Failed to generate upload URL', 'INTERNAL_ERROR', 500);
   }
 }

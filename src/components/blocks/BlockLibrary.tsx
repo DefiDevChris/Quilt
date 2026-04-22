@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { AlertCircle, Inbox, X } from 'lucide-react';
 import { useBlockStore } from '@/stores/blockStore';
 import { useAuthDerived } from '@/stores/authStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -143,18 +144,40 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                   ))}
                 </div>
               ) : error ? (
-                <div className="py-8 text-center">
-                  <p className="text-[14px] leading-[20px] text-primary">{error}</p>
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="py-8 text-center flex flex-col items-center gap-2"
+                >
+                  <AlertCircle
+                    size={20}
+                    strokeWidth={1.5}
+                    className="text-[var(--color-accent)]"
+                    aria-hidden="true"
+                  />
+                  <p className="text-[14px] leading-[20px] text-[var(--color-text)]">
+                    Couldn&apos;t load the block library.
+                  </p>
+                  <p className="text-[12px] leading-[18px] text-dim max-w-[220px]">
+                    {error}
+                  </p>
                   <button
                     type="button"
                     onClick={() => useBlockStore.getState().fetchBlocks()}
-                    className="mt-2 text-[14px] leading-[20px] text-primary hover:underline"
+                    aria-label="Retry loading blocks"
+                    className="mt-1 rounded-full bg-primary px-3 py-1 text-[12px] leading-[18px] font-semibold text-default hover:bg-primary-dark transition-colors"
                   >
-                    Retry
+                    Try again
                   </button>
                 </div>
               ) : blocks.length === 0 ? (
-                <div className="py-8 text-center">
+                <div className="py-8 text-center flex flex-col items-center gap-2">
+                  <Inbox
+                    size={20}
+                    strokeWidth={1.5}
+                    className="text-[var(--color-text-dim)]"
+                    aria-hidden="true"
+                  />
                   <p className="text-[14px] leading-[20px] text-dim">
                     No blocks in the library yet.
                   </p>
@@ -247,10 +270,11 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                       <button
                         type="button"
                         onClick={() => handleDeleteUserBlock(block.id)}
-                        className="absolute -top-1 -right-1 hidden group-hover:flex items-center justify-center w-4 h-4 rounded-full bg-[var(--color-accent)] text-white text-[10px] leading-none"
+                        className="absolute -top-1 -right-1 hidden group-hover:flex items-center justify-center w-4 h-4 rounded-full bg-[var(--color-accent)] text-white"
                         title="Delete block"
+                        aria-label={`Delete ${block.name}`}
                       >
-                        ×
+                        <X size={10} strokeWidth={2.5} aria-hidden="true" />
                       </button>
                     </div>
                   ))}

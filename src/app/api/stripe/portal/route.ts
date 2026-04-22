@@ -39,7 +39,7 @@ export async function POST() {
       success: true,
       data: { portalUrl: portalSession.url },
     });
-  } catch {
+  } catch (err) { console.error('[stripe/portal]', err);
     return errorResponse('Failed to create portal session', 'INTERNAL_ERROR', 500);
   }
 }

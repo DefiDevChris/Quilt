@@ -95,7 +95,13 @@ export function useBendTool() {
         previewPath: null,
       };
 
-      const HIT_THRESHOLD = 24; // pixels
+      const HIT_THRESHOLD_SCREEN_PX = 24;
+      function hitThreshold(): number {
+        return HIT_THRESHOLD_SCREEN_PX / Math.max(0.0001, stateRef.current.zoom);
+      }
+      let hoveredPath: unknown | null = null;
+      let hoveredOriginalStroke: string | null = null;
+      let hoveredOriginalWidth: number | null = null;
 
       function getGridSizeIn(): number {
         const { gridSettings } = stateRef.current;
@@ -142,6 +148,7 @@ export function useBendTool() {
           getBoundingRect?: () => { left: number; top: number; width: number; height: number };
         }>;
 
+        const threshold = hitThreshold();
         for (const obj of objects) {
           if (!isEasyDrawSegment(obj) && !isBentSegment(obj)) continue;
 
@@ -153,10 +160,10 @@ export function useBendTool() {
 
           // Quick bounds check
           if (
-            pointer.x < bounds.left - HIT_THRESHOLD ||
-            pointer.x > bounds.left + bounds.width + HIT_THRESHOLD ||
-            pointer.y < bounds.top - HIT_THRESHOLD ||
-            pointer.y > bounds.top + bounds.height + HIT_THRESHOLD
+            pointer.x < bounds.left - threshold ||
+            pointer.x > bounds.left + bounds.width + threshold ||
+            pointer.y < bounds.top - threshold ||
+            pointer.y > bounds.top + bounds.height + threshold
           ) {
             continue;
           }
@@ -168,7 +175,7 @@ export function useBendTool() {
               segment.start,
               segment.end
             );
-            if (distance <= HIT_THRESHOLD) {
+            if (distance <= threshold) {
               return { path: obj, segment };
             }
           } else {
@@ -192,7 +199,7 @@ export function useBendTool() {
               };
 
               const { distance } = closestPointOnSegment(pointer, p1, p2);
-              if (distance <= HIT_THRESHOLD) {
+              if (distance <= threshold) {
                 return { path: obj, segment };
               }
             }
@@ -286,6 +293,11 @@ export function useBendTool() {
 
         const snappedClick = snapPoint({ x: pointer.x, y: pointer.y });
 
+        // Reset hover visuals before the target path is replaced on commit.
+        hoveredPath = null;
+        hoveredOriginalStroke = null;
+        hoveredOriginalWidth = null;
+
         bendState.isDragging = true;
         bendState.targetPath = hit.path;
         bendState.originalSegment = hit.segment;
@@ -295,12 +307,56 @@ export function useBendTool() {
         canvas.defaultCursor = 'move';
       }
 
+      function clearHover() {
+        if (hoveredPath && hoveredOriginalStroke !== null) {
+          (hoveredPath as { set: (p: object) => void }).set({
+            stroke: hoveredOriginalStroke,
+            strokeWidth: hoveredOriginalWidth ?? stateRef.current.strokeWidth,
+          });
+        }
+        hoveredPath = null;
+        hoveredOriginalStroke = null;
+        hoveredOriginalWidth = null;
+      }
+
+      function updateHover(pointer: Point) {
+        const hit = findSegmentAtPoint(pointer);
+        if (!hit) {
+          if (hoveredPath) {
+            clearHover();
+            canvas.renderAll();
+          }
+          canvas.defaultCursor = cursorForTool('bend');
+          return;
+        }
+        if (hit.path !== hoveredPath) {
+          clearHover();
+          hoveredPath = hit.path;
+          const p = hit.path as { stroke?: string; strokeWidth?: number; set: (o: object) => void };
+          hoveredOriginalStroke = p.stroke ?? stateRef.current.strokeColor;
+          hoveredOriginalWidth = p.strokeWidth ?? stateRef.current.strokeWidth;
+          p.set({
+            stroke: COLORS.primary,
+            strokeWidth: (hoveredOriginalWidth ?? 2) * 1.75,
+          });
+          canvas.renderAll();
+        }
+        canvas.defaultCursor = 'pointer';
+      }
+
       function onMouseMove(e: { e: MouseEvent }) {
-        if (!bendState.isDragging || !bendState.originalSegment || !bendState.clickPoint) {
+        const pointerHover = canvas.getScenePoint(e.e);
+
+        if (!bendState.isDragging) {
+          updateHover({ x: pointerHover.x, y: pointerHover.y });
           return;
         }
 
-        const pointer = canvas.getScenePoint(e.e);
+        if (!bendState.originalSegment || !bendState.clickPoint) {
+          return;
+        }
+
+        const pointer = pointerHover;
         const snappedDrag = snapPoint({ x: pointer.x, y: pointer.y });
 
         // Calculate control point preview
@@ -447,6 +503,7 @@ export function useBendTool() {
         canvas.off('mouse:move', onMouseMove as never);
         canvas.off('mouse:up', onMouseUp as never);
         window.removeEventListener('keydown', onKeyDown);
+        clearHover();
         canvas.selection = previousSelection;
         canvas.defaultCursor = previousCursor;
       };

@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
+  } catch (err) { console.error('[blocks]', err);
     return errorResponse('Failed to fetch blocks', 'INTERNAL_ERROR', 500);
   }
 }
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch {
+  } catch (err) { console.error('[blocks]', err);
     return errorResponse('Failed to create block', 'INTERNAL_ERROR', 500);
   }
 }

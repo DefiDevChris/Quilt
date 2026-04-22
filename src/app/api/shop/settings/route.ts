@@ -19,7 +19,7 @@ export async function GET() {
     const enabled = row?.value === true;
 
     return Response.json({ success: true, data: { enabled } });
-  } catch {
+  } catch (err) { console.error('[shop/settings]', err);
     return Response.json({ success: true, data: { enabled: false } });
   }
 }

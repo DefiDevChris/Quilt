@@ -38,7 +38,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const [updated] = await db.update(blocks).set(updateData).where(eq(blocks.id, id)).returning();
 
     return Response.json({ success: true, data: updated });
-  } catch {
+  } catch (err) { console.error('[admin/blocks/[id]]', err);
     return errorResponse('Failed to update block', 'INTERNAL_ERROR', 500);
   }
 }
@@ -74,7 +74,7 @@ export async function DELETE(
       success: true,
       data: { deleted: true },
     });
-  } catch {
+  } catch (err) { console.error('[admin/blocks/[id]]', err);
     return errorResponse('Failed to delete block', 'INTERNAL_ERROR', 500);
   }
 }

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         redirectAction: assignedType,
       },
     });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads/[id]/process]', err);
     return errorResponse('Failed to process upload', 'INTERNAL_ERROR', 500);
   }
 }

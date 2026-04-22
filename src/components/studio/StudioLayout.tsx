@@ -18,6 +18,7 @@ import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { LayoutsPanel } from '@/components/studio/LayoutsPanel';
 import { TemplatesPanel } from '@/components/studio/TemplatesPanel';
 import { PreviewBanner } from '@/components/canvas/PreviewBanner';
+import { DrawingHud } from '@/components/studio/DrawingHud';
 
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
@@ -30,6 +31,7 @@ import { useFabricDrop } from '@/hooks/useFabricLayout';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
 import { saveProject } from '@/lib/save-project';
 import { useCanvasContext } from '@/contexts/CanvasContext';
+import { X } from 'lucide-react';
 
 interface StudioLayoutProps {
   readonly project: Project;
@@ -70,7 +72,17 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
   const [showQuiltSetup, setShowQuiltSetup] = useState(false);
   const [quiltSetupDismissible, setQuiltSetupDismissible] = useState(false);
-  const [showModeModal, setShowModeModal] = useState(!project.canvasData || Object.keys(project.canvasData).length === 0);
+  const [showModeModal, setShowModeModal] = useState(() => {
+    // Only show mode selector when the project is genuinely untouched:
+    //   - canvasData is empty (no layout state and no objects), AND
+    //   - user hasn't previously dismissed/picked the mode selector for this project.
+    // This prevents the modal from re-appearing forever on empty-but-visited projects.
+    const hasCanvasContent =
+      project.canvasData && Object.keys(project.canvasData).length > 0;
+    if (hasCanvasContent) return false;
+    if (typeof window === 'undefined') return true;
+    return window.localStorage.getItem(`qc:studio:modeChosen:${project.id}`) !== '1';
+  });
 
   const { handleDragStart: handleBlockDragStart } = useBlockDrop();
   const { handleFabricDragStart } = useFabricDrop();
@@ -92,14 +104,30 @@ export function StudioLayout({ project }: StudioLayoutProps) {
     }
   }, [searchParams, projectMode, openLayouts, openTemplates, dismiss]);
 
-  const handleModeSelect = useCallback((mode: 'template' | 'layout' | 'free-form') => {
+  const handleModeSelect = useCallback(
+    (mode: 'template' | 'layout' | 'free-form') => {
+      setShowModeModal(false);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(`qc:studio:modeChosen:${project.id}`, '1');
+      }
+      useProjectStore.getState().setMode(mode);
+      if (mode === 'layout') {
+        openLayouts();
+      } else if (mode === 'template') {
+        openTemplates();
+      } else {
+        dismiss();
+      }
+    },
+    [project.id, openLayouts, openTemplates, dismiss]
+  );
+
+  const handleModeModalDismiss = useCallback(() => {
     setShowModeModal(false);
-    if (mode === 'layout') {
-      openLayouts();
-    } else if (mode === 'template') {
-      openTemplates();
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(`qc:studio:modeChosen:${project.id}`, '1');
     }
-  }, [openLayouts, openTemplates]);
+  }, [project.id]);
 
   const syncProjectLayoutState = useCallback(
     (setup: StudioQuiltSetup) => {
@@ -285,14 +313,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
                         className="w-6 h-6 flex items-center justify-center rounded-lg text-[var(--color-text)]/40 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
                         aria-label="Close reference panel"
                       >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                          <path
-                            d="M3 3L11 11M11 3L3 11"
-                            stroke="currentColor"
-                            strokeWidth="1.4"
-                            strokeLinecap="round"
-                          />
-                        </svg>
+                        <X size={14} strokeWidth={1.75} />
                       </button>
                     </div>
                     <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
@@ -320,8 +341,13 @@ export function StudioLayout({ project }: StudioLayoutProps) {
 
       <BottomBar />
       <DuplicateOptionsPopup />
+      <DrawingHud />
 
-      <ProjectModeModal open={showModeModal} onSelect={handleModeSelect} />
+      <ProjectModeModal
+        open={showModeModal}
+        onSelect={handleModeSelect}
+        onDismiss={handleModeModalDismiss}
+      />
 
       <NewProjectWizard
         mode="studio"

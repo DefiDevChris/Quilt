@@ -61,7 +61,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         isDefault: block.isDefault,
       },
     });
-  } catch {
+  } catch (err) { console.error('[blocks/[id]]', err);
     return errorResponse('Failed to fetch block', 'INTERNAL_ERROR', 500);
   }
 }
@@ -93,7 +93,7 @@ export async function DELETE(
     await db.delete(blocks).where(eq(blocks.id, id));
 
     return new Response(null, { status: 204 });
-  } catch {
+  } catch (err) { console.error('[blocks/[id]]', err);
     return errorResponse('Failed to delete block', 'INTERNAL_ERROR', 500);
   }
 }

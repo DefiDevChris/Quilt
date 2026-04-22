@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch {
+  } catch (err) { console.error('[mobile-uploads]', err);
     return errorResponse('Failed to fetch mobile uploads', 'INTERNAL_ERROR', 500);
   }
 }
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch {
+  } catch (err) { console.error('[mobile-uploads]', err);
     return errorResponse('Failed to create mobile upload', 'INTERNAL_ERROR', 500);
   }
 }
