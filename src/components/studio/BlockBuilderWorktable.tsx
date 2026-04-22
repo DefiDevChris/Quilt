@@ -133,6 +133,7 @@ export function BlockBuilderWorktable() {
     gridRows,
     canvasSize,
     activeMode,
+    onShapeClosed: () => setActiveMode('select'),
   });
 
   useEffect(() => {
