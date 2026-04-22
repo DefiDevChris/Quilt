@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import type { Canvas as FabricCanvas } from 'fabric';
@@ -15,6 +15,10 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   const undoStack = useCanvasStore((s) => s.undoStack);
   const [baseTimestamp] = useState(() => Date.now());
   const { getCanvas } = useCanvasContext();
+  // Re-entry guard: loadFromJSON is asynchronous; clicking a second history entry
+  // before the first finishes would interleave two canvas loads and corrupt the
+  // stacks. We drop subsequent clicks until the in-flight jump completes.
+  const isJumpingRef = useRef(false);
 
   const entries: HistoryEntry[] = useMemo(
     () =>
@@ -26,20 +30,33 @@ export function HistoryPanel({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   );
 
   const jumpToState = (index: number) => {
+    // Refuse concurrent jumps — the in-flight loadFromJSON is still resolving.
+    if (isJumpingRef.current) return;
     const fabricCanvas = getCanvas();
     if (!fabricCanvas) return;
 
     const canvas = fabricCanvas as FabricCanvas;
     const targetJson = entries[index].json;
 
-    canvas.loadFromJSON(JSON.parse(targetJson), () => {
-      canvas.renderAll();
-    });
+    // Snapshot the undoStack *before* the async load so subsequent canvas
+    // events (object:added etc. fired during hydration) cannot influence the
+    // slice indices we use to rebuild the undo/redo stacks.
+    const snapshotStack = undoStack;
 
-    // Update undo/redo stacks
-    const newUndoStack = undoStack.slice(0, index + 1);
-    const newRedoStack = undoStack.slice(index + 1);
-    useCanvasStore.setState({ undoStack: newUndoStack, redoStack: newRedoStack });
+    isJumpingRef.current = true;
+    canvas.loadFromJSON(JSON.parse(targetJson), () => {
+      try {
+        canvas.renderAll();
+        // Stack update must happen AFTER loadFromJSON resolves; doing it
+        // synchronously (the previous behavior) let events fired during load
+        // push new entries onto the "new" stack, corrupting history ordering.
+        const newUndoStack = snapshotStack.slice(0, index + 1);
+        const newRedoStack = snapshotStack.slice(index + 1);
+        useCanvasStore.setState({ undoStack: newUndoStack, redoStack: newRedoStack });
+      } finally {
+        isJumpingRef.current = false;
+      }
+    });
   };
 
   if (!isOpen) return null;

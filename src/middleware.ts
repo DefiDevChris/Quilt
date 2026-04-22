@@ -36,7 +36,9 @@ function getJwks() {
   return createRemoteJWKSet(new URL(jwksUrl));
 }
 
-async function verifyIdToken(token: string): Promise<{ sub: string; email: string } | null> {
+async function verifyIdToken(
+  token: string,
+): Promise<{ sub: string; email: string; groups: string[] } | null> {
   const jwks = getJwks();
   if (!jwks) return null;
   const userPoolId = getUserPoolId();
@@ -45,9 +47,17 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
       issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}`,
       audience: COGNITO_CLIENT_ID,
     });
+    // Cognito puts group memberships in the `cognito:groups` claim of the ID token.
+    // This is cryptographically signed by the user pool and cannot be tampered with
+    // by the client, unlike a plain cookie.
+    const rawGroups = (payload as Record<string, unknown>)['cognito:groups'];
+    const groups = Array.isArray(rawGroups)
+      ? rawGroups.filter((g): g is string => typeof g === 'string')
+      : [];
     return {
       sub: payload.sub as string,
       email: (payload.email as string) ?? '',
+      groups,
     };
   } catch {
     return null;
@@ -97,15 +107,18 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // Admin route protection: check role cookie set during sign-in.
-  // This is UI gating only — API routes still enforce DB-based role checks.
+  // Admin route protection: verify role from the signed Cognito ID token claims.
+  //
+  // Previously this gated on the `qc_user_role` cookie, which is client-writeable
+  // (anyone could set `document.cookie = 'qc_user_role=admin'` in DevTools and
+  // access /admin). The Cognito ID token is signed by the user pool's JWKS and
+  // has already been verified above, so `user.groups` is authoritative.
   if (pathname.startsWith('/admin')) {
-    if (!isAuthenticated) {
+    if (!user) {
       return NextResponse.redirect(new URL('/auth/signin', req.url));
     }
-    const role = req.cookies.get('qc_user_role')?.value;
-    if (role !== 'admin') {
-      logAudit('UNAUTHORIZED_ADMIN_ACCESS', { path: pathname });
+    if (!user.groups.includes('admin')) {
+      logAudit('UNAUTHORIZED_ADMIN_ACCESS', { path: pathname, sub: user.sub });
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
   }
