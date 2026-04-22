@@ -151,6 +151,7 @@ export function useSegments(gridCols: number, gridRows: number) {
     setPatches,
     patchFills,
     selectedPatchId,
+    setSelectedPatchId,
     segmentsRef,
     addShapeSegments,
     setPatchFill,
