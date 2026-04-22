@@ -23,16 +23,22 @@ export function useDrawingTool() {
     gridSettings: CanvasGridSettings;
     unitSystem: 'imperial' | 'metric';
     isSpacePressed: boolean;
-  }>({
-    fillColor: CANVAS.pencilPreview,
-    strokeColor: CANVAS.seamLine,
-    strokeWidth: 1,
-    gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
-    unitSystem: 'imperial' as 'imperial' | 'metric',
-    isSpacePressed: false,
-  });
+  }>(
+    (() => {
+      const s = useCanvasStore.getState();
+      return {
+        fillColor: s.fillColor ?? CANVAS.pencilPreview,
+        strokeColor: s.strokeColor ?? CANVAS.seamLine,
+        strokeWidth: s.strokeWidth ?? 1,
+        gridSettings: s.gridSettings,
+        unitSystem: s.unitSystem,
+        isSpacePressed: s.isSpacePressed,
+      };
+    })()
+  );
 
   useEffect(() => {
+    // subscribe returns an unsubscribe fn — it becomes the effect cleanup
     return useCanvasStore.subscribe((state) => {
       stateRef.current = {
         fillColor: state.fillColor,

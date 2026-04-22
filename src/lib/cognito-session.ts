@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import {
@@ -115,8 +116,14 @@ export async function clearAuthCookies(): Promise<void> {
 /**
  * Get the current session from cookies. Verifies JWT, attempts refresh if expired.
  * Requires a DB lookup to get the user's role (stored in our DB, not Cognito).
+ *
+ * Wrapped in React.cache so a single server request that calls getSession()
+ * from multiple RSCs / route handlers pays for JWT verification + DB lookup
+ * exactly once.
  */
-export async function getSession(): Promise<CognitoSession | null> {
+export const getSession = cache(_getSession);
+
+async function _getSession(): Promise<CognitoSession | null> {
   if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
     const cookieStore = await cookies();
     const devUserId = cookieStore.get('qc_dev_user_id')?.value;

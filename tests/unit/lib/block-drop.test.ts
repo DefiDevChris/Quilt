@@ -266,8 +266,16 @@ describe('Block Drop Logic', () => {
     it('should fallback to containsPoint if findTarget misses', () => {
       const pointer = { x: 150, y: 150 };
       const allObjects = [
-        { _fenceElement: true, _fenceRole: 'block-cell', containsPoint: () => false },
-        { _fenceElement: true, _fenceRole: 'block-cell', containsPoint: () => true },
+        {
+          _fenceElement: true,
+          _fenceRole: 'block-cell',
+          containsPoint: (_p: { x: number; y: number }) => false,
+        },
+        {
+          _fenceElement: true,
+          _fenceRole: 'block-cell',
+          containsPoint: (_p: { x: number; y: number }) => true,
+        },
       ];
 
       const fallbackTarget = allObjects.find(
@@ -283,7 +291,11 @@ describe('Block Drop Logic', () => {
     it('should handle failed block fetch gracefully', async () => {
       const mockFetchFailed = async () => {
         try {
-          const res = { ok: false, status: 404 };
+          const res: { ok: boolean; status: number; json: () => Promise<unknown> } = {
+            ok: false,
+            status: 404,
+            json: async () => ({}),
+          };
           if (!res.ok) return null;
           return await res.json();
         } catch {

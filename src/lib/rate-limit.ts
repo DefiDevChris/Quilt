@@ -149,19 +149,45 @@ export const API_RATE_LIMITS = {
   publicRead: { limit: 60, windowMs: 60 * 1000 },
 } as const;
 
+/**
+ * Extract the client IP from trusted headers.
+ *
+ * Security note: the leftmost x-forwarded-for entry is attacker-controlled
+ * (clients can inject any value). We strip N rightmost hops according to
+ * TRUSTED_PROXY_HOPS (defaults to 1, matching a single load balancer / CDN).
+ * Platform-specific single-value headers (cf-connecting-ip, true-client-ip,
+ * x-real-ip) take precedence when present since they are set by the trusted
+ * edge and are not a comma-separated chain.
+ */
 export function getClientIp(request: Request): string {
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (cfIp) return cfIp.trim();
+
+  const trueClient = request.headers.get('true-client-ip');
+  if (trueClient) return trueClient.trim();
+
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
+
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
     const ips = forwarded
       .split(',')
       .map((ip) => ip.trim())
       .filter((ip) => ip);
-    // Leftmost IP is the original client (after trusted proxies are stripped).
-    // The rightmost IP is the load balancer — using it would rate-limit all users together.
-    return ips[0] ?? 'unknown';
+    if (ips.length === 0) return 'unknown';
+
+    const trustedHops = Math.max(
+      0,
+      parseInt(process.env.TRUSTED_PROXY_HOPS ?? '1', 10) || 0
+    );
+    // Walk from the right, skipping trusted hops. Whatever remains at that
+    // index is the first untrusted value — the real client.
+    const idx = Math.max(0, ips.length - 1 - trustedHops);
+    return ips[idx] ?? 'unknown';
   }
-  // x-real-ip is set by the trusted proxy - use it if available
-  return request.headers.get('x-real-ip') ?? 'unknown';
+
+  return 'unknown';
 }
 
 export function rateLimitResponse(retryAfterMs: number): Response {

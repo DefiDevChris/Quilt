@@ -18,12 +18,10 @@ function logAudit(event: string, details: Record<string, string>) {
   const logEntry = {
     timestamp: new Date().toISOString(),
     level: 'WARN',
-    service: 'proxy',
+    service: 'middleware',
     event,
     ...details,
   };
-  // Use console.log for structured logging (JSON) instead of console.warn
-  // This allows log aggregation systems to parse the structured data
   console.log(JSON.stringify(logEntry));
 }
 
@@ -56,10 +54,16 @@ async function verifyIdToken(token: string): Promise<{ sub: string; email: strin
   }
 }
 
-export async function proxy(req: NextRequest) {
-  // Dev auth bypass — allows testing all pages without Cognito credentials
+export async function middleware(req: NextRequest) {
+  // Dev auth bypass — allows testing all pages without Cognito credentials.
+  // Require the host to be localhost/127.0.0.1 in addition to the env flag so
+  // a misconfigured staging server (missing NODE_ENV=production) cannot
+  // silently open every route.
   if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
-    return NextResponse.next();
+    const host = req.nextUrl.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+      return NextResponse.next();
+    }
   }
 
   const { pathname } = req.nextUrl;

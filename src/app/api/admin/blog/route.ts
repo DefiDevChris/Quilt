@@ -18,7 +18,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const url = request.nextUrl;

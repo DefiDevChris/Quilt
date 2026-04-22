@@ -3,12 +3,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
 import { requireAdminSession } from '@/lib/auth-helpers';
-import {
-  errorResponse,
-  unauthorizedResponse,
-  forbiddenResponse,
-  validationErrorResponse,
-} from '@/lib/api-responses';
+import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
 import { updateBlogPostSchema } from '@/lib/validation';
 import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
 
@@ -18,7 +13,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const { id } = await params;
@@ -39,7 +33,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const { id } = await params;
@@ -105,7 +98,6 @@ export async function DELETE(
 ) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
-  const { session } = result;
 
   try {
     const { id } = await params;

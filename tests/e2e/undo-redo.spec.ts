@@ -4,7 +4,11 @@ import { mockProject } from './helpers/canvas';
 
 declare global {
   interface Window {
-    useCanvasStore?: { getState: () => Record<string, unknown> };
+    useCanvasStore?: {
+      getState: () => {
+        fabricCanvas?: { getObjects: () => unknown[] };
+      };
+    };
   }
 }
 

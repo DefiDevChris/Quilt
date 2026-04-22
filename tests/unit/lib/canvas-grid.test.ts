@@ -10,6 +10,7 @@ describe('renderGrid', () => {
     const mockFabricCanvas = { getZoom: () => 1, viewportTransform: [1, 0, 0, 1, 0, 0] };
     expect(() => renderGrid(mockCanvas, mockFabricCanvas, {
       gridSettings: { enabled: true, size: 1 },
+      mode: 'free-form',
       unitSystem: 'imperial',
       quiltWidth: 10,
       quiltHeight: 10,
@@ -41,6 +42,7 @@ describe('renderGrid', () => {
     const mockFabricCanvas = { getZoom: () => 1, viewportTransform: [1, 0, 0, 1, 0, 0] };
     renderGrid(mockCanvas, mockFabricCanvas, {
       gridSettings: { enabled: true, size: 1 },
+      mode: 'free-form',
       unitSystem: 'imperial',
       quiltWidth: 10,
       quiltHeight: 10,

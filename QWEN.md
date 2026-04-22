@@ -44,7 +44,7 @@ src/
 
 **Path alias**: `@/*` → `./src/*`
 
-**Auth**: Cognito HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `src/proxy.ts` verifies JWT via JWKS. `getSession()` does DB lookup. Roles: `free | pro | admin`.
+**Auth**: Cognito HTTP-only cookies (`qc_id_token`, `qc_access_token`, `qc_refresh_token`). `src/middleware.ts` verifies JWT via JWKS and runs CSRF guard on `/api/*`. `getSession()` does DB lookup. Roles: `free | pro | admin`.
 
 **Route protection**: `/studio/*` redirects guests. `/admin/*` requires admin. Pro gating: `useAuthStore.isPro` client-side, `session.user.role` + 403 `PRO_REQUIRED` server-side.
 

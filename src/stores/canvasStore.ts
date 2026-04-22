@@ -145,6 +145,7 @@ interface CanvasStoreState {
   setClipboard: (objects: unknown[]) => void;
   setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
+  toggleReferencePanel: () => void;
   setSelectedPatch: (patch: unknown | null) => void;
   setShadeViewActive: (active: boolean) => void;
   toggleShadeView: () => void;
@@ -201,7 +202,11 @@ const INITIAL_STATE = {
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   ...INITIAL_STATE,
 
-  setZoom: (zoom) => set({ zoom: clamp(zoom, ZOOM_MIN, ZOOM_MAX) }),
+  setZoom: (zoom) => {
+    const { fabricCanvas } = get();
+    const min = getDynamicMinZoom(fabricCanvas);
+    set({ zoom: clamp(zoom, min, ZOOM_MAX) });
+  },
 
   setUnitSystem: (unitSystem) => set({ unitSystem }),
 

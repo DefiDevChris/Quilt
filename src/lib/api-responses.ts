@@ -1,4 +1,4 @@
-type ApiErrorCode =
+export type ApiErrorCode =
   | 'BAD_REQUEST'
   | 'UNAUTHORIZED'
   | 'FORBIDDEN'

@@ -41,6 +41,11 @@
     "test-results",
     "playwright-report",
     "drizzle",
-    ".playwright-mcp"
+    ".playwright-mcp",
+    "tests",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }
