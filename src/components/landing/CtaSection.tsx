@@ -52,7 +52,7 @@ export default function CtaSection() {
 
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-primary text-default rounded-full font-bold text-lg hover:bg-primary-dark transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] inline-block"
+              className="px-8 py-4 bg-primary text-default rounded-full font-bold text-lg hover:bg-primary-dark transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)] inline-block"
             >
               Start Designing Free
             </Link>
