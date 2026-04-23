@@ -31,17 +31,19 @@ jobs:
           curl -sL -o public/images/shop/jelly-rolls.jpg "https://pub.hyperagent.com/api/published/6F4E3Ld0fp8ctnKDfIGFUA/jelly-rolls.jpg"
           curl -sL -o public/images/shop/sewing-machine.jpg "https://pub.hyperagent.com/api/published/fKAF1JNuwG_afJgFppR3ww/sewing-machine.jpg"
 
-      - name: Verify files (must be non-empty JPEGs)
+      - name: Verify files are valid JPEGs
         run: |
           set -eux
           for f in fabric-by-yard featured-store fabric-shop-shelves fabric-collection charm-packs quilting-thread jelly-rolls sewing-machine; do
             path="public/images/shop/${f}.jpg"
             size=$(stat -c %s "$path")
             if [ "$size" -lt 10000 ]; then
-              echo "ERROR: $path is too small ($size bytes)"
-              exit 1
+              echo "ERROR: $path too small ($size bytes)"; exit 1
             fi
-            head -c 3 "$path" | xxd | grep -q 'ffd8ff' || { echo "ERROR: $path is not a JPEG"; exit 1; }
+            magic=$(head -c 3 "$path" | od -An -tx1 | tr -d ' \n')
+            if [ "$magic" != "ffd8ff" ]; then
+              echo "ERROR: $path magic=$magic, not a JPEG"; exit 1
+            fi
           done
           ls -la public/images/shop/
 
