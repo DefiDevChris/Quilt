@@ -16,16 +16,16 @@ export const ORDER_STATUS_COLORS: Record<OrderStatus, string> = {
   pending: '#fbbf24',
   confirmed: '#3b82f6',
   fulfilled: '#22c55e',
-  cancelled: '#ef4444',
-  refunded: '#ef4444',
+  cancelled: 'var(--color-error)',
+  refunded: 'var(--color-error)',
 };
 
 export const ORDER_STATUS_BG_LIGHT: Record<OrderStatus, string> = {
   pending: '#fef3c7',
   confirmed: '#dbeafe',
   fulfilled: '#dcfce7',
-  cancelled: '#fee2e2',
-  refunded: '#fee2e2',
+  cancelled: 'var(--color-accent-blush)',
+  refunded: 'var(--color-accent-blush)',
 };
 
 /**
